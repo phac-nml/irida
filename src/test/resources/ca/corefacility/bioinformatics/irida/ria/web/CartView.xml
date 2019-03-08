@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true"/>
+    <user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="test@me.com" firstName="test" lastName="User"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="testUser" enabled="true" system_role="ROLE_USER"
+          credentialsNonExpired="true"/>
+    <user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="project1Manager@test.com" firstName="project1Manager" lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="project1Manager" enabled="true" system_role="ROLE_USER"
+          credentialsNonExpired="true"/>
+    <user id="4" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="admin@nowhere.com" firstName="Mr." lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true"/>
+
+
+    <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0"
+             organism="E. coli" projectDescription="This is an interesting project description."
+             remoteURL="http://google.ca" sistr_typing_uploads="OFF"/>
+    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0"
+             sistr_typing_uploads="OFF"/>
+    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0"
+             sistr_typing_uploads="OFF"/>
+    <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0"
+             sistr_typing_uploads="OFF"/>
+    <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"
+             sistr_typing_uploads="OFF"/>
+    <project id="6" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"
+             sistr_typing_uploads="OFF"/>
+
+    <related_project id="1" subject_id="1" relatedProject_id="6" createdDate="2013-07-18 14:20:19.0"/>
+
+    <project_user id="1" project_id="1" user_id="1"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="2" project_id="2" user_id="1"
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="3" project_id="3" user_id="1"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="4" project_id="4" user_id="1"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="6" project_id="1" user_id="2"
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="7" project_id="1" user_id="3"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="8" project_id="2" user_id="3"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+    <project_user id="9" project_id="6" user_id="1"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false"/>
+
+    <sample id="1" createdDate="2013-07-01 14:00:19.0" modifiedDate="2015-07-01 14:00:19.0" description="description1"
+            sampleName="sample1" organism="E. coli"/>
+    <sample id="2" createdDate="2013-07-02 14:01:19.0" modifiedDate="2015-07-02 14:00:19.0" description="description2"
+            sampleName="sample2" organism="E. coli"/>
+    <sample id="3" createdDate="2013-07-03 14:02:19.0" modifiedDate="2015-07-02 14:00:19.0" description="description3"
+            sampleName="sample3" organism="E. coli"/>
+    <sample id="4" createdDate="2013-07-04 14:03:19.0" modifiedDate="2015-07-03 14:00:19.0" description="description4"
+            sampleName="sample4" organism="Listeria"/>
+    <sample id="5" createdDate="2013-07-05 14:04:19.0" modifiedDate="2015-07-05 14:00:19.0" description="description5"
+            sampleName="sample5" organism="Listeria"/>
+    <sample id="6" createdDate="2013-07-06 14:05:19.0" modifiedDate="2015-07-06 14:00:19.0" description="description5"
+            sampleName="sample523423"/>
+    <sample id="7" createdDate="2013-07-07 14:06:19.0" modifiedDate="2015-07-07 14:00:19.0" description="description5"
+            sampleName="sample534534"/>
+    <sample id="8" createdDate="2013-07-08 14:07:19.0" modifiedDate="2015-07-08 14:00:19.0" description="description5"
+            sampleName="sample589789"/>
+    <sample id="9" createdDate="2013-07-09 14:08:19.0" modifiedDate="2015-07-09 14:00:19.0" description="description5"
+            sampleName="sample52342"/>
+    <sample id="10" createdDate="2013-07-10 14:09:19.0" modifiedDate="2015-07-10 14:00:19.0" description="description5"
+            sampleName="sample565"/>
+    <sample id="11" createdDate="2013-07-11 14:10:19.0" modifiedDate="2015-07-11 14:00:19.0" description="description5"
+            sampleName="sample6735"/>
+    <sample id="12" createdDate="2013-07-12 14:11:19.0" modifiedDate="2015-07-12 14:00:19.0" description="description5"
+            sampleName="sample3452345"/>
+    <sample id="13" createdDate="2013-07-13 14:12:19.0" modifiedDate="2015-07-13 14:00:19.0" description="description5"
+            sampleName="sample3643225"/>
+    <sample id="14" createdDate="2013-07-14 14:13:19.0" modifiedDate="2015-07-14 14:00:19.0" description="description5"
+            sampleName="sample64565"/>
+    <sample id="15" createdDate="2013-07-15 14:14:19.0" modifiedDate="2015-07-15 14:00:19.0" description="description5"
+            sampleName="sample57567"/>
+    <sample id="16" createdDate="2013-07-16 14:15:19.0" modifiedDate="2015-07-16 14:00:19.0" description="description5"
+            sampleName="sample55422r"/>
+    <sample id="17" createdDate="2013-07-17 14:16:19.0" modifiedDate="2015-07-17 14:00:19.0" description="description5"
+            sampleName="sample5dt5"/>
+    <sample id="18" createdDate="2013-07-18 14:17:19.0" modifiedDate="2015-07-18 14:00:19.0" description="description5"
+            sampleName="sample5ddfg4"/>
+    <sample id="19" createdDate="2013-07-19 14:18:19.0" modifiedDate="2015-07-19 14:00:19.0" description="description5"
+            sampleName="sample554sg5"/>
+    <sample id="20" createdDate="2013-07-20 14:19:19.0" modifiedDate="2015-07-20 14:00:19.0" description="description5"
+            sampleName="sample5fdgr"/>
+    <sample id="21" createdDate="2013-07-21 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description5"
+            sampleName="sample5fg44"/>
+    <sample id="22" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description22"
+            sampleName="sample5fg22"/>
+
+    <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:21:19.0"/>
+    <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:22:19.0"/>
+    <project_sample id="3" project_id="1" sample_id="3" createdDate="2013-07-14 14:23:19.0"/>
+    <project_sample id="4" project_id="1" sample_id="4" createdDate="2013-07-16 14:24:19.0"/>
+    <project_sample id="5" project_id="1" sample_id="5" createdDate="2013-07-18 14:25:19.0"/>
+    <project_sample id="6" project_id="1" sample_id="6" createdDate="2013-07-18 14:26:19.0"/>
+    <project_sample id="7" project_id="1" sample_id="7" createdDate="2013-07-18 14:27:19.0"/>
+    <project_sample id="8" project_id="1" sample_id="8" createdDate="2013-07-18 14:28:19.0"/>
+    <project_sample id="9" project_id="1" sample_id="9" createdDate="2013-07-18 14:29:19.0"/>
+    <project_sample id="10" project_id="1" sample_id="10" createdDate="2013-07-18 14:31:19.0"/>
+    <project_sample id="11" project_id="1" sample_id="11" createdDate="2013-07-18 14:32:19.0"/>
+    <project_sample id="12" project_id="1" sample_id="12" createdDate="2013-07-18 14:33:19.0"/>
+    <project_sample id="13" project_id="1" sample_id="13" createdDate="2013-07-18 14:34:19.0"/>
+    <project_sample id="14" project_id="1" sample_id="14" createdDate="2013-07-18 14:35:19.0"/>
+    <project_sample id="15" project_id="1" sample_id="15" createdDate="2013-07-18 14:36:19.0"/>
+    <project_sample id="16" project_id="1" sample_id="16" createdDate="2013-07-18 14:37:19.0"/>
+    <project_sample id="17" project_id="1" sample_id="17" createdDate="2013-07-18 14:38:19.0"/>
+    <project_sample id="18" project_id="1" sample_id="18" createdDate="2013-07-18 14:39:19.0"/>
+    <project_sample id="19" project_id="1" sample_id="19" createdDate="2013-07-18 14:40:19.0"/>
+    <project_sample id="20" project_id="1" sample_id="20" createdDate="2013-07-18 14:41:19.0"/>
+    <project_sample id="21" project_id="1" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
+    <project_sample id="22" project_id="6" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
+    <project_sample id="23" project_id="3" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
+
+    <metadata_field id="1" label="firstName" type="text" DTYPE="MetadataTemplateField"/>
+    <metadata_field id="2" label="lastName" type="text" DTYPE="MetadataTemplateField"/>
+    <metadata_field id="3" label="healthAuthority" type="text" DTYPE="MetadataTemplateField"/>
+    <metadata_field id="4" label="symptom" type="text" DTYPE="MetadataTemplateField"/>
+
+    <metadata_template id="1" created_date="2016-06-10 08:05:53" modified_date="2016-06-10 08:05:53"
+                       name="Testing Template 1"/>
+
+    <metadata_template_metadata_field metadata_template_id="1" fields_id="1"/>
+    <metadata_template_metadata_field metadata_template_id="1" fields_id="2"/>
+    <metadata_template_metadata_field metadata_template_id="1" fields_id="4"/>
+
+    <project_metadata_template id="1" created_date="2016-06-10 08:05:53" project_id="1" template_id="1"/>
+
+    <metadata_entry id="1" value="Fred" type="text"/>
+    <metadata_entry id="2" value="Johnson" type="text"/>
+    <metadata_entry id="3" value="WRHA" type="text"/>
+    <metadata_entry id="4" value="Sneezing" type="text"/>
+    <metadata_entry id="5" value="AB-1001" type="text"/>
+
+    <metadata_entry id="6" value="Elizabeth" type="text"/>
+    <metadata_entry id="7" value="Feldman" type="text"/>
+    <metadata_entry id="8" value="WRHA" type="text"/>
+    <metadata_entry id="9" value="Coughing" type="text"/>
+    <metadata_entry id="10" value="AB-1004" type="text"/>
+
+    <metadata_entry id="11" value="James" type="text"/>
+    <metadata_entry id="12" value="Brown" type="text"/>
+    <metadata_entry id="13" value="WRHA" type="text"/>
+    <metadata_entry id="14" value="bloody stool" type="text"/>
+    <metadata_entry id="15" value="AB-1003" type="text"/>
+
+    <sample_metadata_entry sample_id="1" metadata_id="1" metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="1" metadata_id="2" metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="1" metadata_id="3" metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="1" metadata_id="4" metadata_KEY="4"/>
+
+    <sample_metadata_entry sample_id="2" metadata_id="6" metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="2" metadata_id="7" metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="2" metadata_id="8" metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="2" metadata_id="9" metadata_KEY="4"/>
+
+    <sample_metadata_entry sample_id="3" metadata_id="11" metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="3" metadata_id="12" metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="3" metadata_id="13" metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="3" metadata_id="14" metadata_KEY="4"/>
+
+</dataset>

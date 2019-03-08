@@ -22,7 +22,7 @@ export class Pipelines extends React.Component {
 
   render() {
     return (
-      <Row gutter={16}>
+      <Row className="t-pipelines" gutter={16}>
         {this.state.pipelines.map(pipeline => (
           <Col
             md={24}
