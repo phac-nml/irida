@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -339,14 +341,16 @@ public class IridaApiServicesConfig {
 	/**
 	 * Builds a new {@link Executor} for analysis tasks.
 	 * 
-	 * @param userService
-	 *            a reference to the user service.
+	 * @param userService a reference to the user service.
 	 * 
 	 * @return A new {@link Executor} for analysis tasks.
 	 */
 	@Bean
 	@DependsOn("springLiquibase")
 	public Executor analysisTaskExecutor(UserService userService) {
+		checkArgument(analysisTaskThreads > 0,
+				"irida.workflow.analysis.threads=" + analysisTaskThreads + " must be > 0");
+		logger.info("Creating thread pool for analysis tasks with " + analysisTaskThreads + " threads");
 		ExecutorService delegateExecutor = Executors.newFixedThreadPool(analysisTaskThreads);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextExecutorService(delegateExecutor, schedulerContext);
