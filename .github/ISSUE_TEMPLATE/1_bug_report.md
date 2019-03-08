@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report an issue you've found with IRIDA
+about: Report an issue you've found with IRIDA.
 title: ''
 labels: bug
 assignees: ''
