@@ -107,6 +107,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				.name("my analysis")
 				.inputFiles(sequenceFiles)
 				.referenceFile(referenceFile)
+				.emailPipelineResult(false)
 				.build();
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
@@ -141,21 +142,18 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				.name("low")
 				.inputFiles(sequenceFiles)
 				.priority(AnalysisSubmission.Priority.LOW)
-				.emailPipelineResult(false)
 				.build();
 
 		AnalysisSubmission medium = AnalysisSubmission.builder(workflowId)
 				.name("medium")
 				.inputFiles(sequenceFiles)
 				.priority(AnalysisSubmission.Priority.MEDIUM)
-				.emailPipelineResult(false)
 				.build();
 
 		AnalysisSubmission high = AnalysisSubmission.builder(workflowId)
 				.name("high")
 				.inputFiles(sequenceFiles)
 				.priority(AnalysisSubmission.Priority.HIGH)
-				.emailPipelineResult(true)
 				.build();
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
@@ -227,6 +225,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully switching analysis state to
 	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
+	 * Also ,tests not sending an email on pipeline completion.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -247,11 +246,35 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
-		if (analysisSubmission.getEmailPipelineResult()) {
-			verify(emailController).sendPipelineStatusEmail(analysisSubmission);
-		} else {
-			verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
-		}
+		verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching analysis state to
+	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
+	 * Also, tests sending an email to user on pipeline completion.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessFinishedWithEmail()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResult(true);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.OK,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
@@ -306,7 +329,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an error Galaxy state.
+	 * if there was an error Galaxy state. Also, tests not sending a pipeline
+	 * result email.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -328,16 +352,41 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
-		if (analysisSubmission.getEmailPipelineResult()) {
-			verify(emailController).sendPipelineStatusEmail(analysisSubmission);
-		} else {
-			verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
-		}
+		verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
 	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an error building the workflow status.
+	 * if there was an error Galaxy state. On  error, user is sent an email
+	 * with the pipeline result.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessErrorWithEmail()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResult(true);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.ERROR,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an error building the workflow status. Also, tests not
+	 * sending of pipeline status email.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -355,11 +404,32 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
-		if (analysisSubmission.getEmailPipelineResult()) {
-			verify(emailController).sendPipelineStatusEmail(analysisSubmission);
-		} else {
-			verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
-		}
+		verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an error building the workflow status. Also, tests
+	 * sending of pipeline status email.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesErrorWorkflowStatusWithEmail()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResult(true);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenThrow(new IllegalArgumentException());
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**

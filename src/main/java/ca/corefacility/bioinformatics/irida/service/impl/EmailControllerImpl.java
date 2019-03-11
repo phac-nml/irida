@@ -264,9 +264,9 @@ public class EmailControllerImpl implements EmailController {
 				.equals(AnalysisState.ERROR) ?
 				messageSource.getMessage("email.pipeline.ERROR", null, locale) :
 				messageSource.getMessage("email.pipeline.COMPLETED", null, locale);
-		String emailSubject =
-				messageSource.getMessage("email.pipeline.status", null, locale) + " - " + submission.getName() + " - "
-						+ pipelineStatus;
+		String emailSubject = messageSource.getMessage("email.pipeline.subject",
+				new Object[] { submission.getName(), pipelineStatus }, locale);
+
 		ctx.setVariable("serverURL", serverURL);
 		ctx.setVariable("pipelineStatus", pipelineStatus);
 		ctx.setVariable("pipelineName", submission.getName());

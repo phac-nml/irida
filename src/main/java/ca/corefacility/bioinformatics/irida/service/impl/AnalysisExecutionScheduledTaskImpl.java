@@ -266,7 +266,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			AnalysisSubmission analysisSubmission) {
 		Future<AnalysisSubmission> returnedSubmission;
 
-		boolean final_workflow_status_set = false;
+		boolean finalWorkflowStatusSet = false;
 
 		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
 		if (workflowStatus.errorOccurred()) {
@@ -274,13 +274,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
-			final_workflow_status_set = true;
+			finalWorkflowStatusSet = true;
 		} else if (workflowStatus.completedSuccessfully()) {
 			logger.debug("Analysis finished " + analysisSubmission);
 
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
-			final_workflow_status_set = true;
+			finalWorkflowStatusSet = true;
 		} else if (workflowStatus.isRunning()) {
 			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
 					+ workflowStatus.getProportionComplete());
@@ -292,10 +292,17 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
-			final_workflow_status_set = true;
+			finalWorkflowStatusSet = true;
 		}
 
-		if (final_workflow_status_set && analysisSubmission.getEmailPipelineResult()) {
+		/*
+		 The variable finalWorkflowStatusSet is set to true when an analysis
+		 has successfully completed or completed with an error and is used in
+		 the logic below. If the analysis has finished with an error or completed successfully
+		 and the user selected to be emailed on completion, then the following code
+		 will be executed.
+		 */
+		if (finalWorkflowStatusSet && analysisSubmission.getEmailPipelineResult()) {
 			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 
