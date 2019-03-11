@@ -3,7 +3,7 @@ import { Location, Router } from "@reach/router";
 import { Row } from "antd";
 import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
-import { COLOR_BACKGROUND_LIGHTEST } from "../../../styles/colors";
+import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { GalaxyExport } from "../../../components/galaxy/GalaxyExport";
@@ -12,14 +12,15 @@ import { Pipelines } from "../../../components/pipelines/Pipelines";
 const ToolsWrapper = styled(Row)`
   height: 100%;
   width: 100%;
-  background-color: ${COLOR_BACKGROUND_LIGHTEST};
+  background-color: ${grey1};
+  border-right: 1px solid ${grey4};
   position: relative;
 `;
 
 const ToolsInner = styled.div`
   padding: ${SPACE_MD};
   position: absolute;
-  top: 65px;
+  top: 67px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -42,7 +43,7 @@ export function CartTools() {
       text: getI18N("CartTools.menu.pipelines"),
       component: (
         <Pipelines
-          key="cart/pipelines"
+          key="/cart/pipelines"
           path="cart/pipelines"
           default={!fromGalaxy}
         />
@@ -66,9 +67,7 @@ export function CartTools() {
           <>
             <CartToolsMenu
               pathname={
-                location.pathname || fromGalaxy
-                  ? "/cart/galaxy"
-                  : "/cart/pipelines"
+                location.pathname
               }
               paths={paths}
             />

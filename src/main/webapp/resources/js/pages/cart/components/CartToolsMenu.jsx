@@ -10,17 +10,12 @@ import { Link } from "@reach/router";
  * @returns {*}
  */
 export function CartToolsMenu({ pathname, paths }) {
+  console.log(pathname);
   return (
-    <Col
-      span={24}
-      style={{
-        height: 65,
-        paddingTop: 17
-      }}
-    >
+    <Col span={24}>
       <Menu mode="horizontal" selectedKeys={[pathname]}>
         {paths.map(path => (
-          <Menu.Item key={path.key}>
+          <Menu.Item style={{ paddingTop: 10, height: 65 }} key={path.key}>
             <Link to={path.link}>{path.text}</Link>
           </Menu.Item>
         ))}

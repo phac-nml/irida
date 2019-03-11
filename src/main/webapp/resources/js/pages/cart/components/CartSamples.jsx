@@ -10,7 +10,7 @@ import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
-import { COLOR_BACKGROUND_LIGHT, grey4 } from "../../../styles/colors";
+import { blue6, grey1, grey3, grey4, grey5 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
@@ -40,7 +40,16 @@ const CartTools = styled(Row)`
 
   .ant-input {
     border: none;
-    background-color: ${COLOR_BACKGROUND_LIGHT};
+    background-color: ${grey3};
+
+    &:hover {
+      background-color: ${grey5};
+    }
+
+    &:focus {
+      border: 1px solid ${blue6};
+      background-color: ${grey1};
+    }
   }
 `;
 
