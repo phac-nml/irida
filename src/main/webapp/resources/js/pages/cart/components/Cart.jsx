@@ -28,12 +28,12 @@ const Content = styled.div`
 export default function Cart({ count }) {
   return (
     <Wrapper>
-      <Sidebar>
-        <CartSamples count={count} />
-      </Sidebar>
       <Content>
         <CartTools />
       </Content>
+      <Sidebar>
+        <CartSamples count={count}/>
+      </Sidebar>
       <SampleDetails />
     </Wrapper>
   );
