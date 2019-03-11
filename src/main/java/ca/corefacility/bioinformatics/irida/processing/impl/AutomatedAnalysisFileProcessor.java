@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -12,6 +15,8 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTemplateRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class AutomatedAnalysisFileProcessor implements FileProcessor {
@@ -29,15 +35,20 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	private ProjectSampleJoinRepository psjRepository;
 	private AnalysisSubmissionRepository submissionRepository;
 	private AnalysisSubmissionTemplateRepository analysisTemplateRepository;
+	private IridaWorkflowsService workflowsService;
+	private SequencingObjectRepository objectRepository;
 
 	@Autowired
 	public AutomatedAnalysisFileProcessor(SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectSampleJoinRepository psjRepository, AnalysisSubmissionRepository submissionRepository,
-			AnalysisSubmissionTemplateRepository analysisTemplateRepository) {
+			AnalysisSubmissionTemplateRepository analysisTemplateRepository, IridaWorkflowsService workflowsService,
+			SequencingObjectRepository objectRepository) {
 		this.ssoRepository = ssoRepository;
 		this.psjRepository = psjRepository;
 		this.submissionRepository = submissionRepository;
 		this.analysisTemplateRepository = analysisTemplateRepository;
+		this.workflowsService = workflowsService;
+		this.objectRepository = objectRepository;
 	}
 
 	@Override
@@ -57,6 +68,8 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 			submission.setSubmitter(template.getSubmitter());
 
 			submission = submissionRepository.save(submission);
+
+			legacyFileProcessorCompatibility(submission, sequencingObject);
 		}
 	}
 
@@ -90,5 +103,33 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		}
 
 		return submissionTemplates;
+	}
+
+	private void legacyFileProcessorCompatibility(AnalysisSubmission submission, SequencingObject sequencingObject) {
+		try {
+			IridaWorkflow assemblyWorkflow = workflowsService.getDefaultWorkflowByType(
+					BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+			IridaWorkflow sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
+
+			UUID assemblyWorkflowWorkflowIdentifier = assemblyWorkflow.getWorkflowIdentifier();
+			UUID sistrWorkflowWorkflowIdentifier = sistrWorkflow.getWorkflowIdentifier();
+
+			if (submission.getWorkflowId()
+					.equals(assemblyWorkflowWorkflowIdentifier)) {
+				// Associate the assembly submission with the seqobject
+				sequencingObject.setAutomatedAssembly(submission);
+
+				objectRepository.save(sequencingObject);
+			} else if (submission.getWorkflowId()
+					.equals(sistrWorkflowWorkflowIdentifier)) {
+				// Associate the sistr submission with the seqobject
+				sequencingObject.setSistrTyping(submission);
+
+				objectRepository.save(sequencingObject);
+			}
+
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Could not associate assembly workflow with analysis " + submission.getIdentifier(), e);
+		}
 	}
 }
