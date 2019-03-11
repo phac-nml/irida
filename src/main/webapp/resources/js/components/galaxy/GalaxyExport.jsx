@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Row } from "antd";
+import { Card, Col, Row } from "antd";
 import { GalaxyDetailsForm } from "./GalaxyDetailsForm";
 import { GalaxySubmission } from "./GalaxySubmission";
 import { GalaxySamples } from "./GalaxySamples";
@@ -12,10 +12,12 @@ export function GalaxyExport() {
   return (
     <Row>
       <Col lg={12} md={24}>
-        <GalaxyDetailsForm />
-        <GalaxySamples />
-        <GalaxySubmitError/>
-        <GalaxySubmission />
+        <Card>
+          <GalaxyDetailsForm />
+          <GalaxySamples />
+          <GalaxySubmitError />
+          <GalaxySubmission />
+        </Card>
       </Col>
     </Row>
   );

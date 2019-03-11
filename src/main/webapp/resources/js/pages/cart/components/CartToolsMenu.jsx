@@ -10,7 +10,6 @@ import { Link } from "@reach/router";
  * @returns {*}
  */
 export function CartToolsMenu({ pathname, paths }) {
-  console.log(pathname);
   return (
     <Col span={24}>
       <Menu mode="horizontal" selectedKeys={[pathname]}>
