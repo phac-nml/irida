@@ -65,7 +65,11 @@ export function CartTools() {
         {({ location }) => (
           <>
             <CartToolsMenu
-              pathname={location.pathname || "/cart/galaxy"}
+              pathname={
+                location.pathname || fromGalaxy
+                  ? "/cart/galaxy"
+                  : "/cart/pipelines"
+              }
               paths={paths}
             />
             <ToolsInner>
