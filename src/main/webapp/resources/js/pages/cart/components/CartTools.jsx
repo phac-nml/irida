@@ -30,7 +30,7 @@ const ToolsInner = styled.div`
  * Wrapper component for functionality available in the cart.
  */
 export function CartTools() {
-  const fromGalaxy = window.PAGE.galaxyCallback !== null;
+  const fromGalaxy = typeof window.GALAXY !== "undefined";
 
   /*
    * Update here to add new tab items to the page.
