@@ -14,9 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -28,11 +26,9 @@ import static org.mockito.Mockito.*;
 public class CartControllerTest {
 	SampleService sampleService;
 	ProjectService projectService;
-	UserService userService;
 	MessageSource messageSource;
 
 	CartController controller;
-	SequencingObjectService sequencingObjectService;
 	Cart cart;
 
 	private Long projectId;
@@ -44,14 +40,11 @@ public class CartControllerTest {
 	public void setup() {
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
-		userService = mock(UserService.class);
 		messageSource = mock(MessageSource.class);
-		sequencingObjectService = mock(SequencingObjectService.class);
 		cart = new Cart(projectService, messageSource);
 		String iridaPipelinePluginStyle = "";
 
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
-				iridaPipelinePluginStyle, cart);
+		controller = new CartController(sampleService, projectService, iridaPipelinePluginStyle, cart);
 
 		testData();
 
