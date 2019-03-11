@@ -19,7 +19,7 @@ const ToolsWrapper = styled(Row)`
 const ToolsInner = styled.div`
   padding: ${SPACE_MD};
   position: absolute;
-  top: 50px;
+  top: 65px;
   right: 0;
   bottom: 0;
   left: 0;
