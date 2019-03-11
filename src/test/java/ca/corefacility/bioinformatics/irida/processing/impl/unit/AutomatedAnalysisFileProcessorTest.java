@@ -22,10 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -97,7 +94,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		Project project = new Project();
 
 		AnalysisSubmissionTemplate assemblyTemplate = new AnalysisSubmissionTemplate("assemble",
-				assemblyWorkflow.getWorkflowIdentifier(), Maps.newHashMap(), null, false, "desc",
+				assemblyWorkflow.getWorkflowIdentifier(), ImmutableMap.of("param1", "myparam"), null, false, "desc",
 				AbstractAnalysisSubmission.Priority.MEDIUM, project);
 		assemblyTemplate.setSubmitter(submitter);
 
@@ -144,7 +141,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		Project disabledProject = new Project("no assembly");
 
 		AnalysisSubmissionTemplate assemblyTemplate = new AnalysisSubmissionTemplate("assemble",
-				assemblyWorkflow.getWorkflowIdentifier(), Maps.newHashMap(), null, false, "desc",
+				assemblyWorkflow.getWorkflowIdentifier(), ImmutableMap.of("param1", "myparam"), null, false, "desc",
 				AbstractAnalysisSubmission.Priority.MEDIUM, project);
 		assemblyTemplate.setSubmitter(submitter);
 
