@@ -4,27 +4,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -36,11 +26,9 @@ import static org.mockito.Mockito.*;
 public class CartControllerTest {
 	SampleService sampleService;
 	ProjectService projectService;
-	UserService userService;
 	MessageSource messageSource;
 
 	CartController controller;
-	SequencingObjectService sequencingObjectService;
 	Cart cart;
 
 	private Long projectId;
@@ -52,14 +40,11 @@ public class CartControllerTest {
 	public void setup() {
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
-		userService = mock(UserService.class);
 		messageSource = mock(MessageSource.class);
-		sequencingObjectService = mock(SequencingObjectService.class);
 		cart = new Cart(projectService, messageSource);
 		String iridaPipelinePluginStyle = "";
 
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
-				iridaPipelinePluginStyle, cart);
+		controller = new CartController(sampleService, projectService, iridaPipelinePluginStyle, cart);
 
 		testData();
 
@@ -88,129 +73,55 @@ public class CartControllerTest {
 		AddToCartRequest thirdRequest = new AddToCartRequest(1L, ImmutableSet.of(new CartSampleRequest(5L, "sample1")));
 		AddToCartResponse thirdResponse = controller.addSamplesToCart(thirdRequest, Locale.ENGLISH);
 		assertNotNull("Should give a duplicate sample name message", thirdResponse);
-		assertEquals("Should not have added the diplicate to the cart", 4, thirdResponse.getCount());
+		assertEquals("Should not have added the duplicate to the cart", 4, thirdResponse.getCount());
 	}
 
 	@Test
-	@Ignore
-	public void testRemoveProjectSamples() {
-//		Map<Project, Set<Sample>> selected = new HashMap<>();
-//		selected.put(project, samples);
-//		controller.addSelected(selected, Locale.ENGLISH);
-//
-//		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
-//
-//		controller.removeProjectSamples(projectId, subIds);
-//
-//		verify(projectService).read(projectId);
-//		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
-//
-//		Map<Project, List<Sample>> response = controller.getSelected();
-//
-//		assertEquals(1, response.keySet().size());
-//		Project projectKey = selected.keySet().iterator().next();
-//		assertEquals(project, projectKey);
-//		for (Sample s : selected.get(projectKey)) {
-//			assertFalse(subIds.contains(s.getId()));
-//		}
-	}
-
-	@Test
-	@Ignore
-	public void testRemoveProjectSample() {
-//		Map<Project, Set<Sample>> selected = new HashMap<>();
-//		selected.put(project, samples);
-//		controller.addSelected(selected, Locale.ENGLISH);
-//		Sample sample = samples.iterator().next();
-//
-//		controller.removeProjectSample(projectId, sample.getId());
-//
-//		Map<Project, List<Sample>> response = controller.getSelected();
-//		assertEquals(1, response.keySet().size());
-//		assertFalse(response.get(project).contains(sample));
-
-	}
-
-	@Test
-	@Ignore
-	public void testRemoveAllProjectSamples() {
-//		Map<Project, Set<Sample>> selected = new HashMap<>();
-//		selected.put(project, samples);
-//		controller.addSelected(selected, Locale.ENGLISH);
-//
-//		controller.removeProjectSamples(projectId, sampleIds);
-//
-//		verify(projectService).read(projectId);
-//		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
-//
-//		Map<Project, List<Sample>> response = controller.getSelected();
-//
-//		assertFalse("project should have been removed because all samples were removed", selected.containsKey(project));
-	}
-
-	@Test
-	@Ignore
 	public void testClearCart() {
-		Map<String, Object> clearCart = controller.clearCart();
-		assertTrue((boolean) clearCart.get("success"));
+		// Add some samples to the cart
+		AddToCartRequest addToCartRequest = new AddToCartRequest(1L,
+				ImmutableSet.of(new CartSampleRequest(1L, "sample2"), new CartSampleRequest(4L, "sample4"),
+						new CartSampleRequest(5L, "sample1")));
+		AddToCartResponse addToCartResponse = controller.addSamplesToCart(addToCartRequest, Locale.ENGLISH);
+		assertEquals("Should be 3 samples in the cart", 3, addToCartResponse.getCount());
 
-		Map<Project, List<Sample>> selected = controller.getSelected();
-		assertTrue(selected.isEmpty());
+		// Test emptying the cart.
+		controller.clearCart();
+		assertEquals("The cart should be empty", 0, cart.get()
+				.size());
 	}
 
 	@Test
-	@Ignore
-	public void testAddProject() {
-		controller.addProject(projectId, Locale.ENGLISH);
+	public void testRemoveSamplesFromCart() {
+		// Add some samples to the cart
+		AddToCartRequest addToCartRequest = new AddToCartRequest(1L,
+				ImmutableSet.of(new CartSampleRequest(1L, "sample2"), new CartSampleRequest(4L, "sample4"),
+						new CartSampleRequest(5L, "sample1")));
+		AddToCartResponse addToCartResponse = controller.addSamplesToCart(addToCartRequest, Locale.ENGLISH);
+		assertEquals("Should be 3 samples in the cart", 3, addToCartResponse.getCount());
 
-		List<Join<Project, Sample>> joins = new ArrayList<>();
-		samples.forEach((s) -> {
-			joins.add(new ProjectSampleJoin(project, s, true));
-		});
-		when(sampleService.getSamplesForProject(project)).thenReturn(joins);
+		// Test removing a single sample from the cart
+		RemoveSampleRequest removeSampleRequest = new RemoveSampleRequest(1L, 1L);
+		RemoveSampleResponse removeSampleResponse = controller.removeSamplesFromCart(removeSampleRequest);
+		assertEquals("After removing a sample there should be 2 left in cart.", 2, removeSampleResponse.getCount());
 
-		verify(projectService).read(projectId);
-		verify(sampleService).getSamplesForProject(project);
-
-		Map<Project, List<Sample>> selected = controller.getSelected();
-		assertEquals(1, selected.keySet().size());
-		Project projectKey = selected.keySet().iterator().next();
-		assertEquals(project, projectKey);
-		for (Sample s : selected.get(projectKey)) {
-			assertTrue(sampleIds.contains(s.getId()));
-		}
 	}
 
 	@Test
-	@Ignore
-	public void testRemoveProject() {
-//		controller.removeProject(projectId);
-//		verify(projectService).read(projectId);
-	}
+	public void testRemoveProjectFromCart() {
+		// Add some samples to the cart
+		AddToCartRequest addToCartRequest = new AddToCartRequest(1L,
+				ImmutableSet.of(new CartSampleRequest(1L, "sample2")));
+		controller.addSamplesToCart(addToCartRequest, Locale.ENGLISH);
+		AddToCartRequest addToCartRequest2 = new AddToCartRequest(2L,
+				ImmutableSet.of(new CartSampleRequest(11L, "sample4"), new CartSampleRequest(12L, "sample1")));
+		AddToCartResponse addToCartResponse2 = controller.addSamplesToCart(addToCartRequest2, Locale.ENGLISH);
+		assertEquals("Should be 3 samples in the cart", 3, addToCartResponse2.getCount());
 
-	@Test
-	@Ignore
-	public void testGetCartMap() {
-		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-		RequestContextHolder.setRequestAttributes(ra);
+		RemoveSampleResponse removeSampleResponse = controller.removeProjectFromCart(1L);
+		assertEquals("There are 2 different projects in the cart, therefore there still should be 2 samples", 2,
+				removeSampleResponse.getCount());
 
-		Map<Project, Set<Sample>> selected = new HashMap<>();
-		selected.put(project, samples);
-		controller.addSelected(selected, Locale.ENGLISH);
-//
-//		Map<String, Object> cartMap = controller.getCartMap();
-//		assertTrue(cartMap.containsKey("projects"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> pList = (List<Map<String, Object>>) cartMap.get("projects");
-//		Map<String, Object> projectMap = pList.iterator().next();
-//
-//		assertTrue(projectMap.containsKey("samples"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> sList = (List<Map<String, Object>>) projectMap.get("samples");
-//		for (Map<String, Object> map : sList) {
-//			assertTrue(map.containsKey("id"));
-//			assertTrue(map.containsKey("label"));
-//		}
 	}
 
 	private void testData() {
@@ -220,14 +131,29 @@ public class CartControllerTest {
 		project = new Project("project");
 		project.setId(projectId);
 		samples = new HashSet<>();
-
 		when(projectService.read(projectId)).thenReturn(project);
+
 		for (Long id : sampleIds) {
 			Sample sample = new Sample("sample" + id);
 			sample.setId(id);
 			samples.add(sample);
 			when(sampleService.getSampleForProject(project, id)).thenReturn(new ProjectSampleJoin(project,sample, true));
 		}
+
+		// Need a second project to test removing a project from the cart.
+		Project project2 = new Project("Project2");
+		project2.setId(2L);
+		when(projectService.read(2L)).thenReturn(project2);
+
+		Set<Long> sampleIds2 = Sets.newHashSet(11L, 12L, 13L, 14L);
+		for (Long id : sampleIds2) {
+			Sample sample = new Sample("sample" + id);
+			sample.setId(id);
+			samples.add(sample);
+			when(sampleService.getSampleForProject(project2, id)).thenReturn(
+					new ProjectSampleJoin(project2, sample, true));
+		}
+
 		final ArrayList<Long> ids = new ArrayList<>(sampleIds);
 
 		when(messageSource.getMessage("cart.in-cart", new Object[] {}, Locale.ENGLISH)).thenReturn(

@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,22 +10,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.google.common.collect.ImmutableMap;
-
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -42,22 +27,17 @@ public class CartController {
 	private Cart cart;
 
 	private final SampleService sampleService;
-	private final UserService userService;
 	private final ProjectService projectService;
-	private final SequencingObjectService sequencingObjectService;
 	/*
 	 * Additional variables
 	 */
 	private String iridaPipelinePluginStyle;
 
 	@Autowired
-	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService,
+	public CartController(SampleService sampleService, ProjectService projectService,
 			@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle, Cart cart) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
-		this.userService = userService;
-		this.sequencingObjectService = sequencingObjectService;
 		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
 		this.cart = cart;
 	}
@@ -75,34 +55,11 @@ public class CartController {
 	}
 
 	/**
-	 * Get a modal dialog in order to export sample files to Galaxy
-	 * @param model
-	 *            The model to add attributes to for the template
-	 * @param principal
-	 *            A reference to the logged in user.
-	 * @param projectId
-	 *            The {@link Project} ID
-	 * @return the name of the galaxy export modal dialog page
-	 */
-	@RequestMapping(value = "/template/galaxy/project/{projectId}", produces = MediaType.TEXT_HTML_VALUE)
-	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId ) {
-		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
-		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
-		String orgName = projectService.read(projectId).getOrganism() + "-" + principal.getName();
-		model.addAttribute("orgName", orgName);
-		return "templates/galaxy.tmpl";
-	}
-
-	/**
-	 * Clear the cart
-	 *
-	 * @return Success message
+	 * Remove all {@link Project}s and {@link Sample}s from the cart
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> clearCart() {
+	public void clearCart() {
 		cart.empty();
-		return ImmutableMap.of("success", true);
 	}
 
 	/**
@@ -150,47 +107,6 @@ public class CartController {
 	}
 
 	/**
-	 * Set the cart object programmatically. Used mostly for testing.
-	 *
-	 * @param selected
-	 *            A {@code Map<Project,Set<Sample>>} of selected samples
-	 * @param locale {@link Locale}
-	 */
-	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
-		for (Project project : selected.keySet()) {
-			Set<CartSampleRequest> cartSampleRequests = selected.get(project)
-					.stream()
-					.map(s -> new CartSampleRequest(s.getId(), s.getLabel()))
-					.collect(Collectors.toSet());
-			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartSampleRequests), locale);
-		}
-	}
-
-	/**
-	 * Add a {@link Sample} to the cart from a given {@link Project}
-	 *
-	 * @param projectId The {@link Project} ID
-	 * @param sampleIds The {@link Sample} id
-	 * @param locale    Locale of the logged in user
-	 * @return a map stating success
-	 */
-	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
-	@ResponseBody
-	public AddToCartResponse addProjectSample(@RequestParam Long projectId,
-			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
-		Project project = projectService.read(projectId);
-		Set<CartSampleRequest> samples = sampleIds.stream()
-				.map(id -> {
-					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
-					Sample sample = join.getObject();
-					return new CartSampleRequest(sample.getId(), sample.getSampleName());
-				})
-				.collect(Collectors.toSet());
-		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
-		return this.cart.addProjectSamplesToCart(addToCartRequest, locale);
-	}
-
-	/**
 	 * Update add samples to cart for the new LineList page.
 	 *
 	 * @param addToCartRequest {@link AddToCartRequest} contains the {@link Project} identifier and list of {@link Sample} data to add to the cart
@@ -201,154 +117,6 @@ public class CartController {
 	@ResponseBody
 	public AddToCartResponse addSamplesToCart(@RequestBody AddToCartRequest addToCartRequest, Locale locale) {
 		return this.cart.addProjectSamplesToCart(addToCartRequest, locale);
-	}
-
-	/**
-	 * Add an entire {@link Project} to the cart
-	 *
-	 * @param projectId
-	 *            The ID of the {@link Project}
-	 * @param locale {@link Locale}
-	 */
-	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void addProject(@PathVariable Long projectId, Locale locale) {
-		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		Set<CartSampleRequest> samples = samplesForProject.stream()
-				.map(j -> new CartSampleRequest(j.getId(), j.getLabel()))
-				.collect(Collectors.toSet());
-		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
-	}
-
-	/**
-	 * Get the {@link Sample}s in a {@link Project} with the given IDs
-	 *
-	 * @param project
-	 *            The {@link Project} to get {@link Sample}s for
-	 * @param sampleIds
-	 *            the {@link Sample} ids
-	 * @return A Set of {@link Sample}s
-	 */
-	private Set<Sample> loadSamplesForProject(Project project, Set<Long> sampleIds) {
-		return new HashSet<>(sampleService.getSamplesInProject(project, new ArrayList<>(sampleIds)));
-
-	}
-
-	/**
-	 * Get the {@link Project}s in the cart as a List for JSON serialization
-	 *
-	 * @return A List<Map<String,Object>> containing the relevant Project and
-	 *         Sample information
-	 */
-	private List<Map<String, Object>> getProjectsAsList() {
-//		Map<Long, Set<Long>> currentCart = cart.get();
-//		List<Map<String, Object>> projectList = new ArrayList<>();
-//		for (Long id : currentCart.keySet()) {
-//			Project p = projectService.read(id);
-//			Set<Sample> selectedSamplesForProject = currentCart.get(id)
-//					.stream()
-//					.map(sampleService::read)
-//					.collect(Collectors.toSet());
-//			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
-//
-//			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
-//					samples);
-//			projectList.add(projectMap);
-//		}
-//
-//		return projectList;
-		return null;
-	}
-
-	/**
-	 * Get the set of given {@link Sample}s as a List for JSON serialization
-	 *
-	 * @param samples
-	 *            The {@link Sample} set
-	 * @return A List<Map<String,Object>> containing the relevant Sample
-	 *         information
-	 */
-	private List<Map<String, Object>> getSamplesAsList(Set<Sample> samples) {
-		List<Map<String, Object>> sampleList = new ArrayList<>();
-		for (Sample s : samples) {
-			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "createdDate", s.getCreatedDate());
-			sampleList.add(sampleMap);
-		}
-		return sampleList;
-	}
-
-	/**
-	 * Get the {@link Project}s in the cart as a List for JSON serialization for export to Galaxy.
-	 *
-	 * @return A List<Map<String,Object>> containing the relevant Project and
-	 * Sample information
-	 */
-	private List<Map<String, Object>> getProjectsAsListForGalaxy() {
-//		Map<Long, Set<Long>> currentCart = cart.get();
-//		List<Map<String, Object>> projectList = new ArrayList<>();
-//		for (Long id : currentCart.keySet()) {
-//			Set<Sample> selectedSamplesForProject = currentCart.get(id)
-//					.stream()
-//					.map(sampleService::read)
-//					.collect(Collectors.toSet());
-//			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, id);
-//			Project p = projectService.read(id);
-//			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
-//					samples);
-//			projectList.add(projectMap);
-//		}
-//
-//		return projectList;
-		return null;
-	}
-
-	/**
-	 * Get the set of given {@link Sample}s as a List for JSON serialization for export to Galaxy.
-	 *
-	 * @param samples
-	 *            The {@link Sample} set
-	 * @return A List<Map<String,Object>> containing the relevant Sample
-	 *         information
-	 */
-	private List<Map<String, Object>> getSamplesAsListForGalaxy(Set<Sample> samples, Long projectId) {
-		List<Map<String, Object>> sampleList = new ArrayList<>();
-		for (Sample s : samples) {
-			String sampleHref = linkTo(
-					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, s.getId())).withSelfRel()
-					.getHref();
-			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "createdDate",
-					s.getCreatedDate(), "sequenceFiles", getSequenceFileListForGalaxy(s), "href", sampleHref);
-			sampleList.add(sampleMap);
-		}
-		return sampleList;
-
-	}
-
-	/**
-	 * Get {@link SequenceFile}s as a List from a {@link Sample} for JSON serialization for export to Galaxy.
-	 *
-	 * @param sample The {@link Sample} set
-	 * @return A List<Map<String,Object>> containing the relevant SequenceFile information
-	 */
-	private List<Map<String, Object>> getSequenceFileListForGalaxy(Sample sample) {
-		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
-				sample);
-		List<Map<String, Object>> sequenceFiles = new ArrayList<>();
-		for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
-			for (SequenceFile seq : join.getObject()
-					.getFiles()) {
-				String objectType = RESTSampleSequenceFilesController.objectLabels.get(join.getObject()
-						.getClass());
-				String seqFileLoc = linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(
-								sample.getId(), objectType, join.getObject()
-										.getId(), seq.getId())).withSelfRel()
-						.getHref();
-				Map<String, Object> seqMap = ImmutableMap.of("selfRef", seqFileLoc);
-				sequenceFiles.add(seqMap);
-			}
-		}
-		return sequenceFiles;
 	}
 
 	/**
@@ -393,5 +161,4 @@ public class CartController {
 	public List<CartSample> getCartSamplesForProject(@RequestParam Long projectId) {
 		return cart.getCartSamplesForProject(projectId);
 	}
-
 }
