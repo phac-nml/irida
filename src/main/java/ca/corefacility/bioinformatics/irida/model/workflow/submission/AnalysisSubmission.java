@@ -255,6 +255,14 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			this.inputParameters = Maps.newHashMap();
 		}
 
+		public Builder(AnalysisSubmissionTemplate template){
+			this(template.getWorkflowId());
+			this.priority=template.getPriority();
+			this.name = template.getName();
+			this.analysisDescription = template.getAnalysisDescription();
+			this.updateSamples = template.getUpdateSamples();
+		}
+
 		/**
 		 * Sets a name for this submission.
 		 *

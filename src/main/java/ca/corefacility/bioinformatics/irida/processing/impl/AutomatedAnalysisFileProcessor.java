@@ -58,12 +58,9 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		for (AnalysisSubmissionTemplate template : analysisTemplates) {
 
 			// build an SubmittableAnalysisSubmission
-			AnalysisSubmission.Builder builder = new AnalysisSubmission.Builder(template.getWorkflowId());
+			AnalysisSubmission.Builder builder = new AnalysisSubmission.Builder(template);
+
 			AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))
-					.priority(template.getPriority())
-					.name(template.getName())
-					.analysisDescription(template.getAnalysisDescription())
-					.updateSamples(template.getUpdateSamples())
 					.build();
 			submission.setSubmitter(template.getSubmitter());
 
