@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,13 +69,6 @@ import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
-import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.SistrTypingFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -292,12 +286,14 @@ public class IridaApiServicesConfig {
 			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, AssemblyFileProcessor assemblyFileProcessor,
 			ChecksumFileProcessor checksumProcessor, CoverageFileProcessor coverageProcessor,
-			SistrTypingFileProcessor sistrTypingFileProcessor) {
+			SistrTypingFileProcessor sistrTypingFileProcessor,
+			AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(checksumProcessor, gzipFileProcessor,
-				fastQcFileProcessor, coverageProcessor, assemblyFileProcessor, sistrTypingFileProcessor);
+				fastQcFileProcessor, coverageProcessor, assemblyFileProcessor, sistrTypingFileProcessor,
+				automatedAnalysisFileProcessor);
 
 		if (!decompressFiles) {
 			logger.info("File decompression is disabled [file.processing.decompress=false]");
