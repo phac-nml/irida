@@ -15,9 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -29,22 +27,17 @@ public class CartController {
 	private Cart cart;
 
 	private final SampleService sampleService;
-	private final UserService userService;
 	private final ProjectService projectService;
-	private final SequencingObjectService sequencingObjectService;
 	/*
 	 * Additional variables
 	 */
 	private String iridaPipelinePluginStyle;
 
 	@Autowired
-	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService,
+	public CartController(SampleService sampleService, ProjectService projectService,
 			@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle, Cart cart) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
-		this.userService = userService;
-		this.sequencingObjectService = sequencingObjectService;
 		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
 		this.cart = cart;
 	}
