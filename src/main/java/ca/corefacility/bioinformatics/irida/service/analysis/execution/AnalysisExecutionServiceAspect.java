@@ -43,13 +43,10 @@ public class AnalysisExecutionServiceAspect {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceAspect.class);
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private EmailController emailController;
 
 	@Autowired
-	public AnalysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository,
-			EmailController emailController) {
+	public AnalysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.emailController = emailController;
 	}
 
 	/**
@@ -61,7 +58,7 @@ public class AnalysisExecutionServiceAspect {
 	 * @param emailController    for sending error emails for {@link AnalysisSubmission}s
 	 * @param exception          The exception that was thrown.
 	 */
-	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
+	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission,emailController)", throwing = ("exception"))
 	public void toErrorStateOnException(AnalysisSubmission analysisSubmission, EmailController emailController,
 			Exception exception) {
 		logger.error(
