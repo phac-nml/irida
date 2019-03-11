@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea or new feature for IRIDA
+about: Suggest an idea or new feature for IRIDA.
 title: ''
 labels: enhancement
 assignees: ''
