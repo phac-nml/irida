@@ -48,6 +48,10 @@
                     </label>
                 </div>
             </div>
+            <a class="btn btn-default" href="/pipelines" th:href="@{/pipelines(automatedProject=${project.id})}" role="button">
+                <i class="fas fa-plus"></i>
+                <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
+            </a>
         </div>
     </div>
     <div class="row">
