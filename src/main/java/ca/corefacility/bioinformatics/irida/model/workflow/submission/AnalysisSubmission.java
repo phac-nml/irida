@@ -255,12 +255,31 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			this.inputParameters = Maps.newHashMap();
 		}
 
-		public Builder(AnalysisSubmissionTemplate template){
+		/**
+		 * Create a new {@link Builder} from the given {@link AnalysisSubmissionTemplate}
+		 *
+		 * @param template an {@link AnalysisSubmissionTemplate} to build an {@link AnalysisSubmission}
+		 */
+		public Builder(AnalysisSubmissionTemplate template) {
 			this(template.getWorkflowId());
-			this.priority=template.getPriority();
-			this.name = template.getName();
-			this.analysisDescription = template.getAnalysisDescription();
-			this.updateSamples = template.getUpdateSamples();
+			priority(template.getPriority());
+			name(template.getName());
+			analysisDescription(template.getAnalysisDescription());
+			updateSamples(template.getUpdateSamples());
+
+			if (template.getReferenceFile()
+					.isPresent()) {
+				referenceFile(template.getReferenceFile()
+						.get());
+			}
+
+			//check if we have named params.  If so, add them
+			if (template.getNamedParameters() != null) {
+				withNamedParameters(template.getNamedParameters());
+			} else {
+				inputParameters(template.getInputParameters());
+			}
+
 		}
 
 		/**
