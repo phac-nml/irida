@@ -21,5 +21,12 @@
             </column>
             <column name="submitted_project_id" type="bigint(20)"/>
         </addColumn>
+
+        <!--Drop old notnulls since the table now has the template also encoded -->
+        <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_state"
+                               columnDataType="varchar(255)"/>
+        <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_cleaned_state"
+                               columnDataType="varchar(255)"/>
+
     </changeSet>
 </databaseChangeLog>
