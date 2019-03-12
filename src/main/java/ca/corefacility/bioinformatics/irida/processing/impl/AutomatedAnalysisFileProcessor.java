@@ -27,16 +27,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * File processor used to launch an automated analysis for uploaded data.  This will take the {@link
+ * AnalysisSubmissionTemplate}s for a {@link Project} and convert them to {@link AnalysisSubmission}s and submit them.
+ */
 @Component
 public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(AutomatedAnalysisFileProcessor.class);
 
-	private SampleSequencingObjectJoinRepository ssoRepository;
-	private ProjectSampleJoinRepository psjRepository;
-	private AnalysisSubmissionRepository submissionRepository;
-	private AnalysisSubmissionTemplateRepository analysisTemplateRepository;
-	private IridaWorkflowsService workflowsService;
-	private SequencingObjectRepository objectRepository;
+	private final SampleSequencingObjectJoinRepository ssoRepository;
+	private final ProjectSampleJoinRepository psjRepository;
+	private final AnalysisSubmissionRepository submissionRepository;
+	private final AnalysisSubmissionTemplateRepository analysisTemplateRepository;
+	private final IridaWorkflowsService workflowsService;
+	private final SequencingObjectRepository objectRepository;
 
 	@Autowired
 	public AutomatedAnalysisFileProcessor(SampleSequencingObjectJoinRepository ssoRepository,
@@ -51,6 +55,9 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		this.objectRepository = objectRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void process(SequencingObject sequencingObject) {
 		List<AnalysisSubmissionTemplate> analysisTemplates = getAnalysisTemplates(sequencingObject);
@@ -70,11 +77,21 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean modifiesFile() {
 		return false;
 	}
 
+	/**
+	 * Get the {@link AnalysisSubmissionTemplate}s for a given {@link SequencingObject}.  Search up the {@link Sample}
+	 * and {@link Project}s the sequence belongs to.
+	 *
+	 * @param object the {@link SequencingObject}
+	 * @return the List of {@link AnalysisSubmissionTemplate}
+	 */
 	private List<AnalysisSubmissionTemplate> getAnalysisTemplates(SequencingObject object) {
 		List<AnalysisSubmissionTemplate> submissionTemplates = new ArrayList<>();
 
@@ -102,6 +119,13 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		return submissionTemplates;
 	}
 
+	/**
+	 * Do the work the old Assembly and SISTR file processors used to do and assign the assembly and SISTR result back
+	 * to the {@link SequencingObject}.  This will only do something if its an Assembly or SISTR analysis.
+	 *
+	 * @param submission       the {@link AnalysisSubmission} to check
+	 * @param sequencingObject the {@link SequencingObject} to apply results to.
+	 */
 	private void legacyFileProcessorCompatibility(AnalysisSubmission submission, SequencingObject sequencingObject) {
 		try {
 			IridaWorkflow assemblyWorkflow = workflowsService.getDefaultWorkflowByType(
