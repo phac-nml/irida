@@ -13,6 +13,7 @@ Changes
 * [UI]: Fixed typo when loading data in **Advanced Phylogenomic Visualization** page.
 * [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
 * [UI/Developer]: Added code splitting to webpack bundles.
+* [UI/Developer]: Minor JavaScript code cleanup.
 * [Developer]: Updated spring security to 4.2.11.RELEASE.
 
 0.22.0 to 19.01
