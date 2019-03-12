@@ -43,10 +43,12 @@ public class AnalysisExecutionServiceAspect {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceAspect.class);
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private EmailController emailController;
 
 	@Autowired
-	public AnalysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository) {
+	public AnalysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository, EmailController emailController) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -58,8 +60,8 @@ public class AnalysisExecutionServiceAspect {
 	 * @param emailController    for sending error emails for {@link AnalysisSubmission}s
 	 * @param exception          The exception that was thrown.
 	 */
-	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission,emailController)", throwing = ("exception"))
-	public void toErrorStateOnException(AnalysisSubmission analysisSubmission, EmailController emailController,
+	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
+	public void toErrorStateOnException(AnalysisSubmission analysisSubmission,
 			Exception exception) {
 		logger.error(
 				"Error occured for submission: " + analysisSubmission + " changing to state " + AnalysisState.ERROR,
