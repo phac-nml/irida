@@ -57,7 +57,6 @@ public class AnalysisExecutionServiceAspect {
 	 * exception.
 	 *
 	 * @param analysisSubmission The submission that has failed.
-	 * @param emailController    for sending error emails for {@link AnalysisSubmission}s
 	 * @param exception          The exception that was thrown.
 	 */
 	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
