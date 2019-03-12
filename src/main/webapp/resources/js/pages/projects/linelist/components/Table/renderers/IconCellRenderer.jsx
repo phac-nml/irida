@@ -13,7 +13,9 @@ function LockedIcon() {
 }
 
 export class IconCellRenderer extends React.Component {
-  static propTypes = {};
+  static propTypes = {
+    data: PropTypes.func.isRequired
+  };
 
   render() {
     const { owner } = this.props.data;
