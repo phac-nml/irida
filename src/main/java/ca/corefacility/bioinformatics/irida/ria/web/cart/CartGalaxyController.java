@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportSample;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -27,14 +26,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Scope("session")
 @RequestMapping("/ajax/galaxy-export")
 public class CartGalaxyController {
-	private IridaClientDetailsService clientDetailsService;
 	private SampleService sampleService;
 	private Cart cart;
 
 	@Autowired
-	public CartGalaxyController(IridaClientDetailsService clientDetailsService, SampleService sampleService,
-			Cart cart) {
-		this.clientDetailsService = clientDetailsService;
+	public CartGalaxyController(SampleService sampleService, Cart cart) {
 		this.sampleService = sampleService;
 		this.cart = cart;
 	}
@@ -55,6 +51,11 @@ public class CartGalaxyController {
 		return result;
 	}
 
+	/**
+	 * Remove the Galaxy attributes from the session.
+	 *
+	 * @param request - the current {@link HttpServletRequest}
+	 */
 	@RequestMapping("remove")
 	public void removeGalaxySession(HttpServletRequest request) {
 		HttpSession session = request.getSession();
