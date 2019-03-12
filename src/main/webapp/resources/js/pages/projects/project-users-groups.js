@@ -16,7 +16,6 @@ import { formatDate } from "../../utilities/date-utilities";
 import { showNotification } from "../../modules/notifications";
 
 const $table = $("#usersTable");
-const canManage = !!$table.data("admin");
 
 /*
 Get the template for the role wrapper.  This is used to populate the member role column.
