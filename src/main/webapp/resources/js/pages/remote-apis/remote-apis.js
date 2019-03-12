@@ -51,7 +51,7 @@ export function updateRemoteConnectionStatus($container, apiId) {
       } catch (e) {
         // Since this code is loaded onto multiple pages, this error is thrown so the developer
         // will be reminded ot add that to the page.
-        new Error(
+        throw new Error(
           "Expected window to have Object `PAGE` with `lang.errorText` as a property"
         );
       }
