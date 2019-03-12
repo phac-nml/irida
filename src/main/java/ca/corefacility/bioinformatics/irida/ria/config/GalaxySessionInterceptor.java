@@ -9,6 +9,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * Interceptor to determine if the {@link HttpServletRequest} is from a Galaxy Instance.
+ * If it is this gets added to the session so that the user is presented with the appropriate
+ * information, and cart page.
+ */
 public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
 	// HTTP session variable name for Galaxy callback variable
 	public static final String GALAXY_CALLBACK_URL = "galaxyCallbackUrl";
