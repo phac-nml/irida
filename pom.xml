@@ -1034,7 +1034,7 @@
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<guava.version>17.0</guava.version>
-		<spring.version>4.2.3.RELEASE</spring.version>
+		<spring.version>4.0.4.RELEASE</spring.version>
 		<spring.security.version>4.2.11.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
