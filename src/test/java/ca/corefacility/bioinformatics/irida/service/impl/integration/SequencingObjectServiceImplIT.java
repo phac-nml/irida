@@ -31,7 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -80,7 +80,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequencingObjectServiceImplIT {
