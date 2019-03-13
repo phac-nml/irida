@@ -60,17 +60,15 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param analysisExecutionServiceGalaxy A service for executing {@link AnalysisSubmission}s.
 	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission}
 	 *                                       should be cleaned up.
-	 * @param galaxyJobErrorsService		 {@link GalaxyJobErrorsService} for getting {@link JobError} objects
+	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
-	 * @param emailController				{@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
+	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
-			CleanupAnalysisSubmissionCondition cleanupCondition,
-			GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository,
-			EmailController emailController) {
+			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
+			JobErrorRepository jobErrorRepository, EmailController emailController) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
@@ -152,8 +150,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			return submissions;
 		}
 	}
-
-
 
 	/**
 	 * {@inheritDoc}
@@ -240,8 +236,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (postProcessingLock) {
 			logger.trace("Running postProcessResults");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.TRANSFERRED);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.TRANSFERRED);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
