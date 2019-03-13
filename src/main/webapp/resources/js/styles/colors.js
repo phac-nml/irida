@@ -72,4 +72,4 @@ export const gold1 = "hsl(51,100%,95%)";
 export const COLOR_BACKGROUND_LIGHTEST = grey1;
 export const COLOR_BACKGROUND_LIGHT = grey4;
 export const COLOR_BACKGROUND_DARK = grey8;
-export const COLOR_BORDER_LIGHT = grey2;
+export const COLOR_BORDER_LIGHT = grey3;

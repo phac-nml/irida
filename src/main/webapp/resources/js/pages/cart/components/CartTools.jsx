@@ -31,7 +31,7 @@ const ToolsInner = styled.div`
 /**
  * Wrapper component for functionality available in the cart.
  */
-export function CartTools() {
+export function CartTools({ toggleSidebar, collapsed }) {
   const fromGalaxy = typeof window.GALAXY !== "undefined";
 
   /*
@@ -67,10 +67,10 @@ export function CartTools() {
         {({ location }) => (
           <>
             <CartToolsMenu
-              pathname={
-                location.pathname
-              }
+              pathname={location.pathname}
               paths={paths}
+              toggleSidebar={toggleSidebar}
+              collapsed={collapsed}
             />
             <ToolsInner>
               <Router>{paths.map(path => path.component)}</Router>
