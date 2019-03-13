@@ -172,9 +172,23 @@ You may also run into the following error.
 Reason: liquibase.exception.DatabaseException: Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'irida_uploader_test.ss.sample_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
 ```
 
-You can fix this by removing the `only_full_group_by` mode from sql
+To fix this on a running sql instance, you can remove the `only_full_group_by` mode from sql
+
+NOTE: This will not persist when restarting mysql/mariadb
 
 ```
 mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 ```
+
+To make this a permanent setting, edit your config file `/etc/mysql/my.cnf`
+
+And add the following to the end of the file
+
+```
+[mysqld]
+
+sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+```
+
+Then restart mysql `sudo service mysql restart`
 
