@@ -94,16 +94,16 @@
                                         <li th:each="sample : ${disallowedSamples}" th:text="${sample.sampleName}">_sample_</li>
                                     </ul>
                                 </div>
+
+                                <div class="checkbox">
+                                    <label for="lockSamples">
+                                        <input type="checkbox" id="lockSamples" name="lockSamples" value="false" th:disabled="${allSamples} == 0" />
+                                        <span th:text=" #{projects.create.settings.sample.modification}" >_Lock sample
+                                    modification_</span>
+                                    </label>
+                                </div>
                             </th:block>
 
-                            <div class="checkbox">
-                                <label for="lockSamples">
-                                    <input type="checkbox" id="lockSamples" name="lockSamples" value="false" th:disabled="${allSamples} == 0" />
-                                    <span th:text=" #{projects.create.settings.sample.modification}" >_Lock sample
-                                    modification_</span>
-                                </label>
-                            </div>
-                            
                             <div class="checkbox">
                                 <label for="assemble">
                                     <input type="checkbox" id="assemble" name="assembleUploads" value="true"/>
