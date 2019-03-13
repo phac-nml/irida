@@ -180,14 +180,18 @@ NOTE: This will not persist when restarting mysql/mariadb
 mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 ```
 
-To make this a permanent setting, edit your config file `/etc/mysql/my.cnf`
+To make this a permanent setting, check your config file `/etc/mysql/my.cnf` and the config files listed there, for `sql_mode`. If it doesn't exist you can add it to the config file.
 
-And add the following to the end of the file
+In mysql, check what sql_modes are currently enabled, and set your sql_mode to be the same, but with `only_full_group_by` removed.
+
+You can check your sql_mode in mysql with the command `SELECT @@sql_mode;`
+
+Example: if you have `no_auto_create_user`, `no_engine_substitution`, and `only_full_group_by` enabled, you can add/change your mode in a config file to the following.
 
 ```
 [mysqld]
 
-sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 ```
 
 Then restart mysql `sudo service mysql restart`
