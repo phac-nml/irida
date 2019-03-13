@@ -10,7 +10,13 @@ import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
-import { blue6, grey1, grey3, grey4, grey5 } from "../../../styles/colors";
+import {
+  blue6,
+  COLOR_BORDER_LIGHT,
+  grey1,
+  grey3,
+  grey5
+} from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
@@ -36,7 +42,7 @@ const CartTools = styled(Row)`
   left: 0;
   padding: ${SPACE_MD};
   height: 65px;
-  border-bottom: 1px solid ${grey4};
+  border-bottom: 1px solid ${COLOR_BORDER_LIGHT};
 
   .ant-input {
     border: none;
@@ -68,7 +74,8 @@ class CartSamplesComponent extends React.Component {
       cellRenderer: "SampleRenderer",
       cellStyle: {
         padding: SPACE_MD,
-        width: "100%"
+        width: "100%",
+        borderBottomColor: COLOR_BORDER_LIGHT
       }
     }
   ];
@@ -150,7 +157,7 @@ class CartSamplesComponent extends React.Component {
             frameworkComponents={{ SampleRenderer }}
             onGridReady={this.onGridReady}
             rowHeight={80}
-            rowStyle={{ width: "100%" }}
+            rowStyle={{ width: "100%", borderBottom: "none" }}
             filter={true}
             suppressRowClickSelection={true}
             suppressCellSelection={true}

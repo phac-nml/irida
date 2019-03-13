@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card } from "antd";
+import { Button, Card } from "antd";
 import styled from "styled-components";
 import { FONT_SIZE_DEFAULT, FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_SM } from "../../styles/spacing";
@@ -62,12 +62,12 @@ export default class Pipeline extends React.Component {
           </Heading>
         }
         actions={[
-          <a
+          <Button size="small"
             className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
             href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
           >
             Select
-          </a>
+          </Button>
         ]}
       >
         {this.props.description}
