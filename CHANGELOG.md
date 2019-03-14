@@ -6,6 +6,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.11 to fix security issue. (19.01.1)
 * [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
 * [Admin]: Made analysis task pool size configurable with `irida.workflow.analysis.threads`. (19.01.2)
+* [REST]: Fixes issue where the Sample collection date was synchronized incorrectly, leading to the synced date up to one day off from the original date. (19.01.2)
 
 0.22.0 to 19.01
 ----------------
