@@ -12,6 +12,7 @@ Changes
 * [UI/Developer]: Updated bootstrap dependencies and cleaned up dependencies by running `yarn install --flat` and resolving dependencies.
 * [UI]: Fixed typo when loading data in **Advanced Phylogenomic Visualization** page.
 * [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
+* [Documentation]: Added information on fixing ONLY_FULL_GROUP_BY sql error to the administrator faq docs.
 
 0.22.0 to 19.01
 ----------------
