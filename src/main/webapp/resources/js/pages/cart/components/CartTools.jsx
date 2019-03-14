@@ -3,7 +3,7 @@ import { Location, Router } from "@reach/router";
 import { Row } from "antd";
 import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
-import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
+import { COLOR_BORDER_LIGHT, grey2 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { GalaxyExport } from "../../../components/galaxy/GalaxyExport";
@@ -12,9 +12,8 @@ import { Pipelines } from "../../../components/pipelines/Pipelines";
 const ToolsWrapper = styled(Row)`
   height: 100%;
   width: 100%;
-  background-color: ${grey1};
+  background-color: ${grey2};
   border-right: 1px solid ${COLOR_BORDER_LIGHT};
-  background-color: ${grey1};
   position: relative;
 `;
 

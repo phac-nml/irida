@@ -34,7 +34,7 @@ const CartSamplesWrapper = styled.div`
   .ag-center-cols-container {
     width: 100% !important;
   }
-  
+
   .ag-row-odd {
     background-color: ${grey2};
   }
@@ -45,13 +45,10 @@ const CartTools = styled.div`
   top: 0;
   right: 0;
   left: 0;
-  display: flex;
-  align-items: center;
   padding: 0 ${SPACE_MD};
   height: 65px;
   border-bottom: 1px solid ${COLOR_BORDER_LIGHT};
   display: flex;
-  justify-content: space-between;
   align-items: center;
 
   .ant-input-search {
@@ -149,16 +146,9 @@ class CartSamplesComponent extends React.Component {
           width: 400
         }}
       >
-        <CartTools type="flex" justify="space-between">
-          <Search
-            style={{ width: "100%" }}
-            onChange={this.onSearch}
-            value={this.state.filter}
-          />
-          <Button onClick={this.props.emptyCart}>Empty</Button>
         <CartTools>
           <Search
-            style={{ width: "100%", marginRight: SPACE_MD }}
+            style={{ width: "100%" }}
             onChange={this.onSearch}
             value={this.state.filter}
           />
