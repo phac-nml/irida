@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
@@ -106,11 +105,6 @@ public class PipelineController extends BaseController {
 	 * CONTROLLERS
 	 */
 	private CartController cartController;
-	
-	/*
-	 * Additional variables
-	 */
-	private String iridaPipelinePluginStyle;
 
 	@Autowired
 	public PipelineController(SequencingObjectService sequencingObjectService,
@@ -119,8 +113,7 @@ public class PipelineController extends BaseController {
 			CartController cartController, MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService,
 			UpdateSamplePermission updateSamplePermission,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService,
-			@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -133,7 +126,6 @@ public class PipelineController extends BaseController {
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
-		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
 	}
 
 	/**
