@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,7 +53,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -523,40 +521,6 @@ public class PipelineController extends BaseController {
 	public @ResponseBody Map<String, Object> ajaxSaveParameters(@RequestBody final WorkflowParametersToSave params) {
 		final IridaWorkflowNamedParameters namedParameters = namedParameterService.create(params.namedParameters());
 		return ImmutableMap.of("id", namedParameters.getId());
-	}
-
-	/**
-	 * Extract {@link IridaWorkflow} parameters from the request {@link Map}
-	 *
-	 * @param mapString
-	 *            {@link Map} of parameters
-	 *
-	 * @return {@link Map} of parameters for the pipeline
-	 * @throws IOException
-	 *             when unable to parse the parameters from the provided string.
-	 */
-	@SuppressWarnings("unchecked")
-	private Map<String, Object> extractPipelineParameters(String mapString) throws IOException {
-		// TODO [15-02-16] (Josh): Update when addressing issue #100
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.readValue(mapString, Map.class);
-		} catch (IOException e) {
-			logger.error("Error extracting parameters from submission", e);
-			throw e;
-		}
-	}
-
-	/**
-	 * Get details about the contents of the cart.
-	 *
-	 * @return {@link Map} containing the counts of the projects and samples in the cart.
-	 */
-	private Map<String, Integer> getCartSummaryMap() {
-		return ImmutableMap.of(
-				"projects", cartController.getNumberOfProjects(),
-				"samples", cartController.getNumberOfSamples()
-		);
 	}
 
 	/**
