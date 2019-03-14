@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 
 const Sidebar = styled.div`
   height: 100%;
-  width: 400px;
+  width: 350px;
 `;
 
 const Content = styled.div`
