@@ -15,7 +15,7 @@ const Wrapper = styled(Layout)`
 //
 // const Sidebar = styled(Sider)`
 //   height: 100%;
-//   width: 400px;
+//   width: 350px;
 // `;
 //
 // const Content = styled.div`

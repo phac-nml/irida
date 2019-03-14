@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Alert } from "antd";
+import { Alert, Icon } from "antd";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -25,7 +25,7 @@ export default function GalaxyAlert({ removeGalaxy }) {
         rel="noopener noreferrer"
         href="https://irida.corefacility.ca/documentation/user/user/samples/#galaxy-export"
       >
-        {window.GALAXY.DOCUMENTATION}
+        {window.GALAXY.DOCUMENTATION} <Icon type="link"/>
       </a>
     </span>
   );

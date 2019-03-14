@@ -11,7 +11,7 @@ import { GalaxySubmitError } from "./GalaxySubmitError";
 export function GalaxyExport() {
   return (
     <Row>
-      <Col lg={12} md={24}>
+      <Col lg={{ span: 12, offset: 6 }} md={24}>
         <Card>
           <GalaxyDetailsForm />
           <GalaxySamples />

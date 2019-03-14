@@ -56,7 +56,6 @@ public class PipelineControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
-	private String iridaPipelinePluginStyle = "";
 
 	@Before
 	public void setUp() {
@@ -76,7 +75,7 @@ public class PipelineControllerTest {
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, iridaPipelinePluginStyle);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
