@@ -62,7 +62,12 @@ export default class Pipeline extends React.Component {
           </Heading>
         }
         actions={[
-          <a href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}>Select</a>
+          <a
+            className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
+            href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
+          >
+            Select
+          </a>
         ]}
       >
         {this.props.description}
