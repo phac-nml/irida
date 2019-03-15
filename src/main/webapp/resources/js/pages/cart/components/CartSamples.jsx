@@ -24,6 +24,10 @@ const CartSamplesWrapper = styled.div`
     border: none !important;
   }
 
+  .ag-header {
+    border-bottom: none;
+  }
+
   .ag-center-cols-container {
     width: 100% !important;
   }
