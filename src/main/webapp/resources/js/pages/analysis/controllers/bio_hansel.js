@@ -37,15 +37,13 @@ import { analysisOutputFileApiUrl, trim } from "../preview.utils";
  */
 function toHtml(vm) {
   const {
-    all_subtypes,
     avg_tile_coverage,
     sample,
     scheme,
     scheme_version,
     subtype,
     qc_status,
-    qc_message,
-    inconsistent_subtypes
+    qc_message
   } = vm.results;
   const { i18n } = vm;
 
@@ -65,11 +63,10 @@ function toHtml(vm) {
 
   const msgHtml = msgs
     .map(trim)
-    .map(
-      msg =>
-        msg.length
-          ? `<li class="${qcMsgClass(msg)}"><span>${msg}</span></li>`
-          : ""
+    .map(msg =>
+      msg.length
+        ? `<li class="${qcMsgClass(msg)}"><span>${msg}</span></li>`
+        : ""
     )
     .join("");
 

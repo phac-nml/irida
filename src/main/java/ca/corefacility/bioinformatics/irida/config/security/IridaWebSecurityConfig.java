@@ -220,7 +220,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			
 			// See https://jira.springsource.org/browse/SPR-11496
 			// This is for SockJS and Web Sockets
-			.headers().frameOptions().disable()
+			.headers().frameOptions().disable().and()
 			.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login")
 					.successHandler(getLoginSuccessHandler())
 					.failureHandler(authFailureHandler).permitAll()
