@@ -1,7 +1,10 @@
 import { call, delay, put, take } from "redux-saga/effects";
 import { actions, types } from "./reducer";
 import { types as cartTypes } from "../../redux/reducers/cart";
-import { getGalaxySamples } from "../../apis/galaxy/galaxy";
+import {
+  getGalaxySamples,
+  removeGalaxySession
+} from "../../apis/galaxy/galaxy";
 import { authenticateOauthClient } from "../../apis/oauth/oauth";
 import { exportToGalaxy } from "../../apis/galaxy/submission";
 
@@ -38,7 +41,9 @@ export function* submitGalaxyDataSaga() {
     } else if (result === "CLOSED") {
       yield put(actions.oauthWindowClosed());
     } else {
-      // We have the code!
+      // Everything checks out.
+      // Remove the galaxy session from IRIDA and submit to galaxy.
+      yield call(removeGalaxySession);
       exportToGalaxy(
         email,
         makepairedcollection,
