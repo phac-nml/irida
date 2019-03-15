@@ -8,6 +8,11 @@ import {
 import { authenticateOauthClient } from "../../apis/oauth/oauth";
 import { exportToGalaxy } from "../../apis/galaxy/submission";
 
+/**
+ * This will open an new window providing the user with the ability to authenticate
+ * the galaxy instance if required.
+ * @returns {Promise<any>}
+ */
 async function validateOauthClient() {
   const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
   return authenticateOauthClient(window.GALAXY.CLIENT_ID, redirect)
@@ -15,16 +20,23 @@ async function validateOauthClient() {
     .catch(response => response);
 }
 
+/**
+ * Get a formatted object containing the sample links required for galaxy.
+ * @returns {IterableIterator<*>}
+ */
 export function* getCartGalaxySamplesSaga() {
   while (true) {
     yield take(types.GET_GALAXY_SAMPLES);
-    console.log("GETTING SAMPLES");
     const samples = yield call(getGalaxySamples);
-    yield delay(1500); // Short wait so that the UI does not flash instantly.
+    yield delay(800); // Short wait so that the UI does not flash instantly.
     yield put(actions.setGalaxySamples(samples));
   }
 }
 
+/**
+ * Return to galaxy with the appropriate details to transfer samples.
+ * @returns {IterableIterator<*>}
+ */
 export function* submitGalaxyDataSaga() {
   while (true) {
     // 1. Wait for the submit call
@@ -55,6 +67,11 @@ export function* submitGalaxyDataSaga() {
   }
 }
 
+/**
+ * Listen for an update to the samples list.  If a user removes a sample from the
+ * sidebar, the list of sample links sent to galaxy needs to be regenerated.
+ * @returns {IterableIterator<*>}
+ */
 export function* samplesUpdated() {
   while (true) {
     yield take(cartTypes.UPDATED);
