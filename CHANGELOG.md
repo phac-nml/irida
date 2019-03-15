@@ -13,6 +13,7 @@ Changes
 * [UI]: Fixed typo when loading data in **Advanced Phylogenomic Visualization** page.
 * [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
 * [UI/Developer]: Added code splitting to webpack bundles.
+* [UI/Developer]: Added checkbox to Create a New Project page for user to lock sample modification when a project is created from samples in the cart.
 
 0.22.0 to 19.01
 ----------------

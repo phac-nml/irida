@@ -14,6 +14,8 @@ If you choose to set a project organism, click on the "Select an Organism" drop-
 
 The organism names are derived from the [NCBI taxonomy database](http://www.ncbi.nlm.nih.gov/taxonomy).
 
+To lock sample modification in the new project, check the "Lock sample modification" box. This setting will only allow the sample owner to edit any sample data.
+
 To enable automated assemblies for the project, check the "Automatically assemble data uploaded to project" box.  This setting will perform an assembly on all sequence files uploaded to this project.  For more information about automated assemblies see the [samples documentation]({{ site.baseurl }}/user/user/samples/#viewing-automated-assemblies).
 
 When you've finished entering the details for your new project, click on the "Create Project" button. You will be redirected to the projects list.

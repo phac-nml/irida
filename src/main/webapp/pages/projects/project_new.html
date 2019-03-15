@@ -220,6 +220,14 @@
           }
         });
 
+        $("#useCartSamples").on("change", function(e) {
+          var selected = $(e.target).prop("checked");
+          if (!selected) {
+            $("#lockSamples").attr("disabled", true);
+          } else {
+            $("#lockSamples").removeAttr("disabled");
+          }
+        });
 
         $("#lockSamplesToOwner").on("change", function(e) {
           var selected = $(e.target).prop("checked");
@@ -229,6 +237,7 @@
             $("#lockSamples").val("true");
           }
         });
+
 
         (function() {
           "use strict";
