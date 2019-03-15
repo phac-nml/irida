@@ -12,6 +12,7 @@ export const types = {
 const initialState = {
   email: window.PAGE.user,
   makepairedcollection: true,
+  fetchingSamples: false,
   samples: undefined,
   submitted: false,
   submittable: false,
@@ -27,8 +28,15 @@ export const reducer = (state = initialState, action = {}) => {
         ...state,
         makepairedcollection: action.payload.makepairedcollection
       };
+    case types.GET_GALAXY_SAMPLES:
+      return { ...state, fetchingSamples: true, submittable: false };
     case types.SET_GALAXY_SAMPLES:
-      return { ...state, samples: action.payload.samples, submittable: true };
+      return {
+        ...state,
+        samples: action.payload.samples,
+        submittable: true,
+        fetchingSamples: false
+      };
     case types.OAUTH_WINDOW_CLOSED:
       return { ...state, submittable: true, submitted: false };
     case types.SUBMIT:
