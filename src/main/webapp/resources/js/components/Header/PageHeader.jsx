@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { blue1 } from "../../styles/colors";
-import { removeGalaxySession } from "../../apis/galaxy/galaxy";
 
 const GalaxyAlert = React.lazy(() => import("./GalaxyAlert"));
 
@@ -15,8 +14,6 @@ export class PageHeader extends React.Component {
       this.setState({ inGalaxy: true });
     }
   }
-
-  removeGalaxy = () => removeGalaxySession();
 
   render() {
     return (
@@ -32,7 +29,7 @@ export class PageHeader extends React.Component {
               />
             }
           >
-            <GalaxyAlert removeGalaxy={this.removeGalaxy} />
+            <GalaxyAlert />
           </Suspense>
         ) : null}
       </div>

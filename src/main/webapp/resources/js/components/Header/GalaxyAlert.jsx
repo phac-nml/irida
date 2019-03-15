@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Alert, Icon } from "antd";
+import { removeGalaxySession } from "../../apis/galaxy/galaxy";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -37,7 +38,7 @@ export default function GalaxyAlert({ removeGalaxy }) {
       banner
       closable
       closeText={window.GALAXY.CANCEL}
-      onClose={removeGalaxy}
+      onClose={removeGalaxySession}
     />
   );
 }
