@@ -15,6 +15,7 @@ Changes
 * [UI/Developer]: Added code splitting to webpack bundles.
 * [UI/Developer]: Minor JavaScript code cleanup.
 * [Developer]: Updated spring security to 4.0.4.RELEASE.
+* [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 
 0.22.0 to 19.01
 ----------------
