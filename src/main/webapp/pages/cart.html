@@ -3,7 +3,7 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   data-layout-decorate="~{template/page}"
-  th:with="galaxyUrl=${session.galaxyExportToolCallbackURL}"
+  th:with="galaxyUrl=${session.galaxyCallbackUrl}"
 >
   <head>
     <title th:text="#{page.cart.title}">MY AWESOME CART</title>
@@ -35,26 +35,11 @@
           "GalaxyFinalSubmission.submit": /*[[#{GalaxyFinalSubmission.submit}]]*/ "_EXPORT_",
           "GalaxySamples.ready": /*[[#{GalaxySamples.ready}]]*/ "_SAMPLES_READY_",
           "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_",
-          "GalaxyOauth.Authentication.Required": /*[[#{GalaxyOauth.Authentication.Required}]]*/ "GALAXY_AUTH_REQUIRED",
           "GalaxySubmissionError.message": /*[[#{GalaxySubmissionError.message}]]*/ "GalaxySubmissionError.message",
           "GalaxySubmissionError.description": /*[[#{GalaxySubmissionError.description}]]*/ "GalaxySubmissionError.description"
-        },
-        galaxyCallback: /*[[${galaxyUrl}]]*/,
-        galaxyClientID: /*[[${#httpSession.getAttribute('galaxyExportToolClientID')}]]*/ ""
+        }
       };
     </script>
-    <style>
-      body {
-        position: relative;
-      }
-      .body-content {
-        position: absolute;
-        top: 53px;
-        right: 0;
-        left: 0;
-        bottom: 0;
-      }
-    </style>
   </head>
   <body>
     <div id="root" style="height: 100%;" layout:fragment="page"></div>

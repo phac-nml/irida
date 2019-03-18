@@ -92,8 +92,7 @@ public class ProjectsControllerTest {
 	@Test
 	public void showAllProjects() {
 		Model model = new ExtendedModelMap();
-		HttpSession ses = mock(HttpSession.class);
-		String page = controller.getProjectsPage(model, null,null, ses);
+		String page = controller.getProjectsPage(model);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 

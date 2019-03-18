@@ -17,14 +17,14 @@ const ProjectLink = styled.a`
 `;
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
-  <Menu>
+  <Menu className="t-delete-menu">
     <Menu.Item>
-      <div onClick={removeSample}>
+      <div onClick={removeSample} className="t-delete-sample">
         {getI18N("SampleRenderer.remove.sample")}
       </div>
     </Menu.Item>
     <Menu.Item>
-      <div onClick={removeProject}>
+      <div onClick={removeProject} className="t-delete-project">
         {getI18N("SampleRenderer.remove.project")}
       </div>
     </Menu.Item>
@@ -68,9 +68,19 @@ export class SampleRenderer extends React.Component {
   render() {
     const sample = this.props.data;
     return (
-      <Row type="flex" align="top" justify="space-between">
+      <Row
+        className="t-cart-sample"
+        type="flex"
+        align="top"
+        justify="space-between"
+      >
         <Col>
-          <Button shape="round" size="small" onClick={this.displaySample}>
+          <Button
+            className="t-sample-name"
+            shape="round"
+            size="small"
+            onClick={this.displaySample}
+          >
             {sample.label}
           </Button>
           <ProjectLink
@@ -89,7 +99,7 @@ export class SampleRenderer extends React.Component {
             }
             trigger={["click"]}
           >
-            <Button ghost shape="circle" size="small">
+            <Button className="t-delete-menu-btn" ghost shape="circle" size="small">
               <Icon type="ellipsis" style={{ color: FONT_COLOR_PRIMARY }} />
             </Button>
           </Dropdown>

@@ -4,14 +4,14 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button, Col, Input, Row } from "antd";
+import { Button, Input } from "antd";
 import styled from "styled-components";
 import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
-import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colors";
-import { SPACE_MD } from "../../../styles/spacing";
+import { blue6, grey1, grey3, grey4, grey5 } from "../../../styles/colors";
+import { SPACE_MD, SPACE_SM } from "../../../styles/spacing";
 
 const { Search } = Input;
 
@@ -24,22 +24,41 @@ const CartSamplesWrapper = styled.div`
     border: none !important;
   }
 
+  .ag-header {
+    border-bottom: none;
+  }
+
   .ag-center-cols-container {
     width: 100% !important;
   }
 `;
 
-const CartTools = styled(Row)`
+const CartTools = styled.div`
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
-  padding: ${SPACE_MD};
+  display: flex;
+  align-items: center;
+  padding: 0 ${SPACE_MD};
   height: 65px;
+  border-bottom: 1px solid ${grey4};
+
+  .ant-input-search {
+    margin-right: ${SPACE_SM};
+  }
 
   .ant-input {
-    border: none;
-    background-color: ${COLOR_BACKGROUND_LIGHT};
+    background-color: ${grey3};
+
+    &:hover {
+      background-color: ${grey5};
+    }
+
+    &:focus {
+      border: 1px solid ${blue6};
+      background-color: ${grey1};
+    }
   }
 `;
 
@@ -119,16 +138,12 @@ class CartSamplesComponent extends React.Component {
         }}
       >
         <CartTools type="flex" justify="space-between">
-          <Col>
-            <Search
-              style={{ width: 285 }}
-              onChange={this.onSearch}
-              value={this.state.filter}
-            />
-          </Col>
-          <Col>
-            <Button onClick={this.props.emptyCart}>Empty</Button>
-          </Col>
+          <Search
+            style={{ width: "100%" }}
+            onChange={this.onSearch}
+            value={this.state.filter}
+          />
+          <Button onClick={this.props.emptyCart}>Empty</Button>
         </CartTools>
         <CartSamplesWrapper className="ag-theme-balham">
           <AgGridReact
@@ -142,6 +157,9 @@ class CartSamplesComponent extends React.Component {
             rowHeight={80}
             rowStyle={{ width: "100%" }}
             filter={true}
+            suppressRowClickSelection={true}
+            suppressCellSelection={true}
+            suppressRowHoverHighlight={true}
           />
         </CartSamplesWrapper>
       </div>

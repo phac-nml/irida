@@ -14,6 +14,8 @@ import "./modules/notifications";
 import { CART } from "./utilities/events-utilities";
 import { showNotification } from "./modules/notifications";
 import { getCartCount } from "./apis/cart/cart";
+// Galaxy Alert if in galaxy session
+import "./components/Header/PageHeader";
 
 const deps = ["ngAria", "ui.bootstrap", "irida.cart", IridaSession];
 

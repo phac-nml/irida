@@ -20,6 +20,7 @@ export default function CartEmpty() {
     >
       <img
         height="300px"
+        className="t-cart-empty"
         src={`${BASE_URL}resources/img/empty-cart.svg`}
         alt={getI18N("CartEmpty.imageAlt")}
       />

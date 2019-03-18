@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportSample;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -23,14 +26,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Scope("session")
 @RequestMapping("/ajax/galaxy-export")
 public class CartGalaxyController {
-	private IridaClientDetailsService clientDetailsService;
 	private SampleService sampleService;
 	private Cart cart;
 
 	@Autowired
-	public CartGalaxyController(IridaClientDetailsService clientDetailsService, SampleService sampleService,
-			Cart cart) {
-		this.clientDetailsService = clientDetailsService;
+	public CartGalaxyController(SampleService sampleService, Cart cart) {
 		this.sampleService = sampleService;
 		this.cart = cart;
 	}
@@ -49,5 +49,17 @@ public class CartGalaxyController {
 			samples.forEach(s -> result.add(new GalaxyExportSample(s, projectId)));
 		}
 		return result;
+	}
+
+	/**
+	 * Remove the Galaxy attributes from the session.
+	 *
+	 * @param request - the current {@link HttpServletRequest}
+	 */
+	@RequestMapping("remove")
+	public void removeGalaxySession(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.removeAttribute(GalaxySessionInterceptor.GALAXY_CALLBACK_URL);
+		session.removeAttribute(GalaxySessionInterceptor.GALAXY_CLIENT_ID);
 	}
 }

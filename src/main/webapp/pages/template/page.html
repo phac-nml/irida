@@ -12,6 +12,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
+	<header class="js-page-header"></header>
 	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
 	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
 		<div class="container-fluid">
@@ -43,7 +44,7 @@
 	</script>
 
 	<script th:inline="javascript">
-		var TL = {
+		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
 		  	URLS: {
 			  cart: {
@@ -65,6 +66,17 @@
 					full: /*[[#{moment.full}]]*/ 'MMM D, YYYY h:mm:ss a'
 				}
 			}
+		};
+	</script>
+
+	<script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}" th:inline="javascript">
+		window.GALAXY = {
+			URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
+			CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
+			TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
+			MESSAGE: /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
+			CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
+			DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
 		};
 	</script>
 
