@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Alert, Icon } from "antd";
 import { removeGalaxySession } from "../../apis/galaxy/galaxy";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
@@ -42,7 +41,3 @@ export default function GalaxyAlert() {
     />
   );
 }
-
-GalaxyAlert.propTypes = {
-  removeGalaxy: PropTypes.func.isRequired
-};

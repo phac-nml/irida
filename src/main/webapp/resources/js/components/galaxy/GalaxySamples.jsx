@@ -1,35 +1,29 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { Alert, Icon } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
 import { SPACE_SM } from "../../styles/spacing";
-import { actions } from "./reducer";
 import PropTypes from "prop-types";
 
 /**
  * Component to display the status of fetching samples in the proper Galaxy format.
- * @param {function} getGalaxySamples
- * @param {boolean} finished
+ * @param {boolean} fetching
  */
-function GalaxySamplesComponent({ getGalaxySamples, finished }) {
-  useEffect(() => {
-    getGalaxySamples();
-  });
-
+function GalaxySamplesComponent({ fetching }) {
   return (
     <div style={{ marginBottom: SPACE_SM }}>
-      {finished ? (
+      {fetching ? (
+        <Alert
+          message={getI18N("GalaxySamples.processing")}
+          icon={<Icon type="loading"/>}
+          showIcon
+          type="info"
+        />
+      ) : (
         <Alert
           message={getI18N("GalaxySamples.ready")}
           type="success"
           showIcon
-        />
-      ) : (
-        <Alert
-          message={getI18N("GalaxySamples.processing")}
-          icon={<Icon type="loading" />}
-          showIcon
-          type="info"
         />
       )}
     </div>
@@ -37,20 +31,17 @@ function GalaxySamplesComponent({ getGalaxySamples, finished }) {
 }
 
 GalaxySamplesComponent.propTypes = {
-  getGalaxySamples: PropTypes.func.isRequired,
-  finished: PropTypes.bool.isRequired
+  fetching: PropTypes.bool.isRequired
 };
 
 /*
 Connect the component to redux to get all the required values and functions.
  */
 const mapStateToProps = state => ({
-  finished: typeof state.galaxyReducer.samples !== "undefined"
+  fetching: state.galaxyReducer.fetchingSamples
 });
 
-const mapDispatchToProps = dispatch => ({
-  getGalaxySamples: () => dispatch(actions.getGalaxySamples())
-});
+const mapDispatchToProps = dispatch => ({});
 
 export const GalaxySamples = connect(
   mapStateToProps,
