@@ -57,7 +57,6 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
-  "pipeline-selection": "./resources/js/pages/pipelines/pipeline-selection.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
