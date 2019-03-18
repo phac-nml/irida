@@ -3,10 +3,10 @@ import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
 import { download } from "../../utilities/file.utilities";
 import {
-  getProjectSharedSingleSampleAnalysisOutputs,
-  prepareAnalysisOutputsDownload,
   getPrincipalUserSingleSampleAnalysisOutputs,
-  getProjectAutomatedSingleSampleAnalysisOutputs
+  getProjectAutomatedSingleSampleAnalysisOutputs,
+  getProjectSharedSingleSampleAnalysisOutputs,
+  prepareAnalysisOutputsDownload
 } from "../../apis/analysis/analysis";
 import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 
@@ -232,8 +232,7 @@ function getWorkflowInfo(singleSampleOutputs) {
   );
   Object.keys(workflowIds).forEach(async function(workflowId) {
     const { data, error } = await getIridaWorkflowDescription(workflowId);
-    if (error) {
-    } else {
+    if (!error) {
       workflowIds[workflowId] = data;
       if (grid) {
         grid.context.beans.gridApi.beanInstance.redrawRows();
