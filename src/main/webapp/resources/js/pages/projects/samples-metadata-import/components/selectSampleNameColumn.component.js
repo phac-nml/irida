@@ -16,16 +16,16 @@ const selectSampleNameColumnComponent = {
         // therefore we need to go to the upload page.
         if (this.data.headers === null || this.data.rows === null) {
           $state.go("upload");
-        }
 
-        // Check to make sure there are no duplicate headers
-        const foundHeaders = {};
-        this.data.headers.forEach(header => {
-          if (foundHeaders[header]) {
-            $state.go("upload", { errors: header });
-          }
-          foundHeaders[header] = true;
-        });
+          // Check to make sure there are no duplicate headers
+          const foundHeaders = {};
+          this.data.headers.forEach(header => {
+            if (foundHeaders[header]) {
+              $state.go("upload", { errors: header });
+            }
+            foundHeaders[header] = true;
+          });
+        }
 
         // Check to see if an 'idColumn' has already been set.
         if (this.data.sampleNameColumn === null) {
