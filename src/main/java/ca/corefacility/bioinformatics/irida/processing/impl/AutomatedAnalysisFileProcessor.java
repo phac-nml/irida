@@ -109,11 +109,20 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 				List<AnalysisSubmissionTemplate> analysisSubmissionTemplatesForProject = analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(
 						j.getSubject());
 
+				//adding the sample name to the template
+				analysisSubmissionTemplatesForProject.forEach(t -> {
+					String name = t.getName();
+					name = name + " - " + j.getObject()
+							.getSampleName();
+					t.setName(name);
+				});
+
 				submissionTemplates.addAll(analysisSubmissionTemplatesForProject);
 			}
 
 		} else {
-			logger.warn("Cannot find sample for sequencing object.  Not assembling");
+			logger.warn("Cannot find sample for sequencing object " + object.getId()
+					+ ".  Not running automated pipelines.");
 		}
 
 		return submissionTemplates;

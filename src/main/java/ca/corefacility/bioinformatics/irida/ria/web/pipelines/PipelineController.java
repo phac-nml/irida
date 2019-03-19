@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -342,6 +343,20 @@ public class PipelineController extends BaseController {
 			} else {
 				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
 			}
+
+			//getting default pipeline name.  regular pipelines just have a date.  automated ones say it's automated
+			String defaultName = null;
+			if (projectId != null) {
+				defaultName = messageSource.getMessage("workflow.name.automated-prefix",
+						new Object[] { description.getName() }, locale);
+			} else {
+				SimpleDateFormat sdf;
+				sdf = new SimpleDateFormat("yyyyMMdd");
+				String text = sdf.format(new Date());
+				defaultName = messageSource.getMessage("workflow.name.default-prefix",
+						new Object[] { description.getName(), text }, locale);
+			}
+
 			// Parameters should be added not matter what, even if they are empty.
 			model.addAttribute("parameters", parameters);
 
@@ -349,7 +364,7 @@ public class PipelineController extends BaseController {
 					messageSource.getMessage("pipeline.title." + description.getName(), null, locale));
 			model.addAttribute("mainTitle",
 					messageSource.getMessage("pipeline.h1." + description.getName(), null, locale));
-			model.addAttribute("name", description.getName());
+			model.addAttribute("name", defaultName);
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("referenceRequired", description.requiresReference());
