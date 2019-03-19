@@ -322,7 +322,7 @@ public class GroupsController {
 		final UserGroup group = userGroupService.read(userGroupId);
 		logger.debug("Loading users not in group [" + userGroupId + "]");
 		final Collection<User> usersNotInGroup = userGroupService.getUsersNotInGroup(group);
-		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
+		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 
