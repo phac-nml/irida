@@ -87,6 +87,7 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.apiKey=xxxx`
   * `galaxy.execution.email=user@localhost`
   * `irida.workflow.max-running=4` - The maximum number of running workflows.  For larger installations this number can be increased.
+  * `irida.workflow.analysis.threads` - The number of threads to use for handling analysis/workflow tasks. For larger installations this number can be increased. Increasing beyond `irida.workflow.max-running` is unlikely to give any additional performance boost.
 4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
   * `ncbi.upload.host` - FTP host to upload ncbi exports
   * `ncbi.upload.user` - FTP Username

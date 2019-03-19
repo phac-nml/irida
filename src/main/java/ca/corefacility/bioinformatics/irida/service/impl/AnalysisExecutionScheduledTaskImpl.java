@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Job
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.google.common.collect.Sets;
 
@@ -49,6 +50,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private final CleanupAnalysisSubmissionCondition cleanupCondition;
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
+	private final EmailController emailController;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -58,20 +60,21 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param analysisExecutionServiceGalaxy A service for executing {@link AnalysisSubmission}s.
 	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission}
 	 *                                       should be cleaned up.
-	 * @param galaxyJobErrorsService		 {@link GalaxyJobErrorsService} for getting {@link JobError} objects
+	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
+	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
-			CleanupAnalysisSubmissionCondition cleanupCondition,
-			GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository) {
+			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
+			JobErrorRepository jobErrorRepository, EmailController emailController) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 		this.galaxyJobErrorsService = galaxyJobErrorsService;
 		this.jobErrorRepository = jobErrorRepository;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -148,8 +151,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		}
 	}
 
-
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -174,6 +175,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+					if (analysisSubmission.getEmailPipelineResult()) {
+						emailController.sendPipelineStatusEmail(analysisSubmission);
+					}
 				}
 			}
 
@@ -232,8 +236,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (postProcessingLock) {
 			logger.trace("Running postProcessResults");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.TRANSFERRED);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.TRANSFERRED);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
@@ -258,17 +262,21 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			AnalysisSubmission analysisSubmission) {
 		Future<AnalysisSubmission> returnedSubmission;
 
+		boolean finalWorkflowStatusSet = false;
+
 		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
 		if (workflowStatus.errorOccurred()) {
 			logger.error("Workflow for analysis " + analysisSubmission + " in error state " + workflowStatus);
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
+			finalWorkflowStatusSet = true;
 		} else if (workflowStatus.completedSuccessfully()) {
 			logger.debug("Analysis finished " + analysisSubmission);
 
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+			finalWorkflowStatusSet = true;
 		} else if (workflowStatus.isRunning()) {
 			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
 					+ workflowStatus.getProportionComplete());
@@ -280,6 +288,18 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
+			finalWorkflowStatusSet = true;
+		}
+
+		/*
+		 The variable finalWorkflowStatusSet is set to true when an analysis
+		 has successfully completed or completed with an error and is used in
+		 the logic below. If the analysis has finished with an error or completed successfully
+		 and the user selected to be emailed on completion, then the following code
+		 will be executed.
+		 */
+		if (finalWorkflowStatusSet && analysisSubmission.getEmailPipelineResult()) {
+			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 
 		return returnedSubmission;

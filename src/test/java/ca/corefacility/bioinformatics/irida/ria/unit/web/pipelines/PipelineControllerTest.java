@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -56,6 +57,7 @@ public class PipelineControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
+	private TestEmailController emailController;
 
 	@Before
 	public void setUp() {
@@ -71,11 +73,12 @@ public class PipelineControllerTest {
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		galaxyToolDataService = mock(GalaxyToolDataService.class);
-		
+		emailController = mock(TestEmailController.class);
+
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 

@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 
 /**
@@ -37,33 +38,38 @@ public class AnalysisExecutionServiceAspect {
 	/**
 	 * Defines the order for the {@link AnalysisExecutionServiceAspect}.
 	 */
-	public static final int ANALYSIS_EXECUTION_ASPECT_ORDER = IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER - 1;
+	public static final int ANALYSIS_EXECUTION_ASPECT_ORDER =
+			IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER - 1;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceAspect.class);
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private EmailController emailController;
 
 	@Autowired
-	public AnalysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository) {
+	public AnalysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository, EmailController emailController) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.emailController = emailController;
 	}
 
 	/**
 	 * Aspect that matches any asynchronous calls for performing analysis
 	 * submissions and switches the submission to an error state on an
 	 * exception.
-	 * 
-	 * @param analysisSubmission
-	 *            The submission that has failed.
-	 * 
-	 * @param exception
-	 *            The exception that was thrown.
+	 *
+	 * @param analysisSubmission The submission that has failed.
+	 * @param exception          The exception that was thrown.
 	 */
 	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
-	public void toErrorStateOnException(AnalysisSubmission analysisSubmission, Exception exception) {
-		logger.error("Error occured for submission: " + analysisSubmission + " changing to state "
-				+ AnalysisState.ERROR, exception);
+	public void toErrorStateOnException(AnalysisSubmission analysisSubmission,
+			Exception exception) {
+		logger.error(
+				"Error occured for submission: " + analysisSubmission + " changing to state " + AnalysisState.ERROR,
+				exception);
 		analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmissionRepository.save(analysisSubmission);
+		if (analysisSubmission.getEmailPipelineResult()) {
+			emailController.sendPipelineStatusEmail(analysisSubmission);
+		}
 	}
 	
 	/**

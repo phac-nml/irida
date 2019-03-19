@@ -52,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.google.common.base.Strings;
@@ -98,7 +99,8 @@ public class PipelineController extends BaseController {
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
-	
+	private EmailController emailController;
+
 	/*
 	 * CONTROLLERS
 	 */
@@ -111,7 +113,8 @@ public class PipelineController extends BaseController {
 			CartController cartController, MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService,
 			UpdateSamplePermission updateSamplePermission,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService,
+			EmailController emailController) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -124,6 +127,7 @@ public class PipelineController extends BaseController {
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -277,9 +281,11 @@ public class PipelineController extends BaseController {
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
-                        model.addAttribute("workflowName", workflowName);
+			model.addAttribute("workflowName", workflowName);
 			model.addAttribute("dynamicSourceRequired", description.requiresDynamicSource());
-			model.addAttribute("analysisType", flow.getWorkflowDescription().getAnalysisType());
+			model.addAttribute("analysisType", flow.getWorkflowDescription()
+					.getAnalysisType());
+			model.addAttribute("emailConfigured", emailController.isMailConfigured());
 
 			final List<Map<String, Object>> dynamicSources = new ArrayList<>();
 			if (description.requiresDynamicSource()) {
@@ -475,13 +481,15 @@ public class PipelineController extends BaseController {
 
 			String analysisDescription = parameters.getDescription();
 			Boolean writeResultsToSamples = parameters.getWriteResultsToSamples();
+			Boolean emailPipelineResult = parameters.getEmailPipelineResult();
+
 			if (description.getInputs()
 					.requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples, emailPipelineResult);
 			} else {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples, emailPipelineResult);
 			}
 
 		} catch (IridaWorkflowNotFoundException | IridaWorkflowNotDisplayableException e) {
