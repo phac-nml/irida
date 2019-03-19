@@ -10,9 +10,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTemplateRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -39,18 +41,21 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	private final ProjectSampleJoinRepository psjRepository;
 	private final AnalysisSubmissionRepository submissionRepository;
 	private final AnalysisSubmissionTemplateRepository analysisTemplateRepository;
+	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final IridaWorkflowsService workflowsService;
 	private final SequencingObjectRepository objectRepository;
 
 	@Autowired
 	public AutomatedAnalysisFileProcessor(SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectSampleJoinRepository psjRepository, AnalysisSubmissionRepository submissionRepository,
-			AnalysisSubmissionTemplateRepository analysisTemplateRepository, IridaWorkflowsService workflowsService,
+			AnalysisSubmissionTemplateRepository analysisTemplateRepository,
+			ProjectAnalysisSubmissionJoinRepository pasRepository, IridaWorkflowsService workflowsService,
 			SequencingObjectRepository objectRepository) {
 		this.ssoRepository = ssoRepository;
 		this.psjRepository = psjRepository;
 		this.submissionRepository = submissionRepository;
 		this.analysisTemplateRepository = analysisTemplateRepository;
+		this.pasRepository = pasRepository;
 		this.workflowsService = workflowsService;
 		this.objectRepository = objectRepository;
 	}
@@ -72,6 +77,10 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 			submission.setSubmitter(template.getSubmitter());
 
 			submission = submissionRepository.save(submission);
+
+			//share submission back to the project
+			Project project = template.getSubmittedProject();
+			pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
 
 			legacyFileProcessorCompatibility(submission, sequencingObject);
 		}

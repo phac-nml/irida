@@ -14,9 +14,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AbstractAnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.processing.impl.AutomatedAnalysisFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTemplateRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -25,12 +27,14 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -47,6 +51,8 @@ public class AutomatedAnalysisFileProcessorTest {
 	@Mock
 	private UserRepository userRepository;
 	@Mock
+	private ProjectAnalysisSubmissionJoinRepository pasRepository;
+	@Mock
 	private IridaWorkflowsService workflowsService;
 	@Mock
 	private AnalysisSubmissionTemplateRepository templateRepository;
@@ -62,7 +68,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		MockitoAnnotations.initMocks(this);
 
 		processor = new AutomatedAnalysisFileProcessor(ssoRepository, psjRepository, submissionRepository,
-				templateRepository, workflowsService, objectRepository);
+				templateRepository, pasRepository, workflowsService, objectRepository);
 
 		//assembly
 		UUID assemblyID = UUID.randomUUID();
@@ -113,6 +119,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
+		verify(pasRepository).save(any(ProjectAnalysisSubmissionJoin.class));
 	}
 
 	@Test
@@ -159,5 +166,13 @@ public class AutomatedAnalysisFileProcessorTest {
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
+
+		ArgumentCaptor<ProjectAnalysisSubmissionJoin> captor = ArgumentCaptor.forClass(ProjectAnalysisSubmissionJoin.class);
+
+		verify(pasRepository).save(captor.capture());
+
+		ProjectAnalysisSubmissionJoin captorValue = captor.getValue();
+		assertEquals("should have run file processor for one project", project, captorValue.getSubject());
+
 	}
 }
