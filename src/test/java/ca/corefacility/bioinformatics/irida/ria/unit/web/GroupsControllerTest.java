@@ -45,10 +45,11 @@ public class GroupsControllerTest {
 
 		Long groupId = 1L;
 		Long userId = 2L;
+		Long anotherUserId = 3L;
 		UserGroup userGroup = new UserGroup("new group");
 		userGroup.setId(groupId);
 		List<User> users = Lists.newArrayList(new User(userId, "test01", null, null, "Test", "User", null),
-				new User(userId, "newUser", null, null, "test02", "user", null));
+				new User(anotherUserId, "newUser", null, null, "test02", "user", null));
 
 		when(controller.getUsersNotInGroup(groupId, term)).thenReturn(users);
 		when(controller.getUsersNotInGroup(groupId, term2)).thenReturn(users);
