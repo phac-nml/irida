@@ -116,6 +116,8 @@ export class CartTools extends Component {
               <CartToolsMenu
                 pathname={location.pathname}
                 paths={this.state.paths}
+                toggleSidebar={this.props.toggleSidebar}
+                collapsed={this.props.collapsed}
               />
               <ToolsInner>
                 <Router>{this.state.paths.map(path => path.component)}</Router>

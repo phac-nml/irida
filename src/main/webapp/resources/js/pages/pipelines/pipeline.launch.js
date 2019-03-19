@@ -1,5 +1,6 @@
 (function(ng, $, location, page) {
   "use strict";
+
   /**
    * Main controller for the pipeline launch page.
    * @param $scope Application model object
@@ -37,8 +38,8 @@
     });
 
     /*
-		 * Whether or not the page is waiting for a response from the server.
-		 */
+     * Whether or not the page is waiting for a response from the server.
+     */
     vm.loading = false;
     /**
      * Analysis submission success?

@@ -25,7 +25,7 @@ export default function GalaxyAlert() {
         rel="noopener noreferrer"
         href="https://irida.corefacility.ca/documentation/user/user/samples/#galaxy-export"
       >
-        {window.GALAXY.DOCUMENTATION} <Icon type="link"/>
+        {window.GALAXY.DOCUMENTATION} <Icon type="link" />
       </a>
     </span>
   );
