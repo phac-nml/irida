@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="#{email.pipeline.status}">_Pipeline Status_</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width" />
+    </head>
+
+    <body>
+        <h1 th:text="#{email.pipeline.status}">_Pipeline Status_</h1>
+        <div>
+            <p th:text="#{email.pipeline.failure}" th:if="${pipelineStatus == 'ERROR'}">_The following pipeline has encountered an error and did not complete successfully:_</p>
+            <p th:text="#{email.pipeline.success}" th:unless="${pipelineStatus == 'ERROR'}">_The following pipeline has completed successfully:_</p>
+            <p th:text="${pipelineName}">_Pipeline Name_</p>
+            <p th:text="#{email.pipeline.view}">_You can view the pipeline results at the link below:_</p>
+            <a href="#" th:href="${analysisSubmissionURL}" th:text="${analysisSubmissionURL}">_http://localhost:8080/analysis/1_</a></p>
+        </div>
+    </body>
+</html>

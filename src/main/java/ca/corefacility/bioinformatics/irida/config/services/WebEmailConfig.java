@@ -109,13 +109,13 @@ public class WebEmailConfig {
 		@Override
 		public Boolean isConfigured() {
 			if (UNCONFIGURED_HOST_VALUE.equals(getHost())) {
-				logger.warn("E-mail host is not configured, unable to send password reset e-mails.");
+				logger.warn("E-mail host is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			} else if (UNCONFIGURED_PROTOCOL_VALUE.equals(getProtocol())) {
-				logger.warn("E-mail protocol is not configured, unable to send password reset e-mails.");
+				logger.warn("E-mail protocol is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			} else if (UNCONFIGURED_USERNAME_VALUE.equals(getUsername())) {
-				logger.warn("E-mail username is not configured, unable to send password reset e-mails.");
+				logger.warn("E-mail username is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			}
 		

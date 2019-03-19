@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUserAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspect;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
  * Configures the aspects in IRIDA
@@ -39,8 +40,8 @@ public class IridaApiAspectsConfig {
 
 	@Bean
 	public AnalysisExecutionServiceAspect analysisExecutionServiceAspect(
-			AnalysisSubmissionRepository analysisSubmissionRepository) {
-		return new AnalysisExecutionServiceAspect(analysisSubmissionRepository);
+			AnalysisSubmissionRepository analysisSubmissionRepository, EmailController emailController) {
+		return new AnalysisExecutionServiceAspect(analysisSubmissionRepository, emailController);
 	}
 
 	/**
