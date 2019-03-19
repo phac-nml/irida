@@ -1,11 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Icon, Menu, Tooltip } from "antd";
+import { Icon, Menu } from "antd";
 import { Link } from "@reach/router";
 import { COLOR_BORDER_LIGHT, grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
-import { getI18N } from "../../../utilities/i18n-utilties";
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -40,13 +39,11 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
           </Menu.Item>
         ))}
       </Menu>
-      <Tooltip placement="bottom" title={getI18N("CartTools.menu.toggle")}>
-        <Icon
-          style={{ color: grey6, fontSize: 24, margin: SPACE_MD }}
-          type={collapsed ? "menu-fold" : "menu-unfold"}
-          onClick={toggleSidebar}
-        />
-      </Tooltip>
+      <Icon
+        style={{ color: grey6, fontSize: 24, margin: SPACE_MD }}
+        type={collapsed ? "menu-fold" : "menu-unfold"}
+        onClick={toggleSidebar}
+      />
     </MenuWrapper>
   );
 }
