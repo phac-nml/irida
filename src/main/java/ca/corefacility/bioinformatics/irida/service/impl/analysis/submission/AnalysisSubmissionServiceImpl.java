@@ -464,14 +464,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsParameters()) {
 			if (namedParameters != null) {
 				template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(), namedParameters,
-						referenceFile, writeResultsToSamples, analysisDescription, AnalysisSubmission.Priority.MEDIUM,
+						referenceFile, writeResultsToSamples, analysisDescription, AnalysisSubmission.Priority.LOW,
 						projectsToShare);
 
 			} else {
 				if (!params.isEmpty()) {
 					template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(),
 							params, referenceFile, writeResultsToSamples, analysisDescription,
-							AnalysisSubmission.Priority.MEDIUM, projectsToShare);
+							AnalysisSubmission.Priority.LOW, projectsToShare);
 				}
 			}
 		}
