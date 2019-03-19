@@ -15,6 +15,7 @@ Changes
 * [UI/Developer]: Added code splitting to webpack bundles.
 * [UI/Developer]: Minor JavaScript code cleanup.
 * [Developer]: Updated spring security to 4.0.4.RELEASE.
+* [UI/Developer]: Fixed issue where search for member to add to group resulted in no results found when search term contained capital letters.
 
 0.22.0 to 19.01
 ----------------
