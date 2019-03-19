@@ -1,5 +1,6 @@
 const path = require("path");
 const merge = require("webpack-merge");
+const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const entries = require("./entries.js");
@@ -75,7 +76,19 @@ const config = {
       }
     ]
   },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "initial"
+        }
+      }
+    }
+  },
   plugins: [
+    new webpack.HashedModuleIdsPlugin(), // so that file hashes don't change unexpectedly
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
     })
