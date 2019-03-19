@@ -43,11 +43,10 @@ import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCon
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 
 /**
  * Tests out scheduling analysis tasks.
- * 
- *
  */
 public class AnalysisExecutionScheduledTaskImplTest {
 
@@ -66,13 +65,12 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
 	private Analysis analysis;
-	
+
 	@Mock
 	private AnalysisSubmission analysisSubmissionMock;
-	
+
 	@Mock
 	private AnalysisSubmission analysisSubmissionMock2;
-
 
 	@Mock
 	private GalaxyJobErrorsService galaxyJobErrorsService;
@@ -82,6 +80,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
 	private JobErrorRepository jobErrorRepository;
+
+	@Mock
+	private TestEmailController emailController;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -99,13 +100,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
-				galaxyJobErrorsService, jobErrorRepository);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
+				jobErrorRepository, emailController);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
 				.inputFiles(sequenceFiles)
 				.referenceFile(referenceFile)
+				.emailPipelineResult(false)
 				.build();
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
@@ -114,14 +116,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully preparing submitted analyses.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
 	@Test
-	public void testPrepareAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
-			IOException {
+	public void testPrepareAnalysesSuccess()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
@@ -154,8 +156,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				.priority(AnalysisSubmission.Priority.HIGH)
 				.build();
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW))
-				.thenReturn(Arrays.asList(medium, high, low));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList(medium, high, low));
 		when(analysisExecutionService.getCapacity()).thenReturn(2);
 
 		analysisExecutionScheduledTask.prepareAnalyses();
@@ -167,14 +169,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests no analysis to prepare.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
 	@Test
-	public void testPrepareAnalysesNoAnalysis() throws ExecutionManagerException, IridaWorkflowNotFoundException,
-			IOException {
+	public void testPrepareAnalysesNoAnalysis()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(Arrays.asList());
@@ -186,9 +188,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully executing submitted analyses.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test
 	public void testExecuteAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowException {
@@ -204,9 +206,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests no analyses to submit.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test
 	public void testExecuteAnalysesNoAnalyses() throws ExecutionManagerException, IridaWorkflowException {
@@ -223,13 +225,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully switching analysis state to
 	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
-	 * 
+	 * Also ,tests not sending an email on pipeline completion.
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testMonitorRunningAnalysesSuccessFinished() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testMonitorRunningAnalysesSuccessFinished()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.OK,
 				Sets.newHashSet("1"));
@@ -243,18 +246,47 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching analysis state to
+	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
+	 * Also, tests sending an email to user on pipeline completion.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessFinishedWithEmail()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResult(true);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.OK,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
 	 * Tests successfully skipping over switching analysis state for a running
 	 * analysis in Galaxy.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testMonitorRunningAnalysesSuccessRunning() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testMonitorRunningAnalysesSuccessRunning()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.RUNNING,
 				Sets.newHashSet("1"));
@@ -269,17 +301,17 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository, never()).save(analysisSubmission);
 	}
-	
+
 	/**
 	 * Tests successfully skipping over switching analysis state for a queued
 	 * analysis in Galaxy.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testMonitorRunningAnalysesSuccessQueued() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testMonitorRunningAnalysesSuccessQueued()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.QUEUED,
 				Sets.newHashSet("1"));
@@ -297,14 +329,15 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an error Galaxy state.
-	 * 
+	 * if there was an error Galaxy state. Also, tests not sending a pipeline
+	 * result email.
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testMonitorRunningAnalysesSuccessError() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testMonitorRunningAnalysesSuccessError()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.ERROR,
@@ -319,18 +352,48 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
 	}
-	
+
 	/**
 	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an error building the workflow status.
-	 * 
+	 * if there was an error Galaxy state. On  error, user is sent an email
+	 * with the pipeline result.
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testMonitorRunningAnalysesErrorWorkflowStatus() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testMonitorRunningAnalysesSuccessErrorWithEmail()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResult(true);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.ERROR,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an error building the workflow status. Also, tests not
+	 * sending of pipeline status email.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesErrorWorkflowStatus()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
@@ -341,18 +404,44 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController, never()).sendPipelineStatusEmail(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an error building the workflow status. Also, tests
+	 * sending of pipeline status email.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesErrorWorkflowStatusWithEmail()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResult(true);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenThrow(new IllegalArgumentException());
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
 	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
 	 * if there was an Galaxy job with an error, but still running.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testMonitorRunningAnalysesSuccessErrorStillRunning() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testMonitorRunningAnalysesSuccessErrorStillRunning()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.ERROR,
@@ -371,15 +460,16 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully transferring results for a submitted analysis.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
-	 * @throws IridaWorkflowAnalysisTypeException 
+	 * @throws IridaWorkflowAnalysisTypeException
 	 */
 	@Test
-	public void testTransferAnalysesResultsSuccess() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
+	public void testTransferAnalysesResultsSuccess()
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException {
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.FINISHED_RUNNING)).thenReturn(
@@ -392,15 +482,16 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests no analysis results to check if they can be transferred.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
-	 * @throws IridaWorkflowAnalysisTypeException 
+	 * @throws IridaWorkflowAnalysisTypeException
 	 */
 	@Test
-	public void testTransferAnalysesResultsNoAnalyses() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
+	public void testTransferAnalysesResultsNoAnalyses()
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.FINISHED_RUNNING)).thenReturn(
 				new ArrayList<AnalysisSubmission>());
 
@@ -412,7 +503,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully cleaning up analysis submissions with completed
 	 * status.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -420,12 +511,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
@@ -433,7 +522,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully cleaning up analysis submissions with error status.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -441,11 +530,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR, AnalysisCleanedState.NOT_CLEANED))
-				.thenReturn(Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
@@ -454,7 +542,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully not cleaning up any analysis submissions in the
 	 * running state.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -462,11 +550,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING, AnalysisCleanedState.NOT_CLEANED))
-				.thenReturn(Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
@@ -475,7 +562,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully not cleaning up an analysis in completed when it's
 	 * already cleaned.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -483,12 +570,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
@@ -497,7 +582,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully not cleaning up an analysis in completed when it's in
 	 * a cleaning error.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -505,12 +590,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING_ERROR);
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
@@ -519,7 +602,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully not cleaning up an analysis in completed when it's
 	 * already being cleaned.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -527,12 +610,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
@@ -541,52 +622,51 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully cleaning up analysis submissions with completed status
 	 * that are over a day old (time limit until they should be cleaned).
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
 	public void testCleanupAnalysisSubmissionsCompletedOverOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().minusDays(2).toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
+				.minusDays(2)
+				.toDate());
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 	}
-	
+
 	/**
 	 * Tests successfully cleaning up analysis submissions with completed status
 	 * when cleanup time is zero.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
 	public void testCleanupAnalysisSubmissionsCompletedCleanupZeroSuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ZERO),
-				galaxyJobErrorsService, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
+				.toDate());
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
@@ -596,25 +676,24 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * Tests successfully not cleaning up analysis submissions with completed
 	 * status that are under a day old (time limit until they should be
 	 * cleaned).
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
 	public void testCleanupAnalysisSubmissionsCompletedUnderOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
+				.toDate());
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmissionMock);
@@ -624,30 +703,31 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * Tests successfully cleaning up analysis submissions with completed status
 	 * where one is over a day old (so gets cleaned up) and one is under a day
 	 * old (so does not get cleaned up).
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
 	public void testCleanupAnalysisSubmissionsCompletedOverUnderOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().minusDays(2).toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
+				.minusDays(2)
+				.toDate());
 
 		when(analysisSubmissionMock2.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock2.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock2.getCreatedDate()).thenReturn(DateTime.now().toDate());
+		when(analysisSubmissionMock2.getCreatedDate()).thenReturn(DateTime.now()
+				.toDate());
 
-		when(
-				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
-						AnalysisCleanedState.NOT_CLEANED)).thenReturn(
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+				AnalysisCleanedState.NOT_CLEANED)).thenReturn(
 				Arrays.asList(analysisSubmissionMock, analysisSubmissionMock2));
 
-		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
-				.cleanupAnalysisSubmissions();
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);

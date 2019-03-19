@@ -64,4 +64,18 @@ public class PipelinesAssemblyPage extends AbstractPage {
 			return false;
 		}
 	}
+
+	public void clickEmailPipelineResult() {
+		driver.findElement(By.id("email-pipeline-result")).click();
+		waitForTime(500);
+	}
+
+	public boolean existsEmailPipelineResult() {
+		try {
+			driver.findElement(By.id("email-pipeline-result"));
+			return true;
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
 }

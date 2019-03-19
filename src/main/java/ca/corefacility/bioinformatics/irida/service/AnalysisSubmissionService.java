@@ -69,73 +69,57 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
 			Collection<UUID> workflowIds);
-	
+
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
-	 * @param workflow
-	 *            {@link IridaWorkflow} that the files will be run on
-	 * @param ref
-	 *            {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles
-	 *            {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs
-	 *            {@link List} of {@link SequenceFilePair} to run on the
-	 *            workflow
-	 * @param unnamedParameters
-	 *            {@link Map} of parameters specific for the pipeline
-	 * @param namedParameters
-	 *            the named parameters to use for the workflow.
-	 * @param name
-	 *            {@link String} the name for the analysis
-	 * @param analysisDescription
-	 *            {@link String} the description of the analysis being submitted
-	 * @param projectsToShare
-	 *            A list of {@link Project}s to share analysis results with
-	 * @param writeResultsToSamples
-	 *            If true, results of this pipeline will be saved back to the
-	 *            samples on successful completion.
+	 * @param workflow              {@link IridaWorkflow} that the files will be run on
+	 * @param ref                   {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles         {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs     {@link List} of {@link SequenceFilePair} to run on the
+	 *                              workflow
+	 * @param unnamedParameters     {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters       the named parameters to use for the workflow.
+	 * @param name                  {@link String} the name for the analysis
+	 * @param analysisDescription   {@link String} the description of the analysis being submitted
+	 * @param projectsToShare       A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the
+	 *                              samples on successful completion.
+	 * @param emailPipelineResult   If true, user will be emailed if a pipelines successfully
+	 *                              completes or if it errors
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
-	 * @param workflow
-	 *            {@link IridaWorkflow} that the files will be run on
-	 * @param ref
-	 *            {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles
-	 *            {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs
-	 *            {@link List} of {@link SequenceFilePair} to run on the
-	 *            workflow
-	 * @param unnamedParameters
-	 *            {@link Map} of parameters specific for the pipeline
-	 * @param namedParameters
-	 *            the named parameters to use for the workflow.
-	 * @param name
-	 *            {@link String} the name for the analysis
-	 * @param analysisDescription
-	 *            {@link String} the description of the analysis being submitted
-	 * @param projectsToShare
-	 *            A list of {@link Project}s to share analysis results with
-	 * @param writeResultsToSamples
-	 *            If true, results of this pipeline will be saved back to the
-	 *            samples on successful completion.
+	 * @param workflow              {@link IridaWorkflow} that the files will be run on
+	 * @param ref                   {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles         {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs     {@link List} of {@link SequenceFilePair} to run on the
+	 *                              workflow
+	 * @param unnamedParameters     {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters       the named parameters to use for the workflow.
+	 * @param name                  {@link String} the name for the analysis
+	 * @param analysisDescription   {@link String} the description of the analysis being submitted
+	 * @param projectsToShare       A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the
+	 *                              samples on successful completion.
+	 * @param emailPipelineResult   If true, user will be emailed if a pipelines successfully
+	 *                              completes or if it errors
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
-	 *         the supplied files.
+	 * the supplied files.
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
