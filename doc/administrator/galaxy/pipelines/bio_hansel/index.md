@@ -11,7 +11,7 @@ This workflow uses the following software for the bio_hansel pipeline. The pipel
 
 | Tool Name                      | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:------------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **bio_hansel**                 | nml      | [4654c51dae72][]| 9 (2018-05-09)              | [Galaxy Main Shed][] |
+| **biohansel**                 | nml      | [ba6a0af656a6][]| 6 (2019-03-20)              | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.
@@ -50,7 +50,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successful then all dependencies for this pipeline have been properly installed.
 
-[4654c51dae72]: https://toolshed.g2.bx.psu.edu/view/nml/bio_hansel/4654c51dae72
+[ba6a0af656a6]: https://toolshed.g2.bx.psu.edu/view/nml/bio_hansel/4654c51dae72
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [bio_hansel Galaxy Workflow]: ../test/bio_hansel/bio_hansel.ga
