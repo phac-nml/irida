@@ -19,6 +19,7 @@ Changes
 * [Admin]: Made analysis task pool size configurable with `irida.workflow.analysis.threads`. (19.01.2)
 * [REST]: Fixes issue where the Sample collection date was synchronized incorrectly, leading to the synced date up to one day off from the original date. (19.01.2)
 * [UI]: Fixed bug where uploading a metadata file with a `.` in the header row would cause an error. (19.01.2)
+* [UI]: Updated icons on for Data Tables sorting and metadata importer.
 
 
 0.22.0 to 19.01
