@@ -69,6 +69,10 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	protected Set<SequencingObject> inputFiles;
 
+	@NotAudited
+	@Column(name = "automated")
+	private boolean automated;
+
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
 	private List<ProjectAnalysisSubmissionJoin> projects;
 
@@ -80,6 +84,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
 		this.analysisCleanedState = AnalysisCleanedState.NOT_CLEANED;
+		automated = false;
 	}
 
 	/**
@@ -105,6 +110,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.analysisDescription = (builder.analysisDescription);
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
+		this.automated = builder.automated;
 	}
 
 	/**
@@ -189,6 +195,15 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	}
 
 	/**
+	 * Whether this pipeline was run as part of an automated process
+	 *
+	 * @return true if the pipeline was run as an automated process
+	 */
+	public boolean isAutomated() {
+		return automated;
+	}
+
+	/**
 	 * Set the {@link Analysis} generated as a result of this submission. Note: {@link
 	 * AnalysisSubmission#setAnalysis(Analysis)} can only be set **once**; if the current {@link Analysis} is non-null,
 	 * then this method will throw a {@link AnalysisAlreadySetException}.
@@ -241,6 +256,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		private IridaWorkflowNamedParameters namedParameters;
 		private String analysisDescription;
 		private boolean updateSamples = false;
+		private boolean automated;
 		private Priority priority = Priority.MEDIUM;
 
 		/**
@@ -266,6 +282,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			name(template.getName());
 			analysisDescription(template.getAnalysisDescription());
 			updateSamples(template.getUpdateSamples());
+			automated(true);
 
 			if (template.getReferenceFile()
 					.isPresent()) {
@@ -405,6 +422,17 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		public Builder updateSamples(boolean updateSamples) {
 			this.updateSamples = updateSamples;
 
+			return this;
+		}
+
+		/**
+		 * Sets whether this pipeline is being run as part of an automated process
+		 *
+		 * @param automated whether this is an automated pipeline
+		 * @return a {@link Builder}
+		 */
+		public Builder automated(boolean automated) {
+			this.automated = automated;
 			return this;
 		}
 

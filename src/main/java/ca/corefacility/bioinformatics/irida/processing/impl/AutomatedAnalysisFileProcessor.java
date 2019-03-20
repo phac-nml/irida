@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -107,23 +108,34 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(object);
 
 		/*
-		 * This is something that should only ever happen in tests, but added
-		 * check with a warning
+		 * Checking if the seq object was deleted from the sample before this file processor was run
 		 */
 		if (sampleForSequencingObject != null) {
 			List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(
 					sampleForSequencingObject.getSubject());
 
+			//get all the projects for the sample
 			for (Join<Project, Sample> j : projectForSample) {
+
+				//get the analysis templates for that project
 				List<AnalysisSubmissionTemplate> analysisSubmissionTemplatesForProject = analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(
 						j.getSubject());
 
-				//adding the sample name to the template
+				//check if the project owns this sample
+				ProjectSampleJoin psj = (ProjectSampleJoin) j;
+				boolean owner = psj.isOwner();
+
 				analysisSubmissionTemplatesForProject.forEach(t -> {
+					//adding the sample name to the template
 					String name = t.getName();
 					name = name + " - " + j.getObject()
 							.getSampleName();
 					t.setName(name);
+
+					//don't try to update the sample if this project isn't the owner.  it'll fail when it tries.
+					if (!owner) {
+						t.setUpdateSamples(false);
+					}
 				});
 
 				submissionTemplates.addAll(analysisSubmissionTemplatesForProject);

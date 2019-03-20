@@ -13,6 +13,7 @@
                 <constraints foreignKeyName="FK_ANALYSIS_TEMPLATE_PROJECT" referencedColumnNames="id"
                              referencedTableName="project"/>
             </column>
+            <column name="automated" type="bit(1)"/>
         </addColumn>
 
         <addColumn tableName="analysis_submission_AUD">
@@ -21,6 +22,14 @@
             </column>
             <column name="submitted_project_id" type="bigint(20)"/>
         </addColumn>
+
+        <!--updating old automated runs-->
+        <sql>UPDATE analysis_submission SET automated=0</sql>
+        <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT sistr_typing FROM sequencing_object)
+        </sql>
+        <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT automated_assembly FROM
+            sequencing_object)
+        </sql>
 
         <!--Drop old notnulls since the table now has the template also encoded -->
         <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_state"

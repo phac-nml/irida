@@ -153,7 +153,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
 
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, project);
+				.filterAnalyses(search, name, state, null, workflowIds, project, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -165,7 +165,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
 			Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, null);
+				.filterAnalyses(search, name, state, null, workflowIds, null, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -177,7 +177,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
 			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, user, workflowIds, null);
+				.filterAnalyses(search, name, state, user, workflowIds, null, false);
 		return super.search(specification, pageRequest);
 	}
 
