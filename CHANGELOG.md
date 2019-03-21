@@ -20,7 +20,7 @@ Changes
 * [REST]: Fixes issue where the Sample collection date was synchronized incorrectly, leading to the synced date up to one day off from the original date. (19.01.2)
 * [UI]: Fixed bug where uploading a metadata file with a `.` in the header row would cause an error. (19.01.2)
 * [UI]: Updated icons for datatables sorting and metadata importer.
-
+* [UI]: Fixed bug where users could not update their email subscriptions to projects. (19.01.2)
 
 0.22.0 to 19.01
 ----------------
