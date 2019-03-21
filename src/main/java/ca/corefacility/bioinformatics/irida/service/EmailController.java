@@ -7,6 +7,7 @@ import org.springframework.mail.MailSendException;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Interface describing methods for emailing information to the user
@@ -72,4 +73,12 @@ public interface EmailController {
 	 */
 	public Boolean isMailConfigured();
 
+	/**
+	 * Send pipeline status email to a user when a pipeline that they have
+	 * launched is completed or has an error
+	 *
+	 * @param submission The {@link AnalysisSubmission} that the pipeline status email will be sent for
+	 * @throws MailSendException if the email failed to send
+	 */
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException;
 }

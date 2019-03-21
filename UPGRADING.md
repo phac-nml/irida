@@ -7,6 +7,11 @@ upgrading IRIDA that cannot be automated.
 19.01 to 19.04
 --------------
 
+19.01 to 19.01.2
+----------------
+* A new configuration value is available to control the number of threads used for communication with Galaxy when running pipelines. The default value is **4**. To change, please set `irida.workflow.analysis.threads` in the `/etc/irida/irida.conf` file. This can help when running lots of pipelines in IRIDA.
+
+
 0.22.0 to 19.01
 ----------------
 * The following new Tomcat variable should be set for deployment `irida.db.profile=prod` for production deployments. See https://irida.corefacility.ca/documentation/administrator/web/#servlet-container-configuration for more details.

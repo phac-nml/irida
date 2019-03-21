@@ -8,13 +8,13 @@ const template = `
   <button ng-hide="$ctrl.saving" 
           class="btn btn-success" 
           ng-click="$ctrl.saveMetadata()">
-    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;
+    <i class="far fa-save spaced-right__sm"></i>
     {{ $ctrl.label }}
   </button>
   <button ng-show="$ctrl.saving"
           disabled="disabled"
           class="btn btn-success">
-     <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i>&nbsp;
+     <i class="fas fa-circle-notch fa-spin"></i>
 </button>
 </span>
 `;

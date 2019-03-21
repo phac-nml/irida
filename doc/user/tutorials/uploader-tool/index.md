@@ -18,7 +18,7 @@ This tutorial assumes that your client has already created the [project][project
 
 Downloading and Installing the Uploader
 ---------------------------------------
-The Illumina MiSeq platform has a Windows 7 PC installed inside the sequencer. A Windows installer for the Illumina MiSeq uploader tool can be downloaded at: <https://irida.corefacility.ca/downloads/tools/IRIDA_Uploader_latest.exe>
+The Illumina MiSeq platform has a Windows 7 PC installed inside the sequencer. A Windows installer for the Illumina MiSeq uploader tool can be downloaded at: <https://github.com/phac-nml/irida-miseq-uploader/releases>
 
 You can safely accept all default options once you launch the installer. 
 
@@ -29,6 +29,14 @@ For complete transparency, the installer will install several components require
 * Python 2.7.9 (32-bit)
 * PyLauncher for Windows (<https://bitbucket.org/vinay.sajip/pylauncher>)
 * The IRIDA MiSeq Uploader source code (<https://github.com/phac-nml/irida-miseq-uploader>)
+
+### Command Line Uploader
+
+Development is being done on a new Command Line Uploader.
+
+If you would prefer using the command line to upload data, you can download it here <https://github.com/phac-nml/irida-uploader>
+
+Please Note: The tutorial expects that you will be using the GUI uploader.
 
 Launching the Uploader
 ----------------------
