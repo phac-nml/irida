@@ -75,7 +75,6 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 
 			AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))
 					.build();
-			submission.setSubmitter(template.getSubmitter());
 
 			submission = submissionRepository.save(submission);
 

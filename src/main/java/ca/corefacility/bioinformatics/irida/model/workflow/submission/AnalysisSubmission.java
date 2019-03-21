@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -111,6 +112,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
 		this.automated = builder.automated;
+		this.submitter = submitter;
 	}
 
 	/**
@@ -258,6 +260,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		private boolean updateSamples = false;
 		private boolean automated;
 		private Priority priority = Priority.MEDIUM;
+		private User submitter;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -283,6 +286,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			analysisDescription(template.getAnalysisDescription());
 			updateSamples(template.getUpdateSamples());
 			automated(true);
+			submitter(template.getSubmitter());
 
 			if (template.getReferenceFile()
 					.isPresent()) {
@@ -433,6 +437,16 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		 */
 		public Builder automated(boolean automated) {
 			this.automated = automated;
+			return this;
+		}
+
+		/**
+		 * Set the user who submitted the pipeline
+		 * @param submitter {@link User} who submitted the pipeline
+		 * @return a {@link Builder}
+		 */
+		public Builder submitter(User submitter){
+			this.submitter = submitter;
 			return this;
 		}
 
