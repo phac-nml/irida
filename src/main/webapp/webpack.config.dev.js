@@ -8,7 +8,7 @@ exports.config = {
       target: "localhost:8080"
     },
     overlay: {
-      warnings: true,
+      warnings: false,
       errors: true
     },
     hot: true,

@@ -37,15 +37,13 @@ import { analysisOutputFileApiUrl, trim } from "../preview.utils";
  */
 function toHtml(vm) {
   const {
-    all_subtypes,
     avg_tile_coverage,
     sample,
     scheme,
     scheme_version,
     subtype,
     qc_status,
-    qc_message,
-    inconsistent_subtypes
+    qc_message
   } = vm.results;
   const { i18n } = vm;
 

@@ -156,6 +156,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	private String analysisDescription;
 
 	@NotNull
+	@Column(name = "email_pipeline_result")
+	private boolean emailPipelineResult;
+
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Priority priority;
 
@@ -180,6 +184,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
+		this.emailPipelineResult = builder.emailPipelineResult;
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
 	}
@@ -462,6 +467,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.analysisDescription = description;
 	}
 
+
 	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
@@ -476,6 +482,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private String analysisDescription;
 		private boolean updateSamples = false;
 		private Priority priority = Priority.MEDIUM;
+		private boolean emailPipelineResult = false;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -626,6 +633,19 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		}
 
 		/**
+		 * Sets if user should be emailed on
+		 * pipeline completion or error
+		 *
+		 * @param emailPipelineResult If user should be emailed or not
+		 * @return A {@link Builder}
+		 */
+		public Builder emailPipelineResult(boolean emailPipelineResult) {
+			this.emailPipelineResult = emailPipelineResult;
+
+			return this;
+		}
+
+		/**
 		 * Build the analysis submission from the set parameters
 		 * @return the new AnalysisSubmission
 		 */
@@ -693,6 +713,22 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	public boolean getUpdateSamples() {
 		return updateSamples;
+	}
+
+	/**
+	 * Sets flag to indicate whether or not user should be emailed upon pipeline completion or error.
+	 * @param emailPipelineResult If true, email pipeline result to user.
+	 */
+	public void setEmailPipelineResult(boolean emailPipelineResult) {
+		this.emailPipelineResult = emailPipelineResult;
+	}
+
+	/**
+	 * Whether or not to send an email upon pipeline completion or error.
+	 * @return Email pipeline result on completion or error.
+	 */
+	public boolean getEmailPipelineResult() {
+		return emailPipelineResult;
 	}
 
 	@Override

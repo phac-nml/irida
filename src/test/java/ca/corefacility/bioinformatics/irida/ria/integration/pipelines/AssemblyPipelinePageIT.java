@@ -132,4 +132,23 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 		return submission;
 	}
+
+	@Test
+	public void testEmailPipelineResult() {
+		addSamplesToCartManager();
+
+		String analysisName = AssemblyPipelinePageIT.class.getName() + ".testEmailPipelineResult";
+		page.setNameForAnalysisPipeline(analysisName);
+
+		assertTrue("Email Pipeline Result checkbox should exist", page.existsEmailPipelineResult());
+		page.clickEmailPipelineResult();
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+
+		AnalysisSubmission submission = findAnalysisSubmissionWithName(analysisName + "_sample1");
+
+		assertNotNull("Analysis Submission is null", submission);
+		assertTrue("emailPipelineResult should be true", submission.getEmailPipelineResult());
+	}
 }
