@@ -112,7 +112,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
 		this.automated = builder.automated;
-		this.submitter = submitter;
+		this.submitter = builder.submitter;
 	}
 
 	/**
