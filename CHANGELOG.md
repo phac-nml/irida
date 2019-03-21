@@ -22,6 +22,7 @@ Changes
 * [UI]: Updated icons for datatables sorting and metadata importer.
 * [UI]: Fixed bug where users could not update their email subscriptions to projects. (19.01.2)
 * [UI/Developer]: Fixed issue where search for member to add to group resulted in no results found when search term contained capital letters.
+* [Documentation]: Added information on fixing ONLY_FULL_GROUP_BY sql error to the administrator faq docs.
 
 0.22.0 to 19.01
 ----------------

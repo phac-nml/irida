@@ -133,6 +133,8 @@ You should see `sistr_cmd 1.0.2` as output of the above command.
 
 ## 1. MariaDB
 
+### max key length was too long
+
 MariaDB Ubuntu users may encounter errors when deploying IRIDA due to character set requirements. If the application does not launch and you see the following message in the IRIDA logs: 
 
 ```
@@ -161,4 +163,36 @@ collation-server = utf8_general_ci
 ```
 
 You will need to drop your databases, restart your mysql service, and then recreate your databases before re-running IRIDA for the changes to take effect.
+
+### only_full_group_by error
+
+You may also run into the following error.
+
+```
+Reason: liquibase.exception.DatabaseException: Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'irida_uploader_test.ss.sample_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+```
+
+To fix this on a running sql instance, you can remove the `only_full_group_by` mode from sql
+
+NOTE: This will not persist when restarting mysql/mariadb
+
+```
+mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+```
+
+To make this a permanent setting, check your config file `/etc/mysql/my.cnf` and the config files listed there, for `sql_mode`. If it doesn't exist you can add it to the config file.
+
+In mysql, check what sql_modes are currently enabled, and set your sql_mode to be the same, but with `only_full_group_by` removed.
+
+You can check your sql_mode in mysql with the command `SELECT @@sql_mode;`
+
+Example: if you have `no_auto_create_user`, `no_engine_substitution`, and `only_full_group_by` enabled, you can add/change your mode in a config file to the following.
+
+```
+[mysqld]
+
+sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+```
+
+Then restart mysql `sudo service mysql restart`
 
