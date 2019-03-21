@@ -37,8 +37,8 @@ public class GroupsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAddGroupMember() {
-		final String groupId = "1";
-		final String anotherGroupId = "2";
+		final int groupId = 1;
+		final int anotherGroupId = 2;
 		final String searchTermUc = "Te";
 		final String searchTermLc = "te";
 		final String role = "GROUP_MEMBER";

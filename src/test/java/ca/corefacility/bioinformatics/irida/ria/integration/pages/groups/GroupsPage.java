@@ -68,7 +68,7 @@ public class GroupsPage extends AbstractPage {
 		get(driver, GROUPS_RELATIVE_URL);
 	}
 
-	public static GroupsPage goToGroupPage(WebDriver driver, String groupId) {
+	public static GroupsPage goToGroupPage(WebDriver driver, int groupId) {
 		get(driver, GROUP_RELATIVE_URL.replace("{groupId}", String.valueOf(groupId)));
 		return PageFactory.initElements(driver, GroupsPage.class);
 	}
