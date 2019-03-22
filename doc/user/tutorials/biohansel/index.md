@@ -1,13 +1,13 @@
 ---
 layout: default
-title: "bio_hansel: SNV Subtyping"
-search_title: "bio_hansel: SNV Subtyping"
-description: "A tutorial on how to subtype whole-genome sequencing data with bio_hansel"
+title: "biohansel: SNV Subtyping"
+search_title: "biohansel: SNV Subtyping"
+description: "A tutorial on how to subtype whole-genome sequencing data with biohansel"
 ---
 
-Subtyping *Salmonella* data with bio_hansel
+Subtyping *Salmonella* data with biohansel
 ============================================
-This is a quick tutorial on how to use IRIDA to analyze data with the bio_hansel pipeline.
+This is a quick tutorial on how to use IRIDA to analyze data with the biohansel pipeline.
 
 
 Tutorial Data
@@ -35,7 +35,7 @@ Selecting a Pipeline
 
 Once inside the cart, the **Select a Pipeline** button can be used to select a pipeline to run on the selected samples.
 
-For this tutorial, we will select the **bio_hansel Pipeline**: 
+For this tutorial, we will select the **biohansel Pipeline**: 
 ![](images/select-a-pipeline.png)
 
 
@@ -72,15 +72,15 @@ Clicking the pipeline name will bring you to a page for that analysis pipeline.
 Viewing Individual Sample Results
 =================================
 
-Once the pipeline is complete, you will be able to view the `bio_hansel` pipeline results and download the output files of the analysis.
+Once the pipeline is complete, you will be able to view the `biohansel` pipeline results and download the output files of the analysis.
 
 ![](images/bio_hansel-analysis-details-SRR1203042.png)
 
-You can view the `bio_hansel` analysis output files:
+You can view the `biohansel` analysis output files:
 
 ![](images/bio_hansel-analysis_details-SRR1203042-output-preview.png)
 
-You can view the detailed `bio_hansel` match results in a tabular view:
+You can view the detailed `biohansel` match results in a tabular view:
 
 ![](images/bio_hansel-analysis_details-preview-match_results.png)
 
@@ -88,7 +88,7 @@ You can view the detailed `bio_hansel` match results in a tabular view:
 Viewing Results For Multiple Samples
 ====================================
 
-If you had checked the **Save bio_hansel results to Project Line List Metadata** checkbox on the `bio_hansel` pipeline launch page, you will be able to view the results of your analyses in the **Line List** table on the **Project** page:
+If you had checked the **Save biohansel results to Project Line List Metadata** checkbox on the `biohansel` pipeline launch page, you will be able to view the results of your analyses in the **Line List** table on the **Project** page:
 
 ![](images/bio_hansel-line_list_table-3-samples.png)
 
@@ -96,15 +96,15 @@ If you had checked the **Save bio_hansel results to Project Line List Metadata**
 Interpreting the Results
 ========================
 
-For more information on interpreting your `bio_hansel` results, please see:
+For more information on interpreting your `biohansel` results, please see:
 
-- the [IRIDA bio_hansel Documentation][docs] or 
-- the [bio_hansel GitHub] page.
+- the [IRIDA biohansel Documentation][docs] or 
+- the [biohansel GitHub] page.
 
 
 [SRR1203042]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
 [forward reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_1.fastq.gz
 [reverse reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_2.fastq.gz
 [Web Upload Tutorial]: ../web-upload/
-[docs]: ../../user/bio_hansel/
-[bio_hansel GitHub]: https://github.com/phac-nml/bio_hansel
+[docs]: ../../user/biohansel/
+[biohansel GitHub]: https://github.com/phac-nml/biohansel

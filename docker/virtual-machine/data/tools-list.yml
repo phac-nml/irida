@@ -93,10 +93,10 @@ tools:
 
   ### Tools for bio_hansel v2.0.0 ###
 
-- name: "bio_hansel"
+- name: "biohansel"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "4654c51dae72"
+  - "ba6a0af656a6"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true

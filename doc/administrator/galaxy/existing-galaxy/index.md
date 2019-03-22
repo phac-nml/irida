@@ -101,7 +101,7 @@ Alternatively, the necessary tools can be installed manually through the followi
 * [SISTR Salmonella Typing][]
 * [refseq_masher]
 * [MentaLiST MLST][]
-* [Bio_Hansel][]
+* [BioHansel][]
 
 Link up Galaxy with IRIDA
 -------------------------
@@ -123,7 +123,7 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/
 [refseq_masher]: ../pipelines/refseq_masher/
 [MentaLiST MLST]: ../pipelines/mentalist/
-[Bio_Hansel]: ../pipelines/bio_hansel/
+[BioHansel]: ../pipelines/biohansel/
 [Purging Histories and Datasets]: https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
 [PostgreSQL]: https://www.postgresql.org/
 [MySQL/MariaDB]: https://mariadb.org/
