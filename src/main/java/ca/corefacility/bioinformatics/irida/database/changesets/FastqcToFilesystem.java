@@ -158,7 +158,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 							//only writing progress for mod1000 results or the log gets crazy
 							if (id % 1000 == 0) {
-								logger.info("Progress: Writing " + chartType + " number " + id + "/" + entries);
+								logger.info("Progress: Writing " + chartType + " number " + rowNum + "/" + entries);
 							}
 
 							//get a path for <output files base dir>/<output file id>/1/
