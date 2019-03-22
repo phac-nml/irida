@@ -137,7 +137,7 @@
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             },
             "tool_state": "{\"qc_vals\": \"{\\\"min_ambiguous_tiles\\\": \\\"3\\\", \\\"max_missing_tiles\\\": \\\"0.05\\\", \\\"low_cov_depth_freq\\\": \\\"20\\\", \\\"low_coverage_warning\\\": \\\"20\\\", \\\"max_intermediate_tiles\\\": \\\"0.05\\\"}\", \"__page__\": 0, \"kmer_vals\": \"{\\\"kmer_min\\\": \\\"8\\\", \\\"kmer_max\\\": \\\"1000\\\"}\", \"type_of_scheme\": \"{\\\"scheme_type\\\": \\\"heidelberg\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"dev_args\": \"{\\\"use_json\\\": \\\"true\\\"}\", \"input\": \"{\\\"paired_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired_collection\\\", \\\"__current_case__\\\": 3}\"}",
-            "tool_version": "2.0.0",
+            "tool_version": "2.1.5",
             "type": "tool",
             "uuid": "2b396dda-dfe0-4c3f-88e5-95ef1cd11f47",
             "workflow_outputs": [
