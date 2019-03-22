@@ -34,6 +34,9 @@ import java.util.List;
  */
 public class FastqcToFilesystem implements CustomSqlChange {
 
+	//going to do the updates in batches so things go smoothly
+	private final long BATCH_SIZE = 10000;
+
 	private static final Logger logger = LoggerFactory.getLogger(FastqcToFilesystem.class);
 	private Path outputFileDirectory;
 	private Path tempOutputDirectory;
@@ -44,6 +47,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+		Long previousMaxId = getMaxId(jdbcTemplate);
 
 		List<Path> writtenFiles = new ArrayList<>();
 
@@ -86,6 +91,17 @@ public class FastqcToFilesystem implements CustomSqlChange {
 								+ ".png'");
 			});
 
+		} catch (RuntimeException e) {
+			//if there's an error we want to write a log message about it
+			logger.error(
+					"There was a problem moving the FastQC images from the database to the filesystem.  The directory "
+							+ tempOutputDirectory
+							+ " contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  You do *not* have to cleanup existing FastQC images on the filesystem as they will be re-written.  Once your upgrade has completed successfully, you can safely remove the temp directory.");
+
+			throw e;
+		}
+
+		try {
 			//if everything went well, we can move those files into the real output directory
 			for (Path fileDir : writtenFiles) {
 				try {
@@ -105,14 +121,15 @@ public class FastqcToFilesystem implements CustomSqlChange {
 				throw new CustomChangeException("Temporary file directory " + tempOutputDirectory
 						+ " is not empty.  All files in here should have moved to output file directory "
 						+ outputFileDirectory);
-
 			}
-		} catch (CustomChangeException | RuntimeException e) {
-			//if there's an error we want to write a log message about it
-			logger.error(
-					"There was a problem moving the FastQC images from the database to the filesystem.  The directory "
-							+ tempOutputDirectory
-							+ " contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  You do *not* have to cleanup existing FastQC images on the filesystem as they will be re-written.  Once your upgrade has completed successfully, you can safely remove the temp directory.");
+		} catch (CustomChangeException e) {
+			logger.error("There was a problem moving the FastQC images from the temporary file location "
+					+ tempOutputDirectory
+					+ " to their final output file location.  This is going to involve some manual cleanup.  We recommend first creating a backup of "
+					+ outputFileDirectory + ".  The previous max file ID was " + previousMaxId + ".  Any files in "
+					+ outputFileDirectory + " with an ID greater than " + previousMaxId
+					+ " were created during this process and can be deleted.  The directory " + tempOutputDirectory
+					+ " contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  Once your upgrade has completed successfully, you can safely remove the temp directory.");
 
 			throw e;
 		}
@@ -130,21 +147,20 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 		List<Path> writtenFiles = new ArrayList<>();
 
-		//going to do the updates in batches so things go smoothly
-		long batchsize = 10000;
-
 		//first get the count of analysis_fastqc entries we need to do for this chart type
 		String sql = "SELECT count(o.id) FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=?";
 		Long entries = jdbcTemplate.queryForObject(sql, new Object[] { chartType + ".png" }, Long.class);
 		logger.info("Going to write " + entries + " entires for chart type " + chartType);
 
 		//doing this in a for loop to batch the entries
-		for (long offset = 0; offset < entries; offset += batchsize) {
+		for (long offset = 0; offset < entries; offset += BATCH_SIZE) {
 
 			//get a chunk of entries for this chart type
 			sql = "SELECT f.id, o.id, f." + chartType
 					+ " FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=? ORDER BY f.id ASC LIMIT "
-					+ batchsize + " OFFSET " + offset;
+					+ BATCH_SIZE + " OFFSET " + offset;
+
+			logger.info("Progress: Writing " + chartType + " number " + offset + "/" + entries);
 
 			List<Object[]> updates = jdbcTemplate.query(sql, new Object[] { chartType + ".png" },
 					//this mapper will look at the temp output file entry and write a file to the file system
@@ -155,11 +171,6 @@ public class FastqcToFilesystem implements CustomSqlChange {
 							Long id = rs.getLong(1); //the analysis id
 							Long chartId = rs.getLong(2); //the analysis_output_file id
 							byte[] chart = rs.getBytes(3); //the chart type
-
-							//only writing progress for mod1000 results or the log gets crazy
-							if (id % 1000 == 0) {
-								logger.info("Progress: Writing " + chartType + " number " + rowNum + "/" + entries);
-							}
 
 							//get a path for <output files base dir>/<output file id>/1/
 							Path baseFilePath = tempOutputDirectory.resolve(chartId.toString());
@@ -179,17 +190,12 @@ public class FastqcToFilesystem implements CustomSqlChange {
 								throw new SQLException("Couldn't create " + chartType + " file for analysis " + id, e);
 							}
 
-							// get the path as a string
-							String fullPath = newFileDirectory.toString();
-
-							//get a string representation of the output file directory
-							String basePath = tempOutputDirectory.toString();
-
-							// relativize the path by stripping the base file path
-							fullPath = fullPath.replaceFirst(basePath + "/", "");
+							//relativeize the path to the output files to store in the DB
+							Path relativePath = tempOutputDirectory.relativize(newFileDirectory);
+							String relativeStr = relativePath.toString();
 
 							//return the file path and chart id
-							return new Object[] { fullPath, chartId };
+							return new Object[] { relativeStr, chartId };
 						}
 					});
 
@@ -203,6 +209,20 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 		return writtenFiles;
 
+	}
+
+	/**
+	 * Get the previous maximum output file ID for analysis output files.  This might be used for an error statement if
+	 * things go badly.
+	 *
+	 * @param jdbcTemplate a {@link JdbcTemplate} for doing an sql query.
+	 * @return the maximum file id in the analysis output file dir
+	 */
+	private Long getMaxId(JdbcTemplate jdbcTemplate) {
+		String sql = "SELECT id FROM analysis_output_file ORDER BY id DESC LIMIT 1";
+
+		Long maxFileId = jdbcTemplate.queryForObject(sql, Long.class);
+		return maxFileId;
 	}
 
 	@Override
