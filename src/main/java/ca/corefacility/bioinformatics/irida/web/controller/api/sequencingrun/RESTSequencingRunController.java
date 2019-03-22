@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.model.run.GenericSequencingRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,17 +58,19 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 
 	}
 
+
 	/**
-	 * Create a MiSeq run
+	 * Create a Sequencing run
 	 *
 	 * @param representation the run info to create
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
-	@RequestMapping(value = "/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(value = "/{type}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap createMiseqRun(@RequestBody MiseqRun representation, HttpServletResponse response) {
-		logger.trace("creating miseq run");
+	public ModelMap createGenericRun(@PathVariable String runType, @RequestBody GenericSequencingRun representation, HttpServletResponse response) {
+		logger.trace("creating sequencing run");
+		representation.setSequencerType(runType);
 		return create(representation, response);
 	}
 
@@ -76,7 +80,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Override
 	protected Collection<Link> constructCollectionResourceLinks(ResourceCollection<SequencingRun> list) {
 		Collection<Link> links = super.constructCollectionResourceLinks(list);
-		links.add(linkTo(methodOn(RESTSequencingRunController.class).createMiseqRun(null, null)).withRel(MISEQ_REL));
+		//links.add(linkTo(methodOn(RESTSequencingRunController.class).createGenericRun(null, null,null)).withRel(MISEQ_REL));
 		return links;
 	}
 
