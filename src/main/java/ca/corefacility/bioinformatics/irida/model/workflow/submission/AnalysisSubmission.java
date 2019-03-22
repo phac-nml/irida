@@ -70,7 +70,6 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	protected Set<SequencingObject> inputFiles;
 
-	@NotAudited
 	@Column(name = "automated")
 	private boolean automated;
 

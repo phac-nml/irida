@@ -21,6 +21,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="submitted_project_id" type="bigint(20)"/>
+            <column name="automated" type="bit(1)"/>
         </addColumn>
 
         <!--updating old automated runs-->
@@ -28,6 +29,13 @@
         <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT sistr_typing FROM sequencing_object)
         </sql>
         <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT automated_assembly FROM
+            sequencing_object)
+        </sql>
+
+        <sql>UPDATE analysis_submission_AUD SET automated=0</sql>
+        <sql>UPDATE analysis_submission_AUD s SET s.automated=1 WHERE s.id IN (SELECT sistr_typing FROM sequencing_object)
+        </sql>
+        <sql>UPDATE analysis_submission_AUD s SET s.automated=1 WHERE s.id IN (SELECT automated_assembly FROM
             sequencing_object)
         </sql>
 
