@@ -220,9 +220,13 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	 */
 	private Long getMaxId(JdbcTemplate jdbcTemplate) {
 		String sql = "SELECT id FROM analysis_output_file ORDER BY id DESC LIMIT 1";
+		List<Long> longs = jdbcTemplate.queryForList(sql, Long.class);
 
-		Long maxFileId = jdbcTemplate.queryForObject(sql, Long.class);
-		return maxFileId;
+		if (longs.isEmpty()) {
+			return 0L;
+		}
+		return longs.iterator()
+				.next();
 	}
 
 	@Override
