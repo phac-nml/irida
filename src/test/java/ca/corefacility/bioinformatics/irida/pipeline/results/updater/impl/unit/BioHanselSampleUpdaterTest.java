@@ -59,7 +59,7 @@ public class BioHanselSampleUpdaterTest {
 		);
 		// @formatter:on
 		final Path path = Paths.get(
-				"src/test/resources/files/biohansel/SRR1203042-bi_hansel-results-heidelberg-0.5.0.json");
+				"src/test/resources/files/biohansel/SRR1203042-biohansel-results-heidelberg-0.5.0.json");
 		final AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(path, null, null, null);
 		final Analysis analysis = new Analysis(null, ImmutableMap.of("biohansel-results.json", analysisOutputFile),
 				null, null);

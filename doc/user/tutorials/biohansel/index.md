@@ -46,7 +46,7 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![](images/bio_hansel-pipeline_launch-initial.png)
 
-Please select the **Salmonella Heidelberg SNV Subtyping Scheme** and ensure that the **Save bio_hansel results to Project Line List Metadata** checkbox is checked:
+Please select the **Salmonella Heidelberg SNV Subtyping Scheme** and ensure that the **Save biohansel results to Project Line List Metadata** checkbox is checked:
 
 ![](images/bio_hansel-pipeline_launch-selected_scheme-save_to_sample_metadata.png)
 
