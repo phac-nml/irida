@@ -91,7 +91,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 								+ ".png'");
 			});
 
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			//if there's an error we want to write a log message about it
 			logger.error(
 					"There was a problem moving the FastQC images from the database to the filesystem.  The directory "
@@ -122,7 +122,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 						+ " is not empty.  All files in here should have moved to output file directory "
 						+ outputFileDirectory);
 			}
-		} catch (CustomChangeException e) {
+		} catch (Exception e) {
 			logger.error("There was a problem moving the FastQC images from the temporary file location "
 					+ tempOutputDirectory
 					+ " to their final output file location.  This is going to involve some manual cleanup.  We recommend first creating a backup of "
