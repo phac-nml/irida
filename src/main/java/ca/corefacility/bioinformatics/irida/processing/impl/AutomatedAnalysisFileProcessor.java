@@ -150,36 +150,40 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 
 	/**
 	 * Do the work the old Assembly and SISTR file processors used to do and assign the assembly and SISTR result back
-	 * to the {@link SequencingObject}.  This will only do something if its an Assembly or SISTR analysis.
+	 * to the {@link SequencingObject}.  This will only do something if its an Assembly or SISTR analysis and if
+	 * updateSamples is true.
 	 *
 	 * @param submission       the {@link AnalysisSubmission} to check
 	 * @param sequencingObject the {@link SequencingObject} to apply results to.
 	 */
 	private void legacyFileProcessorCompatibility(AnalysisSubmission submission, SequencingObject sequencingObject) {
-		try {
-			IridaWorkflow assemblyWorkflow = workflowsService.getDefaultWorkflowByType(
-					BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-			IridaWorkflow sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
+		if (submission.getUpdateSamples()) {
+			try {
+				IridaWorkflow assemblyWorkflow = workflowsService.getDefaultWorkflowByType(
+						BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+				IridaWorkflow sistrWorkflow = workflowsService.getDefaultWorkflowByType(
+						BuiltInAnalysisTypes.SISTR_TYPING);
 
-			UUID assemblyWorkflowWorkflowIdentifier = assemblyWorkflow.getWorkflowIdentifier();
-			UUID sistrWorkflowWorkflowIdentifier = sistrWorkflow.getWorkflowIdentifier();
+				UUID assemblyWorkflowWorkflowIdentifier = assemblyWorkflow.getWorkflowIdentifier();
+				UUID sistrWorkflowWorkflowIdentifier = sistrWorkflow.getWorkflowIdentifier();
 
-			if (submission.getWorkflowId()
-					.equals(assemblyWorkflowWorkflowIdentifier)) {
-				// Associate the assembly submission with the seqobject
-				sequencingObject.setAutomatedAssembly(submission);
+				if (submission.getWorkflowId()
+						.equals(assemblyWorkflowWorkflowIdentifier)) {
+					// Associate the assembly submission with the seqobject
+					sequencingObject.setAutomatedAssembly(submission);
 
-				objectRepository.save(sequencingObject);
-			} else if (submission.getWorkflowId()
-					.equals(sistrWorkflowWorkflowIdentifier)) {
-				// Associate the sistr submission with the seqobject
-				sequencingObject.setSistrTyping(submission);
+					objectRepository.save(sequencingObject);
+				} else if (submission.getWorkflowId()
+						.equals(sistrWorkflowWorkflowIdentifier)) {
+					// Associate the sistr submission with the seqobject
+					sequencingObject.setSistrTyping(submission);
 
-				objectRepository.save(sequencingObject);
+					objectRepository.save(sequencingObject);
+				}
+
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Could not associate assembly workflow with analysis " + submission.getIdentifier(), e);
 			}
-
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Could not associate assembly workflow with analysis " + submission.getIdentifier(), e);
 		}
 	}
 }
