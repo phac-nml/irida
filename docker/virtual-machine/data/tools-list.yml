@@ -91,7 +91,7 @@ tools:
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
-  ### Tools for bio_hansel v2.0.0 ###
+  ### Tools for biohansel v2.1.5 ###
 
 - name: "biohansel"
   owner: "nml"

@@ -304,8 +304,8 @@ public class AnalysisController {
 					tree(submission, model);
 				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
-					model.addAttribute("bio_hansel", true);
+				} else if (analysisType.equals(BuiltInAnalysisTypes.BIOHANSEL)) {
+					model.addAttribute("biohansel", true);
 				}
 			}
 

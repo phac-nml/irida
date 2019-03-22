@@ -52,16 +52,16 @@ public class BioHanselSampleUpdaterTest {
 	public void testUpdateSucess() throws AnalysisAlreadySetException, PostProcessingException {
 		// @formatter:off
 		final Map<String, String> expectedResults = ImmutableMap.of(
-				"bio_hansel/heidelberg/v0.5.0/Subtype", "2.2.1.1.2",
-				"bio_hansel/heidelberg/v0.5.0/Average Tile Coverage", "27.3961038961",
-				"bio_hansel/heidelberg/v0.5.0/QC Status", "FAIL",
-				"bio_hansel/heidelberg/v0.5.0/QC Message","FAIL: Missing Tiles Error 1: 25.25% missing tiles; more than 5.00% missing tiles threshold. Okay coverage depth (27.6 >= 20.0 expected), but this may be the wrong serovar or species for scheme \"heidelberg\" | FAIL: Mixed Sample Error 2: Mixed subtypes found: \"1; 2.2.1.1.2\"."
+				"biohansel/heidelberg/v0.5.0/Subtype", "2.2.1.1.2",
+				"biohansel/heidelberg/v0.5.0/Average Tile Coverage", "27.3961038961",
+				"biohansel/heidelberg/v0.5.0/QC Status", "FAIL",
+				"biohansel/heidelberg/v0.5.0/QC Message","FAIL: Missing Tiles Error 1: 25.25% missing tiles; more than 5.00% missing tiles threshold. Okay coverage depth (27.6 >= 20.0 expected), but this may be the wrong serovar or species for scheme \"heidelberg\" | FAIL: Mixed Sample Error 2: Mixed subtypes found: \"1; 2.2.1.1.2\"."
 		);
 		// @formatter:on
 		final Path path = Paths.get(
-				"src/test/resources/files/bio_hansel/SRR1203042-bio_hansel-results-heidelberg-0.5.0.json");
+				"src/test/resources/files/biohansel/SRR1203042-bi_hansel-results-heidelberg-0.5.0.json");
 		final AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(path, null, null, null);
-		final Analysis analysis = new Analysis(null, ImmutableMap.of("bio_hansel-results.json", analysisOutputFile),
+		final Analysis analysis = new Analysis(null, ImmutableMap.of("biohansel-results.json", analysisOutputFile),
 				null, null);
 		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
 				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null)))

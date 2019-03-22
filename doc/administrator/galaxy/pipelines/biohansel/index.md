@@ -11,7 +11,7 @@ This workflow uses the following software for the biohansel pipeline. The pipeli
 
 | Tool Name                      | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:------------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **biohansel**                 | nml      | [ba6a0af656a6][]| 9 (2018-05-09)              | [Galaxy Main Shed][] |
+| **biohansel**                 | nml      | [ba6a0af656a6][]| 9 (2019-03-20)              | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.

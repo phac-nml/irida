@@ -9,7 +9,7 @@ import { renderPlainTextPreview } from "./plaintext-preview";
 import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
 import "../../vendor/datatables/datatables";
-import { BioHanselController } from "./controllers/bio_hansel";
+import { BioHanselController } from "./controllers/biohansel";
 import { renderJsonPreview } from "./json-preview";
 
 const baseAjaxUrl = window.PAGE.URLS.base;
@@ -397,9 +397,9 @@ const iridaAnalysis = angular
           controllerAs: "sistrCtrl",
           controller: ["AnalysisService", SistrController]
         })
-        .state("bio_hansel", {
-          url: "/bio_hansel",
-          templateUrl: "bio_hansel.html",
+        .state("biohansel", {
+          url: "/biohansel",
+          templateUrl: "biohansel.html",
           controllerAs: "bioHanselCtrl",
           controller: ["AnalysisService", BioHanselController]
         })

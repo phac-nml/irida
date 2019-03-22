@@ -12,7 +12,7 @@ public class BuiltInAnalysisTypes {
 
 	public static final AnalysisType ASSEMBLY_ANNOTATION = new AnalysisType("ASSEMBLY_ANNOTATION");
 
-	public static final AnalysisType BIO_HANSEL = new AnalysisType("BIO_HANSEL");
+	public static final AnalysisType BIOHANSEL = new AnalysisType("BIOHANSEL");
 
 	public static final AnalysisType ASSEMBLY_ANNOTATION_COLLECTION = new AnalysisType(
 			"ASSEMBLY_ANNOTATION_COLLECTION");

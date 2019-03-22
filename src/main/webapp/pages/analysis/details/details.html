@@ -109,9 +109,9 @@
               text="Sistr"
             ></sub-nav-item>
             <sub-nav-item
-              th:if="${bio_hansel}"
-              state="bio_hansel"
-              text="bio_hansel"
+              th:if="${biohansel}"
+              state="biohansel"
+              text="biohansel"
             ></sub-nav-item>
             <sub-nav-item
               th:if="${isCompleted}"
@@ -328,7 +328,7 @@
             th:replace="~{analysis/details/ng-templates/joberror::main}"
           ></div>
           <div
-            th:replace="~{analysis/details/ng-templates/bio_hansel::main}"
+            th:replace="~{analysis/details/ng-templates/biohansel::main}"
           ></div>
 
           <script

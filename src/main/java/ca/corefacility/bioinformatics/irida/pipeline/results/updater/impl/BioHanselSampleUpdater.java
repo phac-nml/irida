@@ -31,17 +31,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * {@link AnalysisSampleUpdater} for bio_hansel results to be written to metadata of {@link Sample}s.
+ * {@link AnalysisSampleUpdater} for biohansel results to be written to metadata of {@link Sample}s.
  */
 @Component
 public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	private static final Logger logger = LoggerFactory.getLogger(BioHanselSampleUpdater.class);
-	private static final String BIO_HANSEL_RESULTS_FILE = "bio_hansel-results.json";
+	private static final String BIOHANSEL_RESULTS_FILE = "biohansel-results.json";
 	private static final String SCHEME_KEY = "scheme";
 	private static final String VERSION_KEY = "scheme_version";
-	private static final String TMPL_NAME_FMT = "bio_hansel/%1$s/v%2$s";
+	private static final String TMPL_NAME_FMT = "biohansel/%1$s/v%2$s";
 	// @formatter:off
-	private static Map<String, String> BIO_HANSEL_RESULTS_FIELDS = ImmutableMap.of(
+	private static Map<String, String> BIOHANSEL_RESULTS_FIELDS = ImmutableMap.of(
 			"subtype", "Subtype",
 			"qc_status", "QC Status",
 			"qc_message", "QC Message",
@@ -58,9 +58,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	/**
-	 * Add bio_hansel results to the metadata of the given {@link Sample}.
+	 * Add biohansel results to the metadata of the given {@link Sample}.
 	 * <p>
-	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} of the {@link Sample} if one doesn't exist.
+	 * Create a biohansel {@link MetadataTemplate} for each {@link Project} of the {@link Sample} if one doesn't exist.
 	 *
 	 * @param samples  The sample to update (collection should only have one {@link Sample} object).
 	 * @param analysis Use the results from this {@link AnalysisSubmission} to update the {@link Sample} metadata.
@@ -76,7 +76,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				.next();
 
 		AnalysisOutputFile aof = analysis.getAnalysis()
-				.getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
+				.getAnalysisOutputFile(BIOHANSEL_RESULTS_FILE);
 
 		Path filePath = aof.getFile();
 
@@ -94,7 +94,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				final String scheme = (String) result.get(SCHEME_KEY);
 				final String version = (String) result.get(VERSION_KEY);
 				final String baseNamespace = getBaseNamespace(scheme, version);
-				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
+				BIOHANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
 					if (result.containsKey(key)) {
 						String value = result.get(key)
@@ -103,7 +103,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 								analysis);
 						stringEntries.put(formattedField, metadataEntry);
 					} else {
-						logger.warn("bio_hansel output file '" + filePath.toFile()
+						logger.warn("biohansel output file '" + filePath.toFile()
 								.getAbsolutePath() + "' does not contain expected key '" + key
 								+ "'. Please check the format of this file!");
 					}
@@ -129,29 +129,29 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 */
 	@Override
 	public AnalysisType getAnalysisType() {
-		return BuiltInAnalysisTypes.BIO_HANSEL;
+		return BuiltInAnalysisTypes.BIOHANSEL;
 	}
 
 	/**
-	 * Get the base bio_hansel metadata field namespace.
+	 * Get the base biohansel metadata field namespace.
 	 * <p>
-	 * For example, `bio_hansel/heidelberg/v0.5.0`, so that metadata fields from different analyses of bio_hansel will
-	 * not clash, e.g. `bio_hansel/heidelberg/v0.5.0/Subtype` vs `bio_hansel/enteritidis/v0.7.0/Subtype`.
+	 * For example, `biohansel/heidelberg/v0.5.0`, so that metadata fields from different analyses of biohansel will
+	 * not clash, e.g. `biohansel/heidelberg/v0.5.0/Subtype` vs `biohansel/enteritidis/v0.7.0/Subtype`.
 	 *
-	 * @param scheme bio_hansel scheme name.
-	 * @param version bio_hansel scheme version.
-	 * @return Base bio_hansel metadata field namespace prefix.
+	 * @param scheme biohansel scheme name.
+	 * @param version biohansel scheme version.
+	 * @return Base biohansel metadata field namespace prefix.
 	 */
 	private String getBaseNamespace(String scheme, String version) {
 		return String.format(TMPL_NAME_FMT, scheme, version);
 	}
 
 	/**
-	 * Given a base bio_hansel metadata field namespace, get the namespaced metadata field name.
+	 * Given a base biohansel metadata field namespace, get the namespaced metadata field name.
 	 *
-	 * @param baseNamespace The base bio_hansel metadata field namespace, e.g. `bio_hansel/enteritidis/v0.7.0`
+	 * @param baseNamespace The base biohansel metadata field namespace, e.g. `biohansel/enteritidis/v0.7.0`
 	 * @param field Metadata field, e.g. `Subtype`.
-	 * @return Namespaced metadata field, e.g. `bio_hansel/enteritidis/v0.7.0/Subtype`.
+	 * @return Namespaced metadata field, e.g. `biohansel/enteritidis/v0.7.0/Subtype`.
 	 */
 	private String getNamespacedField(String baseNamespace, String field) {
 		return baseNamespace + "/" + field;

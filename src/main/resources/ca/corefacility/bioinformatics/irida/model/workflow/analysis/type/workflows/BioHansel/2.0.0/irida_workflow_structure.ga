@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "bio_hansel-sequence_reads_paired-2.0.0",
+    "name": "biohansel-sequence_reads_paired-2.1.5",
     "steps": {
         "0": {
             "annotation": "", 
@@ -38,7 +38,7 @@
         }, 
         "1": {
             "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/biohansel/biohansel/2.1.5", 
             "id": 1, 
             "input_connections": {
                 "input|paired_collection": {
@@ -48,12 +48,12 @@
             }, 
             "inputs": [
                 {
-                    "description": "runtime parameter for tool bio_hansel", 
+                    "description": "runtime parameter for tool biohansel", 
                     "name": "input"
                 }
             ], 
             "label": null, 
-            "name": "bio_hansel", 
+            "name": "biohansel", 
             "outputs": [
                 {
                     "name": "results.tab", 
@@ -87,52 +87,52 @@
             "post_job_actions": {
                 "RenameDatasetActionmatch_results.json": {
                     "action_arguments": {
-                        "newname": "bio_hansel-match_results.json"
+                        "newname": "biohansel-match_results.json"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "match_results.json"
                 }, 
                 "RenameDatasetActionmatch_results.tab": {
                     "action_arguments": {
-                        "newname": "bio_hansel-match_results.tab"
+                        "newname": "biohansel-match_results.tab"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "match_results.tab"
                 }, 
                 "RenameDatasetActionresults.json": {
                     "action_arguments": {
-                        "newname": "bio_hansel-results.json"
+                        "newname": "biohansel-results.json"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "results.json"
                 }, 
                 "RenameDatasetActionresults.tab": {
                     "action_arguments": {
-                        "newname": "bio_hansel-results.tab"
+                        "newname": "biohansel-results.tab"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "results.tab"
                 }, 
                 "RenameDatasetActiontech_results.json": {
                     "action_arguments": {
-                        "newname": "bio_hansel-tech_results.json"
+                        "newname": "biohansel-tech_results.json"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "tech_results.json"
                 }, 
                 "RenameDatasetActiontech_results.tab": {
                     "action_arguments": {
-                        "newname": "bio_hansel-tech_results.tab"
+                        "newname": "biohansel-tech_results.tab"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "tech_results.tab"
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0", 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/biohansel/biohansel/2.1.5", 
             "tool_shed_repository": {
-                "changeset_revision": "4654c51dae72", 
-                "name": "bio_hansel", 
+                "changeset_revision": "ba6a0af656a6", 
+                "name": "biohansel", 
                 "owner": "nml", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             }, 

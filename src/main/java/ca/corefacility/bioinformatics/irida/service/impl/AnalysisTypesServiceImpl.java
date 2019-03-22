@@ -66,7 +66,7 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		allTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
 		allTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);
 		allTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION.getType(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-		allTypesMap.put(BuiltInAnalysisTypes.BIO_HANSEL.getType(), BuiltInAnalysisTypes.BIO_HANSEL);
+		allTypesMap.put(BuiltInAnalysisTypes.BIOHANSEL.getType(), BuiltInAnalysisTypes.BIOHANSEL);
 		allTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
 				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
 		allTypesMap.put(BuiltInAnalysisTypes.REFSEQ_MASHER.getType(), BuiltInAnalysisTypes.REFSEQ_MASHER);
@@ -77,7 +77,7 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		runnableTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
 		runnableTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);
 		runnableTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION.getType(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-		runnableTypesMap.put(BuiltInAnalysisTypes.BIO_HANSEL.getType(), BuiltInAnalysisTypes.BIO_HANSEL);
+		runnableTypesMap.put(BuiltInAnalysisTypes.BIOHANSEL.getType(), BuiltInAnalysisTypes.BIOHANSEL);
 		runnableTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
 				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
 		runnableTypesMap.put(BuiltInAnalysisTypes.REFSEQ_MASHER.getType(), BuiltInAnalysisTypes.REFSEQ_MASHER);

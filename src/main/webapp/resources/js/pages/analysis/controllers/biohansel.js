@@ -1,7 +1,7 @@
 import $ from "jquery";
 import { analysisOutputFileApiUrl, trim } from "../preview.utils";
 
-// Example bio_hansel results:
+// Example biohansel results:
 // {
 //   "all_subtypes": "1; 2.2.1.1.2",
 //   "are_subtypes_consistent": false,
@@ -28,12 +28,12 @@ import { analysisOutputFileApiUrl, trim } from "../preview.utils";
 //   "subtype": "2.2.1.1.2",
 //   "tiles_matching_subtype": "2592097-2.2.1.1.2"
 // }
-// Only rendering basic bio_hansel info targeted for use by technicians
+// Only rendering basic biohansel info targeted for use by technicians
 
 /**
- * Generate HTML representation of bio_hansel results
- * @param {Object} vm bio_hansel results and i18n messages
- * @returns {string} HTML representation of basic bio_hansel results
+ * Generate HTML representation of biohansel results
+ * @param {Object} vm biohansel results and i18n messages
+ * @returns {string} HTML representation of basic biohansel results
  */
 function toHtml(vm) {
   const {
@@ -109,26 +109,26 @@ function toHtml(vm) {
 }
 
 /**
- * bio_hansel Angular controller
+ * biohansel Angular controller
  *
- * Using literal string templating to generate basic HTML table of bio_hansel
+ * Using literal string templating to generate basic HTML table of biohansel
  * results for technicians.
  *
- * @param analysisService Angular service component for getting bio_hansel analysis JSON output file contents
+ * @param analysisService Angular service component for getting biohansel analysis JSON output file contents
  */
 export function BioHanselController(analysisService) {
-  const BIO_HANSEL_RESULTS = "bio_hansel-results.json";
+  const BIOHANSEL_RESULTS = "biohansel-results.json";
   const vm = this;
   vm.results = null;
   const $cntr = $(".js-bio-hansel");
   vm.i18n = $(".js-bio-hansel-messages").data();
-  // Get info about each analysis output file for a bio_hansel analysis submission
-  // and get all textual contents for `bio_hansel-results.json`, parse JSON and
+  // Get info about each analysis output file for a biohansel analysis submission
+  // and get all textual contents for `biohansel-results.json`, parse JSON and
   // render basic HTML table
   analysisService.getOutputsInfo().then(outputInfos => {
     for (const outputInfo of outputInfos) {
       const { filename, fileSizeBytes } = outputInfo;
-      if (filename !== BIO_HANSEL_RESULTS) {
+      if (filename !== BIOHANSEL_RESULTS) {
         continue;
       }
       const apiUrl = analysisOutputFileApiUrl(
