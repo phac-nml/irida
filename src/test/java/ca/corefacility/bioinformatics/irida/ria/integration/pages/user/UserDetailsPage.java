@@ -67,6 +67,14 @@ public class UserDetailsPage extends AbstractPage {
 		confirmButton.click();
 	}
 
+	public void subscribeToFirstProject() {
+		WebElement firstCheckbox = driver.findElements(By.className("subcription-checkbox"))
+				.iterator()
+				.next();
+
+		firstCheckbox.click();
+	}
+
 	public boolean checkSuccessNotification() {
 		return pageUtilities.checkSuccessNotification();
 	}

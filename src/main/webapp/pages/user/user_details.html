@@ -234,17 +234,22 @@
 			}
 		}]);
 
-        pwd.service('SubscriptionService', ['$http', function($http){
-          var svc = this;
+				pwd.service('SubscriptionService', ['$http', function ($http) {
+					var svc = this;
 
-          svc.updateSubscription = function(userId, projectId, subscribe){
-            var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
-            urlBase += projectId + '/subscribe/' + userId;
-            var params = {subscribe:subscribe};
+					svc.updateSubscription = function (userId, projectId, subscribe) {
+						var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
+						urlBase += projectId + '/subscribe/' + userId;
+						var params = $.param({ subscribe: subscribe });
 
-            return $http.post(urlBase, params);
-          };
-        }]);
+						return $http({
+							method: "POST",
+							url: urlBase,
+							data: $.param({ subscribe: subscribe }),
+							headers: { "Content-Type": "application/x-www-form-urlencoded" }
+						});
+					};
+				}]);
 
         pwd.controller('SubscriptionController', ['SubscriptionService', function (SubscriptionService) {
           var sub = this;
