@@ -305,6 +305,7 @@ public class Project extends IridaResourceSupport
 	 * AUTO - Run SISTR
 	 * AUTO_METADATA - Run and save results to metadata
 	 */
+	//TODO REMOVEME
 	public enum AutomatedSISTRSetting {
 		OFF,
 		AUTO,
