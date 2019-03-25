@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,42 +46,98 @@ public class ProjectSettingsController {
 	private final ProjectService projectService;
 	private final ProjectRemoteService projectRemoteService;
 	private final UserService userService;
+	private AnalysisSubmissionService analysisSubmissionService;
+	private IridaWorkflowsService workflowsService;
 
 	public static final String ACTIVE_NAV_SETTINGS = "settings";
 
 	@Autowired
 	public ProjectSettingsController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
 			ProjectControllerUtils projectControllerUtils, ProjectService projectService,
-			ProjectRemoteService projectRemoteService, UserService userService) {
+			ProjectRemoteService projectRemoteService, UserService userService, AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService workflowsService) {
 		this.messageSource = messageSource;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.projectRemoteService = projectRemoteService;
 		this.userService = userService;
+		this.analysisSubmissionService = analysisSubmissionService;
+		this.workflowsService = workflowsService;
 	}
 
 	/**
 	 * Request for a {@link Project} basic settings page
 	 *
-	 * @param projectId
-	 *            the ID of the {@link Project} to read
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            Logged in user
-	 *
+	 * @param projectId the ID of the {@link Project} to read
+	 * @param model     Model for the view
+	 * @param principal Logged in user
+	 * @param locale    Locale of the logged in user
 	 * @return name of the project settings page
 	 */
 	@RequestMapping("")
 	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
-			final Principal principal) {
+			final Principal principal, Locale locale) {
 		Project project = projectService.read(projectId);
+		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
+
+		List<TemplateResponseType> templateResponseTypes = templatesToResponse(templates, locale);
+
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "basic");
+		model.addAttribute("analysisTemplates", templateResponseTypes);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/basic";
+	}
+
+	/**
+	 * Convert a list of analysis templates to {@link TemplateResponseType} instances
+	 *
+	 * @param templates the list of {@link AnalysisSubmissionTemplate}
+	 * @param locale    User's logged in locale
+	 * @return a list of {@link TemplateResponseType}
+	 */
+	private List<TemplateResponseType> templatesToResponse(List<AnalysisSubmissionTemplate> templates, Locale locale) {
+		List<TemplateResponseType> responses = new ArrayList<>(templates.size());
+		for (AnalysisSubmissionTemplate t : templates) {
+			UUID workflowId = t.getWorkflowId();
+			String typeString;
+
+			try {
+				IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
+				AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+						.getAnalysisType();
+
+				typeString = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, locale);
+			} catch (IridaWorkflowNotFoundException e) {
+				typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
+			}
+
+			responses.add(new TemplateResponseType(t.getName(), typeString));
+		}
+
+		return responses;
+	}
+
+	/**
+	 * Response class for easily formatting analysis templates for the project settings page
+	 */
+	private class TemplateResponseType {
+		String name;
+		String analysisType;
+
+		TemplateResponseType(String name, String analysisType) {
+			this.name = name;
+			this.analysisType = analysisType;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getAnalysisType() {
+			return analysisType;
+		}
 	}
 
 	/**
@@ -106,7 +164,7 @@ public class ProjectSettingsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/remote";
 	}
-	
+
 	/**
 	 * Request for a {@link Project} deletion page
 	 *
@@ -130,11 +188,11 @@ public class ProjectSettingsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/delete";
 	}
-	
+
 	/**
 	 * Delete a project from the UI. Will redirect to user's projects page on
 	 * completion.
-	 * 
+	 *
 	 * @param projectId
 	 *            the {@link Project} id to delete
 	 * @param confirm
@@ -146,10 +204,10 @@ public class ProjectSettingsController {
 	public String deleteProject(@PathVariable Long projectId, @RequestParam(required=false, defaultValue="") String confirm) {
 		if(confirm.equals("true")){
 			projectService.delete(projectId);
-			
+
 			return "redirect:/projects";
 		}
-		
+
 		return "redirect: /projects/" + projectId + "/settings/delete";
 	}
 
@@ -278,7 +336,7 @@ public class ProjectSettingsController {
 	@ResponseBody
 	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
 			@RequestParam(defaultValue = "0") Integer minimumCoverage,
-			@RequestParam(defaultValue = "0") Integer maximumCoverage, 
+			@RequestParam(defaultValue = "0") Integer maximumCoverage,
 			Locale locale) {
 		Project read = projectService.read(projectId);
 
@@ -288,7 +346,7 @@ public class ProjectSettingsController {
 		if (maximumCoverage == 0) {
 			maximumCoverage = null;
 		}
-		
+
 		Map<String, Object> updates = new HashMap<>();
 		updates.put("minimumCoverage", minimumCoverage);
 		updates.put("maximumCoverage", maximumCoverage);

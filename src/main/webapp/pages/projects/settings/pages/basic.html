@@ -21,7 +21,26 @@
         <div class="col-md-12">
             <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
             
-            <a class="btn btn-default" href="/pipelines" th:href="@{/pipelines(automatedProject=${project.id})}" role="button">
+            <table class="table table-striped" th:if="${not analysisTemplates.isEmpty()}">
+                <thead>
+                   <th th:text="#{project.settings.automated.template.name}">_Pipeline name_</th>
+                   <th th:text="#{project.settings.automated.template.type}">_Analysis type_</th>
+                   <th th:if="${manageMembers}"></th>
+                </thead>
+                <tbody>
+                    <tr th:each="template : ${analysisTemplates}">
+                        <td th:text="${template.name}">_Name_</td>
+                        <td th:text="${template.analysisType}">_type_</td>
+                        <td th:if="${manageMembers}">
+                            <button class="btn btn-xs btn-default"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-info" th:if="${analysisTemplates.isEmpty()}" th:text="#{project.settings.automated.empty}">_Add one below_</div>
+
+            <a class="btn btn-default" href="/pipelines" th:href="@{/pipelines(automatedProject=${project.id})}" role="button" th:if="${manageMembers}">
                 <i class="fas fa-plus"></i>
                 <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
             </a>
