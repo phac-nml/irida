@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -80,7 +81,9 @@ public class ProjectSettingsController {
 		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
 
-		List<TemplateResponseType> templateResponseTypes = templatesToResponse(templates, locale);
+		List<TemplateResponseType> templateResponseTypes = templates.stream()
+				.map(t -> templatesToResponse(t, locale))
+				.collect(Collectors.toList());
 
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
@@ -91,16 +94,14 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Convert a list of analysis templates to {@link TemplateResponseType} instances
+	 * Convert a analysis template to {@link TemplateResponseType}
 	 *
-	 * @param templates the list of {@link AnalysisSubmissionTemplate}
+	 * @param template the {@link AnalysisSubmissionTemplate}
 	 * @param locale    User's logged in locale
 	 * @return a list of {@link TemplateResponseType}
 	 */
-	private List<TemplateResponseType> templatesToResponse(List<AnalysisSubmissionTemplate> templates, Locale locale) {
-		List<TemplateResponseType> responses = new ArrayList<>(templates.size());
-		for (AnalysisSubmissionTemplate t : templates) {
-			UUID workflowId = t.getWorkflowId();
+	private TemplateResponseType templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
+			UUID workflowId = template.getWorkflowId();
 			String typeString;
 
 			try {
@@ -113,22 +114,26 @@ public class ProjectSettingsController {
 				typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
 			}
 
-			responses.add(new TemplateResponseType(t.getName(), typeString));
-		}
+			return new TemplateResponseType(template.getId(), template.getName(), typeString);
 
-		return responses;
 	}
 
 	/**
 	 * Response class for easily formatting analysis templates for the project settings page
 	 */
 	private class TemplateResponseType {
+		Long id;
 		String name;
 		String analysisType;
 
-		TemplateResponseType(String name, String analysisType) {
+		TemplateResponseType(Long id, String name, String analysisType) {
+			this.id = id;
 			this.name = name;
 			this.analysisType = analysisType;
+		}
+
+		public Long getId() {
+			return id;
 		}
 
 		public String getName() {
@@ -138,6 +143,37 @@ public class ProjectSettingsController {
 		public String getAnalysisType() {
 			return analysisType;
 		}
+	}
+
+	/**
+	 * Load the modal to confirm removal of the given analysis template from the project
+	 * @param templateId the {@link AnalysisSubmissionTemplate} id
+	 * @param projectId the {@link Project} id to delete from
+	 * @param model Model for the view
+	 * @param locale User's locale
+	 * @return template id
+	 */
+	@RequestMapping(path = "/template/removeTemplateModal", method = RequestMethod.POST)
+	public String removeTemplateModal(final @RequestParam Long templateId, final @PathVariable Long projectId,
+			final Model model, Locale locale) {
+		Project project = projectService.read(projectId);
+		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
+				templateId, project);
+
+
+		TemplateResponseType templateResponseType = templatesToResponse(template, locale);
+
+		model.addAttribute("template", templateResponseType);
+		model.addAttribute("project", project);
+		return "projects/templates/remove-analysis-template-modal";
+	}
+
+	@RequestMapping(path = "/template/remove", method = RequestMethod.POST)
+	public String removeTemplateConfirm(final @RequestParam Long templateId, final @PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+
+		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
+		return "redirect:/projects/" + projectId + "/settings";
 	}
 
 	/**

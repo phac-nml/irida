@@ -51,6 +51,24 @@ const projectSettings = (function(page, notifications) {
     toggleDeleteButton();
   });
 
+  $(".analysis-remove").on("click", function() {
+    const templateId = $(this)
+      .closest("tr")
+      .data("analysis");
+
+    /*
+    Display the confirmation modal for removing a template from the project.
+     */
+    $("#removeAnalysisTemplateModal").load(
+      `${window.PAGE.urls.deleteModal}#removeAnalysisTemplateModalGen`,
+      { templateId },
+      function() {
+        const modal = $(this);
+        modal.modal("show");
+      }
+    );
+  });
+
   function toggleDeleteButton() {
     if ($("#confirm-deletion").is(":checked")) {
       $("#submit-delete").prop("disabled", false);

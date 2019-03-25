@@ -10,7 +10,8 @@
           'not_set': /*[[#{project.settings.notset}]]*/ '_not set_'
         },
         urls: {
-          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
+          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage',
+          'deleteModal': /*[[@{/projects/{id}/settings/template/removeTemplateModal(id=${project.getId()})}]]*/ '/projects/1/setttings/template/removeTemplateModal'
         }
       };
     </script>
@@ -28,11 +29,11 @@
                    <th th:if="${manageMembers}"></th>
                 </thead>
                 <tbody>
-                    <tr th:each="template : ${analysisTemplates}">
+                    <tr th:each="template : ${analysisTemplates}" th:data-analysis="${template.id}">
                         <td th:text="${template.name}">_Name_</td>
                         <td th:text="${template.analysisType}">_type_</td>
                         <td th:if="${manageMembers}">
-                            <button class="btn btn-xs btn-default"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-xs btn-default analysis-remove"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -60,7 +61,6 @@
                     th:text="#{form.btn.update}">_save_</button>
         </span>
             </h2>
-
 
             <div class="form-group">
                 <div id="display-coverage" class="row edit-coverage">
@@ -125,6 +125,7 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="removeAnalysisTemplateModal" role="dialog" aria-labelledBy="#deleteConfirmTitle"></div>
 </th:block>
 
 <th:block layout:fragment="scripts">
