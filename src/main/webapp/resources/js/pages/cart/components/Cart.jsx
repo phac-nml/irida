@@ -1,11 +1,13 @@
 import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import { Layout } from "antd";
-import { CartSamples } from "./CartSamples";
-const SampleDetails = lazy(() => import("../../../components/SampleDetails"));
-import { CartTools } from "./CartTools";
+const CartSamples = lazy(() => import("./CartSamples"));
+const SampleDetails = lazy(() =>
+  import("../../../components/SampleDetails/SampleDetails")
+);
+const CartTools = lazy(() => import("./CartTools"));
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 
 export default function Cart({ count }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -15,17 +17,13 @@ export default function Cart({ count }) {
   return (
     <Content style={{ display: "flex", height: "100%" }}>
       <Content style={{ flexGrow: 1 }}>
-        <CartTools toggleSidebar={toggleSidebar} collapsed={collapsed} />
+        <Suspense fallback={<div />}>
+          <CartTools toggleSidebar={toggleSidebar} collapsed={collapsed} />
+        </Suspense>
       </Content>
-      <Sider
-        width={400}
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        collapsedWidth={0}
-      >
-        <CartSamples count={count} />
-      </Sider>
+      <Suspense fallback={<div style={{ width: 400, height: "100%" }} />}>
+        <CartSamples count={count} collapsed={collapsed} />
+      </Suspense>
       <Suspense fallback={<span />}>
         <SampleDetails />
       </Suspense>
