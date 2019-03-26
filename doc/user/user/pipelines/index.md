@@ -1,4 +1,4 @@
----
+me---
 layout: default
 search_title: "Launching Pipelines"
 description: "Documentation for launching pipelines in IRIDA."
@@ -22,7 +22,7 @@ The cart is initially empty. You can add samples to your cart by navigating to t
 
 ![Add to cart button.](images/add-to-cart-button.png)
 
-Once you've added some samples to the cart, if you click the "Cart" button on the main navigation you will be updated to the cart page.
+Once you’ve added some samples to the cart, if you click the `Cart` button on the main navigation, you will be taken to the cart page.
 
 ![Pipeline Cart.](images/pipeline-launch-cart.png)
 
@@ -30,7 +30,7 @@ You can remove individual samples or all selected samples from a project by clic
 
  ![Cart clear button.](images/menu-icon.png)
  
- And either selection "Remove Sample" or "Remove Project" which will remove all samples belong to the same project.  You can also empty the cart entirely by clicking on the "Empty" button, in the top, right-hand corner of the cart.
+And either selection “Remove Sample” which will remove just a single sample or “Remove Project” which will remove all samples that belong to the same project. You can also empty the cart entirely by clicking on the “Empty” button, in the top, right-hand corner of the cart.
 
 Searching samples in the cart
 -----------------------------

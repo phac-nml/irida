@@ -12,9 +12,9 @@ After you log in to IRIDA (or if you were already logged in), you will be direct
 
 ![Galaxy IRIDA projects list.]({{ site.baseurl }}/images/tutorials/common/samples/galaxy-irida-projects-list.png)
 
-When you are inside IRIDA from Galaxy, there will be a notification at the top of the window.  This will be there for the duration of your session.  If you want to end you Galaxy session without exporting samples, click on the `Cancel Galaxy Export` link at the top right.
+When you are connected to Galaxy from within IRIDA, there will be a notification at the top of the page. This will be there for the duration of your session. If you want to end you Galaxy session without exporting samples, click on the `Cancel Galaxy Export` link at the top right.
 
-Navigate to the project that contain the samples that you're interested in exporting by clicking on the project name. Then, [select the samples]({{ site.baseurl }}/user/user/samples/#selecting-samples) that you want to export and click `Add to Cart` button to add the samples to the cart.  Samples can be added from all projects that you have access to.  Once all the samples have been added to the cart, click on the cart icon on the top menu bar will take you to the cart galaxy export page.
+Navigate to the project that contains the samples that you’re interested in exporting by clicking on the project name. Then, [select the samples]({{ site.baseurl }}/user/user/samples/#selecting-samples) that you want to export and click the Add to Cart button to add the samples to the cart. Samples can be added from any project that you have access to. Once all the samples have been added to the cart, click on the cart icon on the top menu bar. This will take you to the cart galaxy export page.
 
 ![Galaxy IRIDA Cart.]({{ site.baseurl }}/images/tutorials/common/samples/cart-galaxy-page.png)
 
