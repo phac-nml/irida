@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import { Layout } from "antd";
 import { CartSamples } from "./CartSamples";
-import { SampleDetails } from "../../../components/SampleDetails";
+const SampleDetails = lazy(() => import("../../../components/SampleDetails"));
 import { CartTools } from "./CartTools";
 
 const { Content, Sider } = Layout;
@@ -26,7 +26,9 @@ export default function Cart({ count }) {
       >
         <CartSamples count={count} />
       </Sider>
-      <SampleDetails />
+      <Suspense fallback={<span />}>
+        <SampleDetails />
+      </Suspense>
     </Content>
   );
 }
