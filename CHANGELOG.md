@@ -21,6 +21,8 @@ Changes
 * [UI]: Fixed bug where uploading a metadata file with a `.` in the header row would cause an error. (19.01.2)
 * [UI]: Updated icons for datatables sorting and metadata importer.
 * [UI]: Fixed bug where users could not update their email subscriptions to projects. (19.01.2)
+* [UI/Developer]: Fixed issue where search for member to add to group resulted in no results found when search term contained capital letters.
+* [Documentation]: Added information on fixing ONLY_FULL_GROUP_BY sql error to the administrator faq docs.
 * [UI]: New dedicated cart page.
 
 0.22.0 to 19.01
