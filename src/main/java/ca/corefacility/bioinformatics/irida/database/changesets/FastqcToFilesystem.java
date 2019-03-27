@@ -46,6 +46,10 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	@Override
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 
+		logger.info("=====================================================");
+		logger.info("======= STAGE 1 - Copying files to filesystem =======");
+		logger.info("=====================================================");
+
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		Long previousMaxId = getMaxId(jdbcTemplate);
@@ -100,6 +104,10 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 			throw e;
 		}
+
+		logger.info("=====================================================");
+		logger.info("====== STAGE 2 - Moving files to output folder ======");
+		logger.info("=====================================================");
 
 		try {
 			//if everything went well, we can move those files into the real output directory
