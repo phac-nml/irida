@@ -113,7 +113,7 @@
 	<analysis_submission id="1" name="my analysis" remote_analysis_id="1"
 						 analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
         
     <analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="6" />
 </dataset>
