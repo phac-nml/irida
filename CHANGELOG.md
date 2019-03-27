@@ -25,6 +25,7 @@ Changes
 * [Documentation]: Added information on fixing ONLY_FULL_GROUP_BY sql error to the administrator faq docs.
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: New dedicated cart page.
+* [UI/Developer]: Load angular through `yarn` and remove as `bower` dependency.
 
 0.22.0 to 19.01
 ----------------
