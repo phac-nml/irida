@@ -1,10 +1,9 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import PropTypes from "prop-types";
 import { Layout } from "antd";
+import { SampleDetailsLoader } from "../../../components/SampleDetails";
+
 const CartSamples = lazy(() => import("./CartSamples"));
-const SampleDetails = lazy(() =>
-  import("../../../components/SampleDetails/SampleDetails")
-);
 const CartTools = lazy(() => import("./CartTools"));
 
 const { Content } = Layout;
@@ -24,9 +23,7 @@ export default function Cart({ count }) {
       <Suspense fallback={<div style={{ width: 400, height: "100%" }} />}>
         <CartSamples count={count} collapsed={collapsed} />
       </Suspense>
-      <Suspense fallback={<span />}>
-        <SampleDetails />
-      </Suspense>
+      <SampleDetailsLoader />
     </Content>
   );
 }
