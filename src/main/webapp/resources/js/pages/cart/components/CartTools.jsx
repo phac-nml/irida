@@ -31,7 +31,7 @@ const ToolsInner = styled.div`
 /**
  * Wrapper component for functionality available in the cart.
  */
-export class CartTools extends Component {
+export default class CartTools extends Component {
   constructor(props) {
     super(props);
 
