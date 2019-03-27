@@ -5,6 +5,8 @@
  */
 module.exports = {
   vendor: ["@babel/polyfill", "expose-loader?$!jquery"],
+  common: ["expose-loader?angular!angular"],
+  login: "./resources/js/pages/login.js",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   activities: "./resources/js/pages/activities/activities.js",
