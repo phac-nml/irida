@@ -182,7 +182,7 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 				}
 
 			} catch (IridaWorkflowNotFoundException e) {
-				logger.error("Could not associate assembly workflow with analysis " + submission.getIdentifier(), e);
+				logger.error("Could not associate automated workflow with analysis " + submission.getIdentifier(), e);
 			}
 		}
 	}
