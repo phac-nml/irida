@@ -28,7 +28,7 @@
             <div class="btn-group btn-group-sm">
                 <button id="add-members-button" class="btn btn-default"
                         type="button" data-toggle="modal" data-target="#addMemberModal"
-                        th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
+                        th:if="${isAdmin} or ${manageMembers}" href="#addMembersLink"
                         th:text="#{project.members.edit.add.group}">_Add Members_
                 </button>
             </div>
