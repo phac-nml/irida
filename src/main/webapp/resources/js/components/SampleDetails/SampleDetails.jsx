@@ -135,7 +135,9 @@ const mapDispatchToProps = dispatch => ({
   hideDetails: () => dispatch(sampleDetailsActions.closeDisplay())
 });
 
-export const SampleDetails = connect(
+const SampleDetails = connect(
   mapStateToProps,
   mapDispatchToProps
 )(SampleDetailsComponent);
+
+export default SampleDetails;

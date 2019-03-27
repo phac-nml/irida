@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button, Input } from "antd";
+import { Button, Input, Layout } from "antd";
 import styled from "styled-components";
 import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
@@ -19,6 +19,7 @@ import {
   grey5
 } from "../../../styles/colors";
 import { SPACE_MD, SPACE_SM } from "../../../styles/spacing";
+const { Sider } = Layout;
 
 const { Search } = Input;
 
@@ -143,39 +144,47 @@ class CartSamplesComponent extends React.Component {
       s.label.includes(this.state.filter)
     );
     return (
-      <div
-        style={{
-          height: "100%",
-          position: "relative",
-          width: 400
-        }}
+      <Sider
+        width={400}
+        trigger={null}
+        collapsible
+        collapsed={this.props.collapsed}
+        collapsedWidth={0}
       >
-        <CartTools>
-          <Search
-            style={{ width: "100%" }}
-            onChange={this.onSearch}
-            value={this.state.filter}
-          />
-          <Button onClick={this.props.emptyCart}>Empty</Button>
-        </CartTools>
-        <CartSamplesWrapper className="ag-theme-balham">
-          <AgGridReact
-            getRowNodeId={data => data.id}
-            animateRows={true}
-            headerHeight={0}
-            columnDefs={this.columnDefs}
-            rowData={samples}
-            frameworkComponents={{ SampleRenderer }}
-            onGridReady={this.onGridReady}
-            rowHeight={80}
-            rowStyle={{ width: "100%", borderWidth: 0 }}
-            filter={true}
-            suppressRowClickSelection={true}
-            suppressCellSelection={true}
-            suppressRowHoverHighlight={true}
-          />
-        </CartSamplesWrapper>
-      </div>
+        <div
+          style={{
+            height: "100%",
+            position: "relative",
+            width: 400
+          }}
+        >
+          <CartTools>
+            <Search
+              style={{ width: "100%" }}
+              onChange={this.onSearch}
+              value={this.state.filter}
+            />
+            <Button onClick={this.props.emptyCart}>Empty</Button>
+          </CartTools>
+          <CartSamplesWrapper className="ag-theme-balham">
+            <AgGridReact
+              getRowNodeId={data => data.id}
+              animateRows={true}
+              headerHeight={0}
+              columnDefs={this.columnDefs}
+              rowData={samples}
+              frameworkComponents={{ SampleRenderer }}
+              onGridReady={this.onGridReady}
+              rowHeight={80}
+              rowStyle={{ width: "100%", borderWidth: 0 }}
+              filter={true}
+              suppressRowClickSelection={true}
+              suppressCellSelection={true}
+              suppressRowHoverHighlight={true}
+            />
+          </CartSamplesWrapper>
+        </div>
+      </Sider>
     );
   }
 }
@@ -192,7 +201,9 @@ const mapDispatchToProps = dispatch => ({
   removeProject: id => dispatch(actions.removeProject(id))
 });
 
-export const CartSamples = connect(
+const CartSamples = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CartSamplesComponent);
+
+export default CartSamples;
