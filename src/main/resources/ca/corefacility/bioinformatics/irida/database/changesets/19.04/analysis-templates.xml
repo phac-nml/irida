@@ -13,7 +13,7 @@
                 <constraints foreignKeyName="FK_ANALYSIS_TEMPLATE_PROJECT" referencedColumnNames="id"
                              referencedTableName="project"/>
             </column>
-            <column name="automated" type="bit(1)" defaultValue="0"/>
+            <column name="automated" type="bit(1)"/>
         </addColumn>
 
         <addColumn tableName="analysis_submission_AUD">
