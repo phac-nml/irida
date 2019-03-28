@@ -37,7 +37,6 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 * @return the projects linked to the group.
 	 */
 	Collection<UserGroupProjectJoin> getProjectsWithUserGroup(final UserGroup userGroup);
-	Collection<UserGroupProjectJoin> getProjectsWithUserGroup(final UserGroup userGroup);
 
 	/**
 	 * Add a user to the group with the specified role.
