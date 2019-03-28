@@ -205,19 +205,19 @@ public class GroupsController {
 
 	/**
 	 * Delete the specified {@link UserGroup}.
-	 * 
-	 * @param userGroupId
-	 *            the group to delete.
-	 * @param locale
-	 *            the locale of the browser
+	 *
+	 * @param userGroupId the group to delete.
+	 * @param locale      the locale of the browser
 	 * @return a message indicating success.
 	 */
 	@RequestMapping(path = "/{userGroupId}", method = RequestMethod.DELETE)
-	public @ResponseBody Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
+	public @ResponseBody
+	Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
 		final UserGroup userGroup = userGroupService.read(userGroupId);
 		userGroupService.delete(userGroupId);
-		return ImmutableMap.of("result", messageSource.getMessage("group.remove.notification.success",
-				new Object[] { userGroup.getName() }, locale));
+		return ImmutableMap.of("result",
+				messageSource.getMessage("group.remove.notification.success", new Object[] { userGroup.getName() },
+						locale));
 	}
 
 	/**

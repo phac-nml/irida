@@ -54,7 +54,7 @@ public class UserGroup implements MutableIridaThing {
 	private Set<UserGroupJoin> users;
 
 	@NotAudited
-	@OneToMany(cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, mappedBy = "userGroup")
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "userGroup")
 	private List<UserGroupRoleSetProjectEvent> events;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "userGroup")
