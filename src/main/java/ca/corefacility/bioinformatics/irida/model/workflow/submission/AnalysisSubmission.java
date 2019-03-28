@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -69,6 +70,9 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	protected Set<SequencingObject> inputFiles;
 
+	@Column(name = "automated")
+	private boolean automated;
+
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
 	private List<ProjectAnalysisSubmissionJoin> projects;
 
@@ -80,6 +84,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
 		this.analysisCleanedState = AnalysisCleanedState.NOT_CLEANED;
+		automated = false;
 	}
 
 	/**
@@ -105,6 +110,8 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.analysisDescription = (builder.analysisDescription);
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
+		this.automated = builder.automated;
+		this.submitter = builder.submitter;
 	}
 
 	/**
@@ -189,6 +196,15 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	}
 
 	/**
+	 * Whether this pipeline was run as part of an automated process
+	 *
+	 * @return true if the pipeline was run as an automated process
+	 */
+	public boolean isAutomated() {
+		return automated;
+	}
+
+	/**
 	 * Set the {@link Analysis} generated as a result of this submission. Note: {@link
 	 * AnalysisSubmission#setAnalysis(Analysis)} can only be set **once**; if the current {@link Analysis} is non-null,
 	 * then this method will throw a {@link AnalysisAlreadySetException}.
@@ -241,7 +257,9 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		private IridaWorkflowNamedParameters namedParameters;
 		private String analysisDescription;
 		private boolean updateSamples = false;
+		private boolean automated;
 		private Priority priority = Priority.MEDIUM;
+		private User submitter;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -253,6 +271,35 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 
 			this.workflowId = workflowId;
 			this.inputParameters = Maps.newHashMap();
+		}
+
+		/**
+		 * Create a new {@link Builder} from the given {@link AnalysisSubmissionTemplate}
+		 *
+		 * @param template an {@link AnalysisSubmissionTemplate} to build an {@link AnalysisSubmission}
+		 */
+		public Builder(AnalysisSubmissionTemplate template) {
+			this(template.getWorkflowId());
+			priority(template.getPriority());
+			name(template.getName());
+			analysisDescription(template.getAnalysisDescription());
+			updateSamples(template.getUpdateSamples());
+			automated(true);
+			submitter(template.getSubmitter());
+
+			if (template.getReferenceFile()
+					.isPresent()) {
+				referenceFile(template.getReferenceFile()
+						.get());
+			}
+
+			//check if we have named params.  If so, add them
+			if (template.getNamedParameters() != null) {
+				withNamedParameters(template.getNamedParameters());
+			} else {
+				inputParameters(template.getInputParameters());
+			}
+
 		}
 
 		/**
@@ -378,6 +425,27 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		public Builder updateSamples(boolean updateSamples) {
 			this.updateSamples = updateSamples;
 
+			return this;
+		}
+
+		/**
+		 * Sets whether this pipeline is being run as part of an automated process
+		 *
+		 * @param automated whether this is an automated pipeline
+		 * @return a {@link Builder}
+		 */
+		public Builder automated(boolean automated) {
+			this.automated = automated;
+			return this;
+		}
+
+		/**
+		 * Set the user who submitted the pipeline
+		 * @param submitter {@link User} who submitted the pipeline
+		 * @return a {@link Builder}
+		 */
+		public Builder submitter(User submitter){
+			this.submitter = submitter;
 			return this;
 		}
 
