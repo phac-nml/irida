@@ -113,6 +113,7 @@ public class GroupsPage extends AbstractPage {
 		List<WebElement> deleteGroupButtons = (List<WebElement>) waitForElementsVisible(By.className("remove-btn"));
 		WebElement firstGroupDeleteButton = deleteGroupButtons.get(0);
 		firstGroupDeleteButton.click();
+		waitForElementVisible(By.id("remove-group-button"));
 		removeGroupBtn.click();
 		waitForAjax();
 	}
