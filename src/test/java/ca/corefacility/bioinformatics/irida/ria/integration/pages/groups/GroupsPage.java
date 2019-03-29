@@ -17,6 +17,8 @@ import org.openqa.selenium.NoSuchElementException;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Page to represent the group page.
  */
@@ -54,6 +56,14 @@ public class GroupsPage extends AbstractPage {
 
 	@FindBy(className = "select2-search__field")
 	private WebElement userNameField;
+
+	@FindBy(className = "remove-btn")
+	private List<WebElement> deleteGroupButtons;
+
+	@FindBy(id = "remove-group-button")
+	private WebElement removeGroupBtn;
+
+
 
 	public GroupsPage(WebDriver driver) {
 		super(driver);
@@ -101,6 +111,14 @@ public class GroupsPage extends AbstractPage {
 		Select roleSelect = new Select(addGroupMemberRole);
 		roleSelect.selectByValue(role);
 		submitAddMemberButton.click();
+		waitForAjax();
+	}
+
+	public void removeUserGroupWithProjectLinks() {
+		// Group being deleted is linked to 4 projects
+		WebElement firstGroupDeleteButton = deleteGroupButtons.get(0);
+		firstGroupDeleteButton.click();
+		removeGroupBtn.click();
 		waitForAjax();
 	}
 
