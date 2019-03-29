@@ -17,8 +17,6 @@ import org.openqa.selenium.NoSuchElementException;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
-import com.google.common.collect.Iterables;
-
 /**
  * Page to represent the group page.
  */
