@@ -1,30 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.run;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -46,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
+public class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -58,7 +40,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
-	
+
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -75,7 +57,19 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@Enumerated(EnumType.STRING)
 	@Column(name = "layout_type")
 	private LayoutType layoutType;
-	
+
+	// Key/value map of additional properties you could set on a sequence file.
+	// This may contain optional sequencer specific properties.
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "property_key", nullable = false)
+	@Column(name = "property_value", nullable = false)
+	@CollectionTable(name = "sequencing_run_properties", joinColumns = @JoinColumn(name = "sequencing_run_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"sequencing_run_id", "property_key" }, name = "UK_SEQUENCING_RUN_PROPERTY_KEY"))
+	private Map<String, String> optionalProperties;
+
+	@Column(name = "sequencer_type")
+	private String sequencerType;
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "user_id")
@@ -83,8 +77,9 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 
 	protected SequencingRun() {
 		createdDate = new Date();
+		optionalProperties = new HashMap<>();
 	}
-	
+
 	public SequencingRun(final LayoutType layoutType, final SequencingRunUploadStatus uploadStatus) {
 		this();
 		this.layoutType = layoutType;
@@ -95,7 +90,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	public Long getId() {
 		return id;
 	}
-	
+
 	@Override
 	public void setId(final Long id) {
 		this.id = id;
@@ -104,7 +99,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -113,12 +108,12 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	public Date getCreatedDate() {
 		return createdDate;
 	}
-	
+
 	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
-	
+
 	@Override
 	public void setModifiedDate(final Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
@@ -146,7 +141,8 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 			return false;
 		}
 		final SequencingRun other = (SequencingRun) obj;
-		return Objects.equals(this.description, other.description) && Objects.equals(this.createdDate, other.createdDate);
+		return Objects.equals(this.description, other.description) && Objects.equals(this.createdDate,
+				other.createdDate);
 	}
 
 	public SequencingRunUploadStatus getUploadStatus() {
@@ -156,29 +152,69 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	public LayoutType getLayoutType() {
 		return layoutType;
 	}
-	
+
 	public User getUser() {
 		return user;
 	}
-	
+
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
+	/**
+	 * Add one optional property to the map of properties
+	 *
+	 * @param key   The key of the property to add
+	 * @param value The value of the property to add
+	 */
+	@JsonAnySetter
+	public void addOptionalProperty(String key, String value) {
+		optionalProperties.put(key, value);
+	}
+
+	/**
+	 * Get the Map of optional properties
+	 *
+	 * @return A {@code Map<String,String>} of all the optional propertie
+	 */
+	@JsonAnyGetter
+	public Map<String, String> getOptionalProperties() {
+		return optionalProperties;
+	}
+
+	/**
+	 * Get an individual optional property
+	 *
+	 * @param key The key of the property to read
+	 * @return A String of the property's value
+	 */
+	public String getOptionalProperty(String key) {
+		return optionalProperties.get(key);
+	}
+
 	/**
 	 * Get the sequencer type
-	 * 
+	 *
 	 * @return Name of the sequencer type
 	 */
-	public abstract String getSequencerType();
+	public String getSequencerType() {
+		return sequencerType;
+	}
+
+	public void setSequencerType(String sequencerType) {
+		this.sequencerType = sequencerType;
+	}
 
 	/**
 	 * The type of layout for the run. Single/Paired end
-	 * 
-	 *
 	 */
 	public static enum LayoutType {
-		SINGLE_END, PAIRED_END
+		SINGLE_END,
+		PAIRED_END
 	}
 
+	@Override
+	public int compareTo(SequencingRun sequencingRun) {
+		return 0;
+	}
 }

@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletResponse;
 
-import ca.corefacility.bioinformatics.irida.model.run.GenericSequencingRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -68,7 +65,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 */
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap createGenericRun(@PathVariable String runType, @RequestBody GenericSequencingRun representation, HttpServletResponse response) {
+	public ModelMap createGenericRun(@PathVariable String runType, @RequestBody SequencingRun representation, HttpServletResponse response) {
 		logger.trace("creating sequencing run");
 		representation.setSequencerType(runType);
 		return create(representation, response);
