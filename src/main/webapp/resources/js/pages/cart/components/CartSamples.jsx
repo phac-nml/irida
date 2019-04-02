@@ -161,7 +161,7 @@ class CartSamplesComponent extends React.Component {
       >
         <SiderInner>
           <CartTools>
-            <Search allowClear onChange={this.onSearch} value={filter} />
+            <Search onChange={this.onSearch} value={filter} />
           </CartTools>
           <CartSamplesWrapper>
             {samples.length > 0 ? (
