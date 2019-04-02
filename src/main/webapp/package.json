@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack --env.mode production",
-    "start": "webpack-dev-server --env.mode development",
+    "start": "webpack --env.mode development",
     "clean": "rm -r node* resources/dist/",
     "precommit": "lint-staged"
   },
@@ -66,6 +66,8 @@
     "react-dom-factories": "^1.0.2",
     "react-immutable-proptypes": "^2.1.0",
     "react-redux": "^6.0.0",
+    "react-virtualized-auto-sizer": "^1.0.2",
+    "react-window": "^1.7.1",
     "reactour": "^1.9.1",
     "redux": "4.0.1",
     "redux-saga": "^1.0.1",

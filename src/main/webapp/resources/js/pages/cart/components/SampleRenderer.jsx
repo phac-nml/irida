@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Col, Dropdown, Icon, Menu, Row } from "antd";
+import { Button, Dropdown, Icon, Menu, List } from "antd";
 import styled from "styled-components";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import {
@@ -8,6 +8,8 @@ import {
   FONT_COLOR_PRIMARY,
   FONT_SIZE_SMALL
 } from "../../../styles/fonts";
+import { grey1, grey2, grey3, grey4 } from "../../../styles/colors";
+import { SPACE_XS, SPACE_MD, SPACE_SM } from "../../../styles/spacing";
 
 const ProjectLink = styled.a`
   display: block;
@@ -17,7 +19,7 @@ const ProjectLink = styled.a`
 `;
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
-  <Menu className="t-delete-menu">
+  <Menu className="t-delete-menu" style={{ border: `1px solid ${grey4}` }}>
     <Menu.Item>
       <div onClick={removeSample} className="t-delete-sample">
         {getI18N("SampleRenderer.remove.sample")}
@@ -29,6 +31,13 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
       </div>
     </Menu.Item>
   </Menu>
+);
+
+const IconText = ({ type, text }) => (
+  <span>
+    <Icon type={type} style={{ marginRight: SPACE_XS }} />
+    {text}
+  </span>
 );
 
 /**
@@ -57,54 +66,65 @@ export class SampleRenderer extends React.Component {
     })
   };
 
-  displaySample = () => this.props.api.displaySample(this.props.data);
+  displaySample = () => this.props.displaySample(this.props.data);
 
-  removeSample = () =>
-    this.props.api.removeSample(this.props.rowIndex, this.props.data);
+  removeSample = () => this.props.removeSample(this.props.data);
 
-  removeProject = () =>
-    this.props.api.removeProject(this.props.data.project.id);
+  removeProject = () => this.props.removeProject(this.props.data.project.id);
 
   render() {
     const sample = this.props.data;
     return (
-      <Row
+      <div
+        style={{
+          ...this.props.style,
+          padding: `0 ${SPACE_SM}`,
+          backgroundColor: grey3,
+          borderBottom: `1px solid ${grey4}`
+        }}
         className="t-cart-sample"
-        type="flex"
-        align="top"
-        justify="space-between"
       >
-        <Col>
-          <Button
-            className="t-sample-name"
-            shape="round"
-            size="small"
-            onClick={this.displaySample}
-          >
-            {sample.label}
-          </Button>
-          <ProjectLink
-            href={`${window.TL.BASE_URL}projects/${sample.project.id}/linelist`}
-          >
-            {sample.project.label}
-          </ProjectLink>
-        </Col>
-        <Col>
-          <Dropdown
-            overlay={
-              <DeleteMenu
-                removeSample={this.removeSample}
-                removeProject={this.removeProject}
-              />
+        <List.Item
+          key={sample.id}
+          extra={
+            <Dropdown
+              overlay={
+                <DeleteMenu
+                  removeSample={this.removeSample}
+                  removeProject={this.removeProject}
+                />
+              }
+              trigger={["click"]}
+            >
+              <Button className="t-delete-menu-btn" shape="circle" size="small">
+                <Icon type="ellipsis" />
+              </Button>
+            </Dropdown>
+          }
+          actions={[
+            <IconText
+              type="folder"
+              text={
+                <a href={`${window.TL.BASE_URL}projects/${sample.project.id}`}>
+                  {sample.project.label}
+                </a>
+              }
+            />
+          ]}
+        >
+          <List.Item.Meta
+            title={
+              <Button
+                className="t-sample-name"
+                size="small"
+                onClick={this.displaySample}
+              >
+                {sample.label}
+              </Button>
             }
-            trigger={["click"]}
-          >
-            <Button className="t-delete-menu-btn" ghost shape="circle" size="small">
-              <Icon type="ellipsis" style={{ color: FONT_COLOR_PRIMARY }} />
-            </Button>
-          </Dropdown>
-        </Col>
-      </Row>
+          />
+        </List.Item>
+      </div>
     );
   }
 }
