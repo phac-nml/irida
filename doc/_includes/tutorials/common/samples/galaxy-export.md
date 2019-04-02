@@ -1,4 +1,4 @@
-Samples can also be exported directly to Galaxy. Samples exported from IRIDA into Galaxy are loaded into a [Galaxy data library](https://wiki.galaxyproject.org/Admin/DataLibraries/Libraries) that can be easily shared with multiple Galaxy users.
+Samples can also be exported directly to Galaxy. Samples exported from IRIDA into Galaxy are loaded into a [Galaxy data library](https://galaxyproject.org/data-libraries/) that can be easily shared with multiple Galaxy users.
 
 To export data from IRIDA to Galaxy, start in Galaxy and find the "IRIDA server" tool in the "Get Data" section:
 
