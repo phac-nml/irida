@@ -1,10 +1,10 @@
 import React from "react";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { FixedSizeList as VList } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Button, Icon, Input, List, Layout } from "antd";
-import styled from "styled-components";
 import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
@@ -15,16 +15,53 @@ import {
   grey1,
   grey2,
   grey3,
-  grey5
+  grey5,
+  red4,
+  red6
 } from "../../../styles/colors";
-import { SPACE_MD, SPACE_SM } from "../../../styles/spacing";
+import { SPACE_SM } from "../../../styles/spacing";
 import { getI18N } from "../../../utilities/i18n-utilties";
 const { Sider } = Layout;
 
 const { Search } = Input;
 
+const SiderInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 400px;
+`;
+
 const CartSamplesWrapper = styled.div`
   flex-grow: 1;
+`;
+
+const ButtonsPanelBotton = styled.div`
+  height: 60px;
+  padding: ${SPACE_SM};
+  border-top: 1px solid ${COLOR_BORDER_LIGHT};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const EmptyCartButton = styled(Button)`
+  background-color: ${red4};
+  color: ${grey1};
+
+  &:hover {
+    background-color: ${red6};
+  }
+`;
+
+const FilterWarning = styled.div`
+  font-size: 30px;
+  color: ${blue6};
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const CartTools = styled.div`
@@ -84,15 +121,10 @@ class CartSamplesComponent extends React.Component {
 
   removeProject = id => {
     this.props.removeProject(id);
-    const rows = [];
-    this.gridApi.forEachNode((node, index) => {
-      if (node.data.project.id === id) {
-        rows.push(node);
-      }
+    this.samples = this.samples.filter(s => s.project.id !== id);
+    this.setState({
+      samples: this.samples.filter(s => s.label.includes(this.state.filter))
     });
-    if (rows.length) {
-      this.gridApi.updateRowData({ remove: rows });
-    }
   };
 
   onSearch = e =>
@@ -125,23 +157,11 @@ class CartSamplesComponent extends React.Component {
         collapsible
         collapsed={this.props.collapsed}
         collapsedWidth={0}
-        style={{ backgroundColor: grey1 }}
+        style={{ backgroundColor: grey2 }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-            width: 400
-          }}
-        >
+        <SiderInner>
           <CartTools>
-            <Search
-              allowClear
-              style={{ width: "100%" }}
-              onChange={this.onSearch}
-              value={filter}
-            />
+            <Search allowClear onChange={this.onSearch} value={filter} />
           </CartTools>
           <CartSamplesWrapper>
             {samples.length > 0 ? (
@@ -160,39 +180,20 @@ class CartSamplesComponent extends React.Component {
                 )}
               </AutoSizer>
             ) : this.state.loaded ? (
-              <div
-                style={{
-                  fontSize: 30,
-                  color: blue6,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  height: 300,
-                  display: "flex"
-                }}
-              >
+              <FilterWarning>
                 <div>
-                  <Icon type="warning" style={{ fontSize: 60 }} />
+                  <Icon type="warning" style={{ fontSize: 120 }} />
                 </div>
                 <div>{getI18N("cart.noneMatchingFilter")}</div>
-              </div>
+              </FilterWarning>
             ) : null}
           </CartSamplesWrapper>
-          <div
-            style={{
-              height: 60,
-              padding: SPACE_SM,
-              display: "flex",
-              justifyContent: "center",
-              borderTop: `1px solid ${COLOR_BORDER_LIGHT}`,
-              alignItems: "center"
-            }}
-          >
-            <Button type="danger" block onClick={this.props.emptyCart}>
+          <ButtonsPanelBotton>
+            <EmptyCartButton type="danger" block onClick={this.props.emptyCart}>
               {getI18N("cart.clear")}
-            </Button>
-          </div>
-        </div>
+            </EmptyCartButton>
+          </ButtonsPanelBotton>
+        </SiderInner>
       </Sider>
     );
   }
