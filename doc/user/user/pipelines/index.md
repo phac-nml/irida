@@ -30,7 +30,7 @@ You can remove individual samples or all selected samples from a project by clic
 
  ![Cart clear button.](images/menu-icon.png)
  
-And either selection “Remove Sample” which will remove just a single sample or “Remove Project” which will remove all samples that belong to the same project. You can also empty the cart entirely by clicking on the “Empty” button, in the top, right-hand corner of the cart.
+And either selecting “Remove Sample” which will remove just a single sample or “Remove Project” which will remove all samples that belong to the same project. You can also empty the cart entirely by clicking on the “Empty” button, in the top, right-hand corner of the cart.
 
 Searching samples in the cart
 -----------------------------
