@@ -51,6 +51,9 @@ const projectSettings = (function(page, notifications) {
     toggleDeleteButton();
   });
 
+  /**
+   * Button for removing an analysis template from a project.  This should show a confirmation modal
+   */
   $(".analysis-remove").on("click", function() {
     const templateId = $(this)
       .closest("tr")
