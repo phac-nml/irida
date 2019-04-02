@@ -4922,6 +4922,11 @@ mem@4.1.0, mem@^4.0.0:
     mimic-fn "^1.0.0"
     p-is-promise "^2.0.0"
 
+"memoize-one@>=3.1.1 <6":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.0.2.tgz#6aba5276856d72fb44ead3efab86432f94ba203d"
+  integrity sha512-o7lldN4fs/axqctc03NF+PMhd2veRrWeJ2n2GjEzUPBD4F9rmNg4A+bQCACIzwjHJEXuYv4aFFMaH35KZfHUrw==
+
 memoize-one@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-4.1.0.tgz#a2387c58c03fff27ca390c31b764a79addf3f906"
@@ -6766,6 +6771,19 @@ react-slick@~0.23.2:
     lodash.debounce "^4.0.8"
     prettier "^1.14.3"
     resize-observer-polyfill "^1.5.0"
+
+react-virtualized-auto-sizer@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.2.tgz#a61dd4f756458bbf63bd895a92379f9b70f803bd"
+  integrity sha512-MYXhTY1BZpdJFjUovvYHVBmkq79szK/k7V3MO+36gJkWGkrXKtyr4vCPtpphaTLRAdDNoYEYFZWE8LjN+PIHNg==
+
+react-window@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.7.1.tgz#c1db640415b97b85bc0a1c66eb82dadabca39b86"
+  integrity sha512-y4/Qc98agCtHulpeI5b6K2Hh8J7TeZIfvccBVesfqOFx4CS+TSUpnJl1/ipeXzhfvzPwvVEmaU/VosQ6O5VhTg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
 
 react@16.8.2:
   version "16.8.2"
