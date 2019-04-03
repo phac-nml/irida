@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -61,7 +61,7 @@ public class SequencingObjectServiceTest {
 	public void testCreateSequenceFileInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "workflow");
+		SequencingRun run = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING);
 
 		so.setSequencingRun(run);
 
@@ -74,7 +74,7 @@ public class SequencingObjectServiceTest {
 	public void testCreateSequenceFilePairInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 
-		SequencingRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
+		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, SequencingRunUploadStatus.UPLOADING);
 
 		SequenceFilePair so = TestDataFactory.constructSequenceFilePair();
 		so.setSequencingRun(run);

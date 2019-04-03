@@ -6,6 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="add-generic-sequencing-runs" author="tom">
+        <!-- Create the new props tables -->
         <createTable tableName="sequencing_run_properties">
             <column name="sequencing_run_id" type="bigint(20)">
                 <constraints foreignKeyName="FK_SEQUENCING_RUN_PROPERTIES" referencedColumnNames="id"
@@ -36,6 +37,7 @@
             <column name="REVTYPE" type="tinyint(4)"/>
         </createTable>
 
+        <!-- Translate the old static properties from miseq_run into the props table -->
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
             'application', application FROM miseq_run;
@@ -64,6 +66,10 @@
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
             'readLengths', read_lengths FROM miseq_run;
         </sql>
+
+        <!-- Drop the old miseq run table -->
+        <dropTable tableName="miseq_run_AUD"/>
+        <dropTable tableName="miseq_run"/>
 
     </changeSet>
 </databaseChangeLog>

@@ -67,6 +67,7 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 			"sequencing_run_id", "property_key" }, name = "UK_SEQUENCING_RUN_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
 
+	@NotNull
 	@Column(name = "sequencer_type")
 	private String sequencerType;
 
@@ -129,7 +130,7 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, description);
+		return Objects.hash(uploadStatus, layoutType, description, sequencerType, optionalProperties);
 	}
 
 	@Override
@@ -141,8 +142,10 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 			return false;
 		}
 		final SequencingRun other = (SequencingRun) obj;
-		return Objects.equals(this.description, other.description) && Objects.equals(this.createdDate,
-				other.createdDate);
+		return Objects.equals(this.uploadStatus, other.uploadStatus) && Objects.equals(this.layoutType,
+				other.layoutType) && Objects.equals(this.description, other.description) && Objects.equals(
+				this.sequencerType, other.sequencerType) && Objects.equals(this.optionalProperties,
+				other.optionalProperties);
 	}
 
 	public SequencingRunUploadStatus getUploadStatus() {
@@ -214,7 +217,9 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	}
 
 	@Override
-	public int compareTo(SequencingRun sequencingRun) {
-		return 0;
+	public int compareTo(SequencingRun o) {
+		return this.getCreatedDate()
+				.compareTo(o.getCreatedDate());
 	}
+
 }
