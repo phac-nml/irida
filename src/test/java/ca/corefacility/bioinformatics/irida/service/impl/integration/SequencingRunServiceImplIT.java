@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -153,7 +152,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
-		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING, "miseq");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -176,7 +175,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUser() {
-		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING, "miseq");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun create = miseqRunService.create(mr);
 		assertEquals("user", create.getUser().getUsername());
 	}
@@ -230,7 +229,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
-		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING, "miseq");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		miseqRunService.create(mr);
 	}
 

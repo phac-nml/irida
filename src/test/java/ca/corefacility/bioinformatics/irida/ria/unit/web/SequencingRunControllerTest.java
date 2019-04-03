@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -43,8 +42,7 @@ public class SequencingRunControllerTest {
 	@Test
 	public void testGetDetailsPage() throws IOException {
 		Long runId = 1L;
-		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END,
-				SequencingRunUploadStatus.UPLOADING, "miseq");
+		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 		ExtendedModelMap model = new ExtendedModelMap();
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
 
@@ -60,8 +58,7 @@ public class SequencingRunControllerTest {
 	public void testGetFilesPage() throws IOException {
 		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
-		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END,
-				SequencingRunUploadStatus.UPLOADING, "miseq");
+		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 
 		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 

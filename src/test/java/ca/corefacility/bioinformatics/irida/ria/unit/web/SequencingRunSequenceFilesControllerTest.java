@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -49,7 +48,7 @@ public class SequencingRunSequenceFilesControllerTest {
 
 		SingleEndSequenceFile singleEndSequenceFile = TestDataFactory.constructSingleEndSequenceFile();
 
-		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, SequencingRunUploadStatus.UPLOADING, "miseq");
+		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, "miseq");
 		Map<String, String> representation = new HashMap<String, String>();
 		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, "" + seqId);
 

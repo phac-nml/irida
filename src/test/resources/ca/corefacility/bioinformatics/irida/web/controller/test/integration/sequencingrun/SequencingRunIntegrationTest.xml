@@ -31,6 +31,10 @@
 		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
 		layout_type="PAIRED_END" sequencer_type="miseq"/>
 
+	<sequencing_run_properties sequencing_run_id="1" property_key="workflow" property_value="Test workflow 1"/>
+	<sequencing_run_properties sequencing_run_id="2" property_key="workflow" property_value="Test workflow 2"/>
+	<sequencing_run_properties sequencing_run_id="3" property_key="workflow" property_value="Test workflow 3"/>
+
 	<client_details id="1" clientId="testClient"
 		clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />
 	<client_role name="ROLE_CLIENT" description="A basic OAuth2 client." />

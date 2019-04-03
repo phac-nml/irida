@@ -74,15 +74,14 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	private User user;
 
 	protected SequencingRun() {
+		uploadStatus = SequencingRunUploadStatus.UPLOADING;
 		createdDate = new Date();
 		optionalProperties = new HashMap<>();
 	}
 
-	public SequencingRun(final LayoutType layoutType, final SequencingRunUploadStatus uploadStatus,
-			String sequencerType) {
+	public SequencingRun(final LayoutType layoutType, String sequencerType) {
 		this();
 		this.layoutType = layoutType;
-		this.uploadStatus = uploadStatus;
 		this.sequencerType = sequencerType;
 	}
 
