@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletResponse;
-
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 /**
  *
@@ -59,6 +55,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	/**
 	 * Create a Sequencing run
 	 *
+	 * @param runType The type of sequencing run to create
 	 * @param representation the run info to create
 	 * @param response       HTTP response to add info to
 	 * @return the created run

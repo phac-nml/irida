@@ -34,7 +34,7 @@ public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGetSequencerType() {
 		String sequencerType = page.getSequencerType();
-		assertEquals("MiSeq", sequencerType);
+		assertEquals("miseq", sequencerType);
 	}
 	
 	@Test
