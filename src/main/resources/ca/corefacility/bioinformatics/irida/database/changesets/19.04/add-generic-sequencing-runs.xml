@@ -6,6 +6,19 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="add-generic-sequencing-runs" author="tom">
+
+        <addColumn tableName="sequencing_run">
+            <column name="sequencer_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <sql>UPDATE sequencing_run SET sequencer_type="miseq"</sql>
+
+        <addColumn tableName="sequencing_run_AUD">
+            <column name="sequencer_type" type="varchar(255)"/>
+        </addColumn>
+
         <!-- Create the new props tables -->
         <createTable tableName="sequencing_run_properties">
             <column name="sequencing_run_id" type="bigint(20)">
