@@ -45,14 +45,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.PipelineStartParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.google.common.base.Strings;
@@ -537,7 +533,7 @@ public class PipelineController extends BaseController {
 	 * @param locale {@link Locale} of the current user
 	 * @return {@link List} of localized {@link AnalysisType}
 	 */
-	@RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Pipeline> getWorkflowTypes(Locale locale) {
 		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
 		List<Pipeline> pipelines = new ArrayList<>();
