@@ -49,7 +49,7 @@ public class SequencingRunSequenceFilesControllerTest {
 
 		SingleEndSequenceFile singleEndSequenceFile = TestDataFactory.constructSingleEndSequenceFile();
 
-		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, SequencingRunUploadStatus.UPLOADING);
+		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, SequencingRunUploadStatus.UPLOADING, "miseq");
 		Map<String, String> representation = new HashMap<String, String>();
 		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, "" + seqId);
 

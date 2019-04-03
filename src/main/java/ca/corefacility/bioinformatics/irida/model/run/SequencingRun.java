@@ -1,24 +1,21 @@
 package ca.corefacility.bioinformatics.irida.model.run;
 
-import java.util.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import org.hibernate.envers.Audited;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 
 /**
  * This class represents a collection of sequence files that have come off one run of a sequencer.
@@ -81,10 +78,12 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 		optionalProperties = new HashMap<>();
 	}
 
-	public SequencingRun(final LayoutType layoutType, final SequencingRunUploadStatus uploadStatus) {
+	public SequencingRun(final LayoutType layoutType, final SequencingRunUploadStatus uploadStatus,
+			String sequencerType) {
 		this();
 		this.layoutType = layoutType;
 		this.uploadStatus = uploadStatus;
+		this.sequencerType = sequencerType;
 	}
 
 	@Override

@@ -153,7 +153,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
-		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING);
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING, "miseq");
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -176,7 +176,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUser() {
-		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING);
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING, "miseq");
 		SequencingRun create = miseqRunService.create(mr);
 		assertEquals("user", create.getUser().getUsername());
 	}
@@ -230,7 +230,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
-		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING);
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING, "miseq");
 		miseqRunService.create(mr);
 	}
 

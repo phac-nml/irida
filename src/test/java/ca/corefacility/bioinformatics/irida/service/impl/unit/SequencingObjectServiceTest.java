@@ -61,7 +61,8 @@ public class SequencingObjectServiceTest {
 	public void testCreateSequenceFileInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequencingRun run = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING);
+		SequencingRun run = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING,
+				"miseq");
 
 		so.setSequencingRun(run);
 
@@ -74,7 +75,7 @@ public class SequencingObjectServiceTest {
 	public void testCreateSequenceFilePairInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 
-		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, SequencingRunUploadStatus.UPLOADING);
+		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, SequencingRunUploadStatus.UPLOADING, "miseq");
 
 		SequenceFilePair so = TestDataFactory.constructSequenceFilePair();
 		so.setSequencingRun(run);

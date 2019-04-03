@@ -44,7 +44,7 @@ public class SequencingRunControllerTest {
 	public void testGetDetailsPage() throws IOException {
 		Long runId = 1L;
 		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END,
-				SequencingRunUploadStatus.UPLOADING);
+				SequencingRunUploadStatus.UPLOADING, "miseq");
 		ExtendedModelMap model = new ExtendedModelMap();
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
 
@@ -61,7 +61,7 @@ public class SequencingRunControllerTest {
 		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END,
-				SequencingRunUploadStatus.UPLOADING);
+				SequencingRunUploadStatus.UPLOADING, "miseq");
 
 		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 
