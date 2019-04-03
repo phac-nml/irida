@@ -22,10 +22,6 @@ IRIDA will automatically generate a numeric project identifier for your project.
 
 #### Creating a project from cart
 
-You can create a project with samples already added to the project by using the [cart]({{ site.baseurl }}/user/user/dashboard/#cart).  To use this feature, you must first add some samples to the cart.  Once the samples are added you can click the arrow next to **Select a Pipeline**, and click **Create Project from Samples**.  This will bring you to the create project page.
-
-![Create project cart]({{ site.baseurl }}/images/tutorials/common/projects/create-project-cart.png)
-
-Continue creating the project details as described above, but note the checkbox **Add samples in cart to project**.  If this checkbox is enabled any samples in the cart will be automatically added to this project.  If there are any samples which you cannot add to the project, a warning will be displayed below.
+You can create a project with samples already added to the project by using the cart.  Continue creating the project details as described above, but select the checkbox **Add samples in cart to project**.  If this checkbox is enabled any samples in the cart will be automatically added to this project.  If there are any samples which you cannot add to the project, a warning will be displayed below.
 
 ![Create project cart warning]({{ site.baseurl }}/images/tutorials/common/projects/create-project-cart-warning.png)
