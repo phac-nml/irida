@@ -23,13 +23,13 @@
 
 	<sequencing_run id="1" description="run 1"
 		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
-		layout_type="PAIRED_END" />
+		layout_type="PAIRED_END" sequencer_type="miseq" />
 	<sequencing_run id="2" description="run 2"
 		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
-		layout_type="PAIRED_END" />
+		layout_type="PAIRED_END" sequencer_type="miseq" />
 	<sequencing_run id="3" description="run 3"
 		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
-		layout_type="PAIRED_END" />
+		layout_type="PAIRED_END" sequencer_type="miseq"/>
 
 	<client_details id="1" clientId="testClient"
 		clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />

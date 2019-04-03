@@ -7,10 +7,10 @@
 		credentialsNonExpired="true" />
 
 	<sequencing_run id="1" createdDate="2014-07-30 08:24:33"
-		description="A cool run" upload_status="COMPLETE" layout_type="PAIRED_END" />
+		description="A cool run" upload_status="COMPLETE" layout_type="PAIRED_END" sequencer_type="miseq" />
 
 	<sequencing_run id="2" createdDate="2014-08-30 08:24:33"
-		description="Another cool run" upload_status="COMPLETE" layout_type="PAIRED_END" />
+		description="Another cool run" upload_status="COMPLETE" layout_type="PAIRED_END" sequencer_type="miseq" />
 
 	<sequence_file id="1" file_path="/FileThatMayNotExist"
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1" />
