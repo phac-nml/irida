@@ -26,7 +26,7 @@ Changes
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: Fixed bug preventing associated projects from being loaded into the project samples table. (19.01.3)
 * [UI]: New dedicated cart page.
-* [UI]: Exporting to Galaxy now runs through the new cart interface.
+* [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been depricated.
 
 0.22.0 to 19.01
 ----------------
