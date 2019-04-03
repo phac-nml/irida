@@ -65,7 +65,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 */
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap createGenericRun(@PathVariable String runType, @RequestBody SequencingRun representation, HttpServletResponse response) {
+	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation, HttpServletResponse response) {
 		logger.trace("creating sequencing run");
 		representation.setSequencerType(runType);
 		return create(representation, response);
@@ -77,7 +77,6 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Override
 	protected Collection<Link> constructCollectionResourceLinks(ResourceCollection<SequencingRun> list) {
 		Collection<Link> links = super.constructCollectionResourceLinks(list);
-		//links.add(linkTo(methodOn(RESTSequencingRunController.class).createGenericRun(null, null,null)).withRel(MISEQ_REL));
 		return links;
 	}
 

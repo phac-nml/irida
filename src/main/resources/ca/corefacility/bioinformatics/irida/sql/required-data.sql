@@ -306,6 +306,7 @@ insert into remote_api (name,clientId,clientSecret,description,serviceURI,create
 insert into sequencing_run (createdDate, description, modifiedDate, upload_status, layout_type, sequencer_type, user_id) values ('2014-07-30 08:24:33','Superbug','2014-07-30 08:24:33','COMPLETE', "SINGLE_END", "MiSeq", 1);
 insert into sequencing_run (createdDate, description, modifiedDate, upload_status, layout_type, sequencer_type, user_id) values ('2014-06-30 08:22:33','Buggy!','2014-06-30 08:24:33','COMPLETE', "SINGLE_END", "MiSeq", 2);
 insert into sequencing_run (createdDate, description, modifiedDate, upload_status, layout_type, sequencer_type, user_id) values ('2014-05-30 08:22:33','Another one!!','2014-05-30 08:24:33','COMPLETE', "SINGLE_END", "NextSeq", 3);
+
 insert into sequencing_run_properties (sequencing_run_id, property_key, property_value) values (1,"workflow", "test workflow"), (1, "read_lengths", "250"), (1, "assay", "Nextera"), (2, "workflow", "Another workflow"), (2, "read_lengths", "400"), (2, "assay", "Nextera"), (3,"workflow", "craxy workflow"), (3, "read_lengths", "300"), (3, "assay", "Nextera");
 
 -- sequence files
