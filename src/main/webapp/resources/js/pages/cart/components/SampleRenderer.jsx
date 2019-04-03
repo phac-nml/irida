@@ -79,7 +79,7 @@ export class SampleRenderer extends React.Component {
         style={{
           ...this.props.style,
           padding: `0 ${SPACE_SM}`,
-          backgroundColor: grey3,
+          backgroundColor: grey1,
           borderBottom: `1px solid ${grey4}`
         }}
         className="t-cart-sample"
