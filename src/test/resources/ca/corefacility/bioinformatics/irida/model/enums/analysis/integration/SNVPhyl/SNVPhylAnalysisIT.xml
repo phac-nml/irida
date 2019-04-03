@@ -25,9 +25,6 @@
 		modifiedDate="2013-07-18 14:20:19.0" description="info" upload_status="COMPLETE"
 		layout_type="PAIRED_END" />
 
-	<miseq_run id="1" application="a" assay="a" chemistry="a"
-		experimentName="a" investigatorName="a" projectName="a" workflow="a" />
-
 	<reference_file id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
 		fileRevisionNumber="1" />
