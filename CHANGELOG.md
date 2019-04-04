@@ -25,7 +25,7 @@ Changes
 * [Documentation]: Added information on fixing `ONLY_FULL_GROUP_BY` sql error to the administrator faq docs.
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: Fixed bug preventing associated projects from being loaded into the project samples table. (19.01.3)
-* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See https://irida.corefacility.ca/documentation/upgrades/#1904 for more information. 
+* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See https://irida.corefacility.ca/documentation/adminstrator/upgrades/#1904 for more information. 
 
 0.22.0 to 19.01
 ----------------
