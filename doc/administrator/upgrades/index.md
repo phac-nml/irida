@@ -45,11 +45,11 @@ What to do for recovery if something goes wrong will be different depending on t
 #### Stage 1 - Creating temporary files
 {:.no_toc}
 
-If a problem occurs during stage 1 point you're probably going to see the following error message:
+If a problem occurs during stage 1 you're probably going to see the following error message:
 
-> There was a problem moving the FastQC images from the database to the filesystem.  The directory **YOUR TEMP DIRECTORY** contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  You do *not* have to cleanup existing FastQC images on the filesystem as they will be re-written.  Once your upgrade has completed successfully, you can safely remove the temp directory.
+> There was a problem moving the FastQC images from the database to the filesystem.  The directory (**YOUR TEMP DIRECTORY**) contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  You do *not* have to cleanup existing FastQC images on the filesystem as they will be re-written.  Once your upgrade has completed successfully, you can safely remove the temp directory.
 
-As the error message states, this means there was a problem while creating the temporary files.  If you check out **YOUR TEMP DIRECTORY** you should see a directory with lots of numbered subdirectories with some `.png` files with the FastQC images inside.  To recover from this point:
+As the error message states, this means there was a problem while creating the temporary files.  If you look inside (**YOUR TEMP DIRECTORY**) you should see a directory with lots of numbered subdirectories with some `.png` files with the FastQC images inside.  To recover from this point:
 
 1. Restore your database backup
 2. Remove the temporary directory created during the upgrade.  It will be included in the error message.
@@ -60,13 +60,13 @@ As the error message states, this means there was a problem while creating the t
 
 Issues with this step will be much more rare, but If a problem occurs here it's a bit more of a process to clean up.  You'll see the following message:
 
-> There was a problem moving the FastQC images from the temporary file location **YOUR TEMP DIRECTORY** to their final output file location.  This is going to involve some manual cleanup.  We recommend first creating a backup of **YOUR OUTPUT DIRECTORY**.  The previous max file ID was **PREVIOUS MAX ID**.  Any files in **YOUR OUTPUT DIRECTORY** with an ID greater than **PREVIOUS MAX ID** were created during this process and can be deleted.  The directory **YOUR TEMP DIRECTORY** contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  Once your upgrade has completed successfully, you can safely remove the temp directory.
+> There was a problem moving the FastQC images from the temporary file location (**YOUR TEMP DIRECTORY**) to their final output file location.  This is going to involve some manual cleanup.  We recommend first creating a backup of (**YOUR OUTPUT DIRECTORY**).  The previous max file ID was (**PREVIOUS MAX ID**).  Any files in (**YOUR OUTPUT DIRECTORY**) with an ID greater than (**PREVIOUS MAX ID**) were created during this process and can be deleted.  The directory (**YOUR TEMP DIRECTORY**) contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  Once your upgrade has completed successfully, you can safely remove the temp directory.
 
 What's happened at this point is an error occurred while moving the temporary files to their output location.  As stated in the message above you'll need to manually delete some files to clean up from here.
 
 1. (optional but recommended) Back up your analysis output files directory `output.file.base.directory`.
 2. Restore your database backup.
-3. Check the error message.  It will note the pre-upgrade largest output file id "The previous max file ID was **PREVIOUS MAX ID**".
+3. Check the error message.  It will note the pre-upgrade largest output file id "The previous max file ID was (**PREVIOUS MAX ID**)".
 4. Remove all directories from your `output.file.base.directory` with an ID **GREATER THAN** the above noted ID.  These files were created as part of the upgrade process.
 5. Retry the upgrade by starting Tomcat again.
-6. Remove the temporary directory created during the failed upgrade.  It will be included in the error message. "... temporary file location **YOUR TEMP DIRECTORY**".
+6. Remove the temporary directory created during the failed upgrade.  It will be included in the error message. "... temporary file location (**YOUR TEMP DIRECTORY**)".
