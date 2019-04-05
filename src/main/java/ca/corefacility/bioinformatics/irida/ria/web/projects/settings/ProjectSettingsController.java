@@ -7,7 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponseDTO;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponse;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -63,7 +63,7 @@ public class ProjectSettingsController {
 		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
 
-		List<TemplateResponseDTO> templateResponseTypes = templates.stream()
+		List<TemplateResponse> templateResponseTypes = templates.stream()
 				.map(t -> templatesToResponse(t, locale))
 				.collect(Collectors.toList());
 
@@ -76,13 +76,13 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Convert a analysis template to {@link TemplateResponseDTO}
+	 * Convert a analysis template to {@link TemplateResponse}
 	 *
 	 * @param template the {@link AnalysisSubmissionTemplate}
 	 * @param locale   User's logged in locale
-	 * @return a list of {@link TemplateResponseDTO}
+	 * @return a list of {@link TemplateResponse}
 	 */
-	private TemplateResponseDTO templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
+	private TemplateResponse templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
 		UUID workflowId = template.getWorkflowId();
 		String typeString;
 
@@ -96,7 +96,7 @@ public class ProjectSettingsController {
 			typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
 		}
 
-		return new TemplateResponseDTO(template.getId(), template.getName(), typeString);
+		return new TemplateResponse(template.getId(), template.getName(), typeString);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class ProjectSettingsController {
 		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
 				templateId, project);
 
-		TemplateResponseDTO templateResponseType = templatesToResponse(template, locale);
+		TemplateResponse templateResponseType = templatesToResponse(template, locale);
 
 		model.addAttribute("template", templateResponseType);
 		model.addAttribute("project", project);
