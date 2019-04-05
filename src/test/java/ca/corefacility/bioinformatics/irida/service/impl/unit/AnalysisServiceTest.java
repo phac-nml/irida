@@ -1,30 +1,25 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-
-import javax.validation.Validator;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisServiceImpl;
+import com.google.common.collect.ImmutableMap;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.validation.Validator;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class AnalysisServiceTest {
 
@@ -46,7 +41,7 @@ public class AnalysisServiceTest {
 	public void testCreateAnalysisWithOneOutputFile() throws IOException {
 		Path outputFile = Files.createTempFile(null, null);
 		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "", "", null);
-		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().description("something").fastQCReport(report).build();
+		Analysis analysis = new Analysis(null, ImmutableMap.of("file", report), new AnalysisType("test"));
 
 		analysisService.create(analysis);
 

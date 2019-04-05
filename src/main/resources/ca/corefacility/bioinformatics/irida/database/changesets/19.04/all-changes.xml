@@ -6,4 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="add-email-pipeline-result-to-analysis-submission.xml"
              relativeToChangelogFile="true"/>
+    <include file="fastqc-filesystem.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
