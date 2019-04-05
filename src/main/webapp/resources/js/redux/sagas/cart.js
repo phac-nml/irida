@@ -6,7 +6,9 @@ import {
   getCartCount,
   putSampleInCart,
   removeSample,
-  removeProject
+  removeProject,
+  getCartIds,
+  getSamplesForProjects
 } from "../../apis/cart/cart";
 import { FIELDS } from "../../pages/projects/linelist/constants";
 
@@ -68,10 +70,22 @@ export function* removeSampleFromCart() {
     yield put(actions.updated({ count }));
   }
 }
+
+/**
+ * Remove an entire project from the cart.
+ * @returns {IterableIterator<PutEffect<*|{payload, type}>|CallEffect|TakeEffect>}
+ */
 export function* removeProjectFromCart() {
   while (true) {
     const { payload } = yield take(types.REMOVE_PROJECT);
     const { count } = yield call(removeProject, payload.id);
     yield put(actions.updated({ count }));
   }
+}
+
+export function* loadFullCart() {
+  yield take(types.LOAD_CART);
+  const { ids } = yield call(getCartIds);
+  const samples = yield call(getSamplesForProjects, ids);
+  yield put(actions.cartLoaded(samples));
 }

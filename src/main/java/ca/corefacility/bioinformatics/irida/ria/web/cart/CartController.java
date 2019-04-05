@@ -153,12 +153,16 @@ public class CartController {
 	/**
 	 * Get {@link Sample}s in the cart for a specific {@link Project}
 	 *
-	 * @param projectId {@link Long} identifier for a project
+	 * @param projectId {@link List} identifiers for a projects
 	 * @return {@link List} of {@link CartSample}s belonging to the {@link Project}
 	 */
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<CartSample> getCartSamplesForProject(@RequestParam Long projectId) {
-		return cart.getCartSamplesForProject(projectId);
+	public List<CartSample> getCartSamplesForProject(@RequestParam List<Long> projectId) {
+		List<CartSample> samples = new ArrayList<>();
+		for (Long id : projectId) {
+			samples.addAll(cart.getCartSamplesForProject(id));
+		}
+		return samples;
 	}
 }

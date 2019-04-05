@@ -49,7 +49,11 @@ export default class Pipeline extends React.Component {
     /**  Pipeline description */
     description: PropTypes.string.isRequired,
     /** Styles specific for this pipeline.  Affects the way the pipeline name is displayed */
-    styleName: PropTypes.string.isRequired
+    styleName: PropTypes.string.isRequired,
+    /**
+     * Ability to select this pipeline
+     */
+    displaySelect: PropTypes.bool.isRequired
   };
 
   render() {
@@ -60,14 +64,19 @@ export default class Pipeline extends React.Component {
             {this.props.name}
           </Heading>
         }
-        actions={[
-          <Button size="small"
-            className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
-            href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
-          >
-            Select
-          </Button>
-        ]}
+        actions={
+          this.props.displaySelect
+            ? [
+                <Button
+                  size="small"
+                  className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
+                  href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
+                >
+                  Select
+                </Button>
+              ]
+            : []
+        }
       >
         {this.props.description}
       </PipelineCard>

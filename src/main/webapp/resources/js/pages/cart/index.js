@@ -11,14 +11,15 @@ import { reducer as galaxyReducer } from "../../components/galaxy/reducer";
 import {
   empty,
   removeProjectFromCart,
-  removeSampleFromCart
+  removeSampleFromCart,
+  loadFullCart
 } from "../../redux/sagas/cart";
 import {
   getCartGalaxySamplesSaga,
   samplesUpdated,
   submitGalaxyDataSaga
 } from "../../components/galaxy/sagas";
-import { CartPage } from "./components/CartPage";
+import { Cart } from "./components/Cart";
 
 const store = getStore(
   { sampleDetailsReducer, galaxyReducer },
@@ -27,6 +28,7 @@ const store = getStore(
     getDetailsForSample,
     removeSampleFromCart,
     removeProjectFromCart,
+    loadFullCart,
     getCartGalaxySamplesSaga,
     submitGalaxyDataSaga,
     samplesUpdated
@@ -35,7 +37,7 @@ const store = getStore(
 
 render(
   <Provider store={store}>
-    <CartPage />
+    <Cart />
   </Provider>,
   document.querySelector("#root")
 );

@@ -62,6 +62,7 @@ export default class CartTools extends Component {
             <Pipelines
               key="/cart/pipelines"
               path="cart/pipelines"
+              displaySelect={props.count > 0}
               default={!fromGalaxy}
             />
           )

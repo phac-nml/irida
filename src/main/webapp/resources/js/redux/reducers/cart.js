@@ -7,10 +7,45 @@ export const types = {
   CART_EMPTY: "CART/EMPTY",
   CART_EMPTY_SUCCESS: "CART/EMPTY_SUCCESS",
   REMOVE_SAMPLE: "CART/REMOVE_SAMPLE",
-  REMOVE_PROJECT: "CART/REMOVE_PROJECT"
+  REMOVE_PROJECT: "CART/REMOVE_PROJECT",
+  LOAD_CART: "CART/LOAD_CART",
+  CART_LOADED: "CART/CART_LOADED",
+  APPLY_FILTER: "CART/FILTER"
 };
 
-const initialState = { count: 0, initialized: false };
+const initialState = {
+  count: 0,
+  initialized: false,
+  loaded: false,
+  filter: "",
+  samples: [],
+  filteredSamples: []
+};
+
+function filterSamples(samples = [], filter = "") {
+  return filter.length > 0
+    ? samples.filter(s => s.label.toLowerCase().includes(filter))
+    : samples;
+}
+
+function removeSample(samples, filter, projectId, sampleId) {
+  const index = samples.find(
+    sample => sample.project.id === projectId && sample.id === sampleId
+  );
+  samples.splice(index, 1);
+  return {
+    samples,
+    filteredSamples: filterSamples(samples, filter)
+  };
+}
+
+function removeProject(samples, filter, projectId) {
+  const filtered = samples.filter(s => s.project.id !== projectId);
+  return {
+    samples: filtered,
+    filteredSamples: filterSamples(filtered, filter)
+  };
+}
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -28,6 +63,37 @@ export const reducer = (state = initialState, action = {}) => {
         })
       );
       return { ...state, ...{ count: action.payload.count } };
+    case types.CART_LOADED:
+      return {
+        ...state,
+        loaded: true,
+        samples: action.payload.samples,
+        filteredSamples: action.payload.samples
+      };
+    case types.REMOVE_SAMPLE:
+      return {
+        ...state,
+        ...removeSample(
+          state.samples,
+          state.filter,
+          action.payload.projectId,
+          action.payload.sampleId
+        )
+      };
+    case types.REMOVE_PROJECT:
+      return {
+        ...state,
+        ...removeProject(state.samples, state.filter, action.payload.id)
+      };
+    case types.APPLY_FILTER:
+      return {
+        ...state,
+        filter: action.payload.filter.toLowerCase(),
+        filteredSamples: filterSamples(
+          state.samples,
+          action.payload.filter.toLowerCase()
+        )
+      };
     case types.CART_EMPTY_SUCCESS:
       return { ...state, count: 0 };
     default:
@@ -51,6 +117,19 @@ export const actions = {
     type: types.REMOVE_PROJECT,
     payload: {
       id
+    }
+  }),
+  loadCart: () => ({
+    type: types.LOAD_CART
+  }),
+  cartLoaded: samples => ({
+    type: types.CART_LOADED,
+    payload: { samples }
+  }),
+  applyFilter: filter => ({
+    type: types.APPLY_FILTER,
+    payload: {
+      filter
     }
   })
 };

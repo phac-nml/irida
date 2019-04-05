@@ -36,6 +36,7 @@ export class Pipelines extends React.Component {
               name={pipeline.name}
               description={pipeline.description}
               styleName={pipeline.styleName}
+              displaySelect={this.props.displaySelect}
             />
           </Col>
         ))}
