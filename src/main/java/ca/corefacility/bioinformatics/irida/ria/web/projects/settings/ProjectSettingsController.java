@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
@@ -12,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponseDTO;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/projects/{projectId}/settings")
 public class ProjectSettingsController {
 	private final MessageSource messageSource;
-	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -42,11 +38,10 @@ public class ProjectSettingsController {
 	public static final String ACTIVE_NAV_SETTINGS = "settings";
 
 	@Autowired
-	public ProjectSettingsController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, ProjectService projectService,
-			AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService workflowsService) {
+	public ProjectSettingsController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
+			ProjectService projectService, AnalysisSubmissionService analysisSubmissionService,
+			IridaWorkflowsService workflowsService) {
 		this.messageSource = messageSource;
-		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -135,7 +130,8 @@ public class ProjectSettingsController {
 	 * @return Redirect to the project settings page after completion
 	 */
 	@RequestMapping(path = "/template/remove", method = RequestMethod.POST)
-	public String removeAnalysisTemplateConfirm(final @RequestParam Long templateId, final @PathVariable Long projectId) {
+	public String removeAnalysisTemplateConfirm(final @RequestParam Long templateId,
+			final @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 
 		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
@@ -179,33 +175,6 @@ public class ProjectSettingsController {
 		}
 
 		return "redirect: /projects/" + projectId + "/settings/delete";
-	}
-
-	/**
-	 * Request for a {@link Project} remote settings page
-	 *
-	 * @param projectId the ID of the {@link Project} to read
-	 * @param model     Model for the view
-	 * @param principal Logged in user
-	 * @return name of the project remote settings page
-	 */
-	@RequestMapping("/metadata-templates")
-	public String getSampleMetadataTemplatesPage(@PathVariable Long projectId, final Model model,
-			final Principal principal) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
-		List<MetadataTemplate> templates = new ArrayList<>();
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			templates.add(join.getObject());
-		}
-		model.addAttribute("templates", templates);
-		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "metadata_templates");
-		return "projects/settings/pages/metadata_templates";
 	}
 
 	/**
