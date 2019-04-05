@@ -103,7 +103,7 @@ public class ProjectSettingsController {
 
 		return new TemplateResponseDTO(template.getId(), template.getName(), typeString);
 	}
-	
+
 	/**
 	 * Load the modal to confirm removal of the given analysis template from the project
 	 *
@@ -114,7 +114,7 @@ public class ProjectSettingsController {
 	 * @return template id
 	 */
 	@RequestMapping(path = "/template/removeTemplateModal", method = RequestMethod.POST)
-	public String removeTemplateModal(final @RequestParam Long templateId, final @PathVariable Long projectId,
+	public String removeAnalysisTemplateModal(final @RequestParam Long templateId, final @PathVariable Long projectId,
 			final Model model, Locale locale) {
 		Project project = projectService.read(projectId);
 		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
@@ -135,7 +135,7 @@ public class ProjectSettingsController {
 	 * @return Redirect to the project settings page after completion
 	 */
 	@RequestMapping(path = "/template/remove", method = RequestMethod.POST)
-	public String removeTemplateConfirm(final @RequestParam Long templateId, final @PathVariable Long projectId) {
+	public String removeAnalysisTemplateConfirm(final @RequestParam Long templateId, final @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 
 		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
@@ -152,7 +152,7 @@ public class ProjectSettingsController {
 	 */
 	@RequestMapping("/delete")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public String getProjctDeletionPage(@PathVariable Long projectId, final Model model, final Principal principal) {
+	public String getProjectDeletionPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
