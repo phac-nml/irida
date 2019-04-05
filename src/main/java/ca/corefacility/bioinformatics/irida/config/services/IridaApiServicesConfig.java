@@ -117,9 +117,6 @@ public class IridaApiServicesConfig {
 	
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
-
-	@Value("${irida.debug.nrepl.server.port:#{null}}")
-	private Integer nreplPort;
 	
 	@Value("${irida.workflow.analysis.threads}")
 	private int analysisTaskThreads;
