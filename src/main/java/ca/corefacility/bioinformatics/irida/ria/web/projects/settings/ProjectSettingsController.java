@@ -84,35 +84,33 @@ public class ProjectSettingsController {
 	 * Convert a analysis template to {@link TemplateResponseDTO}
 	 *
 	 * @param template the {@link AnalysisSubmissionTemplate}
-	 * @param locale    User's logged in locale
+	 * @param locale   User's logged in locale
 	 * @return a list of {@link TemplateResponseDTO}
 	 */
 	private TemplateResponseDTO templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
-			UUID workflowId = template.getWorkflowId();
-			String typeString;
+		UUID workflowId = template.getWorkflowId();
+		String typeString;
 
-			try {
-				IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
-				AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
-						.getAnalysisType();
+		try {
+			IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
+			AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+					.getAnalysisType();
 
-				typeString = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, locale);
-			} catch (IridaWorkflowNotFoundException e) {
-				typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
-			}
+			typeString = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, locale);
+		} catch (IridaWorkflowNotFoundException e) {
+			typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
+		}
 
-			return new TemplateResponseDTO(template.getId(), template.getName(), typeString);
-
+		return new TemplateResponseDTO(template.getId(), template.getName(), typeString);
 	}
-
-
-
+	
 	/**
 	 * Load the modal to confirm removal of the given analysis template from the project
+	 *
 	 * @param templateId the {@link AnalysisSubmissionTemplate} id
-	 * @param projectId the {@link Project} id to delete from
-	 * @param model Model for the view
-	 * @param locale User's locale
+	 * @param projectId  the {@link Project} id to delete from
+	 * @param model      Model for the view
+	 * @param locale     User's locale
 	 * @return template id
 	 */
 	@RequestMapping(path = "/template/removeTemplateModal", method = RequestMethod.POST)
@@ -144,24 +142,17 @@ public class ProjectSettingsController {
 		return "redirect:/projects/" + projectId + "/settings";
 	}
 
-
-
 	/**
 	 * Request for a {@link Project} deletion page
 	 *
-	 * @param projectId
-	 *            the ID of the {@link Project} to read
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            Logged in user
-	 *
+	 * @param projectId the ID of the {@link Project} to read
+	 * @param model     Model for the view
+	 * @param principal Logged in user
 	 * @return name of the project deletion page
 	 */
 	@RequestMapping("/delete")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public String getProjctDeletionPage(@PathVariable Long projectId, final Model model,
-			final Principal principal) {
+	public String getProjctDeletionPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
@@ -171,19 +162,17 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Delete a project from the UI. Will redirect to user's projects page on
-	 * completion.
+	 * Delete a project from the UI. Will redirect to user's projects page on completion.
 	 *
-	 * @param projectId
-	 *            the {@link Project} id to delete
-	 * @param confirm
-	 *            confirmation checkbox to delete
+	 * @param projectId the {@link Project} id to delete
+	 * @param confirm   confirmation checkbox to delete
 	 * @return a redirect to the users's project page on completion.
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public String deleteProject(@PathVariable Long projectId, @RequestParam(required=false, defaultValue="") String confirm) {
-		if(confirm.equals("true")){
+	public String deleteProject(@PathVariable Long projectId,
+			@RequestParam(required = false, defaultValue = "") String confirm) {
+		if (confirm.equals("true")) {
 			projectService.delete(projectId);
 
 			return "redirect:/projects";
@@ -195,13 +184,9 @@ public class ProjectSettingsController {
 	/**
 	 * Request for a {@link Project} remote settings page
 	 *
-	 * @param projectId
-	 * 		the ID of the {@link Project} to read
-	 * @param model
-	 * 		Model for the view
-	 * @param principal
-	 * 		Logged in user
-	 *
+	 * @param projectId the ID of the {@link Project} to read
+	 * @param model     Model for the view
+	 * @param principal Logged in user
 	 * @return name of the project remote settings page
 	 */
 	@RequestMapping("/metadata-templates")
@@ -211,8 +196,8 @@ public class ProjectSettingsController {
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
-				.getMetadataTemplatesForProject(project);
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+				project);
 		List<MetadataTemplate> templates = new ArrayList<>();
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			templates.add(join.getObject());
@@ -223,30 +208,21 @@ public class ProjectSettingsController {
 		return "projects/settings/pages/metadata_templates";
 	}
 
-
-
 	/**
 	 * Update the coverage QC setting of a {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of a {@link Project}
-	 * @param genomeSize
-	 *            the genomeSize to set for the project
-	 * @param minimumCoverage
-	 *            minimum coverage needed for qc to pass
-	 * @param maximumCoverage
-	 *            maximum coverage needed for QC to pass
-	 * @param locale
-	 *            locale of the user
-	 *
+	 * @param projectId       the ID of a {@link Project}
+	 * @param genomeSize      the genomeSize to set for the project
+	 * @param minimumCoverage minimum coverage needed for qc to pass
+	 * @param maximumCoverage maximum coverage needed for QC to pass
+	 * @param locale          locale of the user
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/coverage", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
 			@RequestParam(defaultValue = "0") Integer minimumCoverage,
-			@RequestParam(defaultValue = "0") Integer maximumCoverage,
-			Locale locale) {
+			@RequestParam(defaultValue = "0") Integer maximumCoverage, Locale locale) {
 		Project read = projectService.read(projectId);
 
 		if (minimumCoverage == 0) {
