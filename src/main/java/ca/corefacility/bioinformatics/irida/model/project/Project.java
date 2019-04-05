@@ -76,11 +76,13 @@ public class Project extends IridaResourceSupport
 	private String projectDescription;
 
 	private String remoteURL;
-	
+
+	@Deprecated
 	@NotNull
 	@Column(name="assemble_uploads")
 	private boolean assembleUploads;
-	
+
+	@Deprecated
 	@NotNull
 	@Column(name="sistr_typing_uploads")
 	@Enumerated(EnumType.STRING)
@@ -238,11 +240,13 @@ public class Project extends IridaResourceSupport
 	public void setOrganism(String organism) {
 		this.organism = organism;
 	}
-	
+
+	@Deprecated
 	public void setAssembleUploads(boolean assembleUploads) {
 		this.assembleUploads = assembleUploads;
 	}
-	
+
+	@Deprecated
 	public boolean getAssembleUploads(){
 		return assembleUploads;
 	}
@@ -289,11 +293,13 @@ public class Project extends IridaResourceSupport
 		this.maximumCoverage = maximumCoverage;
 	}
 
+	@Deprecated
 	@JsonIgnore
 	public AutomatedSISTRSetting getSistrTypingUploads() {
 		return sistrTypingUploads;
 	}
 
+	@Deprecated
 	@JsonIgnore
 	public void setSistrTypingUploads(AutomatedSISTRSetting sistrTypingUploads) {
 		this.sistrTypingUploads = sistrTypingUploads;
@@ -305,7 +311,7 @@ public class Project extends IridaResourceSupport
 	 * AUTO - Run SISTR
 	 * AUTO_METADATA - Run and save results to metadata
 	 */
-	//TODO REMOVEME
+	@Deprecated
 	public enum AutomatedSISTRSetting {
 		OFF,
 		AUTO,
