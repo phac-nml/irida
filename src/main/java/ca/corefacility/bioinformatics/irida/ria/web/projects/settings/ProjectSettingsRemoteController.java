@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Controller for managing settings for a remotely sync'd project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
 public class ProjectSettingsRemoteController {

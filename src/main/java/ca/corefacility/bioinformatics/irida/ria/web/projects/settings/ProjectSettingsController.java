@@ -3,21 +3,16 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponseDTO;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +68,7 @@ public class ProjectSettingsController {
 		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
 
-		List<TemplateResponseType> templateResponseTypes = templates.stream()
+		List<TemplateResponseDTO> templateResponseTypes = templates.stream()
 				.map(t -> templatesToResponse(t, locale))
 				.collect(Collectors.toList());
 
@@ -86,13 +81,13 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Convert a analysis template to {@link TemplateResponseType}
+	 * Convert a analysis template to {@link TemplateResponseDTO}
 	 *
 	 * @param template the {@link AnalysisSubmissionTemplate}
 	 * @param locale    User's logged in locale
-	 * @return a list of {@link TemplateResponseType}
+	 * @return a list of {@link TemplateResponseDTO}
 	 */
-	private TemplateResponseType templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
+	private TemplateResponseDTO templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
 			UUID workflowId = template.getWorkflowId();
 			String typeString;
 
@@ -106,36 +101,11 @@ public class ProjectSettingsController {
 				typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
 			}
 
-			return new TemplateResponseType(template.getId(), template.getName(), typeString);
+			return new TemplateResponseDTO(template.getId(), template.getName(), typeString);
 
 	}
 
-	/**
-	 * Response class for easily formatting analysis templates for the project settings page
-	 */
-	private class TemplateResponseType {
-		Long id;
-		String name;
-		String analysisType;
 
-		TemplateResponseType(Long id, String name, String analysisType) {
-			this.id = id;
-			this.name = name;
-			this.analysisType = analysisType;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getAnalysisType() {
-			return analysisType;
-		}
-	}
 
 	/**
 	 * Load the modal to confirm removal of the given analysis template from the project
@@ -152,8 +122,7 @@ public class ProjectSettingsController {
 		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
 				templateId, project);
 
-
-		TemplateResponseType templateResponseType = templatesToResponse(template, locale);
+		TemplateResponseDTO templateResponseType = templatesToResponse(template, locale);
 
 		model.addAttribute("template", templateResponseType);
 		model.addAttribute("project", project);
