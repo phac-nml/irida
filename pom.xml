@@ -585,13 +585,6 @@
 			<artifactId>imgscalr-lib</artifactId>
 			<version>${imgscalr.version}</version>
 		</dependency>
-
-		<!-- Clojure nREPL -->
-		<dependency>
-			<groupId>net.matlux</groupId>
-			<artifactId>jvm-breakglass</artifactId>
-			<version>${jvm-breakglass.version}</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -1083,7 +1076,6 @@
 		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
-		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 		<pf4j.version>2.4.0</pf4j.version>
 		<hamcrest.version>1.3</hamcrest.version>
 
