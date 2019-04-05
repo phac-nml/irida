@@ -25,6 +25,7 @@ Changes
 * [Documentation]: Added information on fixing ONLY_FULL_GROUP_BY sql error to the administrator faq docs.
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: Fixed bug preventing associated projects from being loaded into the project samples table. (19.01.3)
+* [UI]: Added hard wrap on sample name on sample details page.
 
 0.22.0 to 19.01
 ----------------
