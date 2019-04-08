@@ -40,34 +40,8 @@ export default class CartTools extends Component {
   constructor(props) {
     super(props);
 
-    const fromGalaxy = typeof window.GALAXY !== "undefined";
     this.state = {
-      fromGalaxy,
-      paths: [
-        fromGalaxy
-          ? {
-              key: "/cart/galaxy",
-              link: "cart/galaxy",
-              text: getI18N("CartTools.menu.galaxy"),
-              component: (
-                <GalaxyExport key="cart/galaxy" path="cart/galaxy" default />
-              )
-            }
-          : null,
-        {
-          key: "/cart/pipelines",
-          link: "cart/pipelines",
-          text: getI18N("CartTools.menu.pipelines"),
-          component: (
-            <Pipelines
-              key="/cart/pipelines"
-              path="cart/pipelines"
-              displaySelect={props.count > 0}
-              default={!fromGalaxy}
-            />
-          )
-        }
-      ].filter(Boolean)
+      fromGalaxy: typeof window.GALAXY !== "undefined"
     };
   }
 
@@ -114,6 +88,32 @@ export default class CartTools extends Component {
     document.body.removeEventListener("galaxy:removal", this.removeGalaxy);
 
   render() {
+    const paths = [
+      this.state.fromGalaxy
+        ? {
+            key: "/cart/galaxy",
+            link: "cart/galaxy",
+            text: getI18N("CartTools.menu.galaxy"),
+            component: (
+              <GalaxyExport key="cart/galaxy" path="cart/galaxy" default />
+            )
+          }
+        : null,
+      {
+        key: "/cart/pipelines",
+        link: "cart/pipelines",
+        text: getI18N("CartTools.menu.pipelines"),
+        component: (
+          <Pipelines
+            key="/cart/pipelines"
+            path="cart/pipelines"
+            displaySelect={this.props.count > 0}
+            default={!this.state.fromGalaxy}
+          />
+        )
+      }
+    ].filter(Boolean);
+
     return (
       <ToolsWrapper>
         <Location>
@@ -121,12 +121,12 @@ export default class CartTools extends Component {
             <>
               <CartToolsMenu
                 pathname={location.pathname}
-                paths={this.state.paths}
+                paths={paths}
                 toggleSidebar={this.props.toggleSidebar}
                 collapsed={this.props.collapsed}
               />
               <ToolsInner>
-                <Router>{this.state.paths.map(path => path.component)}</Router>
+                <Router>{paths.map(path => path.component)}</Router>
               </ToolsInner>
             </>
           )}
