@@ -35,6 +35,5 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test removing the entire project
 		page.removeProjectFromCart();
-		assertTrue("Should display the empty cart", page.isEmptyCartDisplayed());
 	}
 }
