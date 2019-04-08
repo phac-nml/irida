@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/CartView.xml")
@@ -24,7 +25,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.addSelectedSamplesToCart();
 
 		// Make sure 3 samples are in the cart
-		page = CartPage.goToCart(driver());
+		CartPage page = CartPage.goToCart(driver());
 		assertEquals("Should be 3 samples in the cart", 3, page.getNumberOfSamplesInCart());
 		assertTrue("Should be directed to pipelines view", page.onPipelinesView());
 
