@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSettingsAssociatedProjectsController;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectSettingsAssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 

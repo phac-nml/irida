@@ -488,6 +488,36 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public AnalysisSubmissionTemplate readAnalysisSubmissionTemplateForProject(Long id, Project project) {
+		List<AnalysisSubmissionTemplate> analysisTemplatesForProject = getAnalysisTemplatesForProject(project);
+
+		Optional<AnalysisSubmissionTemplate> first = analysisTemplatesForProject.stream()
+				.filter(t -> t.getId()
+						.equals(id))
+				.findFirst();
+
+		if(!first.isPresent()){
+			throw new EntityNotFoundException("Could not get analysis template " + id + " for project " + project.getId());
+		}
+
+		return first.get();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public void deleteAnalysisSubmissionTemplateForProject(Long id, Project project) {
+		AnalysisSubmissionTemplate template = readAnalysisSubmissionTemplateForProject(id, project);
+		analysisTemplateRepository.delete(template);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")

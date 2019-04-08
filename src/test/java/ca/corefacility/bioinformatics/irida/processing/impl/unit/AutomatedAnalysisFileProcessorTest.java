@@ -123,13 +123,14 @@ public class AutomatedAnalysisFileProcessorTest {
 	}
 
 	@Test
-	public void testAssemblyDisabled() {
+	public void testNoSubmissions() {
 		Long sequenceFileId = 1L;
 		SequenceFilePair pair = new SequenceFilePair();
 		Sample sample = new Sample();
 		Project project = new Project();
-		project.setAssembleUploads(false);
 
+		when(templateRepository.getAnalysisSubmissionTemplatesForProject(project)).thenReturn(
+				Lists.newArrayList());
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(

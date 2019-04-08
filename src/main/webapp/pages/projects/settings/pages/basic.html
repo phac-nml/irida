@@ -10,9 +10,8 @@
           'not_set': /*[[#{project.settings.notset}]]*/ '_not set_'
         },
         urls: {
-          'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-          'sistr': /*[[@{/projects/{id}/settings/sistr(id=${project.getId()})}]]*/ '/projects/1/settings/sistr',
-          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
+          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage',
+          'deleteModal': /*[[@{/projects/{id}/settings/template/removeTemplateModal(id=${project.getId()})}]]*/ '/projects/1/setttings/template/removeTemplateModal'
         }
       };
     </script>
@@ -22,33 +21,27 @@
     <div class="row">
         <div class="col-md-12">
             <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
-            <div class="checkbox">
-                <label>
-                    <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"
-                           th:disabled="not ${manageMembers}"/>
-                    <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
-                </label>
-            </div>
+            
+            <table class="table table-striped" th:if="${not analysisTemplates.isEmpty()}">
+                <thead>
+                   <th th:text="#{project.settings.automated.template.name}">_Pipeline name_</th>
+                   <th th:text="#{project.settings.automated.template.type}">_Analysis type_</th>
+                   <th th:if="${manageMembers}"></th>
+                </thead>
+                <tbody>
+                    <tr th:each="template : ${analysisTemplates}" th:data-analysis="${template.id}">
+                        <td th:text="${template.name}">_Name_</td>
+                        <td th:text="${template.analysisType}">_type_</td>
+                        <td th:if="${manageMembers}">
+                            <button class="btn btn-xs btn-default analysis-remove"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <div class="form-group">
-                <div class="checkbox">
-                    <label for="sistrTypingUploads">
-                        <input type="checkbox" class="js-sistr-checkbox" id="sistrTypingUploads"
-                               th:checked="${#strings.contains(project.sistrTypingUploads, 'AUTO')}"
-                               name="sistrTypingUploads" value="OFF" th:disabled="not ${manageMembers}">
-                        <span th:text="#{projects.create.settings.sistr}">_RUN_SISTR_</span>
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label style="margin-left: 20px;" for="sistrWrites">
-                        <input type="checkbox" class="js-sistr-writes" id="sistrWrites"
-                               th:checked="${#strings.equals(project.sistrTypingUploads, 'AUTO_METADATA')}"
-                               th:disabled="not ${#strings.contains(project.sistrTypingUploads, 'AUTO')}">
-                        <span th:text="#{projects.create.settings.sistr.AUTO_METADATA}">_WRITE_BACK_TO_SAMPLE_METADATA_</span>
-                    </label>
-                </div>
-            </div>
-            <a class="btn btn-default" href="/pipelines" th:href="@{/pipelines(automatedProject=${project.id})}" role="button">
+            <div class="alert alert-info" th:if="${analysisTemplates.isEmpty()}" th:text="#{project.settings.automated.empty}">_Add one below_</div>
+
+            <a class="btn btn-default" href="/pipelines" th:href="@{/pipelines(automatedProject=${project.id})}" role="button" th:if="${manageMembers}">
                 <i class="fas fa-plus"></i>
                 <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
             </a>
@@ -68,7 +61,6 @@
                     th:text="#{form.btn.update}">_save_</button>
         </span>
             </h2>
-
 
             <div class="form-group">
                 <div id="display-coverage" class="row edit-coverage">
@@ -133,6 +125,7 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="removeAnalysisTemplateModal" role="dialog" aria-labelledBy="#deleteConfirmTitle"></div>
 </th:block>
 
 <th:block layout:fragment="scripts">

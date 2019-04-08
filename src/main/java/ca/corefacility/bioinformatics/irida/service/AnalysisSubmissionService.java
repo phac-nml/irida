@@ -164,6 +164,23 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project);
 
 	/**
+	 * Get an {@link AnalysisSubmissionTemplate} on the given {@link Project}
+	 *
+	 * @param id      the {@link AnalysisSubmissionTemplate} id
+	 * @param project the {@link Project} to get templates for
+	 * @return the found {@link AnalysisSubmissionTemplate}
+	 */
+	public AnalysisSubmissionTemplate readAnalysisSubmissionTemplateForProject(Long id, Project project);
+
+	/**
+	 * Delete an {@link AnalysisSubmissionTemplate} from the given {@link Project}
+	 *
+	 * @param id      The id of an {@link AnalysisSubmissionTemplate}.
+	 * @param project the {@link Project} to delete from
+	 */
+	public void deleteAnalysisSubmissionTemplateForProject(Long id, Project project);
+
+	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
 	 * complete.
 	 * 

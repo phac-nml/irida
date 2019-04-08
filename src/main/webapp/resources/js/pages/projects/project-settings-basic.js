@@ -1,73 +1,4 @@
 const projectSettings = (function(page, notifications) {
-  $("#assemble").change(function() {
-    const checkbox = $(this);
-    const assemble = checkbox.is(":checked");
-
-    $.ajax({
-      url: page.urls.assemble,
-      type: "POST",
-      data: {
-        assemble: assemble
-      },
-      statusCode: {
-        200: function(response) {
-          notifications.show({ text: response.result });
-        }
-      },
-      fail: function() {
-        notifications.show({ text: page.i18n.error, type: "error" });
-      }
-    });
-  });
-
-  // Sistr settings
-  const SISTR_TYPES = {
-    off: "OFF",
-    auto: "AUTO",
-    autoMetadata: "AUTO_METADATA"
-  };
-
-  $(".js-sistr-checkbox").on("change", function(e) {
-    const selected = $(e.target).prop("checked");
-    if (selected) {
-      $(".js-sistr-writes").removeAttr("disabled");
-      updateSistrSettings(SISTR_TYPES.auto);
-    } else {
-      $(".js-sistr-writes")
-        .removeAttr("checked")
-        .attr("disabled", true);
-      updateSistrSettings(SISTR_TYPES.off);
-    }
-  });
-
-  $(".js-sistr-writes").on("change", function(e) {
-    const selected = $(e.target).prop("checked");
-    if (selected) {
-      updateSistrSettings(SISTR_TYPES.autoMetadata);
-    } else {
-      updateSistrSettings(SISTR_TYPES.auto);
-    }
-  });
-
-  function updateSistrSettings(sistr) {
-    $(".js-sistr-checkbox").val(sistr);
-    $.ajax({
-      url: page.urls.sistr,
-      type: "POST",
-      data: {
-        sistr
-      },
-      statusCode: {
-        200: function(response) {
-          notifications.show({ text: response.result });
-        }
-      },
-      fail: function() {
-        notifications.show({ text: page.i18n.error, type: "error" });
-      }
-    });
-  }
-
   $("#coverage-save").on("click", function() {
     const genomeSize = $("#genome-size").val();
     const minimumCoverage = $("#minimum-coverage").val();
@@ -118,6 +49,27 @@ const projectSettings = (function(page, notifications) {
 
   $("#confirm-deletion").on("change", function() {
     toggleDeleteButton();
+  });
+
+  /**
+   * Button for removing an analysis template from a project.  This should show a confirmation modal
+   */
+  $(".analysis-remove").on("click", function() {
+    const templateId = $(this)
+      .closest("tr")
+      .data("analysis");
+
+    /*
+    Display the confirmation modal for removing a template from the project.
+     */
+    $("#removeAnalysisTemplateModal").load(
+      `${window.PAGE.urls.deleteModal}#removeAnalysisTemplateModalGen`,
+      { templateId },
+      function() {
+        const modal = $(this);
+        modal.modal("show");
+      }
+    );
   });
 
   function toggleDeleteButton() {
