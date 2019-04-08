@@ -29,10 +29,6 @@ public class CartPage extends AbstractPage {
 		return PageFactory.initElements(driver, CartPage.class);
 	}
 
-	public boolean isEmptyCartDisplayed() {
-		return emptyCartElement.isDisplayed();
-	}
-
 	public int getNumberOfSamplesInCart() {
 		return driver.findElements(By.className("t-cart-sample")).size();
 	}

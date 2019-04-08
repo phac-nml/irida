@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/CartView.xml")
@@ -16,10 +15,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testCartPage() {
 		LoginPage.loginAsUser(driver());
-
-		// Test an empty cart.
-		CartPage page = CartPage.goToCart(driver());
-		assertTrue("Should display the empty cart", page.isEmptyCartDisplayed());
 
 		// Add some samples to the cart and test to see if they get displayed/
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
