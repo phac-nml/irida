@@ -30,7 +30,9 @@ public class CartPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamplesInCart() {
-		return driver.findElements(By.className("t-cart-sample")).size();
+		waitForElementVisible(By.className("t-cart-sample"));
+		return driver.findElements(By.className("t-cart-sample"))
+				.size();
 	}
 
 	public boolean onPipelinesView() {
@@ -39,9 +41,11 @@ public class CartPage extends AbstractPage {
 
 	public void removeSampleFromCart(int index) {
 		WebElement sample = cartSamples.get(index);
-		sample.findElement(By.className("t-delete-menu-btn")).click();
+		sample.findElement(By.className("t-delete-menu-btn"))
+				.click();
 		WebElement deleteMenu = driver.findElement(By.className("t-delete-menu"));
-		deleteMenu.findElement(By.className("t-delete-sample")).click();
+		deleteMenu.findElement(By.className("t-delete-sample"))
+				.click();
 		// Need to wait for the sample to be removed from the UI.
 		waitForTime(500);
 	}
@@ -51,7 +55,8 @@ public class CartPage extends AbstractPage {
 		sample.findElement(By.className("t-delete-menu-btn"))
 				.click();
 		WebElement deleteMenu = driver.findElement(By.className("t-delete-menu"));
-		deleteMenu.findElement(By.className("t-delete-project")).click();
+		deleteMenu.findElement(By.className("t-delete-project"))
+				.click();
 		waitForTime(500);
 	}
 
