@@ -82,9 +82,9 @@ export class SampleRenderer extends React.Component {
           backgroundColor: grey1,
           borderBottom: `1px solid ${grey4}`
         }}
-        className="t-cart-sample"
       >
         <List.Item
+          className="t-cart-sample"
           key={sample.id}
           extra={
             <Dropdown
