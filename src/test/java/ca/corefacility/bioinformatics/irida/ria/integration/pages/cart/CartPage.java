@@ -26,6 +26,7 @@ public class CartPage extends AbstractPage {
 
 	public static CartPage goToCart(WebDriver driver) {
 		get(driver, "/cart/pipelines");
+		waitForTime(500);
 		return PageFactory.initElements(driver, CartPage.class);
 	}
 
