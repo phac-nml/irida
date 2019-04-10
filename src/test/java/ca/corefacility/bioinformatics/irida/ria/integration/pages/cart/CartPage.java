@@ -32,10 +32,14 @@ public class CartPage extends AbstractPage {
 		return PageFactory.initElements(driver, CartPage.class);
 	}
 
+	public int getNavBarSamplesCount() {
+		return Integer.parseInt(driver.findElement(By.className("t-cart-count"))
+				.getText());
+	}
+
 	public int getNumberOfSamplesInCart() {
 		new WebDriverWait(driver, 10).until(
-				ExpectedConditions.visibilityOfElementLocated(By.className("PHYLOGENOMICS")));
-		new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.className("t-sample-name")));
+				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-sample-name")));
 		return driver.findElements(By.className("t-cart-sample"))
 				.size();
 	}

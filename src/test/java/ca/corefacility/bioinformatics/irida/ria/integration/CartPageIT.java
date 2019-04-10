@@ -26,6 +26,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Make sure 3 samples are in the cart
 		CartPage page = CartPage.goToCart(driver());
+
+		int count = page.getNavBarSamplesCount();
+		assertEquals("Should be 3 samples displayed in navbar", 3, count);
 		assertEquals("Should be 3 samples in the cart", 3, page.getNumberOfSamplesInCart());
 		assertTrue("Should be directed to pipelines view", page.onPipelinesView());
 

@@ -147,7 +147,7 @@
                     <li th:with="url=${#strings.isEmpty(session.galaxyClientID) ? '/cart/pipelines' : '/cart/galaxy'}">
                         <a th:href="@{${url}}" id="cart-show-btn" class="nav-icon-wrapper">
                             <i class="fa fa-fw fa-shopping-cart nav-icon"></i>
-                            <span style="display: none;" class="js-cart-count btn__badge"></span>
+                            <span style="display: none;" class="js-cart-count t-cart-count btn__badge"></span>
                         </a>
                     </li>
 
