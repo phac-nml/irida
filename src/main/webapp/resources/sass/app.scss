@@ -331,6 +331,11 @@ ol.continue li:before {
   right: 0;
 }
 
+// Wrapping long sample names to the size of the container
+.text-wrap {
+  word-wrap: break-word;
+}
+
 /****************************************************************************************
 * AG-GRID
 *****************************************************************************************/

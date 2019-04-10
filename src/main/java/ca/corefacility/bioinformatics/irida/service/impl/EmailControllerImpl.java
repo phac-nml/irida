@@ -34,8 +34,9 @@ import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 /**
  * This class is responsible for all email sent to the server that are templated
  * with Thymeleaf.
@@ -49,6 +50,7 @@ public class EmailControllerImpl implements EmailController {
 	public static final String WELCOME_TEMPLATE = "welcome-email";
 	public static final String RESET_TEMPLATE = "password-reset-link";
 	public static final String SUBSCRIPTION_TEMPLATE = "subscription-email";
+	public static final String PIPELINE_STATUS_TEMPLATE = "pipeline-status-email";
 
 	private @Value("${mail.server.email}") String serverEmail;
 
@@ -237,13 +239,53 @@ public class EmailControllerImpl implements EmailController {
 			message.setSubject("IRIDA NCBI Upload Exception: " + rootCause.getMessage());
 			message.setTo(adminEmailAddress);
 			message.setFrom(serverEmail);
-			message.setText("An exeption occurred when attempting to communicate with NCBI's SRA.  Submission "
-					+ submissionId + " had an error:" + rootCause);
+			message.setText("An exeption occurred when attempting to communicate with NCBI's SRA.  Submission " + submissionId
+					+ " had an error:" + rootCause);
 
 			javaMailSender.send(mimeMessage);
 		} catch (final MessagingException e) {
 			logger.error("Error trying to send exception email.", e);
 			throw new MailSendException("Failed to send e-mail for NCBI SRA related-exception.", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException {
+		logger.debug("Sending pipeline status email to " + submission.getSubmitter()
+				.getEmail());
+
+		Locale locale = LocaleContextHolder.getLocale();
+
+		final Context ctx = new Context(locale);
+		String pipelineStatus = submission.getAnalysisState()
+				.equals(AnalysisState.ERROR) ?
+				messageSource.getMessage("email.pipeline.ERROR", null, locale) :
+				messageSource.getMessage("email.pipeline.COMPLETED", null, locale);
+		String emailSubject = messageSource.getMessage("email.pipeline.subject",
+				new Object[] { submission.getName(), pipelineStatus }, locale);
+
+		ctx.setVariable("serverURL", serverURL);
+		ctx.setVariable("pipelineStatus", pipelineStatus);
+		ctx.setVariable("pipelineName", submission.getName());
+		ctx.setVariable("analysisSubmissionURL", (serverURL + "/analysis/" + (submission.getId())));
+
+		try {
+			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
+			message.setSubject(emailSubject);
+			message.setFrom(serverEmail);
+			message.setTo(submission.getSubmitter()
+					.getEmail());
+
+			final String htmlContent = templateEngine.process(PIPELINE_STATUS_TEMPLATE, ctx);
+			message.setText(htmlContent, true);
+			javaMailSender.send(mimeMessage);
+		} catch (final Exception e) {
+			logger.error("Pipeline status email failed to send", e);
+			throw new MailSendException("Failed to send pipeline status e-mail .", e);
 		}
 	}
 }

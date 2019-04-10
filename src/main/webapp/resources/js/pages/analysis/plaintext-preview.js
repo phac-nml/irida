@@ -10,8 +10,7 @@ import { convertFileSize } from "../../utilities/file.utilities";
  */
 const statusText = (byte, fileSizeBytes) =>
   `${convertFileSize(byte)} / ${convertFileSize(fileSizeBytes)} (${(
-    byte /
-    fileSizeBytes *
+    (byte / fileSizeBytes) *
     100
   ).toFixed(1)}%)`;
 

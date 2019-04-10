@@ -80,6 +80,11 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
 	private List<JobError> jobErrors;
 
+	@NotNull
+	@Column(name = "email_pipeline_result")
+	private boolean emailPipelineResult;
+
+
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
@@ -108,6 +113,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
+		this.emailPipelineResult = builder.emailPipelineResult;
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
 		this.automated = builder.automated;
@@ -260,6 +266,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		private boolean automated;
 		private Priority priority = Priority.MEDIUM;
 		private User submitter;
+		private boolean emailPipelineResult = false;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -440,6 +447,19 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		}
 
 		/**
+		 * Sets if user should be emailed on
+		 * pipeline completion or error
+		 *
+		 * @param emailPipelineResult If user should be emailed or not
+		 * @return A {@link Builder}
+		 */
+		public Builder emailPipelineResult(boolean emailPipelineResult) {
+			this.emailPipelineResult = emailPipelineResult;
+
+			return this;
+		}
+
+		/**
 		 * Set the user who submitted the pipeline
 		 * @param submitter {@link User} who submitted the pipeline
 		 * @return a {@link Builder}
@@ -479,6 +499,22 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	 */
 	public boolean hasRemoteAnalysisId() {
 		return remoteAnalysisId != null;
+	}
+
+	/**
+	 * Sets flag to indicate whether or not user should be emailed upon pipeline completion or error.
+	 * @param emailPipelineResult If true, email pipeline result to user.
+	 */
+	public void setEmailPipelineResult(boolean emailPipelineResult) {
+		this.emailPipelineResult = emailPipelineResult;
+	}
+
+	/**
+	 * Whether or not to send an email upon pipeline completion or error.
+	 * @return Email pipeline result on completion or error.
+	 */
+	public boolean getEmailPipelineResult() {
+		return emailPipelineResult;
 	}
 
 	/**

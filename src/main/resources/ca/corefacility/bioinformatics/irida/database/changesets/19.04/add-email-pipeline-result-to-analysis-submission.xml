@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="email-pipeline-result" author="deep">
+		<!-- Add emailPipelineResult to analysis submission -->
+		<addColumn tableName="analysis_submission">
+			<column name="email_pipeline_result" type="bit(1)" valueBoolean="false"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="analysis_submission_AUD">
+			<column name="email_pipeline_result" type="bit(1)" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

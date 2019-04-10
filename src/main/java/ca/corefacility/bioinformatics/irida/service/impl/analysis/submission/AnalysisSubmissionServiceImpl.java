@@ -524,8 +524,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples) {
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
+
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
@@ -541,7 +542,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.inputFiles(ImmutableSet.of(file));
 				builder.updateSamples(writeResultsToSamples);
 				builder.priority(AnalysisSubmission.Priority.MEDIUM);
-
+				// Add if user should be emailed on pipeline completion/error
+				builder.emailPipelineResult(emailPipelineResult);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
 					// Note: This cannot be empty if through the UI if the
@@ -564,6 +566,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
+
 			}
 
 		}
@@ -581,7 +584,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.name(name + "_" + s.getSampleName());
 				builder.inputFiles(ImmutableSet.of(filePair));
 				builder.updateSamples(writeResultsToSamples);
-
+				// Add if user should be emailed on pipeline completion/error
+				builder.emailPipelineResult(emailPipelineResult);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
 					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
@@ -626,7 +630,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples) {
+			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		builder.priority(AnalysisSubmission.Priority.MEDIUM);
@@ -669,6 +673,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Add description to submission, can be null
 		builder.analysisDescription(newAnalysisDescription);
 
+		// Add if user should be emailed on pipeline completion/error
+		builder.emailPipelineResult(emailPipelineResult);
 		// Create the submission
 		AnalysisSubmission submission = create(builder.build());
 

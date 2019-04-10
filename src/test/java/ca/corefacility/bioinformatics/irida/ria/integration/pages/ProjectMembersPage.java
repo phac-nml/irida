@@ -21,33 +21,35 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * <p>
  * Page Object to represent the project details page.
  * </p>
- * 
  */
 public class ProjectMembersPage extends AbstractPage {
 	public static final String RELATIVE_URL = "projects/1/settings/members";
 	public static final String GROUPS_URL = "projects/1/settings/groups";
-			
+
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersPage.class);
 
 	public ProjectMembersPage(WebDriver driver) {
 		super(driver);
 	}
-	
+
 	public void goToPage() {
 		get(driver, RELATIVE_URL);
 	}
-	
+
 	public void goToGroupsPage() {
 		get(driver, GROUPS_URL);
 	}
 
 	public String getTitle() {
-		return driver.findElement(By.tagName("h1")).getText();
+		return driver.findElement(By.tagName("h1"))
+				.getText();
 	}
 
-	public List<String> 	getProjectMembersNames() {
+	public List<String> getProjectMembersNames() {
 		List<WebElement> els = driver.findElements(By.cssSelector("td:first-child a"));
-		return els.stream().map(WebElement::getText).collect(Collectors.toList());
+		return els.stream()
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
 	}
 
 	public void clickRemoveUserButton(Long id) {
@@ -59,8 +61,8 @@ public class ProjectMembersPage extends AbstractPage {
 
 	public void clickModalPopupButton() {
 		logger.debug("Confirming user removal");
-		WebElement myDynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-member-button")));
+		WebElement myDynamicElement = (new WebDriverWait(driver, 10)).until(
+				ExpectedConditions.elementToBeClickable(By.id("remove-member-button")));
 
 		myDynamicElement.click();
 		waitForAjax();
@@ -78,11 +80,23 @@ public class ProjectMembersPage extends AbstractPage {
 		logger.debug("Checking if noty success");
 		boolean present = false;
 		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("noty_type__success")));
+			(new WebDriverWait(driver, 10)).until(
+					ExpectedConditions.presenceOfElementLocated(By.className("noty_type__success")));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;
+		}
+
+		return present;
+	}
+
+	public boolean addGroupButtonDisplayed() {
+		logger.debug("Checking if add group button is displayed");
+		boolean present = false;
+
+		if (!driver.findElements(By.id("add-members-button"))
+				.isEmpty()) {
+			present = true;
 		}
 
 		return present;
@@ -113,9 +127,10 @@ public class ProjectMembersPage extends AbstractPage {
 		submit.click();
 		waitForAjax();
 	}
-	
+
 	public void clickGroupsLink() {
-		driver.findElement(By.id("project-groups-link")).click();
+		driver.findElement(By.id("project-groups-link"))
+				.click();
 	}
 
 	private void waitForAjax() {
