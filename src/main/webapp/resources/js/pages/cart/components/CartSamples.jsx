@@ -109,7 +109,7 @@ function CartSamplesComponent({
         {samples.length > 0 ? (
           <AutoSizer>
             {({ height, width }) => (
-              <List itemLayout="vertical">
+              <List itemLayout="vertical" className="t-samples-list">
                 <VList
                   itemCount={samples.length}
                   itemSize={95}
