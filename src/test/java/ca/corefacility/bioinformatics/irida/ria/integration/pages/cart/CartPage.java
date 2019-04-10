@@ -31,7 +31,8 @@ public class CartPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamplesInCart() {
-		return cartSamples.size();
+		waitForTime(2000);
+		return driver.findElements(By.className("t-cart-sample")).size();
 	}
 
 	public boolean onPipelinesView() {
