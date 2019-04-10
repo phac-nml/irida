@@ -29,7 +29,7 @@ Contact the IRIDA Team
 Citation
 --------
 
-A paper describing IRIDA is available on bioRxiv:
+The IRIDA manuscript is in prepration. A preprint is available on bioRxiv:
 
 Thomas C Matthews, Franklin R Bristow, Emma J Griffiths, Aaron Petkau, Josh Adam, Damion Dooley, Peter Kruczkiewicz, John Curatcha, Jennifer Cabral, Dan Fornika, Geoffrey L. Winsor, Melanie Courtot, Claire Bertelli, Ataollah Roudgar, Pedro Feijao, Philip Mabon, Eric Enns, Joel Thiessen, Alexander Keddy, Judith Isaac-Renton, Jennifer L. Gardy, Patrick Tang, The IRIDA Consortium, João A Carriço, Leonid Chindelevitch, Cedric Chauve, Morag R Graham, Andrew G McArthur, Eduardo N Taboada, Robert G Beiko, Fiona SL Brinkman, William WL Hsiao, Gary Van Domselaar. 2018. **The Integrated Rapid Infectious Disease Analysis (IRIDA) Platform**. bioRxiv 381830; doi: <https://doi.org/10.1101/381830>.
 
