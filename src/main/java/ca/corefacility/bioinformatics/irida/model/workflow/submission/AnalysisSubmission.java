@@ -80,11 +80,6 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
 	private List<JobError> jobErrors;
 
-	@NotNull
-	@Column(name = "email_pipeline_result")
-	private boolean emailPipelineResult;
-
-
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
@@ -293,6 +288,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			updateSamples(template.getUpdateSamples());
 			automated(true);
 			submitter(template.getSubmitter());
+			emailPipelineResult(template.getEmailPipelineResult());
 
 			if (template.getReferenceFile()
 					.isPresent()) {
@@ -499,22 +495,6 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	 */
 	public boolean hasRemoteAnalysisId() {
 		return remoteAnalysisId != null;
-	}
-
-	/**
-	 * Sets flag to indicate whether or not user should be emailed upon pipeline completion or error.
-	 * @param emailPipelineResult If true, email pipeline result to user.
-	 */
-	public void setEmailPipelineResult(boolean emailPipelineResult) {
-		this.emailPipelineResult = emailPipelineResult;
-	}
-
-	/**
-	 * Whether or not to send an email upon pipeline completion or error.
-	 * @return Email pipeline result on completion or error.
-	 */
-	public boolean getEmailPipelineResult() {
-		return emailPipelineResult;
 	}
 
 	/**

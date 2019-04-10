@@ -89,6 +89,10 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	@Enumerated(EnumType.STRING)
 	protected AnalysisSubmission.Priority priority;
 
+	@NotNull
+	@Column(name = "email_pipeline_result")
+	protected boolean emailPipelineResult;
+
 	protected AbstractAnalysisSubmission() {
 		this.createdDate = new Date();
 	}
@@ -261,6 +265,22 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	 */
 	public boolean getUpdateSamples() {
 		return updateSamples;
+	}
+
+	/**
+	 * Sets flag to indicate whether or not user should be emailed upon pipeline completion or error.
+	 * @param emailPipelineResult If true, email pipeline result to user.
+	 */
+	public void setEmailPipelineResult(boolean emailPipelineResult) {
+		this.emailPipelineResult = emailPipelineResult;
+	}
+
+	/**
+	 * Whether or not to send an email upon pipeline completion or error.
+	 * @return Email pipeline result on completion or error.
+	 */
+	public boolean getEmailPipelineResult() {
+		return emailPipelineResult;
 	}
 
 	@Override

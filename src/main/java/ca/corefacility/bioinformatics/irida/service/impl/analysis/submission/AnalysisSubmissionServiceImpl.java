@@ -447,7 +447,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasPermission(#projectsToShare, 'canManageLocalProjectSettings')")
 	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
-			String analysisDescription, Project projectsToShare, boolean writeResultsToSamples) {
+			String analysisDescription, Project projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResults) {
 
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -463,15 +463,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		AnalysisSubmissionTemplate template = null;
 		if (description.acceptsParameters()) {
 			if (namedParameters != null) {
-				template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(), namedParameters,
-						referenceFile, writeResultsToSamples, analysisDescription, AnalysisSubmission.Priority.LOW,
-						projectsToShare);
+				template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(),
+						namedParameters, referenceFile, writeResultsToSamples, analysisDescription,
+						AnalysisSubmission.Priority.LOW, emailPipelineResults, projectsToShare);
 
 			} else {
 				if (!params.isEmpty()) {
-					template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(),
-							params, referenceFile, writeResultsToSamples, analysisDescription,
-							AnalysisSubmission.Priority.LOW, projectsToShare);
+					template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(), params,
+							referenceFile, writeResultsToSamples, analysisDescription, AnalysisSubmission.Priority.LOW,
+							emailPipelineResults, projectsToShare);
 				}
 			}
 		}

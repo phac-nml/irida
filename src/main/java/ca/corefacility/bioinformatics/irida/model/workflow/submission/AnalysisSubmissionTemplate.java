@@ -29,7 +29,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, IridaWorkflowNamedParameters namedParameters,
 			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, Priority priority,
-			Project submittedProject) {
+			boolean emailPipelineResult, Project submittedProject) {
 		this();
 		this.name = name;
 		this.workflowId = workflowId;
@@ -38,12 +38,13 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 		this.updateSamples = updateSamples;
 		this.analysisDescription = analysisDescription;
 		this.priority = priority;
+		this.emailPipelineResult = emailPipelineResult;
 		this.submittedProject = submittedProject;
 	}
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, Map<String, String> inputParameters,
 			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, Priority priority,
-			Project submittedProject) {
+			boolean emailPipelineResult, Project submittedProject) {
 		this();
 		this.name = name;
 		this.workflowId = workflowId;
@@ -52,6 +53,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 		this.updateSamples = updateSamples;
 		this.analysisDescription = analysisDescription;
 		this.priority = priority;
+		this.emailPipelineResult = emailPipelineResult;
 		this.submittedProject = submittedProject;
 	}
 

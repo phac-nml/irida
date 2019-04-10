@@ -536,7 +536,7 @@ public class PipelineController extends BaseController {
 			if (parameters.getAutomatedProject() != null) {
 				Project readProject = projectService.read(parameters.getAutomatedProject());
 				analysisSubmissionService.createSingleSampleSubmissionTemplate(flow, ref, params, namedParameters, name,
-						analysisDescription, readProject, writeResultsToSamples);
+						analysisDescription, readProject, writeResultsToSamples, emailPipelineResult);
 			} else {
 				//otherwise get the project shares and sequence files
 				List<Project> projectsToShare = new ArrayList<>();
