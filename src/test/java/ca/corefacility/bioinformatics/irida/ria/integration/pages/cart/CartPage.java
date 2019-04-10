@@ -39,6 +39,10 @@ public class CartPage extends AbstractPage {
 
 	public int getNumberOfSamplesInCart() {
 		new WebDriverWait(driver, 10).until(
+				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-Assembly_and_Annotation_Pipeline_btn")));
+		new WebDriverWait(driver, 10).until(
+				ExpectedConditions.elementToBeClickable(By.className("t-empty-cart-btn")));
+		new WebDriverWait(driver, 10).until(
 				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-sample-name")));
 		return driver.findElements(By.className("t-cart-sample"))
 				.size();

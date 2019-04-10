@@ -124,7 +124,7 @@ function CartSamplesComponent({
         ) : null}
       </CartSamplesWrapper>
       <ButtonsPanelBottom>
-        <EmptyCartButton type="danger" block onClick={emptyCart}>
+        <EmptyCartButton className="t-empty-cart-btn" type="danger" block onClick={emptyCart}>
           {getI18N("cart.clear")}
         </EmptyCartButton>
       </ButtonsPanelBottom>
