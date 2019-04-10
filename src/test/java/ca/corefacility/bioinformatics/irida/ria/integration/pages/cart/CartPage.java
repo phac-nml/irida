@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -31,8 +33,9 @@ public class CartPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamplesInCart() {
-		waitForTime(2000);
-		return driver.findElements(By.className("t-cart-sample")).size();
+		List<WebElement> list = new WebDriverWait(driver, 10).until(
+				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-cart-sample")));
+		return list.size();
 	}
 
 	public boolean onPipelinesView() {
