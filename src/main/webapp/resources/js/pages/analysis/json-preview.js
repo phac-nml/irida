@@ -156,8 +156,7 @@ function repairMalformedJSON(malformedJSON) {
  */
 const statusText = (byte, fileSizeBytes) =>
   `${convertFileSize(byte)} / ${convertFileSize(fileSizeBytes)} (${(
-    byte /
-    fileSizeBytes *
+    (byte / fileSizeBytes) *
     100
   ).toFixed(1)}%)`;
 

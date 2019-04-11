@@ -1,36 +1,9 @@
 /**
 This is a new files to replace datatables-custom.scss after all DataTables updated
  */
-/*
-Use FontAweseom as the sorting controllers.
- */
 table.dataTable thead th {
   position: relative;
   background-image: none !important;
-}
-
-table.dataTable thead th.sorting:after,
-table.dataTable thead th.sorting_asc:after,
-table.dataTable thead th.sorting_desc:after {
-  position: absolute;
-  display: block;
-  top: 50%;
-  transform: translateY(-50%);
-  content: "";
-  font-family: FontAwesome;
-}
-
-table.dataTable thead th.sorting:after {
-  content: "\f0dc";
-  color: #ddd;
-  font-size: 0.8em;
-  padding-top: 0.12em;
-}
-table.dataTable thead th.sorting_asc:after {
-  content: "\f0de";
-}
-table.dataTable thead th.sorting_desc:after {
-  content: "\f0dd";
 }
 
 table.dataTable {
@@ -202,15 +175,4 @@ table.dataTable {
   margin-left: 6px;
   cursor: pointer;
   display: inline-block;
-}
-
-// Datatables directional sorting arrows
-table.dataTable thead th.sorting_desc::after {
-  content: "\f175";
-  font-family: FontAwesome;
-}
-
-table.dataTable thead th.sorting_asc::after {
-  content: "\f176";
-  font-family: FontAwesome;
 }

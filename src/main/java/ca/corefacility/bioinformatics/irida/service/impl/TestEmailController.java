@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.Confi
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Email controller used for testing.  Does not really send emails.
@@ -63,6 +64,11 @@ public class TestEmailController extends EmailControllerImpl {
 	public void sendNCBIUploadExceptionEmail(String adminEmailAddress, Exception rootCause, Long submissionId)
 			throws MailSendException {
 		logger.info("TestEmailController#sendNCBIUploadExceptionEmail called.");
+	}
+
+	@Override
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) {
+		logger.info("TestEmailController#sendPipelineStatusEmail called for " + submission.getSubmitter().getEmail());
 	}
 
 	@Override

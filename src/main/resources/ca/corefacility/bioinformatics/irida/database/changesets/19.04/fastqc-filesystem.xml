@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="fastqc-filesystem" author="tom">
+
+        <dropNotNullConstraint
+                columnDataType="bigint(20)"
+                columnName="tool_execution_id"
+                tableName="analysis_output_file"/>
+
+        <!--Adding temporary column for mapping between the output file and original analysis -->
+        <addColumn tableName="analysis_output_file">
+            <column name="analysis_id" type="bigint(20)"/>
+        </addColumn>
+
+        <dropNotNullConstraint tableName="analysis_output_file" columnName="file_path" columnDataType="varchar(255)"/>
+
+        <customChange
+                class="ca.corefacility.bioinformatics.irida.database.changesets.FastqcToFilesystem"/>
+
+        <addNotNullConstraint tableName="analysis_output_file" columnName="file_path" columnDataType="varchar(255)"/>
+
+        <!--Removing old file chart columns-->
+        <dropColumn tableName="analysis_fastqc" columnName="duplicationLevelChart"/>
+        <dropColumn tableName="analysis_fastqc" columnName="perBaseQualityScoreChart"/>
+        <dropColumn tableName="analysis_fastqc" columnName="perSequenceQualityScoreChart"/>
+
+        <dropForeignKeyConstraint baseTableName="analysis_fastqc" constraintName="FK_ANALYSIS_FASTQC_REPORT"/>
+        <dropColumn tableName="analysis_fastqc" columnName="fastQCReport_id"/>
+
+
+        <!--removing temp column-->
+        <dropColumn tableName="analysis_output_file" columnName="analysis_id"/>
+    </changeSet>
+</databaseChangeLog>

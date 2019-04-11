@@ -32,18 +32,14 @@
 	<analysis id="1" createdDate="2013-07-18 00:00:00.0"
 		description="FastQC" executionManagerAnalysisId="fastqc"
 		analysis_type="FASTQC" />
-	<analysis_fastqc id="1" duplicationLevelChart="x"
-		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
-		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
-		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" fastqcVersion="1.0.0" />
-	
+	<analysis_fastqc id="1" encoding="x" fileType="x" filteredSequences="0" gcContent="30"
+		maxLength="250" minLength="10" totalBases="1000" totalSequences="4" fastqcVersion="1.0.0" />
+
 	<analysis id="2" createdDate="2013-07-19 00:00:00.0"
 		description="FastQC" executionManagerAnalysisId="fastqc"
 		analysis_type="FASTQC" />
-	<analysis_fastqc id="2" duplicationLevelChart="x"
-		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
-		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
-		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" fastqcVersion="1.0.0" />
+	<analysis_fastqc id="2" encoding="x" fileType="x" filteredSequences="0" gcContent="30"
+		maxLength="250" minLength="10" totalBases="1000" totalSequences="4" fastqcVersion="1.0.0" />
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
 	modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"

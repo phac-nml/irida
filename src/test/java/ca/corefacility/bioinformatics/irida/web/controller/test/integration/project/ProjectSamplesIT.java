@@ -228,6 +228,24 @@ public class ProjectSamplesIT {
 	}
 	
 	@Test
+	public void testReadSampleCollectionDate() {
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectSampleUri = projectUri + "/samples/1";
+		
+		asAdmin().expect().body("resource.collectionDate", is("2019-01-24"))
+				.when().get(projectSampleUri);
+	}
+	
+	@Test
+	public void testReadSampleCollectionDate2() {
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectSampleUri = projectUri + "/samples/3";
+		
+		asAdmin().expect().body("resource.collectionDate", is("1999-12-05"))
+				.when().get(projectSampleUri);
+	}
+	
+	@Test
 	public void testReadSampleAsAdminWithDoubledUpSlashes() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api//projects/5";
 		String projectSampleUri = projectUri + "/samples/1";

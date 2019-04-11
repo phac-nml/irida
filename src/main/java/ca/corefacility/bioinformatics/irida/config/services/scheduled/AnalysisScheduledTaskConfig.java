@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCon
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class AnalysisScheduledTaskConfig {
 
 	@Autowired
 	private JobErrorRepository jobErrorRepository;
+
+	@Autowired
+	private EmailController emailController;
 
 	/**
 	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
@@ -116,7 +120,7 @@ public class AnalysisScheduledTaskConfig {
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
-				cleanupAnalysisSubmissionCondition(), galaxyJobErrorsService, jobErrorRepository);
+				cleanupAnalysisSubmissionCondition(), galaxyJobErrorsService, jobErrorRepository, emailController);
 	}
 
 	/**
