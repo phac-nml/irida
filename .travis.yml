@@ -18,6 +18,8 @@ env:
 services:
   - docker
 
+dist: xenial
+
 addons:
   mariadb: '10.0'
 
