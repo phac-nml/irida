@@ -107,25 +107,24 @@ function CartSamplesComponent({
       </CartTools>
       <CartSamplesWrapper>
         {samples.length > 0 ? (
-          <List itemLayout="vertical" className="t-samples-list">
-            <VList
-              itemCount={samples.length}
-              itemSize={95}
-              height={600}
-              width={400}
-            >
-              {renderSample}
-            </VList>
-          </List>
+          <AutoSizer>
+            {({ height = 600, width = 400 }) => (
+              <List itemLayout="vertical" className="t-samples-list">
+                <VList
+                  itemCount={samples.length}
+                  itemSize={95}
+                  height={height}
+                  width={width}
+                >
+                  {renderSample}
+                </VList>
+              </List>
+            )}
+          </AutoSizer>
         ) : null}
       </CartSamplesWrapper>
       <ButtonsPanelBottom>
-        <EmptyCartButton
-          className="t-empty-cart-btn"
-          type="danger"
-          block
-          onClick={emptyCart}
-        >
+        <EmptyCartButton className="t-empty-cart-btn" type="danger" block onClick={emptyCart}>
           {getI18N("cart.clear")}
         </EmptyCartButton>
       </ButtonsPanelBottom>
@@ -136,8 +135,8 @@ function CartSamplesComponent({
 CartSamplesComponent.propTypes = {
   displaySample: PropTypes.func.isRequired,
   removeSample: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired
-};
+  removeProject: PropTypes.func.isRequired,
+}
 
 const mapStateToProps = state => ({
   samples: state.cart.filteredSamples
