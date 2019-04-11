@@ -78,7 +78,6 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testProjectFromCart() {
 		// get samples from original project and add to cart
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -109,7 +108,6 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testProjectFromCartLockedSamples() {
 		// get samples from original project and add to cart
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);

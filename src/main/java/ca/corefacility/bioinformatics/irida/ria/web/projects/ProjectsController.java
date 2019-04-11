@@ -125,7 +125,8 @@ public class ProjectsController {
 
 	/*
 	 * Converters
-	 */ Formatter<Date> dateFormatter;
+	 */
+	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
 	// HTTP session variable name for Galaxy callback variable
@@ -231,7 +232,6 @@ public class ProjectsController {
 			final Model model,
 			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
 		model.addAttribute("useCartSamples", useCartSamples);
-		model.addAttribute("lockSamples", owner);
 
 		Map<Project, Set<Sample>> selected = cartController.getSelected();
 

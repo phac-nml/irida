@@ -97,7 +97,7 @@
 
                                 <div class="checkbox">
                                     <label for="lockSamples">
-                                        <input type="checkbox" id="lockSamples" name="lockSamples" value="false" th:disabled="${allSamples} == 0" />
+                                        <input type="checkbox" id="lockSamples" name="lockSamples" value="false" th:disabled="${allSamples} == 0 or ${!useCartSamples}" />
                                         <span th:text=" #{projects.create.settings.sample.modification}" >_Lock sample
                                     modification_</span>
                                     </label>
@@ -220,6 +220,10 @@
           }
         });
 
+        /*
+            Disables/enables the lockSamples checkbox
+            depending on if using the samples from cart
+        */
         $("#useCartSamples").on("change", function(e) {
           var selected = $(e.target).prop("checked");
           if (!selected) {
@@ -229,12 +233,15 @@
           }
         });
 
-        $("#lockSamplesToOwner").on("change", function(e) {
+        /*
+            If lockSamples checkbox is checked then we set
+            it's value to false which will set
+            the sample owner to false
+        */
+        $("#lockSamples").on("change", function(e) {
           var selected = $(e.target).prop("checked");
           if (selected) {
             $("#lockSamples").val("false");
-          } else {
-            $("#lockSamples").val("true");
           }
         });
 
