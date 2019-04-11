@@ -73,7 +73,7 @@ public class IntegrationUITestListener extends RunListener {
 			logger.info("Running Chome in no headless (normal) mode");
 		}
 		
-		options.addArguments("window-size=1400x900");
+		options.addArguments("--window-size=1920,1080");
 
 		driver = new ChromeDriver(options);
 		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
