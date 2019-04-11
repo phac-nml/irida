@@ -228,23 +228,11 @@
           var selected = $(e.target).prop("checked");
           if (!selected) {
             $("#lockSamples").attr("disabled", true);
+            $("#lockSamples").prop("checked", false);
           } else {
             $("#lockSamples").removeAttr("disabled");
           }
         });
-
-        /*
-            If lockSamples checkbox is checked then we set
-            it's value to false which will set
-            the sample owner to false
-        */
-        $("#lockSamples").on("change", function(e) {
-          var selected = $(e.target).prop("checked");
-          if (selected) {
-            $("#lockSamples").val("false");
-          }
-        });
-
 
         (function() {
           "use strict";
