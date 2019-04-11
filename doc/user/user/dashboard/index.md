@@ -77,13 +77,9 @@ To view *projects* matching your search result, click the `Projects` tab.
 Cart
 ----
 
-The cart is a temporary area to keep a collection of samples that you intend to submit for use in a pipeline execution. The dashboard provides a quick summary of the contents of your cart on the top, right-hand corner of the page:
+The cart is a temporary area to keep a collection of samples that you intend to submit for use in a pipeline execution. The dashboard provides access to your cart on the top, right-hand corner of the page:
 
 ![The cart button in the dashboard.](images/cart.png)
-
-You can click on the cart button to reveal more information about the contents of your cart:
-
-![Viewing the contents of the cart.](images/cart-contents.png)
 
 For more information about using the cart, please see the [launching pipelines](../pipelines) section, and the [managing samples](../samples) section.
 
