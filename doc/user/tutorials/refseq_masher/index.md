@@ -51,8 +51,6 @@ Select sample "SRR1203042" and add it to your Cart:
 
 ![add-to-cart]
 
-In your Cart, click the "Select a Pipeline" button.
-
 
 Select refseq_masher Pipeline
 -----------------------------
@@ -185,7 +183,7 @@ About some of the fields in `SRR1203042-refseq-masher-contains.tsv`:
 [contains]: https://github.com/phac-nml/refseq_masher#contains---find-what-ncbi-refseq-genomes-are-contained-in-your-input-sequences
 [analyses-your-analyses]: images/analyses-your-analyses.png
 [card]: images/card.png
-[add-to-cart]: images/add-to-cart.png
+[add-to-cart]: images/add-to-cart.gif
 [analysis-complete]: images/analysis-complete.png
 [analysis-in-progress]: images/analysis-in-progress.png
 [launch-masher]: images/launch-masher.png

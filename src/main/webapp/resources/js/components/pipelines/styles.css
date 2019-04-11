@@ -1,0 +1,29 @@
+.PHYLOGENOMICS {
+  background-color: rgba(30, 170, 241, 1) !important;
+  color: #222 !important;
+}
+.ASSEMBLY_ANNOTATION {
+  background-color: rgba(205, 218, 73, 1) !important;
+  color: #222 !important;
+}
+.ASSEMBLY_ANNOTATION_COLLECTION {
+  background-color: rgba(253, 192, 47, 1) !important;
+  color: #222 !important;
+}
+.SISTR_TYPING {
+  background-color: rgba(239, 101, 72, 1) !important;
+  color: #222 !important;
+}
+.REFSEQ_MASHER {
+  background-color: #eb93ff !important;
+  color: #222 !important;
+}
+
+.MLST_MENTALIST {
+  background-color: rgba(154, 159, 226, 1) !important;
+  color: #222 !important;
+}
+
+.BIO_HANSEL {
+  background-color: rgba(250, 159, 181, 1) !important;
+}
