@@ -38,10 +38,9 @@ public class CartPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamplesInCart() {
-		new WebDriverWait(driver, 10).until(
-				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-Assembly_and_Annotation_Pipeline_btn")));
-		new WebDriverWait(driver, 10).until(
-				ExpectedConditions.elementToBeClickable(By.className("t-samples-list")));
+		new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+				By.className("t-Assembly_and_Annotation_Pipeline_btn")));
+		new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.className("t-samples-list")));
 		new WebDriverWait(driver, 10).until(
 				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-sample-name")));
 		return driver.findElements(By.className("t-cart-sample"))
@@ -59,7 +58,6 @@ public class CartPage extends AbstractPage {
 		WebElement deleteMenu = driver.findElement(By.className("t-delete-menu"));
 		deleteMenu.findElement(By.className("t-delete-sample"))
 				.click();
-		// Need to wait for the sample to be removed from the UI.
 		waitForTime(500);
 	}
 
