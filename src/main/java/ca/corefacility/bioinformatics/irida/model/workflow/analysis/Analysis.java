@@ -46,7 +46,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private final Long id;
+	private Long id;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -229,6 +229,10 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	@Override
 	public Long getId() {
 		return this.id;
+	}
+
+	public void setId(Long id){
+		this.id = id;
 	}
 
 	public Map<String, String> getAdditionalProperties() {
