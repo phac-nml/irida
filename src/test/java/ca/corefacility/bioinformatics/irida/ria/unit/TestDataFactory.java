@@ -183,9 +183,9 @@ public class TestDataFactory {
 		return new IridaWorkflow(description, structure);
 	}
 
-	public static Map<Project, Set<Sample>> constructCart() {
+	public static Map<Project, List<Sample>> constructCart() {
 		Project project = constructProject();
-		Set<Sample> samples = new HashSet<>();
+		List<Sample> samples = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			samples.add(constructSample());
 		}

@@ -203,14 +203,12 @@
                                     <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
-
-                            <li th:if="${galaxyCallback}" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
-                                <a href="#" ng-click="gExportCtrl.exportToGalaxy($event)"
-                                   data:url="@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}"
-                                   data:project-id="${project.getId()}"
+                            <li th:if="${#httpSession.getAttribute('galaxyExportToolCallbackURL')} != null" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
+                                <a href="#" data-toggle="modal" data-target="#galaxy-modal" class="js-sample-tool-btn"
+                                   data-enabled-at="1"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}">
                                     <i class="fa fa-cloud-upload-alt fa-fw spaced-right__sm" aria-hidden="true"></i>
-                                    <th:block th:text="#{project.samples.export.galaxy}"></th:block>
+                                    <th:block th:text="#{project.samples.export.galaxy}"/>
                                 </a>
                             </li>
                             <li role="menuitem">
@@ -309,6 +307,41 @@
 
 </main>
 <th:block layout:fragment="scripts">
+    <div th:if="${#httpSession.getAttribute('galaxyExportToolCallbackURL')} != null">
+        <!-- Only loaded on the page if there is a galaxy session -->
+        <div class="modal fade" id="galaxy-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div
+                            class="modal-header"
+                            style="background-color: hsl(52, 96%, 53%); border-top-left-radius: 4px; border-top-right-radius: 4px;"
+                    >
+                        <h4 class="modal-title" id="myModalLabel" th:text="#{galaxy.modal.title}">DEPRICATED</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning" role="alert">
+                            <strong th:text="#{galaxy.modal.alert.header}" style="display: block"/>
+                            <p th:text="#{galaxy.modal.alert.body}"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="js-goToCart" th:text="#{galaxy.modal.btn}">Go to cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+          var btn = document.querySelector("#js-goToCart");
+          btn.addEventListener("click", function () {
+            var cartBtn = document.querySelector("#cart-add-btn");
+            if (cartBtn !== null) {
+              cartBtn.click();
+              window.location = window.TL.BASE_URL + "cart/galaxy";
+            }
+          });
+        </script>
+    </div>
     <script th:src="@{/resources/dist/js/project-samples.bundle.js}"></script>
 </th:block>
 </body>

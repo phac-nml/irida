@@ -1,5 +1,6 @@
 (function(ng, $, location, page) {
   "use strict";
+
   /**
    * Main controller for the pipeline launch page.
    * @param $scope Application model object

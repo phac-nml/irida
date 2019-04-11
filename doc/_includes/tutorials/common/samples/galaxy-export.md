@@ -1,4 +1,4 @@
-Samples can also be exported directly to Galaxy. Samples exported from IRIDA into Galaxy are loaded into a [Galaxy data library](https://wiki.galaxyproject.org/Admin/DataLibraries/Libraries) that can be easily shared with multiple Galaxy users.
+Samples can also be exported directly to Galaxy. Samples exported from IRIDA into Galaxy are loaded into a [Galaxy data library](https://galaxyproject.org/data-libraries/) that can be easily shared with multiple Galaxy users.
 
 To export data from IRIDA to Galaxy, start in Galaxy and find the "IRIDA server" tool in the "Get Data" section:
 
@@ -12,17 +12,15 @@ After you log in to IRIDA (or if you were already logged in), you will be direct
 
 ![Galaxy IRIDA projects list.]({{ site.baseurl }}/images/tutorials/common/samples/galaxy-irida-projects-list.png)
 
-Navigate to the list of samples that you're interested in exporting by clicking on the project name. Then, [select the samples]({{ site.baseurl }}/user/user/samples/#selecting-samples) that you want to export, click on the "Export" button just above the samples list, then click "Send to Galaxy":
+When you are connected to Galaxy from within IRIDA, there will be a notification at the top of the page. This will be there for the duration of your session. If you want to end you Galaxy session without exporting samples, click on the `Cancel Galaxy Export` link at the top right.
 
-![Export to Galaxy button.]({{ site.baseurl }}/images/tutorials/common/samples/export-to-galaxy-button.png)
+Navigate to the project that contains the samples that you’re interested in exporting by clicking on the project name. Then, [select the samples]({{ site.baseurl }}/user/user/samples/#selecting-samples) that you want to export and click the Add to Cart button to add the samples to the cart. Samples can be added from any project that you have access to. Once all the samples have been added to the cart, click on the cart icon on the top menu bar. This will take you to the cart galaxy export page.
 
-The dialog that appears will allow you to choose the e-mail address that should be assigned ownership of the data library. The e-mail address should be the e-mail address that you use as your username in Galaxy. You may also choose the name of the data library that the sequencing data should be exported to:
+![Galaxy IRIDA Cart.]({{ site.baseurl }}/images/tutorials/common/samples/cart-galaxy-page.png)
 
-![Export to Galaxy dialog.]({{ site.baseurl }}/images/tutorials/common/samples/export-to-galaxy-dialog.png)
+Clicking "Authorize" will authenticate the Galaxy instance and send you back to Galaxy beginning the actual importing of samples.
 
-You will also be presented with two optional methods of exporting your data; you can choose whether or not you want your exported data to show up in your Galaxy history by using the "Add samples to history" checkbox. If you opt to show your data in your Galaxy history, you can additionally specify whether or not you want your data to be organized into collections of paired items, depending on your use case.
-
-After you've entered your e-mail address and the name of the data library, click the "Upload Samples" button. You will be redirected back into Galaxy and a new history item will appear (if you opted to show your exported data in your history):
+![Galaxy IRIDA Oauth2.]({{ site.baseurl }}/images/tutorials/common/samples/cart-galaxy-oauth2.png)
 
 ![Export to Galaxy history item.]({{ site.baseurl }}/images/tutorials/common/samples/galaxy-history-item.png)
 

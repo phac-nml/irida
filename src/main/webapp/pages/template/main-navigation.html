@@ -55,9 +55,6 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a th:href="@{/pipelines}" th:text="#{nav.main.pipelines}">Pipelines</a>
-                        </li>
-                        <li>
                             <a th:href="@{/analysis}" th:text="#{nav.main.analysis-admin-user}">Your
                                 Analysis</a>
                         </li>
@@ -147,11 +144,10 @@
                             <li class="dropdown-header" th:text="#{irida.version}"></li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="#" id="cart-show-btn" class="nav-icon-wrapper" ng-click="cart.show=!cart.show">
+                    <li th:with="url=${#strings.isEmpty(session.galaxyClientID) ? '/cart/pipelines' : '/cart/galaxy'}">
+                        <a th:href="@{${url}}" id="cart-show-btn" class="nav-icon-wrapper">
                             <i class="fa fa-fw fa-shopping-cart nav-icon"></i>
-                            <span id="cart-count" ng-show="cart.count > 0" class="btn__badge"
-                                  ng-bind="cart.count"></span>
+                            <span style="display: none;" class="js-cart-count t-cart-count btn__badge"></span>
                         </a>
                     </li>
 

@@ -3,9 +3,8 @@ The store ({@link https://redux.js.org/basics/store}) represents the facts
 about "what happened" and the reducers that update the state according
 to actions.
  */
-import { createStore, applyMiddleware, combineReducers, compose } from "redux";
+import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
-
 // Default reducers
 import * as defaultReducers from "./reducers";
 import * as defaultSagas from "./sagas";
@@ -31,7 +30,10 @@ export function getStore(reducers = {}, sagas = {}, initialState) {
    */
   const composeEnhancers =
     typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-      ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+      ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+          trace: true,
+          traceLimit: 25
+        })
       : compose;
 
   /*

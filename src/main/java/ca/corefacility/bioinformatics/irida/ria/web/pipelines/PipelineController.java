@@ -1,50 +1,26 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
-import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.*;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
-
-import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -59,22 +35,26 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSourceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.PipelineStartParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
+
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Controller for pipeline related views
@@ -121,11 +101,6 @@ public class PipelineController extends BaseController {
 	 * CONTROLLERS
 	 */
 	private CartController cartController;
-	
-	/*
-	 * Additional variables
-	 */
-	private String iridaPipelinePluginStyle;
 
 	@Autowired
 	public PipelineController(SequencingObjectService sequencingObjectService,
@@ -135,7 +110,7 @@ public class PipelineController extends BaseController {
 			final WorkflowNamedParametersService namedParameterService,
 			UpdateSamplePermission updateSamplePermission,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService,
-			@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle, EmailController emailController) {
+			EmailController emailController) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -148,52 +123,7 @@ public class PipelineController extends BaseController {
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
-		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
 		this.emailController = emailController;
-	}
-
-	/**
-	 * Get the Pipeline Selection Page
-	 *
-	 * @param model
-	 * 		{@link Model}
-	 * @param locale
-	 * 		Current users {@link Locale}
-	 *
-	 * @return location of the pipeline selection page.
-	 */
-	@RequestMapping
-	public String getPipelineLaunchPage(final Model model, Locale locale) {
-		Set<AnalysisType> workflows = workflowsService.getDisplayableWorkflowTypes();
-
-		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
-		workflows.stream().forEach(type -> {
-			IridaWorkflow flow = null;
-			try {
-				flow = workflowsService.getDefaultWorkflowByType(type);
-				IridaWorkflowDescription description = flow.getWorkflowDescription();
-				String name = type.getType();
-				String key = "workflow." + name;
-				flows.add(ImmutableMap.of(
-						"name", name,
-						"id", description.getId().toString(),
-						"title",
-						messageSource
-								.getMessage(key + ".title", null, locale),
-						"description",
-						messageSource
-								.getMessage(key + ".description", null, locale)
-				));
-			} catch (IridaWorkflowNotFoundException e) {
-				logger.error("Workflow not found - See stack:", e);
-			}
-		});
-
-		flows.sort((f1, f2) -> f1.get("name").compareTo(f2.get("name")));
-		model.addAttribute("counts", getCartSummaryMap());
-		model.addAttribute("workflows", flows);
-		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
-		return URL_LAUNCH;
 	}
 
 	/**
@@ -214,7 +144,7 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 		boolean canUpdateAllSamples;
 
-		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
+		Map<Project, List<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -261,7 +191,7 @@ public class PipelineController extends BaseController {
 					}
 				}
 
-				Set<Sample> samples = cartMap.get(project);
+				List<Sample> samples = cartMap.get(project);
 				Map<String, Object> projectMap = new HashMap<>();
 				List<Map<String, Object>> sampleList = new ArrayList<>();
 				for (Sample sample : samples) {
@@ -598,36 +528,59 @@ public class PipelineController extends BaseController {
 	}
 
 	/**
-	 * Extract {@link IridaWorkflow} parameters from the request {@link Map}
+	 * Get a {@link List} of all {@link AnalysisType}s
 	 *
-	 * @param mapString
-	 *            {@link Map} of parameters
-	 *
-	 * @return {@link Map} of parameters for the pipeline
-	 * @throws IOException
-	 *             when unable to parse the parameters from the provided string.
+	 * @param locale {@link Locale} of the current user
+	 * @return {@link List} of localized {@link AnalysisType}
 	 */
-	@SuppressWarnings("unchecked")
-	private Map<String, Object> extractPipelineParameters(String mapString) throws IOException {
-		// TODO [15-02-16] (Josh): Update when addressing issue #100
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.readValue(mapString, Map.class);
-		} catch (IOException e) {
-			logger.error("Error extracting parameters from submission", e);
-			throw e;
+	@RequestMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Pipeline> getWorkflowTypes(Locale locale) {
+		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
+		List<Pipeline> pipelines = new ArrayList<>();
+		for (AnalysisType type : analysisTypes) {
+			try {
+				Pipeline workflow = new Pipeline(type, locale);
+				pipelines.add(workflow);
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
+			}
 		}
+		return pipelines.stream()
+				.sorted(Comparator.comparing(Pipeline::getName))
+				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Get details about the contents of the cart.
-	 *
-	 * @return {@link Map} containing the counts of the projects and samples in the cart.
-	 */
-	private Map<String, Integer> getCartSummaryMap() {
-		return ImmutableMap.of(
-				"projects", cartController.getNumberOfProjects(),
-				"samples", cartController.getNumberOfSamples()
-		);
+	class Pipeline {
+		private String name;
+		private String description;
+		private UUID id;
+		private String styleName;
+
+		public Pipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
+			IridaWorkflowDescription description = workflowsService.getDefaultWorkflowByType(analysisType)
+					.getWorkflowDescription();
+			String prefix = "workflow." + analysisType.getType();
+			this.name = messageSource.getMessage(prefix + ".title", new Object[] {}, locale);
+			this.description = messageSource.getMessage(prefix + ".description",
+					new Object[] {}, locale);
+			this.id = description.getId();
+			this.styleName = analysisType.getType();
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public UUID getId() {
+			return id;
+		}
+
+		public String getStyleName() {
+			return styleName;
+		}
 	}
 }
