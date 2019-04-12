@@ -46,11 +46,7 @@ Once the samples have been added to the cart, the samples can be reviewed by cli
 Selecting a Pipeline
 ====================
 
-Once inside the cart, the **Select a Pipeline** button can be used to select a pipeline to run on the selected samples.
-
-![select-a-pipeline.png][]
-
-From the **Select a Pipeline** view a number of different pipelines are available.
+Once inside the cart, all available pipelines will be displayed.
 
 ![select-a-pipeline-view.png][]
 

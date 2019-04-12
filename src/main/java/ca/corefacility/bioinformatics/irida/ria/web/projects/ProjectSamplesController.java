@@ -12,7 +12,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -30,9 +29,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -57,6 +53,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectS
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Controller for handling interactions with samples in a project
@@ -105,14 +104,11 @@ public class ProjectSamplesController {
 	 * 		The user reading the project
 	 * @param projectId
 	 * 		The ID of the project
-	 * @param httpSession
-	 * 		The user's session
 	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping(value = { "/projects/{projectId}", "/projects/{projectId}/samples" })
-	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId,
-			HttpSession httpSession) {
+	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
@@ -120,10 +116,7 @@ public class ProjectSamplesController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
-		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
-				!= null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
-		model.addAttribute("galaxyCallback", haveGalaxyCallbackURL);
 
 		// Add the associated projects
 		List<RelatedProjectJoin> associatedJoin = projectService.getRelatedProjects(project);

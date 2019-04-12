@@ -97,6 +97,9 @@
 		angular.module('irida', ['ui.bootstrap'])
 			.controller('ImageController', ['$scope', ImageController])
 		;
+
+		// Clear any old session data
+		sessionStorage.clear();
 		/*]]>*/
 	</script>
 </th:block>
