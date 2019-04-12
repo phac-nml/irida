@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
  * <p>
  * Integration test to ensure that the ProjectsNew Page.
  * </p>
- *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
@@ -95,11 +94,45 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		Long projectId = metadataPage.getProjectId();
 
 		// check if samples match
-		samplesPage = ProjectSamplesPage.gotToPage(driver(), projectId.intValue());
+		ProjectSamplesPage newProjSamplesPage = ProjectSamplesPage.gotToPage(driver(), projectId.intValue());
 
-		List<String> sampleNames = samplesPage.getSampleNamesOnPage();
+
+		List<String> sampleNames = newProjSamplesPage.getSampleNamesOnPage();
+		List<String> lockedSampleNames = newProjSamplesPage.getLockedSampleNames();
+
 		assertFalse("Should have samples", sampleNames.isEmpty());
 
 		assertEquals("should have the same samples as the other project", originalSamples, sampleNames);
+		assertNotEquals("samples should not be locked", originalSamples, lockedSampleNames);
+	}
+
+	@Test
+	public void testProjectFromCartLockedSamples() {
+		// get samples from original project and add to cart
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		List<String> originalSamples = samplesPage.getSampleNamesOnPage();
+		samplesPage.selectAllSamples();
+		samplesPage.addSelectedSamplesToCart();
+
+		// create project
+		page.goToPageWithCart();
+		page.setName("newProjectWithSamples");
+		page.selectLockSamples();
+		page.clickSubmit();
+
+		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
+		assertTrue("Should be on metadata page which has edit buttong", metadataPage.hasEditButton());
+		Long projectId = metadataPage.getProjectId();
+
+		// check if samples match
+		ProjectSamplesPage newProjSamplesPage = ProjectSamplesPage.gotToPage(driver(), projectId.intValue());
+
+		List<String> sampleNames = newProjSamplesPage.getSampleNamesOnPage();
+		List<String> lockedSampleNames = newProjSamplesPage.getLockedSampleNames();
+
+		assertFalse("Should have samples", sampleNames.isEmpty());
+
+		assertEquals("should have the same samples as the other project", originalSamples, sampleNames);
+		assertEquals("samples should be locked", originalSamples, lockedSampleNames);
 	}
 }

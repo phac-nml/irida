@@ -417,15 +417,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the updated {@link Project}
 	 */
 	public Project updateProjectSettings(Project project, Map<String,Object> updates);
-	
+
 	/**
 	 * Create a {@link Project} with the given {@link Sample}s contained
-	 * 
-	 * @param project
-	 *            the {@link Project} to create
-	 * @param sampleIds
-	 *            IDs of the {@link Sample}s
+	 *
+	 * @param project   the {@link Project} to create
+	 * @param sampleIds IDs of the {@link Sample}s
+	 * @param owner     whether to lock {@link Sample} modification from new project
 	 * @return the created {@link Project}
 	 */
-	public Project createProjectWithSamples(Project project, List<Long> sampleIds);
+	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner);
 }
