@@ -14,6 +14,7 @@ Changes
 * [UI]: Fixed typo when loading data in **Advanced Phylogenomic Visualization** page.
 * [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
 * [UI/Developer]: Added code splitting to webpack bundles.
+* [UI/Developer]: Added checkbox to Create a New Project page for user to lock sample modification when a project is created from samples in the cart.
 * [UI/Developer]: Minor JavaScript code cleanup.
 * [Developer]: Updated spring security to 4.0.4.RELEASE.
 * [Admin]: Made analysis task pool size configurable with `irida.workflow.analysis.threads`. (19.01.2)
