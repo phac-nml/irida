@@ -30,6 +30,8 @@ Changes
 * [UI]: Added hard wrap on sample name on sample details page.
 * [UI]: New dedicated cart page.
 * [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been deprecated.
+* [Developer]: Updated Travis CI dist to `xenial`.
+* [Developer]: Updated chromedriver in pom.xml and packages.json to newer versions to work better with newest chrome version.
 
 0.22.0 to 19.01
 ----------------

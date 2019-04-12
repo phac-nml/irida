@@ -18,6 +18,8 @@ env:
 services:
   - docker
 
+dist: xenial
+
 addons:
   mariadb: '10.0'
 
@@ -30,6 +32,9 @@ rvm:
 cache:
   directories:
     - $HOME/.m2
+
+before_install:
+  - sudo apt-get install libgconf-2-4
 
 install:
   - mysql -e "CREATE USER '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD'; GRANT ALL ON $MYSQL_DATABASE.* to '$MYSQL_USER'@'localhost';"
