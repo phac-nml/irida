@@ -101,7 +101,7 @@ public class AutomatedAnalysisFileProcessorTest {
 
 		AnalysisSubmissionTemplate assemblyTemplate = new AnalysisSubmissionTemplate("assemble",
 				assemblyWorkflow.getWorkflowIdentifier(), ImmutableMap.of("param1", "myparam"), null, false, "desc",
-				AbstractAnalysisSubmission.Priority.MEDIUM, project);
+				AbstractAnalysisSubmission.Priority.MEDIUM, false, project);
 		assemblyTemplate.setSubmitter(submitter);
 
 		AnalysisSubmission built = new AnalysisSubmission.Builder(assemblyTemplate).inputFiles(Sets.newHashSet(pair))
@@ -150,7 +150,7 @@ public class AutomatedAnalysisFileProcessorTest {
 
 		AnalysisSubmissionTemplate assemblyTemplate = new AnalysisSubmissionTemplate("assemble",
 				assemblyWorkflow.getWorkflowIdentifier(), ImmutableMap.of("param1", "myparam"), null, false, "desc",
-				AbstractAnalysisSubmission.Priority.MEDIUM, project);
+				AbstractAnalysisSubmission.Priority.MEDIUM, false, project);
 		assemblyTemplate.setSubmitter(submitter);
 
 		AnalysisSubmission built = new AnalysisSubmission.Builder(assemblyTemplate).inputFiles(Sets.newHashSet(pair))
