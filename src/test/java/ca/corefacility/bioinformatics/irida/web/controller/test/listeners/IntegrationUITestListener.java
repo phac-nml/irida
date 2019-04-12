@@ -9,6 +9,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
@@ -57,6 +58,7 @@ public class IntegrationUITestListener extends RunListener {
 	 * Start the web driver.
 	 */
 	public static void startWebDriver() {
+		ChromeOptions options = new ChromeOptions();
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 
 		/*
@@ -66,19 +68,21 @@ public class IntegrationUITestListener extends RunListener {
 		String noSandbox = System.getProperty("irida.it.nosandbox");
 		if (noSandbox != null && noSandbox.equals("true")) {
 			logger.warn("Running Chrome in no sandbox mode");
-			capabilities.setCapability("no-sandbox",true);
+			options.addArguments("--no-sandbox");
 		}
 
 		// Run chrome in headless mode
 		String headless = System.getProperty("irida.it.headless");
 		if (headless != null && headless.equals("true")) {
 			logger.info("Running Chome in headless mode");
-			capabilities.setCapability("headless", true);
+			options.addArguments("headless");
 		} else {
 			logger.info("Running Chome in no headless (normal) mode");
 		}
 
-		capabilities.setCapability("window-size=1920,1080", true);
+		options.addArguments("--window-size=1920,1080");
+
+		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
 		// Run selenium tests through external selenium server
 		String seleniumUrl = System.getProperty("webdriver.selenium_url");
