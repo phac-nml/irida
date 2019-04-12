@@ -1074,8 +1074,8 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
-		<selenium-driver.version>2.48.2</selenium-driver.version>
-		<selenium-chrome-driver.version>2.48.2</selenium-chrome-driver.version>
+		<selenium-driver.version>2.52.0</selenium-driver.version>
+		<selenium-chrome-driver.version>2.52.0</selenium-chrome-driver.version>
 		<attoparser.version>2.0.4.RELEASE</attoparser.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
@@ -1105,7 +1105,7 @@
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v11.10.0</node.version>
-		<yarn.version>v1.13.0</yarn.version>
+		<yarn.version>v1.15.2</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->

@@ -294,7 +294,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
 		waitForElementVisible(
-				By.cssSelector("#cart-count"));
+				By.className("js-cart-count"));
 		// If the cart count is already visible this can go too fast,
 		// wait for the cart to fully update it's total.
 		waitForTime(500);

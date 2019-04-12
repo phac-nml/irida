@@ -18,47 +18,40 @@ Adding samples to the cart
 
 The cart is a place where you can temporarily store a selection of samples from across multiple projects for submission to a pipeline for analysis.
 
-You can see the current contents of the cart by clicking on the "Cart" button, on the top, right-hand side of the [dashboard](../dashboard):
-
-![Cart button location.](images/cart-button.png)
-
-The cart will appear on the right-hand side of the page:
-
-![Empty cart.](images/empty-cart.png)
-
 The cart is initially empty. You can add samples to your cart by navigating to the [samples list for a project](../samples/#viewing-samples-in-a-project) and [selecting the samples that you want to add](../samples/#selecting-samples). Once you've selected the samples that you want to add, click on the "Add to Cart" button, just above the samples list:
 
 ![Add to cart button.](images/add-to-cart-button.png)
 
-Once you've added some samples to the cart, if you click the "Cart" button on the dashboard, you'll be able to review all of the samples that you've selected, organized by project:
+Once you’ve added some samples to the cart, if you click the `Cart` button on the main navigation, you will be taken to the cart page.
 
-![Full cart.](images/full-cart.png)
+![Pipeline Cart.](images/pipeline-launch-cart.png)
 
-You can remove individual samples or all selected samples from a project by clicking on the <img src="images/remove-icon.png" class="inline" alt="Remove icon."> icon, or you can empty the cart entirely by clicking on the "Clear" button, in the top, right-hand corner of the cart:
+You can remove individual samples or all selected samples from a project by clicking on the sample menu icon:
 
-![Cart clear button.](images/cart-clear-button.png)
+ ![Cart clear button.](images/menu-icon.png)
+ 
+And either selecting “Remove Sample” which will remove just a single sample or “Remove Project” which will remove all samples that belong to the same project. You can also empty the cart entirely by clicking on the “Empty” button, in the top, right-hand corner of the cart.
 
 Searching samples in the cart
 -----------------------------
 
 You can search for individual samples within the cart use the 'cart search' field.
 
-![Cart search field](images/cart-filter-input.png)
+![Cart search field](images/cart-filter-input.gif)
 
-Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.
+Search terms can match partial samples names.
 
 Selecting a pipeline
 --------------------
 
-Once you've selected the samples that you want to analyse and [added them to the cart](#adding-samples-to-the-cart), you can click on the "Select a Pipeline" button at the bottom of the cart:
+The default cart page will allow you to choose from the pipelines that are currently configured in IRIDA.  If you are not on the pipelines page, select the "Pipelines" menu from the top of the section:
 
-![Select a pipeline button.](images/select-a-pipeline-button.png)
-
-The pipelines page will allow you to choose from the pipelines that are currently configured in IRIDA. IRIDA has multiple pipelines:
-
-![Select a pipeline page.](images/select-a-pipeline-page.png)
+![Select a pipeline page.](images/pipeline-tab.png)
 
 Click on the "Select" button at the bottom, right-hand side of the pipeline that you'd like to launch.
+
+Running a pipeline
+------------------
 
 **Note**: Some pipelines will require a reference sequence:
 
