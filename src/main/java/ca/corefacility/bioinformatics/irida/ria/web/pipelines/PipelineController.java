@@ -71,7 +71,7 @@ public class PipelineController extends BaseController {
 	 */
 	private static final String DEFAULT_WORKFLOW_PARAMETERS_ID = "default";
 	private static final String CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID = "custom";
-	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/cart/pipelines";
+	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/cart";
 	public static final String URL_GENERIC_PIPELINE = "pipelines/types/generic_pipeline";
 	// JSON KEYS
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
