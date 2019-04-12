@@ -587,13 +587,24 @@ public class PipelineController extends BaseController {
 	 * @return {@link List} of localized {@link AnalysisType}
 	 */
 	@RequestMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Pipeline> getWorkflowTypes(Locale locale) {
+	public List<Pipeline> getWorkflowTypes(
+			@RequestParam(required = false, name = "automatedProject") Long automatedProject, Locale locale) {
 		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
 		List<Pipeline> pipelines = new ArrayList<>();
+		logger.debug("Autoproject: " + automatedProject);
 		for (AnalysisType type : analysisTypes) {
 			try {
-				Pipeline workflow = new Pipeline(type, locale);
-				pipelines.add(workflow);
+				IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);
+				IridaWorkflowDescription description = flow.getWorkflowDescription();
+
+				logger.debug("flow: " + flow.toString());
+
+				//if we're setting up an automated project, strip out all the multi-sample pipelines
+				if (automatedProject == null || (description.getInputs()
+						.requiresSingleSample())) {
+					Pipeline workflow = new Pipeline(type, locale);
+					pipelines.add(workflow);
+				}
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
 			}

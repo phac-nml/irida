@@ -57,6 +57,10 @@ export default class Pipeline extends React.Component {
   };
 
   render() {
+    var pipelineUrl = `${window.TL.BASE_URL}pipelines/${this.props.id}`;
+    if(this.props.automatedProject != null){
+      pipelineUrl = pipelineUrl + "?automatedProject=" + this.props.automatedProject;
+    }
     return (
       <PipelineCard
         cover={
@@ -70,7 +74,7 @@ export default class Pipeline extends React.Component {
                 <Button
                   size="small"
                   className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
-                  href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
+                  href={pipelineUrl}
                 >
                   Select
                 </Button>

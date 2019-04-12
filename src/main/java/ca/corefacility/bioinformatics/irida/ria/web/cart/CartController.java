@@ -48,9 +48,12 @@ public class CartController {
 	 * @param model {@link Model}
 	 * @return {@link String} path to the cart page template
 	 */
-	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
-	public String getCartPage(Model model) {
+	@RequestMapping(value = { "", "/*" }, produces = MediaType.TEXT_HTML_VALUE)
+	public String getCartPage(Model model,
+			@RequestParam(required = false, name = "automatedProject")
+					Long automatedProject) {
 		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
+		model.addAttribute("automatedProject", automatedProject);
 		return "cart";
 	}
 
