@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.listeners;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.runner.Description;
@@ -7,9 +9,12 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.fail;
 
 /**
  * Global settings for UI integration tests.
@@ -52,7 +57,7 @@ public class IntegrationUITestListener extends RunListener {
 	 * Start the web driver.
 	 */
 	public static void startWebDriver() {
-		ChromeOptions options = new ChromeOptions();
+		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 
 		/*
 		 * Run chrome in no sandbox mode. Only use this option for running tests
@@ -61,21 +66,32 @@ public class IntegrationUITestListener extends RunListener {
 		String noSandbox = System.getProperty("irida.it.nosandbox");
 		if (noSandbox != null && noSandbox.equals("true")) {
 			logger.warn("Running Chrome in no sandbox mode");
-			options.addArguments("--no-sandbox");
+			capabilities.setCapability("no-sandbox",true);
 		}
 
 		// Run chrome in headless mode
 		String headless = System.getProperty("irida.it.headless");
 		if (headless != null && headless.equals("true")) {
 			logger.info("Running Chome in headless mode");
-			options.addArguments("headless");
+			capabilities.setCapability("headless", true);
 		} else {
 			logger.info("Running Chome in no headless (normal) mode");
 		}
-		
-		options.addArguments("--window-size=1920,1080");
 
-		driver = new ChromeDriver(options);
+		capabilities.setCapability("window-size=1920,1080", true);
+
+		// Run selenium tests through external selenium server
+		String seleniumUrl = System.getProperty("webdriver.selenium_url");
+		if (seleniumUrl != null) {
+			try {
+				driver = new RemoteWebDriver(new URL(seleniumUrl), capabilities);
+			} catch (MalformedURLException e) {
+				fail();
+			}
+		} else {
+			driver = new ChromeDriver(capabilities);
+		}
+
 		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 	}
 

@@ -25,9 +25,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080"
-			: System.getProperty("jetty.port");
-	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
+	protected static final String BASE_URL = System.getProperty("server.base.url") + "/";
 	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	protected final int DEFAULT_WAIT = 500;
@@ -214,12 +212,12 @@ public class AbstractPage {
 	}
 
 	/**
-	 * Get the current JETTY port
+	 * Get the BASE URL
 	 *
 	 * @return
 	 */
-	public String getApplicationPort() {
-		return APPLICATION_PORT;
+	public String getBaseUrl() {
+		return BASE_URL;
 	}
 
 	/**
