@@ -580,9 +580,11 @@ public class PipelineController extends BaseController {
 	}
 
 	/**
-	 * Get a {@link List} of all {@link AnalysisType}s
+	 * Get a {@link List} of all {@link AnalysisType}s.  If this is an automated project, it will only return the
+	 * analyses that can be automated.
 	 *
 	 * @param locale {@link Locale} of the current user
+	 * @param automatedProject Project ID if we're launching an automated project (optional)
 	 * @return {@link List} of localized {@link AnalysisType}
 	 */
 	@RequestMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -590,7 +592,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false, name = "automatedProject") Long automatedProject, Locale locale) {
 		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
 		List<Pipeline> pipelines = new ArrayList<>();
-		logger.debug("Autoproject: " + automatedProject);
+
 		for (AnalysisType type : analysisTypes) {
 			try {
 				IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);

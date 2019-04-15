@@ -46,6 +46,7 @@ public class CartController {
 	 * Get the dedicated page for the Cart
 	 *
 	 * @param model {@link Model}
+	 * @param automatedProject The ID of the automated project to add a pipeline to (optional)
 	 * @return {@link String} path to the cart page template
 	 */
 	@RequestMapping(value = { "", "/*" }, produces = MediaType.TEXT_HTML_VALUE)
