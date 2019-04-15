@@ -302,8 +302,7 @@ public class PipelineController extends BaseController {
 				SimpleDateFormat sdf;
 				sdf = new SimpleDateFormat("yyyyMMdd");
 				String text = sdf.format(new Date());
-				defaultName = messageSource.getMessage("workflow.name.default-prefix",
-						new Object[] { description.getName(), text }, locale);
+				defaultName = description.getName()+ "_" + text;
 			}
 
 			// Parameters should be added not matter what, even if they are empty.
