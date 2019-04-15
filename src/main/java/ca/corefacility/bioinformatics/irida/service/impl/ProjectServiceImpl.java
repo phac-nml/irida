@@ -731,13 +731,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasPermission(#sampleIds, 'canUpdateSample')")
 	@Override
-	public Project createProjectWithSamples(Project project, List<Long> sampleIds) {
+	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner) {
 
 		Project created = create(project);
 
 		sampleIds.forEach(sid -> {
 			Sample s = sampleRepository.findOne(sid);
-			addSampleToProject(project, s, false);
+			addSampleToProject(project, s, owner);
 		});
 
 		return created;

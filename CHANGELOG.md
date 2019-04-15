@@ -14,6 +14,7 @@ Changes
 * [UI]: Fixed typo when loading data in **Advanced Phylogenomic Visualization** page.
 * [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
 * [UI/Developer]: Added code splitting to webpack bundles.
+* [UI/Developer]: Added checkbox to Create a New Project page for user to lock sample modification when a project is created from samples in the cart.
 * [UI/Developer]: Minor JavaScript code cleanup.
 * [Developer]: Updated spring security to 4.0.4.RELEASE.
 * [Admin]: Made analysis task pool size configurable with `irida.workflow.analysis.threads`. (19.01.2)
@@ -29,6 +30,8 @@ Changes
 * [UI]: Added hard wrap on sample name on sample details page.
 * [UI]: New dedicated cart page.
 * [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been deprecated.
+* [Developer]: Updated Travis CI dist to `xenial`.
+* [Developer]: Updated chromedriver in pom.xml and packages.json to newer versions to work better with newest chrome version.
 
 0.22.0 to 19.01
 ----------------
