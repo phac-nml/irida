@@ -598,8 +598,6 @@ public class PipelineController extends BaseController {
 				IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);
 				IridaWorkflowDescription description = flow.getWorkflowDescription();
 
-				logger.debug("flow: " + flow.toString());
-
 				//if we're setting up an automated project, strip out all the multi-sample pipelines
 				if (automatedProject == null || (description.getInputs()
 						.requiresSingleSample())) {
