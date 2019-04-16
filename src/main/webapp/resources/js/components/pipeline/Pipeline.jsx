@@ -56,10 +56,17 @@ export default class Pipeline extends React.Component {
     displaySelect: PropTypes.bool.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.url = `${window.TL.BASE_URL}pipelines/${this.props.id}`;
+  }
+
   render() {
-    var pipelineUrl = `${window.TL.BASE_URL}pipelines/${this.props.id}`;
-    if(this.props.automatedProject != null){
-      pipelineUrl = pipelineUrl + "?automatedProject=" + this.props.automatedProject;
+    var pipelineUrl = this.url;
+    if (this.props.automatedProject !== null) {
+      pipelineUrl = `${pipelineUrl}?automatedProject=${
+        this.props.automatedProject
+      }`;
     }
     return (
       <PipelineCard

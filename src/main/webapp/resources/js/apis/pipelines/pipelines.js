@@ -28,8 +28,8 @@ export async function getIridaWorkflowDescription(workflowUUID) {
  */
 export const fetchIridaAnalysisWorkflows = async function() {
   var ajaxUrl = URL;
-  if (window.PAGE.automatedProject != null) {
-    ajaxUrl = ajaxUrl + "?automatedProject=" + window.PAGE.automatedProject;
+  if (window.PAGE.automatedProject !== null) {
+    ajaxUrl = `${ajaxUrl}?automatedProject=${window.PAGE.automatedProject}`;
   }
   return axios.get(ajaxUrl).then(response => response.data);
 };
