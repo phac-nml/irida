@@ -14,24 +14,16 @@ import {
   removeSampleFromCart,
   loadFullCart
 } from "../../redux/sagas/cart";
-import {
-  getCartGalaxySamplesSaga,
-  samplesUpdated,
-  submitGalaxyDataSaga
-} from "../../components/galaxy/sagas";
 import { Cart } from "./components/Cart";
 
 const store = getStore(
-  { sampleDetailsReducer, galaxyReducer },
+  { sampleDetailsReducer },
   {
     empty,
     getDetailsForSample,
     removeSampleFromCart,
     removeProjectFromCart,
-    loadFullCart,
-    getCartGalaxySamplesSaga,
-    submitGalaxyDataSaga,
-    samplesUpdated
+    loadFullCart
   }
 );
 

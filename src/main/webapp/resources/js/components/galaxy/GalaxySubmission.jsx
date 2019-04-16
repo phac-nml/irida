@@ -1,70 +1,57 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { useStateValue } from "./GalaxyState";
 import { Button } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
-import { connect } from "react-redux";
 import { actions } from "./reducer";
+import {
+  getGalaxySamples,
+  validateOauthClient
+} from "../../apis/galaxy/galaxy";
+import { exportToGalaxy } from "../../apis/galaxy/submission";
+import { validateEmail } from "../../utilities/validation-utilities";
 
 /**
  * Component to actually send the samples to a Galaxy Client
- * @param {boolean} disabled - if the form is ready to be submitted.
- * @param {boolean} submitted - if the form is being submitted
- * @param {string} email - users galaxy email
- * @param {boolean} makepairedcollection
- * @param {array} samples
- * @param {function} submitSamplesToGalaxy - send samples to galaxy through saga.
  * @returns {*}
  */
-export function GalaxySubmissionComponent({
-  disabled,
-  submitted,
-  email,
-  makepairedcollection,
-  samples,
-  submitSamplesToGalaxy
-}) {
-  const submit = () => {
-    submitSamplesToGalaxy(email, makepairedcollection, samples);
-  };
+export function GalaxySubmission() {
+  const [
+    { submittable, submitted, email, validEmail, makepairedcollection },
+    dispatch
+  ] = useStateValue();
+
+  function submitToGalaxy() {
+    validateOauthClient().then(result => {
+      switch (result) {
+        case "ERROR":
+          dispatch(actions.submitError());
+          break;
+        case "CLOSED":
+          dispatch(actions.oauthWindowClosed());
+          break;
+        default:
+          getGalaxySamples().then(samples => {
+            dispatch(actions.submit());
+            exportToGalaxy({
+              email,
+              makepairedcollection,
+              oauthCode: result,
+              oauthRedirect: `${window.TL.BASE_URL}galaxy/auth_code`,
+              samples
+            });
+          });
+      }
+    });
+  }
 
   return (
     <Button
       type="primary"
-      disabled={disabled}
+      disabled={!validEmail}
       loading={submitted}
-      onClick={submit}
+      onClick={submitToGalaxy}
     >
       {getI18N("GalaxyFinalSubmission.submit")}
     </Button>
   );
 }
-
-GalaxySubmissionComponent.propTypes = {
-  disabled: PropTypes.bool.isRequired,
-  submitted: PropTypes.bool.isRequired,
-  email: PropTypes.string,
-  makepairedcollection: PropTypes.bool,
-  samples: PropTypes.array,
-  submitSamplesToGalaxy: PropTypes.func.isRequired
-};
-
-/*
-Connect the component to redux to get all the required values and functions.
- */
-const mapStateToProps = state => ({
-  disabled: !state.galaxyReducer.submittable,
-  submitted: state.galaxyReducer.submitted,
-  email: state.galaxyReducer.email,
-  makepairedcollection: state.galaxyReducer.makepairedcollection,
-  samples: state.galaxyReducer.samples
-});
-
-const mapDispatchToProps = dispatch => ({
-  submitSamplesToGalaxy: (email, makepairedcollection, samples) =>
-    dispatch(actions.submit(email, makepairedcollection, samples))
-});
-
-export const GalaxySubmission = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(GalaxySubmissionComponent);
