@@ -50,6 +50,10 @@ public class CartController {
 	 */
 	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage(Model model) {
+		/*
+		 * The cart is dynamically created at runtime using React.
+		 * Base file at src/main/webapp/resources/js/pages/cart/components/Cart.jsx
+		 */
 		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
 		return "cart";
 	}

@@ -42,7 +42,12 @@
     </script>
   </head>
   <body>
-    <div id="root" style="height: 100%;" layout:fragment="page"></div>
+    <div id="root" style="height: 100%;" layout:fragment="page">
+    <!--
+       This is a DOM element for React to render the full cart experience into.
+       See  src/main/webapp/resources/js/pages/cart/components/Cart.jsx
+    -->
+    </div>
 
     <th:block layout:fragment="scripts">
       <div th:if="${galaxyUrl != null}">
