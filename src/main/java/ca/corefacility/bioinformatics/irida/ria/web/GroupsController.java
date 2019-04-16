@@ -46,6 +46,7 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping(value = "/groups")
 public class GroupsController {
 
+	public static final int maxProjectsToDisplay = 3;
 	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
@@ -389,7 +390,6 @@ public class GroupsController {
 	public String getDeleteGroupText(final @RequestParam Long userGroupId, final Model model) {
 		final UserGroup group = userGroupService.read(userGroupId);
 		final Collection<UserGroupProjectJoin> projects = userGroupService.getProjectsWithUserGroup(group);
-		final int maxProjectsToDisplay = 3;
 
 		model.addAttribute("group", group);
 
