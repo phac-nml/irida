@@ -1,38 +1,12 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { FixedSizeList as VList } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { Button, Icon, Input, List, Layout } from "antd";
-import { actions } from "../../../redux/reducers/cart";
-import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
+import { Layout } from "antd";
 import CartSamples from "./CartSamples";
-import { SampleRenderer } from "./SampleRenderer";
-import { getCartIds, getSamplesForProjects } from "../../../apis/cart/cart";
-import {
-  blue6,
-  COLOR_BORDER_LIGHT,
-  grey1,
-  grey2,
-  grey3,
-  grey5,
-  red4,
-  red6
-} from "../../../styles/colors";
-import { SPACE_SM } from "../../../styles/spacing";
+import { grey2 } from "../../../styles/colors";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import CartNotification from "./CartNotification";
 const { Sider } = Layout;
-
-const { Search } = Input;
-
-const SiderInner = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 400px;
-`;
 
 function CartSamplesComponent({ count, collapsed, loaded }) {
   return (

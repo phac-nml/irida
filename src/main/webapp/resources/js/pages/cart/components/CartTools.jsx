@@ -52,7 +52,7 @@ export default class CartTools extends Component {
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
       from the UI, and the user is redirected to the pipelines page.
        */
-      this.galaxySesssionListener = document.body.addEventListener(
+      document.body.addEventListener(
         "galaxy:removal",
         this.removeGalaxy
       );

@@ -217,6 +217,15 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#group, 'canUpdateUserGroup')")
+	public Collection<UserGroupProjectJoin> getProjectsWithUserGroup(final UserGroup group) {
+		return userGroupProjectJoinRepository.findProjectsByUserGroup(group);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role) {
 		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
