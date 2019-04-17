@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping(value = "/groups")
 public class GroupsController {
 
-	public static final int maxProjectsToDisplay = 3;
+	public static final int MAX_PROJECTS_TO_DISPLAY = 3;
 	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
@@ -395,7 +395,7 @@ public class GroupsController {
 
 		if (!projects.isEmpty()) {
 			model.addAttribute("projectsWithGroup", projects);
-			model.addAttribute("maxProjectsToDisplay", maxProjectsToDisplay);
+			model.addAttribute("maxProjectsToDisplay", MAX_PROJECTS_TO_DISPLAY);
 		}
 
 		return GROUPS_REMOVE_MODAL;
