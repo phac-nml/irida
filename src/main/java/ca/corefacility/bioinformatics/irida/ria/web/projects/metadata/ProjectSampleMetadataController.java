@@ -113,7 +113,6 @@ public class ProjectSampleMetadataController {
 			// Only look at the first sheet in the workbook as this should be the file we want.
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
-			List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "Sample", "Modified Date", "Created Date");
 
 			List<String> headers = getWorkbookHeaders(rowIterator.next());
 			storage.saveHeaders(headers);
@@ -130,9 +129,8 @@ public class ProjectSampleMetadataController {
 					if (columnIndex < headers.size()) {
 						String header = headers.get(columnIndex);
 
-						if (cell.getCellTypeEnum().equals(CellType.BLANK)) {
-							rowMap.put(header, "");
-						} else {
+						if (!Strings.isNullOrEmpty(header)) {
+							// Need to ignore empty headers.
 							cell.setCellType(CellType.STRING);
 							rowMap.put(header, cell.getStringCellValue());
 						}
@@ -170,10 +168,8 @@ public class ProjectSampleMetadataController {
 			String headerValue = headerCell.getStringCellValue()
 					.trim();
 
-			// Don't want empty header values.
-			if (!Strings.isNullOrEmpty(headerValue)) {
-				headers.add(headerValue);
-			}
+			// Leave empty headers for now, we will remove those columns later.
+			headers.add(headerValue);
 		}
 		return headers;
 	}
@@ -233,6 +229,7 @@ public class ProjectSampleMetadataController {
 	@ResponseBody
 	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@PathVariable long projectId) {
+		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "Modified Date", "Created Date");
 		Map<String, Object> errors = new HashMap<>();
 		Project project = projectService.read(projectId);
 
@@ -259,14 +256,18 @@ public class ProjectSampleMetadataController {
 
 					// Need to overwrite duplicate keys
 					for (Entry<String, String> entry : row.entrySet()) {
-						MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(entry.getKey());
+						// Make sure we are not saving non-metadata items.
+						if (!DEFAULT_HEADERS.contains(entry.getKey())) {
+							MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(
+									entry.getKey());
 
-						if (key == null) {
-							key = metadataTemplateService.saveMetadataField(
-									new MetadataTemplateField(entry.getKey(), "text"));
+							if (key == null) {
+								key = metadataTemplateService.saveMetadataField(
+										new MetadataTemplateField(entry.getKey(), "text"));
+							}
+
+							newData.put(key, new MetadataEntry(entry.getValue(), "text"));
 						}
-
-						newData.put(key, new MetadataEntry(entry.getValue(), "text"));
 					}
 
 					sample.mergeMetadata(newData);
