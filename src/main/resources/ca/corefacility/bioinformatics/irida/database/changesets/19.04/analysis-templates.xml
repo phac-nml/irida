@@ -33,7 +33,7 @@
         <customChange
                 class="ca.corefacility.bioinformatics.irida.database.changesets.AutomatedAnalysisToTemplate"/>
 
-        <!--updating old automated runs-->
+        <!--updating old automated runs with the automated=1 flag-->
         <sql>UPDATE analysis_submission SET automated=0 WHERE DTYPE='AnalysisSubmission'</sql>
         <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT sistr_typing FROM sequencing_object)
         </sql>

@@ -22,6 +22,9 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Liquibase update to convert the project settings for automated Assembly and SISTR checkboxes to analysis templates.
+ */
 public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 
 	private static final Logger logger = LoggerFactory.getLogger(AutomatedAnalysisToTemplate.class);
@@ -70,9 +73,8 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 
 	private void insertWorkflow(JdbcTemplate jdbcTemplate, String name, boolean updateSamples, UUID workflowId,
 			String where, List<IridaWorkflowParameter> params) {
-		// ASSEMBLY INSERTION
 		/*
-		 * we're hijacking the 'automated' flag here to mark entries we need to add params to later.  at this point
+		 * we're borrowing the 'automated' flag here to mark entries we need to add params to later.  at this point
 		 * there'll be nothing with a '1' in the automated flag.  we'll clear it later.
 		 */
 		String assemblyInsert =
@@ -98,12 +100,12 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 
 	@Override
 	public String getConfirmationMessage() {
-		return null;
+		return "Converted automated SISTR and AssemblyAnnotation project settings to analysis templates";
 	}
 
 	@Override
 	public void setUp() throws SetupException {
-
+		logger.info("Converting automated SISTR and AssemblyAnnotation project settings to analysis templates");
 	}
 
 	@Override
