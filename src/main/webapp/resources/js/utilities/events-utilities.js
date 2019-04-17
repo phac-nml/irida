@@ -10,3 +10,11 @@ export const CART = {
   UPDATED: "cart:updated",
   ADD: "cart:add"
 };
+
+export const cartNotification = detail => {
+  document.dispatchEvent(
+    new CustomEvent(CART.UPDATED, {
+      detail
+    })
+  );
+};

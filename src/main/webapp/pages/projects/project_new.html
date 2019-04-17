@@ -94,7 +94,16 @@
                                         <li th:each="sample : ${disallowedSamples}" th:text="${sample.sampleName}">_sample_</li>
                                     </ul>
                                 </div>
+
+                                <div class="checkbox">
+                                    <label for="lockSamples">
+                                        <input type="checkbox" id="lockSamples" name="lockSamples" value="false" th:disabled="${allSamples} == 0 or ${!useCartSamples}" />
+                                        <span th:text=" #{projects.create.settings.sample.modification}" >_Lock sample
+                                    modification_</span>
+                                    </label>
+                                </div>
                             </th:block>
+                        
                         </div>
                 </div>
                 <div class="panel-footer text-right">
@@ -163,6 +172,20 @@
                 $("#cartAlert").hide(time);
             }
         }
+
+        /*
+            Disables/enables the lockSamples checkbox
+            depending on if using the samples from cart
+        */
+        $("#useCartSamples").on("change", function(e) {
+          var selected = $(e.target).prop("checked");
+          if (!selected) {
+            $("#lockSamples").attr("disabled", true);
+            $("#lockSamples").prop("checked", false);
+          } else {
+            $("#lockSamples").removeAttr("disabled");
+          }
+        });
 
         (function() {
           "use strict";

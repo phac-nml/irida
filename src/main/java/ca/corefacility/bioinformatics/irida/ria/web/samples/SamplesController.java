@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -23,6 +27,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
@@ -41,22 +52,13 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for all sample related views
@@ -140,8 +142,22 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
+	}
+
+	/**
+	 * Get {@link Sample} details for a specific sample.
+	 *
+	 * @param id {@link Long} identifier for a sample.
+	 * @return {@link SampleDetails} for the {@link Sample}
+	 */
+	@RequestMapping(value = "/samples", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public SampleDetails getSampleDetails(@RequestParam Long id) {
+		Sample sample = sampleService.read(id);
+		boolean modifiable = this.isSampleModifiable(sample);
+		return new SampleDetails(sample, modifiable);
 	}
 
 	/**
@@ -303,7 +319,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("assemblies", genomeAssemblies);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -549,7 +565,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("single_end", singleFileJoins);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return FILES_CONCATENATE_PAGE;
 	}
@@ -653,7 +669,7 @@ public class SamplesController extends BaseController {
 	 *            The sample to test
 	 * @return true/false if they have management permissions for the sample
 	 */
-	private boolean isProjectManagerForSample(Sample sample) {
+	private boolean isSampleModifiable(Sample sample) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		return updateSamplePermission.isAllowed(authentication, sample);

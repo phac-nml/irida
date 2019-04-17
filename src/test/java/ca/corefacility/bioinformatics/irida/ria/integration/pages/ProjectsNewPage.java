@@ -43,6 +43,10 @@ public class ProjectsNewPage extends AbstractPage {
 		setProjectDescription(description);
 	}
 
+	public void selectLockSamples() {
+		driver.findElement(By.id("lockSamples")).click();
+	}
+
 	public void clickSubmit() {
 		driver.findElement(By.id("submitBtn")).click();
 	}

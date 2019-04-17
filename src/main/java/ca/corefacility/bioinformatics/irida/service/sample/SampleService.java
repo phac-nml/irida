@@ -96,7 +96,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	
 	/**
 	 * Get the number of {@link Sample}s for a given {@link Project}. This
-	 * method will be faster than getSamplesForProject
+	 * method will be faster than getSamplesForProjects
 	 * 
 	 * @param project
 	 *            The project to get samples for
