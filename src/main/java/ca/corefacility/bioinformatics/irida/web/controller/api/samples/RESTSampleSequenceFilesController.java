@@ -468,9 +468,8 @@ public class RESTSampleSequenceFilesController {
 			response.setStatus(HttpStatus.CREATED.value());
 
 		} catch (IllegalArgumentException e) {
+			logger.debug("Error 400 - Bad Request: " + e.getMessage());
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
-		} catch (Exception e) {
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		}
 
 		// respond to the client
@@ -568,9 +567,8 @@ public class RESTSampleSequenceFilesController {
 			response.setStatus(HttpStatus.CREATED.value());
 			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
 		} catch (IllegalArgumentException e) {
+			logger.debug("Error 400 - Bad Request: " + e.getMessage());
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
-		} catch (Exception e) {
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		}
 
 		// respond to the client
