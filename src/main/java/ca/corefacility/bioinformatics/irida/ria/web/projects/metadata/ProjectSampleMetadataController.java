@@ -229,7 +229,8 @@ public class ProjectSampleMetadataController {
 	@ResponseBody
 	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@PathVariable long projectId) {
-		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "Modified Date", "Created Date");
+		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
+				"Created Date", "Created On", "Coverage", "Project ID");
 		Map<String, Object> errors = new HashMap<>();
 		Project project = projectService.read(projectId);
 
