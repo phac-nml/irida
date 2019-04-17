@@ -44,29 +44,43 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 			assemblyWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
 			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
 		} catch (IridaWorkflowNotFoundException e) {
-			throw new CustomChangeException("Could not get SISTR or Assembly workflow", e);
+			logger.warn(
+					"Workflow not found.  Automated pipelines for this workflow will not be converted to analysis templates.",
+					e);
+
+			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
-		//get the workflow identifiers
-		UUID assemblyId = assemblyWorkflow.getWorkflowIdentifier();
-		UUID sistrId = sistrWorkflow.getWorkflowIdentifier();
+		//update assemblies
+		if (assemblyWorkflow != null) {
+			//get the workflow identifiers
+			UUID assemblyId = assemblyWorkflow.getWorkflowIdentifier();
+			//get the default parameters
+			List<IridaWorkflowParameter> defaultAssemblyParams = assemblyWorkflow.getWorkflowDescription()
+					.getParameters();
 
-		//get the default parameters
-		List<IridaWorkflowParameter> defaultAssemblyParams = assemblyWorkflow.getWorkflowDescription()
-				.getParameters();
-		List<IridaWorkflowParameter> defaultSistrParams = sistrWorkflow.getWorkflowDescription()
-				.getParameters();
+			//insert the assembly
+			insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation", true, assemblyId, "p.assemble_uploads=1",
+					defaultAssemblyParams);
 
-		//insert the assembly
-		insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation", true, assemblyId, "p.assemble_uploads=1",
-				defaultAssemblyParams);
+		}
 
-		//insert the sistr entries without metadata
-		insertWorkflow(jdbcTemplate, "Automated SISTR Typing", false, sistrId, "p.sistr_typing_uploads='AUTO'",
-				defaultSistrParams);
-		//insert the sistr entries with metadata
-		insertWorkflow(jdbcTemplate, "Automated SISTR Typing", true, sistrId, "p.sistr_typing_uploads='AUTO_METADATA'",
-				defaultSistrParams);
+		//update SISTR
+		if (sistrWorkflow != null) {
+			//get the workflow identifiers
+			UUID sistrId = sistrWorkflow.getWorkflowIdentifier();
+
+			//get the default params
+			List<IridaWorkflowParameter> defaultSistrParams = sistrWorkflow.getWorkflowDescription()
+					.getParameters();
+
+			//insert the sistr entries without metadata
+			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", false, sistrId, "p.sistr_typing_uploads='AUTO'",
+					defaultSistrParams);
+			//insert the sistr entries with metadata
+			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", true, sistrId,
+					"p.sistr_typing_uploads='AUTO_METADATA'", defaultSistrParams);
+		}
 
 		return new SqlStatement[0];
 	}
