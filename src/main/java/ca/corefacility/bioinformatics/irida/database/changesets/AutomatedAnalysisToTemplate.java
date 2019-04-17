@@ -42,12 +42,18 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		//get the workflow information from the service
 		try {
 			assemblyWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn(
-					"Workflow not found.  Automated pipelines for this workflow will not be converted to analysis templates.",
+					"Assembly workflow not found.  Automated assemblies will not be converted to analysis templates.",
 					e);
+			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
+		}
 
+		//get the workflow information from the service
+		try {
+			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.", e);
 			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
