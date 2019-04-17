@@ -49,5 +49,11 @@
             sequencing_object)
         </sql>
 
+        <dropColumn tableName="project" columnName="sistr_typing_uploads"/>
+        <dropColumn tableName="project" columnName="assemble_uploads"/>
+
+        <dropColumn tableName="project_AUD" columnName="sistr_typing_uploads"/>
+        <dropColumn tableName="project_AUD" columnName="assemble_uploads"/>
+
     </changeSet>
 </databaseChangeLog>
