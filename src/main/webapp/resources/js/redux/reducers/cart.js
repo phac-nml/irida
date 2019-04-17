@@ -29,7 +29,7 @@ function filterSamples(samples = [], filter = "") {
 }
 
 function removeSample(samples, filter, projectId, sampleId) {
-  const index = samples.find(
+  const index = samples.findIndex(
     sample => sample.project.id === projectId && sample.id === sampleId
   );
   samples.splice(index, 1);

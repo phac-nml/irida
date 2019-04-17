@@ -9,13 +9,13 @@
  * @param {string} oauthRedirect - galaxy oauth redirect
  * @param {object} samples - sample links in format required for galaxy.
  */
-export const exportToGalaxy = (
+export const exportToGalaxy = ({
   email,
   makepairedcollection,
   oauthCode,
   oauthRedirect,
   samples
-) => {
+}) => {
   const name = `IRIDA-${Date.now()}`;
 
   /*
