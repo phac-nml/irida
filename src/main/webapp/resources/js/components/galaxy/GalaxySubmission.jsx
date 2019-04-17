@@ -5,10 +5,10 @@ import { getI18N } from "../../utilities/i18n-utilties";
 import { actions } from "./reducer";
 import {
   getGalaxySamples,
+  removeGalaxySession,
   validateOauthClient
 } from "../../apis/galaxy/galaxy";
 import { exportToGalaxy } from "../../apis/galaxy/submission";
-import { validateEmail } from "../../utilities/validation-utilities";
 
 /**
  * Component to actually send the samples to a Galaxy Client
@@ -31,13 +31,19 @@ export function GalaxySubmission() {
           break;
         default:
           getGalaxySamples().then(samples => {
+            // Update the UI
             dispatch(actions.submit());
-            exportToGalaxy({
-              email,
-              makepairedcollection,
-              oauthCode: result,
-              oauthRedirect: `${window.TL.BASE_URL}galaxy/auth_code`,
-              samples
+
+            // Tell the server that we are done with the galaxy session.
+            removeGalaxySession().then(() => {
+              // Post to Galaxy
+              exportToGalaxy({
+                email,
+                makepairedcollection,
+                oauthCode: result,
+                oauthRedirect: `${window.TL.BASE_URL}galaxy/auth_code`,
+                samples
+              });
             });
           });
       }
