@@ -92,7 +92,7 @@
 		createdDate="2013-07-18 14:20:19.0" />
 	<sample id="2" sampleName="sample" 
 		createdDate="2013-07-18 14:20:19.0" />
-	<project id="1" name="project 1" createdDate="2013-07-18 14:20:19.0" sistr_typing_uploads="OFF" />
+	<project id="1" name="project 1" createdDate="2013-07-18 14:20:19.0"  />
 
 	<sample_sequencingobject id="1" sequencingobject_id="2"
 		sample_id="1" created_date="2013-07-18 14:20:19.0" />
