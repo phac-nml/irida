@@ -10,10 +10,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpSession;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
@@ -53,9 +51,8 @@ public class ProjectSampleMetadataController {
 	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource,
-			ProjectService projectService, SampleService sampleService,
-										   MetadataTemplateService metadataTemplateService) {
+	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
+			SampleService sampleService, MetadataTemplateService metadataTemplateService) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -65,11 +62,8 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Handle the page request to upload {@link Sample} metadata
 	 *
-	 * @param model
-	 * 		{@link Model}
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 *
+	 * @param model     {@link Model}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return {@link String} the path to the metadata import page
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.GET)
@@ -91,7 +85,7 @@ public class ProjectSampleMetadataController {
 	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
 	@ResponseBody
 	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, @PathVariable long projectId,
-			@RequestParam("file") MultipartFile file)  {
+			@RequestParam("file") MultipartFile file) {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try {
@@ -135,10 +129,9 @@ public class ProjectSampleMetadataController {
 					if (columnIndex < headers.size()) {
 						String header = headers.get(columnIndex);
 
-						if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-							rowMap.put(header, "");
-						} else {
-							cell.setCellType(Cell.CELL_TYPE_STRING);
+						if (!Strings.isNullOrEmpty(header)) {
+							// Need to ignore empty headers.
+							cell.setCellType(CellType.STRING);
 							rowMap.put(header, cell.getStringCellValue());
 						}
 					}
@@ -161,9 +154,7 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Extract the headers from an excel file.
 	 *
-	 * @param row
-	 * 		{@link Row} First row from the excel file.
-	 *
+	 * @param row {@link Row} First row from the excel file.
 	 * @return {@link List} of {@link String} header values.
 	 */
 	private List<String> getWorkbookHeaders(Row row) {
@@ -174,12 +165,11 @@ public class ProjectSampleMetadataController {
 		Iterator<Cell> headerIterator = row.cellIterator();
 		while (headerIterator.hasNext()) {
 			Cell headerCell = headerIterator.next();
-			String headerValue = headerCell.getStringCellValue().trim();
+			String headerValue = headerCell.getStringCellValue()
+					.trim();
 
-			// Don't want empty header values.
-			if (!Strings.isNullOrEmpty(headerValue)) {
-				headers.add(headerValue);
-			}
+			// Leave empty headers for now, we will remove those columns later.
+			headers.add(headerValue);
 		}
 		return headers;
 	}
@@ -187,13 +177,9 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Add the metadata to specific {@link Sample} based on the selected column to correspond to the {@link Sample} id.
 	 *
-	 * @param session
-	 * 		{@link HttpSession}.
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}.
-	 * @param sampleNameColumn
-	 * 		{@link String} the header to used to represent the {@link Sample} identifier.
-	 *
+	 * @param session          {@link HttpSession}.
+	 * @param projectId        {@link Long} identifier for the current {@link Project}.
+	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
 	 * @return {@link Map} containing
 	 */
 	@RequestMapping(value = "/upload/setSampleColumn", method = RequestMethod.POST)
@@ -234,19 +220,17 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Save uploaded metadata to the
 	 *
-	 * @param locale
-	 * 		{@link Locale} of the current user.
-	 * @param session
-	 * 		{@link HttpSession}
-	 * @param projectId
-	 * 		{@link Long} identifier for the current project
-	 *
+	 * @param locale    {@link Locale} of the current user.
+	 * @param session   {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current project
 	 * @return {@link Map} of potential errors.
 	 */
 	@RequestMapping(value = "/upload/save", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@PathVariable long projectId) {
+		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
+				"Created Date", "Created On", "Coverage", "Project ID");
 		Map<String, Object> errors = new HashMap<>();
 		Project project = projectService.read(projectId);
 
@@ -273,14 +257,18 @@ public class ProjectSampleMetadataController {
 
 					// Need to overwrite duplicate keys
 					for (Entry<String, String> entry : row.entrySet()) {
-						MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(entry.getKey());
+						// Make sure we are not saving non-metadata items.
+						if (!DEFAULT_HEADERS.contains(entry.getKey())) {
+							MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(
+									entry.getKey());
 
-						if (key == null) {
-							key = metadataTemplateService
-									.saveMetadataField(new MetadataTemplateField(entry.getKey(), "text"));
+							if (key == null) {
+								key = metadataTemplateService.saveMetadataField(
+										new MetadataTemplateField(entry.getKey(), "text"));
+							}
+
+							newData.put(key, new MetadataEntry(entry.getValue(), "text"));
 						}
-
-						newData.put(key, new MetadataEntry(entry.getValue(), "text"));
 					}
 
 					sample.mergeMetadata(newData);
@@ -315,10 +303,8 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Clear any uploaded sample metadata stored into the session.
 	 *
-	 * @param session
-	 * 		{@link HttpSession}
-	 * @param projectId
-	 * 		identifier for the {@link Project} currently uploaded metadata to.
+	 * @param session   {@link HttpSession}
+	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
 	@RequestMapping("/upload/clear")
 	public void clearProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
@@ -328,11 +314,8 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Get the currently stored metadata.
 	 *
-	 * @param session
-	 * 		{@link HttpSession}
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 *
+	 * @param session   {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
 	@RequestMapping("/upload/getMetadata")
