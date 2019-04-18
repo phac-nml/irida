@@ -44,8 +44,7 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 			assemblyWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn(
-					"Assembly workflow not found.  Automated assemblies will not be converted to analysis templates.",
-					e);
+					"Assembly workflow not found.  Automated assemblies will not be converted to analysis templates.");
 			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
@@ -53,12 +52,14 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		try {
 			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
 		} catch (IridaWorkflowNotFoundException e) {
-			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.", e);
+			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.");
 			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
 		//update assemblies
 		if (assemblyWorkflow != null) {
+			logger.debug("Upadting automated assembly project settings");
+
 			//get the workflow identifiers
 			UUID assemblyId = assemblyWorkflow.getWorkflowIdentifier();
 			//get the default parameters
@@ -73,6 +74,7 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 
 		//update SISTR
 		if (sistrWorkflow != null) {
+			logger.debug("Upadting automated SISTR project settings");
 			//get the workflow identifiers
 			UUID sistrId = sistrWorkflow.getWorkflowIdentifier();
 
