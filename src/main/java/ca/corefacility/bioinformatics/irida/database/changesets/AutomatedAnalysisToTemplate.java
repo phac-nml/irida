@@ -99,12 +99,18 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		 * we're borrowing the 'automated' flag here to mark entries we need to add params to later.  at this point
 		 * there'll be nothing with a '1' in the automated flag.  we'll clear it later.
 		 */
+
+		int updateSampleBit = updateSamples ? 1 : 0;
+
 		String assemblyInsert =
 				"INSERT INTO analysis_submission (DTYPE, name, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) select 'AnalysisSubmissionTemplate', '"
-						+ name + "', now(), 'LOW', 1, '" + workflowId.toString() + "', 1, p.id, 1 FROM project p WHERE "
-						+ where;
+						+ name + "', now(), 'LOW', " + updateSampleBit + ", '" + workflowId.toString()
+						+ "', 1, p.id, 1 FROM project p WHERE " + where;
 
-		jdbcTemplate.update(assemblyInsert);
+		logger.debug("Inserting analysis submissions");
+		int update = jdbcTemplate.update(assemblyInsert);
+
+		logger.debug("Added " + update + " submissions");
 
 		// Insert the default params for the analysis type
 		for (IridaWorkflowParameter p : params) {
@@ -112,9 +118,11 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 					"INSERT INTO analysis_submission_parameters (id, name, value) SELECT a.id, '" + p.getName() + "', '"
 							+ p.getDefaultValue() + "' FROM analysis_submission a where a.name=? AND a.automated=1";
 
+			logger.debug("Inserting param " + name);
 			jdbcTemplate.update(assemblyParamInsert, name);
 		}
 
+		logger.debug("Removing automated flag");
 		// remove the automated=1
 		String removeAutomatedSql = "UPDATE analysis_submission SET automated=null WHERE DTYPE = 'AnalysisSubmissionTemplate' AND name=?";
 		jdbcTemplate.update(removeAutomatedSql, name);
