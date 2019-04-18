@@ -34,6 +34,7 @@ Changes
 * [Developer]: Updated chromedriver in pom.xml and packages.json to newer versions to work better with newest chrome version.
 * [UI]: Removed `.xlsx` files from being previewed in the pipeline results page.
 * [UI/Developer]: Fixed issue with deleting a user group if it is linked to any projects.
+* [UI]: Fixes issue where importing an excel file that contained "Created Date" and "Modified Date" created metadata fields with those labels.
 
 0.22.0 to 19.01
 ----------------
