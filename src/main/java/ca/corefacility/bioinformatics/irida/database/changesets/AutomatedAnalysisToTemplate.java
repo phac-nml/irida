@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import com.google.common.collect.Lists;
 import liquibase.change.custom.CustomSqlChange;
 import liquibase.database.Database;
 import liquibase.exception.CustomChangeException;
@@ -112,20 +113,24 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 
 		logger.debug("Added " + update + " submissions");
 
-		// Insert the default params for the analysis type
-		for (IridaWorkflowParameter p : params) {
-			String assemblyParamInsert =
-					"INSERT INTO analysis_submission_parameters (id, name, value) SELECT a.id, '" + p.getName() + "', '"
-							+ p.getDefaultValue() + "' FROM analysis_submission a where a.name=? AND a.automated=1";
+		//if we added anything, add the params
+		if (update > 0) {
+			// Insert the default params for the analysis type
+			for (IridaWorkflowParameter p : params) {
+				String assemblyParamInsert =
+						"INSERT INTO analysis_submission_parameters (id, name, value) SELECT a.id, '" + p.getName()
+								+ "', '" + p.getDefaultValue()
+								+ "' FROM analysis_submission a where a.name=? AND a.automated=1";
 
-			logger.debug("Inserting param " + name);
-			jdbcTemplate.update(assemblyParamInsert, name);
+				logger.debug("Inserting param " + name);
+				jdbcTemplate.update(assemblyParamInsert, name);
+			}
+
+			logger.debug("Removing automated flag");
+			// remove the automated=1
+			String removeAutomatedSql = "UPDATE analysis_submission SET automated=null WHERE DTYPE = 'AnalysisSubmissionTemplate' AND name=?";
+			jdbcTemplate.update(removeAutomatedSql, name);
 		}
-
-		logger.debug("Removing automated flag");
-		// remove the automated=1
-		String removeAutomatedSql = "UPDATE analysis_submission SET automated=null WHERE DTYPE = 'AnalysisSubmissionTemplate' AND name=?";
-		jdbcTemplate.update(removeAutomatedSql, name);
 	}
 
 	@Override
