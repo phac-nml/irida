@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.SequenceFilePathType;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
@@ -88,6 +89,9 @@ public class GalaxyHistoriesServiceIT {
 	private Path dataFile2;
 	private Path dataFileInvalid;
 	
+	private SequenceFilePathType dataFileType;
+	private SequenceFilePathType dataFileType2;
+	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
 	
@@ -121,6 +125,9 @@ public class GalaxyHistoriesServiceIT {
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);
+		
+		dataFileType = new SequenceFilePathType(dataFile);
+		dataFileType2 = new SequenceFilePathType(dataFile2);
 	}
 	
 	/**
@@ -325,8 +332,8 @@ public class GalaxyHistoriesServiceIT {
 			throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
-		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
-				FILE_TYPE, history, library, DataStorage.LOCAL);
+		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFileType, dataFileType2),
+				history, library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
 		assertEquals(2, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
@@ -352,8 +359,8 @@ public class GalaxyHistoriesServiceIT {
 			throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
-		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
-				FILE_TYPE, history, library, DataStorage.REMOTE);
+		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFileType, dataFileType2),
+				history, library, DataStorage.REMOTE);
 		assertNotNull(datasetsMap);
 		assertEquals(2, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
@@ -380,8 +387,8 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
-		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
-				FILE_TYPE, history, library, DataStorage.LOCAL);
+		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFileType),
+				history, library, DataStorage.LOCAL);
 	}
 	
 	/**
@@ -396,8 +403,8 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		history.setId("invalid");
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
-		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
-				FILE_TYPE, history, library, DataStorage.LOCAL);
+		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFileType),
+				history, library, DataStorage.LOCAL);
 	}
 	
 	/**

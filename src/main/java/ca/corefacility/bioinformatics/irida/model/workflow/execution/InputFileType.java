@@ -5,12 +5,17 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution;
  *
  */
 public enum InputFileType {
-	
+
 	/**
 	 * The fastqsanger file type (quality scores are Phred+33).
 	 */
 	FASTQ_SANGER("fastqsanger"),
-	
+
+	/**
+	 * The fastqsanger.gz (gzipped) file type (quality scores are Phred+33).
+	 */
+	FASTQ_SANGER_GZ("fastqsanger.gz"),
+
 	/**
 	 * A FASTA formatted file.
 	 */

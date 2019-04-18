@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -13,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -82,9 +82,9 @@ public class AnalysisCollectionServiceGalaxy {
 		}
 
 		// upload files to library and then to a history
-		Set<Path> pathsToUpload = samplesMap.keySet();
+		Set<SequenceFilePathType> pathsToUpload = samplesMap.keySet().stream().map(SequenceFilePathType::new).collect(Collectors.toSet());
 		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
-				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+				workflowHistory, workflowLibrary, DataStorage.LOCAL);
 
 		for (Path sequenceFilePath : samplesMap.keySet()) {
 			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
@@ -128,7 +128,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		Map<Sample, Path> samplesMapPairForward = new HashMap<>();
 		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
-		Set<Path> pathsToUpload = new HashSet<>();
+		Set<SequenceFilePathType> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			IridaSequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
 			IridaSequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
@@ -136,13 +136,13 @@ public class AnalysisCollectionServiceGalaxy {
 
 			samplesMapPairForward.put(sample, fileForward.getFile());
 			samplesMapPairReverse.put(sample, fileReverse.getFile());
-			pathsToUpload.add(fileForward.getFile());
-			pathsToUpload.add(fileReverse.getFile());
+			pathsToUpload.add(new SequenceFilePathType(fileForward.getFile()));
+			pathsToUpload.add(new SequenceFilePathType(fileReverse.getFile()));
 		}
 
 		// upload files to library and then to a history
 		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
-				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+				workflowHistory, workflowLibrary, DataStorage.LOCAL);
 
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			Path fileForward = samplesMapPairForward.get(sample);

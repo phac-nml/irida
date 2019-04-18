@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.SequenceFilePathType;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -178,9 +179,7 @@ public class GalaxyHistoriesService {
 	 * Uploads a set of files to a given history through the given library.
 	 * 
 	 * @param paths
-	 *            The set of paths to upload.
-	 * @param fileType
-	 *            The file type of the file to upload.
+	 *            The set of paths (and file types) to upload.
 	 * @param history
 	 *            The history to upload the file into.
 	 * @param library
@@ -192,15 +191,14 @@ public class GalaxyHistoriesService {
 	 * @throws UploadException
 	 *             If there was an issue uploading the file to Galaxy.
 	 */
-	public Map<Path, String> filesToLibraryToHistory(Set<Path> paths,
-			InputFileType fileType, History history, Library library,
-			DataStorage dataStorage) throws UploadException {
+	public Map<Path, String> filesToLibraryToHistory(Set<SequenceFilePathType> paths,
+			History history, Library library, DataStorage dataStorage) throws UploadException {
 		checkNotNull(paths, "paths is null");
 
 		Map<Path, String> datasetIdsMap = new HashMap<>();
 
 		Map<Path, String> datasetLibraryIdsMap = librariesService
-				.filesToLibraryWait(paths, fileType, library, dataStorage);
+				.filesToLibraryWait(paths, library, dataStorage);
 
 		if (datasetLibraryIdsMap.size() != paths.size()) {
 			throw new UploadException(

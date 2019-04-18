@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.SequenceFilePathType;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
@@ -178,9 +179,7 @@ public class GalaxyLibrariesService {
 	 * complete.
 	 * 
 	 * @param paths
-	 *            The set of paths to upload.
-	 * @param fileType
-	 *            The file type of the file to upload.
+	 *            The set of paths (and file types) to upload.
 	 * @param library
 	 *            The library to initially upload the file into.
 	 * @param dataStorage
@@ -190,9 +189,8 @@ public class GalaxyLibrariesService {
 	 * @throws UploadException
 	 *             If there was an issue uploading the file to Galaxy.
 	 */
-	public Map<Path, String> filesToLibraryWait(Set<Path> paths,
-			InputFileType fileType, Library library, DataStorage dataStorage)
-			throws UploadException {
+	public Map<Path, String> filesToLibraryWait(Set<SequenceFilePathType> paths,
+			Library library, DataStorage dataStorage) throws UploadException {
 		checkNotNull(paths, "paths is null");
 		final int pollingTimeMillis = libraryPollingTime*1000;
 
@@ -200,18 +198,18 @@ public class GalaxyLibrariesService {
 
 		try {
 			// upload all files to library first
-			for (Path path : paths) {
-				String datasetLibraryId = fileToLibrary(path, fileType,
+			for (SequenceFilePathType path : paths) {
+				String datasetLibraryId = fileToLibrary(path.getPath(), path.getFileType(),
 						library, dataStorage);
-				datasetLibraryIdsMap.put(path, datasetLibraryId);
+				datasetLibraryIdsMap.put(path.getPath(), datasetLibraryId);
 			}
 
 			Future<Void> waitForLibraries = executor.submit(new Callable<Void>(){
 				@Override
 				public Void call() throws Exception {
 					// wait for uploads to finish
-					for (Path path : paths) {
-						String datasetLibraryId = datasetLibraryIdsMap.get(path);
+					for (SequenceFilePathType path : paths) {
+						String datasetLibraryId = datasetLibraryIdsMap.get(path.getPath());
 						LibraryDataset libraryDataset = librariesClient.showDataset(
 								library.getId(), datasetLibraryId);
 						while (!LIBRARY_OK_STATE.equals(libraryDataset.getState())) {
