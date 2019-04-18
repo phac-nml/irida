@@ -124,7 +124,12 @@ function CartSamplesComponent({
         ) : null}
       </CartSamplesWrapper>
       <ButtonsPanelBottom>
-        <EmptyCartButton className="t-empty-cart-btn" type="danger" block onClick={emptyCart}>
+        <EmptyCartButton
+          className="t-empty-cart-btn"
+          type="danger"
+          block
+          onClick={emptyCart}
+        >
           {getI18N("cart.clear")}
         </EmptyCartButton>
       </ButtonsPanelBottom>
@@ -135,8 +140,8 @@ function CartSamplesComponent({
 CartSamplesComponent.propTypes = {
   displaySample: PropTypes.func.isRequired,
   removeSample: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired,
-}
+  removeProject: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => ({
   samples: state.cart.filteredSamples
