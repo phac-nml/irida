@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -157,10 +158,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Files.copy(sequenceFilePathReal, sequenceFilePath2B, StandardCopyOption.REPLACE_EXISTING);
 		
 		sequenceFilePathCompressedA = tempDir.resolve("testDataCompressed_1.fastq.gz");
-		Files.copy(sequenceFilePathReal, sequenceFilePathRealCompressed, StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(sequenceFilePathRealCompressed, sequenceFilePathCompressedA, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathCompressedB = tempDir.resolve("testDataCompressed_2.fastq.gz");
-		Files.copy(sequenceFilePathReal, sequenceFilePathRealCompressed, StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(sequenceFilePathRealCompressed, sequenceFilePathCompressedB, StandardCopyOption.REPLACE_EXISTING);
 
 		pairSequenceFiles1A = new ArrayList<>();
 		pairSequenceFiles1A.add(sequenceFilePathA);
@@ -331,6 +332,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SingleEndSequenceFile> sequenceFiles = Sets.newHashSet(
 				databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathCompressedA));
+		
+		SingleEndSequenceFile singleEndSequenceFile = sequenceFiles.iterator().next();
+		for (SequenceFile file : singleEndSequenceFile.getFiles()) {
+			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
+		}
 
 		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
@@ -392,9 +398,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 		assertTrue("the history should have a dataset collection with name " + INPUTS_PAIRED_NAME,
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(),
-				contentsMap.get(sequenceFilePathA.toFile().getName()).getHistoryContentType());
+				contentsMap.get(sequenceFilePathA.toFile().getName()).getType());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(),
-				contentsMap.get(sequenceFilePath2A.toFile().getName()).getHistoryContentType());
+				contentsMap.get(sequenceFilePath2A.toFile().getName()).getType());
 
 		// verify correct collection has been created
 		assertEquals("invalid type of dataset collection created", DatasetCollectionType.LIST_PAIRED.toString(),
@@ -472,6 +478,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
 				createdLibrary);
+		
+		SequenceFilePair pairedSequenceFile = sequenceFiles.iterator().next();
+		for (SequenceFile file : pairedSequenceFile.getFiles()) {
+			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
+		}
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -485,9 +496,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 		assertTrue("the history should have a dataset collection with name " + INPUTS_PAIRED_NAME,
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
-				contentsMap.get(sequenceFilePathCompressedA.toFile().getName()).getHistoryContentType());
+				contentsMap.get(sequenceFilePathCompressedA.toFile().getName()).getType());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
-				contentsMap.get(sequenceFilePathCompressedB.toFile().getName()).getHistoryContentType());
+				contentsMap.get(sequenceFilePathCompressedB.toFile().getName()).getType());
 	}
 	
 	/**
