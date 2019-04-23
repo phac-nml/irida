@@ -341,7 +341,7 @@ public class GalaxyHistoriesServiceIT {
 		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFileType, dataFileType2, dataFileTypeCompressed),
 				history, library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
-		assertEquals(2, datasetsMap.size());
+		assertEquals(3, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
 		String datasetId2 = datasetsMap.get(dataFile2);
 		String datasetIdCompressed = datasetsMap.get(dataFileCompressed);
