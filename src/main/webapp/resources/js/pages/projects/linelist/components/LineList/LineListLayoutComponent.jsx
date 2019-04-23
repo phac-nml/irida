@@ -147,10 +147,10 @@ export class LineListLayoutComponent extends React.Component {
             this.state.filterCount
               ? this.state.filterCount
               : this.props.entries
-              ? this.props.entries.size
+              ? this.props.entries.length
               : 0
           }
-          totalSamples={this.props.entries ? this.props.entries.size : 0}
+          totalSamples={this.props.entries ? this.props.entries.length : 0}
         />
       </div>
     );

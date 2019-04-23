@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { SaveTemplateModal } from "./SaveTemplateModal";
 import { TemplateSelect } from "./TemplateSelect/TemplateSelect";
 

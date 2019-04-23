@@ -1,7 +1,5 @@
 import React from "react";
-import { List } from "immutable";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -68,10 +66,7 @@ export class Table extends React.Component {
       return true;
     }
 
-    if (
-      List.isList(nextProps.entries) &&
-      !nextProps.entries.equals(this.props.entries)
-    ) {
+    if (nextProps.entries !== this.props.entries) {
       /*
       This should only happen on the original loading of the table when the
       complete list of MetadataEntries are passed.
@@ -411,8 +406,6 @@ export class Table extends React.Component {
   };
 
   render() {
-    const rowData =
-      this.props.entries !== null ? this.props.entries.toJS() : undefined;
     return (
       <div
         className="ag-grid-table-wrapper"
@@ -424,7 +417,7 @@ export class Table extends React.Component {
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields}
-          rowData={rowData}
+          rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
           onGridReady={this.onGridReady}
@@ -450,7 +443,7 @@ Table.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: PropTypes.array.isRequired,
-  entries: ImmutablePropTypes.list,
+  entries: PropTypes.array,
   templates: PropTypes.array.isRequired,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired
