@@ -58,10 +58,12 @@ public class GalaxyLibrariesServiceIT {
 	
 	private Path dataFile;
 	private Path dataFile2;
+	private Path dataFileCompressed;
 	private Path dataFileFail;
 	
 	private SequenceFilePathType dataFileType;
 	private SequenceFilePathType dataFileType2;
+	private SequenceFilePathType dataFileTypeCompressed;
 	private SequenceFilePathType dataFileTypeFail;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
@@ -97,11 +99,15 @@ public class GalaxyLibrariesServiceIT {
 		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData2.fastq").toURI());
 		
+		dataFileCompressed = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
+				"testData5.fastq.gz").toURI());
+		
 		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"fail.fastq.gz").toURI());
 		
 		dataFileType = new SequenceFilePathType(dataFile);
 		dataFileType2 = new SequenceFilePathType(dataFile2);
+		dataFileTypeCompressed = new SequenceFilePathType(dataFileCompressed);
 		dataFileTypeFail = new SequenceFilePathType(dataFileFail);
 	}
 	
@@ -158,23 +164,33 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws GalaxyDatasetException
 	 */
 	@Test
-	public void testFilesToLibraryWaitSuccess()
-			throws UploadException, GalaxyDatasetException {
+	public void testFilesToLibraryWaitSuccess() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitSuccess");
-		Map<Path,String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileType, dataFileType2),
-				library, DataStorage.LOCAL);
+		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(
+				Sets.newHashSet(dataFileType, dataFileType2, dataFileTypeCompressed), library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
-		assertEquals(2, datasetsMap.size());
+		assertEquals(3, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
 		String datasetId2 = datasetsMap.get(dataFile2);
-		
-		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
-				.getLibrariesClient().showDataset(library.getId(), datasetId1);
-		assertNotNull(actualDataset1);
+		String datasetIdCompressed = datasetsMap.get(dataFileCompressed);
 
-		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
-				.getLibrariesClient().showDataset(library.getId(), datasetId2);
+		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetId1);
+		assertNotNull(actualDataset1);
+		assertEquals("Invalid data type extension", actualDataset1.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER.toString());
+
+		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetId2);
 		assertNotNull(actualDataset2);
+		assertEquals("Invalid data type extension", actualDataset2.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER.toString());
+
+		LibraryDataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetIdCompressed);
+		assertNotNull(actualDatasetCompressed);
+		assertEquals("Invalid data type extension", actualDatasetCompressed.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER_GZ.toString());
 	}
 	
 	/**
