@@ -18,7 +18,7 @@ public class SequenceFilePathType {
 	/**
 	 * Creates a new {@link SequenceFilePathType}.
 	 * 
-	 * @param path The path to the local sequence file.
+	 * @param sequenceFile The specific sequence file.
 	 */
 	public SequenceFilePathType(IridaSequenceFile sequenceFile) {
 		checkNotNull(sequenceFile, "sequenceFile is null");
