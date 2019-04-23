@@ -54,31 +54,31 @@
         <!-- Translate the old static properties from miseq_run into the props table -->
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
-            'application', application FROM miseq_run;
+            'application', application FROM miseq_run WHERE application != null;
         </sql>
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id, 'assay',
-            assay FROM miseq_run;
+            assay FROM miseq_run WHERE assay != null;
         </sql>
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
-            'chemistry', chemistry FROM miseq_run;
+            'chemistry', chemistry FROM miseq_run WHERE chemistry != null;
         </sql>
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
-            'experimentName', experimentName FROM miseq_run;
+            'experimentName', experimentName FROM miseq_run WHERE experimentName != null;
         </sql>
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
-            'investigatorName', investigatorName FROM miseq_run;
+            'investigatorName', investigatorName FROM miseq_run WHERE investigatorName != null;
         </sql>
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
-            'projectName', projectName FROM miseq_run;
+            'projectName', projectName FROM miseq_run WHERE projectName != null;
         </sql>
         <sql>
             INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
-            'readLengths', read_lengths FROM miseq_run;
+            'readLengths', read_lengths FROM miseq_run WHERE read_lengths != null;
         </sql>
 
         <!-- Drop the old miseq run table -->
