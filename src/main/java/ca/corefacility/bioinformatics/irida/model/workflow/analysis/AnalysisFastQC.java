@@ -1,31 +1,20 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.util.ReflectionUtils;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Specific implementation of {@link Analysis} for storing properties created by
- * FastQC.
- * 
- *
+ * Specific implementation of {@link Analysis} for storing properties created by FastQC.
  */
 @Entity
 @Table(name = "analysis_fastqc")
@@ -49,21 +38,9 @@ public class AnalysisFastQC extends Analysis {
 	private final Integer maxLength;
 	@NotNull
 	private final Short gcContent;
-	@NotNull
-	@Lob
-	private final byte[] perBaseQualityScoreChart;
-	@NotNull
-	@Lob
-	private final byte[] perSequenceQualityScoreChart;
-	@NotNull
-	@Lob
-	private final byte[] duplicationLevelChart;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private final Set<OverrepresentedSequence> overrepresentedSequences;
-
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private final AnalysisOutputFile fastQCReport;
 
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
@@ -78,19 +55,14 @@ public class AnalysisFastQC extends Analysis {
 		this.minLength = null;
 		this.maxLength = null;
 		this.gcContent = null;
-		this.perBaseQualityScoreChart = null;
-		this.perSequenceQualityScoreChart = null;
-		this.duplicationLevelChart = null;
 		this.overrepresentedSequences = null;
-		this.fastQCReport = null;
 		this.fastqcVersion = null;
-		
+
 		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
 
 	public AnalysisFastQC(final AnalysisFastQCBuilder builder) {
-		super(builder.executionManagerAnalysisId, builder.analysisOutputFilesMap, builder.description,
-				builder.additionalProperties);
+		super(builder.executionManagerAnalysisId, builder.images, builder.description, builder.additionalProperties);
 		this.fileType = builder.fileType;
 		this.encoding = builder.encoding;
 		this.totalSequences = builder.totalSequences;
@@ -99,18 +71,15 @@ public class AnalysisFastQC extends Analysis {
 		this.minLength = builder.minLength;
 		this.maxLength = builder.maxLength;
 		this.gcContent = builder.gcContent;
-		this.perBaseQualityScoreChart = builder.perBaseQualityScoreChart;
-		this.perSequenceQualityScoreChart = builder.perSequenceQualityScoreChart;
-		this.duplicationLevelChart = builder.duplicationLevelChart;
 		this.overrepresentedSequences = builder.overrepresentedSequences;
-		this.fastQCReport = builder.fastQCReport;
 		this.fastqcVersion = builder.fastqcVersion;
-		
+
 		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
 
 	/**
 	 * get an AnalysisFastQCBuilder
+	 *
 	 * @return an AnalysisFastQCBuilder
 	 */
 	public static AnalysisFastQCBuilder builder() {
@@ -118,16 +87,8 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	/**
-	 * Get a AnalysisFastQCBuilder sloppy builder that doesn't check fields
-	 * @return a AnalysisFastQCBuilder
-	 */
-	public static AnalysisFastQCBuilder sloppyBuilder() {
-		return new AnalysisFastQCBuilder(false);
-	}
-
-	/**
-	 * Builder for creating instances of {@link AnalysisFastQC}. This builder
-	 * can optionally check if all required fields are set.
+	 * Builder for creating instances of {@link AnalysisFastQC}. This builder can optionally check if all required
+	 * fields are set.
 	 */
 	public static class AnalysisFastQCBuilder {
 		private String fastqcVersion;
@@ -139,52 +100,24 @@ public class AnalysisFastQC extends Analysis {
 		private Integer minLength;
 		private Integer maxLength;
 		private Short gcContent;
-		private byte[] perBaseQualityScoreChart;
-		private byte[] perSequenceQualityScoreChart;
-		private byte[] duplicationLevelChart;
+		private AnalysisOutputFile perBaseQualityScoreChart;
+		private AnalysisOutputFile perSequenceQualityScoreChart;
+		private AnalysisOutputFile duplicationLevelChart;
 		private Set<OverrepresentedSequence> overrepresentedSequences;
-		private AnalysisOutputFile fastQCReport;
 		private String description;
 		private String executionManagerAnalysisId;
 		private Map<String, String> additionalProperties;
-		private Map<String, AnalysisOutputFile> analysisOutputFilesMap;
-
-		private final boolean enforceRequiredFieldCheck;
+		private Map<String, AnalysisOutputFile> images;
 
 		/**
-		 * Create an instance of AnalysisFastQCBuilder, and enforce checking
-		 * required fields by default.
+		 * Create an instance of AnalysisFastQCBuilder,
 		 */
 		public AnalysisFastQCBuilder() {
-			this.enforceRequiredFieldCheck = true;
-		}
-
-		/**
-		 * Create an instance of AnalysisFastQCBuilder, only enforcing checking
-		 * required fields if requested.
-		 * 
-		 * @param enforceRequiredFieldCheck
-		 *            if true, the `build()` method will throw an exception if
-		 *            all required fields are not set; if false, the `build()`
-		 *            method will not. NOTE: This setting does **NOT** affect
-		 *            database-level constraints.
-		 */
-		public AnalysisFastQCBuilder(final boolean enforceRequiredFieldCheck) {
-			this.enforceRequiredFieldCheck = enforceRequiredFieldCheck;
-		}
-
-		/**
-		 * set the analysisOutputFilesMap
-		 * @param analysisOutputFilesMap the analysisOutputFilesMap
-		 * @return the builder
-		 */
-		public AnalysisFastQCBuilder analysisOutputFilesMap(final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-			this.analysisOutputFilesMap = analysisOutputFilesMap;
-			return this;
 		}
 
 		/**
 		 * set the additionalProperties
+		 *
 		 * @param additionalProperties the additionalProperties
 		 * @return the builder
 		 */
@@ -195,6 +128,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * set the executionManagerAnalysisId
+		 *
 		 * @param executionManagerAnalysisId the executionManagerAnalysisId
 		 * @return the builder
 		 */
@@ -205,6 +139,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the fastqc version used in the analysis
+		 *
 		 * @param fastqcVersion the version of fastqc used
 		 * @return the builder
 		 */
@@ -215,6 +150,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * set the description
+		 *
 		 * @param description the description
 		 * @return the builder
 		 */
@@ -224,17 +160,8 @@ public class AnalysisFastQC extends Analysis {
 		}
 
 		/**
-		 * set the fastQCReport
-		 * @param fastQCReport the fastQCReport
-		 * @return the builder
-		 */
-		public AnalysisFastQCBuilder fastQCReport(final AnalysisOutputFile fastQCReport) {
-			this.fastQCReport = fastQCReport;
-			return this;
-		}
-
-		/**
 		 * set the overrepresentedSequences
+		 *
 		 * @param overrepresentedSequences the overrepresentedSequences
 		 * @return the builder
 		 */
@@ -246,36 +173,41 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * set the duplicationLevelChart
+		 *
 		 * @param duplicationLevelChart the duplicationLevelChart
 		 * @return the builder
 		 */
-		public AnalysisFastQCBuilder duplicationLevelChart(final byte[] duplicationLevelChart) {
+		public AnalysisFastQCBuilder duplicationLevelChart(final AnalysisOutputFile duplicationLevelChart) {
 			this.duplicationLevelChart = duplicationLevelChart;
 			return this;
 		}
 
 		/**
 		 * Set the perSequenceQualityScoreChart
+		 *
 		 * @param perSequenceQualityScoreChart the perSequenceQualityScoreChart
 		 * @return the builder
 		 */
-		public AnalysisFastQCBuilder perSequenceQualityScoreChart(final byte[] perSequenceQualityScoreChart) {
+		public AnalysisFastQCBuilder perSequenceQualityScoreChart(
+				final AnalysisOutputFile perSequenceQualityScoreChart) {
 			this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
 			return this;
 		}
 
 		/**
 		 * set the perBaseQualityScoreChart
+		 *
 		 * @param perBaseQualityScoreChart the perBaseQualityScoreChart
 		 * @return the builder
 		 */
-		public AnalysisFastQCBuilder perBaseQualityScoreChart(final byte[] perBaseQualityScoreChart) {
+		public AnalysisFastQCBuilder perBaseQualityScoreChart(final AnalysisOutputFile perBaseQualityScoreChart) {
 			this.perBaseQualityScoreChart = perBaseQualityScoreChart;
 			return this;
 		}
 
 		/**
 		 * Set the gcContent
+		 *
 		 * @param gcContent the gcContent
 		 * @return the builder
 		 */
@@ -286,6 +218,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the maxLength
+		 *
 		 * @param maxLength the maxLength
 		 * @return the builder
 		 */
@@ -296,6 +229,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the minLength
+		 *
 		 * @param minLength the minLength
 		 * @return the builder
 		 */
@@ -306,6 +240,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the totalBases
+		 *
 		 * @param totalBases the totalBases
 		 * @return the builder
 		 */
@@ -316,6 +251,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the filteredSequences
+		 *
 		 * @param filteredSequences the filteredSequences
 		 * @return the builder
 		 */
@@ -326,6 +262,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the total sequences
+		 *
 		 * @param totalSequences the totalsequences
 		 * @return the builder
 		 */
@@ -336,6 +273,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the filetype
+		 *
 		 * @param fileType the filetype
 		 * @return the builder
 		 */
@@ -346,6 +284,7 @@ public class AnalysisFastQC extends Analysis {
 
 		/**
 		 * Set the encoding
+		 *
 		 * @param encoding the encoding
 		 * @return the builder
 		 */
@@ -360,68 +299,46 @@ public class AnalysisFastQC extends Analysis {
 		 * @return the new AnalysisFastQC
 		 */
 		public AnalysisFastQC build() {
-			if (enforceRequiredFieldCheck) {
-				final Field[] fields = AnalysisFastQCBuilder.class.getDeclaredFields();
-				for (final Field field : fields) {
-					try {
-						if (field.getName().equals("enforceRequiredFieldCheck")) {
-							continue;
-						}
-						
-						final Field analysisFastQCField = ReflectionUtils.findField(AnalysisFastQC.class,
-								field.getName());
-						if (analysisFastQCField.getAnnotation(NotNull.class) != null && field.get(this) == null) {
-							throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
-									+ " is not nullable.");
-						}
-					} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
-						throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
-								+ " is not accessible.", e);
-					}
-				}
-			}
+			images = new HashMap<>();
+			images.put("perBaseQualityScoreChart", perBaseQualityScoreChart);
+			images.put("perSequenceQualityScoreChart", perSequenceQualityScoreChart);
+			images.put("duplicationLevelChart", duplicationLevelChart);
+
 			return new AnalysisFastQC(this);
 		}
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
-		return ImmutableSet.of(fastQCReport);
-	}
-
-	/**
-	 * Box and whisker plot showing per-base quality scores as a PNG-formatted
-	 * image in a byte array.
-	 * 
+	 * Box and whisker plot showing per-base quality scores as a PNG-formatted image in a byte array.
+	 *
 	 * @return a PNG-formatted byte array for per-base quality score.
+	 * @throws IOException if the file does not exist
 	 */
 	@JsonIgnore
-	public byte[] getPerBaseQualityScoreChart() {
-		return perBaseQualityScoreChart;
+	public byte[] getPerBaseQualityScoreChart() throws IOException {
+		return getBytesForFile("perBaseQualityScoreChart");
 	}
 
 	/**
-	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
-	 * a byte array.
-	 * 
+	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in a byte array.
+	 *
 	 * @return a PNG-formatted byte array for per-sequence quality score.
+	 * @throws IOException if the file does not exist
 	 */
 	@JsonIgnore
-	public byte[] getPerSequenceQualityScoreChart() {
-		return perSequenceQualityScoreChart;
+	public byte[] getPerSequenceQualityScoreChart() throws IOException {
+		return getBytesForFile("perSequenceQualityScoreChart");
 	}
 
 	/**
-	 * Line chartshowing duplication-level as a PNG-formatted image in a byte
-	 * array.
-	 * 
+	 * Line chartshowing duplication-level as a PNG-formatted image in a byte array.
+	 *
 	 * @return a PNG-formatted byte array for duplication levels.
+	 * @throws IOException if the file does not exist
 	 */
 	@JsonIgnore
-	public byte[] getDuplicationLevelChart() {
-		return duplicationLevelChart;
+	public byte[] getDuplicationLevelChart() throws IOException {
+		return getBytesForFile("duplicationLevelChart");
 	}
 
 	public String getFastqcVersion() {
@@ -464,7 +381,16 @@ public class AnalysisFastQC extends Analysis {
 		return ImmutableSet.copyOf(overrepresentedSequences);
 	}
 
-	public AnalysisOutputFile getFastQCReport() {
-		return fastQCReport;
+	/**
+	 * Read the bytes for a fastqc image
+	 *
+	 * @param key the file key to read
+	 * @return the bytes for the file
+	 * @throws IOException if the file couldn't be read
+	 */
+	private byte[] getBytesForFile(String key) throws IOException {
+		AnalysisOutputFile chart = getAnalysisOutputFile(key);
+		byte[] bytes = Files.readAllBytes(chart.getFile());
+		return bytes;
 	}
 }

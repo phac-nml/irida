@@ -7,7 +7,6 @@
 // COMPONENTS
 @import "components/breadcrumbs";
 @import "components/buttons";
-@import "components/cart";
 @import "components/forms";
 @import "components/modals";
 @import "components/panels";
@@ -18,6 +17,11 @@
 html,
 body {
   height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 /****************************************************************************************
@@ -97,7 +101,8 @@ body {
 }
 
 .body-content {
-  padding-top: 1rem;
+  flex-grow: 1;
+  width: 100%;
 }
 
 .navbar-collapse {
@@ -329,6 +334,11 @@ ol.continue li:before {
   position: absolute;
   top: 5px;
   right: 0;
+}
+
+// Wrapping long sample names to the size of the container
+.text-wrap {
+  word-wrap: break-word;
 }
 
 /****************************************************************************************

@@ -12,93 +12,20 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-	<div style="height: 100%;">
-		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
-			<div class="st-content">
-				<div class="st-content-inner">
-					<nav th:replace="template/main-navigation.html :: #topnav"></nav>
-					<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
-						<div class="container-fluid">
-							<ol>
-								<li th:each="crumb : ${crumbs} ">
-									<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
-								</li>
-							</ol>
-						</div>
-					</div>
-					<th:block layout:fragment="subnav"></th:block>
-					<div class="container-fluid body-content">
-						<div class="row" layout:fragment="page"></div>
-					</div>
-				</div>
-			</div>
-			<cart></cart>
+	<header class="js-page-header"></header>
+	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
+	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
+		<div class="container-fluid">
+			<ol>
+				<li th:each="crumb : ${crumbs} ">
+					<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
+				</li>
+			</ol>
 		</div>
 	</div>
-	<script type="text/ng-template" id="/cart.html">
-		<aside class="cart">
-			<section ng-hide="cart.count">
-				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
-				<p class="lead" th:text="#{cart.empty-text}"></p>
-			</section>
-			<section ng-show="cart.count > 0" ng-controller="CartSliderController as cartCtrl">
-				<div class="cart-control-buttons">
-					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
-					</button>
-					<button id="clear-cart-btn" class="btn btn-warning pull-right" ng-click="cartCtrl.clear()"
-					        th:text="#{cart.btn.clear}">
-						_Clear_
-					</button>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<input class="form-control cart-search" type="search" ng-model="cart.term" th:placeholder="#{cart.placeholder.search}" ng-model-options="{ debounce: {'default': 500, 'blur': 0} }"/>
-					</div>
-				</div>
-				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item local-project" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
-						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
-							<div><i class="fa fa-fw"  ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></i></div>
-							<div class="cart-item__label">
-								{{:: p.label }}
-							</div>
-							<div class="cart_item__btns pull-right">
-								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
-								        ng-attr-id="{{'remove-project-'+p.id}}"
-								        th:title="#{cart.tooltip.removeProject}">
-                                    <i class="fas fa-times remove-icon"></i>
-								</button>
-							</div>
-						</div>
-						<ul uib-collapse="cart.collapsed[p.id]">
-							<li ng-repeat="s in p.filteredSamples = (p.samples | cartFilter:cart.term)">
-								<span>{{ s.label }}</span>
-								<button class="btn-icon pull-right remove-sample-btn"
-								        ng-click="cartCtrl.removeSample(p.id,s.id)"
-								        th:title="#{cart.tooltip.removeSample}">
-                                    <i class="fas fa-times remove-icon"></i>
-								</button>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<div class="cart-control-bottom btn-toolbar">
-					<div class="btn-group pull-right">
-						<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary cart-action" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline</a>
-						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<i class="fa fa-chevron-down" aria-hidden="true"></i>
-  						</button>
-						<ul class="dropdown-menu">
-    						<li><a href="/projects/new?cart=true" th:href="@{/projects/new?cart=true}" th:text="#{cart.btn.create-project}">_Create project from samples_</a></li>
-						</ul>
-					</div>
-					
-					<a th:if="${galaxyCallback}" id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy(); cart.show=false"
-					        class="btn btn-primary pull-right cart-action" th:text="#{cart.btn.export}">Export to Galaxy</a>
-				</div>
-			</section>
-		</aside>
-	</script>
+	<div class="container-fluid body-content">
+		<div class="row" layout:fragment="page"></div>
+	</div>
 
 	<script type="text/ng-template" id="/session-modal.html">
 		<div>
@@ -117,7 +44,7 @@
 	</script>
 
 	<script th:inline="javascript">
-		var TL = {
+		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
 		  	URLS: {
 			  cart: {
@@ -138,9 +65,18 @@
 					short: /*[[#{moment.short}]]*/ 'Do MMM YYYY',
 					full: /*[[#{moment.full}]]*/ 'MMM D, YYYY h:mm:ss a'
 				}
-			},
-			galaxyCallback: /*[[${#httpSession.getAttribute('galaxyExportToolCallbackURL')}!= null]]*/ false,
-			galaxyClientID: /*[[${#httpSession.getAttribute('galaxyExportToolClientID')}]]*/ ""
+			}
+		};
+	</script>
+
+	<script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}" th:inline="javascript">
+		window.GALAXY = {
+			URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
+			CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
+			TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
+			MESSAGE: /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
+			CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
+			DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
 		};
 	</script>
 

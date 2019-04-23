@@ -252,7 +252,7 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
@@ -308,7 +308,7 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
@@ -340,11 +340,11 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf2));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id2")
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder().executionManagerAnalysisId("id2")
 				.totalBases(1000L).build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 

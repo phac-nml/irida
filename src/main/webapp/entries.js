@@ -5,6 +5,8 @@
  */
 module.exports = {
   vendor: ["@babel/polyfill", "expose-loader?$!jquery"],
+  access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
+  cart: "./resources/js/pages/cart/index.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
@@ -55,7 +57,6 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
-  "pipeline-selection": "./resources/js/pages/pipelines/pipeline-selection.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
