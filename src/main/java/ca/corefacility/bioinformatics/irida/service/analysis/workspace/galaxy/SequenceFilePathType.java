@@ -2,9 +2,10 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
 import java.nio.file.Path;
 
-import com.google.common.io.Files;
-
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Class linking together a sequence file path and the Galaxy file type.
@@ -19,16 +20,11 @@ public class SequenceFilePathType {
 	 * 
 	 * @param path The path to the local sequence file.
 	 */
-	public SequenceFilePathType(Path path) {
-		this.path = path;
-
-		String fileExtension = Files.getFileExtension(path.getFileName().toString());
+	public SequenceFilePathType(IridaSequenceFile sequenceFile) {
+		checkNotNull(sequenceFile, "sequenceFile is null");
 		
-		if ("gz".equals(fileExtension)) {
-			fileType = InputFileType.FASTQ_SANGER_GZ;
-		} else {
-			fileType = InputFileType.FASTQ_SANGER;
-		}
+		this.path = sequenceFile.getFile();
+		this.fileType = sequenceFile.isGzipped() ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER;
 	}
 
 	public InputFileType getFileType() {

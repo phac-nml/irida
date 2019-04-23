@@ -123,6 +123,16 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this();
 		this.file = sampleFile;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isGzipped() {
+		String fileExtension = com.google.common.io.Files.getFileExtension(this.file.getFileName().toString());
+
+		return "gz".equals(fileExtension);
+	}
 
 	@Override
 	public boolean equals(Object other) {

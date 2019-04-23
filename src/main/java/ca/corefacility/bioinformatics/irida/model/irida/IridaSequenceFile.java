@@ -25,6 +25,13 @@ public interface IridaSequenceFile {
 	 * @return the physical location of the file.
 	 */
 	public Path getFile();
+	
+	/**
+	 * Returns whether or not the file is gzipped.
+	 * 
+	 * @return True if gzipped, false otherwise.
+	 */
+	public boolean isGzipped();
 
 	/**
 	 * Get a map of optional key/value pair properties
