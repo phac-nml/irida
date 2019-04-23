@@ -12,10 +12,7 @@ import {
   red6
 } from "../../../styles/colors";
 import AutoSizer from "react-virtualized-auto-sizer";
-import {
-  Button,
-  Input
-} from "antd";
+import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { actions } from "../../../redux/reducers/cart";
@@ -105,7 +102,7 @@ function CartSamplesComponent({
       <CartTools>
         <Search onChange={filterSamples} />
       </CartTools>
-      <CartSamplesWrapper>
+      <CartSamplesWrapper className="t-samples-list">
         <AutoSizer>
           {({ height = 600, width = 400 }) => (
             <VList

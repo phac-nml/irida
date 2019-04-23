@@ -1,21 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  Button,
-  Dropdown,
-  Icon,
-  Menu
-} from "antd";
+import { Button, Dropdown, Icon, Menu } from "antd";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import {
-  grey1,
-  grey4,
-  grey5
-} from "../../../styles/colors";
-import {
-  SPACE_SM,
-  SPACE_XS
-} from "../../../styles/spacing";
+import { grey1, grey4, grey5 } from "../../../styles/colors";
+import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -116,7 +104,7 @@ export class SampleRenderer extends React.Component {
             }
             trigger={["hover"]}
           >
-            <Icon type="more" />
+            <Icon className="t-delete-menu-btn" type="more" />
           </Dropdown>
         </div>
         <div>
