@@ -30,6 +30,7 @@
         <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_cleaned_state"
                                columnDataType="varchar(255)"/>
 
+        <!-- Convert all the old project settings automated analyses to analysis_templates -->
         <customChange
                 class="ca.corefacility.bioinformatics.irida.database.changesets.AutomatedAnalysisToTemplate"/>
 
@@ -49,6 +50,8 @@
             sequencing_object)
         </sql>
 
+
+        <!-- Drop the old project columns for automated analyses -->
         <dropColumn tableName="project" columnName="sistr_typing_uploads"/>
         <dropColumn tableName="project" columnName="assemble_uploads"/>
 
