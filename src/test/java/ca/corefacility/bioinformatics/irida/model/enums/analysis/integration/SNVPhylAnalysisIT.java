@@ -174,9 +174,9 @@ public class SNVPhylAnalysisIT {
 		Path sequenceFilePathRealA2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
 		Path sequenceFilePathRealB1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_1.fastq").toURI());
+				"SNVPhyl/test1/input/fastq/b_1.fastq.gz").toURI());
 		Path sequenceFilePathRealB2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_2.fastq").toURI());
+				"SNVPhyl/test1/input/fastq/b_2.fastq.gz").toURI());
 		Path sequenceFilePathRealC1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
 		Path sequenceFilePathRealC2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
@@ -189,9 +189,9 @@ public class SNVPhylAnalysisIT {
 		sequenceFilePathA2 = tempDir.resolve("a_R2_001.fastq");
 		Files.copy(sequenceFilePathRealA2, sequenceFilePathA2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq");
+		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq.gz");
 		Files.copy(sequenceFilePathRealB1, sequenceFilePathB1, StandardCopyOption.REPLACE_EXISTING);
-		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq");
+		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq.gz");
 		Files.copy(sequenceFilePathRealB2, sequenceFilePathB2, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathC1 = tempDir.resolve("c_R1_001.fastq");
