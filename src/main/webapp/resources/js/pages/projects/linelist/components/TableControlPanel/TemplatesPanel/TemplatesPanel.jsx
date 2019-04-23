@@ -27,10 +27,7 @@ export class TemplatesPanel extends React.Component {
 
   render() {
     const { templates, current } = this.props;
-    const template =
-      typeof templates.get(current) === "undefined"
-        ? undefined
-        : templates.get(current).toJS();
+    const template = templates[current];
 
     return (
       <div
@@ -55,6 +52,6 @@ export class TemplatesPanel extends React.Component {
 TemplatesPanel.propTypes = {
   current: PropTypes.number.isRequired,
   saveTemplate: PropTypes.func.isRequired,
-  templates: ImmutablePropTypes.list.isRequired,
+  templates: PropTypes.array.isRequired,
   modified: PropTypes.object
 };

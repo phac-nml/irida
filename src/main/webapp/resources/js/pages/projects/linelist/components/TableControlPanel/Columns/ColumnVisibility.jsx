@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { List, Switch } from "antd";
 import { FIELDS } from "../../../constants";
 
@@ -14,7 +13,7 @@ export default class ColumnVisibility extends React.Component {
     /**
      * A list of Metadata templates related to the project.
      */
-    templates: ImmutablePropTypes.list.isRequired,
+    templates: PropTypes.array.isRequired,
     /**
      * The index in the templates that is currently displayed.
      */
@@ -48,9 +47,11 @@ export default class ColumnVisibility extends React.Component {
   };
 
   render() {
+    const { templates, current, height } = this.props;
     let columns = [];
-    if (this.props.templates.size > 0) {
-      const template = this.props.templates.get(this.props.current).toJS();
+
+    if (templates.length > 0) {
+      const template = templates[current];
       columns =
         template.modified.length === 0 ? template.fields : template.modified;
     }
@@ -58,7 +59,7 @@ export default class ColumnVisibility extends React.Component {
     return (
       <div className="ag-grid-tool-panel--inner">
         {typeof columns !== "undefined" ? (
-          <div style={{ overflowY: "auto", height: this.props.height - 77 }}>
+          <div style={{ overflowY: "auto", height: height - 77 }}>
             <List
               dataSource={columns.filter(
                 f => f.field !== FIELDS.sampleName && f.field !== FIELDS.icons

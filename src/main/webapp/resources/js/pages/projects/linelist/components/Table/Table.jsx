@@ -84,7 +84,7 @@ export class Table extends React.Component {
       The current template has changed.
       Force the table to update to the new view based on the template fields.
        */
-      const template = nextProps.templates.get(nextProps.current).toJS();
+      const template = nextProps.templates[nextProps.current];
       this.applyTemplate(template.fields);
       return false;
     }
@@ -93,24 +93,15 @@ export class Table extends React.Component {
     The field order for a template can change externally.  Check to see if that
     order has been updated, and adjust the columns accordingly.
      */
-    const oldModified = this.props.templates.getIn([
-      this.props.current,
-      "modified"
-    ]);
-    const newModified = nextProps.templates.getIn([
-      nextProps.current,
-      "modified"
-    ]);
+    const oldModified = this.props.templates[this.props.current].modified;
+    const newModified = nextProps.templates[nextProps.current].modified;
 
-    if (
-      typeof oldModified !== "undefined" &&
-      !newModified.equals(oldModified)
-    ) {
+    if (typeof oldModified !== "undefined" && newModified !== oldModified) {
       if (this.colDropped) {
         // Clear the dropped flag as the next update might come from an external source
         this.colDropped = false;
       } else {
-        const fields = newModified.toJS();
+        const fields = newModified;
 
         /*
         If the length of the modified fields === 0, then the modified template
@@ -188,11 +179,10 @@ export class Table extends React.Component {
    * table.
    */
   onColumnDropped = () => {
+    const { fields } = this.props;
     const colOrder = [...this.columnApi.getColumnState()];
     // Remove sample name
     colOrder.shift();
-
-    const fields = this.props.fields.toJS();
 
     /*
     Remove the hidden ones and just get the field identifiers
@@ -461,7 +451,7 @@ Table.propTypes = {
   tableModified: PropTypes.func.isRequired,
   fields: ImmutablePropTypes.list.isRequired,
   entries: ImmutablePropTypes.list,
-  templates: ImmutablePropTypes.list,
+  templates: PropTypes.array.isRequired,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired
 };

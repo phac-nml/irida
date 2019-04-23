@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { Button, Checkbox, Form, Modal, Select } from "antd";
 
 const { Item } = Form;
@@ -44,7 +43,7 @@ export class SaveTemplateModal extends React.Component {
     template: PropTypes.object,
     onClose: PropTypes.func.isRequired,
     current: PropTypes.number.isRequired,
-    templates: ImmutablePropTypes.list.isRequired
+    templates: PropTypes.array.isRequired
   };
 
   validations = [
@@ -96,12 +95,12 @@ export class SaveTemplateModal extends React.Component {
   constructor(props) {
     super(props);
     this._options = this.props.templates
-      .map(t => t.get("name"))
+      .map(t => t.name)
       .sort(sortNames);
 
     this.state = {
       options: this._options,
-      disabledLabel: this._options.get(0) // Name of the "all fields" option. Cannot save by that name.
+      disabledLabel: this._options[0] // Name of the "all fields" option. Cannot save by that name.
     };
   }
 
@@ -177,7 +176,7 @@ export class SaveTemplateModal extends React.Component {
    * Save the current template using the entered name.
    */
   saveTemplate = () => {
-    const template = this.props.templates.get(this.props.current).toJS();
+    const template = this.props.templates[this.props.current];
     const fields = template.modified.filter(t => !t.hide);
     const name = this.state.value;
     const overwrite = this.state.overwriteTemplate;
@@ -186,7 +185,7 @@ export class SaveTemplateModal extends React.Component {
     if (overwrite) {
       // Get the template to overwrite because we need its id.
       const t = this.props.templates.find(t => t.get("name") === name);
-      id = t.get("id");
+      id = t.id;
     }
 
     this.props.saveTemplate(name, fields, id);

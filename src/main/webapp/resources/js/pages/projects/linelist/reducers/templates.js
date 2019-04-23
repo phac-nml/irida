@@ -1,5 +1,3 @@
-import { List, fromJS } from "immutable";
-
 export const NO_TEMPLATE_INDEX = 0;
 
 export const types = {
@@ -15,14 +13,14 @@ export const types = {
   TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED"
 };
 
-const initialState = fromJS({
+const initialState = {
   fetching: false, // Whether there is an ajax request to fetch the list of UIMetadataTemplates
   error: false, // Whether there was an error while fetching the UIMetadataTemplates
-  templates: List(), // The List of UIMetadataTemplates returned.
+  templates: [], // The List of UIMetadataTemplates returned.
   current: NO_TEMPLATE_INDEX, // Which template is currently being used.
   saving: false, // Flag whether the current template is being actively saved to the server
   saved: false // Flag whether the current template's save function has been completed.
-});
+};
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -30,82 +28,91 @@ export const reducer = (state = initialState, action = {}) => {
       /*
       Let the UI know that there has been a request for the MetadataTemplates
        */
-      return state.set("fetching", true).set("error", false);
+      return { ...state, fetching: true, error: false };
     case types.LOAD_SUCCESS:
       /*
       Let the UI know that the templates were fetched successfully, and
       pass the templates along.  Each template should have a modified state.
        */
-      const templates = action.templates.map(t => {
-        t.modified = [];
-        return t;
-      });
-      return state.set("fetching", false).set("templates", fromJS(templates));
+      return {
+        ...state,
+        fetching: false,
+        templates: action.templates.map(t => {
+          t.modified = [];
+          return t;
+        })
+      };
     case types.LOAD_ERROR:
       /*
       Let the UI know that there was an error loading the MetadataTemplates.
        */
-      return state.set("fetching", false).set("error", true);
+      return { ...state, fetching: false, error: true };
     case types.USE_TEMPLATE:
       /*
       Update the current template to show unmodified
       If the action.index == the current template the it will just
       reset the modified state.
        */
-      return state
-        .setIn(["templates", state.get("current"), "modified"], List())
-        .set("current", action.index);
+      return {
+        ...state,
+        templates: (function() {
+          const templates = [...state.templates];
+          templates[state.current].modified = [];
+          return templates;
+        })(),
+        current: action.index
+      };
     case types.TABLE_MODIFIED:
       /*
       This is a modification of the current template through ag-grid.
        */
-      return state.setIn(
-        ["templates", state.get("current"), "modified"],
-        fromJS(action.fields)
-      );
+      return {
+        ...state,
+        templates: (function() {
+          const templates = [...state.templates];
+          templates[state.current].modified = action.fields;
+          return templates;
+        })()
+      };
     case types.TEMPLATE_MODIFIED:
       /*
       A modification of the template from any source external to ag-grid.
        */
-      return state.setIn(
-        ["templates", state.get("current"), "modified"],
-        fromJS(action.fields)
-      );
+      return {
+        ...state,
+        templates: (function() {
+          const templates = [...state.templates];
+          templates[state.current].modified = action.fields;
+          return templates;
+        })()
+      };
     case types.SAVE_TEMPLATE:
-      return state.set("saving", true);
+      return { ...state, saving: true };
     case types.SAVED_TEMPLATE:
-      // Clear modifications to the current template.
-      state = state.setIn(
-        ["templates", state.get("current"), "modified"],
-        List()
-      );
-      let template = action.template;
-      template.modified = [];
-      let index = state
-        .get("templates")
-        .findIndex(t => t.get("id") === template.id);
-      if (index > 0) {
-        /*
-        This was a template update, update the current template.
-         */
-        state = state.setIn(["templates", index], fromJS(template));
-      } else {
-        /*
-        New template created, add it to the end of the list and set it as selected.
-         */
-        state = state.update("templates", templates =>
-          templates.push(fromJS(template))
-        );
-        index = state.get("templates").size - 1;
-      }
-      return state
-        .set("saving", false)
-        .set("saved", true)
-        .set("current", index);
+      return {
+        ...state,
+        ...(function() {
+          const templates = [...state.templates];
+          templates[state.current].modified = [];
+
+          const { template } = action;
+          template.modified = [];
+          // Check to see if it was a template that was updated.
+          if (state.current !== 0) {
+            // Updating a current template
+            templates[state.current] = template;
+            return { templates };
+          } else {
+            // This is a new template
+            templates.push(template);
+            return { templates, current: templates.length - 1 };
+          }
+        })()
+      };
     case types.SAVE_COMPLETE:
-      return state.set("saved", false);
+      return { ...state, saved: false };
     default:
-      return state;
+      return { ...state };
   }
 };
 

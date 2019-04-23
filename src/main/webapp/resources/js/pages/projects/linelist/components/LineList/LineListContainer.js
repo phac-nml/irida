@@ -16,11 +16,11 @@ const mapStateToProps = state => ({
   error: state.fields.get("error"),
   fields: state.fields.get("fields"),
   entries: state.entries.get("entries"),
-  templates: state.templates.get("templates"),
-  current: state.templates.get("current"),
-  modified: state.templates.get("modified"),
-  saving: state.templates.get("saving"),
-  saved: state.templates.get("saved"),
+  templates: state.templates.templates,
+  current: state.templates.current,
+  modified: state.templates.modified,
+  saving: state.templates.saving,
+  saved: state.templates.saved,
   selectedCount: state.entries.get("selected")
 });
 
