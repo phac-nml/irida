@@ -60,7 +60,7 @@ export class Table extends React.Component {
       return true;
     }
 
-    if (!nextProps.fields.equals(this.props.fields)) {
+    if (nextProps.fields !== this.props.fields) {
       /*
       This should only happen on the original loading of the table when the
       complete list of UIMetadataTemplateFields are passed.
@@ -423,7 +423,7 @@ export class Table extends React.Component {
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
-          columnDefs={this.props.fields.toJS()}
+          columnDefs={this.props.fields}
           rowData={rowData}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
@@ -449,7 +449,7 @@ export class Table extends React.Component {
 Table.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
-  fields: ImmutablePropTypes.list.isRequired,
+  fields: PropTypes.array.isRequired,
   entries: ImmutablePropTypes.list,
   templates: PropTypes.array.isRequired,
   current: PropTypes.number.isRequired,
