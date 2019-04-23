@@ -38,12 +38,9 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	}
 
 	/**
-	 * Constructor for {@link RESTProjectsController}, requires a reference to a
-	 * {@link ProjectService}.
+	 * Constructor for {@link RESTProjectsController}, requires a reference to a {@link ProjectService}.
 	 *
-	 * @param service
-	 *            the {@link SequencingRunService} to be used by this
-	 *            controller.
+	 * @param service the {@link SequencingRunService} to be used by this controller.
 	 */
 	@Autowired
 	public RESTSequencingRunController(SequencingRunService service) {
@@ -51,19 +48,25 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 
 	}
 
-
 	/**
 	 * Create a Sequencing run
 	 *
-	 * @param runType The type of sequencing run to create
+	 * @param runType        The type of sequencing run to create
 	 * @param representation the run info to create
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation, HttpServletResponse response) {
+	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
+			HttpServletResponse response) {
 		logger.trace("creating sequencing run");
+
+		//Legacy for ensuring old uploaders pointing to /miseqrun get a sequencer type of 'miseq'
+		if (runType.equals("miseqrun")) {
+			runType = "miseq";
+		}
+
 		representation.setSequencerType(runType);
 		return create(representation, response);
 	}
