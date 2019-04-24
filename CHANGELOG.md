@@ -31,6 +31,7 @@ Changes
 * [UI]: New dedicated cart page.
 * [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been deprecated.
 * [Developer]: Updated Travis CI dist to `xenial`.
+* [Developer]: Upgraded MariaDB version in TravisCI to 10.1.  10.0 wasn't installing properly since upgrade to xenial.
 * [Developer]: Updated chromedriver in pom.xml and packages.json to newer versions to work better with newest chrome version.
 * [UI]: Removed `.xlsx` files from being previewed in the pipeline results page.
 * [UI/Developer]: Fixed issue with deleting a user group if it is linked to any projects.
