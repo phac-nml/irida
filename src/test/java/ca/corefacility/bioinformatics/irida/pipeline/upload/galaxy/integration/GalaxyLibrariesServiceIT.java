@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
@@ -105,10 +106,21 @@ public class GalaxyLibrariesServiceIT {
 		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"fail.fastq.gz").toURI());
 		
-		dataFileType = new SequenceFilePathType(dataFile);
-		dataFileType2 = new SequenceFilePathType(dataFile2);
-		dataFileTypeCompressed = new SequenceFilePathType(dataFileCompressed);
-		dataFileTypeFail = new SequenceFilePathType(dataFileFail);
+		dataFileType = createPathType(dataFile);
+		dataFileType2 = createPathType(dataFile2);
+		dataFileTypeCompressed = createPathType(dataFileCompressed);
+		dataFileTypeFail = createPathType(dataFileFail);
+	}
+	
+	/**
+	 * Creates a new {@link SequenceFilePathType} from a {@link Path} (instead of
+	 * from a {@link SequenceFile}).
+	 * 
+	 * @param path The path.
+	 * @return A new {@link SequenceFilePathType}.
+	 */
+	private SequenceFilePathType createPathType(Path path) {
+		return new SequenceFilePathType(new SequenceFile(path));
 	}
 	
 	/**

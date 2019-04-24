@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
@@ -127,10 +128,21 @@ public class GalaxyHistoriesServiceIT {
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);
-		
-		dataFileType = new SequenceFilePathType(dataFile);
-		dataFileType2 = new SequenceFilePathType(dataFile2);
-		dataFileTypeCompressed = new SequenceFilePathType(dataFileCompressed);
+				
+		dataFileType = createPathType(dataFile);
+		dataFileType2 = createPathType(dataFile2);
+		dataFileTypeCompressed = createPathType(dataFileCompressed);
+	}
+	
+	/**
+	 * Creates a new {@link SequenceFilePathType} from a {@link Path} (instead of
+	 * from a {@link SequenceFile}).
+	 * 
+	 * @param path The path.
+	 * @return A new {@link SequenceFilePathType}.
+	 */
+	private SequenceFilePathType createPathType(Path path) {
+		return new SequenceFilePathType(new SequenceFile(path));
 	}
 	
 	/**
