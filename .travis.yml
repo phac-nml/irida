@@ -21,7 +21,7 @@ services:
 dist: xenial
 
 addons:
-  mariadb: '10.0'
+  mariadb: '10.1'
 
 jdk:
   - openjdk8
