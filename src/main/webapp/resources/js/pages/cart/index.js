@@ -21,7 +21,7 @@ Webpack does not now what the servlet context path is.  To fix this, webpack exp
 the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
-window.__webpack_public_path__ = `${window.TL.BASE_URL}resources/dist/`;
+__webpack_public_path__ = `${window.TL.BASE_URL}resources/dist/`;
 
 const store = getStore(
   { sampleDetailsReducer },
