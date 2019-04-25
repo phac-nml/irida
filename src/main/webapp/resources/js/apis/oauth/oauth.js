@@ -15,11 +15,11 @@ const getWindowFeatures = () => {
 
   // Fixes dual-screen position Most browsers Firefox
   const dualScreenLeft =
-    typeof window.screenLeft != "undefined"
+    typeof window.screenLeft !== "undefined"
       ? window.screenLeft
       : window.screenX;
   const dualScreenTop =
-    typeof window.screenTop != "undefined" ? window.screenTop : window.screenY;
+    typeof window.screenTop !== "undefined" ? window.screenTop : window.screenY;
 
   const width = window.innerWidth
     ? window.innerWidth
