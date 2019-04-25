@@ -7,12 +7,11 @@ import {
   sampleDetailsReducer
 } from "../../components/SampleDetails";
 import { actions } from "../../redux/reducers/app";
-import { reducer as galaxyReducer } from "../../components/galaxy/reducer";
 import {
   empty,
+  loadFullCart,
   removeProjectFromCart,
-  removeSampleFromCart,
-  loadFullCart
+  removeSampleFromCart
 } from "../../redux/sagas/cart";
 import { Cart } from "./components/Cart";
 
