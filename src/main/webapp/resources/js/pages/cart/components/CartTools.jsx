@@ -3,13 +3,7 @@ import { Location, navigate, Router } from "@reach/router";
 import { Row } from "antd";
 import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
-import {
-  grey1,
-  grey2,
-  grey3,
-  grey4,
-  COLOR_BORDER_LIGHT
-} from "../../../styles/colors";
+import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
@@ -80,10 +74,10 @@ export default class CartTools extends Component {
     if (this.state.fromGalaxy) {
       this.setState(
         prevState => ({
-          fromGalaxy: false,
+          fromGalaxy: false
         }),
         () => {
-          navigate("/cart/pipelines");
+          navigate(`${window.TL.BASE_URL}cart/pipelines`);
           this.removeGalaxyListener();
         }
       );
@@ -97,20 +91,23 @@ export default class CartTools extends Component {
     const paths = [
       this.state.fromGalaxy
         ? {
-            key: "/cart/galaxy",
-            link: "cart/galaxy",
+            link: `${window.TL.BASE_URL}cart/galaxy`,
             text: getI18N("CartTools.menu.galaxy"),
-            component: <GalaxyComponent key="cart/galaxy" path="cart/galaxy" />
+            component: (
+              <GalaxyComponent
+                key="galaxy"
+                path={`${window.TL.BASE_URL}cart/galaxy`}
+              />
+            )
           }
         : null,
       {
-        key: "/cart/pipelines",
-        link: "cart/pipelines",
+        link: `${window.TL.BASE_URL}cart/pipelines`,
         text: getI18N("CartTools.menu.pipelines"),
         component: (
           <Pipelines
-            key="/cart/pipelines"
-            path="cart/pipelines"
+            key="pipelines"
+            path={`${window.TL.BASE_URL}cart/pipelines`}
             displaySelect={this.props.count > 0}
             default={!this.state.fromGalaxy}
           />

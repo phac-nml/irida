@@ -34,7 +34,7 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
         style={{ borderBottom: `1px solid ${COLOR_BORDER_LIGHT}` }}
       >
         {paths.map(path => (
-          <Menu.Item key={path.key}>
+          <Menu.Item key={path.link}>
             <Link to={path.link}>{path.text}</Link>
           </Menu.Item>
         ))}
