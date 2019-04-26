@@ -875,10 +875,12 @@
 						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>stop</goal>
-							<goal>run-exploded</goal>
+							<goal>start</goal>
 						</goals>
 						<configuration>
 							<scanIntervalSeconds>0</scanIntervalSeconds>
+							<stopPort>9966</stopPort>
+							<stopKey>STOP</stopKey>
 							<daemon>true</daemon>
 							<systemProperties>
 								<systemProperty>
