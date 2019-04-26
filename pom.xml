@@ -850,7 +850,9 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
+							<descriptors>
+								<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
+							</descriptors>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
@@ -1081,20 +1083,19 @@
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
 		<maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
-		<maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
-		<maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
+		<maven.javadoc.plugin.version>3.1.0</maven.javadoc.plugin.version>
+		<maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
 		<maven.jacoco.plugin.version>0.8.3</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
-		<maven.jar.plugin.version>2.5</maven.jar.plugin.version>
-		<maven.war.plugin.version>2.5</maven.war.plugin.version>
+		<maven.war.plugin.version>3.2.2</maven.war.plugin.version>
 		<maven.jetty.plugin.version>9.4.17.v20190418</maven.jetty.plugin.version>
-		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
-		<maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
-		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
-		<maven.site.plugin.version>3.4</maven.site.plugin.version>
+		<maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
+		<maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
+		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
+		<maven.site.plugin.version>3.7.1</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
-		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+		<frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
 		<node.version>v11.10.0</node.version>
 		<yarn.version>v1.15.2</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
