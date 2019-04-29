@@ -134,6 +134,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.addSelectedSamplesToCart();
 		assertEquals("Should be 5 samples in the cart", 5, page.getCartCount());
 
+		// Need to make sure select all samples works
+		page.selectAllSamples();
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be 21 samples in the cart", 21, page.getCartCount());
 	}
 
 	@Test
