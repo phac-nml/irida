@@ -111,9 +111,7 @@ const cartBtn = new SampleCartButton($(".js-cart-btn"), function() {
   const selected = $dt.select.selected()[0].keys();
   let next = selected.next();
   while (!next.done) {
-    const data =
-      $dt.row(`#${next.value}`).data() ||
-      $dt.select.selected()[0].get(next.value);
+    const data = $dt.row(`#${next.value}`).data();
     projects[data.projectId] = projects[data.projectId] || [];
     projects[data.projectId].push({ id: data.id, label: data.sampleName });
     next = selected.next();
@@ -218,8 +216,16 @@ const config = Object.assign({}, tableConfig, {
       // to format the server response when selectAll is clicked.
       // It puts the response into the format of the `data-info` attribute
       // set on the row itself ({row_id: {projectId, sampleId}}
+      const projectIds = Object.keys(response);
       const complete = new Map();
-      response.forEach(sample => complete.set(`row_${sample.id}`, sample));
+      for (const pId of projectIds) {
+        for (const sId of response[pId]) {
+          complete.set(`row_${sId}`, {
+            project: pId,
+            sample: sId
+          });
+        }
+      }
       return complete;
     }
   },
@@ -423,9 +429,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   const selected = $dt.select.selected()[0];
   const sampleIds = [];
   for (let [key, value] of selected) {
-    sampleIds.push(
-      typeof value.sample === "undefined" ? value.id : value.sample
-    );
+    sampleIds.push(value.sample);
   }
   params["sampleIds"] = sampleIds;
 
