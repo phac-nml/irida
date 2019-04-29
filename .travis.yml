@@ -17,11 +17,9 @@ env:
 
 services:
   - docker
+  - mysql
 
 dist: xenial
-
-addons:
-  mariadb: '10.1'
 
 jdk:
   - openjdk8
