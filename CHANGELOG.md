@@ -38,6 +38,7 @@ Changes
 * [UI]: Fixes issue where importing an excel file that contained "Created Date" and "Modified Date" created metadata fields with those labels.
 * [REST]: Updated http status code returned (400 Bad Request) when uploading files to the wrong type of run
 * [UI/Developer]: Updated to jquery v3.4.0 to fix security issue.
+* [UI]: Fixed bug causing issues with saving Line List templates.
 
 0.22.0 to 19.01
 ----------------
