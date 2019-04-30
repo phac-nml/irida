@@ -131,8 +131,15 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSampleWithShift(4);
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 
+
+		page.goToNextPage();
+		page.selectSample(1);
+		page.selectSample(2);
+		assertEquals("Should be 7 selected samples", "7 samples selected", page.getSelectedInfoText());
+
 		page.addSelectedSamplesToCart();
-		assertEquals("Should be 5 samples in the cart", 5, page.getCartCount());
+		assertEquals("Should be 7 samples in the cart", 7, page.getCartCount());
+		page.selectPaginationPage(1);
 
 		// Need to make sure select all samples works
 		page.selectAllSamples();
@@ -309,6 +316,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectPaginationPage(2);
 		assertEquals("Should only be displaying 9 samples.", 9, page.getNumberProjectsDisplayed());
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
+		page.selectPaginationPage(1);
 	}
 
 	@Test

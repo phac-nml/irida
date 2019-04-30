@@ -169,6 +169,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "locked-sample")
 	private List<WebElement> lockedSamples;
 
+	@FindBy(css = "[data-dt-idx=\"1\"]")
+	private WebElement firstTablePageBtn;
+
+	@FindBy(css = ".paginate_button.next a")
+	private WebElement nextTablePageBtn;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -463,6 +469,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 			}
 		}
 		return locked;
+	}
+
+	public void goToNextPage() {
+		nextTablePageBtn.click();
+		waitForTime(500);
 	}
 	
 	/**

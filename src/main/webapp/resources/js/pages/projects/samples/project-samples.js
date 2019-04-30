@@ -50,6 +50,15 @@ const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
   elm => new SampleDropdownButton(elm)
 );
 
+const getSelectedIds = () => {
+  const selected = $dt.select.selected()[0];
+  const ids = [];
+  for (let [, value] of selected) {
+    ids.push(typeof value.sample === "undefined" ? value.id : value.sample);
+  }
+  return ids;
+};
+
 /*
 Initialize the sample export menu.
  */
@@ -57,12 +66,7 @@ const EXPORT_HANDLERS = {
   download() {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
-    const selected = $dt.select.selected()[0];
-    const ids = [];
-    selected.forEach(s => {
-      ids.push(s.sample);
-    });
-    download(`${url}?${$.param({ ids })}`);
+    download(`${url}?${$.param({ ids: getSelectedIds() })}`);
   },
   file() {
     // this is set by the object calling (i.e. download btn)
@@ -72,11 +76,7 @@ const EXPORT_HANDLERS = {
     download(`${url}?${$.param(params)}`);
   },
   ncbi() {
-    const ids = [];
-    const selected = $dt.select.selected()[0];
-    selected.forEach(s => {
-      ids.push(s.sample);
-    });
+    const ids = getSelectedIds();
     /*
     NCBI Export is a separate page.  If there are ids available for export,
     redirect the user to that page.
@@ -315,8 +315,9 @@ const config = Object.assign({}, tableConfig, {
   createdRow(row, data) {
     const $row = $(row);
     row.dataset.info = JSON.stringify({
-      project: data.projectId,
-      sample: data.id
+      projectId: data.projectId,
+      id: data.id,
+      sampleName: data.sampleName
     });
     /*
     If there are QC errors, highlight the row
@@ -420,14 +421,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   /*
   Find the ids for the currently selected samples.
    */
-  const selected = $dt.select.selected()[0];
-  const sampleIds = [];
-  for (let [key, value] of selected) {
-    sampleIds.push(
-      typeof value.sample === "undefined" ? value.id : value.sample
-    );
-  }
-  params["sampleIds"] = sampleIds;
+  params["sampleIds"] = getSelectedIds();
 
   let script;
   modal.load(`${url}?${$.param(params)}`, function() {
@@ -651,10 +645,7 @@ app.controller("GalaxyExportController", [
       const templateUrl = $event.target.dataset.url;
       const projectId = $event.target.dataset.projectId;
       const ids = [];
-      const selected = $dt.select.selected()[0];
-      selected.forEach(s => {
-        ids.push(s.sample);
-      });
+      const selected = getSelectedIds();
 
       // Cart is expecting an object {projectId: [sampleIds]}
       const sampleIds = { [projectId]: ids };
