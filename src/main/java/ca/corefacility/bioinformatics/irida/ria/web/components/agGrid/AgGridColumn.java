@@ -166,7 +166,7 @@ public class AgGridColumn {
 		this.headerCheckboxSelection = headerCheckboxSelection;
 	}
 
-	public String isFilter() {
+	public String getFilter() {
 		return filter;
 	}
 
