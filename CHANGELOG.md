@@ -39,6 +39,7 @@ Changes
 * [REST]: Updated http status code returned (400 Bad Request) when uploading files to the wrong type of run
 * [UI/Developer]: Updated to jquery v3.4.0 to fix security issue.
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
+* [UI]: Fixed bug causing issues with saving Line List templates.
 
 0.22.0 to 19.01
 ----------------
