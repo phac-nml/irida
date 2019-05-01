@@ -67,7 +67,7 @@
             </div>
         </div>
         <ul class="list-group">
-            <li class="list-group-item" ng-repeat="header in $ctrl.headers">
+            <li class="list-group-item" ng-repeat="header in $ctrl.headers track by $index">
                 <header-item header="header"></header-item>
             </li>
         </ul>

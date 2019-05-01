@@ -16,6 +16,7 @@
         i18n: {
           "cart.clear": /*[[#{cart.clear}]]*/ "Clear",
           "cart.noneMatchingFilter": /*[[#{cart.noneMatchingFilter}]]*/ "Cart filter error",
+          "pipelines.cart.select": /*[[#{pipelines.cart.select}]]*/ "SELECT",
           "CartEmpty.heading": /*[[#{CartEmpty.heading}]]*/ "Your cart is empty",
           "SampleRenderer.remove.sample": /*[[#{SampleRenderer.remove.sample}]]*/ "_Remove Sample_",
           "SampleRenderer.remove.project": /*[[#{SampleRenderer.remove.project}]]*/ "_Remove Project_",
@@ -34,7 +35,6 @@
           "ExportToGalaxyForm.makepairedcollection.help": /*[[#{ExportToGalaxyForm.makepairedcollection.help}]]*/ "_COLLECTION_HELP_",
           "ExportToGalaxyForm.galaxy": /*[[#{ExportToGalaxyForm.galaxy}]]*/ '_EXPORTING AT_',
           "GalaxyFinalSubmission.submit": /*[[#{GalaxyFinalSubmission.submit}]]*/ "_EXPORT_",
-          "GalaxySamples.ready": /*[[#{GalaxySamples.ready}]]*/ "_SAMPLES_READY_",
           "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_",
           "GalaxySubmissionError.message": /*[[#{GalaxySubmissionError.message}]]*/ "GalaxySubmissionError.message",
           "GalaxySubmissionError.description": /*[[#{GalaxySubmissionError.description}]]*/ "GalaxySubmissionError.description"
@@ -46,7 +46,12 @@
     </script>
   </head>
   <body>
-    <div id="root" style="height: 100%; min-height: 100%" layout:fragment="page"></div>
+    <div id="root" style="height: 100%;" layout:fragment="page">
+    <!--
+       This is a DOM element for React to render the full cart experience into.
+       See  src/main/webapp/resources/js/pages/cart/components/Cart.jsx
+    -->
+    </div>
 
     <th:block layout:fragment="scripts">
       <div th:if="${galaxyUrl != null}">
@@ -54,7 +59,7 @@
           <input id="js-query" name="json_params" type="hidden">
         </form>
       </div>
-      <script src="/resources/dist/js/cart.bundle.js"></script>
+      <script th:src="@{/resources/dist/js/cart.bundle.js}"></script>
     </th:block>
   </body>
 </html>

@@ -23,7 +23,7 @@ function CartComponent({ count = 0, loadCart }) {
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (
-    <Content style={{ display: "flex", height: "100%", minHeight: "100%" }}>
+    <Content style={{ display: "flex", height: "100%" }}>
       <Content style={{ flexGrow: 1 }}>
         <Suspense fallback={<div />}>
           <CartTools

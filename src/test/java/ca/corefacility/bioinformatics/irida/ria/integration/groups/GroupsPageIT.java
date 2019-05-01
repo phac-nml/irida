@@ -49,4 +49,12 @@ public class GroupsPageIT extends AbstractIridaUIITChromeDriver {
 		groupsPage.addGroupMember(searchTermLc, role);
 		assertTrue("Noty success should be displayed", groupsPage.notySuccessDisplayed());
 	}
+
+	@Test
+	public void testGroupDeletionWhenLinkedToProjects() {
+		groupsPage = GroupsPage.goToCreateGroupPage(driver());
+		groupsPage.goToGroupsPage();
+		groupsPage.removeUserGroupWithProjectLinks();
+		assertTrue("Noty success should be displayed", groupsPage.notySuccessDisplayed());
+	}
 }

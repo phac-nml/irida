@@ -1,48 +1,49 @@
+import { validateEmail } from "../../utilities/validation-utilities";
+
 export const types = {
   EMAIL_UPDATED: "GALAXY/SET_GALAXY_EMAIL",
   MAKE_PAIRED_COLLECTION_UPDATED: "GALAXY/MAKE_PAIRED_COLLECTION_UPDATED",
-  GET_GALAXY_SAMPLES: "GALAXY/GET_GALAXY_SAMPLES",
-  SET_GALAXY_SAMPLES: "GALAXY/SET_GALAXY_SAMPLES",
   OAUTH_WINDOW_CLOSED: "GALAXY_OAUTH_WINDOW_CLOSED",
   SUBMITTABLE: "GALAXY/SUBMITTABLE",
   SUBMIT: "GALAXY/SUBMIT",
   SUBMIT_ERROR: "GALAXY/SUBMIT_ERROR"
 };
 
-const initialState = {
+export const initialState = {
   email: window.PAGE.user,
+  validEmail: true, // Default to true since from IRIDA
   makepairedcollection: true,
   fetchingSamples: false,
-  samples: undefined,
   submitted: false,
-  submittable: false,
+  submittable: true,
   errored: false
 };
 
-export const reducer = (state = initialState, action = {}) => {
+export const reducer = (state, action) => {
   switch (action.type) {
     case types.EMAIL_UPDATED:
-      return { ...state, email: action.payload.email };
+      return {
+        ...state,
+        email: action.payload.email,
+        validEmail: validateEmail(action.payload.email)
+      };
     case types.MAKE_PAIRED_COLLECTION_UPDATED:
       return {
         ...state,
         makepairedcollection: action.payload.makepairedcollection
       };
-    case types.GET_GALAXY_SAMPLES:
-      return { ...state, fetchingSamples: true, submittable: false };
-    case types.SET_GALAXY_SAMPLES:
-      return {
-        ...state,
-        samples: action.payload.samples,
-        submittable: true,
-        fetchingSamples: false
-      };
     case types.OAUTH_WINDOW_CLOSED:
       return { ...state, submittable: true, submitted: false };
     case types.SUBMIT:
-      return { ...state, submitted: true };
+      return { ...state, fetchingSamples: true, submitted: true };
     case types.SUBMIT_ERROR:
-      return { ...state, submittable: true, submitted: false, errored: true };
+      return {
+        ...state,
+        fetchingSamples: false,
+        submittable: true,
+        submitted: false,
+        errored: true
+      };
     default:
       return { ...state };
   }
@@ -54,18 +55,8 @@ export const actions = {
     type: types.MAKE_PAIRED_COLLECTION_UPDATED,
     payload: { makepairedcollection }
   }),
-  getGalaxySamples: () => ({ type: types.GET_GALAXY_SAMPLES }),
-  setGalaxySamples: samples => ({
-    type: types.SET_GALAXY_SAMPLES,
-    payload: { samples }
-  }),
-  submit: (email, makepairedcollection, samples) => ({
-    type: types.SUBMIT,
-    payload: {
-      email,
-      makepairedcollection,
-      samples
-    }
+  submit: () => ({
+    type: types.SUBMIT
   }),
   submitError: () => ({
     type: types.SUBMIT_ERROR
