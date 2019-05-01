@@ -12,7 +12,7 @@ import {
   red6
 } from "../../../styles/colors";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { List, Input, Button } from "antd";
+import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { actions } from "../../../redux/reducers/cart";
@@ -86,45 +86,43 @@ function CartSamplesComponent({
 
   const removeOneProject = id => removeProject(id);
 
-  const renderSample = ({ index, data, style }) => {
-    const sample = samples[index];
-    return (
-      <SampleRenderer
-        rowIndex={index}
-        data={sample}
-        style={style}
-        displaySample={displaySample}
-        removeSample={removeOneSample}
-        removeProject={removeOneProject}
-      />
-    );
-  };
+  const renderSample = ({ index, data, style }) => (
+    <SampleRenderer
+      rowIndex={index}
+      data={samples[index]}
+      style={style}
+      displaySample={displaySample}
+      removeSample={removeOneSample}
+      removeProject={removeOneProject}
+    />
+  );
 
   return (
     <Wrapper>
       <CartTools>
         <Search onChange={filterSamples} />
       </CartTools>
-      <CartSamplesWrapper>
-        {samples.length > 0 ? (
-          <AutoSizer>
-            {({ height = 600, width = 400 }) => (
-              <List itemLayout="vertical" className="t-samples-list">
-                <VList
-                  itemCount={samples.length}
-                  itemSize={95}
-                  height={height}
-                  width={width}
-                >
-                  {renderSample}
-                </VList>
-              </List>
-            )}
-          </AutoSizer>
-        ) : null}
+      <CartSamplesWrapper className="t-samples-list">
+        <AutoSizer>
+          {({ height = 600, width = 400 }) => (
+            <VList
+              itemCount={samples.length}
+              itemSize={75}
+              height={height}
+              width={width}
+            >
+              {renderSample}
+            </VList>
+          )}
+        </AutoSizer>
       </CartSamplesWrapper>
       <ButtonsPanelBottom>
-        <EmptyCartButton className="t-empty-cart-btn" type="danger" block onClick={emptyCart}>
+        <EmptyCartButton
+          className="t-empty-cart-btn"
+          type="danger"
+          block
+          onClick={emptyCart}
+        >
           {getI18N("cart.clear")}
         </EmptyCartButton>
       </ButtonsPanelBottom>
@@ -135,8 +133,8 @@ function CartSamplesComponent({
 CartSamplesComponent.propTypes = {
   displaySample: PropTypes.func.isRequired,
   removeSample: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired,
-}
+  removeProject: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => ({
   samples: state.cart.filteredSamples

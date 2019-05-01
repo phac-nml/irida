@@ -55,6 +55,10 @@ public class GroupsPage extends AbstractPage {
 	@FindBy(className = "select2-search__field")
 	private WebElement userNameField;
 
+	@FindBy(id = "remove-group-button")
+	private WebElement removeGroupBtn;
+
+
 	public GroupsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -101,6 +105,16 @@ public class GroupsPage extends AbstractPage {
 		Select roleSelect = new Select(addGroupMemberRole);
 		roleSelect.selectByValue(role);
 		submitAddMemberButton.click();
+		waitForAjax();
+	}
+
+	public void removeUserGroupWithProjectLinks() {
+		// Group being deleted is linked to 4 projects
+		List<WebElement> deleteGroupButtons = (List<WebElement>) waitForElementsVisible(By.className("remove-btn"));
+		WebElement firstGroupDeleteButton = deleteGroupButtons.get(0);
+		firstGroupDeleteButton.click();
+		waitForElementVisible(By.id("remove-group-button"));
+		removeGroupBtn.click();
 		waitForAjax();
 	}
 

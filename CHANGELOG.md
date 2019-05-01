@@ -32,7 +32,14 @@ Changes
 * [UI]: New dedicated cart page.
 * [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been deprecated.
 * [Developer]: Updated Travis CI dist to `xenial`.
+* [Developer]: Falling back to mysql for TravisCI testing.  MariaDB currently having install issues.
 * [Developer]: Updated chromedriver in pom.xml and packages.json to newer versions to work better with newest chrome version.
+* [UI]: Removed `.xlsx` files from being previewed in the pipeline results page.
+* [UI/Developer]: Fixed issue with deleting a user group if it is linked to any projects.
+* [UI]: Fixes issue where importing an excel file that contained "Created Date" and "Modified Date" created metadata fields with those labels.
+* [REST]: Updated http status code returned (400 Bad Request) when uploading files to the wrong type of run
+* [UI/Developer]: Updated to jquery v3.4.0 to fix security issue.
+* [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
 
 
 0.22.0 to 19.01

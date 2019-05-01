@@ -1,10 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { useStateValue } from "./GalaxyState";
 import { Checkbox, Form, Input } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
-import { connect } from "react-redux";
 import { actions } from "./reducer";
-import { validateEmail } from "../../utilities/validation-utilities";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 
 /**
@@ -15,18 +13,14 @@ import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
  * @param {function} updateMakePairedCollection - handles update to makepairedcollection
  * @returns {*}
  */
-function ExportToGalaxyFormComponent({
-  email,
-  makepairedcollection,
-  updateEmail,
-  updateMakePairedCollection
-}) {
-  const emailModified = e => updateEmail(e.target.value);
+export function GalaxyDetailsForm() {
+  const [{ email, validEmail, makepairedcollection }, dispatch] = useStateValue();
+
+  const emailModified = e => dispatch(actions.setEmail(e.target.value));
 
   const makePairedCollectionModified = e =>
     updateMakePairedCollection(e.target.checked);
 
-  const validEmail = validateEmail(email);
 
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)
@@ -63,29 +57,3 @@ function ExportToGalaxyFormComponent({
     </div>
   );
 }
-
-ExportToGalaxyFormComponent.propTypes = {
-  email: PropTypes.string.isRequired,
-  makepairedcollection: PropTypes.bool.isRequired,
-  updateEmail: PropTypes.func.isRequired,
-  updateMakePairedCollection: PropTypes.func.isRequired
-};
-
-/*
-Connect the component to redux to get all the required values and functions.
- */
-const mapStateToProps = state => ({
-  email: state.galaxyReducer.email,
-  makepairedcollection: state.galaxyReducer.makepairedcollection
-});
-
-const mapDispatchToProps = dispatch => ({
-  updateEmail: email => dispatch(actions.setEmail(email)),
-  updateMakePairedCollection: value =>
-    dispatch(actions.setMakePairedCollection(value))
-});
-
-export const GalaxyDetailsForm = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ExportToGalaxyFormComponent);

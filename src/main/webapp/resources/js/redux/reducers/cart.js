@@ -29,13 +29,14 @@ function filterSamples(samples = [], filter = "") {
 }
 
 function removeSample(samples, filter, projectId, sampleId) {
-  const index = samples.find(
+  const updatedSamples = [...samples];
+  const index = updatedSamples.findIndex(
     sample => sample.project.id === projectId && sample.id === sampleId
   );
-  samples.splice(index, 1);
+  updatedSamples.splice(index, 1);
   return {
-    samples,
-    filteredSamples: filterSamples(samples, filter)
+    samples: updatedSamples,
+    filteredSamples: filterSamples(updatedSamples, filter)
   };
 }
 

@@ -1,5 +1,5 @@
 exports.config = {
-  mode: "none",
+  mode: "development",
   devtool: "eval-source-map",
   watch: true
 };
