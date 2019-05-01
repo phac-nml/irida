@@ -50,10 +50,16 @@ const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
   elm => new SampleDropdownButton(elm)
 );
 
+/**
+ * Get the ids for all selected samples within the table.
+ * @returns {Array}
+ */
 const getSelectedIds = () => {
   const selected = $dt.select.selected()[0];
   const ids = [];
   for (let [, value] of selected) {
+    // Selected samples not currently listed on the page (i.e. from a different page
+    // in the table only store minimal data not the full sample.
     ids.push(typeof value.sample === "undefined" ? value.id : value.sample);
   }
   return ids;
@@ -314,6 +320,9 @@ const config = Object.assign({}, tableConfig, {
   },
   createdRow(row, data) {
     const $row = $(row);
+    /*
+    Ensure the data stored can be used to save the sample the cart.
+     */
     row.dataset.info = JSON.stringify({
       projectId: data.projectId,
       id: data.id,
@@ -626,7 +635,6 @@ function displayFilters(filters) {
 
   $(".filter-tags").html($wrapper);
 }
-
 /*
 Activate page tooltips
  */
