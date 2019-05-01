@@ -475,6 +475,17 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		nextTablePageBtn.click();
 		waitForTime(500);
 	}
+
+	public void closeModalIfOpen() {
+		List<WebElement> modals = driver.findElements(By.className("modal-open"));
+		if (modals.size() > 0) {
+			Actions actions = new Actions(driver);
+			actions.moveToElement(modals.get(0))
+					.moveByOffset(5, 5)
+					.click()
+					.perform();
+		}
+	}
 	
 	/**
 	 * Exception which is thrown when attempting to give owner to a sample
