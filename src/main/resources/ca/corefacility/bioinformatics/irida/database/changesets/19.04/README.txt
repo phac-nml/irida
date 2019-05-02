@@ -1,0 +1,1 @@
+This database directory is for the 19.05 IRIDA release.  The release was delayed due to unexpected issues near the end of the release cycle which resulted in a version number change.

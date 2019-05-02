@@ -44,6 +44,7 @@ function getColumnDefinition(col) {
 
   if (field === FIELDS.icons) {
     Object.assign(col, {
+      filter: undefined,
       cellRenderer: "IconCellRenderer"
     });
   } else if (type === TYPES.date) {

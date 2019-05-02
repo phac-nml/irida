@@ -1,15 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * <p>
@@ -82,6 +83,19 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
 		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+
+		// Test creating a second template
+		page.toggleMetadataField(5);
+		assertEquals("Should have 4 columns visible", 4, page.getNumberOfTableColumnsVisible());
+		page.saveMetadataTemplate("ANOTHER TESTING TEMPLATE");
+
+		// Switch back to new template
+		page.selectTemplate(TEMPLATE_NAME);
+		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+
+		// Switch back to new template
+		page.selectTemplate("ANOTHER TESTING TEMPLATE");
+		assertEquals("Should have 4 columns visible", 4, page.getNumberOfTableColumnsVisible());
 
 		// Test inline editing
 		page.selectTemplate("All Fields");
