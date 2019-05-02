@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -22,6 +23,16 @@ import static org.junit.Assert.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
+	@After
+	public void resetTable() {
+		/*
+		This was added to ensure that after every test the samples table is returned to its default
+		state.  Current DataTables stores a reference to which page in the table the user is on.
+		 */
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.closeModalIfOpen();
+		page.selectPaginationPage(1);
+	}
 
 	@Test(expected = AssertionError.class)
 	public void testGoingToInvalidPage() {
@@ -131,9 +142,20 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSampleWithShift(4);
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 
-		page.addSelectedSamplesToCart();
-		assertEquals("Should be 5 samples in the cart", 5, page.getCartCount());
 
+		page.goToNextPage();
+		page.selectSample(1);
+		page.selectSample(2);
+		assertEquals("Should be 7 selected samples", "7 samples selected", page.getSelectedInfoText());
+
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be 7 samples in the cart", 7, page.getCartCount());
+		page.selectPaginationPage(1);
+
+		// Need to make sure select all samples works
+		page.selectAllSamples();
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be 21 samples in the cart", 21, page.getCartCount());
 	}
 
 	@Test
