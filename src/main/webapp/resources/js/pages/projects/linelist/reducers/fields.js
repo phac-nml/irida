@@ -51,12 +51,8 @@ function getColumnDefinition(col) {
     Object.assign(col, dateColumn);
   } else if (field === FIELDS.sampleName) {
     Object.assign(col, {
-      cellRenderer: "SampleNameRenderer",
-      filter: "agTextColumnFilter"
+      cellRenderer: "SampleNameRenderer"
     });
-  } else {
-    // Default to text filter
-    Object.assign(col, { filter: "agTextColumnFilter" });
   }
 
   /*
