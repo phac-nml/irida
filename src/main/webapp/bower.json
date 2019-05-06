@@ -23,7 +23,6 @@
     "angular-bootstrap": "0.14.3",
     "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6",
     "noty": "2.3.7",
-    "datatables-bootstrap3-plugin": "~0.4.0",
     "angular-datatables": "~0.5.2",
     "angular-daterangepicker-enhanced": "^0.1.24",
     "lodash": "4.6.1",
