@@ -1,5 +1,3 @@
-import { fromJS } from "immutable";
-
 export const types = {
   LOAD: "METADATA/ENTRIES/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/ENTRIES/LOAD_ERROR",
@@ -8,12 +6,12 @@ export const types = {
   EDITED: "METADATA/ENTRIES/EDITED"
 };
 
-export const initialState = fromJS({
+export const initialState = {
   fetching: false, // Is the API call currently being made
   error: false, // Was there an error making the api call}
   entries: null, // List of metadata entries
   selected: 0
-});
+};
 
 /*
 REDUCERS
@@ -21,16 +19,18 @@ REDUCERS
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
-      return state.set("fetching", true).set("error", false);
+      return { ...state, fetching: true, error: false };
     case types.LOAD_SUCCESS:
-      return state
-        .set("fetching", false)
-        .set("error", false)
-        .set("entries", fromJS(action.entries));
+      return {
+        ...state,
+        fetching: false,
+        error: false,
+        entries: action.entries
+      };
     case types.LOAD_ERROR:
-      return state.set("fetching", false).set("error", true);
+      return { ...state, fetching: false, error: true };
     case types.SELECTION:
-      return state.set("selected", action.count);
+      return { ...state, selected: action.count };
     default:
       return state;
   }

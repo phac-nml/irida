@@ -15,13 +15,13 @@ const mapStateToProps = state => ({
   initializing: state.fields.get("initializing"),
   error: state.fields.get("error"),
   fields: state.fields.get("fields"),
-  entries: state.entries.get("entries"),
+  entries: state.entries.entries,
   templates: state.templates.get("templates"),
   current: state.templates.get("current"),
   modified: state.templates.get("modified"),
   saving: state.templates.get("saving"),
   saved: state.templates.get("saved"),
-  selectedCount: state.entries.get("selected")
+  selectedCount: state.entries.selected
 });
 
 const mapDispatchToProps = dispatch => ({

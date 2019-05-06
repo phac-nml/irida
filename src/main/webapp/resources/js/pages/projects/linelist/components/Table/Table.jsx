@@ -421,8 +421,6 @@ export class Table extends React.Component {
   };
 
   render() {
-    const rowData =
-      this.props.entries !== null ? this.props.entries.toJS() : undefined;
     return (
       <div
         className="ag-grid-table-wrapper"
@@ -434,7 +432,7 @@ export class Table extends React.Component {
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields.toJS()}
-          rowData={rowData}
+          rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
           onGridReady={this.onGridReady}
@@ -460,7 +458,7 @@ Table.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: ImmutablePropTypes.list.isRequired,
-  entries: ImmutablePropTypes.list,
+  entries: PropTypes.array,
   templates: ImmutablePropTypes.list,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired
