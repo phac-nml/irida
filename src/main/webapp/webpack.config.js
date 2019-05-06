@@ -23,7 +23,7 @@ const config = {
   entry: entries,
   output: {
     path: BUILD_PATH,
-    publicPath: `/resources/dist/`,
+    publicPath: `/dist/`,
     filename: "js/[name].bundle.js"
   },
   module: {
