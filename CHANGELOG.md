@@ -3,6 +3,7 @@ Changes
 
 19.05 to 19.09
 ---------------
+* [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
 * [UI/Developer]: Moved the path of compiled JavaScript and CSS to `src/main/webapp`.
 
 19.01 to 19.05
