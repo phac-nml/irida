@@ -5,7 +5,7 @@
         data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{visualization.phylogenomics.title(${submission.label})}">Title</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/visualizations-phylogenetics.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/visualizations-phylogenetics.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
           urls: {
@@ -145,7 +145,7 @@
         </button>
     </script>
 
-    <script th:src="@{/resources/dist/js/visualizations-phylogenetics.bundle.js}"></script>
+    <script th:src="@{/dist/js/visualizations-phylogenetics.bundle.js}"></script>
 </th:block>
 </body>
 </html>

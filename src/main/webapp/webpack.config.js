@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const entries = require("./entries.js");
 
-const BUILD_PATH = path.resolve(__dirname, "resources/dist");
+const BUILD_PATH = path.resolve(__dirname, "dist");
 
 const config = {
   externals: {
