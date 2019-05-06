@@ -3,6 +3,7 @@ Changes
 
 19.05 to 19.09
 ---------------
+* [UI/Developer]: Removed ImmutableJS from the Line List Page.
 
 19.01 to 19.05
 ---------------
