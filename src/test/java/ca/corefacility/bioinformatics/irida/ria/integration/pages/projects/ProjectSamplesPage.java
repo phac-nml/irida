@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -26,19 +23,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(tagName = "h1")
 	private WebElement pageHeader;
 
-	@FindBy(id = "samplesTable")
-	private WebElement samplesTable;
-
-	@FindBy(id = "processingIndicator")
-	private WebElement tableProcessingIndicator;
-
-	@FindBy(id = "associated-btn")
+	@FindBy(className = "t-associated-btn")
 	private WebElement associatedProjectMenuBtn;
 
-	@FindBy(css = "#associated-dropdown")
+	@FindBy(className = "t-associated-dropdown")
 	private WebElement associatedDropdown;
 
-	@FindBy(className = "associated-cb")
+	@FindBy(className = "t-associated-cb")
 	private List<WebElement> associatedCbs;
 
 	@FindBy(className = "selected-counts")
@@ -50,46 +41,46 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "tbody tr")
 	private List<WebElement> tableRows;
 
-	@FindBy(id = "sample-tools")
+	@FindBy(className = "t-sample-tools")
 	private WebElement toolsDropdownBtn;
 
-	@FindBy(id = "mergeBtn")
+	@FindBy(className = "t-merge-btn")
 	private WebElement mergeBtn;
 
-	@FindBy(id = "copyBtn")
+	@FindBy(className = "t-copy-btn")
 	private WebElement copyBtn;
 	
 	@FindBy(id = "giveOwner")
 	private WebElement giveOwnerBtn;
 
-	@FindBy(id = "moveBtn")
+	@FindBy(className = "t-move-btn")
 	private WebElement moveBtn;
 
-	@FindBy(id = "removeBtn")
+	@FindBy(className = "t-remove-btn")
 	private WebElement removeBtn;
 
-	@FindBy(id = "cart-add-btn")
+	@FindBy(className = "t-add-cart-btn")
 	private WebElement addToCartBtn;
 
-	@FindBy(id = "remove-samples-modal")
+	@FindBy(className = "t-remove-modal")
 	private WebElement removeModal;
 
-	@FindBy(id = "removeBtnOk")
+	@FindBy(className = "t-submit-remove")
 	private WebElement removeBtnOK;
 
-	@FindBy(className = "merge-modal")
+	@FindBy(id = "merge-samples-modal")
 	private WebElement mergeModal;
 
 	@FindBy(id = "confirmMergeBtn")
 	private WebElement mergeBtnOK;
 
-	@FindBy(id = "newName")
+	@FindBy(id = "sampleName")
 	private WebElement newMergeNameInput;
 
-	@FindBy(id = "copy-samples-modal")
+	@FindBy(className = "t-copy-samples-modal")
 	private WebElement copySamplesModal;
 
-	@FindBy(id = "confirm-copy-samples")
+	@FindBy(id = "js-confirm")
 	private WebElement copyModalConfirmBtn;
 
 	@FindBy(id = "projectsSelect")
@@ -98,22 +89,28 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
-	@FindBy(className = "select2-chosen")
+	@FindBy(className = "select2-selection")
 	private WebElement select2Opener;
 
-	@FindBy(className = "select2-input")
+	@FindBy(className = "select2-search__field")
 	private WebElement select2Input;
 
-	@FindBy(className = "select2-results")
+	@FindBy(className = "select2-results__options")
 	private WebElement select2Results;
 
-	@FindBy(id = "filterByPropertyBtn")
+	@FindBy(className = "t-filters-btn")
 	private WebElement filterByPropertyBtn;
+
+	@FindBy(className = "t-apply-filter-btn")
+	private WebElement applyFiltersBtn;
+
+	@FindBy(className = "t-name-filter")
+	private WebElement nameFilterInput;
 
 	@FindBy(className = "filter-modal")
 	private WebElement filterModal;
 
-	@FindBy(id = "clearFilterBtn")
+	@FindBy(className = "t-clear-filters")
 	private WebElement clearFilterBtn;
 
 	// This will be 'Previous', 1, 2, ..., 'Next'
@@ -121,7 +118,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private List<WebElement> pagination;
 
 	// Samples filter date range picker
-	@FindBy(id = "daterange")
+	@FindBy(className = "t-daterange-filter")
 	private WebElement dateRangeInput;
 
 	@FindBy(name = "daterangepicker_start")
@@ -133,7 +130,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "div.ranges li")
 	private List<WebElement> dateRanges;
 
-	@FindBy(css = ".range_inputs .applyBtn")
+	@FindBy(className = "applyBtn")
 	private WebElement applyDateRangeBtn;
 
 	@FindBy(id = "selection-main")
@@ -142,34 +139,28 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "selection-toggle")
 	private WebElement selectionToggle;
 
-	@FindBy(id = "selection-all")
+	@FindBy(className = "dt-select-all")
 	private WebElement selectionAll;
 
-	@FindBy(id = "selection-none")
+	@FindBy(className = "dt-select-none")
 	private WebElement selectionNone;
 
-	@FindBy(id = "selection-page-all")
-	private WebElement selectionPageAll;
-
-	@FindBy(id = "selection-page-none")
-	private WebElement selectionPageNone;
-
-	@FindBy(id = "export-samples-btn")
+	@FindBy(className = "t-export-samples-btn")
 	private WebElement exportSamplesDropdownBtn;
 
-	@FindBy(id = "download-btn")
+	@FindBy(className = "t-download-btn")
 	private WebElement downloadBtn;
 
-	@FindBy(id = "ncbi-btn")
-	private WebElement ncbiBtn;
+	@FindBy(className = "t-ncbi-export-btn")
+	private WebElement ncbiExportBtn;
 
-	@FindBy(css = "#linker-btn a")
+	@FindBy(className = "t-linker-btn")
 	private WebElement linkerBtn;
 
-	@FindBy(className = "linker-modal")
+	@FindBy(className = "t-linker-modal")
 	private WebElement linkerModal;
 
-	@FindBy(id = "linker-cmd")
+	@FindBy(className = "t-cmd-text")
 	private WebElement linkerCmd;
 
 	@FindBy(id = "linkerCloseBtn")
@@ -177,6 +168,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	
 	@FindBy(className = "locked-sample")
 	private List<WebElement> lockedSamples;
+
+	@FindBy(css = "[data-dt-idx=\"1\"]")
+	private WebElement firstTablePageBtn;
+
+	@FindBy(css = ".paginate_button.next a")
+	private WebElement nextTablePageBtn;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -208,13 +205,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void openToolsDropDown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		toolsDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mergeBtn")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-merge-btn")));
+	}
+
+	public void closeToolsDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		Actions act = new Actions(driver);
+		act.moveToElement(toolsDropdownBtn)
+				.moveByOffset(10, 10)
+				.click()
+				.perform();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-merge-btn")));
 	}
 
 	public void openExportDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		exportSamplesDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-download-btn")));
 	}
 
 	public boolean isSampleToolsAvailable() {
@@ -222,27 +229,33 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isDownloadBtnEnabled() {
-		return !downloadBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(downloadBtn);
 	}
 
 	public boolean isNcbiBtnEnabled() {
-		return !ncbiBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(ncbiExportBtn);
+	}
+
+	private boolean isAnchorElementEnabled(WebElement element) {
+		// Using xpath because for anchor elements in dropdowns, bootstrap adds
+		// the disabled class it the parent li element.
+		return !element.findElement(By.xpath("./..")).getAttribute("class").contains("disabled");
 	}
 
 	public boolean isMergeBtnEnabled() {
-		return !mergeBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(mergeBtn);
 	}
 
-	public boolean isCopyBtnEnabled() {
-		return !copyBtn.getAttribute("class").contains("disabled");
+	public boolean isShareBtnEnabled() {
+		return isAnchorElementEnabled(copyBtn);
 	}
 
 	public boolean isMoveBtnEnabled() {
-		return !moveBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(moveBtn);
 	}
 
 	public boolean isRemoveBtnEnabled() {
-		return !moveBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(removeBtn);
 	}
 
 	// PAGINATION
@@ -272,13 +285,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectSample(int row) {
 		// Need to get the anything but the first column as that is a link to the sample!
-		WebElement checkbox = tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"));
+		WebElement checkbox = tableRows.get(row).findElement(By.className("t-row-select"));
 		checkbox.click();
 	}
 
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
-		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
+		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.className("t-row-select"))).perform();
 		// Sometimes, that shift key never gets lifted!
 		actions.keyUp(Keys.SHIFT).perform();
 	}
@@ -287,7 +300,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
 		waitForElementVisible(
-				By.cssSelector("#cart-count"));
+				By.className("js-cart-count"));
 		// If the cart count is already visible this can go too fast,
 		// wait for the cart to fully update it's total.
 		waitForTime(500);
@@ -323,61 +336,58 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		newMergeNameInput.sendKeys(newName);
-		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which
-		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
-		waitForTime(400);
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
+	
+	public void waitUntilShareButtonVisible() {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.visibilityOf(copyBtn));
+	}
 
-	public void copySamples(String project, boolean owner) {
+	public void shareSamples(String project, boolean owner) {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		
 		copyBtn.click();
-		copyMoveSamples(project, owner);
+		shareMoveSamples(project, owner);
 	}
 
 	public void moveSamples(String projectNum) {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
-		copyMoveSamples(projectNum, true);
+		// Setting owner to false because we removed the checkbox from the move.
+		shareMoveSamples(projectNum, false);
+	}
+
+	private void openFilterModal() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("modal-content")));
 	}
 
 	public void filterByName(String name) {
+		openFilterModal();
+
+		nameFilterInput.clear();
+		nameFilterInput.sendKeys(name);
+		applyFiltersBtn.click();
+
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		filterByPropertyBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(filterModal));
-		WebElement nameInput = filterModal.findElement(By.id("name"));
-		nameInput.clear();
-		sendInputTextSlowly(name, nameInput);
-		filterModal.findElement(By.id("doFilterBtn")).click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
-		// Ensure that modal fully closed.
-		waitForTime(300);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
-	public void filterByDateRange(String start, String end) {
+	public void filterByDateRange(String range) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		filterByPropertyBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(filterModal));
-		dateRangeInput.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".daterangepicker.show-calendar")));
+		openFilterModal();
 
-		Actions builder = new Actions(driver);
-		builder.moveToElement(daterangepickerStart, 100, 0).click().build().perform();
+		dateRangeInput.clear();
+		dateRangeInput.sendKeys(range);
 
-		daterangepickerStart.clear();
-		sendInputTextSlowly(start, daterangepickerStart);
-
-		builder.moveToElement(daterangepickerEnd, 100, 10).click().build().perform();
-		daterangepickerEnd.clear();
-		sendInputTextSlowly(end, daterangepickerEnd);
 		applyDateRangeBtn.click();
-
-		filterModal.findElement(By.id("doFilterBtn")).click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+		applyFiltersBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
 	public void clearFilter() {
@@ -387,7 +397,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public List<String> getSampleNamesOnPage() {
-		List<WebElement> sampleTDs = driver.findElements(By.className("sample-label"));
+		List<WebElement> sampleTDs = driver.findElements(By.cssSelector("tbody td:nth-child(2) a"));
 		List<String> names = new ArrayList<>();
 		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
 		return names;
@@ -403,36 +413,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectAllSamples() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
 		selectionAll.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
 		waitForTime(500);
 	}
 
 	public void deselectAllSamples() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-none")));
 		selectionNone.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-none")));
-	}
-
-	public void selectPage() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-all")));
-		selectionPageAll.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-all")));
-	}
-
-	public void deselectPage() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-none")));
-		selectionPageNone.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-none")));
+		waitForTime(500);
 	}
 
 	private void enterSelect2Value(String value) {
@@ -440,26 +427,27 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// Wait for select2 to be open properly.
 		waitForTime(500);
 		sendInputTextSlowly(value, select2Input);
-		WebDriverWait wait = new WebDriverWait(driver, 10);
 		// Wait needed to allow select2 to populate.
 		waitForTime(500);
 		select2Input.sendKeys(Keys.RETURN);
-
-		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
 	}
 
-	private void copyMoveSamples(String project, boolean owner) {
+	private void shareMoveSamples(String project, boolean owner) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
 		
-		if(owner){
-			giveOwnerBtn.click();
+		if(owner) {
+			try {
+				giveOwnerBtn.click();
+			} catch (NoSuchElementException e) {
+				throw new GiveOwnerNotDisplayedException();
+			}
 		}
 		
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-copy-samples-modal")));
 	}
 
 	public String getLinkerText() {
@@ -471,7 +459,40 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 	
 	public List<String> getLockedSampleNames(){
-		return lockedSamples.stream().map(s -> s.findElement(By.className("sample-label")).getText())
-				.collect(Collectors.toList());
+		List<WebElement> trs = driver.findElements(By.cssSelector("tbody tr"));
+		List<String> locked = new ArrayList<>();
+		for (WebElement tr : trs) {
+			if (tr.findElements(By.className("fa-lock"))
+					.size() > 0) {
+				locked.add(tr.findElement(By.className("t-sample-label"))
+						.getText());
+			}
+		}
+		return locked;
+	}
+
+	public void goToNextPage() {
+		nextTablePageBtn.click();
+		waitForTime(500);
+	}
+
+	public void closeModalIfOpen() {
+		List<WebElement> modals = driver.findElements(By.className("modal-open"));
+		if (modals.size() > 0) {
+			Actions actions = new Actions(driver);
+			actions.moveToElement(modals.get(0))
+					.moveByOffset(5, 5)
+					.click()
+					.perform();
+		}
+	}
+	
+	/**
+	 * Exception which is thrown when attempting to give owner to a sample
+	 * during copy/move and button is not displayed. Used for verifying no give
+	 * owner button when copying remote samples.
+	 */
+	@SuppressWarnings("serial")
+	public static class GiveOwnerNotDisplayedException extends RuntimeException {
 	}
 }

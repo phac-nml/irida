@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.ImmutableMap;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -40,6 +28,11 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.collect.ImmutableMap;
+
+/**
+ * Controller for handling associated projects in a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings/associated")
 @Scope("session")
@@ -110,7 +103,7 @@ public class ProjectSettingsAssociatedProjectsController {
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
 	 *
-	 * @return
+	 * @return a list of the associated projects for the given project
 	 */
 	@RequestMapping("/ajax/associated")
 	public @ResponseBody
@@ -123,11 +116,9 @@ public class ProjectSettingsAssociatedProjectsController {
 	/**
 	 * Add an associated project to a project
 	 *
-	 * @param projectId
-	 * 		The subject project id
-	 * @param associatedProjectId
-	 * 		The associated project id
-	 *
+	 * @param projectId           The subject project id
+	 * @param associatedProjectId The associated project id
+	 * @param locale              Locale of the logged in user
 	 * @return "success" if the request was successful
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
@@ -146,14 +137,12 @@ public class ProjectSettingsAssociatedProjectsController {
 	/**
 	 * Delete an associated project to a project
 	 *
-	 * @param projectId
-	 * 		The subject project id
-	 * @param associatedProjectId
-	 * 		The associated project id
-	 *
+	 * @param projectId           The subject project id
+	 * @param associatedProjectId The associated project id
+	 * @param locale              Locale of the logged in user
 	 * @return "success" if the request was successful
 	 */
-	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/remove", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> removeAssociatedProject(@PathVariable Long projectId,
 			@RequestParam Long associatedProjectId, Locale locale) {

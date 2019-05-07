@@ -24,6 +24,14 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 * @return the groups assigned to the project.
 	 */
 	public Collection<UserGroupProjectJoin> findGroupsByProject(final Project p);
+
+	/**
+	 * Find all projects linked to the group.
+	 *
+	 * @param ug the user group to check
+	 * @return the projects linked to the user group.
+	 */
+	public Collection<UserGroupProjectJoin> findProjectsByUserGroup(final UserGroup ug);
 	
 	/**
 	 * Find all groups with access to the project with a specific role.

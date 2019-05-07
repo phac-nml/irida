@@ -4,12 +4,14 @@ export class TemplateService {
   }
 
   getTemplates(url) {
-    return this.$http.get(url)
-      .then(result => result.data.templates);
+    return this.$http.get(url).then(result => result.data.templates);
   }
 
   getFieldsForTemplate(url, templateId) {
-    return this.$http.get(`${url}?templateId=${templateId}`)
+    return this.$http
+      .get(`${url}?templateId=${templateId}`)
       .then(result => result.data.fields);
   }
 }
+
+TemplateService.$inject = ["$http"];

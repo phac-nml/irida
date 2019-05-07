@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
@@ -26,7 +26,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  * 
  */
 @Configuration
-@PropertySource(value = { "classpath:configuration.properties", "file:/etc/irida/web.conf" }, ignoreResourceNotFound = true)
+@Import({ IridaApiPropertyPlaceholderConfig.class })
 public class WebEmailConfig {
 
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
@@ -56,11 +56,15 @@ public class WebEmailConfig {
 		return sender;
 	}
 
+	/**
+	 * Configure the template resolver
+	 * @return A ClassLoaderTemplateResolver
+	 */
 	public ClassLoaderTemplateResolver classLoaderTemplateResolver() {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);
 		classLoaderTemplateResolver.setSuffix(TEMPLATE_SUFFIX);
-		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XHTML.getTemplateModeName());
+		classLoaderTemplateResolver.setTemplateMode(TemplateMode.HTML);
 		classLoaderTemplateResolver.setCharacterEncoding(CHARACER_ENCODING);
 		return classLoaderTemplateResolver;
 	}
@@ -105,13 +109,13 @@ public class WebEmailConfig {
 		@Override
 		public Boolean isConfigured() {
 			if (UNCONFIGURED_HOST_VALUE.equals(getHost())) {
-				logger.warn("E-mail host is not configured, unable to send password reset e-mails.");
+				logger.warn("E-mail host is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			} else if (UNCONFIGURED_PROTOCOL_VALUE.equals(getProtocol())) {
-				logger.warn("E-mail protocol is not configured, unable to send password reset e-mails.");
+				logger.warn("E-mail protocol is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			} else if (UNCONFIGURED_USERNAME_VALUE.equals(getUsername())) {
-				logger.warn("E-mail username is not configured, unable to send password reset e-mails.");
+				logger.warn("E-mail username is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			}
 		

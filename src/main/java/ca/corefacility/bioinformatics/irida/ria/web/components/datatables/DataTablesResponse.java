@@ -36,7 +36,7 @@ public class DataTablesResponse {
 	/**
 	 * Get the draw counter. This is used by DataTables to ensure that the Ajax returns from server-side processing
 	 * requests are drawn in sequence by DataTables.  Extracted directly from the initial
-	 * {@link org.apache.http.HttpRequest}
+	 * {@code org.apache.http.HttpRequest}
 	 *
 	 * @return {@link Integer}
 	 */

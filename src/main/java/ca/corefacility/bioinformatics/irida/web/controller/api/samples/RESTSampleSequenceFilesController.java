@@ -158,7 +158,7 @@ public class RESTSampleSequenceFilesController {
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
 	public ModelMap getSampleSequenceFiles(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
-		logger.debug("Reading seq files for sample " + sampleId);
+		logger.trace("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 
 		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
@@ -217,7 +217,7 @@ public class RESTSampleSequenceFilesController {
 	public ModelMap listSequencingObjectsOfTypeForSample(@PathVariable Long sampleId, @PathVariable String objectType) {
 		ModelMap modelMap = new ModelMap();
 
-		logger.debug("Reading seq file  for sample " + sampleId);
+		logger.trace("Reading seq file  for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 
 		Class<? extends SequencingObject> type = objectLabels.inverse().get(objectType);
@@ -422,45 +422,55 @@ public class RESTSampleSequenceFilesController {
 			logger.trace("Added seqfile to miseqrun");
 		}
 
-		// save the seqobject and sample
-		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
-				.createSequencingObjectInSample(singleEndSequenceFile, sample);
+		try {
+			// save the seqobject and sample
+			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
+					singleEndSequenceFile, sample);
 
-		singleEndSequenceFile = (SingleEndSequenceFile) createSequencingObjectInSample.getObject();
+			singleEndSequenceFile = (SingleEndSequenceFile) createSequencingObjectInSample.getObject();
+			logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject()
+					.getId());
 
-		logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject().getId());
-		// clean up the temporary files.
-		Files.deleteIfExists(target);
-		Files.deleteIfExists(temp);
-		logger.trace("Deleted temp file");
-		// prepare a link to the sequence file itself (on the sequence file
-		// controller)
-		String objectType = objectLabels.get(SingleEndSequenceFile.class);
-		Long sequenceFileId = singleEndSequenceFile.getSequenceFile().getId();
-		Link selfRel = linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
-						objectType, singleEndSequenceFile.getId(), sequenceFileId)).withSelfRel();
+			// clean up the temporary files.
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
+			logger.trace("Deleted temp file");
+			// prepare a link to the sequence file itself (on the sequence file
+			// controller)
+			String objectType = objectLabels.get(SingleEndSequenceFile.class);
+			Long sequenceFileId = singleEndSequenceFile.getSequenceFile()
+					.getId();
+			Link selfRel = linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+							objectType, singleEndSequenceFile.getId(), sequenceFileId)).withSelfRel();
 
-		// Changed, because sfr.setResource(sf)
-		// and sfr.setResource(sampleSequenceFileRelationship.getObject())
-		// both will not pass a GET-POST comparison integration test.
-		singleEndSequenceFile = (SingleEndSequenceFile) sequencingObjectService.read(singleEndSequenceFile.getId());
-		SequenceFile sequenceFile = singleEndSequenceFile.getFileWithId(sequenceFileId);
+			// Changed, because sfr.setResource(sf)
+			// and sfr.setResource(sampleSequenceFileRelationship.getObject())
+			// both will not pass a GET-POST comparison integration test.
+			singleEndSequenceFile = (SingleEndSequenceFile) sequencingObjectService.read(singleEndSequenceFile.getId());
+			SequenceFile sequenceFile = singleEndSequenceFile.getFileWithId(sequenceFileId);
 
-		// add links to the resource
-		sequenceFile.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(REL_SAMPLE_SEQUENCE_FILES));
-		sequenceFile.add(selfRel);
-		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
-		sequenceFile.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
-						singleEndSequenceFile.getId())).withRel(REL_SEQ_OBJECT));
-		
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
-		// add a location header.
-		response.addHeader(HttpHeaders.LOCATION, selfRel.getHref());
-		// set the response status.
-		response.setStatus(HttpStatus.CREATED.value());
+			// add links to the resource
+			sequenceFile.add(
+					linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
+							REL_SAMPLE_SEQUENCE_FILES));
+			sequenceFile.add(selfRel);
+			sequenceFile.add(
+					linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
+			sequenceFile.add(
+					linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
+							singleEndSequenceFile.getId())).withRel(REL_SEQ_OBJECT));
+
+			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
+			// add a location header.
+			response.addHeader(HttpHeaders.LOCATION, selfRel.getHref());
+			// set the response status.
+			response.setStatus(HttpStatus.CREATED.value());
+
+		} catch (IllegalArgumentException e) {
+			logger.debug("Error 400 - Bad Request: " + e.getMessage());
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+		}
 
 		// respond to the client
 		return modelMap;
@@ -530,41 +540,47 @@ public class RESTSampleSequenceFilesController {
 			logger.trace("Added sequencing run to files" + runId);
 		}
 
-		// add the files and join
-		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
-				.createSequencingObjectInSample(sequenceFilePair, sample);
+		try {
+			// add the files and join
+			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
+					sequenceFilePair, sample);
+			// clean up the temporary files.
+			Files.deleteIfExists(target1);
+			Files.deleteIfExists(temp1);
+			Files.deleteIfExists(target2);
+			Files.deleteIfExists(temp2);
+			logger.trace("Deleted temp files");
 
-		// clean up the temporary files.
-		Files.deleteIfExists(target1);
-		Files.deleteIfExists(temp1);
-		Files.deleteIfExists(target2);
-		Files.deleteIfExists(temp2);
-		logger.trace("Deleted temp files");
+			SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
 
-		SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
+			sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
 
-		sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
+			sequencingObject.add(
+					linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
+							REL_SAMPLE_SEQUENCE_FILES));
 
-		sequencingObject.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(REL_SAMPLE_SEQUENCE_FILES));
+			// add location header
+			response.addHeader(HttpHeaders.LOCATION, sequencingObject.getLink("self")
+					.getHref());
 
-		// add location header
-		response.addHeader(HttpHeaders.LOCATION, sequencingObject.getLink("self").getHref());
+			// set the response status.
+			response.setStatus(HttpStatus.CREATED.value());
+			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
+		} catch (IllegalArgumentException e) {
+			logger.debug("Error 400 - Bad Request: " + e.getMessage());
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+		}
 
-		// set the response status.
-		response.setStatus(HttpStatus.CREATED.value());
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
 		// respond to the client
 		return modelMap;
 	}
 
 	/**
 	 * Remove a {@link SequencingObject} from a {@link Sample}.
-	 * 
-	 * @param sampleId
-	 *            the source {@link Sample} identifier.
-	 * @param objectId
-	 *            the identifier of the {@link SequencingObject} to move.
+	 *
+	 * @param sampleId   the source {@link Sample} identifier.
+	 * @param objectType The type of sequencing object being removed
+	 * @param objectId   the identifier of the {@link SequencingObject} to move.
 	 * @return a status indicating the success of the move.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.DELETE)
@@ -616,11 +632,10 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Add the links for a {@link SequencingObject} to its sample, self, to each
 	 * individual {@link SequenceFile}
-	 * 
-	 * @param sequencingObject
-	 *            {@link SequencingObject} to enhance
-	 * @param sampleId
-	 *            ID of the {@link Sample} for the object
+	 *
+	 * @param sequencingObject {@link SequencingObject} to enhance
+	 * @param sampleId         ID of the {@link Sample} for the object
+	 * @param <T>              The subclass of {@link SequencingObject} being enhanced by this method
 	 * @return the enhanced {@link SequencingObject}
 	 */
 	@SuppressWarnings("unchecked")

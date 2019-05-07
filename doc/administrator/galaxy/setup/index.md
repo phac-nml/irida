@@ -247,21 +247,7 @@ Now, re-start Galaxy with `service galaxy restart`.  If you log into Galaxy as t
 
 #### Automated installation of tools
 
-An automated script (`install_tool_shed_tools.py`) to install all necessary tools (in `tools-list.yml`) for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed at [Automated tools install][].
-
-To run this script, please do the following:
-
-```
-# Installs dependency modules for script
-pip install -r install-tools-requirements.txt
-
-# Do installation of Galaxy tools
-python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --apikey [api key]
-```
-
-You may want to monitor the Galaxy log file in `paster.log` as the installation is proceeding.  This may take a while to download, build, and install all tools.
-
-*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ][faq-tbl2asn].*
+{%include administrator/galaxy/setup/automated-tool-install.md %}
 
 #### Manual installation of tools
 
@@ -271,6 +257,9 @@ Alternatively, the necessary tools can be installed manually through the followi
 * [Assembly and Annotation][]
 * [Assembly and Annotation Collection][]
 * [SISTR Salmonella Typing][]
+* [refseq_masher]
+* [MentaLiST MLST][]
+* [Bio_Hansel][]
 
 Each of these will step through installing the necessary tools in IRIDA.  These steps will involve going to Galaxy, navigating to **Admin > Search tool sheds**, finding the appropriate tool and installing.  On completion, you should be able to go to **Admin > Manage installed tools** to check the status of each tool.  For a successfull install, you should see a status of `Installed`.  If there is an error, you can click on each tool for more details.
 
@@ -310,6 +299,9 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [SISTR Salmonella Typing]: ../pipelines/sistr/
 [Assembly and Annotation]: ../pipelines/assembly-annotation/
 [Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/
+[refseq_masher]: ../pipelines/refseq_masher/
+[MentaLiST MLST]: ../pipelines/mentalist/
+[Bio_Hansel]: ../pipelines/bio_hansel/
 [Galaxy Job Config]: https://wiki.galaxyproject.org/Admin/Config/Jobs
 [saved-histories.jpg]: ../images/saved-histories.jpg
 [galaxy-installed-repositories.jpg]: ../images/galaxy-installed-repositories.jpg
@@ -317,10 +309,7 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [conda]: https://conda.io/docs/
 [miniconda]: https://conda.io/miniconda.html
 [galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
-[Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
-[IRIDA releases]: https://github.com/phac-nml/irida/releases
 [SQLite]: https://www.sqlite.org/
 [updating tbl2asn]: ../pipelines/assembly-annotation/#updating-tbl2asn
 [faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
-[faq-tbl2asn]: ../../faq/#tbl2asn-out-of-date
 [web]: ../../web

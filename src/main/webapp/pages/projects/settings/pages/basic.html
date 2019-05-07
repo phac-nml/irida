@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/settings/_base">
+      data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.basic}">Basic</title>
     <script th:inline="javascript">
@@ -29,12 +29,24 @@
                     <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
                 </label>
             </div>
-            <div class="checkbox">
-                <label>
-                    <input id="sistr" type="checkbox" value="sistr" th:checked="${project.sistrTypingUploads}"
-                          th:disabled="not ${manageMembers}"/>
-                    <span th:text="#{project.settings.sistr.control}">_Automatically type uploads with SISTR_</span>
-                </label>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label for="sistrTypingUploads">
+                        <input type="checkbox" class="js-sistr-checkbox" id="sistrTypingUploads"
+                               th:checked="${#strings.contains(project.sistrTypingUploads, 'AUTO')}"
+                               name="sistrTypingUploads" value="OFF" th:disabled="not ${manageMembers}">
+                        <span th:text="#{projects.create.settings.sistr}">_RUN_SISTR_</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label style="margin-left: 20px;" for="sistrWrites">
+                        <input type="checkbox" class="js-sistr-writes" id="sistrWrites"
+                               th:checked="${#strings.equals(project.sistrTypingUploads, 'AUTO_METADATA')}"
+                               th:disabled="not ${#strings.contains(project.sistrTypingUploads, 'AUTO')}">
+                        <span th:text="#{projects.create.settings.sistr.AUTO_METADATA}">_WRITE_BACK_TO_SAMPLE_METADATA_</span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>

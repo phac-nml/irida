@@ -1,20 +1,40 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<div id="removeGroupModalGen" class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-					<span aria-hidden="true">&times;</span>
-				</button>
-				<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{group.remove.modal.title}">_Remove Group_</h4>
-			</div>
-			<div class="modal-body">
-				<p th:utext="#{group.remove.modal.confirm(${group.name})}" />
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">_Close_</button>
-				<button type="button" class="btn btn-danger" id="remove-group-button" th:text="#{group.remove.modal.button.remove}">_Remove Group_</button>
-			</div>
-		</div>
-	</div>
+    <div id="removeGroupModalGen" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="deleteConfirmTitle" th:text="#{group.remove.modal.title}">_Remove Group_</h4>
+            </div>
+            <div class="modal-body">
+                <p th:utext="#{group.remove.modal.confirm(${group.name})}">_MODAL GROUP REMOVAL MESSAGE_</p>
+
+                <th:block th:if="${projectsWithGroup != null and !projectsWithGroup.isEmpty()}">
+                    <p th:utext="#{group.remove.modal.confirm.linked.to.project}" th:if="${projectsWithGroup.size()} == 1">_FOLLOWING PROJECT IS LINKED_</p>
+                    <p th:utext="#{group.remove.modal.confirm.linked.to.projects}" th:if="${projectsWithGroup.size()} > 1">_FOLLOWING PROJECTS ARE LINKED_</p>
+                    <th:block th:each="project, istat : ${projectsWithGroup}">
+                        <p><strong th:text="${project.getSubject().getName()}"
+                                   th:if="${istat.index} < ${maxProjectsToDisplay}">
+                            _PROJECT NAME_</strong></p>
+                    </th:block>
+                    <p th:text="#{group.remove.modal.confirm.plus.n.more(${projectsWithGroup.size()} - ${maxProjectsToDisplay})}"
+                       th:if="${projectsWithGroup.size()} - ${maxProjectsToDisplay} > 1">_PLUS 'N' MORE PROJECTS..._</p>
+                    <p th:text="#{group.remove.modal.confirm.plus.one.more}"
+                       th:if="${projectsWithGroup.size()} - ${maxProjectsToDisplay} == 1">_PLUS 1 MORE PROJECTS..._</p>
+                    <br/>
+                    <p th:utext="#{group.remove.modal.confirm.are.you.sure}">_ARE YOU SURE YOU WANT TO REMOVE THIS
+                        GROUP_</p>
+                </th:block>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">_Close_
+                </button>
+                <button type="button" class="btn btn-danger" id="remove-group-button"
+                        th:text="#{group.remove.modal.button.remove}">_Remove Group_
+                </button>
+            </div>
+        </div>
+    </div>
 </html>

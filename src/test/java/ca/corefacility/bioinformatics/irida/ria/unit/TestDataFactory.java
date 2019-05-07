@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetExcepti
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -40,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
@@ -93,14 +93,18 @@ public class TestDataFactory {
 		AnalysisSubmission submission = constructAnalysisSubmission();
 		return new GenomeAssemblyFromAnalysis(submission);
 	}
-
+	
 	public static AnalysisSubmission constructAnalysisSubmission() {
+		return constructAnalysisSubmission(UUID.randomUUID());
+	}
+
+	public static AnalysisSubmission constructAnalysisSubmission(UUID workflowId) {
 		Set<SequencingObject> files = new HashSet<>();
 		files.add(constructSingleEndSequenceFile());
 		Long id = 5L;
 		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getFiles().iterator().next().getFile());
 		rf.setId(id);
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("submission-" + id)
 				.inputFiles(files)
 				.referenceFile(rf)
@@ -119,11 +123,13 @@ public class TestDataFactory {
 
 	public static Analysis constructAnalysis() {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
-				.put("tree", constructAnalysisOutputFile("snp_tree.tree"))
-				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq"))
-				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).
-				put("contigs-with-repeats", constructAnalysisOutputFile("test_file.fasta")).build();
-		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
+				.put("tree", constructAnalysisOutputFile("snp_tree.tree", null))
+				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq", null))
+				.put("table", constructAnalysisOutputFile("test_file_2.fastq", null))
+				.put("contigs-with-repeats", constructAnalysisOutputFile("test_file.fasta", null))
+				.put("refseq-masher-matches", constructAnalysisOutputFile("refseq-masher-matches.tsv", 9000L))
+				.build();
+		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, BuiltInAnalysisTypes.PHYLOGENOMICS);
 		return analysis;
 	}
 
@@ -145,13 +151,16 @@ public class TestDataFactory {
 		return join;
 	}
 
-	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
+	private static AnalysisOutputFile constructAnalysisOutputFile(String name, Long id) {
+		if (id == null) {
+			id = 1L;
+		}
 		ToolExecution toolExecution = new ToolExecution(1L, null, "testTool", "0.0.12", "executionManagersId",
 				ImmutableMap.of());
 		final AnalysisOutputFile of = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), "", FAKE_EXECUTION_MANAGER_ID,
 				toolExecution);
 		final DirectFieldAccessor dfa = new DirectFieldAccessor(of);
-		dfa.setPropertyValue("id", 1L);
+		dfa.setPropertyValue("id", id);
 		return of;
 	}
 
@@ -169,14 +178,14 @@ public class TestDataFactory {
 		List<IridaWorkflowToolRepository> tools = ImmutableList.of();
 		List<IridaWorkflowParameter> parameters = ImmutableList.of();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1",
-				AnalysisType.DEFAULT, input, outputs, tools, parameters);
+				BuiltInAnalysisTypes.DEFAULT, input, outputs, tools, parameters);
 		IridaWorkflowStructure structure = new IridaWorkflowStructure(null);
 		return new IridaWorkflow(description, structure);
 	}
 
-	public static Map<Project, Set<Sample>> constructCart() {
+	public static Map<Project, List<Sample>> constructCart() {
 		Project project = constructProject();
-		Set<Sample> samples = new HashSet<>();
+		List<Sample> samples = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			samples.add(constructSample());
 		}

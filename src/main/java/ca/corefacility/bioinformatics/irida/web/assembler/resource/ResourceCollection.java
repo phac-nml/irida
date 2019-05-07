@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 /**
  * Wraps a collection of {@link ResourceCollection} objects to be sent to the client.
  *
+ * @param <Type> The type of object in this collection
  */
 @XmlRootElement(name = "resource")
 public class ResourceCollection<Type> extends IridaResourceSupport implements Iterable<Type> {

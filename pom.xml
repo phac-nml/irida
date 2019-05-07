@@ -4,19 +4,19 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.20.0-SNAPSHOT</version>
+	<version>19.09-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
 	<issueManagement>
 		<system>GitLab</system>
-		<url>http://irida.corefacility.ca/gitlab/irida/irida/issues</url>
+		<url>https://github.com/phac-nml/irida/issues</url>
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:http://irida.corefacility.ca/gitlab/irida/irida.git</connection>
-		<developerConnection>scm:git:ssh://git@irida.corefacility.ca/gitlab/irida/irida.git</developerConnection>
-		<url>http://irida.corefacility.ca/gitlab/irida/irida</url>
+		<connection>scm:git:https://github.com/phac-nml/irida.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:phac-nml/irida.git</developerConnection>
+		<url>https://github.com/phac-nml/irida</url>
 	</scm>
 
 	<inceptionYear>2013</inceptionYear>
@@ -68,6 +68,10 @@
 		<repository>
 			<id>spring-milestones</id>
 			<url>https://repo.spring.io/libs-milestone/</url>
+		</repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>https://clojars.org/repo</url>
 		</repository>
 	</repositories>
 
@@ -207,7 +211,6 @@
 			<artifactId>commons-net</artifactId>
 			<version>${commons.net.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
@@ -310,7 +313,11 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${apache.poi.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring4</artifactId>
@@ -318,8 +325,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity3</artifactId>
-			<version>${thymeleaf.extras.springsecurity3.version}</version>
+			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
+			<version>${thymeleaf-extras-springsecurity4.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.mxab.thymeleaf.extras</groupId>
@@ -330,37 +337,6 @@
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 			<version>${thymeleaf-layout-dialect.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>dandelion-core</artifactId>
-			<version>${dandelion-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>dandelion-thymeleaf</artifactId>
-			<version>${dandelion-thymeleaf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-thymeleaf</artifactId>
-			<version>${dandelion-datatables.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-export-poi-ooxml</artifactId>
-			<version>${dandelion-datatables.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-spring3</artifactId>
-			<version>${dandelion-spring3.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.github.dandelion</groupId>
-					<artifactId>dandelion-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.attoparser</groupId>
@@ -401,6 +377,12 @@
 
 		<!-- Testing -->
 		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
@@ -428,12 +410,6 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -576,6 +552,13 @@
 			<version>1.1.11</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.pf4j</groupId>
+			<artifactId>pf4j</artifactId>
+			<version>${pf4j.version}</version>
+		</dependency>
+
+
 		<!-- Validation API -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -602,15 +585,18 @@
 			<artifactId>imgscalr-lib</artifactId>
 			<version>${imgscalr.version}</version>
 		</dependency>
+
+		<!-- Clojure nREPL -->
+		<dependency>
+			<groupId>net.matlux</groupId>
+			<artifactId>jvm-breakglass</artifactId>
+			<version>${jvm-breakglass.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<finalName>irida-${project.version}</finalName>
 		<resources>
-			<resource>
-				<directory>src/main/resources/dandelion</directory>
-				<filtering>true</filtering>
-			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
@@ -671,6 +657,7 @@
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
+								<irida.db.profile>it</irida.db.profile>
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
@@ -683,6 +670,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
 					<properties>
 						<property>
 							<name>listener</name>
@@ -739,7 +727,28 @@
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
 					<quiet>true</quiet>
+					<additionalparam>-Xdoclint:all</additionalparam>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven.checkstyle.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>pre-site</phase>
+						<configuration>
+							<configLocation>checkstyle.xml</configLocation>
+							<encoding>UTF-8</encoding>
+							<consoleOutput>true</consoleOutput>
+							<failsOnError>true</failsOnError>
+						</configuration>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -834,6 +843,7 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<packagingExcludes>node_modules/**/*</packagingExcludes>
+					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
 
@@ -883,6 +893,12 @@
 									<!-- Setting spring profile for integration tests to "it". Also
 										done in failsafe plugin -->
 									<name>spring.profiles.active</name>
+									<value>it</value>
+								</systemProperty>
+								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also
+										done in failsafe plugin -->
+									<name>irida.db.profile</name>
 									<value>it</value>
 								</systemProperty>
 								<systemProperty>
@@ -1019,7 +1035,7 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<guava.version>17.0</guava.version>
 		<spring.version>4.2.3.RELEASE</spring.version>
-		<spring.security.version>4.0.0.M1</spring.security.version>
+		<spring.security.version>4.0.4.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
@@ -1027,17 +1043,16 @@
 		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
-		<h2.version>1.4.180</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
-		<commons.net.version>3.3</commons.net.version>
-		<fastqc.version>0.10.1-nml-custom</fastqc.version>
+		<commons.net.version>3.6</commons.net.version>
+		<fastqc.version>0.11.7-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-29f28db211c300fcaf21a7a5992478fc5a9893cd</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.2.0</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
@@ -1051,31 +1066,32 @@
 		<spring.hateoas.version>0.19.0.RELEASE</spring.hateoas.version>
 		<el.ri.version>1.0</el.ri.version>
 		<oltu.version>1.0.0</oltu.version>
-		<thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
-		<thymeleaf-extras-data-attribute.version>1.3</thymeleaf-extras-data-attribute.version>
-		<thymeleaf-layout-dialect.version>1.3.1</thymeleaf-layout-dialect.version>
-		<dandelion-core.version>1.1.1-IRIDA</dandelion-core.version>
-		<dandelion-thymeleaf.version>1.1.1</dandelion-thymeleaf.version>
-		<dandelion-datatables.version>1.1.0</dandelion-datatables.version>
-		<dandelion-spring3.version>1.1.0</dandelion-spring3.version>
+		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
+		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
+		<thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
+		<apache.poi.version>3.17</apache.poi.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
-		<selenium-driver.version>2.48.2</selenium-driver.version>
-		<selenium-chrome-driver.version>2.48.2</selenium-chrome-driver.version>
-		<attoparser.version>1.3</attoparser.version>
-		<thymeleaf.extras.springsecurity3.version>2.1.1.RELEASE</thymeleaf.extras.springsecurity3.version>
+		<selenium-driver.version>2.52.0</selenium-driver.version>
+		<selenium-chrome-driver.version>2.52.0</selenium-chrome-driver.version>
+		<attoparser.version>2.0.4.RELEASE</attoparser.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
 		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
+		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
+		<pf4j.version>2.4.0</pf4j.version>
+		<hamcrest.version>1.3</hamcrest.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
 		<maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
+		<maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
 		<maven.jacoco.plugin.version>0.7.1.201405082137</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
@@ -1088,8 +1104,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-		<node.version>v8.6.0</node.version>
-		<yarn.version>v1.1.0</yarn.version>
+		<node.version>v11.10.0</node.version>
+		<yarn.version>v1.15.2</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
@@ -1127,6 +1143,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
+					**/pipeline/results/**/*IT.java,
 					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
@@ -1149,8 +1166,21 @@
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/*Galaxy*IT.java,
-					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
+				</include.tests>
+				<exclude.tests>
+					**/AnalysisExecutionServiceGalaxyIT.java,
+				</exclude.tests>
+				<jetty.skip>true</jetty.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>galaxy_pipeline_testing</id>
+			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
+				<include.tests>
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisExecutionServiceGalaxyIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 				<jetty.skip>true</jetty.skip>

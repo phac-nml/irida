@@ -76,10 +76,9 @@ public class SequenceFileController {
 	 * Gets the name of the template for the sequence file chart / main page.
 	 * Populates the template with the standard info.
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param sequenceFileId
-	 *            Id for the sequence file
+	 * @param model              {@link Model}
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
 	 * @return The name of the template.
 	 */
 	@RequestMapping(value = {
@@ -99,10 +98,9 @@ public class SequenceFileController {
 	 * Gets the name of the template for the sequence file overrepresented
 	 * sequences page. Populates the template with the standard info.
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param sequenceFileId
-	 *            Id for the sequence file.
+	 * @param model              {@link Model}
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
 	 * @return The name fo the template
 	 */
 	@RequestMapping(value = {
@@ -120,12 +118,10 @@ public class SequenceFileController {
 	/**
 	 * Downloads a sequence file.
 	 *
-	 * @param sequenceFileId
-	 *            Id for the file to download.
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @throws IOException
-	 *             if we can't write the file to the response.
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param response           {@link HttpServletResponse}
+	 * @throws IOException if we can't write the file to the response.
 	 */
 	@RequestMapping("/sequenceFiles/download/{sequencingObjectId}/file/{sequenceFileId}")
 	public void downloadSequenceFile(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,
@@ -141,14 +137,12 @@ public class SequenceFileController {
 	/**
 	 * Get images specific for individual sequence files.
 	 *
-	 * @param sequenceFileId
-	 *            Id for the sequnece file.
-	 * @param type
-	 *            The type of image to get.
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @throws IOException
-	 *             if we can't write the image out to the response.
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param type               The type of image to get.
+	 * @param response           {@link HttpServletResponse}
+	 * @param thumb              Whether to scale the image for a thumbnail
+	 * @throws IOException if we can't write the image out to the response.
 	 */
 	@RequestMapping(value = "/sequenceFiles/img/{sequencingObjectId}/file/{sequenceFileId}/{type}")
 	public void downloadSequenceFileImages(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,

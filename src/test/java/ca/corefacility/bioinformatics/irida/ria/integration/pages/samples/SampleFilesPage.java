@@ -29,7 +29,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public String getPageTitle() {
-		return driver.findElement(By.id("sample-page-title")).getText();
+		return driver.findElement(By.className("t-title")).getText();
 	}
 
 	public String getSequenceFileName() {

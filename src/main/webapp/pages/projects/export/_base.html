@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
-<head lang="en">
+      data-layout-decorate="~{template/page}">
+<head>
     <title th:text="${project.label}">Project</title>
 </head>
 <body>

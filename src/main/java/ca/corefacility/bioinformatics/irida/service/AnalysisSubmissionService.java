@@ -1,10 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -17,11 +16,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 /**
  * A service for AnalysisSubmissions.
@@ -40,7 +39,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *             If the corresponding analysis cannot be found.
 	 */
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
-	
+
 	/**
 	 * Gets a {@link Set} of {@link AnalysisSubmission}s for a {@link User}.
 	 * 
@@ -70,73 +69,57 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
 			Collection<UUID> workflowIds);
-	
+
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
-	 * @param workflow
-	 *            {@link IridaWorkflow} that the files will be run on
-	 * @param ref
-	 *            {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles
-	 *            {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs
-	 *            {@link List} of {@link SequenceFilePair} to run on the
-	 *            workflow
-	 * @param unnamedParameters
-	 *            {@link Map} of parameters specific for the pipeline
-	 * @param namedParameters
-	 *            the named parameters to use for the workflow.
-	 * @param name
-	 *            {@link String} the name for the analysis
-	 * @param analysisDescription
-	 *            {@link String} the description of the analysis being submitted
-	 * @param projectsToShare
-	 *            A list of {@link Project}s to share analysis results with
-	 * @param writeResultsToSamples
-	 *            If true, results of this pipeline will be saved back to the
-	 *            samples on successful completion.
+	 * @param workflow              {@link IridaWorkflow} that the files will be run on
+	 * @param ref                   {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles         {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs     {@link List} of {@link SequenceFilePair} to run on the
+	 *                              workflow
+	 * @param unnamedParameters     {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters       the named parameters to use for the workflow.
+	 * @param name                  {@link String} the name for the analysis
+	 * @param analysisDescription   {@link String} the description of the analysis being submitted
+	 * @param projectsToShare       A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the
+	 *                              samples on successful completion.
+	 * @param emailPipelineResult   If true, user will be emailed if a pipelines successfully
+	 *                              completes or if it errors
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
-	 * @param workflow
-	 *            {@link IridaWorkflow} that the files will be run on
-	 * @param ref
-	 *            {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles
-	 *            {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs
-	 *            {@link List} of {@link SequenceFilePair} to run on the
-	 *            workflow
-	 * @param unnamedParameters
-	 *            {@link Map} of parameters specific for the pipeline
-	 * @param namedParameters
-	 *            the named parameters to use for the workflow.
-	 * @param name
-	 *            {@link String} the name for the analysis
-	 * @param analysisDescription
-	 *            {@link String} the description of the analysis being submitted
-	 * @param projectsToShare
-	 *            A list of {@link Project}s to share analysis results with
-	 * @param writeResultsToSamples
-	 *            If true, results of this pipeline will be saved back to the
-	 *            samples on successful completion.
+	 * @param workflow              {@link IridaWorkflow} that the files will be run on
+	 * @param ref                   {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles         {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs     {@link List} of {@link SequenceFilePair} to run on the
+	 *                              workflow
+	 * @param unnamedParameters     {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters       the named parameters to use for the workflow.
+	 * @param name                  {@link String} the name for the analysis
+	 * @param analysisDescription   {@link String} the description of the analysis being submitted
+	 * @param projectsToShare       A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the
+	 *                              samples on successful completion.
+	 * @param emailPipelineResult   If true, user will be emailed if a pipelines successfully
+	 *                              completes or if it errors
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
-	 *         the supplied files.
+	 * the supplied files.
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
@@ -155,7 +138,25 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
-	
+
+	/**
+	 * Get the {@link JobError} objects for a {@link AnalysisSubmission} id
+	 * @param id {@link AnalysisSubmission} id
+	 * @return {@link JobError} objects for a {@link AnalysisSubmission}
+	 * @throws EntityNotFoundException If no such {@link AnalysisSubmission} exists.
+	 * @throws ExecutionManagerException If there was an issue contacting the execution manager.
+	 */
+	List<JobError> getJobErrors(Long id) throws EntityNotFoundException, ExecutionManagerException;
+
+	/**
+	 * Get first {@link JobError} for a {@link AnalysisSubmission} id
+	 * @param id {@link AnalysisSubmission} id
+	 * @return {@link JobError} object
+	 * @throws EntityNotFoundException If no such {@link AnalysisSubmission} exists.
+	 * @throws ExecutionManagerException If there was an issue contacting the execution manager.
+	 */
+	JobError getFirstJobError(Long id) throws  EntityNotFoundException, ExecutionManagerException;
+
 	/**
 	 * Share an {@link AnalysisSubmission} with a given {@link Project}
 	 * 
@@ -209,7 +210,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
@@ -222,20 +223,55 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
+	 * Get a page of {@link AnalysisSubmission}s the given user has submitted.
+	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show	 * @return
+	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
+
+	/**
+	 * Update the priority of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param priority   the new priority
+	 * @return the updated submission
+	 */
+	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
+
+	/**
+	 * Get all {@link User} generated {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 * @param user {@link User}
+	 * @return List of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user);
+
+	/**
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
 }

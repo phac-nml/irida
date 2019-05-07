@@ -1,11 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.io.IOException;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -13,44 +9,38 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.thymeleaf.cache.StandardCacheManager;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesCriteriasMethodArgumentResolver;
-import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
-import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
+
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -59,13 +49,12 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
-public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
+public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String TEMPLATE_MODE = "HTML5";
-	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final String LOCALE_CHANGE_PARAMETER = "lang";
+	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
@@ -75,12 +64,28 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	private MessageSource messageSource;
 
+	private ApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	public IridaUIWebConfig() {
+		super();
+	}
+
 	@Bean
 	public LocaleChangeInterceptor localeChangeInterceptor() {
 		logger.debug("Configuring LocaleChangeInterceptor");
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
 		return localeChangeInterceptor;
+	}
+
+	@Bean
+	public GalaxySessionInterceptor galaxySessionInterceptor() {
+		return new GalaxySessionInterceptor();
 	}
 
 	@Bean
@@ -97,7 +102,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 			} catch (DirectoryIteratorException ex) {
 				logger.error("Error reading analytics directory: ", ex);
 			} catch (IOException e) {
-				logger.error("Error readin analytics file: ", e);
+				logger.error("Error reading analytics file: ", e);
 			}
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
@@ -128,7 +133,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
-		registry.addResourceHandler("/dandelion-assets/**").addResourceLocations("/dandelion-assets/");
 	}
 
 	@Override
@@ -137,57 +141,43 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
 		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove-modal.tmpl");
-		registry.addViewController("/cart/templates/galaxy").setViewName("cart/templates/galaxy");
 		registry.addViewController("/projects/templates/referenceFiles/delete")
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
+
 	@Bean
-	public ServletContextTemplateResolver templateResolver() {
-		logger.debug("Configuring Template Resolvers.");
-		ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
-		resolver.setPrefix(TEMPLATE_LOCATION);
-		resolver.setSuffix(TEMPLATE_SUFFIX);
-		resolver.setTemplateMode(TEMPLATE_MODE);
+	public SpringResourceTemplateResolver templateResolver(){
+		SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+		templateResolver.setApplicationContext(this.applicationContext);
+		templateResolver.setPrefix(TEMPLATE_LOCATION);
+		templateResolver.setSuffix(TEMPLATE_SUFFIX);
+		templateResolver.setTemplateMode(TemplateMode.HTML);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+			templateResolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 		} else {
-			resolver.setCacheTTLMs(0L);
+			templateResolver.setCacheable(false);
 		}
-		return resolver;
+		return templateResolver;
 	}
 
 	@Bean
-	public SpringTemplateEngine templateEngine() {
-		logger.debug("Configuring SpringTemplateEngine");
-		SpringTemplateEngine engine = new SpringTemplateEngine();
-		engine.setTemplateResolver(templateResolver());
-		engine.setAdditionalDialects(additionalDialects());
-
-		// straight up disable the thymeleaf expression cache. The problem with
-		// ${object.member} sometimes working and sometimes not working comes
-		// from using the same expression in two different contexts (i.e.,
-		// object is a Map in one case, and a Project in another). Thymeleaf
-		// caches the expressions, and something is happening between uses of
-		// the expression.
-		final StandardCacheManager cacheManager = (StandardCacheManager) engine.getCacheManager();
-		cacheManager.setExpressionCacheMaxSize(0);
-
-		return engine;
+	public SpringTemplateEngine templateEngine(){
+		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.setEnableSpringELCompiler(false);
+		templateEngine.setAdditionalDialects(additionalDialects());
+		return templateEngine;
 	}
 
 	@Bean
-	public ViewResolver thymeleafViewResolver() {
-		logger.debug("Configuring thymeleaf view resolver.");
+	public ThymeleafViewResolver viewResolver(){
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
-		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/bootstrap/"));
-		// DO NOT try to handle REST API calls.
-		viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
 		return viewResolver;
 	}
 
@@ -201,6 +191,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(localeChangeInterceptor());
+		registry.addInterceptor(galaxySessionInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
@@ -211,8 +202,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	 */
 	@Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new DataTablesRequestResolver());
-		// TODO: (Josh: 2017-05-23) Remove DatatablesCriteriasMethodArgumentResolver once Dandelion is removed from project.
-		argumentResolvers.add(new DatatablesCriteriasMethodArgumentResolver());
 	}
 
 	/**
@@ -225,10 +214,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
-		// TODO: (Josh: 2017-05-23) Remove these after all Dandelion removed from project.
-		dialects.add(new DandelionDialect());
-		dialects.add(new DataTablesDialect());
 		return dialects;
 	}
-
 }

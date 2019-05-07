@@ -89,6 +89,12 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		}
 	}
 
+	/**
+	 * Get the last time the job was run from the given cron string
+	 *
+	 * @param cron the cron string
+	 * @return A Date of the last time the job was run
+	 */
 	public static Date getPriorDateFromCronString(String cron) {
 		// find the number of milliseconds in the configured time
 		long timeInMillis = Calendar.getInstance().getTimeInMillis();
@@ -99,6 +105,11 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		return new Date(timeInMillis - difference);
 	}
 
+	/**
+	 * Ge the cron string for this scheduled task
+	 *
+	 * @return the cron string
+	 */
 	public String getScheduledCronString() {
 		return scheduledCronString;
 	}

@@ -9,9 +9,8 @@ import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
@@ -47,7 +46,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private final Long id;
+	private Long id;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -74,9 +73,8 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 			"analysis_id", "analysis_output_file_key" }, name = "UK_ANALYSIS_OUTPUT_FILE_KEY"))
 	private final Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
+	@Embedded
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "analysis_type")
 	private AnalysisType analysisType;
 	
 	/**
@@ -94,12 +92,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	/**
 	 * Builds a new {@link Analysis} object with the given information.
-	 * 
-	 * @param executionManagerAnalysisId
-	 *            The id for an execution manager used with this analysis.
-	 * @param analysisOutputFilesMap
-	 *            A {@link Map} of output file keys and
-	 *            {@link AnalysisOutputFile}s.
+	 *
+	 * @param executionManagerAnalysisId The id for an execution manager used with this analysis.
+	 * @param analysisOutputFilesMap     A {@link Map} of output file keys and
+	 *                                   {@link AnalysisOutputFile}s.
+	 * @param analysisType               The {@link AnalysisType} for this analysis
 	 */
 	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, AnalysisType analysisType) {
@@ -157,10 +154,12 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		this.additionalProperties = additionalProperties;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(createdDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
@@ -176,6 +175,17 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "Analysis{" + "id=" + id + 
+				", createdDate=" + createdDate +
+				", description='" + description +
+				'\'' + ", executionManagerAnalysisId='" + executionManagerAnalysisId + '\'' +
+				", additionalProperties=" + additionalProperties +
+				", analysisOutputFilesMap=" + analysisOutputFilesMap +
+				", analysisType=" + analysisType + '}';
+	}
+
 	/**
 	 * Get all output files produced by this {@link Analysis}.
 	 * 
@@ -184,6 +194,10 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	@JsonIgnore
 	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
 		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
+	}
+
+	public Map<String, AnalysisOutputFile> getAnalysisOutputFilesMap() {
+		return ImmutableMap.copyOf(this.analysisOutputFilesMap);
 	}
 
 	public String getDescription() {
@@ -198,6 +212,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return createdDate;
 	}
 
+	/**
+	 * Get an output file with the given key
+	 * @param key the key
+	 * @return an AnalysisOutputFile
+	 */
 	public AnalysisOutputFile getAnalysisOutputFile(String key) {
 		return this.analysisOutputFilesMap.get(key);
 	}
@@ -210,6 +229,10 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	@Override
 	public Long getId() {
 		return this.id;
+	}
+
+	public void setId(Long id){
+		this.id = id;
 	}
 
 	public Map<String, String> getAdditionalProperties() {

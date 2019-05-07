@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
     <script th:inline="javascript">
@@ -14,7 +14,7 @@
 </head>
 <body>
 <div layout:fragment="page">
-    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
+    <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2">
         <form name="new_project" class="ng-cloak" th:action="@{/projects/synchronize}" method="post" role="form"
               novalidate="novalidate">
             <section class="panel panel-default">
@@ -24,20 +24,23 @@
                 <div class="panel-body">
                     <div th:if="${#maps.containsKey(errors, 'oauthError')}" th:text="#{projects.sync.error.oauth}" class="alert alert-warning">_Oauth Error_</div>
                     <div th:if="${#maps.containsKey(errors, 'urlError')}" th:text="#{projects.sync.error.url}" class="alert alert-warning">_URL Error_</div>
-                    <div class="form-group">
+                    <div class="form-group connection-wrapper">
                         <label class="control-label" for="api-selection" th:text="#{projects.sync.remoteapi}">_Remote API_</label>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-7">
                                 <select class="form-control api-selection" id="api-selection">
                                     <option th:each="api : ${apis}" th:text="${api.name}" th:value="${api.id}"></option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <span id="api-status" class="api-status">
-                                    <i class="fa fa-spinner fa-spin"></i>
+                            <div class="col-md-5 clearfix">
+                                <span id="api-status" class="js-status-wrapper api-status pull-left">
+                                    <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                    <th:block th:text="#{remoteapi.status.waiting}"/>
                                 </span>
                             
-                                <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
+                                <button type="button" class="oauth-connect-link btn btn-default hidden pull-right" id="connect-button"
+                                        data-toggle="modal"
+                                        data-target="#remote-connect-wrapper"
                                     th:text="#{remoteapi.status.connect.button}">_Connect_</button>
                             </div>
                         </div>
@@ -75,15 +78,14 @@
                        th:text="#{projects.create.form.cancel}">Cancel</a>
                     <button id="submitBtn" type="submit" class="btn btn-primary" ng-disabled="new_project.$invalid">
                         <span th:text="#{projects.sync.create}">Create Project</span>&nbsp;
-                        <span class="glyphicon glyphicon-chevron-right"></span></button>
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
                 </div>
             </section>
         </form>
     </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/js/pages/projects/project-sync.js}"></script>
-    <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
+    <script th:src="@{/resources/dist/js/project-sync.bundle.js}"></script>
 </th:block>
 </body>
 </html>

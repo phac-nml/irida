@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iridaWorkflow>
+    <id>4673cf14-20eb-44e1-986b-ac7714f9a96f</id>
+    <name>AssemblyAnnotation</name>
+    <version>0.5.0</version>
+    <analysisType>ASSEMBLY_ANNOTATION</analysisType>
+    <inputs>
+        <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+        <requiresSingleSample>true</requiresSingleSample>
+    </inputs>
+    <parameters>
+        <parameter name="shovill-1-adv.mincov" defaultValue="0">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.mincov"/>
+        </parameter>
+        <parameter name="shovill-1-adv.depth" defaultValue="100">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.depth"/>
+        </parameter>
+        <parameter name="shovill-1-adv.nocorr" defaultValue="false">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.nocorr"/>
+        </parameter>
+        <parameter name="shovill-1-trim" defaultValue="false">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="trim"/>
+        </parameter>
+        <parameter name="shovill-1-adv.gsize" defaultValue="">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.gsize"/>
+        </parameter>
+        <parameter name="shovill-1-adv.kmers" defaultValue="">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.kmers"/>
+        </parameter>
+        <parameter name="shovill-1-adv.minlen" defaultValue="0">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.minlen"/>
+        </parameter>
+        <parameter name="shovill-1-adv.namefmt" defaultValue="contig%05d">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.namefmt"/>
+        </parameter>
+        <parameter name="shovill-1-assembler" defaultValue="spades">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="assembler"/>
+        </parameter>
+        <parameter name="shovill-1-adv.opts" defaultValue="">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.opts"/>
+        </parameter>
+        <parameter name="quast-2-min_contig" defaultValue="500">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2" parameterName="min_contig"/>
+        </parameter>
+        <parameter name="quast-2-threshold_contig" defaultValue="0,1000">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2" parameterName="threshold_contig"/>
+        </parameter>
+        <parameter name="prokka-3-evalue" defaultValue="1e-06">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="evalue"/>
+        </parameter>
+        <parameter name="prokka-3-rfam" defaultValue="false">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="rfam"/>
+        </parameter>
+        <parameter name="prokka-3-strain" defaultValue="strain">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="strain"/>
+        </parameter>
+        <parameter name="prokka-3-species" defaultValue="species">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="species"/>
+        </parameter>
+        <parameter name="prokka-3-genus" defaultValue="genus">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="genus"/>
+        </parameter>
+        <parameter name="prokka-3-centre" defaultValue="centre">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="centre"/>
+        </parameter>
+        <parameter name="prokka-3-plasmid" defaultValue="plasmid">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="plasmid"/>
+        </parameter>
+        <parameter name="prokka-3-locustag" defaultValue="P">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="locustag"/>
+        </parameter>
+    </parameters>
+    <outputs>
+        <output name="quast.tsv" fileName="quast.tsv"/>
+        <output name="prokka.txt" fileName="prokka.txt"/>
+        <output name="contigs.fasta" fileName="contigs.fasta"/>
+        <output name="prokka.tsv" fileName="prokka.tsv"/>
+        <output name="prokka.gbk" fileName="prokka.gbk"/>
+        <output name="contigs.fastg" fileName="contigs.fastg"/>
+        <output name="prokka.gff" fileName="prokka.gff"/>
+        <output name="prokka.fna" fileName="prokka.fna"/>
+        <output name="prokka.ffn" fileName="prokka.ffn"/>
+        <output name="prokka.faa" fileName="prokka.faa"/>
+        <output name="prokka.fsa" fileName="prokka.fsa"/>
+        <output name="prokka.sqn" fileName="prokka.sqn"/>
+        <output name="prokka.tbl" fileName="prokka.tbl"/>
+        <output name="quast.html.zip" fileName="quast.html.zip"/>
+        <output name="quast.pdf" fileName="quast.pdf"/>
+        <output name="shovill.log" fileName="shovill.log"/>
+        <output name="quast.log" fileName="quast.log"/>
+        <output name="prokka.log" fileName="prokka.log"/>
+        <output name="prokka.err" fileName="prokka.err"/>
+    </outputs>
+    <toolRepositories>
+        <repository>
+            <name>shovill</name>
+            <owner>iuc</owner>
+            <url>https://toolshed.g2.bx.psu.edu</url>
+            <revision>865119fcb694</revision>
+        </repository>
+        <repository>
+            <name>prokka</name>
+            <owner>crs4</owner>
+            <url>https://toolshed.g2.bx.psu.edu</url>
+            <revision>eaee459f3d69</revision>
+        </repository>
+        <repository>
+            <name>quast</name>
+            <owner>iuc</owner>
+            <url>https://toolshed.g2.bx.psu.edu</url>
+            <revision>81df4950d65b</revision>
+        </repository>
+    </toolRepositories>
+</iridaWorkflow>

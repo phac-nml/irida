@@ -24,14 +24,15 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
+import ca.corefacility.bioinformatics.irida.service.impl.AnalysisTypesServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -52,6 +53,8 @@ public class ToolsListExporter {
 	private static final Pattern regexPattern = Pattern.compile("- " + toolsSectionName + ": \"([^\"]+)\"");
 
 	private static final String defaultToolPanelId = "irida";
+	
+	private static final AnalysisTypesService analysisTypesService = new AnalysisTypesServiceImpl();
 
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -62,7 +65,7 @@ public class ToolsListExporter {
 
 		IridaWorkflowsService iridaWorkflowsService = context.getBean(IridaWorkflowsService.class);
 		Map<AnalysisType, IridaWorkflow> workflows = iridaWorkflowsService
-				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.executableAnalysisTypes()));
+				.getAllDefaultWorkflowsByType(analysisTypesService.executableAnalysisTypes());
 
 		context.close();
 
@@ -115,7 +118,7 @@ public class ToolsListExporter {
 		yamlMap.put("api_key", "<Galaxy Admin user API key>");
 		yamlMap.put("galaxy_instance", "<IP address for target Galaxy instance>");
 
-		List<Map<String, String>> tools = Lists.newArrayList();
+		List<Map<String, Object>> tools = Lists.newArrayList();
 		yamlMap.put("tools", tools);
 
 		List<IridaWorkflow> workflowsSorted = workflows.values().stream().sorted(new Comparator<IridaWorkflow>() {
@@ -155,12 +158,13 @@ public class ToolsListExporter {
 					uniqueToolRepositories.add(toolRepository);
 
 					// @formatter:off
-					tools.add(ImmutableMap.<String, String>builder()
+					tools.add(ImmutableMap.<String, Object>builder()
 							.put("name", toolRepository.getName())
 							.put("owner", toolRepository.getOwner())
 							.put("tool_shed_url", toolRepositoryURLString)
-							.put("revision", toolRepository.getRevision())
-							.put("tool_panel_section_id", defaultToolPanelId).build());
+							.put("revisions", Lists.newArrayList(toolRepository.getRevision()))
+							.put("tool_panel_section_id", defaultToolPanelId)
+							.put("install_tool_dependencies", true).build());
 					// @formatter:on
 				}
 			}

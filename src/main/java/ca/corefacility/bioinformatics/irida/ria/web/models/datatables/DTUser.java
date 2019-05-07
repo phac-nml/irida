@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * User interface model for DataTables for {@link User}

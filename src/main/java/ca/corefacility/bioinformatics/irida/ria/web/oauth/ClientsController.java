@@ -190,29 +190,21 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Submit client details edit
-	 * 
-	 * @param clientId
-	 *            the long ID of the {@link IridaClientDetails} to edit
-	 * @param accessTokenValiditySeconds
-	 *            The new accessTokenValiditySeconds
-	 * @param authorizedGrantTypes
-	 *            the new authorizedGrantTypes
-	 * @param scope_read
-	 *            whether to allow read scope
-	 * @param scope_write
-	 *            whether to allow write scope
-	 * @param scope_auto_read
-	 *            whether to allow automatic authorization for the read scope
-	 * @param scope_auto_write
-	 *            whether to allow automatic authorization for the write scope
-	 * @param new_secret
-	 *            whether to generate a new client secret
-	 * @param model
-	 *            Model for the view
-	 * @param locale
-	 *            Locale of the logged in user
+	 *
+	 * @param clientId                   the long ID of the {@link IridaClientDetails} to edit
+	 * @param accessTokenValiditySeconds The new accessTokenValiditySeconds
+	 * @param authorizedGrantTypes       the new authorizedGrantTypes
+	 * @param scope_read                 whether to allow read scope
+	 * @param scope_write                whether to allow write scope
+	 * @param scope_auto_read            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write           whether to allow automatic authorization for the write scope
+	 * @param new_secret                 whether to generate a new client secret
+	 * @param refresh                    Whether the client shoudl allow refresh tokens
+	 * @param refreshTokenValidity       How long the refresh token will be valid
+	 * @param model                      Model for the view
+	 * @param locale                     Locale of the logged in user
 	 * @return Redirect to the client details page if successful, the edit page
-	 *         if there are errors
+	 * if there are errors
 	 */
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
 	public String postEditClient(@PathVariable Long clientId,
@@ -310,25 +302,19 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Create a new client
-	 * 
-	 * @param client
-	 *            The client to add
-	 * @param scope_read
-	 *            if the client should be allowed to read from the server (value
-	 *            should be "read").
-	 * @param scope_write
-	 *            if the client should be allowed to write to the server (value
-	 *            should be "write").
-	 * @param scope_auto_read
-	 *            whether to allow automatic authorization for the read scope
-	 * @param scope_auto_write
-	 *            whether to allow automatic authorization for the write scope
-	 * @param model
-	 *            Model for the view
-	 * @param locale
-	 *            Locale of the current user session
+	 *
+	 * @param client           The client to add
+	 * @param scope_read       if the client should be allowed to read from the server (value
+	 *                         should be "read").
+	 * @param scope_write      if the client should be allowed to write to the server (value
+	 *                         should be "write").
+	 * @param scope_auto_read  whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write whether to allow automatic authorization for the write scope
+	 * @param refresh          whether the client should allow refresh tokens
+	 * @param model            Model for the view
+	 * @param locale           Locale of the current user session
 	 * @return Redirect to the newly created client page, or back to the
-	 *         creation page in case of an error.
+	 * creation page in case of an error.
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String postCreateClient(@ModelAttribute IridaClientDetails client,

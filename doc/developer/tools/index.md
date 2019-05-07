@@ -19,12 +19,10 @@ For more information on developing these tools, please refer to the [IRIDA Pipel
 External Tools
 --------------
 
-These are tools that are not packaged up along with IRIDA but that can interact with IRIDA to get access to IRIDA-managed data.  This includes desktop applications or web servers for sophisticated analyses which cannot easily be integrated into Galaxy.
-
-For more information on developing these tools, please refer to the [IRIDA External Tool Development][] guide.
+These are tools that are not packaged up along with IRIDA but that can interact with IRIDA to get access to IRIDA-managed data.  This includes desktop applications or web servers for sophisticated analyses which cannot easily be integrated into Galaxy. Integration of such tools can be performed via the [IRIDA REST API][].
 
 [Galaxy]: http://galaxyproject.org/
 [Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow
 [IRIDA Pipeline Development]: pipelines/
-[IRIDA External Tool Development]: external/
 [irida-pipelines]: pipelines/images/irida-pipelines.png
+[IRIDA REST API]: ../rest/

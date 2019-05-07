@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
@@ -36,6 +38,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -43,7 +46,7 @@ import com.google.common.collect.ImmutableMap;
  *
  */
 @Configuration
-@Profile({ "dev", "prod", "it" })
+@Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "email", "web"})
 public class ExecutionManagerConfig {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ExecutionManagerConfig.class);
@@ -216,6 +219,26 @@ public class ExecutionManagerConfig {
 	}
 
 	/**
+	 * @return A GalaxyToolDataService for interacting with Galaxy Tool Data Tables.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyToolDataService galaxyToolDataService() throws ExecutionManagerConfigurationException {
+		return new GalaxyToolDataService(toolDataClient());
+	}
+
+	/**
+	 * @return A ToolDataClient for interacting with Galaxy.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public ToolDataClient toolDataClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getToolDataClient();
+	}
+
+	/**
 	 * @return A RolesClient for dealing with roles in Galaxy.
 	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
 	 */
@@ -293,6 +316,12 @@ public class ExecutionManagerConfig {
 	@Bean
 	public HistoriesClient historiesClient() throws ExecutionManagerConfigurationException {
 		return galaxyInstance().getHistoriesClient();
+	}
+
+	@Lazy
+	@Bean
+	public GalaxyJobErrorsService galaxyJobErrorsService() throws ExecutionManagerConfigurationException {
+		return new GalaxyJobErrorsService(historiesClient(), toolsClient(), jobsClient());
 	}
 
 	/**

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base">
+      data-layout-decorate="~{projects/_base}">
 <head>
-    <title th:text="#{linelist.create-template.title}">Title</title>
-    <link rel="stylesheet" href="/resources/css/pages/create-linelist-template.css"
-          th:href="@{/resources/css/pages/create-linelist-template.css}"/>
+    <title th:text="#{metadata-template.title}">Title</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/create-metadata-template.bundle.css}"/>
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -18,7 +17,7 @@
 <body>
 <main layout:fragment="main">
     <div class="clearfix">
-        <h2 class="h2-muted spaced-bottom pull-left" th:text="#{linelist.create-template.title}"></h2>
+        <h2 class="h2-muted spaced-bottom pull-left" th:text="#{metadata-template.title}"></h2>
         <a class="btn btn-default btn-sm pull-right"
            th:href="@{/projects/{id}/metadata-templates/{templateId}/excel(id=${project.getId()}, templateId=${template.getId()})}">
             <i class="fa fa-fw fa-download"></i>&nbsp;<th:block th:text="#{form.download}"/></a>
@@ -29,16 +28,16 @@
                   th:action="@{/projects/{id}/metadata-templates/save(id=${project.id})}" method="post">
                 <input type="hidden" th:field="*{id}"/>
                 <div class="form-group">
-                    <label for="template-name" class="control-label" th:text="#{linelist.create-template.name}">TEMPLATE
+                    <label for="template-name" class="control-label" th:text="#{metadata-template.name}">TEMPLATE
                         NAME</label>
                     <input id="template-name" type="text" class="form-control" th:field="*{name}"
                            minlength="5" required="required" th:disabled="!${isOwner}"
-                           data:msg-minlength="#{linelist.create-template.templateName.minlength}"/>
+                           data:msg-minlength="#{metadata-template.template.template.name-minlength}"/>
                 </div>
                 <hr/>
                 <div class="row spaced-bottom">
                     <div class="col-md-8">
-                        <label th:text="#{linelist.create-template.template-fields}">METADATA_FIELDS</label>
+                        <label th:text="#{metadata-template.fields}">METADATA_FIELDS</label>
                     </div>
                     <div class="col-md-4 text-right">
                         <button id="add-field-btn" type="button" class="btn btn-default"
@@ -50,19 +49,19 @@
                     </div>
                 </div>
                 <div id="field-count-warning" class="spaced-top spaced-bottom alert alert-danger hidden">
-                    <strong th:text="#{linelist.create-template.required-fields}">Must have at least 1 template
+                    <strong th:text="#{metadata-template.required-fields}">Must have at least 1 template
                         field</strong>
                 </div>
                 <ul class="list-group template-fields">
                     <li class="list-group-item template-field" th:classappend="${isOwner} ? template-field-draggable" th:each="field : *{fields}">
                         <i class="fa fa-bars" aria-hidden="true" th:if="${isOwner}"></i>&nbsp;
-                        <th:block th:text="${field}"/>
-                        <input class="field-names" name="fields" type="hidden" th:value="${field}"/>
+                        <th:block th:text="${field.label}"/>
+                        <input class="field-names" name="fields" type="hidden" th:value="${field.label}"/>
                         <span class="close field-remove pull-right" th:if="${isOwner}">&times;</span>
                     </li>
                 </ul>
                 <button id="save-btn" class="btn btn-primary" type="submit"
-                        th:text="#{linelist.create-template.save-template}"
+                        th:text="#{metadata-template.save}"
                         th:if="${isOwner}">SAVE ME
                 </button>
             </form>
@@ -71,14 +70,14 @@
 
     <div class="panel panel-default" th:if="${template.id} and ${isOwner}">
         <div class="panel-heading">
-            <th:block th:text="#{linelist.create-template.settings}"/>
+            <th:block th:text="#{metadata-template.settings}"/>
         </div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-8">
-                    <strong th:text="#{linelist.create-template.delete}">Delete this
+                    <strong th:text="#{metadata-template.delete}">Delete this
                         template</strong>
-                    <p th:text="#{linelist.create-template.delete-warning}">Once you delete a
+                    <p th:text="#{metadata-template.delete-message}">Once you delete a
                         template, there is no going back. Please be certain.</p>
                 </div>
                 <div class="col-md-4 text-right">
@@ -88,7 +87,7 @@
                         </label></div>
                     <button id="delete-template-btn" class="btn btn-danger" disabled="disabled">
                         <i class="fa fa-trash" aria-hidden="true"></i>
-                        <th:block th:text="#{linelist.create-template.delete}"/>
+                        <th:block th:text="#{metadata-template.delete}"/>
                     </button></form>
                 </div>
             </div>
@@ -119,127 +118,7 @@
 
 
 <th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="create-template.tmpl.html">
-        <form name="$ctrl.createTemplateForm" novalidate="">
-            <div class="row">
-                <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group"
-                                 show-validation="">
-                                <div class="clearfix">
-                                    <label class="control-label pull-left"
-                                           for="template-name">
-                                        <th:block th:text="#{linelist.create-template.name}"/>
-                                    </label>
-                                    <span class="text-muted pull-right" ng-show="$ctrl.template.identifier">
-                                        <strong><th:block th:text="#{linelist.template.identifier}"/>:</strong> <span
-                                            id="template-id">{{$ctrl.template.identifier}}</span>
-                                    </span>
-                                </div>
-                                <input id="template-name"
-                                       name="templateName"
-                                       class="form-control"
-                                       metadata-template-name=""
-                                       existing-templates="$ctrl.templates"
-                                       type="text"
-                                       required="required"
-                                       minlength="5"
-                                       ng-model="$ctrl.template.name"/>
-                                <div ng-messages="$ctrl.createTemplateForm.templateName.$error"
-                                     ng-show="$ctrl.createTemplateForm.templateName.$dirty">
-                                    <p class="label label-danger" ng-message="required"
-                                       th:text="#{linelist.create-template.templateName.required}">_This is a required
-                                        field_</p>
-                                    <p class="label label-danger" ng-message="minlength"
-                                       th:text="#{linelist.create-template.templateName.minlength}">_Templage name must
-                                        be 5
-                                        letters long_</p>
-                                    <p class="label label-danger" ng-message="unique"
-                                       th:text="#{linelist.create-template.saving.error.unique}">
-                                        This field already exists.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr/>
-                    <div class="row spaced-bottom">
-                        <div class="col-md-12">
-                            <button id="add-field-btn" class="btn btn-default"
-                                    ng-click="$ctrl.addNewField()"
-                                    th:text="#{visualization.phylogenomics.add-new-field.btn}">_ADD_NEW_FIELD_
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="list-group" dnd-list="$ctrl.template.fields">
-                                <li class="list-group-item template-field" ng-repeat="field in $ctrl.template.fields"
-                                    dnd-draggable="field"
-                                    dnd-effect-allowed="move"
-                                    dnd-disable-if="$ctrl.template.fields.length &lt; 2"
-                                    dnd-moved="$ctrl.template.fields.splice($index, 1)">
-                                    <div class="field-label">{{field.label}}&nbsp;&nbsp;
-                                    </div>
-                                    <div class="field-buttons">
-                                        <div class="close field-remove" ng-click="$ctrl.removeField($index)">&times;
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-md-12" ng-show="$ctrl.template.identifier">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 ng-cloak">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <p class="text-danger"
-                               ng-show="$ctrl.createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
-                               th:text="#{visualization.phylogenomics.aside.warning}">_Templates require a unique name
-                                within the project and at least 1 field._</p>
-                            <p class="text-success"
-                               ng-hide="$ctrl.createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
-                               th:text="#{visualization.phylogenomics.aside.correct}">
-                                _Templates can be viewed or modified through the Settings tab._</p>
-                            <button id="save-template-btn"
-                                    class="btn btn-primary btn-block"
-                                    ng-disabled="$ctrl.disableSave()"
-                                    ng-click="$ctrl.saveTemplate()"
-                                    th:text="#{linelist.create-template.save-template}">_Save_
-                            </button>
-                            <p class="spaced-top text-muted"
-                               ng-hide="$ctrl.templateIsModified()"
-                               th:text="#{linelist.create-template.not-modified}">_This template has not been
-                                modified_</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </script>
-
-
-    <script type="text/ng-template" id="deleteTemplate.tmpl.html">
-        <div class="modal-header"
-             style="background-color: rgba(217, 83, 79, 1.00); color: white; border-radius: 4px 4px 0 0;">
-            <h3 class="modal-title">
-                <i class="fa fa-trash-o"></i>
-                <th:block th:text="#{linelist.create-template.delete-confirm}"/>
-                <div class="close" ng-click="modal.dismiss()"></div>
-            </h3>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-danger" ng-click="modal.confirm()" th:text="#{linelist.create-template.delete}">
-                _Delete Tempate_
-            </button>
-        </div>
-    </script>
-    <script src="/resources/js/build/create-metadata-template.bundle.js"
-            th:src="@{/resources/js/build/create-metadata-template.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/create-metadata-template.bundle.js}"></script>
 </th:block>
 </body>
 </html>

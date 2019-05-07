@@ -1,17 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.Future;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
@@ -23,6 +11,17 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.concurrent.Future;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service for performing analyses within a Galaxy execution manager.
@@ -108,6 +107,23 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis);
 
 		return analysisExecutionServiceGalaxyAsync.transferAnalysisResults(submittingAnalysis);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Future<AnalysisSubmission> postProcessResults(AnalysisSubmission analysisSubmission) {
+		checkArgument(AnalysisState.TRANSFERRED.equals(analysisSubmission.getAnalysisState()),
+				" analysis should be " + AnalysisState.TRANSFERRED);
+
+		analysisSubmission.setAnalysisState(AnalysisState.POST_PROCESSING);
+		analysisSubmission = analysisSubmissionService.update(analysisSubmission);
+
+		//re-reading submission to ensure paths get correctly translated
+		analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
+
+		return analysisExecutionServiceGalaxyAsync.postProcessResults(analysisSubmission);
 	}
 
 	/**

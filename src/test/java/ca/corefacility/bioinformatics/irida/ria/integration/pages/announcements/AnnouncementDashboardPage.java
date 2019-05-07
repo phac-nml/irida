@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Page object to represent the Announcements Dashboard page
@@ -30,7 +31,7 @@ public class AnnouncementDashboardPage extends AbstractPage {
     }
 
     public void markTopAnnouncementAsRead() {
-        WebElement markReadButton = driver.findElement(By.cssSelector("div.announcement-markread>span"));
+		WebElement markReadButton = driver.findElement(By.cssSelector("div.announcement-markread>button"));
         markReadButton.click();
         waitForTime(DEFAULT_WAIT);
     }

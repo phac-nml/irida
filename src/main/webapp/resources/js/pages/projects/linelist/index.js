@@ -1,5 +1,9 @@
-import angular from 'angular';
-import {LinelistModule} from './linelist.module';
+import React from "react";
+import { render } from "react-dom";
+import { App } from "./App";
+import "./linelist.scss";
 
-const app = angular.module('irida');
-app.requires.push(LinelistModule);
+__webpack_public_path__ = `${window.TL.BASE_URL}resources/dist/`;
+
+// Render the application
+render(<App />, document.querySelector("#root"));

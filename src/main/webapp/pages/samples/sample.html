@@ -1,22 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="samples/_base">
-<head lang="en">
-    <meta charset="UTF-8"/>
+      data-layout-decorate="~{samples/_base}">
+<head>
     <title th:text="#{samples.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
 <main layout:fragment="main">
-    <div class="row">
-        <div class="col-md-10">
-            <h1 role="heading" th:text="#{samples.details.page-title(${sample.getLabel()})}">__TITLE__</h1>
-        </div>
-        <div class="col-md-2" th:if="${canManageSample}">
-            <a id="edit-sample" class="btn btn-default btn-sm pull-right ng-cloak"
-               href="edit" th:text="#{form.btn.edit}">__EDIT__</a>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-12">
         	<div class="panel panel-info">

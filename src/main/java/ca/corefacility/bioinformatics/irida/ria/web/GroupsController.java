@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -45,6 +46,7 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping(value = "/groups")
 public class GroupsController {
 
+	public static final int MAX_PROJECTS_TO_DISPLAY = 3;
 	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
@@ -204,19 +206,19 @@ public class GroupsController {
 
 	/**
 	 * Delete the specified {@link UserGroup}.
-	 * 
-	 * @param userGroupId
-	 *            the group to delete.
-	 * @param locale
-	 *            the locale of the browser
+	 *
+	 * @param userGroupId the group to delete.
+	 * @param locale      the locale of the browser
 	 * @return a message indicating success.
 	 */
 	@RequestMapping(path = "/{userGroupId}", method = RequestMethod.DELETE)
-	public @ResponseBody Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
+	public @ResponseBody
+	Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
 		final UserGroup userGroup = userGroupService.read(userGroupId);
 		userGroupService.delete(userGroupId);
-		return ImmutableMap.of("result", messageSource.getMessage("group.remove.notification.success",
-				new Object[] { userGroup.getName() }, locale));
+		return ImmutableMap.of("result",
+				messageSource.getMessage("group.remove.notification.success", new Object[] { userGroup.getName() },
+						locale));
 	}
 
 	/**
@@ -322,7 +324,7 @@ public class GroupsController {
 		final UserGroup group = userGroupService.read(userGroupId);
 		logger.debug("Loading users not in group [" + userGroupId + "]");
 		final Collection<User> usersNotInGroup = userGroupService.getUsersNotInGroup(group);
-		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
+		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 
@@ -379,17 +381,23 @@ public class GroupsController {
 
 	/**
 	 * Get a string to tell the user which group they're going to delete.
-	 * 
-	 * @param userGroupId
-	 *            the user group that's about to be deleted.
-	 * @param model
-	 *            model for rendering view
+	 *
+	 * @param userGroupId the user group that's about to be deleted.
+	 * @param model       model for rendering view
 	 * @return a message indicating which group is going to be deleted.
 	 */
 	@RequestMapping(path = "/deleteConfirmModal", method = RequestMethod.POST)
 	public String getDeleteGroupText(final @RequestParam Long userGroupId, final Model model) {
 		final UserGroup group = userGroupService.read(userGroupId);
+		final Collection<UserGroupProjectJoin> projects = userGroupService.getProjectsWithUserGroup(group);
+
 		model.addAttribute("group", group);
+
+		if (!projects.isEmpty()) {
+			model.addAttribute("projectsWithGroup", projects);
+			model.addAttribute("maxProjectsToDisplay", MAX_PROJECTS_TO_DISPLAY);
+		}
+
 		return GROUPS_REMOVE_MODAL;
 	}
 	

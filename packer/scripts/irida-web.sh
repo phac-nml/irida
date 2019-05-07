@@ -17,13 +17,13 @@ mkdir -p /etc/irida/analytics
 chown -R tomcat:tomcat /home/irida/
 
 cd /home/irida
-curl -O https://irida.corefacility.ca/downloads/webapp/irida-latest.war
+curl --insecure -O https://irida.corefacility.ca/downloads/webapp/irida-latest.war
 ln -s /home/irida/irida-latest.war /var/lib/tomcat/webapps/irida.war
 
-curl -O https://irida.corefacility.ca/documentation/administrator/web/config/irida.conf
+curl --insecure -O https://irida.corefacility.ca/documentation/administrator/web/config/irida.conf
 ln -s /home/irida/irida.conf /etc/irida/irida.conf
 
-curl -O https://irida.corefacility.ca/documentation/administrator/web/config/web.conf
+curl --insecure -O https://irida.corefacility.ca/documentation/administrator/web/config/web.conf
 ln -s /home/irida/web.conf /etc/irida/web.conf
 
 sed -i 's_server.base.url=.*_server.base.url=http://localhost:48888/irida/_' /etc/irida/web.conf

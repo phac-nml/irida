@@ -55,13 +55,13 @@ public class ClientDetailsPage extends AbstractPage {
 
 	public void clickDeleteButton() {
 		logger.debug("clicking remove button");
-		WebElement findElement = driver.findElement(By.id("remove-btn"));
+		WebElement findElement = driver.findElement(By.className("t-client-remove-btn"));
 		findElement.click();
 	}
 
 	public void confirmDelete() {
 		logger.debug("clicking confirm-delete button");
-		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.className("confirm-delete")));
+		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.className("t-confirm-delete")));
 		confirmButton.click();
 	}
 

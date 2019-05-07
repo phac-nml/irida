@@ -135,7 +135,7 @@ public class ToolExecution implements IridaThing {
 		}
 		this.executionTimeParameters = addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
-		this.commandLine = commandLine;
+		this.commandLine = (commandLine == null) ? "null" : commandLine;
 	}
 
 	/**
@@ -217,6 +217,11 @@ public class ToolExecution implements IridaThing {
 		return executionManagerIdentifier;
 	}
 
+	/**
+	 * Get the parameters for execution time of a pipeline
+	 *
+	 * @return The unescaped execution time parameters
+	 */
 	public final Map<String, String> getExecutionTimeParameters() {
 		final Map<String, String> unescapedKeys = new HashMap<>();
 		for (final Entry<String, String> param : executionTimeParameters.entrySet()) {
@@ -226,6 +231,12 @@ public class ToolExecution implements IridaThing {
 		return Collections.unmodifiableMap(unescapedKeys);
 	}
 
+	/**
+	 * Set the execution time parameters
+	 *
+	 * @param parameters the parameters to set
+	 * @return the escaped parameters
+	 */
 	private final Map<String, String> addExecutionTimeParameters(final Map<String, String> parameters) {
 		final Map<String, String> escapedParameters = new HashMap<>(parameters.size());
 		for (final Entry<String, String> param : parameters.entrySet()) {

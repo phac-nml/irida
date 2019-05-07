@@ -24,6 +24,9 @@ import liquibase.resource.ResourceAccessor;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.RawSqlStatement;
 
+/**
+ * Custom SQL change converting absolute paths to relative in the database
+ */
 public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbsoluteToRelativePaths.class);
@@ -74,6 +77,10 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 		return null;
 	}
 
+	/**
+	 * Check that files exist in expected locations
+	 * @return Any validation errors
+	 */
 	public ValidationErrors testRelativePaths() {
 		final ValidationErrors validationErrors = new ValidationErrors();
 

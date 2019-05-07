@@ -6,6 +6,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
+/**
+ * A repository for storing and retrieving objects from a remote api
+ *
+ * @param <Type> the type of object this repository will store
+ */
 public interface RemoteRepository<Type extends IridaResourceSupport> {
 	/**
 	 * Read an individual resource
@@ -35,6 +40,7 @@ public interface RemoteRepository<Type extends IridaResourceSupport> {
 	 * @param remoteAPI
 	 *            The API to check status for
 	 * @return true if the service is active
+	 * @throws IridaOAuthException if the service is unavailable
 	 */
 	public boolean getServiceStatus(RemoteAPI remoteAPI) throws IridaOAuthException;
 }

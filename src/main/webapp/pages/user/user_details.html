@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+	  data-layout-decorate="~{template/page}">
 <head>
 	<title th:text="${user.label}">_USER PAGE_</title>
 	<script th:inline="javascript">
-		window.dependencies = ['PasswordRest'];
 		var PAGE = {
 			urls: {
 				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
@@ -12,21 +11,39 @@
 			userId: /*[[${user.getId()}]]*/ 1
 		};
 	</script>
+	<style>
+		#projectsTable {
+			table-layout: fixed;
+			width: 100% !important;
+		}
+
+		#projectsTable td,
+		#projectsTable th {
+			width: auto !important;
+			white-space: normal;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	</style>
 </head>
 <body>
 <main layout:fragment="page">
 	<input id="userId" type="hidden" th:value="${user.getId()}"/>
-	<div class="col-md-12">
+    <div class="col-lg-8 col-lg-offset-2 col-md-12">
 		<div th:if="${mailFailure}" class="alert alert-warning" th:text="#{user.creation.activation.mail.failure}">
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<h1 id="wb-cont" class="user-details-title" property="name" th:text="${user.label}">__USER NAME__</h1>
+				<h1 class="t-user-page-success"
+					property="name"
+					th:text="${user.label}">
+					__USER NAME__
+				</h1>
 			</div>
 		</div>
 		<div class="row">
 			<!-- User details -->
-			<div class="col-md-6" ng-controller="DetailsCtrl as details">
+            <div class="col-md-4" ng-controller="DetailsCtrl as details">
 				<div class="sidebar">
 					<div class="sidebar__heading clearfix">
 						<h2 class="pull-left" th:text="#{user.details}">_User Details_</h2>
@@ -46,7 +63,7 @@
 
 							<div class="sidebar__item">
                 <div class="sidebar__icon">
-								  <i class="glyphicon glyphicon-barcode"></i>
+					<i class="fa fa-barcode" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.id}">_ID_</div>
                 <div class="sidebar__value" id="user-id" th:text="${user.getId()}">_USER_ID_</div>
@@ -54,7 +71,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-user"></i>
+					<i class="fa fa-user" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.username}">_Username</div>
                 <div class="sidebar__value" id="user-username" th:text="${user.username}">_USERNAME_</div>
@@ -62,7 +79,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-tag"></i>
+					<i class="fa fa-tag" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.name}">_Name_</div>
                 <div class="sidebar__value" id="user-name" th:text="${user.label}">_NAME_</div>
@@ -70,7 +87,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-envelope"></i>
+					<i class="fa fa-envelope" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.email}">_email_</div>
                 <div class="sidebar__value">
@@ -81,7 +98,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-earphone"></i>
+					<i class="fa fa-phone" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.phone}">_phone</div>
                 <div class="sidebar__value" id="user-phone" th:text="${user.phoneNumber}">_123-456-7890_</div>
@@ -89,7 +106,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-stats"></i>
+					<i class="fa fa-users" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.role}">_phone</div>
                 <div class="sidebar__value" id="user-role" th:text="${systemRole}">_ROLE_</div>
@@ -97,18 +114,18 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-off"></i>
+					<i class="fa fa-power-off" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.enabled}">_phone</div>
                 <div class="sidebar__value">
-                  <i class="glyphicon glyphicon-ok" th:if="${user.enabled}"></i>
-                  <i class="glyphicon glyphicon-remove" th:if="not ${user.enabled}"></i>
+					<i class="fa fa-check" aria-hidden="true" th:if="${user.enabled}"></i>
+					<i class="fa fa-times" aria-hidden="true" th:if="not ${user.enabled}"></i>
                 </div>
               </div>
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-calendar"></i>
+					<i class="fa fa-calendar" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.created}">_phone</div>
                 <div class="sidebar__value" id="user-created"
@@ -117,7 +134,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-calendar"></i>
+					<i class="fa fa-calendar" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.modified}">_phone</div>
                 <div class="sidebar__value" id="user-modified"
@@ -126,7 +143,7 @@
 							
 							<div class="sidebar__item">
 									<div class="sidebar__icon">
-										<i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        <i class="far fa-clock"></i>
 									</div>
 									<div th:text="#{user.last-login}">_phone</div>
 									<div class="sidebar__value" id="user-last-login" th:if="${user.lastLogin}"
@@ -135,9 +152,8 @@
 					</div>
 				</div>
 			</div>
-
 			<!-- User project table -->
-			<div class="col-md-6 ">
+            <div class="col-md-8" th:if="${canEditUser}">
 				<div class="panel panel-default">
 					<div class="panel-heading clearfix">
 						<h3 class="panel-title pull-left" th:text="#{user.projects.title}">_Projects_</h3>
@@ -159,10 +175,7 @@
 								<td class="user-project-id" th:text="${project.identifier}">_PROJECT_ID_</td>
 								<td class="user-project-name"><a th:href="@{'/projects/'+${project.identifier}}"><span
 										th:text="${project.name}">_PROJECT_NAME_</span></a></td>
-								<td class="user-project-role">
-									<span class="project-role-icon glyphicon"
-									      th:classappend="${project.isManager} ? 'glyphicon-tower' : 'glyphicon-user'"></span>&nbsp;
-									<span class="project-role-name" th:text="${project.role}">_PROJECT_ROLE_</span>
+								<td class="user-project-role"  th:text="${project.role}">_POJECT_ROLE_</span>
 								</td>
 								<td class="user-project-date"
 								    th:text="${#calendars.format(project.date, 'dd MMM yyyy')}">_DATE ADDED_
@@ -204,7 +217,7 @@
 
 		var pwd = angular.module('PasswordRest', []);
 
-		pwd.service('ResetService', ['$http', 'notifications', function ($http, notifications) {
+		pwd.service('ResetService', ['$http', function ($http) {
 			var svc = this;
 
 			svc.resetPassword = function () {
@@ -212,32 +225,37 @@
                   .then(function(response) {
                     var data = response.data;
 						if(data.success){
-							notifications.show({type: 'success', msg: data.message, title: data.title});
+							window.notifications.show({type: 'success', text: data.message, title: data.title});
 						}else{
-							notifications.show({type: 'error', msg: data.message, title: data.title});
+							window.notifications.show({type: 'error', text: data.message, title: data.title});
 						}
 						return data;
 					});
 			}
 		}]);
-      
-        pwd.service('SubscriptionService', ['$http', function($http){
-          var svc = this;
-          
-          svc.updateSubscription = function(userId, projectId, subscribe){
-            var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
-            urlBase += projectId + '/subscribe/' + userId;
-            var params = {subscribe:subscribe};
-            
-            return $http.post(urlBase, params);
-          };
-        }]);
-      
-        pwd.controller('SubscriptionController', ['SubscriptionService','notifications', function (SubscriptionService, notifications) {
+
+				pwd.service('SubscriptionService', ['$http', function ($http) {
+					var svc = this;
+
+					svc.updateSubscription = function (userId, projectId, subscribe) {
+						var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
+						urlBase += projectId + '/subscribe/' + userId;
+						var params = $.param({ subscribe: subscribe });
+
+						return $http({
+							method: "POST",
+							url: urlBase,
+							data: $.param({ subscribe: subscribe }),
+							headers: { "Content-Type": "application/x-www-form-urlencoded" }
+						});
+					};
+				}]);
+
+        pwd.controller('SubscriptionController', ['SubscriptionService', function (SubscriptionService) {
           var sub = this;
           var title = /*[[#{user.projects.subscriptions}]]*/ 'Subscriptions';
           var errorMessage = /*[[#{user.projects.subscriptions.error}]]*/ 'Error';
-          
+
           angular.element(".subcription-checkbox").on("change", function(){
             var box = $(this);
             var projectId = box.val();
@@ -248,10 +266,10 @@
 
             SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(response) {
               var data = response.data;
-              notifications.show({type: 'success', msg: data.message, title: title});
+              window.notifications.show({type: 'success', text: data.message, title: title});
             }, function(response) {
               var data = response.data;
-              notifications.show({type: 'error', msg: errorMessage, title: title});
+              window.notifications.show({type: 'error', text: errorMessage, title: title});
               box.attr('checked', false);
             });
           });
@@ -285,6 +303,8 @@
 				});
 			};
 		}]);
+
+		angular.module("irida").requires.push(pwd.name);
 	</script>
 </th:block>
 </body>

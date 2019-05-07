@@ -19,12 +19,14 @@ const COLUMNS = generateColumnOrderInfo();
  * Download table in specified format.
  * @param {string} format format of downloaded doc.
  */
-function downloadItem({format = "xlsx"}) {
+function downloadItem({ format = "xlsx" }) {
   const url = `${window.PAGE.urls.export}&dtf=${format}`;
   const anchor = document.createElement("a");
   anchor.style.display = "none";
   anchor.href = url;
+  document.body.appendChild(anchor);
   anchor.click();
+  document.body.removeChild(anchor);
 }
 
 const config = Object.assign(tableConfig, {
@@ -56,9 +58,13 @@ const config = Object.assign(tableConfig, {
         // Render the name as a link to the actual project.
         return createItemLink({
           url: `${window.PAGE.urls.project}${full.id}`,
-          label: `${full.remote
-            ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${window.PAGE.i18n.remote}">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
-            : data}`,
+          label: `${
+            full.remote
+              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${
+                  window.PAGE.i18n.remote
+                }">${data}&nbsp;<i style="color: #000;" class="fas fa-exchange-alt pull-right"></i></div>`
+              : data
+          }`,
           width: "200px"
         });
       }

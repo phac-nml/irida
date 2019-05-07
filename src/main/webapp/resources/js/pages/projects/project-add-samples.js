@@ -1,9 +1,8 @@
 import $ from "jquery";
 import "jquery-validation";
-import "./../../vendor/plugins/jquery/select2";
 import {
-  validationConfig,
-  sampleNameCharacterValidation
+  sampleNameCharacterValidation,
+  validationConfig
 } from "../../utilities/form-validation";
 
 const form = $("#create-sample-form");
@@ -41,17 +40,18 @@ form.find("#sampleName").on("keyup blur", () => {
 const organismInput = $("#organism");
 
 organismInput.select2({
+  theme: "bootstrap",
   minimumInputLength: 1,
   ajax: {
     url: window.PAGE.urls.taxonomy,
     dataType: "json",
     delay: 250,
-    data(params) {
+    data(searchTerm) {
       return {
-        searchTerm: params.term
+        searchTerm
       };
     },
-    processResults(data) {
+    results(data) {
       return {
         results: data
       };

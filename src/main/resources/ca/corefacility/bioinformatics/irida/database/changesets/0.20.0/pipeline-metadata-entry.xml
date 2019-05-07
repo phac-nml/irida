@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="pipeline-metadata-entry" author="tom">
+
+        <validCheckSum>7:04d990c0430b5fd7bd63f5bfc462584b</validCheckSum>
+        <validCheckSum>7:fe424670afa75882a10c9178073eecc1</validCheckSum>
+
+        <createTable tableName="pipeline_metadata_entry">
+            <column name="id" type="bigint(20)">
+                <constraints nullable="false" primaryKey="true" foreignKeyName="FK_PIPELINE_METADATA_ENTRY"
+                             referencedTableName="metadata_entry" referencedColumnNames="id"/>
+            </column>
+
+            <column name="submission_id" type="bigint(20)">
+                <constraints nullable="false" foreignKeyName="FK_ANALYSIS_METADATA_ENTRY" referencedColumnNames="id"
+                             referencedTableName="analysis_submission"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="pipeline_metadata_entry_AUD">
+            <column name="id" type="bigint(20)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="submission_id" type="bigint(20)"/>
+            <column name="REV" type="int(11)">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="id, REV"
+                                 baseTableName="pipeline_metadata_entry_AUD"
+                                 constraintName="FK_PIPELINE_METADATA_ENTRY_AUD"
+                                 referencedColumnNames="id, REV"
+                                 referencedTableName="metadata_entry_AUD"/>
+
+        <modifyDataType columnName="value" newDataType="longtext" tableName="metadata_entry"/>
+        <modifyDataType columnName="value" newDataType="longtext" tableName="metadata_entry_AUD"/>
+
+    </changeSet>
+</databaseChangeLog>

@@ -10,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -41,12 +40,14 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -106,7 +107,7 @@ public class ProjectSamplesControllerTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCopySampleToProjectRemove() {
+	public void testMoveSampleToProject() {
 		Long projectId = 1L;
 		List<Long> sampleIds = ImmutableList.of(2L, 3L);
 		Long newProjectId = 4L;
@@ -117,16 +118,15 @@ public class ProjectSamplesControllerTest {
 		Sample s3 = new Sample("s3");
 		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
 		boolean owner = true;
-		boolean move = true;
 		ArrayList<ProjectSampleJoin> joins = Lists.newArrayList(new ProjectSampleJoin(newProject, s2, owner),
 				new ProjectSampleJoin(newProject, s3, owner));
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenReturn(joins);
+		when(projectService.moveSamples(oldProject, newProject, sampleList)).thenReturn(joins);
 
-		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+		Map<String, Object> result = controller.shareSampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
 
 		assertTrue(result.containsKey("result"));
@@ -135,13 +135,13 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).copyOrMoveSamples(oldProject, newProject, sampleList, move, owner);
+		verify(projectService).moveSamples(oldProject, newProject, sampleList);
 
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCopySampleToProject() {
+	public void testShareSampleToProject() {
 		Long projectId = 1L;
 		List<Long> sampleIds = ImmutableList.of(2L, 3L);
 		Long newProjectId = 4L;
@@ -152,26 +152,25 @@ public class ProjectSamplesControllerTest {
 		Sample s3 = new Sample("s3");
 		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
 		boolean owner = true;
-		boolean move = false;
 		ArrayList<ProjectSampleJoin> joins = Lists.newArrayList(new ProjectSampleJoin(newProject, s2, owner),
 				new ProjectSampleJoin(newProject, s3, owner));
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenReturn(joins);
+		when(projectService.shareSamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
 
-		controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal, true, Locale.US);
+		controller.shareSampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal, true, Locale.US);
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).copyOrMoveSamples(oldProject, newProject, sampleList, move, owner);
+		verify(projectService).shareSamples(oldProject, newProject, sampleList, owner);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCopySampleToProjectSampleExists() {
+	public void testShareSampleToProjectSampleExists() {
 		Long projectId = 1L;
 		List<Long> sampleIds = ImmutableList.of(2L, 3L);
 		Long newProjectId = 4L;
@@ -182,18 +181,16 @@ public class ProjectSamplesControllerTest {
 		Sample s3 = new Sample("s3");
 		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
 		boolean owner = true;
-		boolean move = false;
-
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
 
-		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenThrow(
+		when(projectService.shareSamples(oldProject, newProject, sampleList, owner)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+		Map<String, Object> copySampleToProject = controller.shareSampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
 
 		assertTrue(copySampleToProject.containsKey("warnings"));
@@ -257,7 +254,6 @@ public class ProjectSamplesControllerTest {
 		String property = "name";
 		final Project p = new Project();
 
-		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_ADMIN);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
@@ -266,7 +262,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, property)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(1L, 
-				term, pagesize, page, principal);
+				term, pagesize, page);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
@@ -283,7 +279,6 @@ public class ProjectSamplesControllerTest {
 		Direction order = Direction.ASC;
 		final Project p = new Project();
 
-		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
@@ -292,7 +287,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller
-				.getProjectsAvailableToCopySamples(1L, term, pagesize, page, principal);
+				.getProjectsAvailableToCopySamples(1L, term, pagesize, page);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
@@ -318,7 +313,7 @@ public class ProjectSamplesControllerTest {
 		DataTablesParams params = mock(DataTablesParams.class);
 		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
 		DataTablesResponse response = controller
-				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
+				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), new UISampleFilter(), Locale.US);
 		List<DataTablesResponseModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
 		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);

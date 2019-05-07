@@ -81,13 +81,12 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 
 	/**
 	 * Create a new {@link UserGroupProjectJoin}.
-	 * 
-	 * @param project
-	 *            the {@link Project} that you're permitting the
-	 *            {@link UserGroup} to access.
-	 * @param userGroup
-	 *            the {@link UserGroup} being permitted to access the
-	 *            {@link Project}.
+	 *
+	 * @param project   the {@link Project} that you're permitting the
+	 *                  {@link UserGroup} to access.
+	 * @param userGroup the {@link UserGroup} being permitted to access the
+	 *                  {@link Project}.
+	 * @param role      The Role the users in the group should have
 	 */
 	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role) {
 		this.id = null;
@@ -97,10 +96,12 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 		this.projectRole = role;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(project, userGroup, projectRole, createdDate);
 	}
 
+	@Override
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;

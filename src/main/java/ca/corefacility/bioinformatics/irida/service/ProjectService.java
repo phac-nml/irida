@@ -128,50 +128,54 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
 	 *
-	 * @param project
-	 * 		the {@link Project} to add the {@link Sample} to.
-	 * @param sample
-	 * 		the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
-	 * 		service will persist the {@link Sample}.
-	 *
+	 * @param project the {@link Project} to add the {@link Sample} to.
+	 * @param sample  the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
+	 *                service will persist the {@link Sample}.
+	 * @param owner   Whether the project will have modification access for this sample
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
-	
-	
+
 	/**
 	 * Move a {@link Sample} from one {@link Project} to another
-	 * 
-	 * @param source
-	 *            the source {@link Project}
-	 * @param destination
-	 *            Destination {@link Project}
-	 * @param sample
-	 *            {@link Sample} to be moved
-	 * @param owner
-	 *            Should the new project be an owner?
+	 *
+	 * @param source      the source {@link Project}
+	 * @param destination Destination {@link Project}
+	 * @param sample      The sample to move
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
 	
 	/**
-	 * Copy or move a list of {@link Sample} between 2 {@link Project}
+	 * Share a list of {@link Sample}s between two {@link Project}s.
 	 * 
 	 * @param source
 	 *            the source {@link Project}
 	 * @param destination
-	 *            the {@link Project} being copied to
+	 *            the {@link Project} being shared into
 	 * @param samples
 	 *            a collection of {@link Sample}
-	 * @param move
-	 *            boolean whether to move or copy. true for move
 	 * @param giveOwner
 	 *            whether to give ownership rights to the destination
 	 *            {@link Project}
 	 * @return a list of new {@link ProjectSampleJoin}
 	 */
-	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean move, boolean giveOwner);
+	public List<ProjectSampleJoin> shareSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean giveOwner);
+	
+	/**
+	 * Move a list of {@link Sample}s between 2 {@link Project}
+	 * 
+	 * @param source
+	 *            the source {@link Project}
+	 * @param destination
+	 *            the {@link Project} being moved to
+	 * @param samples
+	 *            a collection of {@link Sample}s
+	 *            {@link Project}
+	 * @return a list of new {@link ProjectSampleJoin}
+	 */
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples);
 
 	/**
 	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the
@@ -392,7 +396,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link ProjectAnalysisSubmissionJoin}s
 	 */
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
-	
+
 	/**
 	 * Get all {@link Project}s that have data used within an
 	 * {@link AnalysisSubmission}. Note that this differs from
@@ -413,15 +417,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the updated {@link Project}
 	 */
 	public Project updateProjectSettings(Project project, Map<String,Object> updates);
-	
+
 	/**
 	 * Create a {@link Project} with the given {@link Sample}s contained
-	 * 
-	 * @param project
-	 *            the {@link Project} to create
-	 * @param sampleIds
-	 *            IDs of the {@link Sample}s
+	 *
+	 * @param project   the {@link Project} to create
+	 * @param sampleIds IDs of the {@link Sample}s
+	 * @param owner     whether to lock {@link Sample} modification from new project
 	 * @return the created {@link Project}
 	 */
-	public Project createProjectWithSamples(Project project, List<Long> sampleIds);
+	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner);
 }

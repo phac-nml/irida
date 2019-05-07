@@ -82,11 +82,10 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 
 	/**
 	 * Create a new {@link UserGroupJoin}.
-	 * 
-	 * @param user
-	 *            the {@link User} in the {@link UserGroup}.
-	 * @param group
-	 *            the {@link UserGroup} that the {@link User} is a member of.
+	 *
+	 * @param user  the {@link User} in the {@link UserGroup}.
+	 * @param group the {@link UserGroup} that the {@link User} is a member of.
+	 * @param role  The role the user should have on the project
 	 */
 	public UserGroupJoin(final User user, final UserGroup group, final UserGroupRole role) {
 		this.createdDate = new Date();
@@ -96,10 +95,12 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 		this.role = role;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(user, group, createdDate, role);
 	}
 
+	@Override
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;
@@ -112,9 +113,18 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 		return false;
 	}
 
+	/**
+	 * The role of a user in the group
+	 */
 	public enum UserGroupRole {
 		GROUP_OWNER, GROUP_MEMBER;
 
+		/**
+		 * Get a role from the given string
+		 *
+		 * @param code string representation of the role
+		 * @return the role
+		 */
 		public static UserGroupRole fromString(String code) {
 			switch (code.toUpperCase()) {
 			case "GROUP_MEMBER":

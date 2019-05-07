@@ -44,6 +44,8 @@ public class AnalysisProvenanceServiceGalaxy {
 	private static final String JSON_TEXT_ARRAY_INDICATOR = JsonToken.START_ARRAY.asString(); // "["
 	private static final String EMPTY_VALUE_PLACEHOLDER = null;
 	private static final ObjectMapper mapper = new ObjectMapper();
+	
+	private static final String COLLECTION = "dataset_collection";
 
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final ToolsClient toolsClient;
@@ -55,7 +57,11 @@ public class AnalysisProvenanceServiceGalaxy {
 		this.toolsClient = toolsClient;
 		this.jobsClient = jobsClient;
 	}
-	
+
+	/**
+	 * Get an empty value placeholder
+	 * @return the placeholder for an empty value
+	 */
 	public static String emptyValuePlaceholder() {
 		return EMPTY_VALUE_PLACEHOLDER;
 	}
@@ -82,8 +88,9 @@ public class AnalysisProvenanceServiceGalaxy {
 		final List<HistoryContents> historyContents = galaxyHistoriesService.showHistoryContents(remoteAnalysisId);
 		// group the history contents by name. The names that we're interested
 		// in starting from should match the filename of the output file.
-		final Map<String, List<HistoryContents>> historyContentsByName = historyContents.stream().collect(
-				Collectors.groupingBy(HistoryContents::getName));
+		final Map<String, List<HistoryContents>> historyContentsByName = historyContents.stream().
+				filter(content -> !COLLECTION.equals(content.getHistoryContentType())).
+				collect(Collectors.groupingBy(HistoryContents::getName));
 
 		final List<HistoryContents> currentContents = historyContentsByName.get(analysisOutputFilename);
 		if (currentContents == null || currentContents.isEmpty() || currentContents.size() > 1) {

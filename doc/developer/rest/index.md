@@ -31,7 +31,7 @@ JSON Format
 
 Resources requested in JSON format will always have the following structure:
 
-```javascript
+```json
 {
   "resource" : {
     "links" : [ {
@@ -58,7 +58,7 @@ The `resource` section contains an array of link objects under the `links` key. 
 
 Resource collections requested in JSON format will always have the following structure:
 
-```javascript
+```json
 {
   "resource" : {
     "links" : [ {
@@ -101,20 +101,20 @@ For Java, we recommend that you use [Spring Security OAuth2](http://projects.spr
 ### Python
 {:.no_toc}
 
-For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/). Both libraries are straightforward to use, so we provide some quick examples for both.
+For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/).
 
-A complete application that uses Rauth is the [command-line concatenater](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) for IRIDA.
+A complete application that uses Rauth is the [IRIDA SISTR results exporter](https://github.com/phac-nml/irida-sistr-results) for IRIDA.
 
 Another option for using Python with IRIDA is the [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/).
 
-A complete example application that uses Requests-OAuthlib is the [IRIDA Galaxy Import Tool](https://irida.corefacility.ca/gitlab/irida/import-tool-for-galaxy). This application uses the authorization code flow.
+A complete example application that uses Requests-OAuthlib is the [IRIDA Galaxy Import Tool](https://github.com/phac-nml/irida-galaxy-importer). This application uses the authorization code flow.
 
 ### Perl
 {:.no_toc}
 
 For Perl, we recommend that you use the [`OAuth::Lite2::Client::UsernameAndPassword`](https://metacpan.org/pod/OAuth::Lite2::Client::UsernameAndPassword) package. 
 
-A complete application that uses `OAuth::Lite2::Client::UsernameAndPassword` is the [command-line](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) tool for IRIDA.
+A complete application that uses `OAuth::Lite2::Client::UsernameAndPassword` is the [command-line linker](https://github.com/phac-nml/irida-linker) tool for IRIDA.
 
 ### HTTP
 {:.no_toc}
@@ -129,7 +129,7 @@ In the example above, you would need to replace `$CLIENT_ID`, `$CLIENT_SECRET`, 
 
 An example response from the server is:
 
-```javascript
+```json
 {
   "access_token": "my-53cr37-04u7h-4cc355-70k3n",
   "expires_in": 43199,
@@ -232,7 +232,7 @@ The user collection contains a reference to all users in the system. Each user r
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
   "resources" : [ {
@@ -286,7 +286,7 @@ Each user account can be accessed by a unique URL.
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource": {
     "createdDate": 1431301716000,
@@ -327,7 +327,7 @@ The [projects collection](#project-collection) provides the list of projects tha
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource": {
     "links": [
@@ -389,7 +389,7 @@ Each project can be accessed by a unique URL.
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource": {
     "createdDate": 1431301716000,
@@ -494,61 +494,52 @@ A sample corresponds to a single isolate and contains the sequencing data and me
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
-  "resources" : [ {
-    "sequenceFileCount" : 0,
-    "description" : "The first sample",
-    "sampleName" : "Sample 1",
-    "sequencerSampleId" : "sample1",
-    "strain" : null,
-    "collectionDate" : null,
-    "collectedBy" : null,
-    "latitude" : null,
-    "longitude" : null,
-    "organism" : "E. coli",
-    "isolate" : null,
-    "geographicLocationName" : null,
-    "isolationSource" : null,
-    "cultureCollection" : null,
-    "genotype" : null,
-    "passageHistory" : null,
-    "pathotype" : null,
-    "serotype" : null,
-    "serovar" : null,
-    "specimenVoucher" : null,
-    "subtype" : null,
-    "hostTaxonomicName" : null,
-    "hostDisease" : null,
-    "hostDescription" : null,
-    "hostDiseaseOutcome" : null,
-    "hostDiseaseStage" : null,
-    "hostHealthState" : null,
-    "hostSex" : null,
-    "hostSubjectId" : null,
-    "hostTissueSampleId" : null,
-    "hostAge" : null,
-    "identifier" : "1",
-    "createdDate" : 1406733849000,
+    "resources" : [ {
+      "createdDate" : 1406733849000,
+      "modifiedDate" : 1406733849000,
+      "sampleName" : "Sample 1",
+      "description" : "The first sample",
+      "organism" : "E. coli",
+      "isolate" : null,
+      "strain" : null,
+      "collectedBy" : null,
+      "collectionDate" : "2019-01-25",
+      "geographicLocationName" : null,
+      "isolationSource" : null,
+      "latitude" : null,
+      "longitude" : null,
+      "label" : "Sample 1",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/samples/5"
+        }, {
+          "rel" : "sample/sequenceFiles",
+          "href" : "http://localhost:8080/api/samples/5/sequenceFiles"
+        }, {
+          "rel" : "sample/sequenceFiles/pairs",
+          "href" : "http://localhost:8080/api/samples/5/pairs"
+        }, {
+          "rel" : "sample/sequenceFiles/unpaired",
+          "href" : "http://localhost:8080/api/samples/5/unpaired"
+        }, {
+          "rel" : "sample/metadata",
+          "href" : "http://localhost:8080/api/samples/5/metadata"
+        }, {
+          "rel" : "sample/project",
+          "href" : "http://localhost:8080/api/projects/5"
+        }, {
+          "rel" : "project/sample",
+          "href" : "http://localhost:8080/api/projects/5/samples/5"
+        } ],
+        "identifier" : "1"
+      } ],
     "links" : [ {
-    "rel" : "self",
-    "href" : "http://localhost:8080/api/samples/1"
-    }, {
-    "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/samples/1/sequenceFiles"
-    }, {
-    "rel" : "sample/project",
-    "href" : "http://localhost:8080/api/projects/5"
-    }, {
-    "rel" : "project/sample",
-    "href" : "http://localhost:8080/api/projects/5/samples/1"
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/5/samples"
     } ]
-  }],
-  "links" : [ {
-    "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/5/samples"
-  } ]
   }
 }
 ```
@@ -564,9 +555,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | Name | Description |
 |------|-------------|
 | `self` | A link to this sample. |
-| `sample/project` | A link to the project that owns this sample. |
 | `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
-| `project/sample` | A link to the relationship between the project and sample.  To remove a sample from a project, `DELETE` this resource. |
 | `sample/sequenceFiles/pairs` | A link to the collection of paired-end sequence files in this sample.  Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 | `sample/sequenceFiles/unpaired` | A link to the collection of unpaired sequence files in this sample. Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 | `sample/metadata`| A link to the metadata associated with the sample. |
@@ -577,11 +566,12 @@ An individual sample contains the metadata associated with an isolate. The sampl
 
 | Name | Description | Validation |
 |------|-------------|------------|
+| `createdDate` | The date the sample was created in IRIDA. | Required. This will be auto-generated by IRIDA. |
+| `modifiedDate` | The date the sample was last modified. | Required. This will be auto-generated by IRIDA. |
 | `sampleName` | The name used to refer to the sample by the user. This is often the same as `sequencerSampleId`, but *may* be different. | Required. Must be at least 3 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' . |` (note: this blacklist of characters is defined by the set of invalid characters on the Windows file system)|
-| `sequencerSampleId` | The name used to refer to this sample by a sequencer. For Illumina, this is the value of the `Sample_Name` column in `SampleSheet.csv`.| Required. Must be at least 3 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' .` (note: this blacklist of characters is defined by the set of invalid characters on the Windows file system)|
 | `description` | A plain-text description of the sample. | Not required. |
 | `strain` | The microbial or eukaryotic strain name. | Not required. Must be at least 3 characters long. |
-| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date (in IRIDA, that is the number of milliseconds since the epoch). |
+| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date in the format of "YYYY-MM-DD" (e.g,. "2019-01-25" for January 25, 2019). |
 | `collectedBy` | The person (or organization) that collected the sample. | Not required. Must be at least 3 characters long. |
 | `latitude` | The latitude of the location where the sample was collected. | Not required. Must be a valid latitude (must match the pattern `^-?(\d){1,2}(\.\d+)?$` and the first number group must be in the range `[-90, 90]`). |
 | `longitude` | The longitude of the location where the sample was collected. | Not required. Must be a valid longitude (must match the pattern `-?(\d){1,3}(\.\d+)?$` and the first number group must be in the range `[-180, 180]`). |
@@ -589,67 +579,46 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `isolate` | The identification or description of the specific individual from which this sample was obtained. | Not required. Must be at least 3 characters long. |
 | `geographicLocationName` | A human-readable geographic location name, complementing the latitude and longitude of collection location. | Not required. Must be at least 3 characters long. Must match the pattern `\w+(:\w+(:\w+)?)?`, as defined by the NCBI location name pattern. |
 | `isolationSource` | Describes the physical, environmental, and/or the geographical source of the biological sample from which the sample was derived. | Not required. |
-| `cultureCollection` | Name of source institute and unique culture identifier. See the NCBI description for the proper format and list of allowed institutes: <http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier> | Not required. |
-| `genotype` | The observed genotype. | Not required. |
-| `passageHistory` | Number of passages and passage method. | Not required. |
-| `pathotype` | The bacterial-specific pathotype (examples: Eschericia coli - STEC, UPEC) | Not required. |
-| `serotype` | The taxonomy below subspecies; a variety (in bacteria, fungi, or virus) usually based on its antigenic properties. Same as serovar and serogroup. e.g., serotype="H1N1" in Influenza A virus CY098518. | Not required. |
-| `serovar` | The taxonomy below subspecies. | Not required. |
-| `specimenVoucher` | Individual identifier for the physical specimen. | Not required. |
-| `subgroup` | Taxonomy below subspecies. | Not required. |
-| `subtype` | Used as classifier in viruses. | Not required. |
-
 
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
-  "sequenceFileCount" : 0,
-  "description" : "The fifth sample",
-  "sampleName" : "Sample 5",
-  "sequencerSampleId" : "sample5",
-  "strain" : null,
-  "collectionDate" : null,
-  "collectedBy" : null,
-  "latitude" : null,
-  "longitude" : null,
-  "organism" : "E. coli",
-  "isolate" : null,
-  "geographicLocationName" : null,
-  "isolationSource" : null,
-  "cultureCollection" : null,
-  "genotype" : null,
-  "passageHistory" : null,
-  "pathotype" : null,
-  "serotype" : null,
-  "serovar" : null,
-  "specimenVoucher" : null,
-  "subtype" : null,
-  "hostTaxonomicName" : null,
-  "hostDisease" : null,
-  "hostDescription" : null,
-  "hostDiseaseOutcome" : null,
-  "hostDiseaseStage" : null,
-  "hostHealthState" : null,
-  "hostSex" : null,
-  "hostSubjectId" : null,
-  "hostTissueSampleId" : null,
-  "hostAge" : null,
-  "identifier" : "5",
-  "createdDate" : 1406733854000,
-  "links" : [ {
-    "rel" : "self",
-    "href" : "http://localhost:8080/api/samples/5"
-  }, {
-    "rel" : "sample/project",
-    "href" : "http://localhost:8080/api/projects/5"
-  }, {
-    "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/samples/5/sequenceFiles"
-  } ]
+    "createdDate" : 1406733854000,
+    "modifiedDate" : 1406733854000,
+    "sampleName" : "Sample 5",
+    "description" : "The fifth sample",
+    "organism" : null,
+    "isolate" : null,
+    "strain" : null,
+    "collectedBy" : null,
+    "collectionDate" : null,
+    "geographicLocationName" : null,
+    "isolationSource" : null,
+    "latitude" : null,
+    "longitude" : null,
+    "label" : "Sample 5",
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/samples/5"
+    }, {
+      "rel" : "sample/sequenceFiles",
+      "href" : "http://localhost:8080/api/samples/5/sequenceFiles"
+    }, {
+      "rel" : "sample/sequenceFiles/pairs",
+      "href" : "http://localhost:8080/api/samples/5/pairs"
+    }, {
+      "rel" : "sample/sequenceFiles/unpaired",
+      "href" : "http://localhost:8080/api/samples/5/unpaired"
+    }, {
+      "rel" : "sample/metadata",
+      "href" : "http://localhost:8080/api/samples/5/metadata"
+    } ],
+    "identifier" : "5"
   }
+}
 
 ```
 
@@ -671,7 +640,7 @@ Sample metadata is unstructured metadata that has been associated with the sampl
 {:.no_toc}
 
 
-```javascript
+```json
 {
   "resource" : {
     "metadata" : {
@@ -725,7 +694,7 @@ The sample will also contain a [list of paired-end sequence files](#sequence-fil
 ##### Example response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
   "resources" : [ {
@@ -784,7 +753,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 ##### Example response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
   "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
@@ -821,7 +790,7 @@ Each sequence file may have FastQC data associated with it to display some basic
 ##### Example FastQC Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
     "createdDate" : 1469714441000,
@@ -1025,7 +994,7 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 ##### Example response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
   "resources" : [ {
@@ -1091,7 +1060,7 @@ A sequencing run contains a reference to all of the files that were generated by
 ##### Example response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
   "projectName" : "Test Project",
@@ -1140,7 +1109,7 @@ If your client needs to know about the specific types of outputs available to it
 ##### Example response
 {:.no_toc}
 
-```javascript
+```json
 {
     "resource": {
         "links": [
@@ -1225,7 +1194,7 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 ##### Example Response
 {:.no_toc}
 
-```javascript
+```json
 {
   "resource" : {
     "name" : "Analysis-13",

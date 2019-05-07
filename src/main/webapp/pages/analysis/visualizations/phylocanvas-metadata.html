@@ -2,11 +2,10 @@
 <html
         xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorator="template/page">
+        data-layout-decorate="~{template/page}">
 <head>
-    <title th:text="#{visualization.phylogenomics.title}">Title</title>
-    <link rel="stylesheet" href="/resources/css/pages/phylocanvas-metadata.css"
-          th:href="@{/resources/css/pages/phylocanvas-metadata.css}"/>
+    <title th:text="#{visualization.phylogenomics.title(${submission.label})}">Title</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/visualizations-phylogenetics.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
           urls: {
@@ -23,7 +22,7 @@
     <!-- This is the main App -->
     <!-- Script: resources/js/pages/visualizations/phylogenetics/components/app/app.component.js -->
     <script type="text/ng-template" id="app-component.tmpl.html">
-        <h1 th:text="#{visualization.phylogenomics.title}"></h1>
+        <h1 th:text="#{visualization.phylogenomics.title(${submission.label})}"></h1>
         <div class="form-inline spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
             <div class="row">
                 <div class="col-md-8 col-sm-12">
@@ -45,6 +44,7 @@
             </div>
         </div>
         <section>
+            <div th:replace="templates/analysis_result_warning"></div>
             <div ng-show="$ctrl.metadataError &amp;&amp; !$ctrl.templateError" class="alert alert-danger">NO METADATA WARNING</div>
             <div ng-show="$ctrl.treeError" class="alert alert-danger">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
@@ -62,7 +62,7 @@
                 <th:block th:text="#{visualization.phylogenomics.error.missing-samples}" />
             </div>
             <div class="alert alert-info" ng-show="$ctrl.loading">
-                <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+                <i class="fas fa-spinner fa-spin fa-fw"></i>
                 <th:block th:text="#{visualization.phylogenomics.loading}"/>
             </div>
         </section>
@@ -140,13 +140,12 @@
     <script type="text/ng-template" id="export-svg-component.tmpl.html">
         <button class="btn btn-default"
                 ng-click="$ctrl.exportSVG()">
-            <i class="fa fa-fw fa-file-code-o"></i>
+            <i class="far fa-fw fa-file-code"></i>
             <th:block th:text="#{visualization.button.export.svg}"/>
         </button>
     </script>
 
-    <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
-            th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/visualizations-phylogenetics.bundle.js}"></script>
 </th:block>
 </body>
 </html>

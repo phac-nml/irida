@@ -17,11 +17,11 @@ const template = `
 
 const headerItem = {
   bindings: {
-    header: '<',
-    idColumn: '='
+    header: "<",
+    idColumn: "="
   },
   require: {
-    parent: '^selectSampleNameColumnComponent'
+    parent: "^selectSampleNameColumnComponent"
   },
   template
 };

@@ -12,7 +12,11 @@ By default, a user will be issued a randomly-generated, one-time-use key to acti
 
 ![Manual password entry.]({{ site.baseurl }}/images/tutorials/common/users/manual-user-password.png)
 
-Passwords must have at least 1 upper-case character, 1 lower-case character, 1 number (0-9), and must be *at least* 8 characters long. If you manually set a password for a new user account, the user will not be required to change their password on first log in.
+Passwords must meet the following requirements:
+
+{% include tutorials/common/password-requirements.md %}
+
+If you manually set a password for a new user account, the user will not be required to change their password on first log in.
 
 When you click "Create User", an e-mail will be sent to the user (to the e-mail address you entered) including the URL for IRIDA (as configured in the [Administrator Install Guide]({{ site.baseurl }}/administrator/web/#web-configuration)). If you did not manually set a password for the user, the e-mail will include a link to activate the user account:
 

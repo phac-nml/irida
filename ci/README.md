@@ -15,10 +15,10 @@ docker build -t irida-testing .
 This will build an image with the requirements for CI integration.  To enable for testing you should push this image to your local docker server.
 
 
-CI Server Configuration
------------------------
+GitLab CI Server Configuration
+------------------------------
 
-The CI server must be setup to allow docker builds.  
+If using gitlab, the CI server must be setup to allow docker builds.  
 
 Command:
 ```bash

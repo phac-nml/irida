@@ -28,6 +28,9 @@ import ca.corefacility.bioinformatics.irida.repositories.RemoteApiTokenRepositor
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+/**
+ * Service implementation for storing and reading remote api tokens
+ */
 @Service
 public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPITokenServiceImpl.class);
@@ -111,19 +114,28 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 				delete(api);
 				token = create(token);
 
-				logger.debug("Token for api " + api + " updated by refresh token.");
+				logger.trace("Token for api " + api + " updated by refresh token.");
 			} else {
-				logger.debug("No refresh token for api " + api + ". Cannot update access token.");
+				logger.trace("No refresh token for api " + api + ". Cannot update access token.");
 			}
 		} catch (EntityNotFoundException ex) {
 			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
 		} catch (OAuthProblemException | OAuthSystemException ex) {
-			logger.error("Updating token by refresh token failed", ex);
+			logger.error("Updating token by refresh token failed", ex.getMessage());
 		}
 
 		return token;
 	}
 
+	/**
+	 * Get a new token from the given auth code
+	 * @param authcode      the auth code to create a token for
+	 * @param remoteAPI     the remote api to get a token for
+	 * @param tokenRedirect a redirect url to get the token from
+	 * @return a new token
+	 * @throws OAuthSystemException If building the token request fails
+	 * @throws OAuthProblemException If the token request fails
+	 */
 	@Transactional
 	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
 			throws OAuthSystemException, OAuthProblemException {
@@ -131,7 +143,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 
 		// Build the token location for this service
 		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
-		logger.debug("Remote token location: " + serviceTokenLocation);
+		logger.trace("Remote token location: " + serviceTokenLocation);
 
 		// Create the token request form the given auth code
 		OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
@@ -152,7 +164,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		Long expiresIn = accessTokenResponse.getExpiresIn();
 		Long currentTime = System.currentTimeMillis();
 		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		logger.debug("Token expiry: " + expiry);
+		logger.trace("Token expiry: " + expiry);
 
 		// create the OAuth2 token and store it
 		RemoteAPIToken token = new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
@@ -209,7 +221,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		Long expiresIn = accessTokenResponse.getExpiresIn();
 		Long currentTime = System.currentTimeMillis();
 		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		logger.debug("Token expiry: " + expiry);
+		logger.trace("Token expiry: " + expiry);
 
 		// create the OAuth2 token
 		return new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);

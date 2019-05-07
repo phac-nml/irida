@@ -3,10 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +12,9 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.RevisionMetadata;
+import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -73,7 +75,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testPasswordUpdate() {
-		final String password = "Password1";
+		final String password = "Password1!";
 		final String encodedPassword = "ENCODED_" + password;
 		final User persisted = user();
 		final Long id = persisted.getId();
@@ -87,6 +89,7 @@ public class UserServiceImplTest {
 		when(userRepository.save(persisted)).thenReturn(persisted);
 		when(userRepository.findOne(id)).thenReturn(persisted);
 		when(userRepository.exists(id)).thenReturn(true);
+		when(userRepository.findRevisions(id)).thenReturn(new Revisions<>(Lists.newArrayList()));
 
 		User u = userService.updateFields(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
@@ -140,12 +143,13 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testUpdatePasswordGoodPassword() {
-		String password = "Password1";
+		String password = "Password1!";
 		String encodedPassword = password + "_ENCODED";
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.exists(1L)).thenReturn(true);
 		when(userRepository.findOne(1L)).thenReturn(user());
+		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<>(Lists.newArrayList()));
 
 		userService.changePassword(1L, password);
 
@@ -153,6 +157,42 @@ public class UserServiceImplTest {
 		verify(userRepository).save(argument.capture());
 		User saved = argument.getValue();
 		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());
+	}
+
+	@Test(expected = PasswordReusedException.class)
+	public void testUpdateExistingPassword() {
+		String password = "Password1";
+		String oldPassword = "oldPassword";
+		String encodedPassword = password + "_ENCODED";
+
+		User revUser = new User();
+		revUser.setPassword(oldPassword);
+		Revision<Integer, User> rev = new Revision(new RevisionMetadata() {
+			@Override
+			public Number getRevisionNumber() {
+				return 1L;
+			}
+
+			@Override
+			public DateTime getRevisionDate() {
+				return new DateTime();
+			}
+
+			@Override
+			public Object getDelegate() {
+				return null;
+			}
+		}, revUser);
+
+		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+		when(passwordEncoder.matches(password, oldPassword)).thenReturn(true);
+		when(userRepository.exists(1L)).thenReturn(true);
+		when(userRepository.findOne(1L)).thenReturn(user());
+		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<Integer, User>(Lists.newArrayList(rev)));
+
+		userService.changePassword(1L, password);
+
+		verify(userRepository, times(0)).save(any(User.class));
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -262,7 +302,7 @@ public class UserServiceImplTest {
 
 	private User user() {
 		String username = "fbristow";
-		String password = "Password1";
+		String password = "Password1!";
 		String email = "fbristow@gmail.com";
 		String firstName = "Franklin";
 		String lastName = "Bristow";

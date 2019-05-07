@@ -1,15 +1,13 @@
 package ca.corefacility.bioinformatics.irida.repositories.user;
 
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
+import java.util.List;
 
 /**
  * Specialized repository for {@link User}.
@@ -32,23 +30,11 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 * Get the list of {@link User}s that are not associated with the current
 	 * project. This is a convenience method for the front end to see what users
 	 * can be added to the project.
-	 * 
-	 * @param project
-	 *            The project we want to list the available users for
+	 *
+	 * @param project The project we want to list the available users for
+	 * @param term    A search term for a user's first or last name
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
 	@Query("SELECT u FROM User u WHERE u NOT IN (SELECT f from ProjectUserJoin p JOIN p.user f WHERE p.project=?1) and CONCAT(u.firstName, ' ', u.lastName) like %?2%")
 	public List<User> getUsersAvailableForProject(Project project, String term);
-
-	/**
-	 * Get a user from the database with the supplied email address
-	 * 
-	 * @param email
-	 *            The email address to look up
-	 * @return The user with the given email address
-	 * @throws EntityNotFoundException
-	 *             if no user can be found with the given email address
-	 */
-	@Query("SELECT u FROM User u WHERE u.email = ?1")
-	public User loadUserByEmail(String email) throws EntityNotFoundException;
 }

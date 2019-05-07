@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -138,18 +141,20 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		return driver.findElements(By.className("remote-sample-container")).size() > 0;
 	}
 	
-	public boolean isReferenceFileNameDisplayed() {
-		return driver.findElement(By.id("uploaded-file-name")).getText().equals("test_file.fasta");
+	public boolean isReferenceFileNameDisplayed(String fileName) {
+		return driver.findElement(By.id("uploaded-file-name")).getText().equals(fileName);
 	}
 	
-	public void selectReferenceFile() {
-		uploadFile("src/test/resources/files/test_file.fasta");
-	}
-	
-	private void uploadFile(String filePath) {
+	public String selectReferenceFile() throws IOException {
+		//create a temp file copy of the test file so it has a unique name
+		Path path = Paths.get("src/test/resources/files/test_file.fasta");
+		Path tempFile = Files.createTempFile("temp_file", ".fasta");
+		Files.copy(path, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
 		WebElement uploadBtn = driver.findElement(By.id("file-upload-button"));
-		Path path = Paths.get(filePath);
-		uploadBtn.sendKeys(path.toAbsolutePath().toString());
+		uploadBtn.sendKeys(tempFile.toAbsolutePath().toString());
 		waitForTime(500);
+
+		return tempFile.getFileName().toString();
 	}
 }

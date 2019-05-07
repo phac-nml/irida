@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
 /**
@@ -15,11 +16,12 @@ public class DTAnalysis implements DataTablesResponseModel {
 	private Date createdDate;
 	private String workflow;
 	private String state;
+	private final JobError jobError;
 	private Long duration;
 	boolean updatePermission;
 
 	public DTAnalysis(Long id, String name, String submitter, float percentComplete, Date createdDate, String workflow,
-			String state, Long duration, boolean updatePermission) {
+			String state, JobError jobError, Long duration, boolean updatePermission) {
 		this.id = id;
 		this.name = name;
 		this.submitter = submitter;
@@ -27,6 +29,7 @@ public class DTAnalysis implements DataTablesResponseModel {
 		this.createdDate = createdDate;
 		this.workflow = workflow;
 		this.state = state;
+		this.jobError = jobError;
 		this.duration = duration;
 		this.updatePermission = updatePermission;
 	}
@@ -66,5 +69,9 @@ public class DTAnalysis implements DataTablesResponseModel {
 
 	public boolean isUpdatePermission() {
 		return updatePermission;
+	}
+
+	public JobError getJobError() {
+		return jobError;
 	}
 }

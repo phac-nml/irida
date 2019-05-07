@@ -34,6 +34,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @param username
 	 *            the user's username.
 	 * @return the user corresponding to the username.
+	 * @throws EntityNotFoundException if the user cannot be found by that username
 	 */
 	public User getUserByUsername(String username) throws EntityNotFoundException;
 

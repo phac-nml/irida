@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="add-job-error-table" author="pkruczkiewicz">
+        <createTable tableName="job_error_AUD">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="command_line" type="LONGTEXT"/>
+            <column name="created_date" type="datetime"/>
+            <column name="exit_code" type="INT"/>
+            <column name="history_id" type="VARCHAR(255)"/>
+            <column name="job_id" type="VARCHAR(255)"/>
+            <column name="parameters" type="LONGTEXT"/>
+            <column name="provenance_id" type="VARCHAR(255)"/>
+            <column name="provenance_uuid" type="VARCHAR(255)"/>
+            <column name="standard_error" type="LONGTEXT"/>
+            <column name="standard_output" type="LONGTEXT"/>
+            <column name="tool_description" type="VARCHAR(255)"/>
+            <column name="tool_id" type="VARCHAR(255)"/>
+            <column name="tool_name" type="VARCHAR(255)"/>
+            <column name="tool_version" type="VARCHAR(255)"/>
+            <column name="updated_date" type="datetime"/>
+            <column name="analysis_submission_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="REV" type="INT">
+                <constraints primaryKey="true"
+                             referencedColumnNames="id"
+                             referencedTableName="Revisions"
+                             foreignKeyName="FK_JOB_ERROR_AUD"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -8,6 +8,7 @@ import {
 } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 import "../../vendor/datatables/datatables";
+import { showNotification } from "../../modules/notifications";
 
 const table = $("#groupsTable");
 const url = table.data("url");
@@ -72,14 +73,14 @@ $dt.on("click", ".remove-btn", function(e) {
               type: "DELETE",
               success: function(result) {
                 $dt.ajax.reload();
-                window.notifications.show({
-                  msg: result.result
+                showNotification({
+                  text: result.result
                 });
                 modal.modal("hide");
               },
               error: function() {
-                window.notifications.show({
-                  msg: window.PAGE.i18n.unexpectedRemoveError,
+                showNotification({
+                  text: window.PAGE.i18n.unexpectedRemoveError,
                   type: "error"
                 });
                 modal.modal("hide");

@@ -1,76 +1,93 @@
 const path = require("path");
 const merge = require("webpack-merge");
-const parts = require("./configs/webpack/webpack.parts");
-const entries = require("./configs/webpack/entries.js");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const PATHS = {
-  build: path.resolve(__dirname, "resources/js/build")
+const entries = require("./entries.js");
+
+const BUILD_PATH = path.resolve(__dirname, "resources/dist");
+
+const config = {
+  externals: {
+    jquery: "jQuery",
+    angular: "angular",
+    moment: "moment"
+  },
+  stats: {
+    children: false,
+    cached: false
+  },
+  resolve: {
+    extensions: [".js", ".jsx"],
+    alias: { "./dist/cpexcel.js": "" }
+  },
+  entry: entries,
+  output: {
+    path: BUILD_PATH,
+    publicPath: `/resources/dist/`,
+    filename: "js/[name].bundle.js"
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude(path) {
+          return path.match(/node_modules/);
+        },
+        use: "babel-loader"
+      },
+      {
+        test: /\.(css|sass|scss)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              plugins: () => [require("autoprefixer")],
+              sourceMap: true
+            }
+          },
+          "sass-loader"
+        ]
+      },
+      {
+        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: {
+          loader: "url-loader"
+        }
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+        use: "file-loader"
+      },
+      {
+        test: require.resolve("jquery"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "$"
+          },
+          {
+            loader: "expose-loader",
+            options: "jQuery"
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/[name].bundle.css"
+    })
+  ]
 };
 
-/*
- This is used by both the production and the development configurations.
- */
-const commonConfig = merge([
-  {
-    entry: entries,
-    stats: {
-      children: false,
-      cached: false
-    },
-
-    externals: {
-      // require('jquery') is external and available
-      //  on the global var jQuery
-      jquery: "jQuery",
-      angular: "angular",
-      moment: "moment"
-    },
-    output: {
-      path: PATHS.build,
-      filename: "[name].bundle.js"
-    }
-  },
-  parts.loadJavaScript(),
-  parts.loadCSS()
-]);
-
-/* ======================
- PRODUCTION CONFIGURATION
-====================== */
-const productionConfig = merge([
-  parts.progressBar(),
-  parts.clean([PATHS.build])
-]);
-
-/* =======================
- DEVELOPMENT CONFIGURATION
- ====================== */
-const developmentConfig = merge([
-  {
-    devtool: "inline-source-map"
-  },
-  parts.devServer({
-    host: process.env.HOST,
-    port: 9090,
-    proxy: {
-      "/": {
-        target: "http://localhost:8080",
-        secure: false,
-        prependPath: false
-      }
-    },
-    publicPath: "http://localhost:9090/",
-    historyApiFallback: true
-  }),
-  // Add this back in after we format the entire project!
-  // parts.lintJavaScript(),
-  parts.writeFilePlugin()
-]);
-
-module.exports = env => {
-  if (env.target === "production") {
-    return merge(commonConfig, productionConfig);
-  }
-
-  return merge(commonConfig, developmentConfig);
+module.exports = ({ mode = "development" }) => {
+  const dev = require("./webpack.config.dev");
+  const prod = require("./wepack.config.prod");
+  return merge(
+    { mode },
+    config,
+    mode === "production" ? prod.config : dev.config
+  );
 };

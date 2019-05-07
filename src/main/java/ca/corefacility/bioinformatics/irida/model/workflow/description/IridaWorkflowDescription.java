@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 
 import com.google.common.collect.ImmutableList;
 
@@ -109,6 +109,21 @@ public class IridaWorkflowDescription {
 	 */
 	public boolean requiresReference() {
 		return getInputs().getReference().isPresent();
+	}
+
+	/**
+	 * Whether or not this workflow requires a data from a dynamic source such as a Galaxy Tool Data Table.
+	 *
+	 * @return True if this workflow requires a parameter value from a dynamic source.
+	 */
+	public boolean requiresDynamicSource() {
+		Boolean requiresDynamicSource = false;
+		for (IridaWorkflowParameter parameter : parameters) {
+			if (parameter.isRequired() && parameter.hasDynamicSource()) {
+				requiresDynamicSource = true;
+			}
+		}
+		return requiresDynamicSource;
 	}
 
 	/**

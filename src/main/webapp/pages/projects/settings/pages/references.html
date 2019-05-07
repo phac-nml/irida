@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/settings/_base">
+      data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.references}">Title</title>
     <script th:inline="javascript">
-      window.dependencies = ['References'];
       var PAGE = {
         urls: {
           get: /*[[@{/projects/{id}/settings/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',
@@ -13,7 +12,7 @@
           upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
         },
         templates: {
-          deleteFile: /*[[@{/projects/templates/referenceFiles/delete'}]]*/ '/projects/templates/referenceFiles/delete'
+          deleteFile: /*[[@{/projects/templates/referenceFiles/delete}]]*/ '/projects/templates/referenceFiles/delete'
         }
       };
     </script>
@@ -104,7 +103,7 @@
             </div>
         </div>
     </script>
-    <script th:src="@{/resources/js/build/project-reference-files.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/project-reference-files.bundle.js}"></script>
 </th:block>
 </body>
 </html>

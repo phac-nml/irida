@@ -15,6 +15,9 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemo
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
+/**
+ * Remote service implementation for reading sequence file pairs from a remote api
+ */
 @Service
 public class SequenceFilePairRemoteServiceImpl extends SequencingObjectRemoteServiceImpl<SequenceFilePair>
 		implements SequenceFilePairRemoteService {

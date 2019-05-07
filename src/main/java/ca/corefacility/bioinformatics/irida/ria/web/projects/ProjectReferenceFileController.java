@@ -51,6 +51,14 @@ public class ProjectReferenceFileController {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get the reference files page for a project
+	 *
+	 * @param model     model for the view
+	 * @param principal currently logged in user
+	 * @param projectId id of the project to get files for
+	 * @return name of the reference files view
+	 */
 	@RequestMapping(value = "/{projectId}/settings/referenceFiles", method = RequestMethod.GET)
 	public String getProjectReferenceFilesPage(final Model model, final Principal principal,
 			@PathVariable long projectId) {
@@ -63,6 +71,13 @@ public class ProjectReferenceFileController {
 		return "projects/settings/pages/references";
 	}
 
+	/**
+	 * Get the reference files fro a project
+	 *
+	 * @param projectId the ID of the project
+	 * @param locale    locale of the logged in user
+	 * @return information about the reference files in the project
+	 */
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
 	public @ResponseBody Map<String, Object> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);

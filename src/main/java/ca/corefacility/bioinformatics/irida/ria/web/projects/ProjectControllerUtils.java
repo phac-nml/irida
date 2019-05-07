@@ -53,13 +53,10 @@ public class ProjectControllerUtils {
 	 * <li>Sidebar Information</li>
 	 * <li>If the current user is an admin</li>
 	 * </ul>
-	 * 
-	 * @param model
-	 *            {@link Model} for the current view.
-	 * @param principal
-	 *            {@link Principal} currently logged in user.
-	 * @param project
-	 *            {@link} current project viewed.
+	 *
+	 * @param model     {@link Model} for the current view.
+	 * @param principal {@link Principal} currently logged in user.
+	 * @param project   current project viewed.
 	 */
 	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
 		User loggedInUser = userService.getUserByUsername(principal.getName());
@@ -73,6 +70,9 @@ public class ProjectControllerUtils {
 
 		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwner", isOwner);
+		
+		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
+		model.addAttribute("isOwnerAllowRemote", isOwnerAllowRemote);
 
 		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);

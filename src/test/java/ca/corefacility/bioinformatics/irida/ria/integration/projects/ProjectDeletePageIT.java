@@ -8,6 +8,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for deleting a project
@@ -31,6 +33,12 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 
 		page = ProjectDeletePage.goTo(driver(), PROJECT_ID);
 
+		assertFalse("delete button should be disabled", page.canClickDelete());
+
+		page.clickConfirm();
+
+		assertTrue("delete button should be enabled", page.canClickDelete());
+
 		page.deleteProject();
 
 		projectsPage.toAdminProjectsPage();
@@ -48,6 +56,12 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.projectsTableSize());
 
 		page = ProjectDeletePage.goTo(driver(), PROJECT_ID);
+
+		assertFalse("delete button should be disabled", page.canClickDelete());
+
+		page.clickConfirm();
+
+		assertTrue("delete button should be enabled", page.canClickDelete());
 
 		page.deleteProject();
 

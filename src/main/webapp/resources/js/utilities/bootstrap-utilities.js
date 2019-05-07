@@ -19,7 +19,7 @@ export function addTooltip({ dom, placement = "top", title }) {
   }
   dom.dataset.toggle = "tooltip";
   dom.dataset.placement = placement;
-  dom.dataset.container = 'body';
+  dom.dataset.container = "body";
   dom.title = title || dom.title;
   return dom;
 }

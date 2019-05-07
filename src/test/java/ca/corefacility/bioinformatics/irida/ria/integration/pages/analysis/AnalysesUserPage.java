@@ -58,7 +58,7 @@ public class AnalysesUserPage extends AbstractPage {
 		deleteAnalysisBtn.iterator().next().click();
 		WebElement deleteButton = waitForElementToBeClickable(driver.findElement(By.id("delete-analysis-button")));
 		deleteButton.click();
-		waitForDatatableAjax();
+		waitForJQueryAjaxResponse();
 	}
 
 	public void clearFilter() {

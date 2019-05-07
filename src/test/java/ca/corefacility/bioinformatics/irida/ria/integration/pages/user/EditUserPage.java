@@ -23,33 +23,41 @@ public class EditUserPage extends AbstractPage {
 		get(driver, EDIT_PAGE);
 	}
 
-	public String updateFirstName(String newName) {
+	public void enterFirstName(String newName) {
 		WebElement firstNameBox = driver.findElement(By.id("firstName"));
 		firstNameBox.sendKeys(newName);
+	}
 
-		driver.findElement(By.className("submit")).click();
-
-		WebElement nameDisplay = driver.findElement(By.id("user-name"));
-
-		return nameDisplay.getText();
+	public String getUpdatedUserFirstLastName() {
+		return driver.findElement(By.id("user-name")).getText();
 	}
 	
-	public void updatePassword(String password, String confirm){
+	public void enterPassword(String password, String confirm){
 		WebElement passwordBox = driver.findElement(By.id("password"));
 		WebElement confirmPasswordBox = driver.findElement(By.id("confirmPassword"));
 		passwordBox.sendKeys(password);
 		confirmPasswordBox.sendKeys(confirm);
-
-		driver.findElement(By.className("submit")).click();
 	}
-	
+
+	public void clickSubmit() {
+		driver.findElement(By.className("t-submit-btn")).click();
+	}
+
 	public boolean updateSuccess(){
 		try {
-			waitForElementVisible(By.className("user-details-title"));
+			waitForElementVisible(By.className("t-user-page-success"));
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	public boolean isSubmitEnabled(){
+		return driver.findElement(By.className("t-submit-btn")).isEnabled();
+	}
+
+	public boolean hasErrors() {
+		return !driver.findElements(By.className("t-form-error")).isEmpty();
 	}
 
 }

@@ -1,9 +1,10 @@
-import angular from 'angular';
-import metadataPlugin from 'phylocanvas-plugin-metadata';
-import exportSVgPlugin from 'phylocanvas-plugin-export-svg';
-import {METADATA, TREE} from './../../constants';
+import angular from "angular";
+import metadataPlugin from "phylocanvas-plugin-metadata";
+import exportSVgPlugin from "phylocanvas-plugin-export-svg";
+import { METADATA, TREE } from "./../../constants";
+import "../../../../../../sass/pages/phylocanvas-metadata.scss";
 
-const PHYLOCANVAS_DIV = 'phylocanvas';
+const PHYLOCANVAS_DIV = "phylocanvas";
 const BOTTOM_PADDING = 180;
 
 /*
@@ -16,11 +17,11 @@ const metadataFormat = {
   blockSize: 32,
   padding: 25,
   columns: [],
-  propertyName: 'data',
+  propertyName: "data",
   underlineHeaders: true,
   headerAngle: 0,
-  fillStyle: 'black',
-  strokeStyle: 'black',
+  fillStyle: "black",
+  strokeStyle: "black",
   lineWidth: 1
 };
 
@@ -42,8 +43,14 @@ const setCanvasHeight = $window => {
  * @param {object} PhylocanvasService angular service for server exchanges for newick data
  * @param {object} MetadataService angular service for getting metedata terms
  */
-function phylocanvasController($window, $scope, $q, Phylocanvas,
-                               PhylocanvasService, MetadataService) {
+function phylocanvasController(
+  $window,
+  $scope,
+  $q,
+  Phylocanvas,
+  PhylocanvasService,
+  MetadataService
+) {
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
@@ -52,11 +59,10 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
   Phylocanvas.plugin(exportSVgPlugin);
 
   // Initialize phylocanvas.
-  const tree = Phylocanvas
-    .createTree(PHYLOCANVAS_DIV, {
-      lineWidth: 2,
-      metadata: metadataFormat
-    });
+  const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
+    lineWidth: 2,
+    metadata: metadataFormat
+  });
 
   const promises = [];
 
@@ -69,27 +75,26 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
      * Kick everything off by getting the newick file and the
      * initial metadata.
      */
-    const newickPromise = PhylocanvasService
-      .getNewickData(this.newickurl)
-      .then(result => result, () => {
+    const newickPromise = PhylocanvasService.getNewickData(this.newickurl).then(
+      result => result,
+      () => {
         $scope.$emit(TREE.NOT_LOADED);
-      });
+      }
+    );
     promises.push(newickPromise);
 
     // Create the tree when the promises complete.
-    $q
-      .all(promises)
-      .then(results => {
-        const newick = results[1];
-        if (angular.isString(newick)) {
-          tree.load(newick);
-        }
-        $scope.$emit(TREE.COMPLETED);
-      });
+    $q.all(promises).then(results => {
+      const newick = results[1];
+      if (angular.isString(newick)) {
+        tree.load(newick);
+      }
+      $scope.$emit(TREE.COMPLETED);
+    });
   };
 
   // Set tree defaults
-  tree.setTreeType('rectangular');
+  tree.setTreeType("rectangular");
   tree.alignLabels = true;
 
   /**
@@ -113,9 +118,9 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
   });
 
   $scope.$on(METADATA.LOADED, (event, args) => {
-    const {metadata} = args;
+    const { metadata } = args;
     // Add the metadata to the branches before the tree is drawn.
-    tree.on('beforeFirstDraw', () => {
+    tree.on("beforeFirstDraw", () => {
       for (const leaf of tree.leaves) {
         leaf.data = metadata[leaf.label];
       }
@@ -128,9 +133,8 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
    * This forces phylocanvas to updates the metadata fields displayed.
    */
   $scope.$on(METADATA.TEMPLATE, (event, args) => {
-    const {fields} = args;
-    tree.metadata.columns = MetadataService
-      .getSortedAndFilteredColumns(fields);
+    const { fields } = args;
+    tree.metadata.columns = MetadataService.getSortedAndFilteredColumns(fields);
     tree.draw();
     tree.fitInPanel();
     tree.draw();
@@ -142,7 +146,7 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
   $scope.$on(TREE.EXPORT_SVG, () => {
     const svg = tree.exportSVG.getSerialisedSVG();
     const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     document.body.appendChild(link);
     link.download = `tree-${Date.now()}.svg`;
@@ -152,18 +156,18 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
 }
 
 phylocanvasController.$inject = [
-  '$window',
-  '$scope',
-  '$q',
-  'Phylocanvas',
-  'PhylocanvasService',
-  'MetadataService'
+  "$window",
+  "$scope",
+  "$q",
+  "Phylocanvas",
+  "PhylocanvasService",
+  "MetadataService"
 ];
 
 export const PhylocanvasComponent = {
   bindings: {
-    newickurl: '@'
+    newickurl: "@"
   },
-  templateUrl: 'phylocanvas.tmpl.html',
+  templateUrl: "phylocanvas.tmpl.html",
   controller: phylocanvasController
 };

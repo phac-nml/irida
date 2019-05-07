@@ -50,10 +50,10 @@ public interface RemoteService<Type extends IridaResourceSupport & IridaThing> {
 
 	/**
 	 * Get the status of the remote service
-	 * 
-	 * @param remoteAPI
-	 *            The API to check status for
+	 *
+	 * @param remoteAPI The API to check status for
 	 * @return true if the service is active
+	 * @throws IridaOAuthException if the remote api cannot be contacted
 	 */
 	public boolean getServiceStatus(RemoteAPI remoteAPI) throws IridaOAuthException;
 

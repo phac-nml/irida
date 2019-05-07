@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="samples/_base">
-<head lang="en">
-    <meta charset="UTF-8"/>
+      data-layout-decorate="~{samples/_base}">
+<head>
     <title th:text="#{samples.edit.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/resources/css/pages/sample_edit.css}" />
+    <link rel="stylesheet" th:href="@{/resources/dist/css/sample-edit.bundle.css}">
 </head>
 <body>
-<main layout:fragment="main">
+<div layout:fragment="main">
     <div class="row">
-        <div class="col-md-12 wb-frmvld">
+        <div class="col-md-12">
             <form id="edit-form" role="form" action="edit" method="post">
                 <div class="panel panel-info">
                     <div class="panel-heading">
@@ -22,16 +21,14 @@
                             <div class="form-group" th:class="#{#maps.containsKey(errors, 'sampleName')}">
                                 <label for="sampleName" th:text="#{samples.details.sampleName}">Sample Name</label>
                                 <input type="text" id="sampleName" name="sampleName" class="form-control input-full"
-                                       th:placeholder="${sample.getSampleName()}"
-                                       th:value="${sampleName}"/>
+                                       th:value="${sampleName} != null ? ${sampleName} : ${sample.getSampleName()}"/>
                                 <span id="sampleName-error" th:if="${#maps.containsKey(errors, 'sampleName')}"
                                       class="help-block" th:text="${errors.sampleName}"></span>
                             </div>
                             <div class="form-group" th:class="#{#maps.containsKey(errors, 'description')}">
                                 <label for="description" th:text="#{samples.details.description}">Description</label>
                                 <textarea type="text" id="description" name="description"
-                                          class="form-control input-full" th:placeholder="${sample.getDescription()}"
-                                          th:text="${description}"></textarea>
+                                          class="form-control input-full" th:text="${description} != null ? ${description} : ${sample.getDescription()}"></textarea>
                                 <span id="description-error" th:if="${#maps.containsKey(errors, 'description')}"
                                       class="help-block" th:text="${errors.description}"></span>
                             </div>
@@ -41,8 +38,7 @@
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'organism')} ? has-error">
                                 <label for="organism" th:text="#{samples.details.organism}">Organism</label>
                                 <input type="text" class="form-control input-full" id="organism" name="organism"
-                                       th:placeholder="${sample.getOrganism()} != null ? ${sample.getOrganism()}"
-                                       th:value="${organism}"/>
+                                       th:value="${organism} != null ? ${organism} : ${sample.getOrganism()}"/>
                                 <span id="organism-error" th:if="${#maps.containsKey(errors, 'organism')}"
                                       class="help-block" th:text="${errors.organism}"></span>
 
@@ -50,16 +46,14 @@
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'isolate')} ? has-error">
                                 <label for="isolate" th:text="#{samples.details.isolate}">Organism</label>
                                 <input type="text" class="form-control input-full" id="isolate" name="isolate"
-                                       th:placeholder="${sample.getIsolate()} != null ? ${sample.getIsolate()}"
-                                       th:value="${isolate}"/>
+                                       th:value="${isolate} != null ? ${isolate} : ${sample.getIsolate()}"/>
                                 <span id="isolate-error" th:if="${#maps.containsKey(errors, 'isolate')}"
                                       class="help-block" th:text="${errors.isolate}"></span>
                             </div>
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'strain')} ? has-error">
                                 <label for="strain" th:text="#{samples.details.strain}">Organism</label>
                                 <input type="text" class="form-control input-full" id="strain" name="strain"
-                                       th:placeholder="${sample.getStrain()} != null ? ${sample.getStrain()}"
-                                       th:value="${strain}"/>
+                                       th:value="${strain} != null ? ${strain} : ${sample.getStrain()}"/>
                                 <span id="strain-error" th:if="${#maps.containsKey(errors, 'strain')}"
                                       class="help-block" th:text="${errors.strain}"></span>
                             </div>
@@ -69,8 +63,7 @@
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'collectedBy')} ? has-error">
                                 <label for="collectedBy" th:text="#{samples.collected-by}">Collected By</label>
                                 <input type="text" class="form-control input-full" id="collectedBy" name="collectedBy"
-                                       th:placeholder="${sample.getCollectedBy()} != null ? ${sample.getCollectedBy()}"
-                                       th:value="${collectedBy}"/>
+                                       th:value="${collectedBy} != null ? ${collectedBy} : ${sample.getCollectedBy()}"/>
                                 <span id="collectedBy-error" th:if="${#maps.containsKey(errors, 'collectedBy')}"
                                       class="help-block" th:text="${errors.collectedBy}"></span>
                             </div>
@@ -80,8 +73,7 @@
                                     Collected</label>
                                 <input type="date" class="form-control input-full" id="collectionDate"
                                        name="collectionDate"
-                                       th:placeholder="${sample.getCollectionDate()} != null ? ${sample.getCollectionDate()}"
-                                       th:value="${collectionDate}"/>
+                                       th:value="${collectionDate} != null ? ${collectionDate} : ${sample.getCollectionDate()}"/>
                                 <span id="collectionDate-error" th:if="${#maps.containsKey(errors, 'collectionDate')}"
                                       class="help-block" th:text="${errors.collectionDate}"></span>
                             </div>
@@ -90,8 +82,7 @@
                                 <label for="isolationSource" th:text="#{samples.isolation-source.title}">Source</label>
                                 <input type="text" class="form-control input-full" id="isolationSource"
                                        name="isolationSource"
-                                       th:placeholder="${sample.getIsolationSource()} != null ? ${sample.getIsolationSource()}"
-                                       th:value="${isolationSource}"/>
+                                       th:value="${isolationSource} != null ? ${isolationSource} : ${sample.getIsolationSource()}"/>
                                 <span id="isolationSource-error" th:if="${#maps.containsKey(errors, 'isolationSource')}"
                                       class="help-block" th:text="${errors.isolationSource}"></span>
                             </div>
@@ -101,8 +92,7 @@
                                     Location</label>
                                 <input type="text" class="form-control input-full" id="geographicLocationName"
                                        name="geographicLocationName"
-                                       th:placeholder="${sample.getGeographicLocationName()} != null ? ${sample.getGeographicLocationName()}"
-                                       th:value="${geographicLocationName}"/>
+                                       th:value="${geographicLocationName} != null ? ${geographicLocationName} : ${sample.getGeographicLocationName()}"/>
                                 <span id="geographicLocationName-error"
                                       th:if="${#maps.containsKey(errors, 'geographicLocationName')}" class="help-block"
                                       th:text="${errors.geographicLocationName}"></span>
@@ -114,8 +104,7 @@
                                         <label for="latitude" th:text="#{location.latitude}">Latitude</label>
                                         <input type="text" class="form-control input-full" id="latitude"
                                                name="latitude"
-                                               th:placeholder="${sample.getLatitude()} != null ? ${sample.getLatitude()}"
-                                               th:value="${latitude}"/>
+                                               th:value="${latitude} != null ? ${latitude} : ${sample.getLatitude()}"/>
                                         <span id="latitude-error" th:if="${#maps.containsKey(errors, 'latitude')}"
                                               class="help-block" th:text="${errors.latitude}"></span>
                                     </div>
@@ -126,8 +115,7 @@
                                         <label for="longitude" th:text="#{location.longitude}">Longitude</label>
                                         <input type="text" class="form-control input-full" id="longitude"
                                                name="longitude"
-                                               th:placeholder="${sample.getLongitude()} != null ? ${sample.getLongitude()}"
-                                               th:value="${longitude}"/>
+                                               th:value="${longitude} != null ? ${longitude} : ${sample.getLongitude()}"/>
                                         <span id="longitude-error" th:if="${#maps.containsKey(errors, 'longitude')}"
                                               class="help-block" th:text="${errors.longitude}"></span>
                                     </div>
@@ -144,7 +132,7 @@
                                                 <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-default delete-metadata" type="button">
-                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                        <i class="far fa-trash-alt"></i>
                                                     </button>
                                                 </span>
                                             </div>
@@ -177,7 +165,7 @@
                             <input type="text" class="metadata-key form-control" required="required"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-default delete-metadata" type="button">
-                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                    <i class="far fa-trash-alt"></i>
                                 </button>
                             </span>
                         </div>
@@ -187,7 +175,7 @@
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <th:block layout:fragment="scripts">
     <script th:src="@{/resources/js/pages/samples/edit.js}"></script>

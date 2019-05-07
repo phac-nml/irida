@@ -4,10 +4,10 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asSequencer;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -70,7 +70,7 @@ public class ProjectSamplesIT {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesIT.class);
 
 	@Test
-	public void testCopySampleToProject() {
+	public void testShareSampleToProject() {
 		final List<String> samples = Lists.newArrayList("1");
 
 		final String projectUri = "/api/projects/4";
@@ -89,7 +89,7 @@ public class ProjectSamplesIT {
 	}
 
 	@Test
-	public void testCopySampleToProjectWithSameId() {
+	public void testShareSampleToProjectWithSameId() {
 		final List<String> samples = Lists.newArrayList("3");
 
 		final String projectUri = "/api/projects/4";
@@ -224,6 +224,24 @@ public class ProjectSamplesIT {
 		String projectSampleUri = projectUri + "/samples/1";
 
 		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
+	}
+	
+	@Test
+	public void testReadSampleCollectionDate() {
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectSampleUri = projectUri + "/samples/1";
+		
+		asAdmin().expect().body("resource.collectionDate", is("2019-01-24"))
+				.when().get(projectSampleUri);
+	}
+	
+	@Test
+	public void testReadSampleCollectionDate2() {
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectSampleUri = projectUri + "/samples/3";
+		
+		asAdmin().expect().body("resource.collectionDate", is("1999-12-05"))
 				.when().get(projectSampleUri);
 	}
 	

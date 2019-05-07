@@ -56,6 +56,13 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 
 	}
 
+	/**
+	 * Create a MiSeq run
+	 *
+	 * @param representation the run info to create
+	 * @param response       HTTP response to add info to
+	 * @return the created run
+	 */
 	@RequestMapping(value = "/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public ModelMap createMiseqRun(@RequestBody MiseqRun representation, HttpServletResponse response) {

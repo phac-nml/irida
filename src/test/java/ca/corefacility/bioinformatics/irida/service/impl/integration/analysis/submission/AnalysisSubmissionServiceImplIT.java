@@ -5,17 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,10 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -55,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.WorkflowNamedParametersRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -69,7 +58,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionServiceImplIT {
@@ -124,7 +113,7 @@ public class AnalysisSubmissionServiceImplIT {
 		String name = "My";
 		paged = analysisSubmissionService.listAllSubmissions(null, name, null, null,
 				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
-		assertEquals(8, paged.getContent().size());
+		assertEquals(10, paged.getContent().size());
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
@@ -397,6 +386,31 @@ public class AnalysisSubmissionServiceImplIT {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 		assertNotNull("submission should be updated", analysisSubmissionService.update(submission));
+	}
+
+	/**
+	 * Tests updating the analysis with a new priority.  Should fail.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUpdatePriorityFail() {
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+		submission.setPriority(AnalysisSubmission.Priority.HIGH);
+		analysisSubmissionService.update(submission);
+	}
+
+	/**
+	 * Tests updating the analysis with a new priority.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUpdatePriority() {
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+
+		analysisSubmissionService.updatePriority(submission, AnalysisSubmission.Priority.HIGH);
+		submission = analysisSubmissionService.read(1L);
+
+		assertEquals("Should have high priority", submission.getPriority(), AnalysisSubmission.Priority.HIGH);
 	}
 
 	/**
@@ -727,17 +741,5 @@ public class AnalysisSubmissionServiceImplIT {
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
 		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(),
 				submissionIds);
-	}
-
-	/**
-	 * Test specification.
-	 * 
-	 *
-	 */
-	private class AnalysisSubmissionTestSpecification implements Specification<AnalysisSubmission> {
-		@Override
-		public Predicate toPredicate(Root<AnalysisSubmission> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-			return null;
-		}
 	}
 }

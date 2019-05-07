@@ -56,8 +56,11 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         UserRevListener.applicationContext = applicationContext;
     }
-    
-    public void initialize(){
+
+	/**
+	 * Initialize the listener by getting dependencies
+	 */
+	public void initialize(){
         urepo = applicationContext.getBean(UserRepository.class);
         clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
     }

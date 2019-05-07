@@ -11,6 +11,10 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequencingObjectRemoteService;
 
+/**
+ * Service to read SequencingObjects from a remote api.
+ * @param <Type> The type of sequencing object for this service
+ */
 public class SequencingObjectRemoteServiceImpl<Type extends SequencingObject> extends RemoteServiceImpl<Type>
 		implements SequencingObjectRemoteService<Type> {
 	public SequenceFileRemoteRepository sequenceFileRemoteRepository;

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -48,17 +48,20 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
@@ -72,7 +75,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SNVPhylAnalysisIT {
@@ -106,6 +109,15 @@ public class SNVPhylAnalysisIT {
 	
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
+
+	@Autowired
+	private GalaxyJobErrorsService galaxyJobErrorsService;
+
+	@Autowired
+	private JobErrorRepository jobErrorRepository;
+
+	@Autowired
+	private EmailController emailController;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -153,7 +165,7 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
@@ -284,7 +296,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				BuiltInAnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
@@ -414,7 +426,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				BuiltInAnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
@@ -564,7 +576,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				BuiltInAnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());

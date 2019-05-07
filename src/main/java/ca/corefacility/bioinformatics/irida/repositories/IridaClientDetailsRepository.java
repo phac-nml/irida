@@ -11,6 +11,12 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
  */
 public interface IridaClientDetailsRepository extends IridaJpaRepository<IridaClientDetails, Long> {
 
+	/**
+	 * Get a client by the given id
+	 *
+	 * @param clientId id to load client for
+	 * @return the found {@link IridaClientDetails}
+	 */
 	@Query("from IridaClientDetails d where d.clientId = ?1")
 	public IridaClientDetails loadClientDetailsByClientId(String clientId);
 }

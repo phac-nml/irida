@@ -1,0 +1,124 @@
+$table-height: 600px;
+$border: 1px solid rgba(189, 195, 199, 1);
+$tableFont: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+  Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$bgColor: #f5f7f7;
+
+// Wrapper for the entire ag-grid
+// Does not wrap the side panel or bottom info box
+.ag-grid-table-wrapper {
+  box-sizing: border-box;
+  height: $table-height;
+  width: 100%;
+}
+
+.templates-option {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ant-select-selection-selected-value {
+  width: 100%;
+}
+
+.ant-select-dropdown-menu-item button,
+.ant-select-selection-selected-value .templates-option--field-count {
+  display: none;
+}
+
+// Hack to display Custom Cell Renderer in React see ag-grid issue https://github.com/ag-grid/ag-grid/issues/2299
+.ag-react-container {
+  display: inline !important;
+}
+
+.ag-grid-info-panel {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 1em;
+  padding-right: 19px;
+  font-family: $tableFont;
+  background-color: $bgColor;
+  border: $border;
+  border-top: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toolbar {
+  margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toolbar-group {
+  display: inline-block;
+
+  .ant-form-item {
+    margin-right: 4px !important;
+  }
+
+  .ant-form-item:last-of-type {
+    margin-right: 6px !important;
+  }
+}
+
+.table-filter,
+.tour-button {
+  margin-top: 4px !important;
+}
+
+// Style the default editor within ag-grid
+.ag-cell-edit-input {
+  color: #222222;
+  font-size: 12px !important;
+  padding: 0 10px;
+}
+
+/******************************************************************************
+* TABLE CONTROL PANEL
+******************************************************************************/
+
+.control-panel {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: $bgColor;
+  border: $border;
+  border-left: none;
+}
+
+.control-panel--content {
+  overflow-x: hidden;
+  width: 258px;
+  margin-right: 42px;
+}
+
+.control-panel--buttons {
+  background-color: $bgColor;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 5px;
+  border-left: 1px solid #bdc3c7;
+
+  button {
+    color: rgba(0, 0, 0, 0.54);
+  }
+}
+
+.column-list-item {
+  width: 100%;
+  .ant-list-item-action {
+    margin-left: 10px;
+  }
+}
+
+.column-list-item--text {
+  margin-left: 10px;
+  word-break: break-all;
+  hyphens: auto;
+  width: 100%;
+}
+
+/*****************************************************************************/

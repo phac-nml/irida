@@ -4,12 +4,13 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asManager;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asRole;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jayway.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
@@ -63,27 +64,37 @@ public class UsersIT {
 		// doesn't matter what the user is, we should fail here when trying to
 		// create a user because the current user doesn't have permission to
 		// create users.
-		asUser().given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
-				.post("/api/users");
+		asUser().given().body(createUser())
+				.contentType(ContentType.JSON)
+				.expect().response().statusCode(HttpStatus.SC_FORBIDDEN)
+				.when().post("/api/users");
 	}
 
 	@Test
 	public void testCreateUserAsAdminSucceed() {
 		Map<String, String> user = createUser();
 
-		asAdmin().given().body(user).expect().response().statusCode(HttpStatus.SC_CREATED).when().post("/api/users");
+		asAdmin().given().body(user)
+				.contentType(ContentType.JSON)
+				.expect().response().statusCode(HttpStatus.SC_CREATED)
+				.when().post("/api/users");
 	}
 
 	@Test
 	public void testCreateUserAsManagerSucceed() {
 		Map<String, String> user = createUser();
-		asManager().given().body(user).expect().response().statusCode(HttpStatus.SC_CREATED).when().post("/api/users");
+		asManager().given().body(user)
+				.contentType(ContentType.JSON)
+				.expect().response().statusCode(HttpStatus.SC_CREATED)
+				.when().post("/api/users");
 	}
 
 	@Test
 	public void testUpdateOtherAccountFail() {
-		asUser().given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
-				.patch("/api/users/2");
+		asUser().given().body(createUser())
+				.contentType(ContentType.JSON)
+				.expect().response().statusCode(HttpStatus.SC_FORBIDDEN)
+				.when().patch("/api/users/2");
 	}
 
 	private Map<String, String> createUser() {
@@ -91,7 +102,7 @@ public class UsersIT {
 		String email = RandomStringUtils.randomAlphanumeric(20) + "@" + RandomStringUtils.randomAlphanumeric(5) + ".ca";
 		Map<String, String> user = new HashMap<>();
 		user.put("username", username);
-		user.put("password", "Password1");
+		user.put("password", "Password1!");
 		user.put("email", email);
 		user.put("firstName", "Franklin");
 		user.put("lastName", "Bristow");

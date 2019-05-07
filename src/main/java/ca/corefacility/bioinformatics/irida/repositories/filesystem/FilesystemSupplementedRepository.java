@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * the custom implementation re-implements only the persisting methods defined
  * as {@link CrudRepository#save(Object)}.
  * 
- *
+ *	@param <Type> The type of object this repository is storing
  */
 @NoRepositoryBean
 public interface FilesystemSupplementedRepository<Type extends VersionedFileFields<Long> & IridaThing> {

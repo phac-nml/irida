@@ -102,9 +102,10 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 
 	/**
 	 * Set the {@link RemoteStatus} of a read remote entity
-	 * 
-	 * @param entity
-	 *            The entity to set the remote status on
+	 *
+	 * @param entity The entity to set the remote status on
+	 * @param api    The API to connect to
+	 * @param <T>    The type of entity you're setting status of
 	 * @return the enhanced entity
 	 */
 	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {

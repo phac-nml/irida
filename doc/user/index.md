@@ -41,6 +41,9 @@ IRIDA has several different built-in pipelines for analyzing your data:
 1. [Assembling your sequencing data][assembly].
 2. [Whole-genome SNV Phylogeny][snvphyl].
 3. [*Salmonella in-silico* Typing (SISTR)][sistr].
+4. [refseq_masher - Find what NCBI RefSeq genomes match or are contained within your sequence data using Mash MinHash with a Mash sketch database of 54,925 NCBI RefSeq Genomes][refseq_masher].
+5. [MentaLiST MLST][mentalist].
+6. [Bio_Hansel][biohansel]
 
 ### Getting your data out of IRIDA
 
@@ -74,6 +77,9 @@ If you are a system administrator or lab technician in a sequencing facility, yo
 [assembly]: tutorials/assembly/
 [snvphyl]: tutorials/snvphyl/
 [sistr]: tutorials/sistr/
+[biohansel]: tutorials/bio_hansel/
+[refseq_masher]: tutorials/refseq_masher/
+[mentalist]: tutorials/mentalist/
 [sharing]: tutorials/sharing/
 [sharing-some]: tutorials/sharing-some/
 [export-to-galaxy]: tutorials/export-to-galaxy/

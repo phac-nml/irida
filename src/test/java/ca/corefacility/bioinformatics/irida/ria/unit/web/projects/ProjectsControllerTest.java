@@ -1,5 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.util.*;
+
+import javax.servlet.http.HttpSession;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -7,9 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -21,20 +36,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
-import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.Principal;
-import java.util.*;
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -89,8 +92,7 @@ public class ProjectsControllerTest {
 	@Test
 	public void showAllProjects() {
 		Model model = new ExtendedModelMap();
-		HttpSession ses = mock(HttpSession.class);
-		String page = controller.getProjectsPage(model, null,null, ses);
+		String page = controller.getProjectsPage(model);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
@@ -140,7 +142,7 @@ public class ProjectsControllerTest {
 	@Test
 	public void testGetCreateProjectPage() {
 		Model model = new ExtendedModelMap();
-		String page = controller.getCreateProjectPage(false, model);
+		String page = controller.getCreateProjectPage(false, model, false);
 		assertEquals("Reruns the correct New Project Page", "projects/project_new", page);
 		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
 	}
@@ -155,7 +157,7 @@ public class ProjectsControllerTest {
 		// Test creating project
 		when(projectService.create(any(Project.class))).thenReturn(project);
 		when(projectService.update(any(Project.class))).thenReturn(project);
-		String page = controller.createNewProject(model, new Project(projectName), false);
+		String page = controller.createNewProject(model, new Project(projectName), false, false);
 		assertEquals("Returns the correct redirect to the collaborators page",
 				"redirect:/projects/" + projectId + "/metadata", page);
 	}

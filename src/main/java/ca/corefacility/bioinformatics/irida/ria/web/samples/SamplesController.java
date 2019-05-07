@@ -6,15 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,15 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -63,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -152,8 +142,22 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
+	}
+
+	/**
+	 * Get {@link Sample} details for a specific sample.
+	 *
+	 * @param id {@link Long} identifier for a sample.
+	 * @return {@link SampleDetails} for the {@link Sample}
+	 */
+	@RequestMapping(value = "/samples", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public SampleDetails getSampleDetails(@RequestParam Long id) {
+		Sample sample = sampleService.read(id);
+		boolean modifiable = this.isSampleModifiable(sample);
+		return new SampleDetails(sample, modifiable);
 	}
 
 	/**
@@ -203,22 +207,29 @@ public class SamplesController extends BaseController {
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
-		
+
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
-			if (!Strings.isNullOrEmpty(fieldValue)) {
-				updatedValues.put(field, fieldValue);
+			if(Strings.isNullOrEmpty(fieldValue)){
+				fieldValue = null;
+			}
+
+			updatedValues.put(field, fieldValue);
+			
+			if (fieldValue != null) {
 				model.addAttribute(field, fieldValue);
 			}
 		}
+
 		// Special case because it is a date field.
+		updatedValues.put(COLLECTION_DATE, collectionDate);
 		if (collectionDate != null) {
-			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 
-		/**
+
+		/*
 		 * If there's sample metadata to add, add it here.
 		 */
 		Map<String, MetadataEntry> metadataMap;
@@ -308,7 +319,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("assemblies", genomeAssemblies);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -382,9 +393,7 @@ public class SamplesController extends BaseController {
 	 * links that previously existed and may be bookmarked. These url require
 	 * the "/sequenceFiles" to prevent loading errors.
 	 *
-	 * @param request{@link
-	 * 			HttpServletRequest}
-	 *
+	 * @param request {@link HttpServletRequest}
 	 * @return {@link String} with the project sequence file URL
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}" })
@@ -537,8 +546,8 @@ public class SamplesController extends BaseController {
 	 *            model for the view
 	 * @return name of the files concatenate page
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/samples/{sampleId}/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/concatenate" }, method = RequestMethod.GET)
 	public String getConcatenatePage(@PathVariable Long sampleId, Model model) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
@@ -556,7 +565,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("single_end", singleFileJoins);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return FILES_CONCATENATE_PAGE;
 	}
@@ -578,8 +587,8 @@ public class SamplesController extends BaseController {
 	 *            the incoming {@link HttpServletRequest}
 	 * @return redirect to the files page if successul
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/samples/{sampleId}/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/concatenate" }, method = RequestMethod.POST)
 	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
 			@RequestParam(name = "filename") String filename,
 			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,
@@ -660,7 +669,7 @@ public class SamplesController extends BaseController {
 	 *            The sample to test
 	 * @return true/false if they have management permissions for the sample
 	 */
-	private boolean isProjectManagerForSample(Sample sample) {
+	private boolean isSampleModifiable(Sample sample) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		return updateSamplePermission.isAllowed(authentication, sample);

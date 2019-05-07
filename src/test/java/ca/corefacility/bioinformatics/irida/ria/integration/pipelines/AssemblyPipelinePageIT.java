@@ -1,29 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesAssemblyPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.*;
 
 /**
  * Testing for launching an assembly pipeline.
@@ -33,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyPipelinePageIT.class);
 	private PipelinesAssemblyPage page;
+	private CartPage cartPage;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -40,6 +37,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	@Before
 	public void setUpTest() {
 		page = new PipelinesAssemblyPage(driver());
+		cartPage = new CartPage(driver());
 	}
 
 	@Test
@@ -119,7 +117,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
 		samplesPage.selectSample(0);
 		samplesPage.addSelectedSamplesToCart();
-		PipelinesSelectionPage.goToAssemblyPipelinePipeline(driver());
+		cartPage.selectAssemblyPipeline();
 	}
 
 	private AnalysisSubmission findAnalysisSubmissionWithName(String name) {
@@ -131,5 +129,24 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		}
 
 		return submission;
+	}
+
+	@Test
+	public void testEmailPipelineResult() {
+		addSamplesToCartManager();
+
+		String analysisName = AssemblyPipelinePageIT.class.getName() + ".testEmailPipelineResult";
+		page.setNameForAnalysisPipeline(analysisName);
+
+		assertTrue("Email Pipeline Result checkbox should exist", page.existsEmailPipelineResult());
+		page.clickEmailPipelineResult();
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+
+		AnalysisSubmission submission = findAnalysisSubmissionWithName(analysisName + "_sample1");
+
+		assertNotNull("Analysis Submission is null", submission);
+		assertTrue("emailPipelineResult should be true", submission.getEmailPipelineResult());
 	}
 }

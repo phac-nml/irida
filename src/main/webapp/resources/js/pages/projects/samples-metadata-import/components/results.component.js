@@ -3,9 +3,9 @@
  * the sample name column has been selected.
  */
 const resultsComponent = {
-  templateUrl: 'results.component.tmpl.html',
+  templateUrl: "results.component.tmpl.html",
   bindings: {
-    data: '='
+    data: "="
   },
   controller() {
     this.$onInit = () => {

@@ -1,6 +1,15 @@
-const angular = require('angular');
-require('./../../modules/utilities/file.utils');
-require('./../../../css/pages/sample_files.css');
+const angular = require("angular");
+require("ng-file-upload");
+import { convertFileSize } from "../../utilities/file.utilities";
+require("../../../sass/pages/sample-files.scss");
+
+/**
+ * Filter for formatting the files size.
+ * @return {function} filter for file size
+ */
+function humanReadableBytes() {
+  return convertFileSize;
+}
 
 /**
  * Controller for the modal to confirm removing a sequenceFile
@@ -39,8 +48,8 @@ function FileController($uibModal) {
    */
   this.deleteFile = function(id, label) {
     $uibModal.open({
-      templateUrl: '/confirm.html',
-      controller: 'FileDeletionController as deleteCtrl',
+      templateUrl: "/confirm.html",
+      controller: "FileDeletionController as deleteCtrl",
       resolve: {
         id: function() {
           return id;
@@ -69,8 +78,8 @@ function AssemblyFileController($uibModal) {
    */
   this.deleteFile = function(id, label) {
     $uibModal.open({
-      templateUrl: '/confirm_assembly.html',
-      controller: 'FileDeletionController as deleteCtrl',
+      templateUrl: "/confirm_assembly.html",
+      controller: "FileDeletionController as deleteCtrl",
       resolve: {
         id: function() {
           return id;
@@ -112,26 +121,32 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
       data: {
         files: files
       },
-      arrayKey: ''
-    }).then(function() {
-      $window.onbeforeunload = undefined;
-      $timeout(function() {
-        vm.uploading = false;
-        $window.location.reload();
-        vm.processing = false;
-      }, 100);
-    }, function(data) {
-      $window.onbeforeunload = undefined;
-      vm.processing = false;
-      vm.uploading = false;
-      vm.errorMessage = data.error_message;
-    }, function(evt) {
-      vm.progress = parseInt(100.0 * evt.loaded / evt.total, 0);
-      if (vm.progress >= 99) {
-        vm.uploading = false;
-        vm.processing = true;
-      }
+      arrayKey: ""
     });
+
+    fileUpload.then(
+      function() {
+        $window.onbeforeunload = undefined;
+        $timeout(function() {
+          vm.uploading = false;
+          $window.location.reload();
+          vm.processing = false;
+        }, 100);
+      },
+      function(data) {
+        $window.onbeforeunload = undefined;
+        vm.processing = false;
+        vm.uploading = false;
+        vm.errorMessage = data.error_message;
+      },
+      function(evt) {
+        vm.progress = parseInt((100.0 * evt.loaded) / evt.total, 0);
+        if (vm.progress >= 99) {
+          vm.uploading = false;
+          vm.processing = true;
+        }
+      }
+    );
   }
 
   vm.uploadFiles = function($files) {
@@ -154,43 +169,50 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
     }
 
     if (badFiles.length > 0) {
-      $uibModal.open({
-        animation: true,
-        templateUrl: '/upload-error.html',
-        controllerAs: 'rejectModalCtrl',
-        controller: ['$uibModalInstance', function($uibModalInstance) {
-          const vm = this;
-          vm.rejects = badFiles;
-          vm.good = goodFiles;
+      $uibModal
+        .open({
+          animation: true,
+          templateUrl: "/upload-error.html",
+          controllerAs: "rejectModalCtrl",
+          controller: [
+            "$uibModalInstance",
+            function($uibModalInstance) {
+              const vm = this;
+              vm.rejects = badFiles;
+              vm.good = goodFiles;
 
-          vm.cancel = function() {
-            $uibModalInstance.dismiss();
-          };
+              vm.cancel = function() {
+                $uibModalInstance.dismiss();
+              };
 
-          vm.finish = function() {
-            $uibModalInstance.close(goodFiles.filter(file => {
-              return file.selected;
-            }));
-          };
-        }],
-        resolve: {
-          rejects: function() {
-            return badFiles;
-          },
-          files: function() {
-            return goodFiles;
+              vm.finish = function() {
+                $uibModalInstance.close(
+                  goodFiles.filter(file => {
+                    return file.selected;
+                  })
+                );
+              };
+            }
+          ],
+          resolve: {
+            rejects: function() {
+              return badFiles;
+            },
+            files: function() {
+              return goodFiles;
+            }
           }
-        }
-      }).result.then(function(files) {
-        uploadGoodFiles(files);
-      });
+        })
+        .result.then(function(files) {
+          uploadGoodFiles(files);
+        });
     } else {
       uploadGoodFiles($files);
     }
   };
 
   vm.cancel = function() {
-    if (fileUpload !== undefined) {
+    if (typeof fileUpload !== "undefined") {
       fileUpload.abort();
       fileUpload = undefined;
       vm.uploading = false;
@@ -198,17 +220,23 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
   };
 }
 
-angular.module('irida.sample.files', [
-  'file.utils',
-  'ngAnimate',
-  'ui.bootstrap',
-  'ngFileUpload'
-])
-  .controller('FileUploadController', ['Upload', '$timeout', '$window',
-    '$uibModal', FileUploadController
+const filesModule = angular
+  .module("irida.sample.files", ["ui.bootstrap", "ngFileUpload"])
+  .filter("humanReadableBytes", humanReadableBytes)
+  .controller("FileUploadController", [
+    "Upload",
+    "$timeout",
+    "$window",
+    "$uibModal",
+    FileUploadController
   ])
-  .controller('FileController', ['$uibModal', FileController])
-  .controller('AssemblyFileController', ['$uibModal', AssemblyFileController])
-  .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
+  .controller("FileController", ["$uibModal", FileController])
+  .controller("AssemblyFileController", ["$uibModal", AssemblyFileController])
+  .controller("FileDeletionController", [
+    "$uibModalInstance",
+    "id",
+    "label",
     FileDeletionController
-  ]);
+  ]).name;
+
+angular.module("irida").requires.push(filesModule);

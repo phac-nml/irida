@@ -7,7 +7,7 @@ DATABASE_USER=test
 DATABASE_PASSWORD=test
 JDBC_URL=jdbc:mysql://localhost:3306/$DATABASE_NAME
 TMP_DIRECTORY=/tmp
-GALAXY_DOCKER=phacnml/galaxy-irida-17.01:0.17.0-it
+GALAXY_DOCKER=phacnml/galaxy-irida-18.09:19.01-it
 GALAXY_DOCKER_NAME=irida-galaxy-test
 GALAXY_PORT=48889
 GALAXY_URL=http://localhost:$GALAXY_PORT
@@ -21,6 +21,11 @@ OUTPUT_FILE_DIR=`mktemp -d $TMP_DIRECTORY/output-file-base-XXXXXXXX`
 DO_KILL_DOCKER=true
 NO_CLEANUP=false
 HEADLESS=true
+
+if [ -z "$DB_MAX_WAIT_MILLIS" ];
+then
+	export DB_MAX_WAIT_MILLIS=10000
+fi
 
 check_dependencies() {
 	mvn --version 1>/dev/null 2>/dev/null
@@ -92,33 +97,54 @@ exit_error() {
 }
 
 test_service() {
-	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
+	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_rest() {
-	mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
+	mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_ui() {
-	mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
+	mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy() {
-	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
-	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
+	test_galaxy_internal galaxy_testing $@
+	exit_code=$?
+	return $exit_code
+}
+
+test_galaxy_pipelines() {
+	test_galaxy_internal galaxy_pipeline_testing $@
+	exit_code=$?
+	return $exit_code
+}
+
+test_galaxy_internal() {
+        profile=$1
+	shift
+
+	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER && \
+	mvn clean verify -B -P$profile -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $GALAXY_DOCKER_NAME; fi
 	return $exit_code
 }
 
+test_doc() {
+	mvn clean site $@
+	exit_code=$?
+	return $exit_code
+}
+
 test_all() {
-	for test_profile in test_rest test_service test_galaxy test_ui;
+	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc;
 	do
 		tmp_dir_cleanup
 		eval $test_profile
@@ -129,6 +155,7 @@ test_all() {
 	done
 
 	echo "SUCCESS for all integration tests"
+	return 0
 }
 
 ############
@@ -143,7 +170,7 @@ then
 	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all}."
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, doc_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
 	echo -e "$0 service_testing\n"
@@ -188,38 +215,60 @@ do
 	fi
 done
 
+exit_code=1
 case "$1" in
 	service_testing)
 		shift
 		pretest_cleanup
 		test_service $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	ui_testing)
 		shift
 		pretest_cleanup
 		test_ui $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	rest_testing)
 		shift
 		pretest_cleanup
 		test_rest $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	galaxy_testing)
 		shift
 		pretest_cleanup
 		test_galaxy $@
+		exit_code=$?
+		posttest_cleanup
+	;;
+	galaxy_pipeline_testing)
+		shift
+		pretest_cleanup
+		test_galaxy_pipelines $@
+		exit_code=$?
+		posttest_cleanup
+	;;
+	doc_testing)
+		shift
+		#pretest_cleanup
+		test_doc $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	all)
 		shift
 		pretest_cleanup
 		test_all $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	*)
-		exit_error "Unrecogized test [$1]"
+		exit_error "Unrecogized command [$1]"
 	;;
 esac
+
+exit $exit_code

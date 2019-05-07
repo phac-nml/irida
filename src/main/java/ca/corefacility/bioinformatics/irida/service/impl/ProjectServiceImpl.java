@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -402,8 +397,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner) {
-		ProjectSampleJoin join = addSampleToProject(destination, sample, owner);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
+		//read the existing ProjectSampleJoin to see if we're the owner
+		ProjectSampleJoin projectSampleJoin = psjRepository.readSampleForProject(source, sample);
+
+		//set the ownership on the sample given the existing permissions
+		ProjectSampleJoin join = addSampleToProject(destination, sample, projectSampleJoin.isOwner());
+
+		//remove the old join
 		removeSampleFromProject(source, sample);
 
 		return join;
@@ -415,27 +416,44 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasPermission(#source, 'isProjectOwner') " + "and hasPermission(#destination, 'isProjectOwner') "
-			+ "and hasPermission(#samples, 'canReadSample') "
-			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
-	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean move, boolean giveOwner) {
+	@PreAuthorize("hasPermission(#source, 'canManageLocalProjectSettings')"
+			+ " and hasPermission(#destination, 'isProjectOwner')"
+			+ " and hasPermission(#samples, 'canReadSample')"
+			+ " and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample'))")
+	public List<ProjectSampleJoin> shareSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean giveOwner) {
 
 		List<ProjectSampleJoin> newJoins = new ArrayList<>();
 
 		for (Sample sample : samples) {
-
-			ProjectSampleJoin newJoin;
-			if (move) {
-				newJoin = moveSampleBetweenProjects(source, destination, sample, giveOwner);
-			} else {
-				newJoin = addSampleToProject(destination, sample, giveOwner);
-			}
-
-			logger.trace("Copied sample " + sample.getId() + " to project " + destination.getId());
+			ProjectSampleJoin newJoin = addSampleToProject(destination, sample, giveOwner);
+			
+			logger.trace("Shared sample " + sample.getId() + " to project " + destination.getId());
 
 			newJoins.add(newJoin);
+		}
 
+		return newJoins;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
+	@PreAuthorize("hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') "
+			+ "and hasPermission(#samples, 'canReadSample') ")
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples) {
+
+		List<ProjectSampleJoin> newJoins = new ArrayList<>();
+
+		for (Sample sample : samples) {
+			ProjectSampleJoin newJoin = moveSampleBetweenProjects(source, destination, sample);
+
+			logger.trace("Moved sample " + sample.getId() + " to project " + destination.getId());
+
+			newJoins.add(newJoin);
 		}
 
 		return newJoins;
@@ -446,7 +464,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	@LaunchesProjectEvent(SampleRemovedProjectEvent.class)
 	public void removeSampleFromProject(Project project, Sample sample) {
 		ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, sample);
@@ -463,7 +481,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	@LaunchesProjectEvent(SampleRemovedProjectEvent.class)
 	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
 		for (Sample s : samples) {
@@ -605,7 +623,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'isProjectOwner')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'canManageLocalProjectSettings')")
 	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page, final Integer count,
 			final Direction sortDirection, final String... sortedBy) {
 
@@ -713,13 +731,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasPermission(#sampleIds, 'canUpdateSample')")
 	@Override
-	public Project createProjectWithSamples(Project project, List<Long> sampleIds) {
+	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner) {
 
 		Project created = create(project);
 
 		sampleIds.forEach(sid -> {
 			Sample s = sampleRepository.findOne(sid);
-			addSampleToProject(project, s, false);
+			addSampleToProject(project, s, owner);
 		});
 
 		return created;

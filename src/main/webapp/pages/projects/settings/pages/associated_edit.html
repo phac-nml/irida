@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/settings/_base">
+      data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.associated.heading(${project.label})}"></title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/projects-associated-edit.bundle.css}">
 </head>
 <body>
 
@@ -107,13 +108,12 @@
           local: {
             get: /*[[@{/projects/{id}/settings/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
             add: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
-            remove: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+            remove: /*[[@{/projects/{id}/settings/associated/remove(id=${project.getId()})}]]*/ "/projects/1/associated/"
           }
         }
       };
     </script>
-    <script src="/resources/js/build/projects-associated-edit.bundle.js"
-            th:src="@{/resources/js/build/projects-associated-edit.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/projects-associated-edit.bundle.js}"></script>
 </th:block>
 </body>
 </html>

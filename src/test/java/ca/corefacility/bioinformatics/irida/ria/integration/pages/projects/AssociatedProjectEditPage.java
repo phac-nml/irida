@@ -75,7 +75,7 @@ public class AssociatedProjectEditPage extends AbstractPage {
 
 	public boolean checkNotyStatus(String status) {
 		WebElement noty = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("noty_type_" + status)));
+				.className("noty_type__" + status)));
 		return noty.isDisplayed();
 	}
 

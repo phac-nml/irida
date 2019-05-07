@@ -13,20 +13,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 
 /**
  * Annotation for {@link DataTablesParams}
- * <p>
  * This is used to handle an ajax request from a client for a <a href="https://datatables.net/">DataTables</a>
  * response.  This is used to intercept the {@link HttpServletRequest} and capture
  * <a href="https://datatables.net/manual/server-side">server side DataTables parameters</a>.
- * </p>
- * <p>
- * <p>
+ *
  * This dependent on: {@link DataTablesRequestResolver}, {@link DataTablesParams}, {@link DataTablesColumnDefinitions}.
- * </p>
- * <p>
- * <p>Intended usage:</p>
- * <code>
- * public DataTablesResponse getDataTablesResponse(@DataTablesRequest DataTablesParams params) { ... }
- * </code>
+ *
+ * Intended usage:
+ * {@code public DataTablesResponse getDataTablesResponse(@DataTablesRequest DataTablesParams params) { ... }}
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

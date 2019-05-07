@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
+/**
+ * Exception thrown if a given dataset is not found in galaxy
+ */
 public class GalaxyDatasetNotFoundException extends GalaxyDatasetException {
 
 	private static final long serialVersionUID = -9021987573289725500L;

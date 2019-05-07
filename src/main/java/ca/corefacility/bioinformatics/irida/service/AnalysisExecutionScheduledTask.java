@@ -51,6 +51,13 @@ public interface AnalysisExecutionScheduledTask {
 	 *         stages.
 	 */
 	public Set<Future<AnalysisSubmission>> transferAnalysesResults();
+
+	/**
+	 * Cycle through any transferred {@link AnalysisSubmission}s and perform post processing as necessary
+	 *
+	 * @return a Set of Future {@link AnalysisSubmission}s
+	 */
+	public Set<Future<AnalysisSubmission>> postProcessResults();
 	
 	/**
 	 * Cycle through any completed or errored {@link AnalysisSubmission}s and

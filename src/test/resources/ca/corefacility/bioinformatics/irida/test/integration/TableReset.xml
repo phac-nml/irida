@@ -2,8 +2,6 @@
 <dataset>
 	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
 		referential integrity -->
-	<sample />
-
 	<analysis />
 	<analysis_fastqc />
 	<overrepresented_sequence />
@@ -11,15 +9,27 @@
 	
 	<sequence_file />
 	<sequence_file_properties />
-	<system_role />
-	<user />
+
+	<!--Keeping an admin user in the db for scheduling purposes -->
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		  email="admin@irida.com" firstName="admin" lastName="admin"
+		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		  phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN"
+		  credentialsNonExpired="true" enabled="true" />
+		
+	<remote_api />
+	<remote_status />
+	
+	<sample />
 	
 	<sequencing_run />
 	<miseq_run />
-	<remote_api />
-	<remote_status />
 	<project />
 	<related_project />
+
+	<tool_execution />
+	<tool_execution_parameters />
+	<tool_execution_prev_steps />
 
 	<analysis_output_file />
 	<analysis_output_file_map />
@@ -41,6 +51,8 @@
 	<analysis_submission />
 	<analysis_submission_parameters />
 	<project_analysis_submission/>
+
+	<job_error />
 	
 	<genome_assembly />
 	<genome_assembly_analysis />
@@ -104,7 +116,6 @@
 	<analysis_submission_AUD />
 	<analysis_submission_sequencing_object_AUD />
 	<analysis_submission_parameters_AUD />
-	<system_role_AUD />
 	<user_AUD />
 	<sample_AUD />
 	<remote_api_AUD />
@@ -139,4 +150,5 @@
 	<ncbi_export_submission_biosample_AUD/>
 	<ncbi_export_biosample_sequence_file_single_end_AUD/>
 	<ncbi_export_biosample_sequence_file_pair_AUD/>
+	<job_error_AUD />
 </dataset>

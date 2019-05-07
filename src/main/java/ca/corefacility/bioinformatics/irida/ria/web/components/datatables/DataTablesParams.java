@@ -18,7 +18,6 @@ import com.google.common.base.Strings;
 
 /**
  * Represents all parameters within a DataTables request.
- * <p>
  * <pre>
  * draw                  - Draw counter. This is used by DataTables to ensure that the Ajax returns
  *                         from server-side processing requests are drawn in sequence by DataTables.

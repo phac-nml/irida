@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
 
@@ -9,8 +9,6 @@
           href="/resources/bower_components/select2/select2.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
           href="/resources/bower_components/select2/select2-bootstrap.css"/>
-
-    <script>window.dependencies=["irida.project.new"];</script>
 </head>
 <body>
 <div layout:fragment="page">
@@ -85,7 +83,7 @@
                             <th:block th:with="allSamples = ${#lists.size(allowedSamples) + #lists.size(disallowedSamples)}">
                                 <div class="checkbox">
                                     <label for="useCartSamples">
-                                        <input type="checkbox" id="useCartSamples" name="useCartSamples" value="true" th:checked="${useCartSamples}" th:disabled="${allSamples} == 0"/>
+                                        <input type="checkbox" id="useCartSamples"  name="useCartSamples" value="true" th:checked="${useCartSamples}" th:disabled="${allSamples} == 0"/>
                                         <span th:text="#{projects.create.settings.cart}">_Use samples from cart_</span>
                                     </label>
                                 </div>
@@ -96,20 +94,37 @@
                                         <li th:each="sample : ${disallowedSamples}" th:text="${sample.sampleName}">_sample_</li>
                                     </ul>
                                 </div>
+
+                                <div class="checkbox">
+                                    <label for="lockSamples">
+                                        <input type="checkbox" id="lockSamples" name="lockSamples" value="false" th:disabled="${allSamples} == 0 or ${!useCartSamples}" />
+                                        <span th:text=" #{projects.create.settings.sample.modification}" >_Lock sample
+                                    modification_</span>
+                                    </label>
+                                </div>
                             </th:block>
-                            
-                                <div class="checkbox">
-                                    <label for="assemble">
-                                        <input type="checkbox" id="assemble" name="assembleUploads" value="true"/>
-                                        <span th:text="#{projects.create.settings.assemble}">_Assemble_</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox">
-                                    <label for="sistr">
-                                        <input type="checkbox" id="sistr" name="sistrTypingUploads" value="true"/>
-                                        <span th:text="#{projects.create.settings.sistr}">_SISTR_</span>
-                                    </label>
-                                </div>
+
+                            <div class="checkbox">
+                                <label for="assemble">
+                                    <input type="checkbox" id="assemble" name="assembleUploads" value="true"/>
+                                    <span th:text="#{projects.create.settings.assemble}">_Assemble_</span>
+                                </label>
+                            </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label for="sistrTypingUploads">
+                                    <input type="checkbox" class="js-sistr-checkbox" id="sistrTypingUploads" name="sistrTypingUploads" value="OFF">
+                                    <span th:text="#{projects.create.settings.sistr}">_RUN_SISTR_</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label style="margin-left: 20px;" for="sistrWrites">
+                                    <input type="checkbox" class="js-sistr-writes" id="sistrWrites" disabled>
+                                    <span th:text="#{projects.create.settings.sistr.AUTO_METADATA}">_WRITE_BACK_TO_SAMPLE_METADATA_</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         </div>
                 </div>
                 <div class="panel-footer text-right">
@@ -117,7 +132,7 @@
                        th:text="#{projects.create.form.cancel}">Cancel</a>
                     <button id="submitBtn" type="submit" class="btn btn-primary" ng-disabled="new_project.$invalid">
                         <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
-                        <span class="glyphicon glyphicon-chevron-right"></span></button>
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
                 </div>
             </section>
         </form>
@@ -179,17 +194,59 @@
             }
         }
 
-        (function() {
-            "use strict";
+        // Sistr settings
+        var SISTR_TYPES = {
+          off: "OFF",
+          auto: "AUTO",
+          autoMetadata: "AUTO_METADATA"
+        };
+        $(".js-sistr-checkbox").on("change", function(e) {
+          var selected = $(e.target).prop("checked");
+          if (selected) {
+            $(".js-sistr-writes").removeAttr("disabled");
+            $(".js-sistr-checkbox").val(SISTR_TYPES.auto);
+          } else {
+            $(".js-sistr-writes").removeAttr("checked").attr("disabled", true);
+            $(".js-sistr-checkbox").val(SISTR_TYPES.off);
+          }
+        });
 
-            angular.module("irida.project.new", ["ui.bootstrap"])
-                    .controller('NewProjectController', function () {
-                        var vm = this;
-                        vm.project = {
-                            name: /*[[${project} ? ${project.getName()} : '']]*/ '',
-                            remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
-                        };
-                    });
+        $(".js-sistr-writes").on("change", function(e) {
+          var selected = $(e.target).prop("checked");
+          if (selected) {
+            $(".js-sistr-checkbox").val(SISTR_TYPES.autoMetadata);
+          } else {
+            $(".js-sistr-checkbox").val(SISTR_TYPES.auto);
+          }
+        });
+
+        /*
+            Disables/enables the lockSamples checkbox
+            depending on if using the samples from cart
+        */
+        $("#useCartSamples").on("change", function(e) {
+          var selected = $(e.target).prop("checked");
+          if (!selected) {
+            $("#lockSamples").attr("disabled", true);
+            $("#lockSamples").prop("checked", false);
+          } else {
+            $("#lockSamples").removeAttr("disabled");
+          }
+        });
+
+        (function() {
+          "use strict";
+
+          const newProjectModule = angular.module("irida.project.new", ["ui.bootstrap"])
+            .controller('NewProjectController', function() {
+              var vm = this;
+              vm.project = {
+                name: /*[[${project} ? ${project.getName()} : '']]*/ '',
+                remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
+              };
+            })
+            .name;
+          angular.module("irida").requires.push(newProjectModule);
         })();
     </script>
 </th:block>

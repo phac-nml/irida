@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<script th:fragment="main" type="text/ng-template" id="joberrors.html">
+    <div ng-show="jobErrorsCtrl.hasNoJobErrorInfoAvailable()"
+         class="it-has-job-error">
+        <h2 th:text="#{analysis.details.joberror.unavailable}">_unavailable_</h2>
+    </div>
+    <div ng-show="jobErrorsCtrl.isLoading()"
+         class="it-has-job-error">
+        <i class="fa fa-spinner fa-pulse fa-4x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div ng-show="jobErrorsCtrl.hasJobErrors">
+        <div ng-repeat="jobError in jobErrorsCtrl.jobErrors" class="it-has-job-error">
+            <h3>[[ #{analysis.joberror} ]] - {{ jobError.toolName }} ({{ jobError.toolVersion}}) - [[ #{analysis.details.joberror.exitCode} ]] {{ jobError.exitCode }}</h3>
+            <table class="table table-bordered table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-md-3" th:text="#{analysis.details.joberror.attribute}"></th>
+                    <th class="col-md-9" th:text="#{analysis.details.joberror.value}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.createdDate}">_createdDate_</th>
+                    <td><p>{{ jobError.createdDate }}</p></td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.updatedDate}">_updatedDate_</th>
+                    <td><p>{{ jobError.updatedDate }}</p></td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.commandLine}">_commandLine_</th>
+                    <td><pre>{{ jobError.commandLine }}</pre></td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.exitCode}">_exitCode_</th>
+                    <td>{{ jobError.exitCode }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.toolId}">_toolId_</th>
+                    <td>{{ jobError.toolId }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.toolName}">_toolName_</th>
+                    <td>{{ jobError.toolName }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.toolVersion}">_toolVersion_</th>
+                    <td>{{ jobError.toolVersion }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.toolDescription}">_toolDescription_</th>
+                    <td>{{ jobError.toolDescription }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.provenanceId}">_provenanceId_</th>
+                    <td>{{ jobError.provenanceId }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.provenanceUUID}">_provenanceUUID_</th>
+                    <td>{{ jobError.provenanceUUID }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.historyId}">_historyId_</th>
+                    <td>{{ jobError.historyId }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.jobId}">_jobId_</th>
+                    <td>{{ jobError.jobId }}</td>
+                </tr>
+                <tr>
+                    <th th:text="#{analysis.details.joberror.identifier}">_identifier_</th>
+                    <td>{{ jobError.identifier }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div>
+                <div class="row">
+                    <div class="col-md-11">
+                        <h4 th:text="#{analysis.details.joberror.standardError}">_standardError_</h4>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-default btn-block"
+                                data-toggle="tooltip" data-placement="left"
+                                th:title="#{analysis.details.joberror.reverse-lines}"
+                                ng-click="jobErrorsCtrl.reverseLines(jobError, 'standardError')">
+                            <span ng-show="jobError.reversed.standardError"><i
+                                    class="fas fa-sort-amount-down"></i></span>
+                            <span ng-show="!jobError.reversed.standardError"><i
+                                    class="fas fa-sort-amount-up"></i></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <pre class="log--resizeable">{{ jobError.standardError }}</pre>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="col-md-11">
+                        <h4 th:text="#{analysis.details.joberror.standardOutput}">_standardOutput_</h4>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-default btn-block"
+                                data-toggle="tooltip" data-placement="left"
+                                th:title="#{analysis.details.joberror.reverse-lines}"
+                                ng-click="jobErrorsCtrl.reverseLines(jobError, 'standardOutput')">
+                            <span ng-show="jobError.reversed.standardOutput"><i
+                                    class="fas fa-sort-amount-down"></i></span>
+                            <span ng-show="!jobError.reversed.standardOutput"><i
+                                    class="fas fa-sort-amount-up"></i></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <pre class="log--resizeable">{{ jobError.standardOutput }}</pre>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 th:text="#{analysis.details.joberror.parameters}">_parameters_</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <pre class="log--resizeable">{{ jobError.parameters|json }}</pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</script>
+
+</body>
+</html>

@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+/**
+ * Library source of an NCBI export
+ */
 public enum NcbiLibrarySource {
 	GENOMIC("GENOMIC"),
 

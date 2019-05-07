@@ -19,7 +19,7 @@ const config = Object.assign(tableConfig, {
       targets: COLUMNS.ID
     },
     {
-      render: function (data, type, row) {
+      render: function(data, type, row) {
         return createItemLink({
           label: data,
           url: `${$table.data("clients")}${row.id}`
@@ -30,7 +30,7 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.CREATED_DATE,
       render(data) {
-        const date = formatDate({date: data});
+        const date = formatDate({ date: data });
         return `<time>${date}</time>`;
       }
     }
@@ -40,7 +40,7 @@ const config = Object.assign(tableConfig, {
 $table.DataTable(config);
 
 $(document).ready(() => {
-  const $addLink = $('#add-link');
-  $('.buttons').append($addLink);
+  const $addLink = $("#add-link");
+  $(".buttons").append($addLink);
   $addLink.removeClass("hidden");
 });

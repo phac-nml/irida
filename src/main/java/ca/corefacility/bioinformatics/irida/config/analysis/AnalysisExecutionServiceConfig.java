@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,11 +14,18 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.google.common.collect.Lists;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AnalysisSubmissionSampleProcessorImpl;
+import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -26,7 +38,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -36,8 +49,10 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  */
 @Configuration
 @EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
-@Profile({ "dev", "prod", "it" })
+@Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "web" })
 public class AnalysisExecutionServiceConfig {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceConfig.class);
 
 	/**
 	 * The order for asynchronous tasks. In particular, defines the order for
@@ -65,21 +80,57 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
-		
-	@Autowired
-	private SampleRemoteService sampleRemoteService;
 	
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
-	
-	@Autowired
-	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
 	
 	@Autowired
 	private ToolsClient toolsClient;
 	
 	@Autowired
 	private JobsClient jobsClient;
+	
+	@Autowired
+	private IridaPluginConfig.IridaPluginList pipelinePlugins;
+
+	@Autowired
+	private MetadataTemplateService metadataTemplateService;
+
+	@Autowired
+	private SampleService sampleService;
+
+	@Autowired
+	private SampleRepository sampleRepository;
+
+	@Autowired
+	private List<AnalysisSampleUpdater> defaultAnalysisSampleUpdaters;
+
+	private List<AnalysisSampleUpdater> loadPluginAnalysisSampleUpdaters() {
+		List<AnalysisSampleUpdater> pluginUpdaters = Lists.newLinkedList();
+
+		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
+			try {
+				Optional<AnalysisSampleUpdater> analysisSampleUpdaterOption = plugin.getUpdater(metadataTemplateService,
+						sampleService, iridaWorkflowsService);
+				if (analysisSampleUpdaterOption.isPresent()) {
+					pluginUpdaters.add(analysisSampleUpdaterOption.get());
+				}
+			} catch (IridaPluginException e) {
+				logger.error("Could not load AnalysisSampleUpdater for plugin " + plugin + ", skipping", e);
+			}
+		}
+
+		return pluginUpdaters;
+	}
+
+	@Bean
+	public AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor() {
+		List<AnalysisSampleUpdater> analysisSampleUpdaters = Lists.newLinkedList();
+		analysisSampleUpdaters.addAll(defaultAnalysisSampleUpdaters);
+		analysisSampleUpdaters.addAll(loadPluginAnalysisSampleUpdaters());
+
+		return new AnalysisSubmissionSampleProcessorImpl(sampleRepository, analysisSampleUpdaters);
+	}
 	
 	@Lazy
 	@Bean
@@ -92,7 +143,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleProcessor());
 	}
 	
 	@Lazy
@@ -107,7 +158,7 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
-				analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService,
+				analysisProvenanceService(), analysisParameterServiceGalaxy,
 				sequencingObjectService);
 	}
 

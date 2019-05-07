@@ -1,17 +1,20 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -19,16 +22,19 @@ import org.mockftpserver.fake.filesystem.DirectoryEntry;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
+import org.mockito.ArgumentCaptor;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
-import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class ExportUploadServiceTest {
 
@@ -51,7 +57,8 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, null, null,
+				new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -95,7 +102,8 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, null, null,
+				new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -123,7 +131,8 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, null, null,
+				new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -147,7 +156,8 @@ public class ExportUploadServiceTest {
 		String baseDirectory = "/home/test/submit/Test";
 		int ftpPort = 1;
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, null, null,
+				new TestEmailController());
 
 		exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
 		String xml = "<xml></xml>";
@@ -196,7 +206,7 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null,
+		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null, null, null,
 				new TestEmailController());
 		try {
 			server.start();
@@ -211,24 +221,36 @@ public class ExportUploadServiceTest {
 
 		assertEquals("sample2 should have processing state", ExportUploadState.PROCESSING,
 				sample2.getSubmissionStatus());
-		assertEquals("sample3 should have processing state", ExportUploadState.SUBMITTED, sample3.getSubmissionStatus());
+		assertEquals("sample3 should have processing state", ExportUploadState.SUBMITTED,
+				sample3.getSubmissionStatus());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetResultsWithAccession() throws IOException, UploadException {
 		NcbiExportSubmissionService exportSubmissionService = mock(NcbiExportSubmissionService.class);
+		SampleService sampleService = mock(SampleService.class);
+		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 
+		SingleEndSequenceFile seqObject = new SingleEndSequenceFile(null);
+		Sample iridaSample = new Sample("sample1");
 		NcbiBioSampleFiles sample2 = new NcbiBioSampleFiles();
 		sample2.setId("NMLTEST2");
+		sample2.setFiles(Lists.newArrayList(seqObject));
 		NcbiExportSubmission submission = new NcbiExportSubmission();
 		submission.setBioSampleFiles(Lists.newArrayList(sample2));
 		submission.setDirectoryPath("submit/Test/example");
 
 		String newAccession = "SRR12345";
+		MetadataTemplateField field = new MetadataTemplateField(ExportUploadService.NCBI_ACCESSION_METADATA_LABEL,
+				"text");
+		MetadataEntry entry = new MetadataEntry(newAccession, "text");
 
 		when(exportSubmissionService.getSubmissionsWithState(any(Set.class)))
 				.thenReturn(Lists.newArrayList(submission));
+		when(sampleService.getSampleForSequencingObject(seqObject))
+				.thenReturn(new SampleSequencingObjectJoin(iridaSample, seqObject));
+		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(ImmutableMap.of(field, entry));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
 				+ "<SubmissionStatus submission_id=\"SUB11245\" status=\"processed-ok\">\n"
@@ -257,8 +279,8 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null,
-				new TestEmailController());
+		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, sampleService,
+				metadataTemplateService, null, new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -273,14 +295,21 @@ public class ExportUploadServiceTest {
 		assertEquals("sample2 should have processing state", ExportUploadState.PROCESSED_OK,
 				sample2.getSubmissionStatus());
 		assertEquals("sample2 should have an accession", newAccession, sample2.getAccession());
+
+		verify(sampleService).getSampleForSequencingObject(seqObject);
+
+		ArgumentCaptor<Sample> captor = ArgumentCaptor.forClass(Sample.class);
+		verify(sampleService).update(captor.capture());
+
+		Sample savedSample = captor.getValue();
+		assertTrue("saved sample shuold contain accession", savedSample.getMetadata().containsKey(field));
 	}
 
 	/**
 	 * Create a fake submission for test uploads
-	 * 
+	 *
 	 * @return a {@link NcbiExportSubmission}
-	 * @throws IOException
-	 *             if the test file couldn't be created
+	 * @throws IOException if the test file couldn't be created
 	 */
 	private NcbiExportSubmission createFakeSubmission() throws IOException {
 		NcbiExportSubmission submission = new NcbiExportSubmission();

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="sequenceFiles/_base">
+      data-layout-decorate="~{sequenceFiles/_base}">
 <head>
     <title th:text="${file.getLabel()}"></title>
     <script th:inline="javascript">
-        window.dependencies = ["irida.sequence-files"];
         window.PAGE = {
             images: [
                 {
@@ -36,9 +35,8 @@
 <body>
 
 <main layout:fragment="main">
-    <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
 
-    <p class="lead" th:text="${fastQC.description}">...</p>
+    <p class="lead" th:text="#{fastqc.file.processor.analysis.description(${fastQC.fastqcVersion})}">...</p>
 
     <section class="sequenceFile">
         <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>

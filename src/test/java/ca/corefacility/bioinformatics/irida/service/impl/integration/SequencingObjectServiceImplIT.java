@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -79,7 +80,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequencingObjectServiceImplIT {
@@ -101,7 +102,7 @@ public class SequencingObjectServiceImplIT {
 
 	@Autowired
 	private SampleService sampleService;
-	
+
 	@Autowired
 	private SampleRepository sampleRepository;
 
@@ -121,14 +122,15 @@ public class SequencingObjectServiceImplIT {
 	@Before
 	public void setUp() throws IOException {
 		Files.createDirectories(baseDirectory);
+		FileUtils.cleanDirectory(baseDirectory.toFile());
 	}
 
 	private SequencingObjectServiceImplIT asRole(Role r, String username) {
 		User u = new User();
 		u.setUsername(username);
-		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setPassword(passwordEncoder.encode("Password1!"));
 		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1!",
 				ImmutableList.of(r));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
@@ -188,7 +190,7 @@ public class SequencingObjectServiceImplIT {
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
 		// Sleeping for a bit to let file processing run
-		Thread.sleep(10000);
+		Thread.sleep(15000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -216,8 +218,8 @@ public class SequencingObjectServiceImplIT {
 
 		objectService.createSequencingObjectInSample(so, s);
 
-		// Wait 5 seconds. file processing should have failed by then.
-		Thread.sleep(5000);
+		// Wait 15 seconds. file processing should have failed by then.
+		Thread.sleep(15000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -279,9 +281,9 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
-		
+
 		// Sleeping for a bit to let file processing run
-		Thread.sleep(10000);
+		Thread.sleep(15000);
 
 		// figure out what the version number of the sequence file is (should be
 		// 1; the file wasn't gzipped, but fastqc will have modified it.)
@@ -343,7 +345,7 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
-		
+
 		// Sleeping for a bit to let file processing run
 		Thread.sleep(10000);
 
@@ -437,8 +439,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 10 seconds. file processing should have run by then.
-		Thread.sleep(10000);
+		// Wait 15 seconds. file processing should have run by then.
+		Thread.sleep(15000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -465,7 +467,7 @@ public class SequencingObjectServiceImplIT {
 		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
 		assertEquals("qc should have failed", QCEntryStatus.NEGATIVE, qcEntry.getStatus());
 	}
-	
+
 	/**
 	 * Tests to make sure we get a properly constructed map of samples to sequencing objects.
 	 */
@@ -474,16 +476,16 @@ public class SequencingObjectServiceImplIT {
 	public void testGetUniqueSamplesForSequencingObjectsSuccess() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
-		
+
 		Sample sa1 = sampleService.read(1L);
 		Sample sa2 = sampleService.read(2L);
-		
+
 		Map<Sample, SequencingObject> sampleMap = objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 		assertEquals("Incorrect number of results returned in sample map", 2, sampleMap.size());
 		assertEquals("Incorrect sequencing object mapped to sample", s2.getId(), sampleMap.get(sa1).getId());
 		assertEquals("Incorrect sequencing object mapped to sample", s1.getId(), sampleMap.get(sa2).getId());
 	}
-	
+
 	/**
 	 * Tests failure when a sample for one sequencing object does not exist.
 	 */
@@ -492,12 +494,12 @@ public class SequencingObjectServiceImplIT {
 	public void testGetUniqueSamplesForSequencingObjectsFailNoSample() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
-		
+
 		sampleRepository.delete(1L);
-		
+
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 	}
-	
+
 	/**
 	 * Tests failure for duplicate samples in sequencing objects.
 	 */
@@ -506,10 +508,10 @@ public class SequencingObjectServiceImplIT {
 	public void testGetUniqueSamplesForSequencingObjectsFailDuplicateSample() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s4 = objectService.read(4L);
-				
+
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
 	}
-	
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testConcatenateSequenceFiles() throws IOException, InterruptedException, ConcatenateException {
@@ -558,14 +560,14 @@ public class SequencingObjectServiceImplIT {
 		assertTrue("new file should contain new name", newFile.getFileName().contains(newFileName));
 
 		long newFileSize = newFile.getFile().toFile().length();
-		
+
 		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
 	}
-	
+
 	private SequenceFile createSequenceFile(String name) throws IOException{
 		Path sequenceFile = Files.createTempFile(name, ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		
+
 		return new SequenceFile(sequenceFile);
 	}
 }

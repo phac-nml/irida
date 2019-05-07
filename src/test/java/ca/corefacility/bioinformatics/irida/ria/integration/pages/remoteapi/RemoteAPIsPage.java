@@ -27,7 +27,7 @@ public class RemoteAPIsPage extends AbstractPage {
 	}
 
 	public boolean checkRemoteApiExistsInTable(String clientName) {
-		List<WebElement> findElements = driver.findElements(By.className("api-name"));
+		List<WebElement> findElements = driver.findElements(By.className("t-api-name"));
 		for (WebElement ele : findElements) {
 			if (ele.getText().equals(clientName)) {
 				return true;

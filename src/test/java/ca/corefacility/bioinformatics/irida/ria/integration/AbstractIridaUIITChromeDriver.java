@@ -27,6 +27,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
@@ -50,6 +51,9 @@ public class AbstractIridaUIITChromeDriver {
 
     private static boolean isSingleTest = false;
 
+	private static final String CHROMEDRIVER_PROP_KEY = "webdriver.chrome.driver";
+	private static final String CHROMEDRIVER_LOCATION = "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver";
+
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
 
@@ -57,7 +61,7 @@ public class AbstractIridaUIITChromeDriver {
      * Code to execute before *each* test.
      */
     @Before
-    public void setUpTest() {
+    public void setUpTest() throws IOException {
     	// logout before everything else.
     	LoginPage.logout(driver());
     }
@@ -90,9 +94,13 @@ public class AbstractIridaUIITChromeDriver {
      */
     public static WebDriver driver() {
         if (IntegrationUITestListener.driver() == null) {
-            logger.debug("Starting ChromeDriver for a single test class.");
-            System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
-            isSingleTest = true;
+			final String chromeDriverProp = System.getProperty(CHROMEDRIVER_PROP_KEY);
+			System.setProperty(CHROMEDRIVER_PROP_KEY,
+					Strings.isNullOrEmpty(chromeDriverProp) ? CHROMEDRIVER_LOCATION : chromeDriverProp);
+			logger.debug(
+					"Starting ChromeDriver for a single test class. Using `chromedriver` at '" + System.getProperty(
+							CHROMEDRIVER_PROP_KEY) + "'");
+			isSingleTest = true;
             IntegrationUITestListener.startWebDriver();
         }
 

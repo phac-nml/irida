@@ -17,18 +17,34 @@ public class SampleMetadataStorage {
 		this.sampleNameColumn = sampleColumnName;
 	}
 
+	/**
+	 * Save the given headers
+	 * @param headers the headers to save
+	 */
 	public void saveHeaders(List<String> headers) {
 		this.headers = headers;
 	}
 
+	/**
+	 * Save the given rows
+	 * @param rows the rows to save
+	 */
 	public void saveRows(List<Map<String, String>> rows) {
 		this.rows = rows;
 	}
 
+	/**
+	 * Save the found values
+	 * @param found the found values
+	 */
 	public void saveFound(List<Map<String, String>> found) {
 		this.found = found;
 	}
 
+	/**
+	 * Save the missing values
+	 * @param missing the missing values
+	 */
 	public void saveMissing(List<Map<String, String>> missing) {
 		this.missing = missing;
 	}
@@ -53,6 +69,9 @@ public class SampleMetadataStorage {
 		return missing;
 	}
 
+	/**
+	 * remove all rows
+	 */
 	public void removeRows() {
 		this.rows = null;
 	}

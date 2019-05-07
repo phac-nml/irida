@@ -1,34 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorator="template/page">
-<head lang="en">
-</head>
+      data-layout-decorate="~{template/page}">
 <body>
-    <nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav"
-         th:with="baseLink=@{/sequencingRuns/{id}(id=${run.getId()})}">
-        <div class="container">
-            <ul class="nav navbar-nav">
+    <div layout:fragment="page">
+        <main class="col-md-9 col-md-push-3">
+            <h1 th:text="#{sequencingruns.page-header(${run.getId()})}">_RUN_LABEL></h1>
+
+            <ul class="nav nav-tabs subnav" th:with="baseLink=@{/sequencingRuns/{id}(id=${run.getId()})}">
                 <li th:class="${activeNav} == 'details' ? 'active'">
                     <a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">
                         _Details_
                     </a>
                 </li>
                 <li th:class="${activeNav} == 'files' ? 'active'">
-                    <a th:href="${baseLink + '/sequenceFiles'}" href="#" >
+                    <a th:href="${baseLink + '/sequenceFiles'}" href="#">
                         <span th:text="#{samples.nav.files}">_Files_</span>
                         <span id="file-count" class="badge badge-default" th:text="${fileCount}">0</span>
                     </a>
                 </li>
             </ul>
-        </div>
-    </nav>
-    <div layout:fragment="page">
-        <main class="col-md-9 col-md-push-3" layout:fragment="main"> </main>
+
+            <th:block layout:fragment="main"/>
+        </main>
         <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
             <div class="sidebar">
-                <div class="sidebar__heading">
-                    <h2 th:text="#{sequencingruns.details.title(${run.getId()})}">__NAME__</h2>
-                </div>
                 <div class="sidebar__body">
                     <div class="sidebar__item">
                         <div class="sidebar__icon"><span class="fa fa-fw fa-barcode sidebar__icon"></span></div> <span th:text="#{iridaThing.id}">ID</span>

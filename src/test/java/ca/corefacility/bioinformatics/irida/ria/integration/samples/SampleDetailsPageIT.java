@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleDetailsPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,7 +39,7 @@ public class SampleDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPageSetup() {
 		page.gotoPage(SAMPLE_ID);
-		assertEquals("Display the correct title.", "Sample - sample1 - Details", page.getPageTitle());
+		assertEquals("Display the correct title.", "Sample - sample1", page.getPageTitle());
 		assertEquals("Displays the correct organism", SAMPLE_ORGANISM, page.getOrganismName());
 		assertEquals("Displays the created date", SAMPLE_CREATED_DATE, page.getCreatedDate());
 		assertEquals("Displays the latitude", SAMPLE_LATITUDE, page.getLatitude());

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+    <id>beee0266-c141-45ef-8d3e-9c471a90de88</id>
+    <name>MLSTMentalist</name>
+    <version>0.1.3</version>
+    <analysisType>MLST_MENTALIST</analysisType>
+    <inputs>
+        <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+        <requiresSingleSample>false</requiresSingleSample>
+    </inputs>
+    <parameters>
+        <parameter name="kmer_db" required="true">
+            <dynamicSource>
+                <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value" />
+            </dynamicSource>
+            <toolParameter
+                    toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3"
+                    parameterName="kmer_db" />
+        </parameter>
+    </parameters>
+    <outputs>
+        <output name="mlst-result" fileName="mentalist_call.tsv" />
+    </outputs>
+    <toolRepositories>
+        <repository>
+            <name>mentalist</name>
+            <owner>dfornika</owner>
+            <url>https://toolshed.g2.bx.psu.edu/</url>
+            <revision>1d9e3950ce61</revision>
+        </repository>
+        <repository>
+            <name>combine_tabular_collection</name>
+            <owner>nml</owner>
+            <url>https://toolshed.g2.bx.psu.edu/</url>
+            <revision>b815081988b5</revision>
+        </repository>
+    </toolRepositories>
+</iridaWorkflow>

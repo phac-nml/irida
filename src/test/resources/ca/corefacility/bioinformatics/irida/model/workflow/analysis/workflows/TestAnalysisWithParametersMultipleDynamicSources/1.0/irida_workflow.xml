@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>c59e79dc-b5a6-448d-a106-ed8eaceb1a69</id>
+	<name>TestWorkflow</name>
+	<version>1.0</version>
+	<analysisType>DEFAULT</analysisType>
+	<inputs>
+		<sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+		<reference>reference</reference>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="test-parameter" required="true">
+			<dynamicSource>
+				<galaxyToolDataTable name="all_fasta" displayColumn="name" parameterColumn="value" />
+				<galaxyToolDataTable name="igv_broad_genomes" displayColumn="name" parameterColumn="value" />
+			</dynamicSource>
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
+				parameterName="a" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="output1" fileName="output1.txt"></output>
+		<output name="output2" fileName="output2.txt"></output>
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>sam_to_bam</name>
+			<owner>devteam</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>8176b2575aa1</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

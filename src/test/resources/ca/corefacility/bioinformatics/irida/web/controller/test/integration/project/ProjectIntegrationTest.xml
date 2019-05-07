@@ -1,9 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<system_role description="A manager" name="ROLE_MANAGER" />
-	<system_role description="An admin" name="ROLE_ADMIN" />
-	<system_role description="A user" name="ROLE_USER" />
-	<system_role description="A sequencer" name="ROLE_SEQUENCER" />
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
 		password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"
@@ -30,7 +26,7 @@
 		phoneNumber="0000" username="uploader" enabled="true" system_role="ROLE_SEQUENCER"
 		credentialsNonExpired="true" />
 
-	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" sistr_typing_uploads="OFF" />
 
 	<sample id="1"  sampleName="sample"
 		createdDate="2013-07-18 14:20:19.0" />

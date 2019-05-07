@@ -74,7 +74,7 @@ public class UserTest {
 	@Test
 	public void testShortPassword() {
 		User u = new User();
-		u.setPassword("Sma11");
+		u.setPassword("Sma1!");
 		Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
 
 		assertEquals(1, constraintViolations.size());
@@ -84,7 +84,7 @@ public class UserTest {
 	@Test
 	public void testWeakLowercasePassword() {
 		User u = new User();
-		u.setPassword("a11-1owercase");
+		u.setPassword("a11!1owercase");
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
 
@@ -95,7 +95,7 @@ public class UserTest {
 	@Test
 	public void testWeakNoNumbersPassword() {
 		User u = new User();
-		u.setPassword("NoNumbers");
+		u.setPassword("NoNumbers!");
 		Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
 
 		assertEquals(1, constraintViolations.size());
@@ -111,8 +111,9 @@ public class UserTest {
 		messages.add(b.getString("user.password.size"));
 		messages.add(b.getString("user.password.uppercase"));
 		messages.add(b.getString("user.password.number"));
+		messages.add(b.getString("user.password.special"));
 
-		assertEquals(3, constraintViolations.size());
+		assertEquals(4, constraintViolations.size());
 		for (ConstraintViolation<User> violation : constraintViolations) {
 			assertTrue(messages.contains(violation.getMessage()));
 			messages.remove(violation.getMessage());
@@ -155,7 +156,7 @@ public class UserTest {
 		User u = new User();
 		u.setUsername("fbristow");
 		u.setEmail("franklin.bristow+plusSymbolsAREValid@phac-aspc.gc.ca");
-		u.setPassword("SuperVa1idP4ssw0rd");
+		u.setPassword("SuperVa1idP4ssw0rd!");
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
@@ -170,7 +171,7 @@ public class UserTest {
 	public void testPasswordNoLowerCase() {
 		User u = new User();
 		u.setUsername("fbristow");
-		u.setPassword("NOLOWERCASES12");
+		u.setPassword("NOLOWERCASES12!");
 		u.setEmail("fbristow@example.com");
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");

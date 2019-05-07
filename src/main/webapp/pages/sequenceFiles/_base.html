@@ -1,90 +1,95 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
-<head lang="en">
-</head>
+      data-layout-decorate="~{template/page}">
 <body>
-<nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav">
-    <div class="container">
-        <ul th:if="${fastQC}" id="fastQC-details-nav" class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
-            <li th:class="${activeNav} == 'dashboard' ? 'active'"><a href="summary">
-                <span th:text="#{sf.subnav.summary}"></span></a></li>
-            <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
-                href="overrepresented">
-                <span th:text="#{sf.subnav.overrepresented}"></span>&nbsp;<span class="badge" th:text="${#lists.size(fastQC.overrepresentedSequences)}"></span></a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div layout:fragment="page">
-    <div th:if="!${fastQC}" id="fastQC-no-run" class="alert alert-info" role="alert">
-        <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
-        <b th:text="#{sf.no-results}">There is no FastQC data available for this file.</b>
-    </div>
-    <th:block th:if="${fastQC}">
-        <!--/*/
-    <main id="fastQC-details" class="col-md-8 col-md-push-4" layout:fragment="main">
-        This is where the main content of every project page will go.
-        /*/-->
-    </main>
+<div layout:fragment="page" class="row">
+    <div class="col-md-12">
+        <h1 th:text="${file.getLabel()}"></h1>
+        <nav>
+            <ul th:if="${fastQC}" id="fastQC-details-nav" class="nav nav-tabs" th:inline="text"
+                th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
+                <li th:class="${activeNav} == 'dashboard' ? 'active'"><a href="summary">
+                    <span th:text="#{sf.subnav.summary}"></span></a></li>
+                <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
+                        href="overrepresented">
+                    <th:block th:text="#{sf.subnav.overrepresented}"/>
+                    <span class="badge spaced-left__sm"
+                          th:text="${#lists.size(fastQC.overrepresentedSequences)}"></span></a>
+                </li>
+            </ul>
+        </nav>
 
-    <aside class="col-md-4 col-md-pull-8 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <b class="panel-title" th:text="#{sf.sidebar.details}">__FILE_DETAILS__</b>
-            </div>
-            <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked project-details">
-                    <li>
-                        <i class="glyphicon glyphicon-barcode"></i>
-                        <em th:text="#{sf.sidebar.file-id}"></em>
-                        <span id="file-id" th:text="${file.getId()}"></span></li>
-                    <li>
-                        <i class="glyphicon glyphicon-calendar"></i>
-                        <em th:text="#{sf.sidebar.created}"></em>
-                        <span id="file-created" th:title="${created}" th:text="${created}"></span>
-                    </li>
-                    <li>
-                        <i class="glyphicon glyphicon-qrcode"></i>
-                        <em th:text="#{sf.encoding}">_ENCODING_</em>
-                        <span id="file-encoding" th:text="*{encoding}"></span>
-                    </li>
-                </ul>
-            </div>
+        <div th:if="!${fastQC}" id="fastQC-no-run" class="alert alert-info" role="alert">
+            <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
+            <b th:text="#{sf.no-results}">There is no FastQC data available for this file.</b>
         </div>
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <b class="panel-title" th:text="#{sf.sidebar.sequences}">__SEQUENCE_DETAILS__</b>
-            </div>
-            <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked project-details">
-                    <li><em th:text="#{sf.totalSequences}">_TOTAL_SEQUENCES_</em><span id="totalSequences"
+        <th:block th:if="${fastQC}">
+            <main id="fastQC-details" class="col-md-8 col-md-push-4" layout:fragment="main">
+                <!--/*/r
+                This is where the main content of every project page will go.
+                /*/-->
+            </main>
+
+            <aside class="col-md-4 col-md-pull-8 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <b class="panel-title" th:text="#{sf.sidebar.details}">__FILE_DETAILS__</b>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked project-details">
+                            <li>
+                                <i class="fa fa-barcode" aria-hidden="true"></i>
+                                <em th:text="#{sf.sidebar.file-id}"></em>
+                                <span id="file-id" th:text="${file.getId()}"></span></li>
+                            <li>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                <em th:text="#{sf.sidebar.created}"></em>
+                                <span id="file-created" th:title="${created}" th:text="${created}"></span>
+                            </li>
+                            <li>
+                                <i class="fa fa-qrcode" aria-hidden="true"></i>
+                                <em th:text="#{sf.encoding}">_ENCODING_</em>
+                                <span id="file-encoding" th:text="*{encoding}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <b class="panel-title" th:text="#{sf.sidebar.sequences}">__SEQUENCE_DETAILS__</b>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked project-details">
+                            <li><em th:text="#{sf.totalSequences}">_TOTAL_SEQUENCES_</em><span id="totalSequences"
+                                                                                               class="pull-right"
+                                                                                               th:text="*{totalSequences}"></span>
+                            </li>
+                            <li><em th:text="#{sf.totalBases}">_TOTAL_BASES+</em><span id="totalBases"
                                                                                        class="pull-right"
-                                                                                       th:text="*{totalSequences}"></span>
-                    </li>
-                    <li><em th:text="#{sf.totalBases}">_TOTAL_BASES+</em><span id="totalBases" class="pull-right"
-                                                                               th:text="*{totalBases}"></span></li>
-                    <li><em th:text="#{sf.minLength}">_MIN_LENGHT_</em><span id="minLength" class="pull-right"
-                                                                             th:text="*{minLength}"></span></li>
-                    <li><em th:text="#{sf.maxLength}">_MIN_LENGHT_</em><span id="maxLength" class="pull-right"
-                                                                             th:text="*{maxLength}"></span></li>
-                    <li><em th:text="#{sf.gcContent}">_MIN_LENGHT_</em><span id="gcContent" class="pull-right"
-                                                                             th:text="*{gcContent}"></span></li>
-                </ul>
-            </div>
-        </div>
-    </aside>
-    </th:block>
+                                                                                       th:text="*{totalBases}"></span>
+                            </li>
+                            <li><em th:text="#{sf.minLength}">_MIN_LENGHT_</em><span id="minLength" class="pull-right"
+                                                                                     th:text="*{minLength}"></span></li>
+                            <li><em th:text="#{sf.maxLength}">_MIN_LENGHT_</em><span id="maxLength" class="pull-right"
+                                                                                     th:text="*{maxLength}"></span></li>
+                            <li><em th:text="#{sf.gcContent}">_MIN_LENGHT_</em><span id="gcContent" class="pull-right"
+                                                                                     th:text="*{gcContent}"></span></li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </th:block>
+    </div>
 </div>
 
 <th:block th:inline="javascript" layout:fragment="scripts">
     <iframe id="invisible" style="display:none;"></iframe>
     <script>
-        $("#fileDownload").on('click', function () {
-            var iframe = document.getElementById('invisible');
-            iframe.src = /*[[@{'/sequenceFiles/download/' + ${file.getId()}}]]*/ '/sequenceFiles/download/11';
-        });
+      $("#fileDownload").on('click', function() {
+        var iframe = document.getElementById('invisible');
+        iframe.src = /*[[@{'/sequenceFiles/download/' + ${file.getId()}}]]*/ '/sequenceFiles/download/11';
+      });
     </script>
 
     <th:block layout:fragment="pageScripts"></th:block>

@@ -2,423 +2,347 @@
 <html
         xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorator="projects/_base">
+        data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-copy.bundle.css}">
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-filter.bundle.css}">
     <script th:inline="javascript">
-        window.dependencies = ['irida.projects.samples.controller'];
-        var PAGE = {
-            project: {
-                id: /*[[${project.getId()}]]*/ '4'
-            },
-            ajaxParam: {date:{}},
-            linker: /*[[${linker}]]*/'',
-            urls: {
-                associated: {
-                    local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
-                },
-                modals: {
-                    remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
-                    merge: /*[[@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}]]*/ '/projects/templates/merge-modal',
-                    copy: /*[[@{/projects/templates/copy-modal(projectId=${project.getId()})}]]*/ '/projects/templates/copy-modal',
-                    move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal',
-                    galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1',
-                    filter: /*[[@{/projects/template/samples-filter-modal}]]*/ ''
-                },
-                projects: {
-                  available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
-                },
-                samples: {
-                    project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
-                    local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
-                    remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-                    merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
-                    copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
-                    download: /*[[@{/projects/{id}/download/files(id=${project.getId()})}]]*/ '/projects/1/download/files',
-                    ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
-                    linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
-                    export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
-                    idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
-                    sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
-                },
-                fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
-            },
-            i18n: {
-                dateFilter: {
-                    days30: /*[[#{project.sample.filter.date.days30}]]*/ "Last 30 Days",
-                    days60: /*[[#{project.sample.filter.date.days60}]]*/ "Last 60 Days",
-                    days120: /*[[#{project.sample.filter.date.days120}]]*/ "Last 120 Days"
-                },
-                selectedCounts: {
-                    none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
-                    one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
-                    other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
-                }
-            }
-        };
+      var PAGE = {
+        isRemoteProject: /*[[${project.isRemote()}]]*/ false,
+        linker: /*[[${linker}]]*/'',
+        urls: {
+          projects: {
+            available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
+          },
+          samples: {
+            project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
+            local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
+            remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+            copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
+            export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
+            idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
+            sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
+          },
+          fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
+        },
+        i18n: {
+          chips: {
+            name: /*[[#{project.sample.filter-name}]]*/ "Name",
+            range: /*[[#{project.sample.filter-date.label}]]*/ "Date Range",
+            organism: /*[[#{project.sample.filter-organism}]]*/ "Organism"
+          },
+          dateFilter: {
+            format: /*[[#{project.sample.filter.date.format}]]*/ "MMM dd, YYYY",
+            month: /*[[#{project.sample.filter.date.month}]]*/ "_MONTH_",
+            months3: /*[[#{project.sample.filter.date.months3}]]*/ "3 Months_",
+            months6: /*[[#{project.sample.filter.date.months6}]]*/ "6 Months_",
+            year: /*[[#{project.sample.filter.date.year}]]*/ "Year_"
+          },
+          buttons: {
+            selectAll: /*[[#{project.samples.select.selectAll}]]*/ "Select All",
+            selectNone: /*[[#{project.samples.select.selectNone}]]*/ "Select None"
+          },
+          select: {
+            none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
+            one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
+            other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
+          }
+        }
+      };
     </script>
-    <style>
-        .dataTables_filter, .filter-area {
-            display: inline-block !important;
-            float: right;
-        }
-        .project-label{
-            border-left: 4px solid #ECEFF1;
-            padding-left: 4px;
-        }
-        .inputfile {
-            width: 0.1px;
-            height: 0.1px;
-            opacity: 0;
-            overflow: hidden;
-            position: absolute;
-            z-index: -1;
-        }
-        .tooltip-ul {
-            text-align: left;
-            padding-left: 14px;
-            margin-left: 0;
-        }
-
-        .dataTable thead th {
-            vertical-align: middle !important;
-            line-height: 40px;
-        }
-
-        #associated-dropdown {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-    </style>
 </head>
 <body>
-<main id="project-samples-main" layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
-    <div dt:conf="samplesTable">
-        <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
-        <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
-        <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
-    </div>
-
-    <table class="selectable" id="samplesTable" dt:table="true" dt:stateSave="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
-        <thead>
-        <tr>
-            <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">
-                <div class="btn-group btn-group-sm ng-cloak" uib-dropdown="" dropdown-append-to-body="true" ng-controller="SelectionController as selectCtrl">
-                    <button id="selection-main" class="btn btn-default" ng-click="selectCtrl.selectAllBtn($event)">
-                        <input id="allSelectedCB" type="checkbox" />
-                    </button>
-                    <button id="selection-toggle" class="btn btn-default" uib-dropdown-toggle="">
-                        <span class="caret"/>
-                    </button>
-                    <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                        <li role="menuitem">
-                            <a id="selection-all" href="#" ng-click="selectCtrl.selectAll()">Select All</a>
-                        </li>
-                        <li role="menuitem">
-                            <a id="selection-none" href="#" ng-click="selectCtrl.selectNone()">Select None</a>
-                        </li>
-                        <li role="menuitem">
-                            <a id="selection-page-all" href="#" ng-click="selectCtrl.selectPage()">Select Page</a>
-                        </li>
-                        <li role="menuitem">
-                            <a id="selection-page-none" href="#" ng-click="selectCtrl.deselectPage()">Deselect Page</a>
-                        </li>
-                    </ul>
-                </div>
-            </th>
-            <th data-name="sample.sampleName" dt:property="sampleName" th:text="#{project.samples.table.name}"
-                dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
-            <th data-name="sample.organism" dt:property="organism" th:text="#{project.samples.table.organism}"
-                dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
-            <th data-name="project.name" dt:property="projectName" th:text="#{project.samples.table.project}"
-                dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
-            <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
-                dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-            <th data-name="sample.modifiedDate" width="160px" dt:property="modifiedDate" dt:sortType="natural"
-                dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
-                dt:renderFunction="datatables-utils#datatable.formatDateWithTime"></th>
-        </tr>
-        </thead>
-    </table>
-    <div class="hidden">
-        <filtered-tags id="filtered-tags"></filtered-tags>
-        <samples-filter id="filter-btns"></samples-filter>
-        <div id="toolbar">
-            <div role="toolbar" aria-label="Sample Table Tools">
-                <div style="display: inline-block;" th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown=""
-                     auto-close="outsideClick"
-                     ng-controller="AssociatedProjectsController as apCtrl">
-                    <button id="associated-btn" class="btn btn-default btn-sm" uib-dropdown-toggle=""
-                            aria-haspopup="true">
-                        <th:block th:text="#{project.samples.nav.associated}"></th:block>
-                        &nbsp;
-                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                    </button>
-                    <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
-                        aria-labelledby="associated-btn">
-                        <li role="menuitemcheckbox">
-                            <a style="display: block;" href="#" ng-click="apCtrl.selectAllOrNone($event)">
-                                <div class="checkbox" style="display: block;">
-                                    <input id="select-all-cb" type="checkbox"/>&nbsp;
-                                    <th:block  th:text="#{project.samples.nav.associated-selectAll}" />
-                                </div>
-                            </a>
-                        </li>
-                        <li role="separator" class="divider"></li>
-                        <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
-                            <a class="associated-link" href="#" style="display: block;" data:id="${associated.getId()}"
-                               ng-click="apCtrl.toggleAssociatedProject($event)">
-                                <div class="checkbox" style="display: block;">
-                                    <label>
-                                        <input class="associated-cb" type="checkbox"/>
-                                        &nbsp;
-                                        <th:block th:text="${associated.getName()}"></th:block>
-                                    </label>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">
-                    <th:block th:if="${isOwner || isAdmin}">
-                        <div style="display: inline-block;" uib-dropdown="">
-                            <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle=""
-                                    type="button">
-                                <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
-                                <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
-                            </button>
-                            <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                                <li id="mergeBtn"
-                                    ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
-                                    tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
-                                    uib-tooltip-template="'merge.msg.tmpl'">
-                                    <a href="#" ng-click="toolsCtrl.merge()">
-                                        <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
-                                        <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
-                                    </a>
-                                </li>
-                                <li id="copyBtn"
-                                    ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                                    tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                                    uib-tooltip-template="'copy.msg.tmpl'">
-                                    <a href="#" ng-click="toolsCtrl.copy()">
-                                        <i class="fa fa-files-o fa-fw" aria-hidden="true"></i>&nbsp;
-                                        <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
-                                    </a>
-                                </li>
-                                <li id="moveBtn"
-                                    ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                                    tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                                    uib-tooltip-template="'move.msg.tmpl'">
-                                    <a href="#" ng-click="toolsCtrl.move()">
-                                        <i class="fa fa-truck fa-fw" aria-hidden="true"></i>&nbsp;
-                                        <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
-                                    </a>
-                                </li>
-                                <li id="removeBtn"
-                                    ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                                    tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                                    uib-tooltip-template="'remove.msg.tmpl'">
-                                    <a href="#" ng-click="toolsCtrl.remove()">
-                                        <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
-                                        <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
-                                    </a>
-                                </li>
-                                <li role="separator" class="divider"></li>
-                                <li>
-                                    <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
-                                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;
-                                <th:block th:text="#{project.nav.samples.import-metadata}"/>
-                            </a></li>
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
-                                        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>&nbsp;
-                                        <th:block th:text="#{project.samples.nav.new}"/>
-                                    </a></li>
-                            </ul>
-                        </div>
-                    </th:block>
-                    <div style="display: inline-block;" uib-dropdown="">
-                        <button id="export-samples-btn" class="btn btn-default btn-sm" uib-dropdown-toggle="">
-                            <th:block th:text="#{project.samples.export.label}" />&nbsp;
-                            <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
+<main id="project-samples-main" layout:fragment="main">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
+                <div class="btn-group" th:if="${isAdmin or isOwnerAllowRemote}">
+                    <div class="dropdown">
+                        <button id="sample-tools" class="btn btn-default btn-sm dropdown-toggle t-sample-tools"
+                                data-toggle="dropdown">
+                            <th:block th:text="#{project.samples.nav.sample-tools}"/>
+                            <i class="fa fa-caret-down fa-fw"></i>
                         </button>
-                        <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="export-samples-btn">
-                            <li id="download-btn" role="menuitem"
-                                ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                                tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                                uib-tooltip-template="'download.msg.tmpl'">
-                                <a href="#" ng-click="toolsCtrl.download()">
-                                    <i class="fa fa-download fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.download}"/>
+                        <ul class="dropdown-menu" aria-labelledby="sample-tools">
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-tool-btn t-merge-btn"
+                                   data-enabled-at="2" data-toggle="tooltip"
+                                   data:enabled-msg="#{project.samples.tooltip.merge.requires-more-than-one}"
+                                   data:remote-msg="#{project.samples.tooltip.merge.remote-project}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}"
+                                   data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/dist/js/project-samples-merge.bundle.js}">
+                                    <i class="fa fa-compress fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.nav.merge}"/>
                                 </a>
                             </li>
-                            <li id="linker-btn" th:if="${linkerAvailable}" role="menuitem"
-                                ng-class="{disabled: toolsCtrl.disabled.hasAssociated}"
-                                tooltip-enable="toolsCtrl.disabled.hasAssociated"
-                                uib-tooltip-template="'linker.msg.tmpl'">
-                                <a href="#" ng-click="toolsCtrl.linker()">
-                                    <i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.linker}"/>
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-tool-btn t-copy-btn"
+                                   data-enabled-at="1" data-toggle="tooltip"
+                                   data:enabled-msg="#{project.samples.tooltip.share.requires-more-than-one}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}"
+                                   data-params="{&quot;move&quot;: false}"
+                                   data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/dist/js/project-samples-copy.bundle.js}">
+                                    <i class="fa fa-share-alt fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.nav.share}"/>
                                 </a>
                             </li>
-                            <li role="menuitem"
-                                th:if="${galaxyCallback}"
-                                ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">
-                                <a href="#" ng-click="toolsCtrl.galaxy(); cart.show=false">
-                                    <i class="fa fa-cloud-upload fa-fw" aria-hidden="true"></i>
-                                    <span th:text="#{project.samples.export.galaxy}"></span>
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-tool-btn t-move-btn"
+                                   data-enabled-at="1" data-params="{&quot;move&quot;: true}"
+                                   data-toggle="tooltip"
+                                   data:enabled-msg="#{project.samples.tooltip.move.requires-more-than-one}"
+                                   data:remote-msg="#{project.samples.tooltip.move.remote-project}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}"
+                                   data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/dist/js/project-samples-copy.bundle.js}">
+                                    <i class="fa fa-truck fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.nav.move}"/>
                                 </a>
                             </li>
-                            <li id="ncbi-btn" role="menuitem"
-                                ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                                tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                                uib-tooltip-template="'ncbi.msg.tmpl'">
-                                <a href="#" ng-click="toolsCtrl.ncbiExport()">
-                                    <i class="fa fa-upload fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/>
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-tool-btn t-remove-btn"
+                                   data-enabled-at="1" data-toggle="tooltip"
+                                   data:enabled-msg="#{project.samples.tooltip.remove.requires-more-than-one}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}"
+                                   data:url="@{/projects/{projectId}/templates/remove-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/dist/js/project-samples-remove.bundle.js}">
+                                    <i class="fa fa-trash fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.nav.remove}"/>
+                                </a>
+                            </li>
+
+                            <li role="separator" class="divider"></li>
+
+                            <!-- IMPORT METADATA LINK-->
+                            <li role="menuitem">
+                                <a href="#"
+                                	class="js-sample-project-tool-btn t-import-metadata-btn"
+                                	data:url="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}"
+                                	data-enabled-at="0" data-toggle="tooltip"
+                                	data:remote-msg="#{project.samples.tooltip.import-metadata.remote-project}">
+                                    <i class="fa fa-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.nav.samples.import-metadata}"/>
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+
+                            <!-- NEW SAMPLE LINK -->
+                            <li role="menuitem">
+                                <a href="#"
+                                  	class="js-sample-project-tool-btn t-new-sample-btn"
+                                	data:url="@{/projects/{id}/samples/new(id=${project.getId()})}"
+                                	data-enabled-at="0" data-toggle="tooltip"
+                                	data:remote-msg="#{project.samples.tooltip.new-sample.remote-project}">
+                                    <i class="fa fa-plus fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.nav.new}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <div class="dropdown associated-dd" th:if="${not #lists.isEmpty(associatedProjects)}">
+                        <button class="btn btn-default btn-sm dropdown-toggle t-associated-btn" type="button"
+                                id="associated-btn"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <th:block th:text="#{project.samples.nav.associated}"/>
+                            <i class="fa fa-caret-down fa-fw"></i>
+                        </button>
+                        <ul id="associated-dropdown" class="dropdown-menu t-associated-dropdown"
+                            aria-labelledby="associated-btn">
+                            <li role="menuitem">
+                                <a href="#">
+                                    <div class="checkbox"><input id="select-all-cb" value="ALL" type="checkbox"/>&nbsp;
+                                        <th:block th:text="#{project.samples.nav.associated-selectAll}"/>
+                                    </div>
                                 </a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#" ng-click="toolsCtrl.exportToFile('xlsx')">
-                                    <i class="fa fa-file-excel-o fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export-to-excel}"/>
-                                </a></li>
+                                <ul>
+                                    <li role="menuitem" th:each="item : ${associatedProjects}">
+                                        <a href="#" class="associated-cb t-associated-cb">
+                                            <div class="checkbox">
+                                                <input type="checkbox" class="spaced-right__sm" th:value="${item.getIdentifier()}"/>
+                                                <th:block th:text="${item.getName()}"/>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <div class="dropdown">
+                        <button class="btn btn-default btn-sm t-export-samples-btn" data-toggle="dropdown">
+                            <th:block th:text="#{project.samples.export.label}"/>
+                            <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="export-samples-btn">
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-export-btn t-download-btn"
+                                   data-enabled-at="1" data-toggle="tooltip" data-type="download"
+                                   data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
+                                   data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
+                                    <i class="fa fa-download fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.download}"/>
+                                </a>
+                            </li>
+                            <li th:if="${linkerAvailable}" role="menuitem">
+                                <a href="#" class="js-sample-tool-btn t-linker-btn"
+                                   data-toggle="tooltip" data-enabled-at="0"
+                                   data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/dist/js/project-samples-linker.bundle.js}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-terminal fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.linker}"/>
+                                </a>
+                            </li>
+                            <li th:if="${#httpSession.getAttribute('galaxyExportToolCallbackURL')} != null" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
+                                <a href="#" data-toggle="modal" data-target="#galaxy-modal" class="js-sample-tool-btn"
+                                   data-enabled-at="1"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-cloud-upload-alt fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.galaxy}"/>
+                                </a>
+                            </li>
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-export-btn t-ncbi-export-btn"
+                                   data-toggle="tooltip" data-enabled-at="1" data-type="ncbi"
+                                   data:url="@{/projects/{id}/export/ncbi(id=${project.getId()})}"
+                                   data:enabled-msg="#{project.samples.tooltip.ncbi.requires-more-than-one}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.ncbi}"/>
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#" ng-click="toolsCtrl.exportToFile('csv')">
-                                    <i class="fa fa-file-o fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export-to-csv}"/>
+                                <a href="#" class="js-sample-export-btn" data-file="excel" data-type="file"
+                                   data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
+                                    <i class="far fa-file-excel spaced-right__sm"></i>
+                                    <th:block th:text="#{project.samples.export-to-excel}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="js-sample-export-btn" data-file="csv" data-type="file"
+                                   data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
+                                    <i class="far fa-file-alt spaced-right__sm"></i>
+                                    <th:block th:text="#{project.samples.export-to-csv}"/>
                                 </a></li>
                         </ul>
                     </div>
-                    <button id="cart-add-btn" class="btn btn-primary btn-sm" ng-click="toolsCtrl.addToCart()">
-                        <i class="fa fa-cart-plus fa-fw" aria-hidden="true"></i>
-                        &nbsp;
-                        <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>
-                    </button>
                 </div>
+                <button id="cart-add-btn" class="btn btn-primary btn-sm js-cart-btn t-add-cart-btn"
+                        data-enabled-at="1">
+                    <i class="fa fa-cart-plus fa-fw spaced-right__sm" aria-hidden="true"></i>
+                    <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>
+                </button>
             </div>
         </div>
     </div>
-</main>
-</body>
 
-<th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="filterButtons.html">
-        <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
-    </script>
+    <table id="samplesTable" class="table table-striped" cellspacing="0" width="100%"
+           data:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
+        <thead>
+        <tr>
+            <th data-orderable="false"></th>
+            <th data-data="sampleName" data-name="sample.sampleName" th:text="#{project.samples.table.name}"></th>
+            <th data-data="organism" data-name="sample.organism" th:text="#{project.samples.table.organism}"></th>
+            <th data-data="projectName" data-name="project.name" th:text="#{project.samples.table.project}"></th>
+            <th class="dt-date" data-data="createdDate" th:text="#{project.samples.table.created}"></th>
+            <th class="dt-date" data-data="modifiedDate" data-name="sample.modifiedDate"
+                th:text="#{project.samples.table.modified}"></th>
+        </tr>
+        </thead>
+    </table>
 
-    <script type="text/ng-template" id="samplesUpdate.html" th:inline="javascript">
-        <div>
-            <strong th:text="#{project.samples.display.notification.title}">Displaying:</strong><br/>
-            <ul>
-                <li ng-repeat='item in items' th:text="#{project.samples.display.notification.item}"></li>
-            </ul>
+    <div id="js-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
+    <div id="js-filter-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"
+         data:template="@{/projects/{id}/template/samples-filter-modal(id=${project.getId()})}"
+         data:script="@{/resources/dist/js/project-samples-filter.bundle.js}"></div>
+
+    <div class="hidden">
+        <span class="qc-warning-wrapper js-qc-warning-wrapper" data-toggle="popover"
+              th:title="#{sample.files.qc.popover-label}">
+            <i class="fa fa-fw fa-exclamation-triangle"></i>
+        </span>
+        <div id="popover-template" class="popover" role="tooltip">
+            <div class="arrow"></div>
+            <h3 class="popover-title"></h3>
+            <div class="popover-content"></div>
         </div>
-    </script>
+        <span class="locked-wrapper js-locked-wrapper" data-toggle="popover" th:title="#{project.samples.locked-title}"
+              data:content="#{project.samples.locked-content}">
+            <i class="fa fa-fw fa-lock"></i>
+        </span>
 
-    <script type="text/ng-template" id="filter.html">
-        <div style="display: inline-block; margin-left: 3px;">
-            <div class="btn-group btn-group-sm">
-                <button id="filterByPropertyBtn" data:uib-tooltip="#{project.samples.filter.label}" type="button"
-                        class="btn btn-default" ng-click="filterCtrl.openFilterModal()">
-                    <span class="fa fa-filter"></span>
+        <!-- Button for filtering samples by file -->
+        <div id="filter-toolbar" class="btn-toolbar" style="margin-left: 1px;">
+            <div class="btn-group btn-group-sm" role="group">
+                <button class="btn btn-default t-filters-btn" id="#js-open-filters"
+                        data-toggle="modal" data-target="#js-filter-modal-wrapper">
+                    <i class="fa fa-filter fa-fw" aria-hidden="true"></i>
                 </button>
-                <label class="btn btn-default" for="filter-file-input" data:uib-tooltip="#{project.sample.filterByFile.modal.title}"
-                       tooltip-append-to-body="true">
-                    <input type="file" name="file" id="filter-file-input" class="inputfile" filter-by-file="filterCtrl.filterByFile($fileContent)"/>
-                    <i class="fa fa-file-o fa-fw" aria-hidden="true"></i>
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
+                <label class="btn btn-default" data-toggle="popover" data-placement="left"
+                       data-trigger="hover" data-container="body"
+                       data:content="#{project.sample.filterByFile.modal.body}"
+                       th:title="#{project.sample.filterByFile.modal.title}">
+                    <i class="far fa-file-alt"></i>
+                    <input type="file" id="filter-by-file" style="display: none;"/>
                 </label>
             </div>
-            <button id="clearFilterBtn" class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="filtered-tags.html">
-        <div class="text-right">
-            <span class="label label-default" ng-show="tags.file" th:text="#{project.sample.filter-by-file}" ng-click="tags.closeFile()"></span>
-            <span class="label label-default" ng-show="tags.date.min" ng-click="tags.close('min')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.date.min | date: 'mediumDate'}}</span>
-            <span class="label label-default" ng-show="tags.date.end" ng-click="tags.close('end')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.date.end | date: 'mediumDate'}}</span>
-            <span ng-repeat="(tag, value) in tags.tag"
-                  class="label label-default"
-                  ng-click="tags.close(tag)">
-                {{ tag }} : {{ value }}
-            </span>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="merge.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.lessThanTwo" th:text="#{project.samples.tooltip.merge.requires-more-than-one}">Needs to be more than one</li>
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="copy.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.copy.requires-more-than-one}">Needs to be more than one</li>
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="move.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.move.requires-more-than-one}">Needs to be more than one</li>
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="remove.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.remove.requires-more-than-one}">Needs to be more than one</li>
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="download.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.download.requires-more-than-one}">Needs to be more than one</li>
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="linker.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="ncbi.msg.tmpl">
-        <ul class="tooltip-ul">
-            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.ncbi.requires-more-than-one}">Needs to be more than one</li>
-            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
-        </ul>
-    </script>
-
-    <script type="text/ng-template" id="linker.tmpl.html" th:inline="javascript">
-        <div id="linker-modal" class="form">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;
-                    <span th:utext="#{ngs.linker.title}">__LINKER</span>
-                </h3>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-default js-clear-filters t-clear-filters" th:text="#{form.btn.clear}">CLEAR</button>
             </div>
-            <div class="modal-body">
-                <p th:text="#{ngs.linker.details}"></p>
-                <div class="input-group">
-                    <input id="linker-cmd" class="form-control" type="text" ng-model="lCtrl.cmd"/>
-                    <span class="input-group-btn">
-		        <button class="btn btn-default clipboard-btn"
-                        type="button"
-                        data-clipboard-target="#linker-cmd"
-                        data:uib-tooltip="#{form.clipboard}"
-                        tooltip-placement="bottom">
-			        <i class="fa fa-clipboard fa-fw" aria-hidden="true"></i>
-		        </button>
-		      </span>
+        </div>
+    </div>
+
+</main>
+<th:block layout:fragment="scripts">
+    <div th:if="${#httpSession.getAttribute('galaxyExportToolCallbackURL')} != null">
+        <!-- Only loaded on the page if there is a galaxy session -->
+        <div class="modal fade" id="galaxy-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div
+                            class="modal-header"
+                            style="background-color: hsl(52, 96%, 53%); border-top-left-radius: 4px; border-top-right-radius: 4px;"
+                    >
+                        <h4 class="modal-title" id="myModalLabel" th:text="#{galaxy.modal.title}">DEPRICATED</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning" role="alert">
+                            <strong th:text="#{galaxy.modal.alert.header}" style="display: block"/>
+                            <p th:text="#{galaxy.modal.alert.body}"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="js-goToCart" th:text="#{galaxy.modal.btn}">Go to cart
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button id="linkerCloseBtn" class="btn btn-primary" ng-click="lCtrl.close()" th:text="#{form.btn.close}">Close</button>
-            </div>
         </div>
-</script>
+        <script>
+          var btn = document.querySelector("#js-goToCart");
+          btn.addEventListener("click", function () {
+            var cartBtn = document.querySelector("#cart-add-btn");
+            if (cartBtn !== null) {
+              cartBtn.click();
+              window.location = window.TL.BASE_URL + "cart/galaxy";
+            }
+          });
+        </script>
+    </div>
+    <script th:src="@{/resources/dist/js/project-samples.bundle.js}"></script>
 </th:block>
+</body>
 </html>

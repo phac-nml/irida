@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,6 +152,8 @@ public class PasswordResetController {
 					String errorKey = violation.getPropertyPath().toString();
 					errors.put(errorKey, violation.getMessage());
 				}
+			} catch (PasswordReusedException ex) {
+				errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
 			}
 		}
 
@@ -271,8 +274,14 @@ public class PasswordResetController {
 		return ACTIVATION_PAGE;
 	}
 
+	/**
+	 * Get the activation page for the given activation
+	 *
+	 * @param activationId the activation id
+	 * @return redirect to the password reset page with the activation id
+	 */
 	@RequestMapping(value = "/activate", method = RequestMethod.POST)
-	public String getPasswordReset(@RequestParam String activationId, Model model) {
+	public String getPasswordReset(@RequestParam String activationId) {
 		return "redirect:/password_reset/" + activationId;
 	}
 

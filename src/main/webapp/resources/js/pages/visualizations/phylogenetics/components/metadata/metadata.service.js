@@ -1,7 +1,7 @@
-import {getRandomColour} from './../../../../../utilities/colour.utilities';
-import {METADATA} from './../../constants';
+import chroma from "chroma-js";
+import { METADATA } from "./../../constants";
 
-const EMPTY_COLOUR = 'rgba(0,0,0,0)';
+const EMPTY_COLOUR = "rgba(0,0,0,0)";
 
 /**
  * Format the metadata into an object that can be conssome by Phylocanvas.
@@ -26,7 +26,7 @@ const formatMetadata = (metadata, metadataFieldLabels) => {
         // If not, get it a new one.
         colourMap[field] = colourMap[field] || {};
         colourMap[field][metadataLabel] =
-          colourMap[field][metadataLabel] || getRandomColour();
+          colourMap[field][metadataLabel] || chroma.random().css();
         result[sampleName][field] = {
           label: metadataLabel,
           colour: colourMap[field][metadataLabel]
@@ -44,7 +44,7 @@ const formatMetadata = (metadata, metadataFieldLabels) => {
   // Add the reference blanks, without this, Phylocanvas will througha fit!
   const reference = {};
   metadataFieldLabels.forEach(term => {
-    reference[term] = {label: '', colour: EMPTY_COLOUR};
+    reference[term] = { label: "", colour: EMPTY_COLOUR };
   });
   result.reference = reference;
 
@@ -56,24 +56,27 @@ export class MetadataService {
     this.$rootScope = $rootScope;
 
     // Initialize the metadata
-    $http.get($window.PAGE.urls.metadata)
-      .then(response => {
+    $http.get($window.PAGE.urls.metadata).then(
+      response => {
         // Keep a reference to the full list of terms
-        const {terms, metadata} = response.data;
+        const { terms, metadata } = response.data;
 
         if (Object.keys(metadata).length && terms.length) {
           // Set everything up.
           this.terms = terms;
           this.metadata = formatMetadata(metadata, terms);
-          $rootScope.$broadcast(
-            METADATA.LOADED, {metadata: this.metadata, terms}
-          );
+          $rootScope.$broadcast(METADATA.LOADED, {
+            metadata: this.metadata,
+            terms
+          });
         } else {
           this.$rootScope.$broadcast(METADATA.EMPTY);
         }
-      }, () => {
+      },
+      () => {
         this.$rootScope.$broadcast(METADATA.ERROR);
-      });
+      }
+    );
   }
 
   /**
@@ -93,9 +96,4 @@ export class MetadataService {
   }
 }
 
-MetadataService.$inject = [
-  '$http',
-  '$window',
-  '$rootScope'
-];
-
+MetadataService.$inject = ["$http", "$window", "$rootScope"];

@@ -11,14 +11,12 @@ import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.*;
 
 /**
  * Test configuration for Galaxy execution services.
@@ -44,6 +42,12 @@ public class GalaxyExecutionTestConfig {
 
 	@Lazy
 	@Bean
+	public GalaxyInstance galaxyInstance() {
+		return localGalaxy.getGalaxyInstanceAdmin();
+	}
+
+	@Lazy
+	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
@@ -63,5 +67,15 @@ public class GalaxyExecutionTestConfig {
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 
 		return new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
+	}
+
+	@Lazy
+	@Bean
+	public GalaxyJobErrorsService galaxyJobErrorsService() {
+		GalaxyInstance galaxyInstance = localGalaxy.getGalaxyInstanceAdmin();
+		return new GalaxyJobErrorsService(
+				galaxyInstance.getHistoriesClient(),
+				galaxyInstance.getToolsClient(),
+				galaxyInstance.getJobsClient());
 	}
 }

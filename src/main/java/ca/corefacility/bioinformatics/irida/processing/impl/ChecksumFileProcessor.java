@@ -64,8 +64,6 @@ public class ChecksumFileProcessor implements FileProcessor {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
 	 */
 	@Override
 	public Boolean modifiesFile() {

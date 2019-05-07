@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+  th:with="galaxyUrl=${session.galaxyCallbackUrl}"
+>
+  <head>
+    <title th:text="#{page.cart.title}">MY AWESOME CART</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/cart.bundle.css}" />
+    <style th:text="${pipeline_plugin_style}"></style>
+    <script th:inline="javascript">
+      window.PAGE = {
+        user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org",
+        i18n: {
+          "cart.clear": /*[[#{cart.clear}]]*/ "Clear",
+          "cart.noneMatchingFilter": /*[[#{cart.noneMatchingFilter}]]*/ "Cart filter error",
+          "pipelines.cart.select": /*[[#{pipelines.cart.select}]]*/ "SELECT",
+          "CartEmpty.heading": /*[[#{CartEmpty.heading}]]*/ "Your cart is empty",
+          "SampleRenderer.remove.sample": /*[[#{SampleRenderer.remove.sample}]]*/ "_Remove Sample_",
+          "SampleRenderer.remove.project": /*[[#{SampleRenderer.remove.project}]]*/ "_Remove Project_",
+          "SampleDetails.general": /*[[#{SampleDetails.general}]]*/ "_GEN",
+          "SampleDetails.metadata": /*[[#{SampleDetails.metadata}]]*/ "_META",
+          "SampleDetails.description": /*[[#{SampleDetails.description}]]*/ "_DESC",
+          "SampleDetails.organism": /*[[#{SampleDetails.organism}]]*/ "_ORG",
+          "SampleDetails.createdDate": /*[[#{SampleDetails.createdDate}]]*/ "_CREATED",
+          "SampleDetails.modifiedDate": /*[[#{SampleDetails.modifiedDate}]]*/ "_MODIFIED",
+          "CartTools.menu.pipelines": /*[[#{CartTools.menu.pipelines}]]*/ "_PIPELINES_TAB_",
+          "CartTools.menu.galaxy": /*[[#{CartTools.menu.galaxy}]]*/ "_GALAXY_TAB_",
+          "ExportToGalaxyForm.email": /*[[#{ExportToGalaxyForm.email}]]*/ "_EMAIL_",
+          "ExportToGalaxyForm.email.help": /*[[#{ExportToGalaxyForm.email.help}]]*/ "_EMAIL_HELP_",
+          "ExportToGalaxyForm.email.warning": /*[[#{ExportToGalaxyForm.email.warning}]]*/ "_EMAIL_WARNING_",
+          "ExportToGalaxyForm.makepairedcollection": /*[[#{ExportToGalaxyForm.makepairedcollection}]]*/ "_MAKE_PAIRED_COLLECTION_",
+          "ExportToGalaxyForm.makepairedcollection.help": /*[[#{ExportToGalaxyForm.makepairedcollection.help}]]*/ "_COLLECTION_HELP_",
+          "ExportToGalaxyForm.galaxy": /*[[#{ExportToGalaxyForm.galaxy}]]*/ '_EXPORTING AT_',
+          "GalaxyFinalSubmission.submit": /*[[#{GalaxyFinalSubmission.submit}]]*/ "_EXPORT_",
+          "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_",
+          "GalaxySubmissionError.message": /*[[#{GalaxySubmissionError.message}]]*/ "GalaxySubmissionError.message",
+          "GalaxySubmissionError.description": /*[[#{GalaxySubmissionError.description}]]*/ "GalaxySubmissionError.description"
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" style="height: 100%;" layout:fragment="page">
+    <!--
+       This is a DOM element for React to render the full cart experience into.
+       See  src/main/webapp/resources/js/pages/cart/components/Cart.jsx
+    -->
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <div th:if="${galaxyUrl != null}">
+        <form id="js-galaxy-form" th:action="${galaxyUrl}" method="post">
+          <input id="js-query" name="json_params" type="hidden">
+        </form>
+      </div>
+      <script th:src="@{/resources/dist/js/cart.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>

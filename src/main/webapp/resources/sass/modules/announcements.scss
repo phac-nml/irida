@@ -1,0 +1,42 @@
+.announcement-item {
+  display: flex;
+  align-items: center;
+}
+
+.announcement-info {
+  width: 120px;
+  min-width: 120px;
+  display: flex;
+}
+
+.announcement-icon .fa {
+  font-size: 1.6em;
+}
+.announcement-date {
+  display: inline-block;
+  flex: 1;
+  color: #666;
+  line-height: 18px;
+  font-size: 0.7em;
+  text-align: right;
+}
+.announcement-time {
+  display: inline-block;
+  line-height: 28px;
+}
+.announcement-content {
+  flex: 1;
+  line-height: 28px;
+  align-content: stretch;
+}
+.announcement-markread {
+  margin-left: 5px;
+}
+textarea.announcement-input {
+  height: 20em;
+}
+
+.tooltip-inner {
+  white-space: nowrap;
+  max-width: none;
+}

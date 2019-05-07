@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"
+<html
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base">
+      data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{metadata.page-title}"></title>
-    <link rel="stylesheet" th:href="@{/resources/css/pages/project_samples_metadata.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/samples-metadata-import.bundle.css}"/>
 </head>
 <body>
 <div layout:fragment="main">
@@ -37,8 +37,8 @@
         <div class="">
             <input type="file" id="file-upload-button" name="files" class="inputfile blocked"
                    ngf-change="$ctrl.uploadFiles($files)"
-                   ngf-pattern="'.xlsx'"
-                   accept=".xlsx"
+                   ngf-pattern="'.xlsx,.xls'"
+                   accept=".xlsx, .xls"
                    ngf-select="" />
             <label for="file-upload-button"
                    ngf-drop="$ctrl.uploadFiles($files)">
@@ -67,7 +67,7 @@
             </div>
         </div>
         <ul class="list-group">
-            <li class="list-group-item" ng-repeat="header in $ctrl.headers">
+            <li class="list-group-item" ng-repeat="header in $ctrl.headers track by $index">
                 <header-item header="header"></header-item>
             </li>
         </ul>
@@ -93,7 +93,7 @@
     <script type="text/ng-template" id="results.found.component.tmpl.html">
         <div class="alert alert-success" ng-show="$ctrl.rows.length &gt; 0">
             <strong>
-                <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>&nbsp;
+                <i class="far fa-thumbs-up spaced-right__sm"></i>
                 <th:block th:text="#{metadata.results.found.component.title}"/>
             </strong>
             <save-metadata
@@ -126,7 +126,7 @@
         </div>
         <table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
     </script>
-    <script th:src="@{/resources/js/build/samples-metadata-import.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/samples-metadata-import.bundle.js}"></script>
 </th:block>
 </body>
 </html>

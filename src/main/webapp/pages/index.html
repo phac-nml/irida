@@ -2,9 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.springframework.org/security/tags"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
+  <link rel="stylesheet" th:href="@{/resources/dist/css/dashboard.bundle.css}">
   <script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -14,8 +15,8 @@
   </script>
 </head>
 <body>
-<div class="row" layout:fragment="page">
-  <div class="col-md-6 col-sm-12">
+<div class="row" style="margin-top: 1em;" layout:fragment="page">
+  <div class="col-md-6 col-lg-5 col-lg-offset-1 col-sm-12">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -34,7 +35,7 @@
     </section>
 
   </div>
-  <div class="col-md-6 col-sm-12">
+  <div class="col-md-6 col-lg-5 col-sm-12">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{announcement.title}">_New Announcements_</h4>
@@ -56,7 +57,7 @@
   <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
   <script th:src="@{/resources/bower_components/marked/marked.min.js}"></script>
   <script th:src="@{/resources/bower_components/angular-marked/angular-marked.min.js}"></script>
-  <script th:src="@{/resources/js/build/dashboard.bundle.js}"></script>
+  <script th:src="@{/resources/dist/js/dashboard.bundle.js}"></script>
 </th:block>
 </body>
 

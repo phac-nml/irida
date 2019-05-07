@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="add-job-error-table" author="pkruczkiewicz">
+        <createTable tableName="job_error">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="command_line" type="LONGTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exit_code" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="history_id" type="VARCHAR(255)"/>
+            <column name="job_id" type="VARCHAR(255)"/>
+            <column name="parameters" type="LONGTEXT"/>
+            <column name="provenance_id" type="VARCHAR(255)"/>
+            <column name="provenance_uuid" type="VARCHAR(255)"/>
+            <column name="standard_error" type="LONGTEXT"/>
+            <column name="standard_output" type="LONGTEXT"/>
+            <column name="tool_description" type="VARCHAR(255)"/>
+            <column name="tool_id" type="VARCHAR(255)"/>
+            <column name="tool_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tool_version" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="analysis_submission_id" type="BIGINT">
+                <constraints
+                        referencedTableName="analysis_submission"
+                        referencedColumnNames="id"
+                        foreignKeyName="FK_JOB_ERROR_ANALYSIS_SUBMISSION"
+                        nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

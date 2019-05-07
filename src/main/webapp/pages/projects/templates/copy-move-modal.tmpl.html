@@ -1,0 +1,87 @@
+<div class="t-copy-samples-modal" th:with="total=${#lists.size(samples) + #lists.size(extraSamples)}, prefix=${'project.samples.modal.' + type}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="js-copy-form">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <i class="fa fa-fw" aria-hidden="true" th:classappend="${#strings.equalsIgnoreCase(type, 'copy')} ? 'fa-share-alt' : 'fa-truck'"></i>
+                        <th:block
+                                th:text="${total == 1} ? #{${prefix} + '.title-singular'} : #{${prefix} + '.title-plural'}"/>
+                    </h3>
+                </div>
+                <div class="modal-body" th:with="extraCount=${#lists.size(extraSamples)}">
+                    <h4 th:text="${total>1} ? #{${prefix + '.intro-plural'}(${total})} : #{${prefix + '.intro-singular'}(${samples[0].sampleName})}">
+                        Copy Samples Title</h4>
+                    <th:block th:if="${total==1}">
+                        <input type="hidden" th:value="${samples.get(0).getId()}" name="sampleIds[]"/>
+                    </th:block>
+                    <th:block th:if="${total>1}">
+                        <ol class="start">
+                            <li th:each="sample : ${samples}">
+                                <input type="hidden" th:value="${sample.getId()}" name="sampleIds[]"/>
+                                <th:block th:text="${sample.sampleName}"/>
+                            </li>
+                            <th:block th:if="${extraCount &lt; 5}">
+                                <li th:each="sample : ${extraSamples}">
+                                    <input type="hidden" th:value="${sample.getId()}" name="sampleIds[]"/>
+                                    <th:block th:text="${sample.sampleName}"/>
+                                </li>
+                            </th:block>
+                        </ol>
+                        <th:block th:if="${extraCount > 4}">
+                            <button class="btn btn-default" type="button"
+                                    data-toggle="collapse" href="#extraSamples" aria-expanded="false"
+                                    aria-controls="collapseExample">
+                                <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
+                                <th:block th:text="#{project.samples.modal.extra-btn(${extraCount})}"></th:block>
+                            </button>
+                            <div class="collapse" id="extraSamples">
+                                <ol class="continue">
+                                    <li th:each="sample : ${extraSamples}">
+                                        <input type="hidden" th:value="${sample.getId()}" name="sampleIds[]"/>
+                                        <th:block th:text="${sample.sampleName}"/>
+                                    </li>
+                                </ol>
+                            </div>
+                        </th:block>
+                    </th:block>
+                    <div class="form-group">
+                        <label for="js-projectsSelect"
+                               th:text="${total>1} ? #{${prefix} + '.select-label-plural'} : #{${prefix} + '.select-label-singular'}"></label>
+                        <select name="newProjectId" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}"
+                                id="js-projectsSelect" class="form-control" style="width: 100%;"></select>
+                    </div>
+                    <div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0 and #strings.equals(type, 'copy')}">
+                        <span th:text="#{${prefix} + '.locked'}">_The following samples will be read only as this project does not have modification access_</span>
+                        <input type="hidden" value="false" name="giveOwner" id="giveOwner" />
+                    </div>
+
+                    <div class="alert alert-warning" th:if="${isRemoteProject}">
+                        <span th:text="#{project.samples.modal.copy.remote}">_All samples will be read only as this project is a remote project_</span>
+                    </div>
+                    <div th:if="${not isRemoteProject}">
+                    <!-- Only the the allow modification checkbox for the copy not the move -->
+                        <div class="form-group" th:if="${#lists.size(lockedSamples) == 0 and #strings.equals(type, 'copy')}">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="true" id="giveOwner" name="giveOwner"/>
+                                    <span th:text="#{project.samples.modal.copy.lock-copied}">_Allow modification in new project_</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" th:text="#{form.btn.cancel}" data-dismiss="modal"></button>
+                    <button id="js-confirm" disabled="disabled"
+                            type="submit" class="btn btn-primary"
+                            data:url="@{/projects/{id}/ajax/samples/copy(id=${projectId}, remove=${#strings.equalsIgnoreCase(type, 'move')})}"
+                            th:text="#{${prefix} + '.complete'}">
+                        __MOVE_OR_COPY__
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

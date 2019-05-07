@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
+import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.util.StringUtils;
 
-import liquibase.integration.spring.SpringLiquibase;
+import javax.sql.DataSource;
+import java.util.Properties;
 
+/**
+ * Configuration for IRIDA's JDBC Datasource
+ */
 @Configuration
-@Profile({ "dev", "prod", "it" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	@Autowired
@@ -45,7 +43,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		public ApplicationContextAwareSpringLiquibase(final ApplicationContext applicationContext) {
 			this.applicationContext = applicationContext;
 		}
-		
+
+		@Override
 		protected SpringResourceOpener createResourceOpener() {
 			return new ApplicationContextSpringResourceOpener(getChangeLog());
 		}
@@ -72,14 +71,13 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * going to be creating the database schema. The scenario should not come
 	 * up, however we will test to see if Hibernate is set to generate a schema
 	 * before executing.
-	 * 
-	 * @param dataSource
-	 *            the connection to use to migrate the database
+	 *
+	 * @param dataSource         the connection to use to migrate the database
+	 * @param applicationContext the Spring Application Context
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
-	@Profile({ "dev", "prod", "it" })
-	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) throws SQLException {
+	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) {
 
 		final ApplicationContextAwareSpringLiquibase springLiquibase = new ApplicationContextAwareSpringLiquibase(applicationContext);
 		springLiquibase.setDataSource(dataSource);
@@ -126,6 +124,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
 		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
 		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
+		
+		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
 
 		return basicDataSource;
 	}

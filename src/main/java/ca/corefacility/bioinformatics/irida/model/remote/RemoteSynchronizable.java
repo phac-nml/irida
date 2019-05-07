@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Marks an object which can be synchronized from a {@link RemoteAPI}
@@ -27,6 +28,7 @@ public interface RemoteSynchronizable {
 	 * 
 	 * @return true if the object was read from a remote api
 	 */
+	@JsonIgnore
 	public default boolean isRemote() {
 		RemoteStatus status = getRemoteStatus();
 

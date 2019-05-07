@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<span id="valid_token" class="status-label api-connected label label-success"
+      style="font-size: 1.3rem;"
+      th:text="#{remoteapi.status.valid}">_VALID_TOKEN_</span>
+
+<span id="invalid_token" class="status-label api-invalid label label-warning"
+      style="font-size: 1.3rem;"
+      th:text="#{remoteapi.status.invalid}">_INVALID_TOKEN_</span>
+
+<div id="connect-modal" class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" th:text="#{remoteapi.connect.title}">Modal title</h4>
+        </div>
+        <div class="modal-body">
+            <p class="alert alert-info" style="margin-bottom: 0" th:text="#{remoteapi.connect.info}">_The content below is from another website_</p>
+        </div>
+        <iframe id="oauth-connect-frame" style="border: none; width: 100%; height: 385px;" data:url="@{/remote_api/connect/}"></iframe>
+    </div>
+</div>
+
+</body>
+</html>

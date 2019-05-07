@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.http.MockHttpInputMessage;
+
+import static org.junit.Assert.*;
 
 public class SequenceFileMessageConverterTest {
 	private SequenceFileMessageConverter converter;
@@ -62,7 +60,10 @@ public class SequenceFileMessageConverterTest {
 	@Test
 	public void testRead() throws HttpMessageNotReadableException, IOException {
 		String message = "Some fastq file";
-		HttpInputMessage inputMessage = new MockHttpInputMessage(message.getBytes());
+		byte[] messageBytes = message.getBytes();
+		HttpInputMessage inputMessage = new MockHttpInputMessage(messageBytes);
+		inputMessage.getHeaders()
+				.add("Content-Length", Long.toString(messageBytes.length));
 		Path read = converter.read(Path.class, inputMessage);
 		assertTrue(Files.exists(read));
 
@@ -70,6 +71,16 @@ public class SequenceFileMessageConverterTest {
 		assertEquals(message, new String(fileBytes));
 
 		Files.delete(read);
+	}
+
+	@Test(expected = IOException.class)
+	public void testReadPartialFile() throws HttpMessageNotReadableException, IOException {
+		String message = "Some fastq file";
+		byte[] messageBytes = message.getBytes();
+		HttpInputMessage inputMessage = new MockHttpInputMessage(messageBytes);
+		inputMessage.getHeaders()
+				.add("Content-Length", Long.toString(messageBytes.length + 1));
+		converter.read(Path.class, inputMessage);
 	}
 
 	@Test

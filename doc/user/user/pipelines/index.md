@@ -18,47 +18,40 @@ Adding samples to the cart
 
 The cart is a place where you can temporarily store a selection of samples from across multiple projects for submission to a pipeline for analysis.
 
-You can see the current contents of the cart by clicking on the "Cart" button, on the top, right-hand side of the [dashboard](../dashboard):
-
-![Cart button location.](images/cart-button.png)
-
-The cart will appear on the right-hand side of the page:
-
-![Empty cart.](images/empty-cart.png)
-
 The cart is initially empty. You can add samples to your cart by navigating to the [samples list for a project](../samples/#viewing-samples-in-a-project) and [selecting the samples that you want to add](../samples/#selecting-samples). Once you've selected the samples that you want to add, click on the "Add to Cart" button, just above the samples list:
 
 ![Add to cart button.](images/add-to-cart-button.png)
 
-Once you've added some samples to the cart, if you click the "Cart" button on the dashboard, you'll be able to review all of the samples that you've selected, organized by project:
+Once you’ve added some samples to the cart, if you click the `Cart` button on the main navigation, you will be taken to the cart page.
 
-![Full cart.](images/full-cart.png)
+![Pipeline Cart.](images/pipeline-launch-cart.png)
 
-You can remove individual samples or all selected samples from a project by clicking on the <img src="images/remove-icon.png" class="inline" alt="Remove icon."> icon, or you can empty the cart entirely by clicking on the "Clear" button, in the top, right-hand corner of the cart:
+You can remove individual samples or all selected samples from a project by clicking on the sample menu icon:
 
-![Cart clear button.](images/cart-clear-button.png)
+ ![Cart clear button.](images/menu-icon.png)
+ 
+And either selecting “Remove Sample” which will remove just a single sample or “Remove Project” which will remove all samples that belong to the same project. You can also empty the cart entirely by clicking on the “Empty” button, in the top, right-hand corner of the cart.
 
 Searching samples in the cart
 -----------------------------
 
 You can search for individual samples within the cart use the 'cart search' field.
 
-![Cart search field](images/cart-filter-input.png)
+![Cart search field](images/cart-filter-input.gif)
 
-Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.
+Search terms can match partial samples names.
 
 Selecting a pipeline
 --------------------
 
-Once you've selected the samples that you want to analyse and [added them to the cart](#adding-samples-to-the-cart), you can click on the "Select a Pipeline" button at the bottom of the cart:
+The default cart page will allow you to choose from the pipelines that are currently configured in IRIDA.  If you are not on the pipelines page, select the "Pipelines" menu from the top of the section:
 
-![Select a pipeline button.](images/select-a-pipeline-button.png)
-
-The pipelines page will allow you to choose from the pipelines that are currently configured in IRIDA. IRIDA has multiple pipelines:
-
-![Select a pipeline page.](images/select-a-pipeline-page.png)
+![Select a pipeline page.](images/pipeline-tab.png)
 
 Click on the "Select" button at the bottom, right-hand side of the pipeline that you'd like to launch.
+
+Running a pipeline
+------------------
 
 **Note**: Some pipelines will require a reference sequence:
 
@@ -163,10 +156,68 @@ You can either click on the <img src="images/download-icon.png" class="inline" a
 The analysis details page shows you more detailed information about your pipeline submission, including the names of the files that were produced by the analysis (on the left-hand side of the page), a preview of the outputs (if available), and some tabs to view more details about how the pipeline was submitted:
 
 ![Analysis details page.](images/analysis-details-page.png)
+<figcaption>Example SNVPhyl pipeline phylogenetic tree preview</figcaption>
+
+![view-results-preview-refseq-masher]
+<figcaption>Example `refseq_masher` tabular results preview</figcaption>
 
 To download output files, you can use the "Output Files" section from this page.  To download an individual file, click on the file name.  To download *all* the outputs produced by the pipeline, you can click on the "Download Files" button.
 
 ![Analysis download.](images/analysis-details-download.png)
+
+### Previewing analysis output files
+
+All analysis pipelines produce analysis output files. You can preview these output files under the **Preview** tab on the **Analysis Details** page:
+
+![view-results-preview-refseq-masher]
+<figcaption>Example `refseq_masher` tabular results preview</figcaption>
+
+For each analysis output file, you will see a panel and in each panel you will see:
+
+- a panel heading with the Galaxy tool name (e.g. "RefSeq Masher Matches") and version (e.g. "(0.1.1)"), internal IRIDA output name (e.g. "refseq-masher-matches") and output file name (e.g. "refseq-masher-matches.tsv")
+- a file download link
+- a preview of the file contents displayed as plain text or in a table
+
+#### Previewing tabular analysis output
+
+Some of the output files will be rendered in a table:
+
+
+![view-results-tabular-snvphyl-snv-table]
+<figcaption>SNVPhyl SNV  results shown in an interactive table.</figcaption>
+
+![view-results-tabular-refseq_masher-contains-default]
+<figcaption>`refseq_masher` results shown in an interactive table.</figcaption>
+
+
+
+When you scroll to the bottom row in the table, more lines will be fetched as they are needed. You can also resize the table by clicking and dragging the "resize icon"  in the corner of the panel:
+
+![view-results-resize]
+<figcaption>
+  Click and drag the "resize icon" to resize the table. 
+</figcaption>
+
+![view-results-refseq_masher-contains-resized]
+<figcaption>Resized `refseq_masher` results table</figcaption>
+
+#### Default plain text preview of analysis output
+
+Analysis output files with file extensions like `.log`, `.txt` or `.fasta` can be previewed in the browser as plain text:
+
+![view-results-plain-text-snvphyl-mapping]
+
+If an analysis output file is small enough like this log file, it will be loaded in its entirety:
+
+![view-results-plain-text-shovill-log]
+<figcaption>Notice that the `4.0 kB / 4.0 kB (100%)` indicates that 100% of the file has been loaded.</figcaption>
+
+If an analysis output file is fairly large like this FASTA file, it will be loaded in chunks as needed for viewing:
+
+![view-results-plain-text-shovill-fasta]
+<figcaption>Notice that the `24.0 kB / 693.9 kB (3.5%)` indicates that only 3.5% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>
+
+
 
 ### Viewing the sequencing data submitted for analysis
 
@@ -230,18 +281,80 @@ Pipeline results can also be shared anytime after a pipeline has been launched. 
 
 ## Saving pipeline results to a sample
 
-Pipeline results can also be saved back to the submitted sample.  Currently, only the results of a genome assembly can be saved back to a sample.  To save the genome assembly back to a sample, on submission of a pipeline please select the `Save Results to Samples` checkbox on the pipeline setup page.
+Some pipelines allow you to save data back to the samples in which the pipeline was ran.  The type of data which will be saved back to the samples will differ between pipelines.  For example an assembly and annotation pipeline will save the assembly to the list of files on a sample, whereas a typing pipeline such as SISTR may save a serotype to the metadata of the sample.
+
+To save analysis results back to a sample, on submission of a pipeline please select the `Save Results to Samples` checkbox on the pipeline setup page.
 
 ![save-results-to-samples](images/save-results-to-samples.png)
 
-This will save the assembly back to the selected sample on completion of the pipeline.  This will look like:
+Results can also be saved after a pipeline has completed.  To save analysis results after the pipeline has finished, click the `Share Results` tab on the pipeline results page.  If you are able to save the analysis results back to the sample, a `Save Results` section will be displayed.  Click the button to save the results to the related samples.
 
-![sample-assembly-results](../samples/images/sample-automated-assembly.png)
+![save-results-to-samples-after](images/save-results-to-samples-after.png)
 
-The saved assemblies can then be directly accessible to anyone with permission to read the Sample.
+## Receive email upon pipeline completion or error
 
-If an assembly already exists for a Sample, then the saved assembly will be appended onto the list of saved assemblies.
+When launching a pipeline you can select the checkbox to receive an email upon pipeline completion or on error.
 
-![saved-assembly-list](images/saved-assembly-list.png)
+## Downloading single sample analysis output files in batch
+
+You can download all of your single sample analysis output files in batch by clicking **Analyses>Output Files** in the top navigation bar:
+
+![](images/user-outputs.png) 
+
+You will see a table of your single sample analysis output files:
+
+![](images/batch-download-user-outputs.png)
+
+You can apply filters to any columns by clicking the column menu icon, for example, applying a filter to the `File` column:
+
+![](images/batch-download-column-filter-open.png)
+
+Filtering for files with `contigs` in the filename:
+
+![](images/batch-download-filtering-on-contains-contigs.png)
+
+You will then see a filter icon displayed beside the column name ![](images/batch-download-column-filter-icon.png)
+
+You can select the files you wish to download using the checkboxes or by holding the `Ctrl` or `Shift` keys as you click on the rows for the files you wish to download. 
+
+![](images/batch-download-multiselect-refine.png)
+
+Or you can click the checkbox in the leftmost column header to select all files displayed:
+
+![](images/batch-download-select-all.png) 
+
+Click **Download** to download. Depending on the number of files you have selected, preparation of the download may take a moment. 
+
+Single files will be downloaded as is, while multiple files will downloaded bundled together in ZIP file. 
+
+![](images/download-confirmation-ff.png) 
+
+## Errors when executing pipelines
+
+You may experience an analysis pipeline execution failure caused by an error in one or more tools within a pipeline.
+
+For example, you may encounter an error when running the "Assembly and Annotation" pipeline:
+
+![analyses-table-error](images/analyses-table-error.png)
+
+If you click on the <span class="fa fa-fw fa-question-circle"></span> icon, you can preview the Galaxy job error information:
+
+![analyses-table-error-preview](images/analyses-table-error-preview.png)
+
+If you follow the link to the analysis page, you can view all the job error information for the pipeline in error:
+
+![analysis-job-error](images/analysis-job-error.png)
+
+This information may be helpful for troubleshooting and communicating what went wrong in a particular analysis pipeline.   
 
 <a href="../samples/">Previous: Managing Samples</a>
+
+
+[view-results-plain-text-shovill-fasta]: images/view-results-plain-text-shovill-fasta.png
+[view-results-plain-text-shovill-log]: images/view-results-plain-text-shovill-log.png
+[view-results-plain-text-snvphyl-mapping]: images/view-results-plain-text-snvphyl-mapping.png
+[view-results-preview-refseq-masher]: images/view-results-preview-refseq-masher.png
+[view-results-refseq_masher-contains-resized]: images/view-results-refseq_masher-contains-resized.png
+[view-results-tabular-refseq_masher-contains-default]: images/view-results-tabular-refseq_masher-contains-default.png
+[view-results-tabular-snvphyl-snv-table]: images/view-results-tabular-snvphyl-snv-table.png
+[view-results-resize]: images/view-results-resize.png

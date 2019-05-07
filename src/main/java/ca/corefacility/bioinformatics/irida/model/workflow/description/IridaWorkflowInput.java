@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -34,7 +32,7 @@ public class IridaWorkflowInput {
 	/**
 	 * Builds a new {@link IridaWorkflowInput} object with the given
 	 * information.
-	 * 
+	 *
 	 * @param sequenceReadsSingle
 	 *            The label to use for a collection of single-end sequence
 	 *            reads. Null if no acceptance of single-end reads.
@@ -48,7 +46,7 @@ public class IridaWorkflowInput {
 	 *            work with multiple samples.
 	 */
 	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference,
-			boolean requiresSingleSample) {
+							  boolean requiresSingleSample) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.sequenceReadsPaired = sequenceReadsPaired;
 		this.reference = reference;

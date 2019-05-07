@@ -1,21 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -26,13 +16,17 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
-import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class ProjectSynchronizationServiceTest {
 
@@ -113,6 +107,7 @@ public class ProjectSynchronizationServiceTest {
 	@Test
 	public void testSyncProjects() {
 		expired.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
 		Project remoteProject = new Project();
 		remoteProject.setRemoteStatus(expired.getRemoteStatus());
 		User readBy = new User();
@@ -163,7 +158,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 	
 	@Test
-	public void testSyncFiles(){
+	public void testSyncFiles() {
 		Sample sample = new Sample();
 		
 		SequenceFilePair pair = new SequenceFilePair();
@@ -180,7 +175,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)
-	public void testSyncFilesError(){
+	public void testSyncFilesError() {
 		Sample sample = new Sample();
 		
 		SequenceFilePair pair = new SequenceFilePair();

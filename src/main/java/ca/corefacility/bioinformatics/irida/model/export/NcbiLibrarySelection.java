@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+/**
+ * Library selection of an ncbi export
+ */
 public enum NcbiLibrarySelection {
 
 	RANDOM("RANDOM"),

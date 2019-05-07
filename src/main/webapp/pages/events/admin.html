@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
 
 <head>
   <title th:text="#{event.admin.title}">_ALL EVENTS_</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/activities.bundle.css}">
 </head>
 
 <body>
@@ -18,7 +20,7 @@
 </div>
 
   <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/build/events.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/activities.bundle.js}"></script>
   </th:block>
 </body>
 

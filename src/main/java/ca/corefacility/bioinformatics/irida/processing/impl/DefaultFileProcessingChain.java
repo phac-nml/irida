@@ -95,6 +95,9 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 				// file processor *doesn't* modify the file, then continue with
 				// execution (show the error, but proceed).
 				if (fileProcessor.modifiesFile() || fastFail) {
+					sequencingObject.setProcessingState(SequencingObject.ProcessingState.ERROR);
+					sequencingObjectRepository.save(sequencingObject);
+
 					throw e;
 				} else {
 					ignoredExceptions.add(e);
@@ -104,6 +107,11 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 				}
 			}
 		}
+
+		SequencingObject statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
+
+		statusObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
+		sequencingObjectRepository.save(statusObject);
 
 		return ignoredExceptions;
 	}
@@ -167,11 +175,13 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			}
 
 			sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
-			Set<SequenceFile> files = sequencingObject.getFiles();
 
-			filesNotSettled = files.stream().anyMatch(f -> {
-				return !Files.exists(f.getFile());
-			});
+			if(sequencingObject != null) {
+				Set<SequenceFile> files = sequencingObject.getFiles();
+				filesNotSettled = files.stream().anyMatch(f -> {
+					return !Files.exists(f.getFile());
+				});
+			}
 		} while (filesNotSettled);
 
 		return sequencingObject;

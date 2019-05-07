@@ -26,12 +26,25 @@ public class ProjectEventAspect implements Ordered {
 		this.eventHandler = eventListener;
 	}
 
+	/**
+	 * Get the return value of a method to send to the {@link ProjectEventHandler}
+	 *
+	 * @param jp              the JoinPoint object describing the method signature
+	 * @param eventAnnotation the LaunchesProjectEvent annotation arguments
+	 * @param returnValue     the return value of the annotated method
+	 */
 	@AfterReturning(value = "execution(public (!void) *(..)) &&  @annotation(eventAnnotation)", returning = "returnValue")
 	public void handleProjectEvent(JoinPoint jp, LaunchesProjectEvent eventAnnotation, Object returnValue) {
 		logger.trace("Intercepted method annotated with LaunchesProjectEvent " + jp.toString());
 		eventHandler.delegate(new MethodEvent(eventAnnotation.value(), returnValue, jp.getArgs()));
 	}
 
+	/**
+	 * Get the arguments of a method to send to the {@link ProjectEventHandler}
+	 *
+	 * @param jp              The join point object describing the method signature
+	 * @param eventAnnotation The LaunchesProjectEvent annotation arguments
+	 */
 	@AfterReturning(value = "execution(public void *(..)) && @annotation(eventAnnotation)")
 	public void handleProjectEventWithoutReturn(JoinPoint jp, LaunchesProjectEvent eventAnnotation) {
 		logger.trace("Intercepted void method annotated with LaunchesProjectEvent " + jp.toString());
@@ -52,7 +65,7 @@ public class ProjectEventAspect implements Ordered {
 	 * time down to at least the second), just make sure that this aspect is
 	 * being applied *outside* of the transaction.
 	 * 
-	 * @return
+	 * @return the order of this aspect
 	 */
 	@Override
 	public int getOrder() {

@@ -12,7 +12,7 @@ function formatResults(headers, rows) {
   for (const row of _rows) {
     for (const header of headers) {
       if (!row.hasOwnProperty(header)) {
-        row[header] = '';
+        row[header] = "";
       }
     }
   }
@@ -27,61 +27,78 @@ function formatResults(headers, rows) {
 export const states = ($stateProvider, $urlRouterProvider) => {
   $stateProvider
     .state({
-      name: 'upload',
-      url: '/upload',
-      component: 'metadataUploader',
+      name: "upload",
+      url: "/upload",
+      component: "metadataUploader",
       params: {
         errors: null
       }
     })
     .state({
-      name: 'sampleId',
-      url: '/sampleId',
-      component: 'selectSampleNameColumnComponent',
+      name: "sampleId",
+      url: "/sampleId",
+      component: "selectSampleNameColumnComponent",
       resolve: {
-        data(sampleMetadataService) {
-          return sampleMetadataService.getProjectData();
-        }
+        data: [
+          "sampleMetadataService",
+          function(sampleMetadataService) {
+            return sampleMetadataService.getProjectData();
+          }
+        ]
       }
     })
     .state({
-      name: 'results',
-      url: '/results',
-      component: 'resultsComponent',
+      name: "results",
+      url: "/results",
+      component: "resultsComponent",
       resolve: {
-        data(sampleMetadataService) {
-          return sampleMetadataService
-            .getProjectData();
-        }
+        data: [
+          "sampleMetadataService",
+          function(sampleMetadataService) {
+            return sampleMetadataService.getProjectData();
+          }
+        ]
       }
     })
     .state({
-      name: 'results.found',
-      url: '/found',
-      component: 'resultsFoundComponent',
+      name: "results.found",
+      url: "/found",
+      component: "resultsFoundComponent",
       resolve: {
-        rows(data) {
-          return formatResults(data.headers, data.found);
-        },
-        headers(data) {
-          return data.headers;
-        }
+        rows: [
+          "data",
+          function(data) {
+            return formatResults(data.headers, data.found);
+          }
+        ],
+        headers: [
+          "data",
+          function(data) {
+            return data.headers;
+          }
+        ]
       }
     })
     .state({
-      name: 'results.missing',
-      url: '/missing',
-      component: 'resultsMissingComponent',
+      name: "results.missing",
+      url: "/missing",
+      component: "resultsMissingComponent",
       resolve: {
-        rows(data) {
-          return formatResults(data.headers, data.missing);
-        },
-        headers(data) {
-          return data.headers;
-        }
+        rows: [
+          "data",
+          function(data) {
+            return formatResults(data.headers, data.missing);
+          }
+        ],
+        headers: [
+          "data",
+          function(data) {
+            return data.headers;
+          }
+        ]
       }
     });
 
   // Set the initial view as the upload view
-  $urlRouterProvider.otherwise('/upload');
+  $urlRouterProvider.otherwise("/upload");
 };

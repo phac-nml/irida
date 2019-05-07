@@ -1,26 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -34,6 +13,21 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnounce
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *  Controller for handling {@link ca.corefacility.bioinformatics.irida.model.announcements.Announcement} views
@@ -236,11 +230,10 @@ public class AnnouncementsController extends BaseController{
      * @param model
      *                  The model for the view
      * @return Returns the detail page for the announcement
-     * @throws IOException
      */
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAnnouncementDetailsPage(@PathVariable long announcementID, Model model) throws IOException {
+    public String getAnnouncementDetailsPage(@PathVariable long announcementID, Model model) {
         Announcement announcement = announcementService.read(announcementID);
 
         long numberOfReads = announcementService.countReadsForOneAnnouncement(announcement);

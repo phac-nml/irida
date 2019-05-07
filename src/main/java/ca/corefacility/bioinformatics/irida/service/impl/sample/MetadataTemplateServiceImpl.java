@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
@@ -61,7 +62,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#id, 'canUpdateMetadataTemplate')")
 	@Override
@@ -109,6 +110,24 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 	@PreAuthorize("permitAll()")
 	@Override
+	public MetadataTemplateField readMetadataFieldByKey(String key) {
+		if (key.startsWith(StaticMetadataTemplateField.STATIC_FIELD_PREFIX)) {
+			String stripped = key.replaceFirst(StaticMetadataTemplateField.STATIC_FIELD_PREFIX, "");
+			return fieldRepository.findMetadataFieldByStaticId(stripped);
+		} else {
+			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
+			return fieldRepository.findOne(Long.parseLong(stripped));
+		}
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public List<StaticMetadataTemplateField> getStaticMetadataFields() {
+		return fieldRepository.findStaticMetadataFields();
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
 	public MetadataTemplateField saveMetadataField(MetadataTemplateField field) {
 		if (field.getId() != null) {
 			throw new IllegalArgumentException("Cannot save a MetadataField that has an ID");
@@ -147,4 +166,14 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 		return metadata;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public List<MetadataTemplateField> getMetadataFieldsForProject(Project project) {
+		return fieldRepository.getMetadataFieldsForProject(project);
+	}
+
 }

@@ -1,39 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -44,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -55,8 +24,24 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
-import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import com.github.jmchilton.blend4j.galaxy.beans.*;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A service for performing tasks for analysis in Galaxy.
@@ -85,31 +70,23 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
 	 * information.
-	 * 
-	 * @param galaxyHistoriesService
-	 *            A GalaxyHistoriesService for interacting with Galaxy
-	 *            Histories.
-	 * @param galaxyWorkflowService
-	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
-	 * @param galaxyLibrariesService
-	 *            An object for building libraries in Galaxy.
-	 * @param iridaWorkflowsService
-	 *            A service used for loading workflows from IRIDA.
-	 * @param analysisCollectionServiceGalaxy
-	 *            A service for constructing dataset collections of input files.
-	 * @param analysisProvenanceServiceGalaxy
-	 *            The service for provenance information.
-	 * @param analysisParameterServiceGalaxy
-	 *            A service for setting up parameters in Galaxy.
-	 * @param sequencingObjectService
-	 *            A service for reading {@link SequencingObject}s
+	 *
+	 * @param galaxyHistoriesService          A GalaxyHistoriesService for interacting with Galaxy
+	 *                                        Histories.
+	 * @param galaxyWorkflowService           A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 * @param galaxyLibrariesService          An object for building libraries in Galaxy.
+	 * @param iridaWorkflowsService           A service used for loading workflows from IRIDA.
+	 * @param analysisCollectionServiceGalaxy A service for constructing dataset collections of input files.
+	 * @param analysisProvenanceServiceGalaxy The service for provenance information.
+	 * @param analysisParameterServiceGalaxy  A service for setting up parameters in Galaxy.
+	 * @param sequencingObjectService         A service for reading {@link SequencingObject}s
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, GalaxyLibrariesService galaxyLibrariesService,
 			IridaWorkflowsService iridaWorkflowsService,
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
-			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService,
+			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy,
 			SequencingObjectService sequencingObjectService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;

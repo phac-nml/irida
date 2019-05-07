@@ -38,6 +38,9 @@ import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatu
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+/**
+ * This class represents a collection of sequence files that have come off one run of a sequencer.
+ */
 @Entity
 @Table(name = "sequencing_run")
 @Audited
@@ -60,7 +63,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, mappedBy = "sequencingRun")
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH }, mappedBy = "sequencingRun")
 	private Set<SequencingObject> sequencingObject;
 
 	@NotNull

@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.pipelines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.security.Principal;
 import java.util.Locale;
 import java.util.UUID;
@@ -16,6 +9,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -23,24 +17,31 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by josh on 15-01-09.
  */
 public class PipelineControllerTest {
-	// Constants
-	public static final Locale LOCALE = Locale.US;
 	// Dependencies to mock
 	private ReferenceFileService referenceFileService;
 	private SequencingObjectService sequencingObjectService;
@@ -55,6 +56,8 @@ public class PipelineControllerTest {
 	private WorkflowNamedParametersService namedParameterService;
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private GalaxyToolDataService galaxyToolDataService;
+	private TestEmailController emailController;
 
 	@Before
 	public void setUp() {
@@ -69,20 +72,14 @@ public class PipelineControllerTest {
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
+		galaxyToolDataService = mock(GalaxyToolDataService.class);
+		emailController = mock(TestEmailController.class);
+
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
-	}
-
-	@Test
-	public void testGetPipelineLaunchPage() {
-		ExtendedModelMap model = new ExtendedModelMap();
-		String response = controller.getPipelineLaunchPage(model, LOCALE);
-		assertEquals(PipelineController.URL_LAUNCH, response);
-		assertTrue(model.containsKey("counts"));
-		assertTrue(model.containsKey("workflows"));
 	}
 
 	@Test
@@ -96,7 +93,7 @@ public class PipelineControllerTest {
 	}
 
 	@Test
-	public void testGetPhylogenomicsPageWithCart() throws IridaWorkflowNotFoundException {
+	public void testGetPhylogenomicsPageWithCart() throws IridaWorkflowNotFoundException, IridaWorkflowNotDisplayableException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String username = "FRED";
 		Principal principal = () -> username;
@@ -110,7 +107,7 @@ public class PipelineControllerTest {
 		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class), eq(SingleEndSequenceFile.class)))
 				.thenReturn(TestDataFactory.generateSequencingObjectsForSample(TestDataFactory.constructSample()));
 
-		when(workflowsService.getIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
+		when(workflowsService.getDisplayableIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
 		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id);
 		assertEquals("Response should be the path to the phylogenomics template",
 				PipelineController.URL_GENERIC_PIPELINE, response);

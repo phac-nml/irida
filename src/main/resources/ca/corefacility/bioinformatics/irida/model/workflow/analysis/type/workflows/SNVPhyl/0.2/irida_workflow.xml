@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>3fd2719d-8729-4e91-bd01-c6c20b99874d</id>
+	<name>SNVPhyl</name>
+	<version>0.2</version>
+	<analysisType>PHYLOGENOMICS</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<reference>reference</reference>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="repeat-minimum-length" defaultValue="150">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
+				parameterName="length" />
+		</parameter>
+		<parameter name="repeat-minimum-pid" defaultValue="90">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
+				parameterName="pid" />
+		</parameter>
+		<parameter name="minimum-percent-coverage" defaultValue="80">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
+				parameterName="minmap" />
+		</parameter>
+		<parameter name="alternative-allele-fraction" defaultValue="0.75">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+				parameterName="options_type.section_input_filters_type.min_alternate_fraction" />
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+				parameterName="ao" />
+		</parameter>
+		<parameter name="minimum-mapping-quality" defaultValue="30">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+				parameterName="options_type.section_input_filters_type.quality_filter_type.min_mapping_quality" />
+		</parameter>
+		<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+				parameterName="mean_mapping" />
+		</parameter>
+		<parameter name="minimum-base-quality" defaultValue="30">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+				parameterName="options_type.section_input_filters_type.quality_filter_type.min_base_quality" />
+		</parameter>
+		<parameter name="minimum-read-coverage" defaultValue="15">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+				parameterName="options_type.section_input_filters_type.min_coverage" />
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+				parameterName="coverage" />
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
+				parameterName="mindepth" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="filter-stats" fileName="filterStats.txt" />
+		<output name="mapping-quality" fileName="mappingQuality.txt" />
+		<output name="tree" fileName="phylogeneticTree.newick" />
+		<output name="tree-stats" fileName="phylogeneticTreeStats.txt" />
+		<output name="matrix" fileName="snpMatrix.tsv" />
+		<output name="table" fileName="snpTable.tsv" />
+		<output name="core" fileName="vcf2core.tsv" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>suite_snvphyl_0_2_0</name>
+			<owner>nml</owner>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>9c9c6f7e0d43</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

@@ -1,33 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.user;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-import javax.validation.Validator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -37,8 +13,32 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUs
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the {@link UserService}.
@@ -179,7 +179,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password) {
-		Set<ConstraintViolation<User>> violations = validatePassword(password);
+		Set<ConstraintViolation<User>> violations = validatePassword(userId, password);
 		if (violations.isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(password);
 			return super.updateFields(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
@@ -222,7 +222,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
-			Set<ConstraintViolation<User>> violations = validatePassword(password);
+			Set<ConstraintViolation<User>> violations = validatePassword(uid, password);
 			if (violations.isEmpty()) {
 				properties.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
 			} else {
@@ -318,13 +318,26 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 
 	/**
 	 * Validate the password of a {@link User} *before* encoding the password
-	 * and passing to super.
-	 * 
-	 * @param password
-	 *            the password to validate.
+	 * and passing to super.  This will check both password structure and whether a password has been reused
+	 *
+	 * @param userId   the ID of the user to check for old passwords.
+	 * @param password the password to validate.
 	 * @return true if valid, false otherwise.
 	 */
-	private Set<ConstraintViolation<User>> validatePassword(String password) {
+	private Set<ConstraintViolation<User>> validatePassword(Long userId, String password) {
+		//check revisions for reused passwords
+		Revisions<Integer, User> revisions = repository.findRevisions(userId);
+
+		Set<String> oldPasswords = revisions.getContent().stream().map(r -> r.getEntity().getPassword())
+				.collect(Collectors.toSet());
+
+		for (String oldPassword : oldPasswords) {
+			if (passwordEncoder.matches(password, oldPassword)) {
+				throw new PasswordReusedException("Password has already been used.");
+			}
+		}
+
+		// if no reused passwords, check other validation
 		return validator.validateValue(User.class, PASSWORD_PROPERTY, password);
 	}
 

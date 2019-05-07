@@ -28,8 +28,15 @@ public class ProjectDeletePage extends AbstractPage {
 		return PageFactory.initElements(driver, ProjectDeletePage.class);
 	}
 
-	public void deleteProject() {
+	public boolean canClickDelete(){
+		return submitDelete.isEnabled();
+	}
+
+	public void clickConfirm(){
 		confirmCheckbox.click();
+	}
+
+	public void deleteProject() {
 		submitDelete.click();
 	}
 

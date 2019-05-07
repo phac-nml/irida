@@ -7,28 +7,22 @@ description: "Install guide for the assembly and annotation pipeline."
 Assembly and Annotation
 =======================
 
-This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
+This workflow uses the [shovill] and [Prokka][] software for assembly and annotation of genomes, respectively, as well as [QUAST] for assembly quality assessment.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                 | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:-------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **flash**                 | irida    | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **filter_spades_repeats** | irida    | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **assemblystats**         | irida    | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
-| **spades**                | nml      | 35cb17bd8bf9  | 4 (2016-08-08)                | [Galaxy Main Shed][] |
-| **prokka**                | crs4     | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
-| **regex_find_replace**    | jjohnson | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
+| Tool Name                  | Owner    | Tool Revision  | Toolshed Installable Revision | Toolshed             |
+|:--------------------------:|:--------:|:--------------:|:-----------------------------:|:--------------------:|
+| **shovill**                | iuc      | [865119fcb694] | 3 (2018-11-13)                | [Galaxy Main Shed][] |
+| **prokka**                 | crs4     | [eaee459f3d69] | 14 (2018-03-28)               | [Galaxy Main Shed][] |
+| **quast**                  | iuc      | [81df4950d65b] | 5 (2018-12-04)                | [Galaxy Main Shed][] |
+
 
 To install these tools please proceed through the following steps.
 
-## Step 1: Install Dependencies
+## Step 1: Galaxy Conda Setup
 
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution using the `env.sh` file).
+Galaxy makes use of [Conda][conda] to automatically install some dependencies for this workflow.  Please verify that the version of Galaxy is >= v16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get this workflow to work with a Galaxy version < v16.01 is available in [FAQ/Conda dependencies][].
 
-```bash
-source activate galaxy
-conda install perl-xml-simple perl-time-piece perl-bioperl openjdk gnuplot libjpeg-turbo
-source deactivate
-```
+{% include administrator/galaxy/pipelines/shovill-1.0.4.md %}
 
 ## Step 2: Install Galaxy Tools
 
@@ -41,6 +35,7 @@ The install progress can be checked by monitoring the Galaxy log files `galaxy/*
 ### Updating `tbl2asn`
 
 The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The version of `tbl2asn` installed by default may have to be updated. Please see our [FAQ][] for more details.
+
 
 ## Step 3: Testing Pipeline
 
@@ -56,23 +51,28 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **a**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **FLASH, SPAdes and Prokka (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **AssemblyAnnotation-shovill-prokka-quast-paired_reads-v0.5 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]
 
     If you see any tool turn red, you can click on the view details icon ![view-details-icon][] for more information.
 
-If everything was successfull then all dependencies for this pipeline have been properly installed.
+If everything was successful then all dependencies for this pipeline have been properly installed.
 
+[865119fcb694]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/865119fcb694
+[eaee459f3d69]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/eaee459f3d69
+[81df4950d65b]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/81df4950d65b
+[galaxy-config]: ../../setup#step-4-modify-configuration-file
+[SLURM]: https://slurm.schedmd.com
+[PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
 [SPAdes]: http://bioinf.spbau.ru/spades
+[shovill]: https://github.com/tseemann/shovill/
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
+[QUAST]: http://quast.sourceforge.net/quast.html
 [tbl2asn]: http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
-[Java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[gnuplot]: http://www.gnuplot.info/
-[BioPerl]: http://www.bioperl.org/wiki/Main_Page
 [Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation/assembly-annotation.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/assembly-annotation/reads
@@ -82,3 +82,8 @@ If everything was successfull then all dependencies for this pipeline have been 
 [workflow-success]: ../test/assembly-annotation/images/workflow-success.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
 [FAQ]: ../../../faq/#tbl2asn-out-of-date
+[conda]: https://conda.io/docs/intro.html
+[bioconda]: https://bioconda.github.io/
+[FAQ/Conda dependencies]: ../../../faq#installing-conda-dependencies-in-galaxy-versions--v1601
+[conda environment]: https://conda.io/docs/user-guide/tasks/manage-environments.html#saving-environment-variables
+[GALAXY_MEMORY_MB]: https://planemo.readthedocs.io/en/latest/writing_advanced.html#developing-for-clusters-galaxy-slots-galaxy-memory-mb-and-galaxy-memory-mb-per-slot

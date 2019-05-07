@@ -43,11 +43,19 @@ Deploying IRIDA mainly involves deploying the `WAR` file into your Servlet conta
 
 Servlet Container Configuration
 -------------------------------
-Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`, and `dandelion.profile.active=prod`.
+Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod` and `irida.db.profile=prod`.
 
 You can adjust these variables in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting the variables as shown below:
 
-    JAVA_OPTS="-Dspring.profiles.active=prod -Ddandelion.profile.active=prod"
+```
+JAVA_OPTS="-Dspring.profiles.active=prod -Dirida.db.profile=prod"
+```
+
+The `irida.db.profile=prod` option sets a number of recommended database settings for IRIDA such as JDBC, Hibernate, and Liquibase options.  See the [jdbc.prod.properties file](https://github.com/phac-nml/irida/blob/master/src/main/resources/ca/corefacility/bioinformatics/irida/config/jdbc.prod.properties) for what gets set.  All these options can be overridden in your `/etc/irida/irida.conf` file.
+
+The `spring.profiles.active=prod` option will enable all the production features of IRIDA (web server, project synchronization, email announcements, NCBI uploads, analysis engine).
+
+For high usage or high load installations of IRIDA, you may consider deploying these features to multiple servers.  For more on this feature, see the [Multi Web Server Configuration](#multi-web-server-configuration) section.
 
 Core Configuration
 ------------------
@@ -69,6 +77,7 @@ The main configuration parameters you will need to change are:
   * `file.processing.core.size=4` - The initial number of threads available for file processing.
   * `file.processing.max.size=8` - The maximum number of available threads for file processing.  This number should not exceed the configured maximum number of JDBC threads.
   * `file.processing.queue.capacity=512` - The maximum number of file processing jobs that can be queued.
+  * `file.processing.process=true` - Whether to run the file processors on the current machine.  This can be set to false if you're running multiple IRIDA servers and want to improve UI performance on a machine.
 2. **Database connection information:**
   * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
   * `jdbc.username=test`
@@ -78,12 +87,15 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.apiKey=xxxx`
   * `galaxy.execution.email=user@localhost`
   * `irida.workflow.max-running=4` - The maximum number of running workflows.  For larger installations this number can be increased.
+  * `irida.workflow.analysis.threads` - The number of threads to use for handling analysis/workflow tasks. For larger installations this number can be increased. Increasing beyond `irida.workflow.max-running` is unlikely to give any additional performance boost.
 4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
   * `ncbi.upload.host` - FTP host to upload ncbi exports
   * `ncbi.upload.user` - FTP Username
   * `ncbi.upload.password` - FTP password
   * `ncbi.upload.baseDirectory` - base directory in which to create SRA submissions
   * `ncbi.upload.namespace` - Prefix for file upload identifiers to NCBI. The namespace is used to guarantee upload IDs are unique.  This configuration option is used as a placeholder and may still be set by the user.
+5. **Security configuration**
+ * `security.password.expiry` - The number of days a password is valid for in IRIDA.  After a password expires the user will be required to create a new one.  Passwords cannot be reused.
 
 Web Configuration
 -----------------
@@ -152,5 +164,62 @@ The default administrator username and password are:
 You will be required to change the password the first time you log-in with these credentials.
 
 Once you've logged in for the first time, you will probably want to create some user accounts. User account creation is outlined in our [Administrative User Guide]({{ site.url }}/user/administrator).
+
+Multi Web Server Configuration
+-------------------------------
+When IRIDA is deployed in a higher load environment, it may be preferable to deploy multiple IRIDA web application servers to handle all web requests, processing, and scheduled tasks.  IRIDA has the ability to run in a multi-server mode which will distribute these tasks among multiple servers.  This is achieved through the use of Spring profiles.  Deploying IRIDA in this fashion allows IRIDA administrators to maintain good performance for users of the IRIDA web application, while offloading some of the more resource-hungry processing tasks to additional servers.  Multiple profiles may be applied to individual servers to group some of the tasks onto one machine.  
+
+Note: The `prod`, `dev` profiles and multi server configuration profiles below **cannot be used at the same time**.  Doing so may result in corrupt analysis data sets.
+
+The different application profiles and their functions are the following:
+
+* `web` - The IRIDA user interface and REST API web application servers.  This is the portal for user interactions.  If using more than 1 `web` server, users & REST API clients must somehow be routed to the other servers.  Minimum number of servers: 1, Recommended: 1, max: unlimited.
+* `email` - Run the email subscription service.  This will send email digests out to users on a scheduled basis.   Required to be active on exactly 1 server.
+* `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.  Required to be active on exactly 1 server.
+* `processing` - File processing pipeline for uploaded sequencing data.  This is the highest load profile as it performs all file management for uploaded sequencing data.  Adding additional servers for this profile will speed up file processing for higher load installations.  Minimum number of servers: 1, recommended: 2, max: unlimited but diminishing returns with higher numbers of servers.
+* `sync` - Synchronizing remote projects.  This profile performs the remote api project synchronization task to pull remote sequencing data and metadata to a local installation.  Required to be active on exactly 1 server.
+* `ncbi` - Uploading data to NCBI.  This profile runs the NCBI SRA uploader task to send project and sample data to NCBI's SRA.  Required to be active on exactly 1 server.
+
+To launch an IRIDA application server with one (or more) of these profiles, you must enable the profile with the `spring.profiles.active` variable in your Tomcat configuration.  For example to run an IRIDA server with the `web` and `analysis` profiles active, you would set the following configuration:
+
+```
+spring.profiles.active=web,analysis
+```
+
+See the [Servlet Container Configuration](#servlet-container-configuration) section for more on setting the `spring.profiles.active` and `irida.db.profile` variables for Tomcat.
+
+#### Example moderate load deployment:
+
+* Server 1 - `web`, `email`, `sync`, `ncbi`, `analysis`
+* Server 2 - `processing`
+
+A deployment of this style provides an additional server for file processing, while maintaining high performance for users of the web server.
+
+#### Example high load deployment:
+
+* Server 1 - `web`, `email`
+* Server 2 - `processing`
+* Server 3 - `processing`
+* Server 4 - `sync`, `ncbi`, `analysis`
+
+A deployment of this style provides multiple servers for file processing, while maintaining high performance for users of the web server.  It also offloads any networking lag introduced by synchronization jobs, uploading to NCBI, or analysis jobs.
+
+Deployment Tips
+---------------
+Since IRIDA often deals with large sequence files, you can occasionally run into issues with file upload sizes being too large for the server IRIDA is running on.  There are 2 directories where Tomcat stores temporary files as they're being uploaded which can be configured to run on some larger shared storage.
+
+First is Tomcat's "temp" directory.  You can configure Tomcat to use another directory by setting the `CATALINA_TMPDIR` variable in `tomcat.conf` (on Centos this can be found in `/etc/tomcat`):
+
+```
+CATALINA_TMPDIR=/Some/Larger/Shared/Storage/temp
+```
+
+The second is Tomcat's "work" directory.  This can be configured in `server.xml` (on Centos this can be found in `/etc/tomcat`).  You can set the `workDir` variable in the `<Host>` section.  Be careful not to modify any other variables:
+
+```xml
+<Host ... workDir="/Some/Larger/Shared/Storage/work">
+...
+</Host>
+```
 
 [Postfix]: http://www.postfix.org/

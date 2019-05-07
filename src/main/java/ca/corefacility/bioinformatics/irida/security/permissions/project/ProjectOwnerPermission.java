@@ -26,14 +26,13 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	private static final String PERMISSION_PROVIDED = "isProjectOwner";
 
 	/**
-	 * Construct an instance of {@link ReadProjectPermission}.
-	 * 
-	 * @param projectRepository
-	 *            the project repository.
-	 * @param userRepository
-	 *            the user repository.
-	 * @param pujRepository
-	 *            the project user join repository.
+	 * Construct an instance of {@link ProjectOwnerPermission}.
+	 *
+	 * @param projectRepository the project repository.
+	 * @param userRepository    the user repository.
+	 * @param pujRepository     the project user join repository.
+	 * @param ugpjRepository    The user group project join repository.
+	 * @param ugRepository      The user group join repository.
 	 */
 	@Autowired
 	public ProjectOwnerPermission(final ProjectRepository projectRepository, final UserRepository userRepository,
@@ -59,7 +58,7 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 
 		return super.customPermissionAllowed(authentication, p);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -81,12 +80,12 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	public String getPermissionProvided() {
 		return PERMISSION_PROVIDED;
 	}
-	
+
 	/**
 	 * Check if the given object is a remote object, and if so if the
 	 * authentication is a {@link ProjectSynchronizationAuthenticationToken}
 	 * object
-	 * 
+	 *
 	 * @param object
 	 *            the object to test
 	 * @param authentication

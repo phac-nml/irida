@@ -137,14 +137,14 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	public void delete(IdentifierType id) throws EntityNotFoundException;
 
 	/**
-	 * List all objects of <code>Type</code> in the database.
+	 * List all objects of {@code Type} in the database.
 	 *
-	 * @return All objects of the specified <code>Type</code> in the database.
+	 * @return All objects of the specified {@code Type} in the database.
 	 */
 	public Iterable<Type> findAll();
 
 	/**
-	 * List objects of <code>Type</code> in the database, limited to some
+	 * List objects of {@code Type} in the database, limited to some
 	 * specific page.
 	 *
 	 * @param page
@@ -157,13 +157,13 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *            the order of the sort.
 	 * @return the list of users within the specified range.
 	 * @throws IllegalArgumentException
-	 *             If the <code>Type</code> has no public property
-	 *             <code>sortProperty</code>.
+	 *             If the {@code Type} has no public property
+	 *             {@code sortProperty}.
 	 */
 	public Page<Type> list(int page, int size, Direction order, String... sortProperty) throws IllegalArgumentException;
 
 	/**
-	 * List objects of <code>Type</code> in the database, limited to some specific page
+	 * List objects of {@code Type} in the database, limited to some specific page
 	 *
 	 * @param page the specific page to use
 	 * @param size the size of the pages
@@ -173,8 +173,8 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	public Page<Type> list(int page, int size, Sort sort);
 
 	/**
-	 * List objects of <code>Type</code> in the database, limited to some
-	 * specific page, ordered by calling the <code>compareTo</code> method on
+	 * List objects of {@code Type} in the database, limited to some
+	 * specific page, ordered by calling the {@code compareTo} method on
 	 * the class.
 	 *
 	 * @param page
@@ -188,25 +188,25 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	public Page<Type> list(int page, int size, Direction order);
 
 	/**
-	 * Check to see if an identifier for <code>Type</code> exists in the
+	 * Check to see if an identifier for {@code Type} exists in the
 	 * database.
 	 *
 	 * @param id
 	 *            The identifier to check for.
-	 * @return <code>true</code> if the identifier exists, <code>false</code>
+	 * @return {@code true} if the identifier exists, {@code false}
 	 *         otherwise.
 	 */
 	public Boolean exists(IdentifierType id);
 
 	/**
-	 * How many entities of <code>Type</code> exist in the database?
+	 * How many entities of {@code Type} exist in the database?
 	 * 
 	 * @return the number of entities in the database.
 	 */
 	public long count();
 
 	/**
-	 * Search for an entity of <code>Type</code> with a given specification
+	 * Search for an entity of {@code Type} with a given specification
 	 * 
 	 * @param specification
 	 *            The search specification
@@ -224,14 +224,14 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 			String... sortProperties);
 
 	/**
-	 * Search for an entity of {@link Type} and {@link PageRequest}
+	 * Search for an entity of {@code Type} and {@link PageRequest}
 	 *
 	 * @param specification
 	 * 		The search {@link Specification}
 	 * @param pageRequest
 	 * 		The {@link PageRequest}
 	 *
-	 * @return a {@link Page} og {@link Type}
+	 * @return a {@link Page} of {@code Type}
 	 */
 	public Page<Type> search(Specification<Type> specification, PageRequest pageRequest);
 

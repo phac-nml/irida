@@ -1,21 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="sequencingRuns/_details_base">
-<head lang="en">
-	<meta charset="UTF-8"/>
-	<title th:text="#{sequencingruns.details.title(${run.getId()})}">_Run_</title>
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  data-layout-decorate="~{sequencingRuns/_details_base}">
+<head>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
 	      href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
-	<div class="row">
-		<div class="col-md-12">
-			<h1 id="page-title" role="heading" th:text="#{sequencingruns.files.title(${run.getId()})}">
-				__TITLE__</h1>
-		</div>
-	</div>
 	<div class="row">
 		<div class="col-md-12">
 			<table id="filesTable">

@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{remoteapi.details.title(${remoteApi.name})}">_REMOTE API PAGE_</title>
 </head>
 <body>
 
-<main class="col-md-12" layout:fragment="page">
-    <div class="row mrgn-tp-lg">
-    	<h1 th:text="${remoteApi.name}">_Api Name_</h1>
+<main class="col-md-8 col-md-push-2 col-sm-12" layout:fragment="page">
+    <div class="row">
+    	<div class="col-md-12"><h1 th:text="${remoteApi.name}">_Api Name_</h1></div>
     	<div class="col-md-6">
             <div class="sidebar">
                 <div class="sidebar__heading clearfix">
                 	<h2 class="pull-left" th:text="#{remoteapi.details.title}">_API Details_</h2>
 					        <div class="btn-group-xs pull-right">
-				            <button id="remove-btn" class="btn btn-danger" th:text="#{remoteapi.remove.button}">Remove</button>
+				            <button id="remove-btn" class="btn btn-danger t-remove-btn" data-toggle="modal" data-target="#remove-modal" th:text="#{remoteapi.remove.button}">Remove</button>
                 	</div>
                 </div>
 
                 <div class="sidebar__body">
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-barcode"></i>
+                        <i class="fa fa-barcode" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{iridaThing.id}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-id" th:text="${remoteApi.getId()}">_ID_</div>
@@ -30,7 +30,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-flag"></i>
+                        <i class="fa fa-flag" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.name}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-name" th:text="${remoteApi.name}">_Name_</div>
@@ -38,7 +38,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-globe"></i>
+                        <i class="fa fa-globe" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.serviceurl}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-serviceurl" th:text="${remoteApi.serviceURI}">_URL_</div>
@@ -46,7 +46,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-tag"></i>
+                        <i class="fa fa-tag" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.clientid}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-clientid" th:text="${remoteApi.clientId}">_Client ID_</div>
@@ -54,7 +54,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-eye-close"></i>
+                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.details.secret}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-secret" th:text="${remoteApi.clientSecret}">_Secret_</div>
@@ -62,7 +62,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-calendar"></i>
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{iridaThing.timestamp}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-created"
@@ -71,28 +71,31 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 connection-status-panel">
             <div class="panel panel-info">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-left">Connection Status</h3>
                     <div class="btn-group-xs pull-right">
                         <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button"
-                            th:attr="data-api-id=${remoteApi.getId()}"
+                            data:api-id="${remoteApi.getId()}" data-toggle="modal"
+                                data-target="#remote-connect-wrapper"
                             th:text="#{remoteapi.status.connect.button}">_Connect_</button>
                     </div>
                 </div>
                 <div class="panel-body">
                     <ul class="list-unstyled project-details" th:inline="text">
                         <li>
-                            <i class="glyphicon glyphicon-link"></i>[[#{remoteapi.status}]]
+                            [[#{remoteapi.status}]]
                             <span class="pull-right">
-                                <span id="connection-status"
-                                        th:text="#{remoteapi.status.waiting}">_Connection Status_</span>
+                                <span id="connection-status" class="js-status-wrapper">
+                                    <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                    <th:block th:text="#{remoteapi.status.waiting}"/>
+                                </span>
                             </span>
 
                         </li>
                         <li th:if="${tokenExpiry}">
-                            <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{remoteapi.status.tokenexpiry}]]
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;[[#{remoteapi.status.tokenexpiry}]]
                             <span class="pull-right" id="token-expiry"
                                     th:text="${tokenExpiry}">_TOKEN_EXPIRY_</span>
                         </li>
@@ -102,48 +105,29 @@
         </div>
        </div>
     <section>
-        <form id="removeForm" action="/remote_api/remove" th:action="@{/remote_api/remove}" method="POST">
-            <input type="hidden" th:value="${remoteApi.getId()}" name="id"/>
-        </form>
     </section>
+
+    <div class="modal fade" id="remove-modal" tabindex="-1" role="dialog" aria-labelledby="remove-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="remove-title" th:text="#{remoteapi.remove.confirm(${remoteApi.name})}">New message</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">Close</button>
+                    <form id="removeForm" style="display: inline-block;" th:action="@{/remote_api/remove}" method="POST">
+                        <input type="hidden" th:value="${remoteApi.getId()}" name="id"/>
+                        <button type="submit" class="btn btn-primary t-confirm-delete" th:text="#{form.btn.confim}">Send message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
-<th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script th:inline="javascript">
-    	$(document).ready(function(){
-    		$("#remove-btn").click(function(){
-    			noty({
-    				layout: "center",
-    	            type: "default",
-    	            text: /*[[#{remoteapi.remove.confirm(${remoteApi.name})}]]*/ "Remove Remote API?",
-    	            modal: true,
-    	            buttons: [
-    	                {
-    	                    addClass: 'btn btn-primary btn-sm confirm-delete',
-    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
-    	                    onClick: function ($noty) {
-    	                        $("#removeForm").submit();
-    	                    }
-    	                },
-    	                {
-    	                    addClass: 'btn btn-default btn-sm',
-    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
-    	                    onClick: function ($noty) {
-    	                        $noty.close();
-    	                    }
-    	                }
-    	            ],
-    			});
-
-    		});
-
-    		var apiId = /*[[${remoteApi.getId()}]]*/ 1;
-    		getApiStatus(apiId,"#connection-status","#connect-button");
-    	});
-
-    </script>
-    <script th:replace="remote_apis/remote_api_connect"></script>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/dist/js/remote-api-details.bundle.js}"></script>
 </th:block>
 </body>
 </html>

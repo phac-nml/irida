@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iridaWorkflow>
+  <id>92ecf046-ee09-4271-b849-7a82625d6b60</id>
+  <name>SISTRTyping</name>
+  <version>0.3.0</version>
+  <analysisType>SISTR_TYPING</analysisType>
+  <inputs>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+    <requiresSingleSample>true</requiresSingleSample>
+  </inputs>
+  <parameters>
+    <parameter name="shovill-1-adv.mincov" defaultValue="2">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.mincov"/>
+    </parameter>
+    <parameter name="shovill-1-trim" defaultValue="false">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="trim"/>
+    </parameter>
+    <parameter name="shovill-1-adv.namefmt" defaultValue="contig%05d">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.namefmt"/>
+    </parameter>
+    <parameter name="shovill-1-adv.depth" defaultValue="100">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.depth"/>
+    </parameter>
+    <parameter name="shovill-1-adv.gsize" defaultValue="">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.gsize"/>
+    </parameter>
+    <parameter name="shovill-1-adv.kmers" defaultValue="">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.kmers"/>
+    </parameter>
+    <parameter name="shovill-1-adv.opts" defaultValue="">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.opts"/>
+    </parameter>
+    <parameter name="shovill-1-adv.minlen" defaultValue="1000">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.minlen"/>
+    </parameter>
+    <parameter name="sistr_cmd-2-use_full_cgmlst_db" defaultValue="true">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="use_full_cgmlst_db"/>
+    </parameter>
+  </parameters>
+  <outputs>
+    <output name="shovill-contigs-fasta" fileName="shovill-contigs.fasta"/>
+    <output name="shovill-contigs-graph" fileName="shovill-contigs.gfa"/>
+    <output name="shovill-std" fileName="shovill-std.log"/>
+    <output name="sistr-alleles-out" fileName="sistr-alleles-out.json"/>
+    <output name="sistr-cgmlst-profiles" fileName="sistr-cgmlst-profiles.csv"/>
+    <output name="sistr-predictions" fileName="sistr-predictions.json"/>
+    <output name="sistr-novel-alleles" fileName="sistr-novel-alleles.fasta"/>
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>sistr_cmd</name>
+      <owner>nml</owner>
+      <url>https://toolshed.g2.bx.psu.edu</url>
+      <revision>5c8ff92e38a9</revision>
+    </repository>
+    <repository>
+      <name>shovill</name>
+      <owner>iuc</owner>
+      <url>https://toolshed.g2.bx.psu.edu</url>
+      <revision>f698c7604b3b</revision>
+    </repository>
+  </toolRepositories>
+</iridaWorkflow>
+

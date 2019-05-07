@@ -1,153 +1,188 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="clients/_base">
+      data-layout-decorate="~{clients/_base}">
 <head>
     <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
-    <script th:inline="javascript">
-        var PAGE = {
-            buttons: {
-                ok: /*[[#{form.btn.confim}]]*/ 'OK',
-                cancel: /*[[#{form.btn.cancel}]]*/ 'Cancel'
-            },
-            removeNoty: {
-                text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?"
-            },
-            revokeNoty: {
-                text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?"
-            }
-        };
-    </script>
 </head>
 <body>
 <main layout:fragment="page">
-    <h1 th:text="${client.clientId}">_Name_</h1>
-    <div class="row mrgn-tp-lg">
-    	<!-- User details -->
-    	<div class="col-md-8">
-            <div class="sidebar">
-                <div class="sidebar__heading clearfix">
-                	<h2 class="pull-left client-details-heading" th:text="#{client.details.title}">_Client Details_</h2>
-					        <div class="btn-group-xs pull-right">
-				            <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
-                        <a href="#" th:href="@{/clients/{id}/edit(id=${client.getId()})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
-                	</div>
+    <div class="row">
+        <div class="col-md-8 col-md-push-2">
+            <div class="row">
+                <div class="col-md-12"><h1 th:text="${client.clientId}">_Name_</h1></div>
+                <div class="col-md-8">
+                    <div class="sidebar">
+                        <div class="sidebar__heading clearfix">
+                            <h2 class="pull-left client-details-heading" th:text="#{client.details.title}">_Client
+                                Details_</h2>
+                            <div class="btn-group-xs pull-right">
+                                <button id="remove-btn" class="t-client-remove-btn btn btn-danger" data-toggle="modal"
+                                        data-target="#js-remove-client-modal" th:text="#{client.remove.button}">Remove
+                                </button>
+                                <a href="#" th:href="@{/clients/{id}/edit(id=${client.getId()})}" id="edit-btn"
+                                   class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
+                            </div>
+                        </div>
+                        <div class="sidebar__body">
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fa fa-fw fa-barcode" aria-hidden="true"></i>
+                                </div>
+                                <div th:text="#{iridaThing.id}">_ID_</div>
+                                <div class="sidebar__value" id="client-id" th:text="${client.getId()}">_ID_</div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
+                                </div>
+                                <div th:text="#{client.clientid}">_ID_</div>
+                                <div class="sidebar__value" id="client-clientid" th:text="${client.clientId}">_Client
+                                    ID_
+                                </div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i>
+                                </div>
+                                <div th:text="#{client.details.clientSecret}">_ID_</div>
+                                <div class="sidebar__value" id="client-secret" th:text="${client.clientSecret}">
+                                    _Secret_
+                                </div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fa fa-fw fa-check" aria-hidden="true"></i>
+                                </div>
+                                <div th:text="#{client.grant-types}">_ID_</div>
+                                <div class="sidebar__value" id="client-grants" th:text="${grants}">_Grants_</div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </div>
+                                <div th:text="#{client.scopes}">_ID_</div>
+                                <div class="sidebar__value" id="client-scopes" th:text="${scopes}">_Scopes_</div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </div>
+                                <div th:text="#{client.autoScopes}">_ID_</div>
+                                <div class="sidebar__value" id="client-auto-approvable-scopes"
+                                     th:text="${autoApproveScopes}">_Auto-Approvable Scopes_
+                                </div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="far fa-clock"></i>
+                                </div>
+                                <div th:text="#{client.details.tokenValidity}">_ID_</div>
+                                <div class="sidebar__value tokenValidityInSeconds" id="client-token-validity"
+                                     th:text="${client.accessTokenValiditySeconds}">_Token Validity_
+                                </div>
+                            </div>
+                            <div class="sidebar__item" th:if="${client.refreshTokenValiditySeconds > 0}">
+                                <div class="sidebar__icon">
+                                    <i class="far fa-clock"></i>
+                                </div>
+                                <div th:text="#{client.details.refreshValidity}">_ID_</div>
+                                <div class="sidebar__value tokenValidityInSeconds" id="refresh-token-validity"
+                                     th:text="${client.refreshTokenValiditySeconds}">_Token Validity_
+                                </div>
+                            </div>
+
+                            <div class="sidebar__item">
+                                <div class="sidebar__icon">
+                                    <i class="fa fa-fw fa-calendar" aria-hidden="true"></i>
+                                </div>
+                                <div th:text="#{iridaThing.timestamp}">_ID_</div>
+                                <div class="sidebar__value" id="client-created"
+                                     th:text="${#calendars.format(client.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="sidebar__body">
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-barcode"></i>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading clearfix">
+                            <h3 class="panel-title pull-left" th:text="#{client.details.token.title}">_Tokens_</h3>
+                            <div class="btn-group-xs pull-right">
+                                <button class="btn btn-default btn-xs" id="revoke-btn"
+                                        data-toggle="modal" data-target="#js-revoke-client-modal"
+                                        th:text="#{client.details.token.revoke}">_Revoke Tokens_
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td th:text="#{client.details.token.active}">_Active Tokens_</td>
+                                    <td th:text="${activeTokens}"></td>
+                                </tr>
+                                <tr>
+                                    <td th:text="#{client.details.token.expired}">_Expired Tokens_</td>
+                                    <td th:text="${expiredTokens}"></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                    <div th:text="#{iridaThing.id}">_ID_</div>
-                    <div class="sidebar__value" id="client-id" th:text="${client.getId()}">_ID_</div>
-                  </div>
-
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-tag"></i>
-                    </div>
-                    <div th:text="#{client.clientid}">_ID_</div>
-                    <div class="sidebar__value" id="client-clientid" th:text="${client.clientId}">_Client ID_</div>
-                  </div>
-
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-eye-close"></i>
-                    </div>
-                    <div th:text="#{client.details.clientSecret}">_ID_</div>
-                    <div class="sidebar__value" id="client-secret" th:text="${client.clientSecret}">_Secret_</div>
-                  </div>
-
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-ok-sign"></i>
-                    </div>
-                    <div th:text="#{client.grant-types}">_ID_</div>
-                    <div class="sidebar__value" id="client-grants" th:text="${grants}">_Grants_</div>
-                  </div>
-
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-transfer"></i>
-                    </div>
-                    <div th:text="#{client.scopes}">_ID_</div>
-                    <div class="sidebar__value" id="client-scopes" th:text="${scopes}">_Scopes_</div>
-                  </div>
-                  
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-transfer"></i>
-                    </div>
-                    <div th:text="#{client.autoScopes}">_ID_</div>
-                    <div class="sidebar__value" id="client-auto-approvable-scopes" th:text="${autoApproveScopes}">_Auto-Approvable Scopes_</div>
-                  </div>
-
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-time"></i>
-                    </div>
-                    <div th:text="#{client.details.tokenValidity}">_ID_</div>
-                    <div class="sidebar__value tokenValidityInSeconds" id="client-token-validity"
-                         th:text="${client.accessTokenValiditySeconds}">_Token Validity_</div>
-                  </div>
-                  <div class="sidebar__item" th:if="${client.refreshTokenValiditySeconds > 0}">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-time"></i>
-                    </div>
-                    <div th:text="#{client.details.refreshValidity}">_ID_</div>
-                    <div class="sidebar__value tokenValidityInSeconds" id="refresh-token-validity"
-                         th:text="${client.refreshTokenValiditySeconds}">_Token Validity_</div>
-                  </div>
-
-                  <div class="sidebar__item">
-                    <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-calendar"></i>
-                    </div>
-                    <div th:text="#{iridaThing.timestamp}">_ID_</div>
-                    <div class="sidebar__value" id="client-created"
-                         th:text="${#calendars.format(client.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</div>
-                  </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-heading clearfix">
-              <h3 class="panel-title pull-left" th:text="#{client.details.token.title}">_Tokens_</h3>
-              <div class="btn-group-xs pull-right">
-                <button class="btn btn-default btn-xs" id="revoke-btn" th:text="#{client.details.token.revoke}">_Revoke Tokens_</button>
-              </div>
-            </div>
-            <div class="panel-body">
-              <table class="table">
-                <tr> 
-                  <td th:text="#{client.details.token.active}">_Active Tokens_</td>
-                  <td th:text="${activeTokens}"></td>
-                </tr>
-                <tr> 
-                  <td th:text="#{client.details.token.expired}">_Expired Tokens_</td>
-                  <td th:text="${expiredTokens}"></td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-       </div>
-       <section>
-           <form id="removeForm" action="/clients/remove" th:action="@{/clients/remove}" method="POST">
-               <input type="hidden" th:value="${client.getId()}" name="id"/>
-           </form>
-       </section>
-  
-       <section>
-           <form id="revokeForm" action="/clients/revoke" th:action="@{/clients/revoke(id=${client.getId()})}" method="POST">
-               <input type="hidden" th:value="${client.id}" name="id"/>
-           </form>
-       </section>
+    </div>
 </main>
 
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/js/pages/clients/client_details.js}"></script>
+    <div class="modal fade" id="js-remove-client-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="#{client.remove.confirm(${client.clientId})}">Modal title</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">
+                        Close
+                    </button>
+
+                    <form id="removeForm" style="display: inline-block;" th:action="@{/clients/remove}" method="POST">
+                        <input type="hidden" th:value="${client.getId()}" name="id"/>
+                        <button type="submit" class="t-confirm-delete js-remove-btn btn btn-primary"
+                                th:text="#{form.btn.confim}">REMOVE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="js-revoke-client-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="#{client.revoke.confirm(${client.clientId})}">Modal title</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">
+                        Close
+                    </button>
+                    <form id="revokeForm" style="display: inline-block;"
+                          th:action="@{/clients/revoke(id=${client.getId()})}"
+                          method="POST">
+                        <input type="hidden" th:value="${client.id}" name="id"/>
+                        <button type="submit" class="js-revoke-btn btn btn-primary" th:text="#{form.btn.confim}">REVOKE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </th:block>
 </body>
 </html>

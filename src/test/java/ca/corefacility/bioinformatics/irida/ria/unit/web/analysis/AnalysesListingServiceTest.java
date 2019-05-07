@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.impl.AnalysisTypesServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
@@ -42,7 +43,7 @@ public class AnalysesListingServiceTest {
 		UpdateAnalysisSubmissionPermission updateAnalysisPermission = mock(UpdateAnalysisSubmissionPermission.class);
 		MessageSource messageSource = mock(MessageSource.class);
 		analysesListingService = new AnalysesListingService(analysisSubmissionService, iridaWorkflowsService,
-				updateAnalysisPermission, messageSource);
+				updateAnalysisPermission, messageSource, new AnalysisTypesServiceImpl());
 	}
 
 	@Test

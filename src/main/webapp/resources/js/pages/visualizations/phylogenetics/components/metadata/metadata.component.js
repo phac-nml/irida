@@ -1,11 +1,10 @@
-class MetadataController {
-}
+class MetadataController {}
 
 export const MetadataComponent = {
   bindings: {
-    terms: '<',
-    onSelectionChange: '&'
+    terms: "<",
+    onSelectionChange: "&"
   },
-  templateUrl: 'metadata-component.tmpl.html',
+  templateUrl: "metadata-component.tmpl.html",
   controller: MetadataController
 };

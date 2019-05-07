@@ -1,16 +1,15 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en">
-<head lang="en">
+      th:lang="${#locale}">
+<head>
 	<meta charset="UTF-8"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+	<title data-layout-title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA
+		Platform</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="icon" href="/resources/img/favicon.ico" th:href="@{/resources/img/favicon.ico}" />
-	<link rel="stylesheet" href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"
-		  th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}" />
-	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}">
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" ng-app="irida">
 <th:block layout:fragment="content">

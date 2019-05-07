@@ -47,6 +47,9 @@ public @interface ValidProjectName {
 
 	Class<? extends Payload>[] payload() default {};
 
+	/**
+	 * Invalid characters in a project name
+	 */
 	public static class ValidProjectNameBlacklist {
 		public static final char[] BLACKLIST = { '?', '(', ')', '[', ']', '/', '\\', '=', '+', '<', '>', ':', ';', '"',
 				',', '*', '^', '|', '&' };

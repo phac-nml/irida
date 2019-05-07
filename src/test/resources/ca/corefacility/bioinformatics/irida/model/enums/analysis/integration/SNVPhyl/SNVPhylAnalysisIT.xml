@@ -1,10 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<system_role description="A basic user in the system" name="ROLE_USER" />
-	<system_role description="An admin in the system" name="ROLE_ADMIN" />
-
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" assemble_uploads="0" sistr_typing_uploads="0" />
+		projectDescription="description" assemble_uploads="0" sistr_typing_uploads="OFF" />
 
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
 		 sampleName="SampleA" />
@@ -40,4 +37,10 @@
 		password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"
 		phoneNumber="867-5309" username="aaron" system_role="ROLE_ADMIN"
 		credentialsNonExpired="true" enabled="true" />
+
+	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		  email="admin@nowhere.com" firstName="Admin" lastName="Admin"
+		  password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"
+		  phoneNumber="0000" username="admin" system_role="ROLE_ADMIN"
+		  credentialsNonExpired="true" enabled="true" />
 </dataset>

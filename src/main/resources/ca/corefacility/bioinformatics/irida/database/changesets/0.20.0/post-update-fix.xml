@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="post-update-fix" author="tom">
+
+        <renameColumn
+                columnDataType="bit(1)"
+                newColumnName="sistr_tmp"
+                oldColumnName="sistr_typing_uploads"
+                tableName="project"/>
+
+        <addColumn tableName="project">
+            <column name="sistr_typing_uploads" type="varchar(255)"/>
+        </addColumn>
+
+        <sql>
+            UPDATE project SET sistr_typing_uploads="AUTO" WHERE sistr_tmp=1
+        </sql>
+
+        <sql>
+            UPDATE project SET sistr_typing_uploads="OFF" WHERE sistr_tmp=0
+        </sql>
+
+        <addNotNullConstraint
+                columnDataType="varchar(255)"
+                columnName="sistr_typing_uploads"
+                defaultNullValue="OFF"
+                tableName="project"/>
+
+        <dropColumn tableName="project" columnName="sistr_tmp"/>
+
+        <renameColumn
+                columnDataType="bit(1)"
+                newColumnName="sistr_tmp"
+                oldColumnName="sistr_typing_uploads"
+                tableName="project_AUD"/>
+
+        <addColumn tableName="project_AUD">
+            <column name="sistr_typing_uploads" type="varchar(255)"/>
+        </addColumn>
+
+        <sql>
+            UPDATE project_AUD SET sistr_typing_uploads="AUTO" WHERE sistr_tmp=1
+        </sql>
+
+        <sql>
+            UPDATE project_AUD SET sistr_typing_uploads="OFF" WHERE sistr_tmp=0
+        </sql>
+
+        <dropColumn tableName="project_AUD" columnName="sistr_tmp"/>
+
+    </changeSet>
+</databaseChangeLog>

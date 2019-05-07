@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
-<head lang="en">
-</head>
+      data-layout-decorate="~{template/page}">
 <body>
-
 <th:block layout:fragment="scripts">
     <script th:src="@{/resources/js/client.js}" src="/resources/js/client.js"></script>
     <th:block layout:fragment="page-scripts"/>

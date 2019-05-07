@@ -19,15 +19,16 @@ EOF
 
 # install docker so that we can pull down the IRIDA Galaxy Docker container:
 yum -y install docker-engine
+mkdir -p /home/vagrant/docker
 # switch to `devicemapper` for docker as I found the that the IRIDA Galaxy docker image failed to run with the default storage driver (overlay)
-sed -i -e 's@ExecStart=/usr/bin/dockerd@ExecStart=/usr/bin/dockerd --storage-driver=devicemapper@' /usr/lib/systemd/system/docker.service
+sed -i -e 's@ExecStart=/usr/bin/dockerd@ExecStart=/usr/bin/dockerd --storage-driver=devicemapper --storage-opt dm.basesize=40G -g /home/vagrant/docker@' /usr/lib/systemd/system/docker.service
 systemctl enable docker
 systemctl start docker
 
 # run the galaxy container, --restart=always makes sure it starts up on boot
 mkdir -p /home/irida/data/galaxy-export
-curl https://irida.corefacility.ca/downloads/docker/irida-galaxy-docker-0.17.0.tar.gz | gunzip -c | docker load
-docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01:0.17.0
+docker pull phacnml/galaxy-irida-18.09
+docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-18.09
 
 # wait for galaxy to succeed starting up for the first time, so we don't have to wait for postgres to start up next time
 wait_for_galaxy
@@ -42,7 +43,7 @@ After=docker.service
 
 [Service]
 ExecStartPre=-/usr/bin/docker rm --force galaxy
-ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01:0.17.0
+ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-18.09
 
 [Install]
 WantedBy=multi-user.target

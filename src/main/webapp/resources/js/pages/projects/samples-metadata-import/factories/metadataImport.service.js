@@ -3,7 +3,7 @@
  * sample metadata.
  */
 
-export const sampleMetadataService = ($http, $window, Upload) => {
+export function sampleMetadataService($http, $window, Upload) {
   // 'project.id' is set in the `project/_bse.html` file
   const URL = $window.location.pathname;
 
@@ -13,11 +13,10 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    * @return {object} ajax promise.
    */
   const uploadMetadata = file => {
-    return Upload
-      .upload({
-        url: `${URL}/file`,
-        data: {file: file}
-      });
+    return Upload.upload({
+      url: `${URL}/file`,
+      data: { file: file }
+    });
   };
 
   /**
@@ -25,10 +24,9 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    * @return {object} the metadata stored for this project.
    */
   const getProjectData = () => {
-    return $http.get(`${URL}/getMetadata`)
-      .then(result => {
-        return result.data;
-      });
+    return $http.get(`${URL}/getMetadata`).then(result => {
+      return result.data;
+    });
   };
 
   /**
@@ -38,8 +36,12 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    * @return {object} ajax promise
    */
   const setSampleIdColumn = sampleNameColumn => {
-    return $http.post(`${URL}/setSampleColumn`, {sampleNameColumn})
-      .then(response => response);
+    return $http({
+      method: "POST",
+      url: `${URL}/setSampleColumn`,
+      data: $.param({ sampleNameColumn }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    }).then(response => response);
   };
 
   /**
@@ -65,4 +67,4 @@ export const sampleMetadataService = ($http, $window, Upload) => {
     saveMetadata,
     clearProject
   };
-};
+}

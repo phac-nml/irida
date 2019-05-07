@@ -25,6 +25,9 @@ import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRep
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
+/**
+ * Service impl for submitting data to NCBI
+ */
 @Service
 public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission> implements
 		NcbiExportSubmissionService {
