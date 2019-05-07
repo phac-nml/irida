@@ -12,9 +12,9 @@ method is what triggers the updates.
  */
 
 const mapStateToProps = state => ({
-  initializing: state.fields.get("initializing"),
-  error: state.fields.get("error"),
-  fields: state.fields.get("fields"),
+  initializing: state.fields.initializing,
+  error: state.fields.error,
+  fields: state.fields.fields,
   entries: state.entries.entries,
   templates: state.templates.templates,
   current: state.templates.current,

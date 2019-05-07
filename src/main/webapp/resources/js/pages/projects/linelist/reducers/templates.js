@@ -1,3 +1,5 @@
+import cloneDeep from "lodash/cloneDeep";
+
 export const NO_TEMPLATE_INDEX = 0;
 
 export const types = {
@@ -75,7 +77,6 @@ export const reducer = (state = initialState, action = {}) => {
         })()
       };
     case types.TEMPLATE_MODIFIED:
-      console.info("UPDATING TEMPLATE", action);
       /*
       This is a modification of the current template through ag-grid.
        */
@@ -90,7 +91,7 @@ export const reducer = (state = initialState, action = {}) => {
           const fields =
             template.modified.length > 0 // Empty array if the template is not modified
               ? [...template.modified]
-              : [...template.fields];
+              : cloneDeep(template.fields); // cloneDeep so we ensure not to overwrite the original fields
 
           template.modified = fields.map(f => {
             if (f.field === action.field.field) {
@@ -116,7 +117,9 @@ export const reducer = (state = initialState, action = {}) => {
           const { template } = action;
           template.modified = [];
 
-          let index = t.findIndex(t => t.id === template.id);
+          console.log(template);
+
+          let index = t.findIndex(temp => temp.id === template.id);
 
           if (index > 0) {
             /*
@@ -128,7 +131,7 @@ export const reducer = (state = initialState, action = {}) => {
             New template created, add it to the end of the list and set it as selected.
              */
             t.push(template);
-            index = t.length = 1;
+            index = t.length - 1;
           }
 
           return { templates: t, current: index };

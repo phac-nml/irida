@@ -2,8 +2,6 @@ import React from "react";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
-import isEqual from "lodash/isEqual";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -62,7 +60,7 @@ export class Table extends React.Component {
       return true;
     }
 
-    if (!nextProps.fields.equals(this.props.fields)) {
+    if (!isEqual(nextProps.fields, this.props.fields)) {
       /*
       This should only happen on the original loading of the table when the
       complete list of UIMetadataTemplateFields are passed.
@@ -183,14 +181,12 @@ export class Table extends React.Component {
     // Remove sample name
     colOrder.shift();
 
-    const fields = this.props.fields.toJS();
-
     /*
     Remove the hidden ones and just get the field identifiers
      */
     let list = colOrder.map(c => {
       // Get the header name
-      const field = fields.find(f => f.field === c.colId);
+      const field = this.props.fields.find(f => f.field === c.colId);
       field.hide = c.hide;
       return { ...field };
     });
@@ -422,7 +418,7 @@ export class Table extends React.Component {
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
-          columnDefs={this.props.fields.toJS()}
+          columnDefs={this.props.fields}
           rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
@@ -448,7 +444,7 @@ export class Table extends React.Component {
 Table.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
-  fields: ImmutablePropTypes.list.isRequired,
+  fields: PropTypes.array.isRequired,
   entries: PropTypes.array,
   templates: PropTypes.array,
   current: PropTypes.number.isRequired,
