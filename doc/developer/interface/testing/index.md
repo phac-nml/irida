@@ -59,15 +59,7 @@ You can specify which [chromedriver] to use with `-Dwebdriver.chrome.driver=/PAT
 
 To use [selenium/standalone-chrome] you will need to have docker installed on your machine.
 
-Note: the following command assumes you are in the root directory of the repository
-
-First start up the [selenium/standalone-chrome] container:
-```bash
-mkdir -p /tmp/irida
-docker run -d -p 4444:4444 -v $PWD:$PWD -v /tmp/irida:/tmp/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:3.6
-```
-
-Then when running the ui tests make sure to all the following options `-Dwebdriver.selenium_url=http://localhost:4444/wd/hub -Djetty.port=33333 -Dserver.base.url=http://YOUR_IP_HERE:33333 -Djava.io.tmpdir=/tmp/irida` otherwise, the `node_modules` version of [chromedriver] is used for running UI tests.
+Then when running the ui tests make sure to specify the `--selenium-docker` option otherwise, the `node_modules` version of [chromedriver] is used for running UI tests.
 
 
 Running specific UI tests through [IntelliJ] IDEA

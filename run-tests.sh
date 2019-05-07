@@ -17,10 +17,14 @@ CHROME_DRIVER=$SCRIPT_DIR/src/main/webapp/node_modules/chromedriver/lib/chromedr
 SEQUENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/sequence-file-base-XXXXXXXX`
 REFERENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/reference-file-base-XXXXXXXX`
 OUTPUT_FILE_DIR=`mktemp -d $TMP_DIRECTORY/output-file-base-XXXXXXXX`
+SELENIUM_DOCKER_NAME=irida-selenium
+SELENIUM_URL=http://localhost:4444/wd/hub
+HOSTNAME=`hostname`
 
 DO_KILL_DOCKER=true
 NO_CLEANUP=false
 HEADLESS=true
+SELENIUM_DOCKER=false
 
 if [ -z "$DB_MAX_WAIT_MILLIS" ];
 then
@@ -109,8 +113,17 @@ test_rest() {
 }
 
 test_ui() {
-	mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
+    SELENIUM_OPTS=""
+    if [ "$SELENIUM_DOCKER" = false ];
+    then
+        SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROME_DRIVER"
+    else
+        docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
+        SELENIUM_OPTS="-Dwebdriver.selenium_url=http://localhost:4444/wd/hub -Djetty.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
+    fi
+	mvn clean verify -B -Pui_testing $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
+	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $SELENIUM_DOCKER_NAME; fi
 	return $exit_code
 }
 
@@ -170,6 +183,7 @@ then
 	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
+	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
 	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, doc_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
@@ -191,7 +205,7 @@ check_dependencies
 
 cd $SCRIPT_DIR
 
-while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" -o "$1" = "--no-headless" ];
+while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" -o "$1" = "--no-headless" -o "$1" = "--selenium-docker" ];
 do
 	if [ "$1" = "--database" -o "$1" = "-d" ];
 	then
@@ -210,6 +224,10 @@ do
 	then
 		HEADLESS=false
 		shift
+	elif [ "$1" = "--selenium-docker" ];
+	then
+	    SELENIUM_DOCKER=true
+	    shift
 	else
 		shift
 	fi
