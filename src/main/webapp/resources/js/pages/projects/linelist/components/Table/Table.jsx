@@ -1,6 +1,7 @@
 import React from "react";
 import { List } from "immutable";
 import PropTypes from "prop-types";
+import isEqual from "lodash/isEqual";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
@@ -84,7 +85,7 @@ export class Table extends React.Component {
       The current template has changed.
       Force the table to update to the new view based on the template fields.
        */
-      const template = nextProps.templates.get(nextProps.current).toJS();
+      const template = nextProps.templates[nextProps.current];
       this.applyTemplate(template.fields);
       return false;
     }
@@ -93,33 +94,22 @@ export class Table extends React.Component {
     The field order for a template can change externally.  Check to see if that
     order has been updated, and adjust the columns accordingly.
      */
-    const oldModified = this.props.templates.getIn([
-      this.props.current,
-      "modified"
-    ]);
-    const newModified = nextProps.templates.getIn([
-      nextProps.current,
-      "modified"
-    ]);
+    const oldModified = this.props.templates[this.props.current].modified;
+    const newModified = nextProps.templates[nextProps.current].modified;
 
-    if (
-      typeof oldModified !== "undefined" &&
-      !newModified.equals(oldModified)
-    ) {
+    if (isEqual(oldModified, newModified)) {
       if (this.colDropped) {
         // Clear the dropped flag as the next update might come from an external source
         this.colDropped = false;
       } else {
-        const fields = newModified.toJS();
-
         /*
         If the length of the modified fields === 0, then the modified template
         was saved ==> the table already reflected this state.  If not the
         template was modified from an external event and therefore needs to
         reflect the changes.
          */
-        if (fields.length > 0) {
-          this.applyTemplate(fields);
+        if (newModified.length > 0) {
+          this.applyTemplate(newModified);
         }
       }
       return false;
@@ -459,7 +449,7 @@ Table.propTypes = {
   tableModified: PropTypes.func.isRequired,
   fields: ImmutablePropTypes.list.isRequired,
   entries: PropTypes.array,
-  templates: ImmutablePropTypes.list,
+  templates: PropTypes.array,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired
 };
