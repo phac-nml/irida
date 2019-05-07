@@ -90,7 +90,8 @@ public class IntegrationUITestListener extends RunListener {
 			try {
 				driver = new RemoteWebDriver(new URL(seleniumUrl), capabilities);
 			} catch (MalformedURLException e) {
-				fail();
+				logger.error("webdriver.selenium_url is malformed", e);
+				fail("Could not connect to the remote web driver at following url: " + seleniumUrl);
 			}
 		} else {
 			driver = new ChromeDriver(capabilities);
