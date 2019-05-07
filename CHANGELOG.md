@@ -3,6 +3,7 @@ Changes
 
 19.05 to 19.09
 ---------------
+* [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
 
 19.01 to 19.05
 ---------------
