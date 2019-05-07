@@ -4,6 +4,7 @@ Changes
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
+* [Developer]: REST API applications can now select which role to add users to a project.
 
 19.01 to 19.05
 ---------------
