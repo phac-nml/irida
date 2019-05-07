@@ -1,5 +1,6 @@
 import React from "react";
-import { List } from "immutable";
+import isEqual from "lodash/isEqual";
+import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
@@ -69,8 +70,8 @@ export class Table extends React.Component {
     }
 
     if (
-      List.isList(nextProps.entries) &&
-      !nextProps.entries.equals(this.props.entries)
+      isArray(nextProps.entries) &&
+      !isEqual(nextProps.entries, this.props.entries)
     ) {
       /*
       This should only happen on the original loading of the table when the
