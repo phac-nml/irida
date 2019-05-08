@@ -3,14 +3,16 @@ export const types = {
   LOAD_ERROR: "METADATA/ENTRIES/LOAD_ERROR",
   LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS",
   SELECTION: "METADATA/ENTRIES/SELECTION",
-  EDITED: "METADATA/ENTRIES/EDITED"
+  EDITED: "METADATA/ENTRIES/EDITED",
+  FILTER: "METADATA/ENTRIES/FILTER"
 };
 
 export const initialState = {
   fetching: false, // Is the API call currently being made
   error: false, // Was there an error making the api call}
   entries: null, // List of metadata entries
-  selected: 0
+  selected: 0,
+  globalFilter: ""
 };
 
 /*
@@ -31,6 +33,8 @@ export const reducer = (state = initialState, action = {}) => {
       return { ...state, fetching: false, error: true };
     case types.SELECTION:
       return { ...state, selected: action.count };
+    case types.FILTER:
+      return { ...state, globalFilter: action.filter };
     default:
       return state;
   }
@@ -44,5 +48,11 @@ export const actions = {
     type: types.SELECTION,
     count
   }),
-  edited: (entry, field, label) => ({ type: types.EDITED, entry, field, label })
+  edited: (entry, field, label) => ({
+    type: types.EDITED,
+    entry,
+    field,
+    label
+  }),
+  setGlobalFilter: value => ({ type: types.FILTER, filter: value })
 };

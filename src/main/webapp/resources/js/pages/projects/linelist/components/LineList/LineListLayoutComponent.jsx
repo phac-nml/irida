@@ -9,7 +9,6 @@ const { Sider, Content } = Layout;
 
 export class LineListLayoutComponent extends React.Component {
   linelistRef = React.createRef();
-  tableRef = React.createRef();
 
   state = {
     collapsed: true,
@@ -81,12 +80,6 @@ export class LineListLayoutComponent extends React.Component {
   exportXLSX = () => this.tableRef.current.exportXLSX();
 
   /**
-   * Search the table for a specific value
-   * @param {string} value
-   */
-  quickSearch = value => this.tableRef.current.quickSearch(value);
-
-  /**
    * Update the state of the filter
    * @param count
    */
@@ -105,7 +98,6 @@ export class LineListLayoutComponent extends React.Component {
     return (
       <div ref={this.linelistRef}>
         <Toolbar
-          quickSearch={this.quickSearch}
           exportCSV={this.exportCSV}
           exportXLSX={this.exportXLSX}
           addSamplesToCart={this.addSamplesToCart}
@@ -115,10 +107,8 @@ export class LineListLayoutComponent extends React.Component {
         <Layout className="ag-theme-balham">
           <Content>
             <Table
-              {...this.props}
               onFilter={this.updateFilterCount}
               height={this.state.height}
-              ref={this.tableRef}
             />
           </Content>
           <Sider
