@@ -1,5 +1,6 @@
 import React from "react";
-import { List } from "immutable";
+import isEqual from "lodash/isEqual";
+import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
@@ -69,8 +70,8 @@ export class Table extends React.Component {
     }
 
     if (
-      List.isList(nextProps.entries) &&
-      !nextProps.entries.equals(this.props.entries)
+      isArray(nextProps.entries) &&
+      !isEqual(nextProps.entries, this.props.entries)
     ) {
       /*
       This should only happen on the original loading of the table when the
@@ -421,8 +422,6 @@ export class Table extends React.Component {
   };
 
   render() {
-    const rowData =
-      this.props.entries !== null ? this.props.entries.toJS() : undefined;
     return (
       <div
         className="ag-grid-table-wrapper"
@@ -434,7 +433,7 @@ export class Table extends React.Component {
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields.toJS()}
-          rowData={rowData}
+          rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
           onGridReady={this.onGridReady}
@@ -460,7 +459,7 @@ Table.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: ImmutablePropTypes.list.isRequired,
-  entries: ImmutablePropTypes.list,
+  entries: PropTypes.array,
   templates: ImmutablePropTypes.list,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired

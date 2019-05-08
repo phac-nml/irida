@@ -4,6 +4,7 @@ Changes
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
+* [UI/Developer]: Removed ImmutableJS from the Line List Page.
 
 19.01 to 19.05
 ---------------
