@@ -44,14 +44,19 @@ function getColumnDefinition(col) {
 
   if (field === FIELDS.icons) {
     Object.assign(col, {
+      filter: undefined,
       cellRenderer: "IconCellRenderer"
     });
   } else if (type === TYPES.date) {
     Object.assign(col, dateColumn);
   } else if (field === FIELDS.sampleName) {
     Object.assign(col, {
-      cellRenderer: "SampleNameRenderer"
+      cellRenderer: "SampleNameRenderer",
+      filter: "agTextColumnFilter"
     });
+  } else {
+    // Default to text filter
+    Object.assign(col, { filter: "agTextColumnFilter" });
   }
 
   /*
