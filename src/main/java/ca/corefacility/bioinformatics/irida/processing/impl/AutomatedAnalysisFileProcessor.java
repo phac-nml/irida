@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
@@ -66,23 +67,47 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public void process(SequencingObject sequencingObject) {
-		List<AnalysisSubmissionTemplate> analysisTemplates = getAnalysisTemplates(sequencingObject);
 
-		for (AnalysisSubmissionTemplate template : analysisTemplates) {
+		SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(
+				sequencingObject);
 
-			// build an SubmittableAnalysisSubmission
-			AnalysisSubmission.Builder builder = new AnalysisSubmission.Builder(template);
+		List<AnalysisSubmissionTemplate> analysisTemplates = getAnalysisTemplates(sampleForSequencingObject);
 
-			AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))
-					.build();
+		/*
+		 * Checking if the seq object was deleted from the sample before this file processor was run
+		 */
+		if (sampleForSequencingObject != null) {
 
-			submission = submissionRepository.save(submission);
+			for (AnalysisSubmissionTemplate template : analysisTemplates) {
 
-			//share submission back to the project
-			Project project = template.getSubmittedProject();
-			pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+				template = checkCurrentWorkflowVersion(template);
 
-			legacyFileProcessorCompatibility(submission, sequencingObject);
+				if (template.isEnabled()) {
+
+					// build an SubmittableAnalysisSubmission
+					AnalysisSubmission.Builder builder = new AnalysisSubmission.Builder(template);
+
+					AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))
+							.build();
+
+					submission = submissionRepository.save(submission);
+
+					//share submission back to the project
+					Project project = template.getSubmittedProject();
+					pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+
+					legacyFileProcessorCompatibility(submission, sequencingObject);
+
+					String statusMessage = "Last launched for sample " + sampleForSequencingObject.getSubject()
+							.getSampleName();
+					template.setStatusMessage(statusMessage);
+
+					analysisTemplateRepository.save(template);
+				}
+			}
+		} else {
+			logger.warn("Cannot find sample for sequencing object " + sequencingObject.getId()
+					+ ".  Not running automated pipelines.");
 		}
 	}
 
@@ -94,55 +119,96 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		return false;
 	}
 
-	/**
-	 * Get the {@link AnalysisSubmissionTemplate}s for a given {@link SequencingObject}.  Search up the {@link Sample}
-	 * and {@link Project}s the sequence belongs to.
-	 *
-	 * @param object the {@link SequencingObject}
-	 * @return the List of {@link AnalysisSubmissionTemplate}
-	 */
-	private List<AnalysisSubmissionTemplate> getAnalysisTemplates(SequencingObject object) {
-		List<AnalysisSubmissionTemplate> submissionTemplates = new ArrayList<>();
+	private AnalysisSubmissionTemplate checkCurrentWorkflowVersion(AnalysisSubmissionTemplate template) {
+		UUID workflowId = template.getWorkflowId();
 
-		SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(object);
+		IridaWorkflow iridaWorkflow = null;
 
-		/*
-		 * Checking if the seq object was deleted from the sample before this file processor was run
-		 */
-		if (sampleForSequencingObject != null) {
-			List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(
-					sampleForSequencingObject.getSubject());
+		try {
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
 
-			//get all the projects for the sample
-			for (Join<Project, Sample> j : projectForSample) {
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("Project " + template.getSubmittedProject()
+					.getId() + " attempted to run workflow " + workflowId
+					+ " but it does not exist.  This template will be disabled.", e);
 
-				//get the analysis templates for that project
-				List<AnalysisSubmissionTemplate> analysisSubmissionTemplatesForProject = analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(
-						j.getSubject());
+			template.setEnabled(false);
+			template.setStatusMessage("Disabled as workflow is not installed.");
+			analysisTemplateRepository.save(template);
+		}
 
-				//check if the project owns this sample
-				ProjectSampleJoin psj = (ProjectSampleJoin) j;
-				boolean owner = psj.isOwner();
+		if (iridaWorkflow != null) {
+			AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+					.getAnalysisType();
 
-				analysisSubmissionTemplatesForProject.forEach(t -> {
-					//adding the sample name to the template
-					String name = t.getName();
-					name = name + " - " + j.getObject()
-							.getSampleName();
-					t.setName(name);
+			IridaWorkflow defaultWorkflow = null;
+			try {
+				defaultWorkflow = workflowsService.getDefaultWorkflowByType(analysisType);
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.warn("Project " + template.getSubmittedProject()
+						.getId() + " attempted to run workflow type " + analysisType.getType()
+						+ " but there is no default workflow for this type.  This template will be disabled.", e);
 
-					//don't try to update the sample if this project isn't the owner.  it'll fail when it tries.
-					if (!owner) {
-						t.setUpdateSamples(false);
-					}
-				});
-
-				submissionTemplates.addAll(analysisSubmissionTemplatesForProject);
+				template.setEnabled(false);
+				template.setStatusMessage("Disabled as no default workflow exists for this type.");
+				analysisTemplateRepository.save(template);
 			}
 
-		} else {
-			logger.warn("Cannot find sample for sequencing object " + object.getId()
-					+ ".  Not running automated pipelines.");
+			if (defaultWorkflow != null && !workflowId.equals(defaultWorkflow.getWorkflowIdentifier())) {
+				logger.warn("Project " + template.getSubmittedProject()
+						.getId() + " attempted to run workflow " + workflowId
+						+ " but is no longer the default workflow for this type.  This template will be disabled.");
+
+				template.setEnabled(false);
+				template.setStatusMessage(
+						"Disabled as this workflow is out of date.  You must create a new automated pipeline.");
+				analysisTemplateRepository.save(template);
+			}
+
+		}
+
+		return template;
+	}
+
+	/**
+	 * Get the {@link AnalysisSubmissionTemplate}s for a given {@link Sample}.  Search up the {@link Sample} and {@link
+	 * Project}s the sequence belongs to.
+	 *
+	 * @param sampleForSequencingObject the {@link Sample}
+	 * @return the List of {@link AnalysisSubmissionTemplate}
+	 */
+	private List<AnalysisSubmissionTemplate> getAnalysisTemplates(
+			SampleSequencingObjectJoin sampleForSequencingObject) {
+		List<AnalysisSubmissionTemplate> submissionTemplates = new ArrayList<>();
+
+		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(
+				sampleForSequencingObject.getSubject());
+
+		//get all the projects for the sample
+		for (Join<Project, Sample> j : projectForSample) {
+
+			//get the analysis templates for that project
+			List<AnalysisSubmissionTemplate> analysisSubmissionTemplatesForProject = analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(
+					j.getSubject());
+
+			//check if the project owns this sample
+			ProjectSampleJoin psj = (ProjectSampleJoin) j;
+			boolean owner = psj.isOwner();
+
+			analysisSubmissionTemplatesForProject.forEach(t -> {
+				//adding the sample name to the template
+				String name = t.getName();
+				name = name + " - " + j.getObject()
+						.getSampleName();
+				t.setName(name);
+
+				//don't try to update the sample if this project isn't the owner.  it'll fail when it tries.
+				if (!owner) {
+					t.setUpdateSamples(false);
+				}
+			});
+
+			submissionTemplates.addAll(analysisSubmissionTemplatesForProject);
 		}
 
 		return submissionTemplates;
