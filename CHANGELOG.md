@@ -1,6 +1,10 @@
 Changes
 =======
 
+19.05 to 19.09
+---------------
+* [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
+
 19.01 to 19.05
 ---------------
 * [Documentation]: Added the CalVer updates to the documentation getting started guide.
@@ -26,7 +30,7 @@ Changes
 * [Documentation]: Added information on fixing `ONLY_FULL_GROUP_BY` sql error to the administrator faq docs.
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: Fixed bug preventing associated projects from being loaded into the project samples table. (19.01.3)
-* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See https://irida.corefacility.ca/documentation/adminstrator/upgrades/#1904 for more information. 
+* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#1905> for more information.
 * [UI]: Added hard wrap on sample name on sample details page.
 * [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
 * [UI]: New dedicated cart page.
@@ -40,6 +44,8 @@ Changes
 * [REST]: Updated http status code returned (400 Bad Request) when uploading files to the wrong type of run
 * [UI/Developer]: Updated to jquery v3.4.0 to fix security issue.
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
+* [UI]: Fixed bug causing issues with saving Line List templates.
+* [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
 
 
 0.22.0 to 19.01
