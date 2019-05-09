@@ -65,11 +65,6 @@ export class LineListLayoutComponent extends React.Component {
   };
 
   /**
-   * Add selected samples to the cart.
-   */
-  addSamplesToCart = () => this.tableRef.current.addSamplesToCart();
-
-  /**
    * Export table to a csv file
    */
   exportCSV = () => this.tableRef.current.exportCSV();

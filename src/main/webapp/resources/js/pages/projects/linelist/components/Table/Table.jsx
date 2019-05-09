@@ -330,7 +330,7 @@ export class TableComponent extends React.Component {
   };
 
   onSelectionChange = () => {
-    this.props.selectionChange(this.api.getSelectedNodes().length);
+    this.props.selection(this.api.getSelectedNodes().map(n => n.data));
   };
 
   /**
@@ -452,7 +452,8 @@ TableComponent.propTypes = {
   templates: PropTypes.array,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired,
-  globalFilter: PropTypes.string.isRequired
+  globalFilter: PropTypes.string.isRequired,
+  selection: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -466,7 +467,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   tableModified: fields => dispatch(templateActions.tableModified(fields)),
   entryEdited: (entry, field, label) =>
-    dispatch(entryActions.edited(entry, field, label))
+    dispatch(entryActions.edited(entry, field, label)),
+  selection: selected => dispatch(entryActions.selection(selected))
 });
 
 export const Table = connect(
