@@ -7614,11 +7614,6 @@ react-focus-lock@^1.18.3:
     prop-types "^15.6.2"
     react-clientside-effect "^1.2.0"
 
-react-immutable-proptypes@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-immutable-proptypes/-/react-immutable-proptypes-2.1.0.tgz#023d6f39bb15c97c071e9e60d00d136eac5fa0b4"
-  integrity sha1-Aj1vObsVyXwHHp5g0A0TbqxfoLQ=
-
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
