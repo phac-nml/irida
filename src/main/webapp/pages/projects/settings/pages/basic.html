@@ -19,7 +19,7 @@
 <body>
 <th:block layout:fragment="settings-content">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
 
             <ul class="list-group">
@@ -33,8 +33,7 @@
                     </h4>
 
                     <div class="list-group-item-text">
-                        <strong th:text="#{project.settings.automated.template.type}">_type_</strong>:
-                        <span th:text="${template.analysisType}">_pipelinetype_</span>
+                        <span th:utext="#{project.settings.automated.template.type(${template.analysisType})}">_type_</span>
                     </div>
                     <div class="list-group-item-text">
                         <span th:text="${template.statusMessage}">_status_</span>

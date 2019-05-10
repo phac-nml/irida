@@ -483,8 +483,11 @@ public class PipelineController extends BaseController {
 			//if we have an automated project set, create the new template
 			if (parameters.getAutomatedProject() != null) {
 				Project readProject = projectService.read(parameters.getAutomatedProject());
+
+				String statusMessage = messageSource.getMessage("analysis.template.status.new", null, locale);
+
 				analysisSubmissionService.createSingleSampleSubmissionTemplate(flow, ref, params, namedParameters, name,
-						analysisDescription, readProject, writeResultsToSamples, emailPipelineResult);
+						statusMessage, analysisDescription, readProject, writeResultsToSamples, emailPipelineResult);
 			} else {
 				//otherwise get the project shares and sequence files
 				List<Project> projectsToShare = new ArrayList<>();

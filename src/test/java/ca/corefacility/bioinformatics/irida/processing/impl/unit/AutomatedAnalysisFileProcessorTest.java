@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
 
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -57,6 +58,9 @@ public class AutomatedAnalysisFileProcessorTest {
 	@Mock
 	private AnalysisSubmissionTemplateRepository templateRepository;
 
+	@Mock
+	private MessageSource messageSource;
+
 	private AutomatedAnalysisFileProcessor processor;
 
 	IridaWorkflow assemblyWorkflow;
@@ -68,7 +72,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		MockitoAnnotations.initMocks(this);
 
 		processor = new AutomatedAnalysisFileProcessor(ssoRepository, psjRepository, submissionRepository,
-				templateRepository, pasRepository, workflowsService, objectRepository);
+				templateRepository, pasRepository, workflowsService, objectRepository, messageSource);
 
 		//assembly
 		UUID assemblyID = UUID.randomUUID();

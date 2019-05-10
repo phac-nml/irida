@@ -25,11 +25,11 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * File processor used to launch an automated analysis for uploaded data.  This will take the {@link
@@ -46,13 +46,14 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final IridaWorkflowsService workflowsService;
 	private final SequencingObjectRepository objectRepository;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public AutomatedAnalysisFileProcessor(SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectSampleJoinRepository psjRepository, AnalysisSubmissionRepository submissionRepository,
 			AnalysisSubmissionTemplateRepository analysisTemplateRepository,
 			ProjectAnalysisSubmissionJoinRepository pasRepository, IridaWorkflowsService workflowsService,
-			SequencingObjectRepository objectRepository) {
+			SequencingObjectRepository objectRepository, MessageSource messageSource) {
 		this.ssoRepository = ssoRepository;
 		this.psjRepository = psjRepository;
 		this.submissionRepository = submissionRepository;
@@ -60,6 +61,7 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		this.pasRepository = pasRepository;
 		this.workflowsService = workflowsService;
 		this.objectRepository = objectRepository;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -106,9 +108,14 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 
 					legacyFileProcessorCompatibility(submission, sequencingObject);
 
-					String statusMessage = "Last launched for sample " + sampleForSequencingObject.getSubject()
-							.getSampleName();
-					template.setStatusMessage(statusMessage);
+					SimpleDateFormat sdf;
+					sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date = sdf.format(new Date());
+
+					String message = messageSource.getMessage("analysis.template.status.lastlaunched",
+							new Object[] { date }, Locale.getDefault());
+
+					template.setStatusMessage(message);
 
 					analysisTemplateRepository.save(template);
 				}
@@ -141,7 +148,10 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 					+ " but it does not exist.  This template will be disabled.", e);
 
 			template.setEnabled(false);
-			template.setStatusMessage("Disabled as workflow is not installed.");
+
+			String message = messageSource.getMessage("analysis.template.status.notexists", null, Locale.getDefault());
+
+			template.setStatusMessage(message);
 			analysisTemplateRepository.save(template);
 		}
 
@@ -158,7 +168,11 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 						+ " but there is no default workflow for this type.  This template will be disabled.", e);
 
 				template.setEnabled(false);
-				template.setStatusMessage("Disabled as no default workflow exists for this type.");
+
+				String message = messageSource.getMessage("analysis.template.status.nodefault", null,
+						Locale.getDefault());
+
+				template.setStatusMessage(message);
 				analysisTemplateRepository.save(template);
 			}
 
@@ -168,8 +182,11 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 						+ " but is no longer the default workflow for this type.  This template will be disabled.");
 
 				template.setEnabled(false);
-				template.setStatusMessage(
-						"Disabled as this workflow is out of date.  You must create a new automated pipeline.");
+
+				String message = messageSource.getMessage("analysis.template.status.outdated", null,
+						Locale.getDefault());
+
+				template.setStatusMessage(message);
 				analysisTemplateRepository.save(template);
 			}
 
