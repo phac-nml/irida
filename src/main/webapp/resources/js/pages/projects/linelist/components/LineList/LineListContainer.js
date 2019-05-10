@@ -19,7 +19,7 @@ const mapStateToProps = state => ({
   modified: state.templates.modified,
   saving: state.templates.saving,
   saved: state.templates.saved,
-  selectedCount: state.entries.selected
+  selectedCount: state.entries.selected.length
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -55,7 +55,6 @@ export class TableComponent extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log(this.props.globalFilter);
     if (prevProps.globalFilter !== this.props.globalFilter) {
       this.api.setQuickFilter(this.props.globalFilter);
     }
