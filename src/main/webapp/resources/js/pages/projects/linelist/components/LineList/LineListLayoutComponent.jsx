@@ -86,7 +86,7 @@ export class LineListLayoutComponent extends React.Component {
    * Scroll the table to the top.
    */
   scrollTableToTop = () => {
-    this.tableRef.current.scrollToTop();
+    this.tableRef.scrollToTop();
   };
 
   render() {
