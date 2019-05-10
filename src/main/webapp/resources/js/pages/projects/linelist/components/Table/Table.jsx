@@ -300,7 +300,10 @@ export class TableComponent extends React.Component {
     ws["!ref"] = XLSX.utils.encode_range(range);
 
     /* add worksheet to workbook using the template name */
-    const template = this.props.templates[this.props.current].name;
+    const template = this.props.templates[this.props.current].name.replace(
+      this.nameRegex,
+      "_"
+    );
     workbook.SheetNames.push(template);
     workbook.Sheets[template] = ws;
 
