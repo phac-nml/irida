@@ -56,7 +56,7 @@ const projectSettings = (function(page, notifications) {
    */
   $(".analysis-remove").on("click", function() {
     const templateId = $(this)
-      .closest("tr")
+      .closest("li")
       .data("analysis");
 
     /*

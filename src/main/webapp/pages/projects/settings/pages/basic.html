@@ -19,29 +19,28 @@
 <body>
 <th:block layout:fragment="settings-content">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
-            
-            <table class="table table-striped" th:if="${not analysisTemplates.isEmpty()}">
-                <thead>
-                   <th th:text="#{project.settings.automated.template.name}">_Pipeline name_</th>
-                   <th th:text="#{project.settings.automated.template.type}">_Analysis type_</th>
-                   <th>_Status_</th>
-                   <th>_Enabled_</th>
-                   <th th:if="${manageMembers}"></th>
-                </thead>
-                <tbody>
-                    <tr th:each="template : ${analysisTemplates}" th:data-analysis="${template.id}">
-                        <td th:text="${template.name}">_Name_</td>
-                        <td th:text="${template.analysisType}">_type_</td>
-                        <td th:text="${template.statusMessage}">_type_</td>
-                        <td th:text="${template.enabled}">_type_</td>
-                        <td th:if="${manageMembers}">
+
+            <ul class="list-group">
+                <li class="" th:class="${!template.enabled} ? 'list-group-item-danger list-group-item' : 'list-group-item'" th:each="template : ${analysisTemplates}" th:data-analysis="${template.id}">
+                    <div class="pull-right" th:if="${manageMembers}">
                             <button class="btn btn-xs btn-default analysis-remove"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    </div>
+                    <h4 class="list-group-item-heading">
+                        <i class="spaced-right__sm fas fa-exclamation-triangle" th:if="${! template.enabled}"></i>
+                        <span th:text="${template.name}">_name_</span>
+                    </h4>
+
+                    <div class="list-group-item-text">
+                        <strong th:text="#{project.settings.automated.template.type}">_type_</strong>:
+                        <span th:text="${template.analysisType}">_pipelinetype_</span>
+                    </div>
+                    <div class="list-group-item-text">
+                        <span th:text="${template.statusMessage}">_status_</span>
+                    </div>
+                </li>
+            </ul>
 
             <div class="alert alert-info" th:if="${analysisTemplates.isEmpty()}" th:text="#{project.settings.automated.empty}">_Add one below_</div>
 
