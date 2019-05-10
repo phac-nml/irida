@@ -67,12 +67,12 @@ export class LineListLayoutComponent extends React.Component {
   /**
    * Export table to a csv file
    */
-  exportCSV = () => this.tableRef.current.exportCSV();
+  exportCSV = () => this.tableRef.exportCSV();
 
   /**
    * Export table to an excel file
    */
-  exportXLSX = () => this.tableRef.current.exportXLSX();
+  exportXLSX = () => this.tableRef.exportXLSX();
 
   /**
    * Update the state of the filter
@@ -102,6 +102,7 @@ export class LineListLayoutComponent extends React.Component {
         <Layout className="ag-theme-balham">
           <Content>
             <Table
+              ref={tableReference => (this.tableRef = tableReference)}
               onFilter={this.updateFilterCount}
               height={this.state.height}
             />

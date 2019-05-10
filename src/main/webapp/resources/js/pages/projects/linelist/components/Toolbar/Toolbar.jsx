@@ -132,7 +132,6 @@ ToolbarComponent.propTypes = {
   selectedCount: PropTypes.number.isRequired,
   exportCSV: PropTypes.func.isRequired,
   exportXLSX: PropTypes.func.isRequired,
-  addSamplesToCart: PropTypes.func.isRequired,
   scrollTableToTop: PropTypes.func.isRequired,
   updateFilter: PropTypes.func.isRequired
 };

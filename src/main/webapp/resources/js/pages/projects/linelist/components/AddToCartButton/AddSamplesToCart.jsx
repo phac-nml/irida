@@ -32,7 +32,7 @@ export function AddSamplesToCartButtonComponent({
 }
 
 AddSamplesToCartButtonComponent.propTypes = {
-  selected: PropTypes.number.isRequired,
+  selected: PropTypes.array.isRequired,
   addSamplesToCart: PropTypes.func.isRequired
 };
 

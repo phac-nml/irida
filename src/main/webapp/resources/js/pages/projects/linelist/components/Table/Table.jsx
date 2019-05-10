@@ -217,9 +217,10 @@ export class TableComponent extends React.Component {
     const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
       1}-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
-    const template = this.props.templates
-      .getIn([this.props.current, "name"])
-      .replace(this.nameRegex, "_");
+    const template = this.props.templates[this.props.current].name.replace(
+      this.nameRegex,
+      "_"
+    );
     return `${date}-${project}-${template}.${ext}`;
   };
 
@@ -299,9 +300,7 @@ export class TableComponent extends React.Component {
     ws["!ref"] = XLSX.utils.encode_range(range);
 
     /* add worksheet to workbook using the template name */
-    const template = this.props.templates
-      .getIn([this.props.current, "name"])
-      .replace(this.nameRegex, "_");
+    const template = this.props.templates[this.props.current].name;
     workbook.SheetNames.push(template);
     workbook.Sheets[template] = ws;
 
@@ -472,5 +471,7 @@ const mapDispatchToProps = dispatch => ({
 
 export const Table = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { forwardRef: true }
 )(TableComponent);
