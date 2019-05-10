@@ -71,6 +71,9 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(
 				sequencingObject);
 
+		String sampleName = sampleForSequencingObject.getSubject()
+				.getSampleName();
+
 		List<AnalysisSubmissionTemplate> analysisTemplates = getAnalysisTemplates(sampleForSequencingObject);
 
 		/*
@@ -86,6 +89,11 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 
 					// build an SubmittableAnalysisSubmission
 					AnalysisSubmission.Builder builder = new AnalysisSubmission.Builder(template);
+
+					//adding the sample name to the template
+					String templateName = template.getName();
+					templateName += " - " + sampleName;
+					builder.name(templateName);
 
 					AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))
 							.build();
@@ -196,12 +204,6 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 			boolean owner = psj.isOwner();
 
 			analysisSubmissionTemplatesForProject.forEach(t -> {
-				//adding the sample name to the template
-				String name = t.getName();
-				name = name + " - " + j.getObject()
-						.getSampleName();
-				t.setName(name);
-
 				//don't try to update the sample if this project isn't the owner.  it'll fail when it tries.
 				if (!owner) {
 					t.setUpdateSamples(false);
