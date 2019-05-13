@@ -4,7 +4,7 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{announcement.admin-menu}">_Announcement_</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/announcement-admin.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/announcement-admin.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -36,7 +36,7 @@
     </main>
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/announcement-admin.bundle.js}"></script>
+    <script th:src="@{/dist/js/announcement-admin.bundle.js}"></script>
 </th:block>
 </body>
 </html>

@@ -3,7 +3,7 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.groups}">Title</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/project-users-groups.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
         i18n: {
@@ -96,7 +96,7 @@
     </div>
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/project-users-groups.bundle.js}"></script>
+    <script th:src="@{/dist/js/project-users-groups.bundle.js}"></script>
 </th:block>
 </body>
 </html>
