@@ -19,6 +19,7 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
+import { HeaderRenderer } from "./HeaderRenderer";
 
 const { i18n } = window.PAGE;
 
@@ -51,7 +52,8 @@ export class TableComponent extends React.Component {
     LoadingOverlay,
     SampleNameRenderer,
     IconCellRenderer,
-    DateCellRenderer
+    DateCellRenderer,
+    agColumnHeader: HeaderRenderer
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
