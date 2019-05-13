@@ -4,7 +4,7 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{nav.main.groups-list}">_Groups_</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/groups-list.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/groups-list.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
             urls: {
@@ -42,7 +42,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/groups-list.bundle.js}"></script>
+    <script th:src="@{/dist/js/groups-list.bundle.js}"></script>
 </th:block>
 </body>
 </html>

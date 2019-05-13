@@ -17,4 +17,4 @@ doc/_site
 /.idea/
 src/main/webapp/resources/css
 src/main/webapp/node
-/src/main/webapp/resources/dist
+/src/main/webapp/dist

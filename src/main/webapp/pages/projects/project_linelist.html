@@ -5,7 +5,7 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/project-linelist.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-linelist.bundle.css}">
     <script th:inline="javascript">
         window.PAGE = {
           project: /*[[${project}]]*/ {},
@@ -181,7 +181,7 @@
 </main>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/project-linelist.bundle.js}"></script>
+    <script th:src="@{/dist/js/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>
