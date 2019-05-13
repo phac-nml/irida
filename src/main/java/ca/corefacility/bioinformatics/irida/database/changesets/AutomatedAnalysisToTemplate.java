@@ -42,23 +42,8 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		//get the workflow information from the service
 		try {
 			assemblyWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.warn(
-					"Assembly workflow not found.  Automated assemblies will not be converted to analysis templates.");
-			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
-		}
 
-		//get the workflow information from the service
-		try {
-			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.");
-			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
-		}
-
-		//update assemblies
-		if (assemblyWorkflow != null) {
-			logger.debug("Upadting automated assembly project settings");
+			logger.debug("Updating automated assembly project settings");
 
 			//get the workflow identifiers
 			UUID assemblyId = assemblyWorkflow.getWorkflowIdentifier();
@@ -70,11 +55,17 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 			insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation", true, assemblyId, "p.assemble_uploads=1",
 					defaultAssemblyParams);
 
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn(
+					"Assembly workflow not found.  Automated assemblies will not be converted to analysis templates.");
+			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
-		//update SISTR
-		if (sistrWorkflow != null) {
-			logger.debug("Upadting automated SISTR project settings");
+		//get the workflow information from the service
+		try {
+			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
+
+			logger.debug("Updating automated SISTR project settings");
 			//get the workflow identifiers
 			UUID sistrId = sistrWorkflow.getWorkflowIdentifier();
 
@@ -88,6 +79,9 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 			//insert the sistr entries with metadata
 			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", true, sistrId,
 					"p.sistr_typing_uploads='AUTO_METADATA'", defaultSistrParams);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.");
+			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
 		return new SqlStatement[0];
@@ -99,12 +93,9 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		 * we're borrowing the 'automated' flag here to mark entries we need to add params to later.  at this point
 		 * there'll be nothing with a '1' in the automated flag.  we'll clear it later.
 		 */
-
-		int updateSampleBit = updateSamples ? 1 : 0;
-
 		String assemblyInsert =
 				"INSERT INTO analysis_submission (DTYPE, name, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) select 'AnalysisSubmissionTemplate', '"
-						+ name + "', now(), 'LOW', " + updateSampleBit + ", '" + workflowId.toString()
+						+ name + "', now(), 'LOW', " + updateSamples + ", '" + workflowId.toString()
 						+ "', 1, p.id, 1 FROM project p WHERE " + where;
 
 		int update = jdbcTemplate.update(assemblyInsert);
@@ -125,6 +116,9 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 			// remove the automated=1
 			String removeAutomatedSql = "UPDATE analysis_submission SET automated=null WHERE DTYPE = 'AnalysisSubmissionTemplate' AND name=?";
 			jdbcTemplate.update(removeAutomatedSql, name);
+		}
+		else{
+			logger.debug("No automated analyeses added for " + name);
 		}
 	}
 
