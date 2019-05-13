@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Icon } from "antd";
 
@@ -8,12 +8,19 @@ const Header = styled.div`
 `;
 
 const SortIcon = styled(Icon)``;
+const FilterIcon = styled.div`
+  padding: 0 5px;
+`;
 
 const AscSortIcon = () => <SortIcon type="arrow-up" />;
 const DescSortIcon = () => <SortIcon type="arrow-down" />;
 const NoSortIcon = () => null;
-const FilterIcon = () =>
-  React.forwardRef((props, ref) => <Icon type="filter" />);
+
+const FilterMenu = React.forwardRef((props, ref) => (
+  <FilterIcon ref={ref} onClick={e => props.displayFilter(e, ref)}>
+    <Icon type="filter" />
+  </FilterIcon>
+));
 
 const SORTS = {
   ASC: "asc",
@@ -30,7 +37,7 @@ export function HeaderRenderer({
   api
 }) {
   const [sortDirection, setSortDirection] = useState("");
-  const menuRef = useRef();
+  const filterRef = React.createRef();
 
   useEffect(() => {
     column.addEventListener("sortChanged", onSortChanged);
@@ -58,8 +65,10 @@ export function HeaderRenderer({
     }
   }
 
-  function showMenu() {
-    showColumnMenu(menuRef.current);
+  function showMenu(event, ref) {
+    event.stopPropagation();
+    console.log(ref)
+    showColumnMenu(ref);
   }
 
   return (
@@ -72,7 +81,9 @@ export function HeaderRenderer({
       ) : (
         <NoSortIcon />
       )}
-      {enableMenu ? <FilterIcon ref={menuRef} onClick={showMenu} /> : null}
+      {enableMenu ? (
+        <FilterMenu ref={filterRef} displayFilter={showMenu} />
+      ) : null}
     </Header>
   );
 }
