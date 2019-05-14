@@ -77,6 +77,9 @@ export class HeaderRenderer extends React.Component {
 
   deleteColumnData = field => this.props.api.removeColumnData(field);
 
+  canDeleteField = ({ field }) =>
+    !(field.includes("irida-static") || field === "icons");
+
   render() {
     return (
       <Header onClick={this.sortColumn}>
@@ -101,10 +104,12 @@ export class HeaderRenderer extends React.Component {
               <Icon type="filter" />
             </span>
           ) : null}
-          <MetadataFieldMenu
-            field={this.props.column.colDef}
-            removeColumnData={this.deleteColumnData}
-          />
+          {this.canDeleteField(this.props.column.colDef) ? (
+            <MetadataFieldMenu
+              field={this.props.column.colDef}
+              removeColumnData={this.deleteColumnData}
+            />
+          ) : null}
         </span>
       </Header>
     );
