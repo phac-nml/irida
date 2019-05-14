@@ -4,7 +4,8 @@ export const types = {
   LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS",
   SELECTION: "METADATA/ENTRIES/SELECTION",
   EDITED: "METADATA/ENTRIES/EDITED",
-  FILTER: "METADATA/ENTRIES/FILTER"
+  FILTER: "METADATA/ENTRIES/FILTER",
+  REMOVE_DATA: "METADATA/ENTRIES/REMOVE_DATA"
 };
 
 export const initialState = {
@@ -54,5 +55,6 @@ export const actions = {
     field,
     label
   }),
-  setGlobalFilter: value => ({ type: types.FILTER, filter: value })
+  setGlobalFilter: value => ({ type: types.FILTER, filter: value }),
+  removeFieldEntries: field => ({ type: types.REMOVE_DATA, field })
 };

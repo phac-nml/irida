@@ -32,3 +32,7 @@ export function saveMetadataEntryField(sampleId, value, label) {
   params.append("label", label);
   return axios.post(BASE_URL, params);
 }
+
+export function removeMetadataEntriesForField(field) {
+  console.log(field);
+}

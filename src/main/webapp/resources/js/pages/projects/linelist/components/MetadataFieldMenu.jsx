@@ -3,7 +3,7 @@ import { Dropdown, Icon, Menu, Modal, Typography } from "antd/lib/index";
 
 const { Text } = Typography;
 
-export function MetadataFieldMenu({ field }) {
+export function MetadataFieldMenu({ field, removeColumnData }) {
   function confirmDelete() {
     Modal.confirm({
       content: (
@@ -32,6 +32,7 @@ export function MetadataFieldMenu({ field }) {
         </div>
       ),
       okType: "danger",
+      onOk: () => removeColumnData(field.headerName),
       okText: "DELETE COLUMN DATA"
     });
   }

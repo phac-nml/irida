@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Icon } from "antd";
-import { MetadataFieldMenu } from "../MetadataFieldMenu";
+import { Icon } from "antd/lib/index";
+import { MetadataFieldMenu } from "../../MetadataFieldMenu";
 
 const Header = styled.div`
   display: flex;
@@ -12,7 +12,7 @@ const Header = styled.div`
     opacity: 0;
     transition: opacity 0.25s ease-in-out;
   }
-  
+
   &:hover .hidden-icons {
     opacity: 1;
   }
@@ -33,8 +33,6 @@ const SORTS = {
 };
 
 export class HeaderRenderer extends React.Component {
-  // filterRef = React.createRef();
-
   constructor(props) {
     super(props);
     props.reactContainer.style.display = "inline-block";
@@ -77,6 +75,8 @@ export class HeaderRenderer extends React.Component {
     this.props.showColumnMenu(this.menuButton);
   };
 
+  deleteColumnData = field => this.props.api.removeColumnData(field);
+
   render() {
     return (
       <Header onClick={this.sortColumn}>
@@ -101,7 +101,10 @@ export class HeaderRenderer extends React.Component {
               <Icon type="filter" />
             </span>
           ) : null}
-          <MetadataFieldMenu field={this.props.column.colDef} />
+          <MetadataFieldMenu
+            field={this.props.column.colDef}
+            removeColumnData={this.deleteColumnData}
+          />
         </span>
       </Header>
     );

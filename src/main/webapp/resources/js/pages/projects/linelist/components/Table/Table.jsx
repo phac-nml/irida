@@ -19,7 +19,7 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
-import { HeaderRenderer } from "./HeaderRenderer";
+import { HeaderRenderer } from "./renderers/HeaderRenderer";
 
 const { i18n } = window.PAGE;
 
@@ -182,6 +182,12 @@ export class TableComponent extends React.Component {
     Resize the icons since no extra space is needed.
      */
     this.columnApi.autoSizeColumns([FIELDS.icons]);
+    /*
+    Need an api to remove all the data from a column
+     */
+    Object.assign(this.api, {
+      removeColumnData: this.props.removeFieldEntries
+    });
   };
 
   /**
@@ -471,7 +477,8 @@ const mapDispatchToProps = dispatch => ({
   tableModified: fields => dispatch(templateActions.tableModified(fields)),
   entryEdited: (entry, field, label) =>
     dispatch(entryActions.edited(entry, field, label)),
-  selection: selected => dispatch(entryActions.selection(selected))
+  selection: selected => dispatch(entryActions.selection(selected)),
+  removeFieldEntries: field => dispatch(entryActions.removeFieldEntries(field))
 });
 
 export const Table = connect(

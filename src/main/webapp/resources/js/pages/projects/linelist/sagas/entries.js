@@ -1,6 +1,7 @@
 import { call, put, take } from "redux-saga/effects";
 import {
   fetchMetadataEntries,
+  removeMetadataEntriesForField,
   saveMetadataEntryField
 } from "../../../../apis/metadata/entry";
 import { types as appTypes } from "../../../../redux/reducers/app";
@@ -30,12 +31,18 @@ export function* entryEditedSaga() {
   // Always true, that way it can the listener is set up every time.
   while (true) {
     const { entry, label, field } = yield take(types.EDITED);
-    console.log(entry, label, field);
     yield call(
       saveMetadataEntryField,
       entry[FIELDS.sampleId],
       entry[field],
       label
     );
+  }
+}
+
+export function* removeFieldEntriesSaga() {
+  while (true) {
+    const { field } = yield take(types.REMOVE_DATA);
+    yield call(removeMetadataEntriesForField, field);
   }
 }
