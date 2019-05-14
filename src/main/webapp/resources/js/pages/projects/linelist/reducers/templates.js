@@ -72,7 +72,7 @@ export const reducer = (state = initialState, action = {}) => {
         ...state,
         templates: (() => {
           const t = [...state.templates];
-          t[state.current] = action.fields;
+          t[state.current].modified = action.fields;
           return t;
         })()
       };
