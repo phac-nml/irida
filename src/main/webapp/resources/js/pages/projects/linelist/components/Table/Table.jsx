@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
@@ -16,13 +17,15 @@ import {
   SampleNameRenderer
 } from "./renderers";
 import { FIELDS } from "../../constants";
+import { actions as templateActions } from "../../reducers/templates";
+import { actions as entryActions } from "../../reducers/entries";
 
 const { i18n } = window.PAGE;
 
 /**
  * React component to render the ag-grid to the page.
  */
-export class Table extends React.Component {
+export class TableComponent extends React.Component {
   state = {
     entries: null,
     filterCount: 0
@@ -51,7 +54,14 @@ export class Table extends React.Component {
     DateCellRenderer
   };
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.globalFilter !== this.props.globalFilter) {
+      this.api.setQuickFilter(this.props.globalFilter);
+    }
+  }
+
   shouldComponentUpdate(nextProps) {
+    if (nextProps.globalFilter !== this.props.globalFilter) return true;
     /**
      * Check to see if the height of the table needs to be updated.
      * This will only happen  on initial load or if the window height has changed
@@ -321,7 +331,7 @@ export class Table extends React.Component {
   };
 
   onSelectionChange = () => {
-    this.props.selectionChange(this.api.getSelectedNodes().length);
+    this.props.selection(this.api.getSelectedNodes().map(n => n.data));
   };
 
   /**
@@ -383,14 +393,6 @@ export class Table extends React.Component {
   };
 
   /**
-   * Search the entire table for a value.
-   * @param {string} value
-   */
-  quickSearch = value => {
-    this.api.setQuickFilter(value);
-  };
-
-  /**
    * Update parent components of the revised filter status.
    * @returns {*}
    */
@@ -443,12 +445,36 @@ export class Table extends React.Component {
   }
 }
 
-Table.propTypes = {
+TableComponent.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array,
   templates: PropTypes.array,
   current: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired
+  onFilter: PropTypes.func.isRequired,
+  globalFilter: PropTypes.string.isRequired,
+  selection: PropTypes.func.isRequired
 };
+
+const mapStateToProps = state => ({
+  fields: state.fields.fields,
+  templates: state.templates.templates,
+  current: state.templates.current,
+  entries: state.entries.entries,
+  globalFilter: state.entries.globalFilter
+});
+
+const mapDispatchToProps = dispatch => ({
+  tableModified: fields => dispatch(templateActions.tableModified(fields)),
+  entryEdited: (entry, field, label) =>
+    dispatch(entryActions.edited(entry, field, label)),
+  selection: selected => dispatch(entryActions.selection(selected))
+});
+
+export const Table = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  null,
+  { forwardRef: true }
+)(TableComponent);
