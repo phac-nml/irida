@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Icon } from "antd";
+import { MetadataFieldMenu } from "../MetadataFieldMenu";
 
 const Header = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
+
+  .hidden-icons {
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out;
+  }
+  
+  &:hover .hidden-icons {
+    opacity: 1;
+  }
 `;
 
-const SortIcon = styled(Icon)``;
-const FilterIcon = styled.div`
-  padding: 0 5px;
+const SortIcon = styled(Icon)`
+  padding: 0 0.5rem;
 `;
 
 const AscSortIcon = () => <SortIcon type="arrow-up" />;
 const DescSortIcon = () => <SortIcon type="arrow-down" />;
 const NoSortIcon = () => null;
-
-const FilterMenu = React.forwardRef((props, ref) => (
-  <FilterIcon ref={ref} onClick={e => props.displayFilter(e, ref)}>
-    <Icon type="filter" />
-  </FilterIcon>
-));
 
 const SORTS = {
   ASC: "asc",
@@ -28,64 +32,80 @@ const SORTS = {
   NONE: ""
 };
 
-export function HeaderRenderer({
-  column,
-  displayName,
-  setSort,
-  enableMenu,
-  showColumnMenu,
-  api
-}) {
-  const [sortDirection, setSortDirection] = useState("");
-  const filterRef = React.createRef();
+export class HeaderRenderer extends React.Component {
+  // filterRef = React.createRef();
 
-  useEffect(() => {
-    column.addEventListener("sortChanged", onSortChanged);
-    onSortChanged();
-    return () => column.removeEventListener("sortChanged", onSortChanged);
-  }, []);
+  constructor(props) {
+    super(props);
+    props.reactContainer.style.display = "inline-block";
+    this.state = {
+      sortDirection: SORTS.NONE
+    };
+  }
 
-  function sortColumn(event) {
+  componentDidMount() {
+    this.props.column.addEventListener("sortChanged", this.onSortChanged);
+    this.onSortChanged();
+  }
+
+  componentWillUnmount() {
+    this.props.column.removeEventListener("sortChanged", this.onSortChanged);
+  }
+
+  sortColumn = event => {
     const order =
-      sortDirection === SORTS.ASC
+      this.state.sortDirection === SORTS.ASC
         ? SORTS.DESC
-        : sortDirection === SORTS.DESC
+        : this.state.sortDirection === SORTS.DESC
         ? SORTS.NONE
         : SORTS.ASC;
-    setSort(order, event.shiftKey);
-  }
+    this.props.setSort(order, event.shiftKey);
+  };
 
-  function onSortChanged() {
-    if (column.isSortAscending()) {
-      setSortDirection(SORTS.ASC);
-    } else if (column.isSortDescending()) {
-      setSortDirection(SORTS.DESC);
+  onSortChanged = () => {
+    if (this.props.column.isSortAscending()) {
+      this.setState({ sortDirection: SORTS.ASC });
+    } else if (this.props.column.isSortDescending()) {
+      this.setState({ sortDirection: SORTS.DESC });
     } else {
-      setSortDirection(SORTS.NONE);
+      this.setState({ sortDirection: SORTS.NONE });
     }
-  }
+  };
 
-  function showMenu(event, ref) {
+  showMenu = event => {
     event.stopPropagation();
-    console.log(ref)
-    showColumnMenu(ref);
-  }
+    this.props.showColumnMenu(this.menuButton);
+  };
 
-  return (
-    <Header onClick={sortColumn}>
-      {displayName}
-      {sortDirection === SORTS.ASC ? (
-        <AscSortIcon />
-      ) : sortDirection === SORTS.DESC ? (
-        <DescSortIcon />
-      ) : (
-        <NoSortIcon />
-      )}
-      {enableMenu ? (
-        <FilterMenu ref={filterRef} displayFilter={showMenu} />
-      ) : null}
-    </Header>
-  );
+  render() {
+    return (
+      <Header onClick={this.sortColumn}>
+        <span>
+          {this.props.displayName}
+          {this.state.sortDirection === SORTS.ASC ? (
+            <AscSortIcon />
+          ) : this.state.sortDirection === SORTS.DESC ? (
+            <DescSortIcon />
+          ) : (
+            <NoSortIcon />
+          )}
+        </span>
+        <span className="hidden-icons" onClick={e => e.stopPropagation()}>
+          {this.props.enableMenu ? (
+            <span
+              ref={menuButton => {
+                this.menuButton = menuButton;
+              }}
+              onClick={e => this.showMenu(e)}
+            >
+              <Icon type="filter" />
+            </span>
+          ) : null}
+          <MetadataFieldMenu field={this.props.column.colDef} />
+        </span>
+      </Header>
+    );
+  }
 }
 
 HeaderRenderer.propTypes = {};

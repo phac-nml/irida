@@ -1,10 +1,9 @@
 import React from "react";
-import { connect } from "react-redux";
 import { Dropdown, Icon, Menu, Modal, Typography } from "antd/lib/index";
 
 const { Text } = Typography;
 
-function MetadataFieldMenuComponent({ field }) {
+export function MetadataFieldMenu({ field }) {
   function confirmDelete() {
     Modal.confirm({
       content: (
@@ -45,18 +44,7 @@ function MetadataFieldMenuComponent({ field }) {
         </Menu>
       }
     >
-      <Icon type="more" />
+      <Icon style={{marginLeft: ".5rem"}} type="more" />
     </Dropdown>
   );
 }
-
-MetadataFieldMenuComponent.propTypes = {};
-
-const mapStateToProps = state => ({});
-
-const mapDispatchToProps = dispatch => ({});
-
-export const MetadataFieldMenu = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MetadataFieldMenuComponent);
