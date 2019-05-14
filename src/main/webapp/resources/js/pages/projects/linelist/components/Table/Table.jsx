@@ -2,7 +2,6 @@ import React from "react";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -61,7 +60,7 @@ export class Table extends React.Component {
       return true;
     }
 
-    if (!nextProps.fields.equals(this.props.fields)) {
+    if (!isEqual(nextProps.fields, this.props.fields)) {
       /*
       This should only happen on the original loading of the table when the
       complete list of UIMetadataTemplateFields are passed.
@@ -85,7 +84,7 @@ export class Table extends React.Component {
       The current template has changed.
       Force the table to update to the new view based on the template fields.
        */
-      const template = nextProps.templates.get(nextProps.current).toJS();
+      const template = nextProps.templates[nextProps.current];
       this.applyTemplate(template.fields);
       return false;
     }
@@ -94,33 +93,22 @@ export class Table extends React.Component {
     The field order for a template can change externally.  Check to see if that
     order has been updated, and adjust the columns accordingly.
      */
-    const oldModified = this.props.templates.getIn([
-      this.props.current,
-      "modified"
-    ]);
-    const newModified = nextProps.templates.getIn([
-      nextProps.current,
-      "modified"
-    ]);
+    const oldModified = this.props.templates[this.props.current].modified;
+    const newModified = nextProps.templates[nextProps.current].modified;
 
-    if (
-      typeof oldModified !== "undefined" &&
-      !newModified.equals(oldModified)
-    ) {
+    if (isEqual(oldModified, newModified)) {
       if (this.colDropped) {
         // Clear the dropped flag as the next update might come from an external source
         this.colDropped = false;
       } else {
-        const fields = newModified.toJS();
-
         /*
         If the length of the modified fields === 0, then the modified template
         was saved ==> the table already reflected this state.  If not the
         template was modified from an external event and therefore needs to
         reflect the changes.
          */
-        if (fields.length > 0) {
-          this.applyTemplate(fields);
+        if (newModified.length > 0) {
+          this.applyTemplate(newModified);
         }
       }
       return false;
@@ -193,14 +181,12 @@ export class Table extends React.Component {
     // Remove sample name
     colOrder.shift();
 
-    const fields = this.props.fields.toJS();
-
     /*
     Remove the hidden ones and just get the field identifiers
      */
     let list = colOrder.map(c => {
       // Get the header name
-      const field = fields.find(f => f.field === c.colId);
+      const field = this.props.fields.find(f => f.field === c.colId);
       field.hide = c.hide;
       return { ...field };
     });
@@ -221,9 +207,10 @@ export class Table extends React.Component {
     const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
       1}-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
-    const template = this.props.templates
-      .getIn([this.props.current, "name"])
-      .replace(this.nameRegex, "_");
+    const template = this.props.templates[this.props.current].name.replace(
+      this.nameRegex,
+      "_"
+    );
     return `${date}-${project}-${template}.${ext}`;
   };
 
@@ -303,9 +290,10 @@ export class Table extends React.Component {
     ws["!ref"] = XLSX.utils.encode_range(range);
 
     /* add worksheet to workbook using the template name */
-    const template = this.props.templates
-      .getIn([this.props.current, "name"])
-      .replace(this.nameRegex, "_");
+    const template = this.props.templates[this.props.current].name.replace(
+      this.nameRegex,
+      "_"
+    );
     workbook.SheetNames.push(template);
     workbook.Sheets[template] = ws;
 
@@ -432,7 +420,7 @@ export class Table extends React.Component {
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
-          columnDefs={this.props.fields.toJS()}
+          columnDefs={this.props.fields}
           rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
@@ -458,9 +446,9 @@ export class Table extends React.Component {
 Table.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
-  fields: ImmutablePropTypes.list.isRequired,
+  fields: PropTypes.array.isRequired,
   entries: PropTypes.array,
-  templates: ImmutablePropTypes.list,
+  templates: PropTypes.array,
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired
 };

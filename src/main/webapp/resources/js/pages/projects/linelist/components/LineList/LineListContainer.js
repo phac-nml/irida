@@ -12,15 +12,15 @@ method is what triggers the updates.
  */
 
 const mapStateToProps = state => ({
-  initializing: state.fields.get("initializing"),
-  error: state.fields.get("error"),
-  fields: state.fields.get("fields"),
+  initializing: state.fields.initializing,
+  error: state.fields.error,
+  fields: state.fields.fields,
   entries: state.entries.entries,
-  templates: state.templates.get("templates"),
-  current: state.templates.get("current"),
-  modified: state.templates.get("modified"),
-  saving: state.templates.get("saving"),
-  saved: state.templates.get("saved"),
+  templates: state.templates.templates,
+  current: state.templates.current,
+  modified: state.templates.modified,
+  saving: state.templates.saving,
+  saved: state.templates.saved,
   selectedCount: state.entries.selected
 });
 
