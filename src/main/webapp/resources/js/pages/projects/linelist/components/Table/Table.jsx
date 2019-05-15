@@ -185,9 +185,7 @@ export class TableComponent extends React.Component {
     /*
     Need an api to remove all the data from a column
      */
-    Object.assign(this.api, {
-      removeColumnData: this.props.removeFieldEntries
-    });
+    this.api.removeColumnData = this.props.removeFieldEntries;
   };
 
   /**

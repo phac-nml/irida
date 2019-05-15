@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Icon } from "antd/lib/index";
+import { Icon } from "antd";
 import { MetadataFieldMenu } from "../../MetadataFieldMenu";
 
 const Header = styled.div`

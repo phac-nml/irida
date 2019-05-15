@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Icon, Menu, Modal, Typography } from "antd/lib/index";
+import { Dropdown, Icon, Menu, Modal, Typography } from "antd";
 
 const { Text } = Typography;
 
@@ -45,7 +45,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
         </Menu>
       }
     >
-      <Icon style={{marginLeft: ".5rem"}} type="more" />
+      <Icon style={{ marginLeft: ".5rem" }} type="more" />
     </Dropdown>
   );
 }
