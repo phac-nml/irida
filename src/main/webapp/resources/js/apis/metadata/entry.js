@@ -33,6 +33,10 @@ export function saveMetadataEntryField(sampleId, value, label) {
   return axios.post(BASE_URL, params);
 }
 
-export function removeMetadataEntriesForField(field) {
-  console.log(field);
+export function removeMetadataEntriesForField(label) {
+  return axios
+    .delete(`${BASE_URL}?label=${label}&projectId=${window.project.id}`)
+    .then(response => ({
+      message: response.data.message
+    }));
 }

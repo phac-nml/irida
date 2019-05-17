@@ -5,7 +5,7 @@ const { Text } = Typography;
 
 export function MetadataFieldMenu({ field, removeColumnData }) {
   function confirmDelete() {
-    Modal.confirm({
+    const modal = Modal.confirm({
       content: (
         <div>
           <p>
@@ -32,10 +32,14 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
         </div>
       ),
       okType: "danger",
-      onOk: () => removeColumnData(field.headerName),
+      onOk: () => {
+        removeColumnData(field.headerName);
+        modal.destroy;
+      },
       okText: "DELETE COLUMN DATA"
     });
   }
+
   return (
     <Dropdown
       trigger={["click"]}
@@ -45,7 +49,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
         </Menu>
       }
     >
-      <Icon style={{ marginLeft: ".5rem" }} type="more" />
+      <Icon type="more" style={{ display: "inline-block" }} />
     </Dropdown>
   );
 }

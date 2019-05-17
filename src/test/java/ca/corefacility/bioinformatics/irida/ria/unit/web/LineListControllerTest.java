@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.mockito.Mockito.*;
-
+import java.security.Principal;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -10,11 +9,12 @@ import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListPermissions;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LineListController}
@@ -24,8 +24,7 @@ public class LineListControllerTest {
 	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private UpdateSamplePermission updateSamplePermission;
-	private ProjectOwnerPermission ownerPermission;
+	private LineListPermissions permissions;
 	private MessageSource messageSource;
 
 	@Before
@@ -33,11 +32,10 @@ public class LineListControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
-		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
-		ownerPermission = mock(ProjectOwnerPermission.class);
-		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
-				updateSamplePermission, ownerPermission, messageSource);
+		permissions = mock(LineListPermissions.class);
+		lineListController = new LineListController(projectService, sampleService, metadataTemplateService, permissions,
+				messageSource);
 	}
 
 	@Test
@@ -51,7 +49,13 @@ public class LineListControllerTest {
 	@Test
 	public void testGetAllProjectMetadataEntries() {
 		long projectId = 1L;
-		lineListController.getProjectSamplesMetadataEntries(projectId);
+		Principal principal = new Principal() {
+			@Override
+			public String getName() {
+				return "Foobar";
+			}
+		};
+		lineListController.getProjectSamplesMetadataEntries(projectId, principal);
 		verify(sampleService, times(1)).getSamplesForProject(any(Project.class));
 	}
 }

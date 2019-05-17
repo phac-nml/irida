@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,8 +9,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,38 +26,34 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
 @Controller
+@Scope("session")
 @RequestMapping("/linelist")
 public class LineListController {
 	private ProjectService projectService;
 	private SampleService sampleService;
+	private LineListPermissions permissions;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messages;
-	private UpdateSamplePermission updateSamplePermission;
-	private ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, UpdateSamplePermission updateSamplePermission,
-			ProjectOwnerPermission projectOwnerPermission, MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, LineListPermissions permissions,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.permissions = permissions;
 		this.metadataTemplateService = metadataTemplateService;
-		this.updateSamplePermission = updateSamplePermission;
-		this.projectOwnerPermission = projectOwnerPermission;
 		this.messages = messageSource;
 	}
 
@@ -70,16 +66,15 @@ public class LineListController {
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
-	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId, Principal principal) {
+		this.permissions.setPrincipalPermissions(principal);
 		Project project = projectService.read(projectId);
 
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		return projectSamples.stream()
 				.map(join -> {
 					ProjectSampleJoin psj = (ProjectSampleJoin)join;
-					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()));
+					return new UISampleMetadata(psj, permissions.canModifySample(psj.getObject()));
 				})
 				.collect(Collectors.toList());
 	}
@@ -128,6 +123,50 @@ public class LineListController {
 	}
 
 	/**
+	 * Remove a {@link MetadataTemplateField} from all {@link Sample}s in a {@link Project}
+	 *
+	 * @param label     {@link String} the name of the {@link MetadataTemplateField}
+	 * @param projectId {@link Long} identifier for the {@link Project}
+	 */
+	@RequestMapping(value = "/entries", method = RequestMethod.DELETE)
+	@ResponseBody
+	public UIRemoveMetadataFieldResponse removeDataFromMetadataField(@RequestParam String label,
+			@RequestParam Long projectId, Principal principal, Locale locale) {
+		this.permissions.setPrincipalPermissions(principal);
+		Project project = projectService.read(projectId);
+		MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
+		List<Join<Project, Sample>> projectSampleJoins = sampleService.getSamplesForProject(project);
+		int lockedCount = 0;
+		for (Join<Project, Sample> join : projectSampleJoins) {
+			Sample sample = join.getObject();
+
+			/*
+			Fields can only be removed by a project that has full access to the sample, or
+			one of the system administrators.
+			 */
+			if (this.permissions.canModifySample(sample)) {
+				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+				metadata.remove(field);
+				sampleService.updateFields(sample.getId(), ImmutableMap.of("metadata", metadata));
+			} else {
+				lockedCount++;
+			}
+		}
+		String message;
+		if (lockedCount == 0) {
+			message = messages.getMessage("linelist.removeMetadata.complete",
+					new Object[] { label, project.getLabel() }, locale);
+		} else if (lockedCount == 1) {
+			message = messages.getMessage("linelist.removeMetadata.oneLockedSamples",
+					new Object[] { project.getLabel(), label }, locale);
+		} else {
+			message = messages.getMessage("linelist.removeMetadata.lockedSamples",
+					new Object[] { lockedCount, project.getLabel(), label }, locale);
+		}
+		return new UIRemoveMetadataFieldResponse(message);
+	}
+
+	/**
 	 * Get a {@link List} of all {@link MetadataTemplate} associated with the project.
 	 *
 	 * @param projectId {@link Long} Identifier for the project to get id's for.
@@ -136,9 +175,10 @@ public class LineListController {
 	 */
 	@RequestMapping("/templates")
 	@ResponseBody
-	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
+	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Principal principal, Locale locale) {
 		Project project = projectService.read(projectId);
-		boolean canEdit = canUserEdit(project);
+		this.permissions.setPrincipalPermissions(principal);
+		boolean canEdit = this.permissions.canModifyProject(project);
 		List<UIMetadataTemplate> templates = new ArrayList<>();
 
 		/*
@@ -242,8 +282,10 @@ public class LineListController {
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
-			@RequestParam Long projectId, Locale locale, HttpServletResponse response) {
+			@RequestParam Long projectId, Principal principal, Locale locale, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
+		this.permissions.setPrincipalPermissions(principal);
+		boolean canModifyProject = this.permissions.canModifyProject(project);
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
@@ -278,7 +320,7 @@ public class LineListController {
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
 				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale),
-						canUserEdit(project)));
+						canModifyProject));
 	}
 
 	/**
@@ -355,17 +397,5 @@ public class LineListController {
 		fields.add(0, iconField);
 
 		return fields;
-	}
-
-	/**
-	 * Check to see if the currently logged in user has permission to edit {@link MetadataEntry} on the current project
-	 *
-	 * @param project {@link Project}
-	 * @return {@link Boolean} true if user can edit on the current project
-	 */
-	private boolean canUserEdit(Project project) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		return projectOwnerPermission.isAllowed(authentication, project);
 	}
 }

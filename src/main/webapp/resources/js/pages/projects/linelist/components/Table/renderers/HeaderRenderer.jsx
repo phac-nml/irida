@@ -8,18 +8,23 @@ const Header = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  .hidden-icons {
+  .utility-icon {
     opacity: 0;
+    display: inline-block;
     transition: opacity 0.25s ease-in-out;
+    padding: 0 .3rem;
+    &:hover {
+      background-color: #e4e6e6;
+    }
   }
 
-  &:hover .hidden-icons {
+  &:hover .utility-icon {
     opacity: 1;
   }
 `;
 
 const SortIcon = styled(Icon)`
-  padding: 0 0.5rem;
+  margin: .3rem;
 `;
 
 const AscSortIcon = () => <SortIcon type="arrow-up" />;
@@ -93,22 +98,25 @@ export class HeaderRenderer extends React.Component {
             <NoSortIcon />
           )}
         </span>
-        <span className="hidden-icons" onClick={e => e.stopPropagation()}>
+        <span onClick={e => e.stopPropagation()}>
           {this.props.enableMenu ? (
-            <span
+            <div
+              className={"utility-icon"}
               ref={menuButton => {
                 this.menuButton = menuButton;
               }}
               onClick={e => this.showMenu(e)}
             >
               <Icon type="filter" />
-            </span>
+            </div>
           ) : null}
           {this.canDeleteField(this.props.column.colDef) ? (
-            <MetadataFieldMenu
-              field={this.props.column.colDef}
-              removeColumnData={this.deleteColumnData}
-            />
+            <div className={"utility-icon"}>
+              <MetadataFieldMenu
+                field={this.props.column.colDef}
+                removeColumnData={this.deleteColumnData}
+              />
+            </div>
           ) : null}
         </span>
       </Header>

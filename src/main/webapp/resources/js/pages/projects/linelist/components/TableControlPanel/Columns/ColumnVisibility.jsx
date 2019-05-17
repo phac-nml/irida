@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { List, Switch } from "antd";
-import { MetadataFieldMenu } from "../../MetadataFieldMenu";
 import { FIELDS } from "../../../constants";
 
 /**
@@ -75,8 +74,7 @@ export default class ColumnVisibility extends React.Component {
                       onChange={checked =>
                         this.fieldUpdated(item, checked, columns)
                       }
-                    />,
-                    <MetadataFieldMenu field={item} />
+                    />
                   ]}
                 >
                   <span className="column-list-item--text">

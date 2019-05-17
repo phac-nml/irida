@@ -7,16 +7,24 @@ import {
 import { types as appTypes } from "../../../../redux/reducers/app";
 import { actions, types } from "../reducers/entries";
 import { FIELDS } from "../constants";
+import { showNotification } from "../../../../modules/notifications";
 
 /**
  * Fetch all the metadata entries required to initialize the table.
  * @returns {IterableIterator<*>}
  */
 export function* entriesLoadingSaga() {
+  yield take(appTypes.INIT_APP);
+  yield call(loadEntries);
+}
+
+function* loadEntries() {
   try {
-    const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
-    const { data: entries } = yield call(fetchMetadataEntries, payload.id);
+    const { data: entries } = yield call(
+      fetchMetadataEntries,
+      window.project.id
+    );
     yield put(actions.success(entries));
   } catch (error) {
     yield put(actions.error(error));
@@ -43,6 +51,8 @@ export function* entryEditedSaga() {
 export function* removeFieldEntriesSaga() {
   while (true) {
     const { field } = yield take(types.REMOVE_DATA);
-    yield call(removeMetadataEntriesForField, field);
+    const { message } = yield call(removeMetadataEntriesForField, field);
+    showNotification({ text: message });
+    yield call(loadEntries);
   }
 }
