@@ -33,6 +33,11 @@ export function saveMetadataEntryField(sampleId, value, label) {
   return axios.post(BASE_URL, params);
 }
 
+/**
+ * Remove all metadata entries for a particular metadata template field.
+ * @param label
+ * @returns {Promise<{message: *} | never>}
+ */
 export function removeMetadataEntriesForField(label) {
   return axios
     .delete(`${BASE_URL}?label=${label}&projectId=${window.project.id}`)
