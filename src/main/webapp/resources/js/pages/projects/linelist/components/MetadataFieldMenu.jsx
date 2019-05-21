@@ -1,7 +1,5 @@
 import React from "react";
-import { Dropdown, Icon, Menu, Modal, Typography } from "antd";
-
-const { Text } = Typography;
+import { Dropdown, Icon, Menu, Modal } from "antd";
 
 export function MetadataFieldMenu({ field, removeColumnData }) {
   function confirmDelete() {
