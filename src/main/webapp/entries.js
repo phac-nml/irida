@@ -4,7 +4,11 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: ["@babel/polyfill", "expose-loader?$!jquery"],
+  vendor: [
+    "@babel/polyfill",
+    "expose-loader?$!jquery",
+    "./resources/js/vendors"
+  ],
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   activities: "./resources/js/pages/activities/activities.js",

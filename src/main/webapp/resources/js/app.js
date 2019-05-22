@@ -1,5 +1,3 @@
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap/dist/js/bootstrap";
 import angular from "angular";
 import "./modules/cart/irida.cart";
 import { IridaSession } from "./services/IridaSession";
