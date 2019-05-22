@@ -6,20 +6,22 @@ import * as reducers from "../reducers";
 import * as sagas from "../sagas";
 import LineList from "../components/LineList/LineListContainer";
 import { IntlProvider } from "react-intl";
+import { getTranslations } from "../../../../apis/translations/translations";
 
 const store = getStore(reducers, sagas);
 
 export function App() {
-  const [translations, setTranslations] = useState();
+  const [translations, setTranslations] = useState(null);
 
   useEffect(() => {
-    console.log("Fetching translations");
-    setTranslations({ foobar: "BAZ" });
+    getTranslations({ page: "linelist" }).then(response =>
+      setTranslations(response.data)
+    );
   }, []);
 
   return (
     <Provider store={store}>
-      <IntlProvider locale="en" messages={translations}>
+      <IntlProvider messages={translations}>
         <LineList />
       </IntlProvider>
     </Provider>

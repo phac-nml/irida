@@ -12,7 +12,7 @@ const Header = styled.div`
     opacity: 0;
     display: inline-block;
     transition: opacity 0.25s ease-in-out;
-    padding: 0 .3rem;
+    padding: 0 0.3rem;
     &:hover {
       background-color: #e4e6e6;
     }
@@ -24,7 +24,7 @@ const Header = styled.div`
 `;
 
 const SortIcon = styled(Icon)`
-  margin: .3rem;
+  margin: 0.3rem;
 `;
 
 const AscSortIcon = () => <SortIcon type="arrow-up" />;
