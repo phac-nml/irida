@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Icon } from "antd";
 import { MetadataFieldMenu } from "../../MetadataFieldMenu";
@@ -37,91 +37,90 @@ const SORTS = {
   NONE: ""
 };
 
-export class HeaderRenderer extends React.Component {
-  constructor(props) {
-    super(props);
-    props.reactContainer.style.display = "inline-block";
-    this.state = {
-      sortDirection: SORTS.NONE
-    };
-  }
+export function HeaderRenderer({
+  api,
+  displayName,
+  enableMenu,
+  reactContainer,
+  column,
+  showColumnMenu,
+  setSort
+}) {
+  reactContainer.style.display = "inline-block";
+  let menuButton;
+  const [sortDirection, setSortDirection] = useState(SORTS.NONE);
 
-  componentDidMount() {
-    this.props.column.addEventListener("sortChanged", this.onSortChanged);
-    this.onSortChanged();
-  }
+  useEffect(() => {
+    column.addEventListener("sortChanged", onSortChanged);
+    onSortChanged();
+    return () => column.removeEventListener("sortChanged", onSortChanged);
+  }, []);
 
-  componentWillUnmount() {
-    this.props.column.removeEventListener("sortChanged", this.onSortChanged);
-  }
-
-  sortColumn = event => {
+  const sortColumn = event => {
     const order =
-      this.state.sortDirection === SORTS.ASC
+      sortDirection === SORTS.ASC
         ? SORTS.DESC
-        : this.state.sortDirection === SORTS.DESC
+        : sortDirection === SORTS.DESC
         ? SORTS.NONE
         : SORTS.ASC;
-    this.props.setSort(order, event.shiftKey);
+    setSort(order, event.shiftKey);
   };
 
-  onSortChanged = () => {
-    if (this.props.column.isSortAscending()) {
-      this.setState({ sortDirection: SORTS.ASC });
-    } else if (this.props.column.isSortDescending()) {
-      this.setState({ sortDirection: SORTS.DESC });
+  const onSortChanged = () => {
+    if (column.isSortAscending()) {
+      setSortDirection(SORTS.ASC);
+    } else if (column.isSortDescending()) {
+      setSortDirection(SORTS.DESC);
     } else {
-      this.setState({ sortDirection: SORTS.NONE });
+      setSortDirection(SORTS.NONE);
     }
   };
 
-  showMenu = event => {
+  const showMenu = event => {
     event.stopPropagation();
-    this.props.showColumnMenu(this.menuButton);
+    showColumnMenu(menuButton);
   };
 
-  deleteColumnData = field => this.props.api.removeColumnData(field);
+  const deleteColumnData = field => api.removeColumnData(field);
 
-  canDeleteField = ({ field }) =>
+  const canDeleteField = ({ field }) =>
     !(field.includes("irida-static") || field === "icons");
 
-  render() {
-    return (
-      <Header onClick={this.sortColumn}>
-        <span>
-          {this.props.displayName}
-          {this.state.sortDirection === SORTS.ASC ? (
-            <AscSortIcon />
-          ) : this.state.sortDirection === SORTS.DESC ? (
-            <DescSortIcon />
-          ) : (
-            <NoSortIcon />
-          )}
-        </span>
-        <span onClick={e => e.stopPropagation()}>
-          {this.props.enableMenu ? (
-            <div
-              className={"utility-icon"}
-              ref={menuButton => {
-                this.menuButton = menuButton;
-              }}
-              onClick={e => this.showMenu(e)}
-            >
-              <Icon type="filter" />
-            </div>
-          ) : null}
-          {this.canDeleteField(this.props.column.colDef) ? (
-            <div className={"utility-icon"}>
-              <MetadataFieldMenu
-                field={this.props.column.colDef}
-                removeColumnData={this.deleteColumnData}
-              />
-            </div>
-          ) : null}
-        </span>
-      </Header>
-    );
-  }
+  return (
+    <Header onClick={sortColumn}>
+      <span>
+        {displayName}
+        {sortDirection === SORTS.ASC ? (
+          <AscSortIcon />
+        ) : sortDirection === SORTS.DESC ? (
+          <DescSortIcon />
+        ) : (
+          <NoSortIcon />
+        )}
+      </span>
+      <span onClick={e => e.stopPropagation()}>
+        {enableMenu ? (
+          <div
+            className={"utility-icon"}
+            ref={button => {
+              menuButton = button;
+            }}
+            onClick={e => showMenu(e)}
+          >
+            <Icon type="filter" />
+          </div>
+        ) : null}
+        {canDeleteField(column.colDef) ? (
+          <div className={"utility-icon"}>
+            <MetadataFieldMenu
+              field={column.colDef}
+              removeColumnData={deleteColumnData}
+            />
+          </div>
+        ) : null}
+      </span>
+    </Header>
+  );
 }
 
 HeaderRenderer.propTypes = {};
