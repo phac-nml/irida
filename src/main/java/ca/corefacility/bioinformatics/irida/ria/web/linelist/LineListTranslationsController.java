@@ -34,6 +34,12 @@ public class LineListTranslationsController {
 		// @formatter:on
 	}
 
+	/**
+	 * Handle translation for the Metadata Field Menu in the Table Headers.
+	 *
+	 * @param locale {@link Locale}
+	 * @return {@link Map}
+	 */
 	@RequestMapping("MetadataFieldMenu")
 	public Map<String, String> getMetadataFieldMenuTranslations(Locale locale) {
 		// @formatter:off
