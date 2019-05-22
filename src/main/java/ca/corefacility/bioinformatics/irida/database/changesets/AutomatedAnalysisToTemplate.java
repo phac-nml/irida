@@ -17,10 +17,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Liquibase update to convert the project settings for automated Assembly and SISTR checkboxes to analysis templates.
@@ -93,31 +98,52 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		 * we're borrowing the 'automated' flag here to mark entries we need to add params to later.  at this point
 		 * there'll be nothing with a '1' in the automated flag.  we'll clear it later.
 		 */
-		String assemblyInsert =
-				"INSERT INTO analysis_submission (DTYPE, name, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) select 'AnalysisSubmissionTemplate', '"
-						+ name + "', now(), 'LOW', " + updateSamples + ", '" + workflowId.toString()
-						+ "', 1, p.id, 1 FROM project p WHERE " + where;
 
-		int update = jdbcTemplate.update(assemblyInsert);
+		//first get the project ids that have an automated submission
+		String idSql = "SELECT p.id FROM project p WHERE " + where;
+		List<Long> projectIds = jdbcTemplate.queryForList(idSql, Long.class);
+
+		//build the params for the insert submission
+		List<Object[]> queryParams = projectIds.stream()
+				.map(p -> {
+					return new Object[] { name, updateSamples, workflowId.toString(), p };
+				})
+				.collect(Collectors.toList());
+
+		//then insert the submisisons for each project
+		String submissionInsert = "INSERT INTO analysis_submission (DTYPE, name, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) VALUES ('AnalysisSubmissionTemplate', ?, now(), 'LOW', ?, ?, 1, ?, 1)";
+		int[] updates = jdbcTemplate.batchUpdate(submissionInsert, queryParams);
+
+		//check if we did any updates
+		int update = IntStream.of(updates)
+				.sum();
 
 		//if we added anything, add the params
 		if (update > 0) {
 
 			// Insert the default params for the analysis type
 			for (IridaWorkflowParameter p : params) {
-				String assemblyParamInsert =
-						"INSERT INTO analysis_submission_parameters (id, name, value) SELECT a.id, '" + p.getName()
-								+ "', '" + p.getDefaultValue()
-								+ "' FROM analysis_submission a where a.name=? AND a.automated=1";
 
-				jdbcTemplate.update(assemblyParamInsert, name);
+				//first get the analysis submission ids we're inserting for
+				String paramSelect = "SELECT a.id FROM analysis_submission a WHERE a.name=? AND a.automated=1";
+				List<Long> submissionIds = jdbcTemplate.queryForList(paramSelect, Long.class, name);
+
+				//build the argument list for the query
+				List<Object[]> submissionParamArgs = submissionIds.stream()
+						.map(i -> {
+							return new Object[] { i, p.getName(), p.getDefaultValue() };
+						})
+						.collect(Collectors.toList());
+
+				//then insert the params for each submission
+				String paramInsert = "INSERT INTO analysis_submission_parameters (id, name,value) VALUES (?, ?, ?)";
+				jdbcTemplate.batchUpdate(paramInsert, submissionParamArgs);
 			}
 
 			// remove the automated=1
 			String removeAutomatedSql = "UPDATE analysis_submission SET automated=null WHERE DTYPE = 'AnalysisSubmissionTemplate' AND name=?";
 			jdbcTemplate.update(removeAutomatedSql, name);
-		}
-		else{
+		} else {
 			logger.debug("No automated analyeses added for " + name);
 		}
 	}
