@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Controller to handle translations on the Line List Page.
+ * This is a here since individual components can be added to the page dynamically during
+ * runtime.  Since a lot of features will not be loaded initially and might never be used
+ * there was no need to load their translations directly onto the page.
+ */
 @RestController
 @RequestMapping("/linelist/translations")
 public class LineListTranslationsController {
