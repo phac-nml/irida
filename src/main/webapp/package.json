@@ -31,6 +31,7 @@
     "angular-ui-router": "1.0.0-alpha.4",
     "antd": "^3.18.1",
     "axios": "^0.18.0",
+    "bootstrap": "3",
     "bootstrap-daterangepicker": "^3.0.3",
     "bootstrap-switch": "^3.3.4",
     "bootstrap3": "^3.3.5",
