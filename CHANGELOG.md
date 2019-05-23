@@ -8,6 +8,7 @@ Changes
 * [UI/Developer]: Moved the path of compiled JavaScript and CSS to `src/main/webapp`.
 * [REST/Developer]: REST API applications can now select which role to add users to a project.
 * [UI/Developer]: Cleaned up some of the redux set up on the linelist page.
+* [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
 
 19.01 to 19.05
 ---------------
