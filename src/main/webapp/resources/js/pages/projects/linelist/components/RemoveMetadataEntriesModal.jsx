@@ -22,6 +22,9 @@ export default function RemoveMetadataEntriesModal({
 }) {
   const [translations, setTranslations] = useState(null);
 
+  /*
+  Since this component is loaded dynamically, we need to fetch the translations.
+   */
   useEffect(() => {
     getTranslations({
       page: "linelist",
