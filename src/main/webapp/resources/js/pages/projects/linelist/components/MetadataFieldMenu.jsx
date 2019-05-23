@@ -3,6 +3,9 @@ import { FormattedMessage, IntlProvider } from "react-intl";
 import { Dropdown, Icon, Menu } from "antd";
 import { getTranslations } from "../../../../apis/translations/translations";
 
+/*
+Lazy load the modal since this does not need to be used all the time.
+ */
 const DeleteMetadataEntriesModal = lazy(() =>
   import("./RemoveMetadataEntriesModal")
 );
@@ -16,20 +19,27 @@ const DeleteMetadataEntriesModal = lazy(() =>
  * @constructor
  */
 export function MetadataFieldMenu({ field, removeColumnData }) {
-  const [deleteColVisible, setDeleteColVisibility] = useState(false);
+  const [
+    isRemoveEntriesModalVisible,
+    setRemoveEntriesModalVisibility
+  ] = useState(false);
   const [translations, setTranslations] = useState(null);
 
+  /*
+  On component mounting, get the translations. Since this component is rendered
+  separately from the main app (through ag-grid) it needs to get its own translations.
+   */
   useEffect(() => {
-    /*
-    Since this component is rendered separately from the main app (through ag-grid)
-    It needs to get its own translations.
-     */
     getTranslations({ page: "linelist", component: "MetadataFieldMenu" }).then(
       data => setTranslations(data)
     );
   }, []);
 
-  const hideDeleteColumnModal = () => setDeleteColVisibility(false);
+  /**
+   * Hide the delete
+   */
+  const hideRemoveMetadataEntriesModal = () =>
+    setRemoveEntriesModalVisibility(false);
 
   return (
     <IntlProvider messages={translations}>
@@ -38,7 +48,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
           trigger={["click"]}
           overlay={
             <Menu>
-              <Menu.Item onClick={() => setDeleteColVisibility(true)}>
+              <Menu.Item onClick={() => setRemoveEntriesModalVisibility(true)}>
                 <FormattedMessage id="MetadataFieldMenu_remove_entries" />
               </Menu.Item>
             </Menu>
@@ -46,12 +56,12 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
         >
           <Icon type="more" style={{ display: "inline-block" }} />
         </Dropdown>
-        {deleteColVisible ? (
+        {isRemoveEntriesModalVisible ? (
           <Suspense fallback={<span />}>
             <DeleteMetadataEntriesModal
               field={field}
-              visible={deleteColVisible}
-              hideModal={hideDeleteColumnModal}
+              visible={isRemoveEntriesModalVisible}
+              hideModal={hideRemoveMetadataEntriesModal}
               removeEntries={removeColumnData}
             />
           </Suspense>

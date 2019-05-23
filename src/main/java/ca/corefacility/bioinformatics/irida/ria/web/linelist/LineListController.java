@@ -62,6 +62,7 @@ public class LineListController {
 	 * {@link  Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @param principal {@link Principal}
 	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
@@ -127,6 +128,8 @@ public class LineListController {
 	 *
 	 * @param label     {@link String} the name of the {@link MetadataTemplateField}
 	 * @param projectId {@link Long} identifier for the {@link Project}
+	 * @param principal {@link Principal}
+	 * @param locale {@link Locale}
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -170,6 +173,7 @@ public class LineListController {
 	 * Get a {@link List} of all {@link MetadataTemplate} associated with the project.
 	 *
 	 * @param projectId {@link Long} Identifier for the project to get id's for.
+	 * @param principal {@link Principal}
 	 * @param locale    {@link Locale} Locale of the currently logged in user.
 	 * @return {@link List}
 	 */
@@ -276,6 +280,7 @@ public class LineListController {
 	 *
 	 * @param template  {@link UIMetadataTemplate}
 	 * @param projectId {@link Long} project identifier
+	 * @param principal {@link Principal}
 	 * @param locale {@link Locale}
 	 * @param response  {@link HttpServletResponse}
 	 * @return saved or updated {@link UIMetadataTemplate}

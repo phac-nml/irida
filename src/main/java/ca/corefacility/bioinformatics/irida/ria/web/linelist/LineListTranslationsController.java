@@ -38,7 +38,7 @@ public class LineListTranslationsController {
 	 * Handle translation for the Metadata Field Menu in the Table Headers.
 	 *
 	 * @param locale {@link Locale}
-	 * @return {@link Map}
+	 * @return {@link Map} of translations
 	 */
 	@RequestMapping("MetadataFieldMenu")
 	public Map<String, String> getMetadataFieldMenuTranslations(Locale locale) {
@@ -61,13 +61,13 @@ public class LineListTranslationsController {
 	public Map<String, String> getRemoveMetadataEntriesModalTranslations(Locale locale) {
 		// @formatter:off
 		return ImmutableMap.of(
-			"RemoveMetadataEntriesModal_title",
+		"RemoveMetadataEntriesModal_title",
 				messageSource.getMessage("RemoveMetadataEntriesModal_title", new Object[] {}, locale),
-			"RemoveMetadataEntriesModal_intro",
+		"RemoveMetadataEntriesModal_intro",
 				messageSource.getMessage("RemoveMetadataEntriesModal_intro", new Object[] {}, locale),
-			"RemoveMetadataEntriesModal_warning",
+		"RemoveMetadataEntriesModal_warning",
 				messageSource.getMessage("RemoveMetadataEntriesModal_warning", new Object[] {}, locale),
-			"RemoveMetadataEntriesModal_confirm",
+		"RemoveMetadataEntriesModal_confirm",
 				messageSource.getMessage("RemoveMetadataEntriesModal_confirm",new Object[]{}, locale)
 		);
 		// @formatter:on

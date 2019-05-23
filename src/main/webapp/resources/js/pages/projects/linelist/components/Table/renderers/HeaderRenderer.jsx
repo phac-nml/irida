@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Icon } from "antd";
 import { MetadataFieldMenu } from "../../MetadataFieldMenu";
@@ -123,4 +124,12 @@ export function HeaderRenderer({
   );
 }
 
-HeaderRenderer.propTypes = {};
+HeaderRenderer.propTypes = {
+  api: PropTypes.object.isRequired,
+  displayName: PropTypes.string.isRequired,
+  enableMenu: PropTypes.bool.isRequired,
+  reactContainer: PropTypes.object.isRequired,
+  column: PropTypes.object.isRequired,
+  showColumnMenu: PropTypes.func.isRequired,
+  setSort: PropTypes.func.isRequired
+};
