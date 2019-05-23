@@ -15,6 +15,10 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Component to standardize user permissions for samples on the
+ * linelist page.
+ */
 @Component
 public class LineListPermissions {
 	private UserService userService;
@@ -41,10 +45,22 @@ public class LineListPermissions {
 				.getAuthentication();
 	}
 
+	/**
+	 * Test to see if the use can modify a specific {@link Sample}.
+	 *
+	 * @param sample {@link Sample}
+	 * @return {@link Boolean} whether the user can modify the sample.
+	 */
 	public boolean canModifySample(Sample sample) {
 		return this.isAdmin || updateSamplePermission.isAllowed(this.authentication, sample);
 	}
 
+	/**
+	 * Test to see if the user can modify the entire {@link Project}.
+	 *
+	 * @param project {@link Project}
+	 * @return {@link Boolean} whether the user can modify the project.
+	 */
 	public boolean canModifyProject(Project project) {
 		return this.isAdmin || projectOwnerPermission.isAllowed(authentication, project);
 	}
