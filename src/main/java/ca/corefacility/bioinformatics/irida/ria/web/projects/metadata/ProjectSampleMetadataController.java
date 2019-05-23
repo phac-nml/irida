@@ -165,8 +165,16 @@ public class ProjectSampleMetadataController {
 		Iterator<Cell> headerIterator = row.cellIterator();
 		while (headerIterator.hasNext()) {
 			Cell headerCell = headerIterator.next();
-			String headerValue = headerCell.getStringCellValue()
-					.trim();
+			CellType cellType = headerCell.getCellTypeEnum();
+
+			String headerValue;
+			if (cellType.equals(CellType.STRING)) {
+				headerValue = headerCell.getStringCellValue()
+						.trim();
+			} else {
+				headerValue = String.valueOf(headerCell.getNumericCellValue())
+						.trim();
+			}
 
 			// Leave empty headers for now, we will remove those columns later.
 			headers.add(headerValue);
