@@ -130,6 +130,7 @@ public class LineListController {
 	 * @param projectId {@link Long} identifier for the {@link Project}
 	 * @param principal {@link Principal}
 	 * @param locale {@link Locale}
+	 * @return {@link UIRemoveMetadataFieldResponse} a description of what happened when the entries were removed
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.DELETE)
 	@ResponseBody
