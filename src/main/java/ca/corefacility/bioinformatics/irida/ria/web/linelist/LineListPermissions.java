@@ -37,6 +37,11 @@ public class LineListPermissions {
 		this.projectOwnerPermission = projectOwnerPermission;
 	}
 
+	/**
+	 * Set the {@link Principal} user to create the permissions.
+	 *
+	 * @param principal {@link Principal}
+	 */
 	public void setPrincipalPermissions(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 		this.isAdmin = user.getSystemRole()
