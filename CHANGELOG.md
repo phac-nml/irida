@@ -9,6 +9,7 @@ Changes
 * [REST/Developer]: REST API applications can now select which role to add users to a project.
 * [UI/Developer]: Cleaned up some of the redux set up on the linelist page.
 * [UI/Developer]: Removed loading Bootstrap through `bower` and moved it into the webpack build.
+* [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
 
 19.01 to 19.05
 ---------------
