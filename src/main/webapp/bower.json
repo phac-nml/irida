@@ -10,8 +10,6 @@
     "livestampjs": "1.1.2",
     "select2": "3.5.0",
     "bower": "*",
-    "angular": "1.6.2",
-    "angular-aria": "1.6.2",
     "angular-ui-router": "0.2.13",
     "datatables": "^1.10.15",
     "angular-bootstrap-switch": "0.4.0",
@@ -33,7 +31,7 @@
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": "1.6.2",
+    "angular": ">=1.4.0",
     "moment": "2.15.0",
     "datatables": "^1.10.15",
     "angular-bootstrap": "0.14.3"
