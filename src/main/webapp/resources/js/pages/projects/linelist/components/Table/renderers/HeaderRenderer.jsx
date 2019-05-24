@@ -90,7 +90,7 @@ export function HeaderRenderer({
   return (
     <Header onClick={sortColumn}>
       <span>
-        {displayName}
+        <div className="ag-header-cell-text">{displayName}</div>
         {sortDirection === SORTS.ASC ? (
           <AscSortIcon />
         ) : sortDirection === SORTS.DESC ? (
