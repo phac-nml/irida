@@ -1,5 +1,4 @@
 import $ from "jquery";
-import angular from "angular";
 import chroma from "chroma-js";
 import {
   createItemLink,
@@ -36,6 +35,7 @@ const POPOVER_OPTIONS = {
   container: "body",
   trigger: "hover",
   placement: "right",
+  sanitize: false,
   html: true,
   template: $("#popover-template").clone()
 };
