@@ -16,7 +16,7 @@ export default function TableControlPanel(props) {
         <Columns {...props} />
       </div>
       <div className="control-panel--buttons">
-        <Tooltip title={i18n.controlPanel.columns.title} placement="left">
+        <Tooltip title={__("linelist.controlPanel.columns.title")} placement="left">
           <Button
             tour="tour-columns"
             shape="circle"

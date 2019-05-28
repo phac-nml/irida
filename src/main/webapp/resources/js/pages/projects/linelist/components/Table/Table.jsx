@@ -366,8 +366,8 @@ export class TableComponent extends React.Component {
       Show a notification that allows the user to reverse the change to the value.
        */
       const text = Boolean(data[field])
-        ? i18n.linelist.editing.undo.full
-        : i18n.linelist.editing.undo.empty;
+        ? __("linelist.editing.undo.full")
+        : __("linelist.editing.undo.empty");
       showUndoNotification(
         {
           text: text
@@ -421,7 +421,7 @@ export class TableComponent extends React.Component {
           id="linelist-grid"
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
-          localeText={i18n.linelist.agGrid}
+          localeText={__("linelist.agGrid")}
           columnDefs={this.props.fields}
           rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}

@@ -28,7 +28,7 @@ export class SaveTemplateButton extends React.Component {
         onClick={this.showSaveModal}
         disabled={typeof this.props.template === "undefined"}
       >
-        {i18n.linelist.templates.saveModified}
+        {__("linelist.templates.saveModified")}
       </Button>
     );
   }

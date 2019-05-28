@@ -417,7 +417,7 @@ $("#deleteConfirmModal")
           },
           () => {
             showNotification({
-              text: window.PAGE.i18n.unexpectedDeleteError,
+              text: __("analysis.delete.unexpected.exception"),
               type: "error"
             });
           }

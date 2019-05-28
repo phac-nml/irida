@@ -1,6 +1,6 @@
 import React from "react";
 
-const { tour } = window.PAGE.i18n.linelist;
+const { tour } = __("linelist");
 
 export const steps = [
   {

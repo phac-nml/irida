@@ -73,7 +73,7 @@ export class ToolbarComponent extends Component {
                   className="fas fa-cloud-upload-alt spaced-right__sm"
                   aria-hidden="true"
                 />
-                {i18n.linelist.importBtn.text}
+                {__("linelist.importBtn.text")}
               </Button>
             </Form.Item>
             <Form.Item>
@@ -105,7 +105,7 @@ export class ToolbarComponent extends Component {
                     }}
                     onClick={this.closePopover}
                   >
-                    {i18n.linelist.tour.popover}
+                    {__("linelist.tour.popover")}
                   </strong>
                 }
                 visible={this.state.showTourPopover}
@@ -113,7 +113,7 @@ export class ToolbarComponent extends Component {
                 arrowPointAtCenter
               >
                 <Button
-                  title={i18n.linelist.tour.title}
+                  title={__("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
                   icon="question"

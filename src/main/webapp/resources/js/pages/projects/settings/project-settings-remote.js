@@ -63,7 +63,10 @@ function updateSyncSettings(data) {
       }
     },
     error: function() {
-      showNotification({ text: page.i18n.error, type: "error" });
+      showNotification({
+        text: __("project.settings.notifications.error"),
+        type: "error"
+      });
     }
   });
 }

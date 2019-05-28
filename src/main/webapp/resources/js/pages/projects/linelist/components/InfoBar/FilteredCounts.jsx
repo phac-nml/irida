@@ -9,7 +9,7 @@ const { i18n } = window.PAGE;
 export function FilteredCounts(props) {
   return (
     <span tour="tour-filter-counts">
-      {i18n.linelist.infobar.filterCounts
+      {__("linelist.infobar.filterCounts")
         .replace("[FILTER_COUNT]", props.filterCount)
         .replace("[TOTAL]", props.totalSamples)}
     </span>

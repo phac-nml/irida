@@ -5,10 +5,6 @@
     <title th:text="#{project.settings.page.title.basic}">Basic</title>
     <script th:inline="javascript">
       var PAGE = {
-        i18n: {
-          'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_',
-          'not_set': /*[[#{project.settings.notset}]]*/ '_not set_'
-        },
         urls: {
           'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
           'sistr': /*[[@{/projects/{id}/settings/sistr(id=${project.getId()})}]]*/ '/projects/1/settings/sistr',

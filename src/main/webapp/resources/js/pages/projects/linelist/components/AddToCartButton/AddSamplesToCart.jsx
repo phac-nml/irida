@@ -26,7 +26,7 @@ export function AddSamplesToCartButtonComponent({
       onClick={addToCart}
     >
       <i className="fas fa-cart-plus spaced-right__sm" />
-      {i18n.linelist.addToCart}
+      {__("linelist.addToCart")}
     </Button>
   );
 }

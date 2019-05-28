@@ -233,10 +233,14 @@ const config = Object.assign({}, tableConfig, {
   rowId: "DT_RowId",
   buttons: ["selectAll", "selectNone"],
   language: {
-    select: window.PAGE.i18n.select,
+    select: {
+      none: __("project.samples.counts.none"),
+      one: __("project.samples.counts.one"),
+      other: __("project.samples.counts.more")
+    },
     buttons: {
-      selectAll: window.PAGE.i18n.buttons.selectAll,
-      selectNone: window.PAGE.i18n.buttons.selectNone
+      selectAll: __("project.samples.select.selectAll"),
+      selectNone: __("project.samples.select.selectNone")
     }
   },
   columnDefs: [
@@ -597,7 +601,7 @@ function displayFilters(filters) {
 
   if (filters.has(FILTERS.FILTER_BY_NAME)) {
     createChip(
-      window.PAGE.i18n.chips.name,
+      __("project.sample.filter-name"),
       filters.get(FILTERS.FILTER_BY_NAME),
       () => {
         filters.delete(FILTERS.FILTER_BY_NAME);
@@ -608,7 +612,7 @@ function displayFilters(filters) {
 
   if (filters.has(FILTERS.FILTER_BY_ORGANISM)) {
     createChip(
-      window.PAGE.i18n.chips.organism,
+      __("project.sample.filter-organism"),
       filters.get(FILTERS.FILTER_BY_ORGANISM),
       () => {
         filters.delete(FILTERS.FILTER_BY_ORGANISM);
@@ -626,7 +630,7 @@ function displayFilters(filters) {
     );
     const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
     const range = `${start} - ${end}`;
-    createChip(window.PAGE.i18n.chips.range, range, () => {
+    createChip(__("project.sample.filter-date.label"), range, () => {
       filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
       filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
       table.ajax.reload();

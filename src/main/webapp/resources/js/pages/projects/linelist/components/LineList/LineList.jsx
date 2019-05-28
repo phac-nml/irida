@@ -17,7 +17,7 @@ export function LineList(props) {
   if (initializing) {
     return <Loader />;
   } else if (props.error) {
-    return <ErrorAlert message={i18n.linelist.error.message} />;
+    return <ErrorAlert message={__("linelist.error.message")} />;
   }
 
   return <LineListLayoutComponent {...props} />;

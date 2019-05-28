@@ -113,7 +113,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
     vm.uploading = true;
 
     $window.onbeforeunload = function() {
-      return $window.PAGE.i18n.leaving;
+      return __("project.samples.files.upload.page-leave");
     };
 
     fileUpload = Upload.upload({

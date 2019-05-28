@@ -9,7 +9,7 @@ const { i18n } = window.PAGE;
  */
 export class DateCellRenderer extends React.Component {
   render() {
-    const content = <div>{i18n.linelist.dateCell.tooltip}</div>;
+    const content = <div>{__("linelist.dateCell.tooltip")}</div>;
     if (!this.props.value) {
       return "";
     } else if (isDate(this.props.value)) {
@@ -23,7 +23,7 @@ export class DateCellRenderer extends React.Component {
             title={
               <span>
                 <Icon type="exclamation-circle-o" />{" "}
-                {i18n.linelist.dateCell.popover.title}
+                {__("linelist.dateCell.popover.title")}
               </span>
             }
           >

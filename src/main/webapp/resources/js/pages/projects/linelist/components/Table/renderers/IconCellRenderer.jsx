@@ -6,7 +6,7 @@ const { i18n } = window.PAGE;
 
 function LockedIcon() {
   return (
-    <Tooltip title={i18n.linelist.icons.locked} placement="right">
+    <Tooltip title={__("project.samples.locked-title")} placement="right">
       <Icon type="lock" theme="twoTone" />
     </Tooltip>
   );
