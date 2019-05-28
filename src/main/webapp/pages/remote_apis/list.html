@@ -43,7 +43,7 @@
 </main>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/remote-apis.bundle.js}"></script>
+    <script th:src="@{/dist/js/remote-apis.__${#locale.language}__.bundle.js}"></script>
 </th:block>
 </body>
 </html>

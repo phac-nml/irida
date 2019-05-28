@@ -121,7 +121,9 @@ module.exports = Object.keys(languages).map(function(language) {
       config,
       {
         output: {
-          filename: `js/[name].${language}.bundle.js`,
+          filename: (chunkData) => {
+            return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].${language}.bundle.js`;
+          }
         },
         plugins: [
           new I18nPlugin(languages[language])

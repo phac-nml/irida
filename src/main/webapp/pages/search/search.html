@@ -73,7 +73,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-        <script th:src="@{/dist/js/search.bundle.js}"></script>
+        <script th:src="@{/dist/js/search.__${#locale.language}__.bundle.js}"></script>
 
     </th:block>
 </body>

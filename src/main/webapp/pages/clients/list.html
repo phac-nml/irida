@@ -34,7 +34,7 @@
     </div>
 </th:block>
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/dist/js/clients-list.bundle.js}"></script>
+    <script th:src="@{/dist/js/clients-list.__${#locale.language}__.bundle.js}"></script>
 </th:block>
 </body>
 </html>

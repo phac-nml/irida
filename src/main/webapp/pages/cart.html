@@ -55,7 +55,7 @@
           <input id="js-query" name="json_params" type="hidden">
         </form>
       </div>
-      <script th:src="@{/dist/js/cart.bundle.js}"></script>
+      <script th:src="@{/dist/js/cart.__${#locale.language}__.bundle.js}"></script>
     </th:block>
   </body>
 </html>
