@@ -21,6 +21,8 @@ const deps = ["ui.bootstrap", "irida.cart", IridaSession];
 
 const app = angular.module("irida", deps);
 
+console.log(__("bc.overrepresented"));
+
 /*
 This is here since this has been updated to use a standard Event,
 and not handled through angularjs.
