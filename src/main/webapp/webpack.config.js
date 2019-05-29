@@ -27,7 +27,7 @@ let languages = {};
 
 for (i=0; i<message_files.length; i++) {
   const message_file = message_files[i];
-  const locale = message_file.match(/messages_(.*)\.properties/);
+  const locale = message_file.match(/messages_(.*)\.properties/).pop();
   languages[locale] = parse_messages(message_file);
 }
 
@@ -119,22 +119,41 @@ const config = {
 const dev = require("./webpack.config.dev");
 const prod = require("./webpack.config.prod");
 
-module.exports = Object.keys(languages).map(function(language) {
-  return ({ mode = "development" }) => {
+module.exports = ({ mode = "development "}) => {
+  if (mode === "development") {
     return merge(
-      { mode },
       config,
       {
         output: {
           filename: (chunkData) => {
-            return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].${language}.bundle.js`;
-          }
+            return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].en.bundle.js`;
+          },
+          chunkFilename: `js/[name].en.bundle.js`,
         },
         plugins: [
-          new I18nPlugin(languages[language])
+          new I18nPlugin(languages["en"])
         ],
       },
-      mode === "production" ? prod.config : dev.config
-    );
-  };
-})
+      dev.config
+    )
+  } else {
+    return Object.keys(languages).map(function(language) {
+      return merge(
+        config,
+        {
+          output: {
+            filename: (chunkData) => {
+              return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].${language}.bundle.js`;
+            },
+            chunkFilename: `js/[name].en.bundle.js`,
+          },
+          plugins: [
+            new I18nPlugin(languages[language])
+          ],
+        },
+        prod.config
+      );
+    });
+  }
+}
+
