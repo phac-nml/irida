@@ -419,7 +419,10 @@ export class TableComponent extends React.Component {
           id="linelist-grid"
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
-          localeText={__("linelist.agGrid")}
+          localeText={{
+            loading: __("linelist.agGrid.loading"),
+            sampleName: __("linelist.agGrid.sampleName"),
+          }}
           columnDefs={this.props.fields}
           rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}

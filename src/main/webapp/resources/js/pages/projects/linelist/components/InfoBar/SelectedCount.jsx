@@ -11,7 +11,7 @@ export function SelectedCount(props) {
         ? __("linelist.selected.none")
         : props.count === 1
         ? __("linelist.selected.one")
-        : __("linelist.selected.multiple.replace")("_COUNT_", props.count)}
+        : __("linelist.selected.multiple").replace("_COUNT_", props.count)}
     </span>
   );
 }

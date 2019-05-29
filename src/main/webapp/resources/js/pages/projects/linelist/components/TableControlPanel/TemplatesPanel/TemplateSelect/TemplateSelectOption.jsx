@@ -42,7 +42,7 @@ export function TemplateSelectOption(props) {
         <span>
           {saved && index === current ? (
             <Tag color="green">
-              {__("linelist.templates.saved.toUpperCase")()}
+              {__("linelist.templates.saved").toUpperCase()}
             </Tag>
           ) : null}
           {modified.length === 0 ? null : renderUpdateSave()}

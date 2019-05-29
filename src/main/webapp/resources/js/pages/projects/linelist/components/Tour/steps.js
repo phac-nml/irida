@@ -1,15 +1,13 @@
 import React from "react";
 
-const { tour } = __("linelist");
-
 export const steps = [
   {
     selector: ".ag-root",
     content() {
       return (
         <div>
-          <strong>{tour.table.title}</strong>
-          <p>{tour.table.content}</p>
+          <strong>{__("linelist.tour.table.title")}</strong>
+          <p>{__("linelist.tour.table.content")}</p>
         </div>
       );
     }
@@ -19,18 +17,18 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.headers.title}</strong>
-          <p>{tour.headers.content.intro}</p>
+          <strong>{__("linelist.tour.headers.title")}</strong>
+          <p>{__("linelist.tour.headers.content.intro")}</p>
           <ol>
-            <li>{tour.headers.content.li1}</li>
+            <li>{__("linelist.tour.headers.content.li1")}</li>
             <li>
-              {tour.headers.content.li2.title}
+              {__("linelist.tour.headers.content.li2.title")}
               <ul>
-                <li>{tour.headers.content.li2.content.li1}</li>
-                <li>{tour.headers.content.li2.content.li2}</li>
+                <li>{__("linelist.tour.headers.content.li2.content.li1")}</li>
+                <li>{__("linelist.tour.headers.content.li2.content.li2")}</li>
               </ul>
             </li>
-            <li>{tour.headers.content.li3}</li>
+            <li>{__("linelist.tour.headers.content.li3")}</li>
           </ol>
         </div>
       );
@@ -41,13 +39,13 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.columns.title}</strong>
-          <p>{tour.columns.content.intro}</p>
+          <strong>{__("linelist.tour.columns.title")}</strong>
+          <p>{__("linelist.tour.columns.content.intro")}</p>
           <ul>
-            <li>{tour.columns.content.li1}</li>
-            <li>{tour.columns.content.li2}</li>
+            <li>{__("linelist.tour.columns.content.li1")}</li>
+            <li>{__("linelist.tour.columns.content.li2")}</li>
           </ul>
-          <p>{tour.columns.content.end}</p>
+          <p>{__("linelist.tour.columns.content.end")}</p>
         </div>
       );
     }
@@ -57,10 +55,10 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.edit.title}</strong>
-          <p>{tour.edit.content.intro}</p>
-          <p>{tour.edit.content.undo}</p>
-          <p>{tour.edit.content.cancel}</p>
+          <strong>{__("linelist.tour.edit.title")}</strong>
+          <p>{__("linelist.tour.edit.content.intro")}</p>
+          <p>{__("linelist.tour.edit.content.undo")}</p>
+          <p>{__("linelist.tour.edit.content.cancel")}</p>
         </div>
       );
     }
@@ -70,8 +68,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.search.title}</strong>
-          <p>{tour.search.content}</p>
+          <strong>{__("linelist.tour.search.title")}</strong>
+          <p>{__("linelist.tour.search.content")}</p>
         </div>
       );
     }
@@ -81,9 +79,9 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.filterCounts.title}</strong>
-          <p>{tour.filterCounts.content.intro}</p>
-          <p>{tour.filterCounts.content.example}</p>
+          <strong>{__("linelist.tour.filterCounts.title")}</strong>
+          <p>{__("linelist.tour.filterCounts.content.intro")}</p>
+          <p>{__("linelist.tour.filterCounts.content.example")}</p>
         </div>
       );
     }
@@ -93,8 +91,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.export.title}</strong>
-          <p>{tour.export.content}</p>
+          <strong>{__("linelist.tour.export.title")}</strong>
+          <p>{__("linelist.tour.export.content")}</p>
         </div>
       );
     }
@@ -104,11 +102,11 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.import.title}</strong>
-          <p>{tour.import.content.intro}</p>
+          <strong>{__("linelist.tour.import.title")}</strong>
+          <p>{__("linelist.tour.import.content.intro")}</p>
           <ul>
-            <li>{tour.import.content.li1}</li>
-            <li>{tour.import.content.li2}</li>
+            <li>{__("linelist.tour.import.content.li1")}</li>
+            <li>{__("linelist.tour.import.content.li2")}</li>
           </ul>
         </div>
       );
@@ -119,8 +117,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.select.title}</strong>
-          <p>{tour.select.content}</p>
+          <strong>{__("linelist.tour.select.title")}</strong>
+          <p>{__("linelist.tour.select.content")}</p>
         </div>
       );
     }
@@ -130,8 +128,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.selectCounts.title}</strong>
-          <p>{tour.selectCounts.content}</p>
+          <strong>{__("linelist.tour.selectCounts.title")}</strong>
+          <p>{__("linelist.tour.selectCounts.content")}</p>
         </div>
       );
     }
@@ -141,8 +139,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.cart.title}</strong>
-          <p>{tour.cart.content}</p>
+          <strong>{__("linelist.tour.cart.title")}</strong>
+          <p>{__("linelist.tour.cart.content")}</p>
         </div>
       );
     }
@@ -152,7 +150,7 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{tour.end}</strong>
+          <strong>{__("linelist.tour.end")}</strong>
         </div>
       );
     }
