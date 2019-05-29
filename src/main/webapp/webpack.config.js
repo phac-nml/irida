@@ -23,7 +23,7 @@ parse_messages = function(source) {
 
 const languages = {
   en: parse_messages("../resources/i18n/messages_en.properties"),
-  fr: parse_messages("../resources/i18n/messages_fr.properties"),
+//  fr: parse_messages("../resources/i18n/messages_fr.properties"),
 };
 
 const config = {
