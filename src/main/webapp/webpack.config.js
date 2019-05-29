@@ -16,14 +16,14 @@ const parse_messages = function(source) {
   return properties.parse(messages_source, {namespaces: false});
 }
 
+// parse all message files in ../resources/i18n folder, assuming they are named
+// messagse_LOCALE.properties
 const message_files = glob.sync("../resources/i18n/messages_*.properties");
-const languages = {};
-
-for (let i=0; i<message_files.length; i++) {
-  const message_file = message_files[i];
-  const locale = message_file.match(/messages_(.*)\.properties/).pop();
-  languages[locale] = parse_messages(message_file);
-}
+const languages = message_files.reduce((hash, file) => {
+  const locale = file.match(/messages_(.*)\.properties/).pop();
+  hash[locale] = parse_messages(file);
+  return hash;
+}, {});
 
 const config = {
   externals: {
