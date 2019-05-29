@@ -27,7 +27,7 @@ let languages = {};
 
 for (i=0; i<message_files.length; i++) {
   const message_file = message_files[i];
-  const locale = message_file.split("/").pop().split(".")[0].split("_").pop();
+  const locale = message_file.match(/messages_(.*)\.properties/);
   languages[locale] = parse_messages(message_file);
 }
 
@@ -116,11 +116,11 @@ const config = {
   ]
 };
 
+const dev = require("./webpack.config.dev");
+const prod = require("./webpack.config.prod");
 
 module.exports = Object.keys(languages).map(function(language) {
   return ({ mode = "development" }) => {
-    const dev = require("./webpack.config.dev");
-    const prod = require("./webpack.config.prod");
     return merge(
       { mode },
       config,
