@@ -10,22 +10,16 @@ const entries = require("./entries.js");
 
 const BUILD_PATH = path.resolve(__dirname, "dist");
 
-parse_messages = function(source) {
-  let $this = this;
+const parse_messages = function(source) {
+  const messages_source = fs.readFileSync(source, {encoding: "utf-8"});
 
-  let options = {
-    namespaces: false,
-  }
-
-  var messages_source = fs.readFileSync(source, {encoding: "utf-8"});
-
-  return properties.parse(messages_source, options);
+  return properties.parse(messages_source, {namespaces: false});
 }
 
 const message_files = glob.sync("../resources/i18n/messages_*.properties");
-let languages = {};
+const languages = {};
 
-for (i=0; i<message_files.length; i++) {
+for (let i=0; i<message_files.length; i++) {
   const message_file = message_files[i];
   const locale = message_file.match(/messages_(.*)\.properties/).pop();
   languages[locale] = parse_messages(message_file);
