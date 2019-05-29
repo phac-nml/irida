@@ -10,6 +10,7 @@ Changes
 * [UI/Developer]: Cleaned up some of the redux set up on the linelist page.
 * [UI/Developer]: Removed loading Bootstrap through `bower` and moved it into the webpack build.
 * [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
+* [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
 
 19.01 to 19.05
 ---------------
