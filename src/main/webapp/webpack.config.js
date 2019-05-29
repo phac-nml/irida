@@ -145,7 +145,7 @@ module.exports = ({ mode = "development "}) => {
             filename: (chunkData) => {
               return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].${language}.bundle.js`;
             },
-            chunkFilename: `js/[name].en.bundle.js`,
+            chunkFilename: `js/[name].${language}.bundle.js`,
           },
           plugins: [
             new I18nPlugin(languages[language])
