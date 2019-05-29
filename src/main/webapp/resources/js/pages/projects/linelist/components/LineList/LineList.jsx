@@ -4,6 +4,8 @@ import { Loader } from "../Loader";
 import { LineListLayoutComponent } from "./LineListLayoutComponent";
 import { ErrorAlert } from "../../../../../components/alerts/ErrorAlert";
 
+const { project } = window.PAGE;
+
 /**
  * Container class for the higher level states of the page:
  * 1. Loading
@@ -15,7 +17,7 @@ export function LineList(props) {
   if (initializing) {
     return <Loader />;
   } else if (props.error) {
-    return <ErrorAlert message={__("linelist.error.message")} />;
+    return <ErrorAlert message={__("linelist.error.message").replace("{0}", project["name"])} />;
   }
 
   return <LineListLayoutComponent {...props} />;
