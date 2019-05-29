@@ -1,7 +1,6 @@
 import React from "react";
 import { Alert } from "antd";
 
-const { i18n } = window.PAGE;
 export const Loader = () => (
   <Alert
     message={__("linelist.Loader.message")}

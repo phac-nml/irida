@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const { i18n } = window.PAGE;
-
 /**
  * Formats and displays selected sample counts
  */

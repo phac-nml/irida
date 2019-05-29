@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Icon, Tooltip } from "antd";
 
-const { i18n } = window.PAGE;
-
 function LockedIcon() {
   return (
     <Tooltip title={__("project.samples.locked-title")} placement="right">

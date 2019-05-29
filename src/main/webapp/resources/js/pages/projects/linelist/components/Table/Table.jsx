@@ -20,8 +20,6 @@ import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
 
-const { i18n } = window.PAGE;
-
 /**
  * React component to render the ag-grid to the page.
  */

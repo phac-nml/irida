@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Spin } from "antd";
 
-const { i18n } = window.PAGE;
 export class LoadingOverlay extends Component {
   render() {
     return (

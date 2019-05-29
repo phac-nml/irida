@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
 
-const { i18n } = window.PAGE;
-
 /**
  * Component to handle any controls that affect the table.  This includes
  * column visibility.

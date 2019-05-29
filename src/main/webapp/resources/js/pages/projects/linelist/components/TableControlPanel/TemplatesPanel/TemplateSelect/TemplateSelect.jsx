@@ -8,7 +8,6 @@ import {
 } from "../../../../../../../components/popovers/index";
 
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /*
 The internationalized content of the help popover describing

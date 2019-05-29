@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import { Tag } from "antd";
 import { SaveTemplateButton } from "./SaveTemplateButton";
 
-const { i18n } = window.PAGE;
-
 /**
  * This class represents the contents of an option in an
  * [antd Select]{@link https://ant.design/components/select/}

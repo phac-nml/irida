@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Dropdown, Menu } from "antd";
 
-const { i18n } = window.PAGE;
-
 export function ExportDropDown(props) {
   const onClick = ({ key }) => {
     if (typeof props[key] !== "undefined") {

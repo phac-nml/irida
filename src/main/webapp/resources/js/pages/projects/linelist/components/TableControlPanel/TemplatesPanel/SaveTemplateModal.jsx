@@ -5,7 +5,6 @@ import { Button, Checkbox, Form, Modal, Select } from "antd";
 
 const { Item } = Form;
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /**
  * Utility method to sort array of strings case insensitively.

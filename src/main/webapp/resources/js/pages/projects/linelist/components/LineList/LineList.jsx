@@ -4,8 +4,6 @@ import { Loader } from "../Loader";
 import { LineListLayoutComponent } from "./LineListLayoutComponent";
 import { ErrorAlert } from "../../../../../components/alerts/ErrorAlert";
 
-const { i18n } = window.PAGE;
-
 /**
  * Container class for the higher level states of the page:
  * 1. Loading

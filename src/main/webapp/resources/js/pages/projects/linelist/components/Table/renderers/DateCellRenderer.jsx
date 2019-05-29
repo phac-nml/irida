@@ -2,8 +2,6 @@ import React from "react";
 import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
 import { Icon, Popover } from "antd";
 
-const { i18n } = window.PAGE;
-
 /**
  * Component to properly display dates in the ag-grid
  */
