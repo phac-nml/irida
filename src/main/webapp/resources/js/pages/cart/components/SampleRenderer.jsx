@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, Dropdown, Icon, Menu } from "antd";
-import { getI18N } from "../../../utilities/i18n-utilties";
 import { grey1, grey4, grey5 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 
@@ -16,12 +15,12 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
   >
     <Menu.Item>
       <div onClick={removeSample} className="t-delete-sample">
-        {getI18N("SampleRenderer.remove.sample")}
+        {__("SampleRenderer.remove.sample")}
       </div>
     </Menu.Item>
     <Menu.Item>
       <div onClick={removeProject} className="t-delete-project">
-        {getI18N("SampleRenderer.remove.project")}
+        {__("SampleRenderer.remove.project")}
       </div>
     </Menu.Item>
   </Menu>

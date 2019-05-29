@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
 import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
-import { getI18N } from "../../../utilities/i18n-utilties";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 
 /*
@@ -92,7 +91,7 @@ export default class CartTools extends Component {
       this.state.fromGalaxy
         ? {
             link: `${window.TL.BASE_URL}cart/galaxy`,
-            text: getI18N("CartTools.menu.galaxy"),
+            text: __("CartTools.menu.galaxy"),
             component: (
               <GalaxyComponent
                 key="galaxy"
@@ -103,7 +102,7 @@ export default class CartTools extends Component {
         : null,
       {
         link: `${window.TL.BASE_URL}cart/pipelines`,
-        text: getI18N("CartTools.menu.pipelines"),
+        text: __("CartTools.menu.pipelines"),
         component: (
           <Pipelines
             key="pipelines"

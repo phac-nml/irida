@@ -5,7 +5,6 @@ import { Drawer, Form } from "antd";
 import styled from "styled-components";
 import { sampleDetailsActions } from "./reducer";
 import { formatDate } from "../../utilities/date-utilities";
-import { getI18N } from "../../utilities/i18n-utilties";
 import {
   FONT_COLOR_PRIMARY,
   FONT_SIZE_DEFAULT,
@@ -85,19 +84,19 @@ class SampleDetailsComponent extends React.Component {
         visible={visible}
       >
         <Form layout="vertical">
-          <DetailsHeading>{getI18N("SampleDetails.general")}</DetailsHeading>
-          <Item label={getI18N("SampleDetails.description")}>
+          <DetailsHeading>{__("SampleDetails.general")}</DetailsHeading>
+          <Item label={__("SampleDetails.description")}>
             <DetailValue>{sample.description}</DetailValue>
           </Item>
-          <Item label={getI18N("SampleDetails.organism")}>
+          <Item label={__("SampleDetails.organism")}>
             <DetailValue>{sample.organism}</DetailValue>
           </Item>
-          <Item label={getI18N("SampleDetails.createdDate")}>
+          <Item label={__("SampleDetails.createdDate")}>
             <DetailValue>
               {formatDate({ date: sample.createdDate })}
             </DetailValue>
           </Item>
-          <Item label={getI18N("SampleDetails.modifiedDate")}>
+          <Item label={__("SampleDetails.modifiedDate")}>
             <DetailValue>
               {formatDate({ date: sample.modifiedDate })}
             </DetailValue>
@@ -106,7 +105,7 @@ class SampleDetailsComponent extends React.Component {
           {metadataKeys.length === 0 ? null : (
             <div>
               <DetailsHeading>
-                {getI18N("SampleDetails.metadata")}
+                {__("SampleDetails.metadata")}
               </DetailsHeading>
               {metadataKeys.map(key => {
                 const item = metadata[key];

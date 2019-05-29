@@ -1,7 +1,6 @@
 import React from "react";
 import { useStateValue } from "./GalaxyState";
 import { Checkbox, Form, Input } from "antd";
-import { getI18N } from "../../utilities/i18n-utilties";
 import { actions } from "./reducer";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 
@@ -29,7 +28,7 @@ export function GalaxyDetailsForm() {
     <div>
       <p>
         <span style={{ fontWeight: FONT_WEIGHT_HEAVY }}>
-          {getI18N("ExportToGalaxyForm.galaxy")}
+          {__("ExportToGalaxyForm.galaxy")}
         </span>{" "}
         <a target="_blank" rel="noreferrer noopener" href={galaxyUrl}>
           {galaxyUrl}
@@ -37,20 +36,20 @@ export function GalaxyDetailsForm() {
       </p>
       <Form layout="vertical" hideRequiredMark>
         <Form.Item
-          label={getI18N("ExportToGalaxyForm.email")}
+          label={__("ExportToGalaxyForm.email")}
           validateStatus={validEmail ? "success" : "error"}
-          help={getI18N("ExportToGalaxyForm.email.help")}
+          help={__("ExportToGalaxyForm.email.help")}
         >
           <Input onChange={emailModified} value={email} />
         </Form.Item>
         <Form.Item
-          help={getI18N("ExportToGalaxyForm.makepairedcollection.help")}
+          help={__("ExportToGalaxyForm.makepairedcollection.help")}
         >
           <Checkbox
             onChange={makePairedCollectionModified}
             checked={makepairedcollection}
           >
-            {getI18N("ExportToGalaxyForm.makepairedcollection")}
+            {__("ExportToGalaxyForm.makepairedcollection")}
           </Checkbox>
         </Form.Item>
       </Form>

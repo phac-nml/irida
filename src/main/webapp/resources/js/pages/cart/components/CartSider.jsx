@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { Layout } from "antd";
 import CartSamples from "./CartSamples";
 import { grey2 } from "../../../styles/colors";
-import { getI18N } from "../../../utilities/i18n-utilties";
 import CartNotification from "./CartNotification";
 const { Sider } = Layout;
 
@@ -21,13 +20,13 @@ function CartSamplesComponent({ count, collapsed, loaded }) {
       {count === 0 ? (
         <CartNotification
           icon="shopping-cart"
-          text={getI18N("CartEmpty.heading")}
+          text={__("CartEmpty.heading")}
         />
       ) : loaded ? (
         <CartSamples />
       ) : (
         <CartNotification
-          text={getI18N("cart.noneMatchingFilter")}
+          text={__("cart.noneMatchingFilter")}
           icon="warning"
         />
       )}
