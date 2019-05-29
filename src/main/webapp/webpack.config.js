@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const I18nPlugin = require("i18n-webpack-plugin");
 const properties = require('properties');
 const fs = require('fs');
+const glob = require('glob');
 
 const entries = require("./entries.js");
 
@@ -21,10 +22,14 @@ parse_messages = function(source) {
   return properties.parse(messages_source, options);
 }
 
-const languages = {
-  en: parse_messages("../resources/i18n/messages_en.properties"),
-//  fr: parse_messages("../resources/i18n/messages_fr.properties"),
-};
+const message_files = glob.sync("../resources/i18n/messages_*.properties");
+let languages = {};
+
+for (i=0; i<message_files.length; i++) {
+  const message_file = message_files[i];
+  const locale = message_file.split("/").pop().split(".")[0].split("_").pop();
+  languages[locale] = parse_messages(message_file);
+}
 
 const config = {
   externals: {
