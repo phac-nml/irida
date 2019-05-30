@@ -1,29 +1,14 @@
 const path = require("path");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const I18nPlugin = require("i18n-webpack-plugin");
-const properties = require('properties');
-const fs = require('fs');
-const glob = require('glob');
+const i18nPropertiesPlugin = require("./webpack/i18nPropertiesPlugin");
+
+const dev = require("./webpack.config.dev");
+const prod = require("./webpack.config.prod");
 
 const entries = require("./entries.js");
 
 const BUILD_PATH = path.resolve(__dirname, "dist");
-
-const parse_messages = function(source) {
-  const messages_source = fs.readFileSync(source, {encoding: "utf-8"});
-
-  return properties.parse(messages_source, {namespaces: false});
-}
-
-// parse all message files in ../resources/i18n folder, assuming they are named
-// messagse_LOCALE.properties
-const message_files = glob.sync("../resources/i18n/messages_*.properties");
-const languages = message_files.reduce((hash, file) => {
-  const locale = file.match(/messages_(.*)\.properties/).pop();
-  hash[locale] = parse_messages(file);
-  return hash;
-}, {});
 
 const config = {
   externals: {
@@ -107,47 +92,14 @@ const config = {
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
     }),
+    new i18nPropertiesPlugin({})
   ]
 };
 
-const dev = require("./webpack.config.dev");
-const prod = require("./webpack.config.prod");
-
-module.exports = ({ mode = "development "}) => {
-  if (mode === "development") {
-    return merge(
-      config,
-      {
-        output: {
-          filename: (chunkData) => {
-            return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].en.bundle.js`;
-          },
-          chunkFilename: `js/[name].en.bundle.js`,
-        },
-        plugins: [
-          new I18nPlugin(languages["en"])
-        ],
-      },
-      dev.config
-    )
-  } else {
-    return Object.keys(languages).map(function(language) {
-      return merge(
-        config,
-        {
-          output: {
-            filename: (chunkData) => {
-              return chunkData.chunk.name === 'vendor' ? 'js/[name].bundle.js' : `js/[name].${language}.bundle.js`;
-            },
-            chunkFilename: `js/[name].${language}.bundle.js`,
-          },
-          plugins: [
-            new I18nPlugin(languages[language])
-          ],
-        },
-        prod.config
-      );
-    });
-  }
-}
-
+module.exports = ({ mode = "development" }) => {
+  return merge(
+    { mode },
+    config,
+    mode === "production" ? prod.config : dev.config
+  );
+};

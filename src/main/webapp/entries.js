@@ -6,6 +6,7 @@
 module.exports = {
   vendor: [
     "@babel/polyfill",
+    "expose-loader?i18n!./resources/js/i18n.js",
     "expose-loader?$!jquery",
     "expose-loader?angular!angular",
     "./resources/js/vendors"
