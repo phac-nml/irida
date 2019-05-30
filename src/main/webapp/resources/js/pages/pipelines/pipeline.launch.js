@@ -128,9 +128,9 @@
      */
     vm.launchButtonTitle = function() {
       if (this.shouldDisableLaunch()) {
-        return __("workflow.launch.btn.title-disarmed");
+        return window.__i18n("workflow.launch.btn.title-disarmed");
       } else {
-        return __("workflow.launch.btn.title");
+        return window.__i18n("workflow.launch.btn.title");
       }
     };
 
@@ -161,7 +161,7 @@
         shared = [];
 
       if (name === null || name.length === 0) {
-        vm.error = __("workflow.no-name-provided");
+        vm.error = window.__i18n("workflow.no-name-provided");
       } else {
         // Hide the launch buttons and display a message that it has been sent.
         vm.loading = true;

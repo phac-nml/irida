@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 
 /**
@@ -8,10 +9,10 @@ export function SelectedCount(props) {
   return (
     <span tour="tour-counts">
       {props.count === 0
-        ? __("linelist.selected.none")
+        ? i18n("linelist.selected.none")
         : props.count === 1
-        ? __("linelist.selected.one")
-        : __("linelist.selected.multiple").replace("_COUNT_", props.count)}
+        ? i18n("linelist.selected.one")
+        : i18n("linelist.selected.multiple").replace("_COUNT_", props.count)}
     </span>
   );
 }

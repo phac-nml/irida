@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
@@ -14,7 +15,7 @@ export default function TableControlPanel(props) {
         <Columns {...props} />
       </div>
       <div className="control-panel--buttons">
-        <Tooltip title={__("linelist.controlPanel.columns.title")} placement="left">
+        <Tooltip title={i18n("linelist.controlPanel.columns.title")} placement="left">
           <Button
             tour="tour-columns"
             shape="circle"

@@ -1,3 +1,4 @@
+import i18n from "i18n";
 import "../../vendor/datatables/datatables";
 import "../../vendor/datatables/datatables-buttons";
 import $ from "jquery";
@@ -60,7 +61,7 @@ const config = Object.assign(tableConfig, {
           url: `${window.PAGE.urls.project}${full.id}`,
           label: `${
             full.remote
-              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${__(
+              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${i18n(
                   "projects.table.remoteSynchronized"
                 )}">${data}&nbsp;<i style="color: #000;" class="fas fa-exchange-alt pull-right"></i></div>`
               : data

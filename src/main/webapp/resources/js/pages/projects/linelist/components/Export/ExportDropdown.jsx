@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Button, Dropdown, Menu } from "antd";
 
@@ -13,14 +14,14 @@ export function ExportDropDown(props) {
 
   const menu = (
     <Menu onClick={onClick}>
-      <Menu.Item key="excel">{__("linelist.toolbar.exportExcel")}</Menu.Item>
-      <Menu.Item key="csv">{__("linelist.toolbar.exportCsv")}</Menu.Item>
+      <Menu.Item key="excel">{i18n("linelist.toolbar.exportExcel")}</Menu.Item>
+      <Menu.Item key="csv">{i18n("linelist.toolbar.exportCsv")}</Menu.Item>
     </Menu>
   );
   return (
     <Dropdown overlay={menu}>
       <Button tour="tour-export">
-        {__("linelist.toolbar.export")}
+        {i18n("linelist.toolbar.exportsds")}
         <i
           className="fas fa-chevron-down spaced-left__sm"
           data-fa-transform="shrink-4"

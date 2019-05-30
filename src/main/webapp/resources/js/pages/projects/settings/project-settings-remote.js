@@ -1,7 +1,8 @@
 /**
- * @file responsible for handling interactions on the Project > Settings > Rempte Page.
+ * @file responsible for handling interactions on the Project > Settings > Remote Page.
  */
 
+import i18n from "i18n";
 import { showNotification } from "../../../modules/notifications";
 import {
   initConnectRemoteApi,
@@ -64,7 +65,7 @@ function updateSyncSettings(data) {
     },
     error: function() {
       showNotification({
-        text: __("project.settings.notifications.error"),
+        text: i18n("project.settings.notifications.error"),
         type: "error"
       });
     }

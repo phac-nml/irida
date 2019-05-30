@@ -3,6 +3,7 @@
  * for handling user / group project roles.
  */
 import $ from "jquery";
+import i18n from "i18n";
 import "./../../vendor/plugins/jquery/select2";
 import "./../../vendor/datatables/datatables";
 import {
@@ -89,7 +90,7 @@ const CONFIG = Object.assign({}, tableConfig, {
         Creates a delete button to remove the user from the project.
          */
         const deleteBtn = createDeleteBtn({
-          title: __("project.members.edit.remove")
+          title: i18n("project.members.edit.remove")
         });
         return createButtonCell([deleteBtn]);
       }
@@ -252,7 +253,7 @@ $("#submitAddMember").on("click", function() {
     error() {
       $("#addMemberModal").modal("hide");
       showNotification({
-        text: __("group.users.add.notification.failure"),
+        text: i18n("group.users.add.notification.failure"),
         type: "error"
       });
     }

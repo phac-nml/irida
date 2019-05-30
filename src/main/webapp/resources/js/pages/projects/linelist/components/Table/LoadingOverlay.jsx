@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import i18n from "i18n";
 import { Spin } from "antd";
 
 export class LoadingOverlay extends Component {
@@ -8,7 +9,7 @@ export class LoadingOverlay extends Component {
         <div>
           <Spin style={{ marginRight: "1rem" }} />
           <span className="irida-ag-overlay-loading-text">{`${
-            __("linelist.agGrid.loading")
+            i18n("linelist.agGrid.loading")
           }`}</span>
         </div>
       </div>

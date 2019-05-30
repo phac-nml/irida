@@ -16,7 +16,7 @@ const projectSettings = (function(page, notifications) {
       },
       fail: function() {
         notifications.show({
-          text: __("project.settings.notifications.error"),
+          text: window.__i18n("project.settings.notifications.error"),
           type: "error"
         });
       }
@@ -67,7 +67,7 @@ const projectSettings = (function(page, notifications) {
       },
       fail: function() {
         notifications.show({
-          text: __("project.settings.notifications.error"),
+          text: window.__i18n("project.settings.notifications.error"),
           type: "error"
         });
       }
@@ -94,19 +94,25 @@ const projectSettings = (function(page, notifications) {
           if (minimumCoverage) {
             $("#minimum-coverage-display").html(minimumCoverage + "x");
           } else {
-            $("#minimum-coverage-display").html(__("project.settings.notset"));
+            $("#minimum-coverage-display").html(
+              window.__i18n("project.settings.notset")
+            );
           }
 
           if (maximumCoverage) {
             $("#maximum-coverage-display").html(maximumCoverage + "x");
           } else {
-            $("#maximum-coverage-display").html(__("project.settings.notset"));
+            $("#maximum-coverage-display").html(
+              window.__i18n("project.settings.notset")
+            );
           }
 
           if (genomeSize) {
             $("#genome-size-display").html(genomeSize + "bp");
           } else {
-            $("#genome-size-display").html(__("project.settings.notset"));
+            $("#genome-size-display").html(
+              window.__i18n("project.settings.notset")
+            );
           }
 
           $(".edit-coverage").toggle();
@@ -114,7 +120,7 @@ const projectSettings = (function(page, notifications) {
       },
       fail: function() {
         notifications.show({
-          text: __("project.settings.notifications.error"),
+          text: window.__i18n("project.settings.notifications.error"),
           type: "error"
         });
       }

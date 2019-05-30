@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Button } from "antd";
@@ -24,7 +25,7 @@ export function AddSamplesToCartButtonComponent({
       onClick={addToCart}
     >
       <i className="fas fa-cart-plus spaced-right__sm" />
-      {__("linelist.addToCart")}
+      {i18n("linelist.addToCart")}
     </Button>
   );
 }

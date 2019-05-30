@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 
 export const steps = [
   {
@@ -6,8 +7,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.table.title")}</strong>
-          <p>{__("linelist.tour.table.content")}</p>
+          <strong>{i18n("linelist.tour.table.title")}</strong>
+          <p>{i18n("linelist.tour.table.content")}</p>
         </div>
       );
     }
@@ -17,18 +18,18 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.headers.title")}</strong>
-          <p>{__("linelist.tour.headers.content.intro")}</p>
+          <strong>{i18n("linelist.tour.headers.title")}</strong>
+          <p>{i18n("linelist.tour.headers.content.intro")}</p>
           <ol>
-            <li>{__("linelist.tour.headers.content.li1")}</li>
+            <li>{i18n("linelist.tour.headers.content.li1")}</li>
             <li>
-              {__("linelist.tour.headers.content.li2.title")}
+              {i18n("linelist.tour.headers.content.li2.title")}
               <ul>
-                <li>{__("linelist.tour.headers.content.li2.content.li1")}</li>
-                <li>{__("linelist.tour.headers.content.li2.content.li2")}</li>
+                <li>{i18n("linelist.tour.headers.content.li2.content.li1")}</li>
+                <li>{i18n("linelist.tour.headers.content.li2.content.li2")}</li>
               </ul>
             </li>
-            <li>{__("linelist.tour.headers.content.li3")}</li>
+            <li>{i18n("linelist.tour.headers.content.li3")}</li>
           </ol>
         </div>
       );
@@ -39,13 +40,13 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.columns.title")}</strong>
-          <p>{__("linelist.tour.columns.content.intro")}</p>
+          <strong>{i18n("linelist.tour.columns.title")}</strong>
+          <p>{i18n("linelist.tour.columns.content.intro")}</p>
           <ul>
-            <li>{__("linelist.tour.columns.content.li1")}</li>
-            <li>{__("linelist.tour.columns.content.li2")}</li>
+            <li>{i18n("linelist.tour.columns.content.li1")}</li>
+            <li>{i18n("linelist.tour.columns.content.li2")}</li>
           </ul>
-          <p>{__("linelist.tour.columns.content.end")}</p>
+          <p>{i18n("linelist.tour.columns.content.end")}</p>
         </div>
       );
     }
@@ -55,10 +56,10 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.edit.title")}</strong>
-          <p>{__("linelist.tour.edit.content.intro")}</p>
-          <p>{__("linelist.tour.edit.content.undo")}</p>
-          <p>{__("linelist.tour.edit.content.cancel")}</p>
+          <strong>{i18n("linelist.tour.edit.title")}</strong>
+          <p>{i18n("linelist.tour.edit.content.intro")}</p>
+          <p>{i18n("linelist.tour.edit.content.undo")}</p>
+          <p>{i18n("linelist.tour.edit.content.cancel")}</p>
         </div>
       );
     }
@@ -68,8 +69,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.search.title")}</strong>
-          <p>{__("linelist.tour.search.content")}</p>
+          <strong>{i18n("linelist.tour.search.title")}</strong>
+          <p>{i18n("linelist.tour.search.content")}</p>
         </div>
       );
     }
@@ -79,9 +80,9 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.filterCounts.title")}</strong>
-          <p>{__("linelist.tour.filterCounts.content.intro")}</p>
-          <p>{__("linelist.tour.filterCounts.content.example")}</p>
+          <strong>{i18n("linelist.tour.filterCounts.title")}</strong>
+          <p>{i18n("linelist.tour.filterCounts.content.intro")}</p>
+          <p>{i18n("linelist.tour.filterCounts.content.example")}</p>
         </div>
       );
     }
@@ -91,8 +92,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.export.title")}</strong>
-          <p>{__("linelist.tour.export.content")}</p>
+          <strong>{i18n("linelist.tour.export.title")}</strong>
+          <p>{i18n("linelist.tour.export.content")}</p>
         </div>
       );
     }
@@ -102,11 +103,11 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.import.title")}</strong>
-          <p>{__("linelist.tour.import.content.intro")}</p>
+          <strong>{i18n("linelist.tour.import.title")}</strong>
+          <p>{i18n("linelist.tour.import.content.intro")}</p>
           <ul>
-            <li>{__("linelist.tour.import.content.li1")}</li>
-            <li>{__("linelist.tour.import.content.li2")}</li>
+            <li>{i18n("linelist.tour.import.content.li1")}</li>
+            <li>{i18n("linelist.tour.import.content.li2")}</li>
           </ul>
         </div>
       );
@@ -117,8 +118,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.select.title")}</strong>
-          <p>{__("linelist.tour.select.content")}</p>
+          <strong>{i18n("linelist.tour.select.title")}</strong>
+          <p>{i18n("linelist.tour.select.content")}</p>
         </div>
       );
     }
@@ -128,8 +129,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.selectCounts.title")}</strong>
-          <p>{__("linelist.tour.selectCounts.content")}</p>
+          <strong>{i18n("linelist.tour.selectCounts.title")}</strong>
+          <p>{i18n("linelist.tour.selectCounts.content")}</p>
         </div>
       );
     }
@@ -139,8 +140,8 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.cart.title")}</strong>
-          <p>{__("linelist.tour.cart.content")}</p>
+          <strong>{i18n("linelist.tour.cart.title")}</strong>
+          <p>{i18n("linelist.tour.cart.content")}</p>
         </div>
       );
     }
@@ -150,7 +151,7 @@ export const steps = [
     content() {
       return (
         <div>
-          <strong>{__("linelist.tour.end")}</strong>
+          <strong>{i18n("linelist.tour.end")}</strong>
         </div>
       );
     }

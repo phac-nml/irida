@@ -20,8 +20,8 @@ module.exports = class i18nPropertiesPlugin {
       message_files.forEach(file => {
         const locale = file.match(/messages_(.*)\.properties/).pop();
         const json = parse_messages(file);
-        compilation.assets[`lang/i18n.${locale}.json`] = new RawSource(
-          JSON.stringify(json)
+        compilation.assets[`lang/i18n.${locale}.js`] = new RawSource(
+          `window.translations = ${JSON.stringify(json)}`
         );
       });
       cb();

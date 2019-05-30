@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Tag } from "antd";
 import { SaveTemplateButton } from "./SaveTemplateButton";
@@ -42,7 +43,7 @@ export function TemplateSelectOption(props) {
         <span>
           {saved && index === current ? (
             <Tag color="green">
-              {__("linelist.templates.saved").toUpperCase()}
+              {i18n("linelist.templates.saved").toUpperCase()}
             </Tag>
           ) : null}
           {modified.length === 0 ? null : renderUpdateSave()}

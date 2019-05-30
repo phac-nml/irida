@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
 import { LineListLayoutComponent } from "./LineListLayoutComponent";
@@ -17,7 +18,7 @@ export function LineList(props) {
   if (initializing) {
     return <Loader />;
   } else if (props.error) {
-    return <ErrorAlert message={__("linelist.error.message").replace("{0}", project["name"])} />;
+    return <ErrorAlert message={i18n("linelist.error.message").replace("{0}", project["name"])} />;
   }
 
   return <LineListLayoutComponent {...props} />;

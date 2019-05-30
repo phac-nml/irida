@@ -1,3 +1,4 @@
+import i18n from "i18n";
 import $ from "jquery";
 import "../../vendor/datatables/datatables";
 import "../../vendor/plugins/jquery/select2";
@@ -111,7 +112,7 @@ const config = Object.assign({}, tableConfig, {
         Creates a delete button to remove the user from the project.
          */
         const deleteBtn = createDeleteBtn({
-          title: __("group.remove.button.tooltip")
+          title: i18n("group.remove.button.tooltip")
         });
         return createButtonCell([deleteBtn]);
       }
@@ -233,7 +234,7 @@ $("#submitAddMember").click(function() {
     error() {
       $("#addUserModal").modal("hide");
       showNotification({
-        text: __("group.users.add.notification.failure"),
+        text: i18n("group.users.add.notification.failure"),
         type: "error"
       });
     }

@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Drawer, Form } from "antd";
@@ -84,19 +85,19 @@ class SampleDetailsComponent extends React.Component {
         visible={visible}
       >
         <Form layout="vertical">
-          <DetailsHeading>{__("SampleDetails.general")}</DetailsHeading>
-          <Item label={__("SampleDetails.description")}>
+          <DetailsHeading>{i18n("SampleDetails.general")}</DetailsHeading>
+          <Item label={i18n("SampleDetails.description")}>
             <DetailValue>{sample.description}</DetailValue>
           </Item>
-          <Item label={__("SampleDetails.organism")}>
+          <Item label={i18n("SampleDetails.organism")}>
             <DetailValue>{sample.organism}</DetailValue>
           </Item>
-          <Item label={__("SampleDetails.createdDate")}>
+          <Item label={i18n("SampleDetails.createdDate")}>
             <DetailValue>
               {formatDate({ date: sample.createdDate })}
             </DetailValue>
           </Item>
-          <Item label={__("SampleDetails.modifiedDate")}>
+          <Item label={i18n("SampleDetails.modifiedDate")}>
             <DetailValue>
               {formatDate({ date: sample.modifiedDate })}
             </DetailValue>
@@ -105,7 +106,7 @@ class SampleDetailsComponent extends React.Component {
           {metadataKeys.length === 0 ? null : (
             <div>
               <DetailsHeading>
-                {__("SampleDetails.metadata")}
+                {i18n("SampleDetails.metadata")}
               </DetailsHeading>
               {metadataKeys.map(key => {
                 const item = metadata[key];

@@ -22,7 +22,7 @@ const config = {
   },
   resolve: {
     extensions: [".js", ".jsx"],
-    alias: { "./dist/cpexcel.js": "" }
+    alias: { "./dist/cpexcel.js": "", i18n: path.resolve(__dirname, "resources/js/i18n.js") }
   },
   entry: entries,
   output: {
@@ -83,6 +83,15 @@ const config = {
           {
             loader: "expose-loader",
             options: "angular"
+          }
+        ]
+      },
+      {
+        test: require.resolve("./resources/js/i18n.js"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "i18n"
           }
         ]
       }

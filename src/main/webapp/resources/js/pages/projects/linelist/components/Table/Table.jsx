@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import i18n from "i18n";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
@@ -364,8 +365,8 @@ export class TableComponent extends React.Component {
       Show a notification that allows the user to reverse the change to the value.
        */
       const text = Boolean(data[field])
-        ? __("linelist.editing.undo.full")
-        : __("linelist.editing.undo.empty");
+        ? i18n("linelist.editing.undo.full")
+        : i18n("linelist.editing.undo.empty");
       showUndoNotification(
         {
           text: text
@@ -420,8 +421,8 @@ export class TableComponent extends React.Component {
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
           localeText={{
-            loading: __("linelist.agGrid.loading"),
-            sampleName: __("linelist.agGrid.sampleName"),
+            loading: i18n("linelist.agGrid.loading"),
+            sampleName: i18n("linelist.agGrid.sampleName"),
           }}
           columnDefs={this.props.fields}
           rowData={this.props.entries}

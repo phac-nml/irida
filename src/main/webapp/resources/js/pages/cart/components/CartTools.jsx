@@ -1,4 +1,5 @@
 import React, { Component, lazy, Suspense } from "react";
+import i18n from "i18n";
 import { Location, navigate, Router } from "@reach/router";
 import { Row } from "antd";
 import styled from "styled-components";
@@ -91,7 +92,7 @@ export default class CartTools extends Component {
       this.state.fromGalaxy
         ? {
             link: `${window.TL.BASE_URL}cart/galaxy`,
-            text: __("CartTools.menu.galaxy"),
+            text: i18n("CartTools.menu.galaxy"),
             component: (
               <GalaxyComponent
                 key="galaxy"
@@ -102,7 +103,7 @@ export default class CartTools extends Component {
         : null,
       {
         link: `${window.TL.BASE_URL}cart/pipelines`,
-        text: __("CartTools.menu.pipelines"),
+        text: i18n("CartTools.menu.pipelines"),
         component: (
           <Pipelines
             key="pipelines"

@@ -42,7 +42,7 @@
 			</div>
 		</div>
 	</script>
-
+	<script th:src="@{/dist/lang/i18n.__${#locale.language}__.js}"></script>
 	<script th:inline="javascript">
 		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
@@ -83,7 +83,7 @@
 	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-	<script th:src="@{/dist/js/app.__${#locale.language}__.bundle.js}"></script>
+	<script th:src="@{/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">
 		<!--/* optional script tags */-->

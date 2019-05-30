@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import { useStateValue } from "./GalaxyState";
 import { Button } from "antd";
 import { actions } from "./reducer";
@@ -56,7 +57,7 @@ export function GalaxySubmission() {
       loading={submitted}
       onClick={submitToGalaxy}
     >
-      {__("GalaxyFinalSubmission.submit")}
+      {i18n("GalaxyFinalSubmission.submit")}
     </Button>
   );
 }

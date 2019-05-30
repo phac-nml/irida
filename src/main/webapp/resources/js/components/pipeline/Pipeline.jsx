@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Button, Card } from "antd";
 import styled from "styled-components";
@@ -72,7 +73,7 @@ export default class Pipeline extends React.Component {
                   className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
                   href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
                 >
-                  {__("pipelines.cart.select")}
+                  {i18n("pipelines.cart.select")}
                 </Button>
               ]
             : []

@@ -1,10 +1,12 @@
 import React from "react";
+import i18n from "i18n";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Layout } from "antd";
 import CartSamples from "./CartSamples";
 import { grey2 } from "../../../styles/colors";
 import CartNotification from "./CartNotification";
+
 const { Sider } = Layout;
 
 function CartSamplesComponent({ count, collapsed, loaded }) {
@@ -20,13 +22,13 @@ function CartSamplesComponent({ count, collapsed, loaded }) {
       {count === 0 ? (
         <CartNotification
           icon="shopping-cart"
-          text={__("CartEmpty.heading")}
+          text={i18n("CartEmpty.heading")}
         />
       ) : loaded ? (
         <CartSamples />
       ) : (
         <CartNotification
-          text={__("cart.noneMatchingFilter")}
+          text={i18n("cart.noneMatchingFilter")}
           icon="warning"
         />
       )}

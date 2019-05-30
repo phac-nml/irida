@@ -1,3 +1,4 @@
+import i18n from "i18n";
 import $ from "jquery";
 import {
   createButtonCell,
@@ -80,7 +81,7 @@ $dt.on("click", ".remove-btn", function(e) {
               },
               error: function() {
                 showNotification({
-                  text: __("group.remove.notification.failure"),
+                  text: i18n("group.remove.notification.failure"),
                   type: "error"
                 });
                 modal.modal("hide");

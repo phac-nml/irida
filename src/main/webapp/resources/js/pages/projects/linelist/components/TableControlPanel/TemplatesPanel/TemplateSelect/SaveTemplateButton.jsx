@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Button } from "antd";
 
@@ -26,7 +27,7 @@ export class SaveTemplateButton extends React.Component {
         onClick={this.showSaveModal}
         disabled={typeof this.props.template === "undefined"}
       >
-        {__("linelist.templates.saveModified")}
+        {i18n("linelist.templates.saveModified")}
       </Button>
     );
   }

@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 import { Button, Dropdown, Icon, Menu } from "antd";
 import { grey1, grey4, grey5 } from "../../../styles/colors";
@@ -15,12 +16,12 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
   >
     <Menu.Item>
       <div onClick={removeSample} className="t-delete-sample">
-        {__("SampleRenderer.remove.sample")}
+        {i18n("SampleRenderer.remove.sample")}
       </div>
     </Menu.Item>
     <Menu.Item>
       <div onClick={removeProject} className="t-delete-project">
-        {__("SampleRenderer.remove.project")}
+        {i18n("SampleRenderer.remove.project")}
       </div>
     </Menu.Item>
   </Menu>

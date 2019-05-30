@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import PropTypes from "prop-types";
 
 /**
@@ -7,7 +8,7 @@ import PropTypes from "prop-types";
 export function FilteredCounts(props) {
   return (
     <span tour="tour-filter-counts">
-      {__("linelist.infobar.filterCounts")
+      {i18n("linelist.infobar.filterCounts")
         .replace("[FILTER_COUNT]", props.filterCount)
         .replace("[TOTAL]", props.totalSamples)}
     </span>

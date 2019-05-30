@@ -1,6 +1,8 @@
 const angular = require("angular");
-require("ng-file-upload");
+import i18n from "i18n";
 import { convertFileSize } from "../../utilities/file.utilities";
+
+require("ng-file-upload");
 require("../../../sass/pages/sample-files.scss");
 
 /**
@@ -113,7 +115,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
     vm.uploading = true;
 
     $window.onbeforeunload = function() {
-      return __("project.samples.files.upload.page-leave");
+      return i18n("project.samples.files.upload.page-leave");
     };
 
     fileUpload = Upload.upload({

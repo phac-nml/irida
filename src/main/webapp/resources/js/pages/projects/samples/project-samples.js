@@ -1,4 +1,5 @@
 import $ from "jquery";
+import i18n from "i18n";
 import chroma from "chroma-js";
 import {
   createItemLink,
@@ -234,13 +235,13 @@ const config = Object.assign({}, tableConfig, {
   buttons: ["selectAll", "selectNone"],
   language: {
     select: {
-      none: __("project.samples.counts.none"),
-      one: __("project.samples.counts.one"),
-      other: __("project.samples.counts.more")
+      none: i18n("project.samples.counts.none"),
+      one: i18n("project.samples.counts.one"),
+      other: i18n("project.samples.counts.more")
     },
     buttons: {
-      selectAll: __("project.samples.select.selectAll"),
-      selectNone: __("project.samples.select.selectNone")
+      selectAll: i18n("project.samples.select.selectAll"),
+      selectNone: i18n("project.samples.select.selectNone")
     }
   },
   columnDefs: [
@@ -601,7 +602,7 @@ function displayFilters(filters) {
 
   if (filters.has(FILTERS.FILTER_BY_NAME)) {
     createChip(
-      __("project.sample.filter-name"),
+      i18n("project.sample.filter-name"),
       filters.get(FILTERS.FILTER_BY_NAME),
       () => {
         filters.delete(FILTERS.FILTER_BY_NAME);
@@ -612,7 +613,7 @@ function displayFilters(filters) {
 
   if (filters.has(FILTERS.FILTER_BY_ORGANISM)) {
     createChip(
-      __("project.sample.filter-organism"),
+      i18n("project.sample.filter-organism"),
       filters.get(FILTERS.FILTER_BY_ORGANISM),
       () => {
         filters.delete(FILTERS.FILTER_BY_ORGANISM);
@@ -630,7 +631,7 @@ function displayFilters(filters) {
     );
     const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
     const range = `${start} - ${end}`;
-    createChip(__("project.sample.filter-date.label"), range, () => {
+    createChip(i18n("project.sample.filter-date.label"), range, () => {
       filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
       filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
       table.ajax.reload();

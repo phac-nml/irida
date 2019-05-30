@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "i18n";
 import { useStateValue } from "./GalaxyState";
 import { Alert, Icon } from "antd";
 import { SPACE_SM } from "../../styles/spacing";
@@ -14,7 +15,7 @@ export function GalaxySamples() {
     <div style={{ marginBottom: SPACE_SM }}>
       {fetchingSamples ? (
         <Alert
-          message={__("GalaxySamples.processing")}
+          message={i18n("GalaxySamples.processing")}
           icon={<Icon type="loading" />}
           showIcon
           type="info"
