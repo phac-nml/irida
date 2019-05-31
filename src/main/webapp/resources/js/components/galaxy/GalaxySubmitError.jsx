@@ -1,5 +1,5 @@
 import React from "react";
-import i18n from "i18n";
+
 import { useStateValue } from "./GalaxyState";
 import { Alert } from "antd";
 import { SPACE_SM } from "../../styles/spacing";

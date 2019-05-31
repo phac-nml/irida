@@ -1,5 +1,4 @@
 import React from "react";
-import i18n from "i18n";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Drawer, Form } from "antd";
@@ -55,7 +54,6 @@ const IdWrapper = styled.span`
   padding: ${SPACE_XS} ${SPACE_SM};
   border-radius: 4px;
 `;
-
 /**
  * Use this component to display a drawer on the side of the screen displaying the
  * details of a sample.

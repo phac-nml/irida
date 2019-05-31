@@ -1,4 +1,3 @@
-import i18n from "i18n";
 import "../../vendor/datatables/datatables";
 import "../../vendor/datatables/datatables-buttons";
 import $ from "jquery";

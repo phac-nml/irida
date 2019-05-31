@@ -1,5 +1,5 @@
 const angular = require("angular");
-import i18n from "i18n";
+
 import { convertFileSize } from "../../utilities/file.utilities";
 
 require("ng-file-upload");

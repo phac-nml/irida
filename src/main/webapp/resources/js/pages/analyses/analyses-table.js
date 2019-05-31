@@ -1,4 +1,3 @@
-import i18n from "i18n";
 import "../../../sass/pages/analyses-list.scss";
 import "../../vendor/datatables/datatables";
 import $ from "jquery";

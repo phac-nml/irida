@@ -3,7 +3,7 @@
  * for handling user / group project roles.
  */
 import $ from "jquery";
-import i18n from "i18n";
+
 import "./../../vendor/plugins/jquery/select2";
 import "./../../vendor/datatables/datatables";
 import {

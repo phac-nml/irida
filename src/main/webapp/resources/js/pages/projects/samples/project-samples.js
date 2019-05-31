@@ -1,5 +1,5 @@
 import $ from "jquery";
-import i18n from "i18n";
+
 import chroma from "chroma-js";
 import {
   createItemLink,

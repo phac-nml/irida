@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import i18n from "i18n";
+
 import { Spin } from "antd";
 
 export class LoadingOverlay extends Component {

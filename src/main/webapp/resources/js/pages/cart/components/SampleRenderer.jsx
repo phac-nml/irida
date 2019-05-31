@@ -1,5 +1,5 @@
 import React from "react";
-import i18n from "i18n";
+
 import PropTypes from "prop-types";
 import { Button, Dropdown, Icon, Menu } from "antd";
 import { grey1, grey4, grey5 } from "../../../styles/colors";

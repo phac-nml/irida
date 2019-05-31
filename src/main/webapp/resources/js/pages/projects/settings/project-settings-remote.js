@@ -2,7 +2,6 @@
  * @file responsible for handling interactions on the Project > Settings > Remote Page.
  */
 
-import i18n from "i18n";
 import { showNotification } from "../../../modules/notifications";
 import {
   initConnectRemoteApi,

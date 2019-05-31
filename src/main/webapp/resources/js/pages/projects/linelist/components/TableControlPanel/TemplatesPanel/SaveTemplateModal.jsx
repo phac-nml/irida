@@ -1,5 +1,5 @@
 import React from "react";
-import i18n from "i18n";
+
 import isEqual from "lodash/isEqual";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Form, Modal, Select } from "antd";

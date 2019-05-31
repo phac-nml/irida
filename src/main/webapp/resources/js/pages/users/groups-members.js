@@ -1,4 +1,3 @@
-import i18n from "i18n";
 import $ from "jquery";
 import "../../vendor/datatables/datatables";
 import "../../vendor/plugins/jquery/select2";

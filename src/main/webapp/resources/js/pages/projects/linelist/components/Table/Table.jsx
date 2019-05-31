@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import i18n from "i18n";
+
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";

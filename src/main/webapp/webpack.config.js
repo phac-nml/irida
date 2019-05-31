@@ -1,7 +1,8 @@
 const path = require("path");
+const webpack = require("webpack");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const i18nPropertiesPlugin = require("./webpack/i18nPropertiesPlugin");
+const i18nPropertiesPlugin = require("./webpack/i18nPropertiesWebpackPlugin");
 
 const dev = require("./webpack.config.dev");
 const prod = require("./webpack.config.prod");
@@ -22,7 +23,10 @@ const config = {
   },
   resolve: {
     extensions: [".js", ".jsx"],
-    alias: { "./dist/cpexcel.js": "", i18n: path.resolve(__dirname, "resources/js/i18n.js") }
+    alias: {
+      "./dist/cpexcel.js": "",
+      i18n: path.resolve(__dirname, "resources/js/i18n.js")
+    }
   },
   entry: entries,
   output: {
@@ -85,23 +89,28 @@ const config = {
             options: "angular"
           }
         ]
-      },
-      {
-        test: require.resolve("./resources/js/i18n.js"),
-        use: [
-          {
-            loader: "expose-loader",
-            options: "i18n"
-          }
-        ]
       }
+      // {
+      //   test: require.resolve("./resources/js/i18n.js"),
+      //   use: [
+      //     {
+      //       loader: "expose-loader",
+      //       options: "i18n"
+      //     }
+      //   ]
+      // }
     ]
   },
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
     }),
-    new i18nPropertiesPlugin({})
+    new i18nPropertiesPlugin({
+      functionName: "i18n"
+    }),
+    new webpack.ProvidePlugin({
+      i18n: path.resolve(path.join(__dirname, "resources/js/i18n.js"))
+    })
   ]
 };
 

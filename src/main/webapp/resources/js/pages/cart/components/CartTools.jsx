@@ -1,5 +1,5 @@
 import React, { Component, lazy, Suspense } from "react";
-import i18n from "i18n";
+
 import { Location, navigate, Router } from "@reach/router";
 import { Row } from "antd";
 import styled from "styled-components";

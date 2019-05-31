@@ -1,5 +1,5 @@
 import "../../vendor/datatables/datatables";
-import i18n from "i18n";
+
 import $ from "jquery";
 import {
   createItemLink,
