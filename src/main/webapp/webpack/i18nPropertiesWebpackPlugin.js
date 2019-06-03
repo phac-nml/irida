@@ -28,8 +28,10 @@ class i18nPropertiesWebpackPlugin {
     this.options = options || {};
 
     const message_files = glob.sync("../resources/i18n/messages_*.properties");
+    this.locales = [];
     this.translations = message_files.reduce((hash, file) => {
       const locale = file.match(/messages_(.*)\.properties/).pop();
+      this.locales.push(locale);
       hash[locale] = parse_messages(file);
       return hash;
     }, {});
@@ -78,33 +80,44 @@ class i18nPropertiesWebpackPlugin {
             parser.hooks.call
               .for(this.functionName)
               .tap("i18nPropertiesWebpackPlugin", expr => {
-                const value = expr.arguments[0].value;
+                const key = expr.arguments[0].value;
                 const entry =
                   reverseEntryPoints[
                     resolveEntry(parser.state.module, reverseEntryPoints)
                   ];
                 this.entryTranslations[entry] =
                   this.entryTranslations[entry] || {};
-                this.entryTranslations[entry][value] = this.translations.en[value];
+                // this.entryTranslations[entry][value] = this.translations.en[value];
+                this.locales.forEach(locale => {
+                  this.entryTranslations[entry][locale] =
+                    this.entryTranslations[entry][locale] || {};
+                  this.entryTranslations[entry][locale][
+                    key
+                  ] = this.translations[locale][key];
+                });
               });
           });
       }
     );
 
     compiler.hooks.done.tap("i18nPropertiesWebpackPlugin", () => {
-      console.log(this.entryTranslations);
-    });
+      const dir = "./dist/i18n";
+      if(!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
 
-    // compiler.plugin("emit", (compilation, cb) => {
-    //   message_files.forEach(file => {
-    //     const locale = file.match(/messages_(.*)\.properties/).pop();
-    //     const json = parse_messages(file);
-    //     compilation.assets[`lang/i18n.${locale}.js`] = new RawSource(
-    //       `window.translations = ${JSON.stringify(json)}`
-    //     );
-    //   });
-    //   cb();
-    // });
+      Object.keys(this.entryTranslations).forEach(entry => {
+        // Loop evey each language
+        Object.keys(this.entryTranslations[entry]).forEach(lang => {
+          fs.writeFileSync(
+            `./dist/i18n/${entry}.${lang}.json`,
+            JSON.stringify(this.entryTranslations[entry][lang], null, 2)
+          );
+        });
+      });
+
+      console.log("Done translations");
+    });
   }
 }
 
