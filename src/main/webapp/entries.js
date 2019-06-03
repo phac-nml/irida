@@ -8,6 +8,7 @@ module.exports = {
     "@babel/polyfill",
     "expose-loader?$!jquery",
     "expose-loader?angular!angular",
+    "expose-loader?i18n!./resources/js/i18n.js",
     "./resources/js/vendors"
   ],
   "angular-st": "expose-loader?angular!angular", // This is just here for pages that need their own angular.

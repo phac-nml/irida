@@ -24,8 +24,7 @@ const config = {
   resolve: {
     extensions: [".js", ".jsx"],
     alias: {
-      "./dist/cpexcel.js": "",
-      i18n: path.resolve(__dirname, "resources/js/i18n.js")
+      "./dist/cpexcel.js": ""
     }
   },
   entry: entries,
@@ -90,15 +89,6 @@ const config = {
           }
         ]
       }
-      // {
-      //   test: require.resolve("./resources/js/i18n.js"),
-      //   use: [
-      //     {
-      //       loader: "expose-loader",
-      //       options: "i18n"
-      //     }
-      //   ]
-      // }
     ]
   },
   plugins: [
@@ -109,7 +99,7 @@ const config = {
       functionName: "i18n"
     }),
     new webpack.ProvidePlugin({
-      i18n: path.resolve(path.join(__dirname, "resources/js/i18n.js"))
+      i18n: path.resolve(path.join(__dirname, "resources/js/i18n"))
     })
   ]
 };

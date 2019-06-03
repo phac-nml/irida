@@ -102,7 +102,7 @@ class i18nPropertiesWebpackPlugin {
 
     compiler.hooks.done.tap("i18nPropertiesWebpackPlugin", () => {
       const dir = "./dist/i18n";
-      if(!fs.existsSync(dir)) {
+      if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
 
@@ -110,8 +110,10 @@ class i18nPropertiesWebpackPlugin {
         // Loop evey each language
         Object.keys(this.entryTranslations[entry]).forEach(lang => {
           fs.writeFileSync(
-            `./dist/i18n/${entry}.${lang}.json`,
-            JSON.stringify(this.entryTranslations[entry][lang], null, 2)
+            `./dist/i18n/${entry}.${lang}.js`,
+            `window.translations = ` +
+              JSON.stringify(this.entryTranslations[entry][lang], null, 2) +
+              ";"
           );
         });
       });
