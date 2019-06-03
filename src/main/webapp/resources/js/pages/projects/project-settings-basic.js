@@ -16,7 +16,7 @@ const projectSettings = (function(page, notifications) {
       },
       fail: function() {
         notifications.show({
-          text: window.__i18n("project.settings.notifications.error"),
+          text: i18n("project.settings.notifications.error"),
           type: "error"
         });
       }
@@ -67,7 +67,7 @@ const projectSettings = (function(page, notifications) {
       },
       fail: function() {
         notifications.show({
-          text: window.__i18n("project.settings.notifications.error"),
+          text: i18n("project.settings.notifications.error"),
           type: "error"
         });
       }
@@ -95,7 +95,7 @@ const projectSettings = (function(page, notifications) {
             $("#minimum-coverage-display").html(minimumCoverage + "x");
           } else {
             $("#minimum-coverage-display").html(
-              window.__i18n("project.settings.notset")
+              i18n("project.settings.notset")
             );
           }
 
@@ -103,16 +103,14 @@ const projectSettings = (function(page, notifications) {
             $("#maximum-coverage-display").html(maximumCoverage + "x");
           } else {
             $("#maximum-coverage-display").html(
-              window.__i18n("project.settings.notset")
+              i18n("project.settings.notset")
             );
           }
 
           if (genomeSize) {
             $("#genome-size-display").html(genomeSize + "bp");
           } else {
-            $("#genome-size-display").html(
-              window.__i18n("project.settings.notset")
-            );
+            $("#genome-size-display").html(i18n("project.settings.notset"));
           }
 
           $(".edit-coverage").toggle();
@@ -120,7 +118,7 @@ const projectSettings = (function(page, notifications) {
       },
       fail: function() {
         notifications.show({
-          text: window.__i18n("project.settings.notifications.error"),
+          text: i18n("project.settings.notifications.error"),
           type: "error"
         });
       }

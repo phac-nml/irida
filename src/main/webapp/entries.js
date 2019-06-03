@@ -37,6 +37,8 @@ module.exports = {
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "project-settings-basic":
+    "./resources/js/pages/projects/project-settings-basic.js",
   "project-settings-remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
