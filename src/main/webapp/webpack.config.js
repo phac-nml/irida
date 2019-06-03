@@ -72,6 +72,15 @@ const config = {
             options: "jQuery"
           }
         ]
+      },
+      {
+        test: require.resolve("angular"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "angular"
+          }
+        ]
       }
     ]
   },
