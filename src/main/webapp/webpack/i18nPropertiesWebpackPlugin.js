@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const glob = require("glob");
 const properties = require("properties");
 const { RawSource } = require("webpack-sources");
@@ -101,16 +102,16 @@ class i18nPropertiesWebpackPlugin {
     );
 
     compiler.hooks.done.tap("i18nPropertiesWebpackPlugin", () => {
-      const dir = "./dist/i18n";
+      const dir = path.join(compiler.options.output.path, "i18n");
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+        fs.mkdirSync(dir, {recursive: true});
       }
 
       Object.keys(this.entryTranslations).forEach(entry => {
         // Loop evey each language
         Object.keys(this.entryTranslations[entry]).forEach(lang => {
           fs.writeFileSync(
-            `./dist/i18n/${entry}.${lang}.js`,
+            path.join(dir,`${entry}.${lang}.js`),
             `window.translations = ` +
               JSON.stringify(this.entryTranslations[entry][lang], null, 2) +
               ";"

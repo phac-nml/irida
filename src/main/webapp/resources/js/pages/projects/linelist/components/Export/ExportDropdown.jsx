@@ -21,7 +21,7 @@ export function ExportDropDown(props) {
   return (
     <Dropdown overlay={menu}>
       <Button tour="tour-export">
-        {i18n("linelist.toolbar.exportsds")}
+        {i18n("linelist.toolbar.export")}
         <i
           className="fas fa-chevron-down spaced-left__sm"
           data-fa-transform="shrink-4"
