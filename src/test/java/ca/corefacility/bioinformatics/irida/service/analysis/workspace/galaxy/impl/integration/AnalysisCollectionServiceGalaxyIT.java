@@ -79,7 +79,7 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisCollectionServiceGalaxyIT {
-
+	
 	@Autowired
 	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
 
@@ -296,8 +296,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
 		assertTrue("dataset collection with name " + INPUTS_SINGLE_NAME + " should have been created in history",
 				contentsMap.containsKey(INPUTS_SINGLE_NAME));
+		
+		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFilePathA.getFileName().toString()).getId());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(),
-				contentsMap.get(sequenceFileNameCompressedA).getHistoryContentType());
+				sequenceFileACompressedDataset.getDataTypeExt());
 
 		// verify correct collection has been created
 		assertEquals(
@@ -357,7 +360,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_SINGLE_NAME));
 		
 		// verify correct file types
-		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(history.getId(),
+		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(createdHistory.getId(),
 				contentsMap.get(sequenceFileNameCompressedA).getId());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
 				sequenceFileACompressedDataset.getDataTypeExt());
@@ -406,10 +409,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// verify correct file types
-		Dataset sequenceFileADataset = historiesClient.showDataset(history.getId(),
+		Dataset sequenceFileADataset = historiesClient.showDataset(createdHistory.getId(),
 				contentsMap.get(sequenceFilePathA.toFile().getName()).getId());
-		Dataset sequenceFileBDataset = historiesClient.showDataset(history.getId(),
-				contentsMap.get(sequenceFilePathB.toFile().getName()).getId());
+		Dataset sequenceFileBDataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFilePath2A.toFile().getName()).getId());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(), sequenceFileADataset.getDataTypeExt());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(), sequenceFileBDataset.getDataTypeExt());
 
@@ -509,9 +512,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// verify correct file types
-		Dataset sequenceFileADataset = historiesClient.showDataset(history.getId(),
+		Dataset sequenceFileADataset = historiesClient.showDataset(createdHistory.getId(),
 				contentsMap.get(sequenceFileNameCompressedA).getId());
-		Dataset sequenceFileBDataset = historiesClient.showDataset(history.getId(),
+		Dataset sequenceFileBDataset = historiesClient.showDataset(createdHistory.getId(),
 				contentsMap.get(sequenceFileNameCompressedB).getId());
 		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
 				sequenceFileADataset.getDataTypeExt());
