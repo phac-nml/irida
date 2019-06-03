@@ -8,9 +8,11 @@ import PropTypes from "prop-types";
 export function FilteredCounts(props) {
   return (
     <span tour="tour-filter-counts">
-      {i18n("linelist.infobar.filterCounts")
-        .replace("[FILTER_COUNT]", props.filterCount)
-        .replace("[TOTAL]", props.totalSamples)}
+      {i18n(
+        "linelist.infobar.filterCounts",
+        props.filterCount,
+        props.totalSamples
+      )}
     </span>
   );
 }

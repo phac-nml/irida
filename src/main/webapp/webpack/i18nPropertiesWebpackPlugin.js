@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const properties = require("properties");
-const { RawSource } = require("webpack-sources");
 
 const parse_messages = source => {
   const messages_source = fs.readFileSync(source, { encoding: "utf-8" });
@@ -81,37 +80,45 @@ class i18nPropertiesWebpackPlugin {
             parser.hooks.call
               .for(this.functionName)
               .tap("i18nPropertiesWebpackPlugin", expr => {
-                const key = expr.arguments[0].value;
-                const entry =
-                  reverseEntryPoints[
-                    resolveEntry(parser.state.module, reverseEntryPoints)
-                  ];
-                this.entryTranslations[entry] =
-                  this.entryTranslations[entry] || {};
-                // this.entryTranslations[entry][value] = this.translations.en[value];
-                this.locales.forEach(locale => {
-                  this.entryTranslations[entry][locale] =
-                    this.entryTranslations[entry][locale] || {};
-                  this.entryTranslations[entry][locale][
-                    key
-                  ] = this.translations[locale][key];
-                });
+                /*
+                Make sure an argument was passed to the function.
+                 */
+                if (expr.arguments.length) {
+                  const key = expr.arguments[0].value;
+                  const entry =
+                    reverseEntryPoints[
+                      resolveEntry(parser.state.module, reverseEntryPoints)
+                    ];
+                  this.entryTranslations[entry] =
+                    this.entryTranslations[entry] || {};
+                  // this.entryTranslations[entry][value] = this.translations.en[value];
+                  this.locales.forEach(locale => {
+                    this.entryTranslations[entry][locale] =
+                      this.entryTranslations[entry][locale] || {};
+                    this.entryTranslations[entry][locale][
+                      key
+                    ] = this.translations[locale][key];
+                  });
+                }
               });
           });
       }
     );
 
+    /*
+    Write the language files for each entry.
+     */
     compiler.hooks.done.tap("i18nPropertiesWebpackPlugin", () => {
       const dir = path.join(compiler.options.output.path, "i18n");
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {recursive: true});
+        fs.mkdirSync(dir, { recursive: true });
       }
 
       Object.keys(this.entryTranslations).forEach(entry => {
         // Loop evey each language
         Object.keys(this.entryTranslations[entry]).forEach(lang => {
           fs.writeFileSync(
-            path.join(dir,`${entry}.${lang}.js`),
+            path.join(dir, `${entry}.${lang}.js`),
             `window.translations = ` +
               JSON.stringify(this.entryTranslations[entry][lang], null, 2) +
               ";"

@@ -365,17 +365,20 @@ export class TableComponent extends React.Component {
       Show a notification that allows the user to reverse the change to the value.
        */
       const text = Boolean(data[field])
-        ? i18n("linelist.editing.undo.full")
-        : i18n("linelist.editing.undo.empty");
+        ? i18n(
+            "linelist.editing.undo.full",
+            `<strong>${data[FIELDS.sampleName]}</strong>`,
+            `<strong>${headerName}</strong>`,
+            `<strong>${data[field]}</strong>`
+          )
+        : i18n(
+            "linelist.editing.undo.empty",
+          `<strong>${headerName}</strong>`,
+            `<strong>${data[FIELDS.sampleName]}</strong>`
+          );
       showUndoNotification(
         {
-          text: text
-            .replace(
-              "[SAMPLE_NAME]",
-              `<strong>${data[FIELDS.sampleName]}</strong>`
-            )
-            .replace("[FIELD]", `<strong>${headerName}</strong>`)
-            .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
+          text
         },
         () => {
           /**
@@ -422,7 +425,7 @@ export class TableComponent extends React.Component {
           onFilterChanged={this.setFilterCount}
           localeText={{
             loading: i18n("linelist.agGrid.loading"),
-            sampleName: i18n("linelist.agGrid.sampleName"),
+            sampleName: i18n("linelist.agGrid.sampleName")
           }}
           columnDefs={this.props.fields}
           rowData={this.props.entries}

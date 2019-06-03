@@ -1,12 +1,16 @@
-function getTranslation(key) {
+const getTranslation = key => {
   if (window.translations && window.translations[key])
     return window.translations[key];
   throw new Error(`No internationalization string for key: ${key}`);
-}
+};
 
-function i18n(key) {
+const replaceKeys = (text, args) =>
+  text.replace(/{([0-9]+)}/g, (_, index) => args[index]);
+
+function i18n(key, ...args) {
   try {
-    return getTranslation(key);
+    const text = getTranslation(key);
+    return replaceKeys(text, args);
   } catch (e) {
     console.error(e);
     return `__${key}__`;
