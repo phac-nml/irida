@@ -9,10 +9,7 @@
   "dependencies": {
     "livestampjs": "1.1.2",
     "select2": "3.5.0",
-    "bootstrap": "3.3.7",
     "bower": "*",
-    "angular": "1.6.2",
-    "angular-aria": "1.6.2",
     "angular-ui-router": "0.2.13",
     "datatables": "^1.10.15",
     "angular-bootstrap-switch": "0.4.0",
@@ -23,7 +20,6 @@
     "angular-bootstrap": "0.14.3",
     "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6",
     "noty": "2.3.7",
-    "datatables-bootstrap3-plugin": "~0.4.0",
     "angular-datatables": "~0.5.2",
     "angular-daterangepicker-enhanced": "^0.1.24",
     "lodash": "4.6.1",
@@ -35,7 +31,7 @@
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": "1.6.2",
+    "angular": ">=1.4.0",
     "moment": "2.15.0",
     "datatables": "^1.10.15",
     "angular-bootstrap": "0.14.3"

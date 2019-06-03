@@ -11,7 +11,7 @@ description: "Upgrade Notes"
 
 The majority of IRIDA's upgrade notes can be seen at <https://github.com/phac-nml/irida/blob/master/UPGRADING.md>.  When there are more major upgrades to the IRIDA system, database, deployment, etc. this page will go further in depth about how to properly back up your system, perform the upgrade, and recover from problems.
 
-# 19.04
+# 19.05
 ## FastQC translation to filesystem
 
 This upgrade was built to greatly reduce the size of IRIDA's database (and database backups).  Before this upgrade, any time FastQC was run the output files were saved in the database `analysis_fastqc` table as `longblob` objects.  This worked fine when IRIDA had a smaller number of files, but as some installations are growing larger this is increasing the database size at an alarming rate.  The upgrade will move the FastQC images out of the database and store them in the configured `output.file.base.directory` alongside the other analysis output files.
@@ -70,3 +70,19 @@ What's happened at this point is an error occurred while moving the temporary fi
 4. Remove all directories from your `output.file.base.directory` with an ID **GREATER THAN** the above noted ID.  These files were created as part of the upgrade process.
 5. Retry the upgrade by starting Tomcat again.
 6. Remove the temporary directory created during the failed upgrade.  It will be included in the error message. "... temporary file location (**YOUR TEMP DIRECTORY**)".
+
+#### Database timeout error
+
+If you have lots of sequence files stored in IRIDA, this upgrade can take a while to write all the FastQC results to the filesystem. This could lead to database connection timeout issues (the default timeout is 8 hours for MySQL/MariaDB). You should see a message in your log like below if this error were to occur:
+
+```
+Error: The last packet successfully received from the server was 38,881,098 milliseconds ago.  The last packet sent successfully to the server was 38,885,372 milliseconds ago. is longer than the server configured value of 'wait_timeout'. You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property 'autoReconnect=true' to avoid this problem. [Failed SQL: ALTER TABLE irida_prod_test.analysis_output_file MODIFY file_path VARCHAR(255) NOT NULL]
+```
+
+If you encounter this error, you can increase the database `wait_timeout` value by modifying the database connection string in `/etc/irida/irida.conf` by appending `?sessionVariables=wait_timeout=57600` like below:
+
+```
+jdbc.url=jdbc:mysql://localhost:3306/irida_prod_test?sessionVariables=wait_timeout=57600
+```
+
+Modify `57600` to some appropriate timeout value (in seconds). Once you've made this modification, you will have to go through the instructions above on recovering from an error before restarting the upgrade. Once the upgrade is complete, you can remove this variable from the connection string and restart IRIDA to reset to the default database timeout value.

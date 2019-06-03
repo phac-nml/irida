@@ -132,7 +132,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		// CSS: default location "/static/styles" during development and
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+		registry.addResourceHandler("/dist/**").addResourceLocations("/dist/");
 	}
 
 	@Override

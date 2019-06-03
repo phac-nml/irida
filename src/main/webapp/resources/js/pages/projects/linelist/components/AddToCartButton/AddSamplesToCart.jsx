@@ -1,6 +1,8 @@
 import React from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Button } from "antd";
+import { actions as cartActions } from "../../../../../redux/reducers/cart";
 
 const { i18n } = window.PAGE;
 
@@ -10,12 +12,18 @@ const { i18n } = window.PAGE;
  * @returns {*}
  * @constructor
  */
-export function AddSamplesToCartButton(props) {
+export function AddSamplesToCartButtonComponent({
+  selected,
+  addSamplesToCart
+}) {
+  function addToCart() {
+    addSamplesToCart(selected);
+  }
   return (
     <Button
       tour="tour-cart"
-      disabled={props.selectedCount === 0}
-      onClick={() => props.addSamplesToCart()}
+      disabled={selected.length === 0}
+      onClick={addToCart}
     >
       <i className="fas fa-cart-plus spaced-right__sm" />
       {i18n.linelist.addToCart}
@@ -23,7 +31,20 @@ export function AddSamplesToCartButton(props) {
   );
 }
 
-AddSamplesToCartButton.propTypes = {
-  selectedCount: PropTypes.number.isRequired,
+AddSamplesToCartButtonComponent.propTypes = {
+  selected: PropTypes.array.isRequired,
   addSamplesToCart: PropTypes.func.isRequired
 };
+
+const mapStateToProps = state => ({
+  selected: state.entries.selected
+});
+
+const mapDispatchToProps = dispatch => ({
+  addSamplesToCart: samples => dispatch(cartActions.add(samples))
+});
+
+export const AddSamplesToCartButton = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AddSamplesToCartButtonComponent);

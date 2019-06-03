@@ -58,9 +58,9 @@ public class AgGridColumn {
 	private boolean headerCheckboxSelection;
 
 	/**
-	 * Suppress the filter on this column
+	 * Type of column filter.
 	 */
-	private boolean filter;
+	private String filter;
 
 	/**
 	 * Suppress the ability to resize this column
@@ -166,11 +166,11 @@ public class AgGridColumn {
 		this.headerCheckboxSelection = headerCheckboxSelection;
 	}
 
-	public boolean isFilter() {
+	public String getFilter() {
 		return filter;
 	}
 
-	public void setFilter(boolean filter) {
+	public void setFilter(String filter) {
 		this.filter = filter;
 	}
 

@@ -1,7 +1,20 @@
 Changes
 =======
 
-19.01 to 19.04
+19.05 to 19.09
+---------------
+* [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
+* [UI/Developer]: Removed ImmutableJS from the Line List Page.
+* [UI/Developer]: Moved the path of compiled JavaScript and CSS to `src/main/webapp`.
+* [REST/Developer]: REST API applications can now select which role to add users to a project.
+* [UI/Developer]: Cleaned up some of the redux set up on the linelist page.
+* [UI/Developer]: Removed loading Bootstrap through `bower` and moved it into the webpack build.
+* [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
+* [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
+* [UI/Developer]: Updated `axios` to fix vulnerability.
+* [Workflow]: Fixing bug so that fastq files uploaded to Galaxy will be "fastqsanger" when uncompressed and "fastqsanger.gz" when compressed.
+
+19.01 to 19.05
 ---------------
 * [Documentation]: Added the CalVer updates to the documentation getting started guide.
 * [Documentation]: Added note with link to NGS Linker installation documentation to Command-line Linker modal
@@ -26,7 +39,7 @@ Changes
 * [Documentation]: Added information on fixing `ONLY_FULL_GROUP_BY` sql error to the administrator faq docs.
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: Fixed bug preventing associated projects from being loaded into the project samples table. (19.01.3)
-* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See https://irida.corefacility.ca/documentation/adminstrator/upgrades/#1904 for more information. 
+* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#1905> for more information.
 * [UI]: Added hard wrap on sample name on sample details page.
 * [UI]: New dedicated cart page.
 * [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been deprecated.
@@ -39,7 +52,8 @@ Changes
 * [REST]: Updated http status code returned (400 Bad Request) when uploading files to the wrong type of run
 * [UI/Developer]: Updated to jquery v3.4.0 to fix security issue.
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
-* [Workflow]: Fixing bug so that fastq files uploaded to Galaxy will be "fastqsanger" when uncompressed and "fastqsanger.gz" when compressed.
+* [UI]: Fixed bug causing issues with saving Line List templates.
+* [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
 
 0.22.0 to 19.01
 ----------------
