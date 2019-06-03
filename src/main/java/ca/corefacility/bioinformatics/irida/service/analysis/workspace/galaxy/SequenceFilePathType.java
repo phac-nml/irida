@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -22,7 +23,7 @@ public class SequenceFilePathType {
 	 */
 	public SequenceFilePathType(IridaSequenceFile sequenceFile) {
 		checkNotNull(sequenceFile, "sequenceFile is null");
-		
+
 		this.path = sequenceFile.getFile();
 		this.fileType = sequenceFile.isGzipped() ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER;
 	}
@@ -37,29 +38,17 @@ public class SequenceFilePathType {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((fileType == null) ? 0 : fileType.hashCode());
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		return result;
+		return Objects.hash(fileType, path);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SequenceFilePathType other = (SequenceFilePathType) obj;
-		if (fileType != other.fileType)
-			return false;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.equals(other.path))
-			return false;
-		return true;
+		if (obj instanceof SequenceFilePathType) {
+			SequenceFilePathType other = (SequenceFilePathType) obj;
+
+			return Objects.equals(fileType, other.fileType) && Objects.equals(path, other.path);
+		}
+
+		return false;
 	}
 }
