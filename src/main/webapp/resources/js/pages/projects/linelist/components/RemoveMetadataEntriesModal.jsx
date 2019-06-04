@@ -47,6 +47,7 @@ export default function RemoveMetadataEntriesModal({
 
   return (
     <Modal
+      className="t-delete-entries-modal"
       title={window.PAGE.i18n.RemoveMetadataEntriesModal_title.replace(
         "{name}",
         field.headerName

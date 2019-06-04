@@ -34,7 +34,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
         trigger={["click"]}
         overlay={
           <Menu>
-            <Menu.Item onClick={() => setRemoveEntriesModalVisibility(true)}>
+            <Menu.Item className="t-delete-entries" onClick={() => setRemoveEntriesModalVisibility(true)}>
               {window.PAGE.i18n.MetadataFieldMenu_remove_entries}
             </Menu.Item>
           </Menu>
