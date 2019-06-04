@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { FormattedMessage, IntlProvider } from "react-intl";
+import React from "react";
 import PropTypes from "prop-types";
 import { Icon, Modal } from "antd";
-import { getTranslations } from "../../../../apis/translations/translations";
 
 /**
  * Modal to indicate to the user what will happen when they delete
@@ -20,64 +18,48 @@ export default function RemoveMetadataEntriesModal({
   hideModal,
   removeEntries
 }) {
-  const [translations, setTranslations] = useState(null);
-
-  /*
-  Since this component is loaded dynamically, we need to fetch the translations.
-   */
-  useEffect(() => {
-    getTranslations({
-      page: "linelist",
-      component: "RemoveMetadataEntriesModal"
-    }).then(data => {
-      setTranslations(data);
-    });
-  }, []);
-
   function removeColumnEntries() {
     removeEntries(field.headerName);
     hideModal();
   }
 
+  const introStrings = window.PAGE.i18n.RemoveMetadataEntriesModal_intro.split(
+    "{name}"
+  );
+  const intro = (
+    <p>
+      {introStrings[0]}
+      <span style={{ textDecoration: "underline" }}>{field.headerName}</span>
+      {introStrings[1]}
+    </p>
+  );
+
+  const warningStrings = window.PAGE.i18n.RemoveMetadataEntriesModal_warning.split(
+    "{icon}"
+  );
+  const warning = (
+    <p>
+      {warningStrings[0]}
+      <Icon type="lock" theme="twoTone" />
+      {warningStrings[1]}
+    </p>
+  );
+
   return (
-    <IntlProvider messages={translations}>
-      <Modal
-        title={
-          <FormattedMessage
-            id="RemoveMetadataEntriesModal_title"
-            values={{
-              name: field.headerName
-            }}
-          />
-        }
-        visible={visible}
-        okType="danger"
-        okText={<FormattedMessage id="RemoveMetadataEntriesModal_confirm" />}
-        onOk={removeColumnEntries}
-        onCancel={hideModal}
-      >
-        <p>
-          <FormattedMessage
-            id="RemoveMetadataEntriesModal_intro"
-            values={{
-              name: (
-                <span style={{ textDecoration: "underline" }}>
-                  {field.headerName}
-                </span>
-              )
-            }}
-          />
-        </p>
-        <p>
-          <FormattedMessage
-            id="RemoveMetadataEntriesModal_warning"
-            values={{
-              icon: <Icon type="lock" theme="twoTone" />
-            }}
-          />
-        </p>
-      </Modal>
-    </IntlProvider>
+    <Modal
+      title={window.PAGE.i18n.RemoveMetadataEntriesModal_title.replace(
+        "{name}",
+        field.headerName
+      )}
+      visible={visible}
+      okType="danger"
+      okText={window.PAGE.i18n.RemoveMetadataEntriesModal_confirm}
+      onOk={removeColumnEntries}
+      onCancel={hideModal}
+    >
+      {intro}
+      {warning}
+    </Modal>
   );
 }
 

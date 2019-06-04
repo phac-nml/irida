@@ -1,7 +1,5 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
-import { FormattedMessage, IntlProvider } from "react-intl";
+import React, { lazy, Suspense, useState } from "react";
 import { Dropdown, Icon, Menu } from "antd";
-import { getTranslations } from "../../../../apis/translations/translations";
 
 /*
 Lazy load the modal since this does not need to be used all the time.
@@ -23,17 +21,6 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
     isRemoveEntriesModalVisible,
     setRemoveEntriesModalVisibility
   ] = useState(false);
-  const [translations, setTranslations] = useState(null);
-
-  /*
-  On component mounting, get the translations. Since this component is rendered
-  separately from the main app (through ag-grid) it needs to get its own translations.
-   */
-  useEffect(() => {
-    getTranslations({ page: "linelist", component: "MetadataFieldMenu" }).then(
-      data => setTranslations(data)
-    );
-  }, []);
 
   /**
    * Hide the delete
@@ -42,31 +29,29 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
     setRemoveEntriesModalVisibility(false);
 
   return (
-    <IntlProvider messages={translations}>
-      <div>
-        <Dropdown
-          trigger={["click"]}
-          overlay={
-            <Menu>
-              <Menu.Item onClick={() => setRemoveEntriesModalVisibility(true)}>
-                <FormattedMessage id="MetadataFieldMenu_remove_entries" />
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Icon type="more" style={{ display: "inline-block" }} />
-        </Dropdown>
-        {isRemoveEntriesModalVisible ? (
-          <Suspense fallback={<span />}>
-            <DeleteMetadataEntriesModal
-              field={field}
-              visible={isRemoveEntriesModalVisible}
-              hideModal={hideRemoveMetadataEntriesModal}
-              removeEntries={removeColumnData}
-            />
-          </Suspense>
-        ) : null}
-      </div>
-    </IntlProvider>
+    <div>
+      <Dropdown
+        trigger={["click"]}
+        overlay={
+          <Menu>
+            <Menu.Item onClick={() => setRemoveEntriesModalVisibility(true)}>
+              {window.PAGE.i18n.MetadataFieldMenu_remove_entries}
+            </Menu.Item>
+          </Menu>
+        }
+      >
+        <Icon type="more" style={{ display: "inline-block" }} />
+      </Dropdown>
+      {isRemoveEntriesModalVisible ? (
+        <Suspense fallback={<span />}>
+          <DeleteMetadataEntriesModal
+            field={field}
+            visible={isRemoveEntriesModalVisible}
+            hideModal={hideRemoveMetadataEntriesModal}
+            removeEntries={removeColumnData}
+          />
+        </Suspense>
+      ) : null}
+    </div>
   );
 }
