@@ -21,9 +21,9 @@
 		phoneNumber="0000" username="uploader" enabled="true" system_role="ROLE_SEQUENCER"
 		credentialsNonExpired="true" />
 
-	<project id="1" createdDate="2013-07-18 14:22:19.0" name="project22" sistr_typing_uploads="OFF" />
-	<project id="4" createdDate="2013-07-18 14:22:19.0" name="project22" sistr_typing_uploads="OFF" />
-	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" sistr_typing_uploads="OFF" />
+	<project id="1" createdDate="2013-07-18 14:22:19.0" name="project22"  />
+	<project id="4" createdDate="2013-07-18 14:22:19.0" name="project22"  />
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22"  />
 
 	<sample id="1"  sampleName="sample1"
 		createdDate="2013-07-18 14:20:19.0" collectionDate="2019-01-24" />

@@ -1,36 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.project;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -44,6 +13,18 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A project object.
@@ -76,17 +57,6 @@ public class Project extends IridaResourceSupport
 	private String projectDescription;
 
 	private String remoteURL;
-
-	@Deprecated
-	@NotNull
-	@Column(name="assemble_uploads")
-	private boolean assembleUploads;
-
-	@Deprecated
-	@NotNull
-	@Column(name="sistr_typing_uploads")
-	@Enumerated(EnumType.STRING)
-	private AutomatedSISTRSetting sistrTypingUploads;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectUserJoin> users;
@@ -142,8 +112,6 @@ public class Project extends IridaResourceSupport
 	private ProjectSyncFrequency syncFrequency;
 
 	public Project() {
-		assembleUploads = false;
-		sistrTypingUploads = AutomatedSISTRSetting.OFF;
 		createdDate = new Date();
 	}
 
@@ -241,16 +209,6 @@ public class Project extends IridaResourceSupport
 		this.organism = organism;
 	}
 
-	@Deprecated
-	public void setAssembleUploads(boolean assembleUploads) {
-		this.assembleUploads = assembleUploads;
-	}
-
-	@Deprecated
-	public boolean getAssembleUploads(){
-		return assembleUploads;
-	}
-	
 	@Override
 	public RemoteStatus getRemoteStatus() {
 		return remoteStatus;
@@ -291,30 +249,5 @@ public class Project extends IridaResourceSupport
 	
 	public void setMaximumCoverage(Integer maximumCoverage) {
 		this.maximumCoverage = maximumCoverage;
-	}
-
-	@Deprecated
-	@JsonIgnore
-	public AutomatedSISTRSetting getSistrTypingUploads() {
-		return sistrTypingUploads;
-	}
-
-	@Deprecated
-	@JsonIgnore
-	public void setSistrTypingUploads(AutomatedSISTRSetting sistrTypingUploads) {
-		this.sistrTypingUploads = sistrTypingUploads;
-	}
-
-	/**
-	 * Setting for how to run automated SISTR analyses.
-	 * OFF - Do not run
-	 * AUTO - Run SISTR
-	 * AUTO_METADATA - Run and save results to metadata
-	 */
-	@Deprecated
-	public enum AutomatedSISTRSetting {
-		OFF,
-		AUTO,
-		AUTO_METADATA
 	}
 }
