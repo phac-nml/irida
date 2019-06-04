@@ -19,6 +19,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,6 +45,9 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		IridaWorkflow assemblyWorkflow = null;
 		IridaWorkflow sistrWorkflow = null;
 
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date today = new Date();
+
 		//get the workflow information from the service
 		try {
 			assemblyWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
@@ -54,8 +61,9 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 					.getParameters();
 
 			//insert the assembly
-			insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation", true, assemblyId, "p.assemble_uploads=1",
-					defaultAssemblyParams);
+			insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation",
+					"Converted from automated assembly project setting on " + dateFormat.format(today), true,
+					assemblyId, "p.assemble_uploads=1", defaultAssemblyParams);
 
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn(
@@ -76,11 +84,13 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 					.getParameters();
 
 			//insert the sistr entries without metadata
-			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", false, sistrId, "p.sistr_typing_uploads='AUTO'",
-					defaultSistrParams);
+			insertWorkflow(jdbcTemplate, "Automated SISTR Typing",
+					"Converted from automated SISTR typing project setting on " + dateFormat.format(today), false,
+					sistrId, "p.sistr_typing_uploads='AUTO'", defaultSistrParams);
 			//insert the sistr entries with metadata
-			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", true, sistrId,
-					"p.sistr_typing_uploads='AUTO_METADATA'", defaultSistrParams);
+			insertWorkflow(jdbcTemplate, "Automated SISTR Typing",
+					"Converted from automated SISTR typing project setting on " + dateFormat.format(today), true,
+					sistrId, "p.sistr_typing_uploads='AUTO_METADATA'", defaultSistrParams);
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.");
 			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
@@ -89,8 +99,8 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		return new SqlStatement[0];
 	}
 
-	private void insertWorkflow(JdbcTemplate jdbcTemplate, String name, boolean updateSamples, UUID workflowId,
-			String where, List<IridaWorkflowParameter> params) {
+	private void insertWorkflow(JdbcTemplate jdbcTemplate, String name, String description, boolean updateSamples,
+			UUID workflowId, String where, List<IridaWorkflowParameter> params) {
 		/*
 		 * we're borrowing the 'automated' flag here to mark entries we need to add params to later.  at this point
 		 * there'll be nothing with a '1' in the automated flag.  we'll clear it later.
@@ -103,12 +113,12 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		//build the params for the insert submission
 		List<Object[]> queryParams = projectIds.stream()
 				.map(p -> {
-					return new Object[] { name, updateSamples, workflowId.toString(), p };
+					return new Object[] { name, description, updateSamples, workflowId.toString(), p };
 				})
 				.collect(Collectors.toList());
 
 		//then insert the submisisons for each project
-		String submissionInsert = "INSERT INTO analysis_submission (DTYPE, name, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) VALUES ('AnalysisSubmissionTemplate', ?, now(), 'LOW', ?, ?, 1, ?, 1)";
+		String submissionInsert = "INSERT INTO analysis_submission (DTYPE, name, analysis_description, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) VALUES ('AnalysisSubmissionTemplate', ?, ?, now(), 'LOW', ?, ?, 1, ?, 1)";
 		int[] updates = jdbcTemplate.batchUpdate(submissionInsert, queryParams);
 
 		//check if we did any updates
