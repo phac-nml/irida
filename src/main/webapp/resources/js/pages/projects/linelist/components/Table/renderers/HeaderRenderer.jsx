@@ -89,8 +89,8 @@ export function HeaderRenderer({
 
   return (
     <Header onClick={sortColumn}>
-      <span>
-        <div className="ag-header-cell-text">{displayName}</div>
+      <div style={{ flexGrow: 1 }}>
+        <span className="ag-header-cell-text">{displayName}</span>
         {sortDirection === SORTS.ASC ? (
           <AscSortIcon />
         ) : sortDirection === SORTS.DESC ? (
@@ -98,10 +98,10 @@ export function HeaderRenderer({
         ) : (
           <NoSortIcon />
         )}
-      </span>
-      <span onClick={e => e.stopPropagation()}>
+      </div>
+      <div onClick={e => e.stopPropagation()}>
         {enableMenu ? (
-          <div
+          <span
             className={"utility-icon"}
             ref={button => {
               menuButton = button;
@@ -109,17 +109,17 @@ export function HeaderRenderer({
             onClick={e => showMenu(e)}
           >
             <Icon type="filter" />
-          </div>
+          </span>
         ) : null}
         {canDeleteField(column.colDef) ? (
-          <div className={"utility-icon"}>
+          <span className="utility-icon t-header-menu">
             <MetadataFieldMenu
               field={column.colDef}
               removeColumnData={deleteColumnData}
             />
-          </div>
+          </span>
         ) : null}
-      </span>
+      </div>
     </Header>
   );
 }
