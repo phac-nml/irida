@@ -9,8 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -123,5 +122,18 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be only one row with the new value", 1, page.getNumberOfRowsInLineList());
 		page.clearTableFilter();
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
+	}
+
+	@Test(expected = Test.None.class /* No exception expected */)
+	public void testDeleteColumn() {
+		LoginPage.loginAsManager(driver());
+		driver().manage()
+				.window()
+				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
+
+		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+		// Make sure any data is at the top of the column;
+		page.sortCellsDescending("firstName");
+		assertTrue("Should delete entries from a column", page.deleteColumn("firstName"));
 	}
 }

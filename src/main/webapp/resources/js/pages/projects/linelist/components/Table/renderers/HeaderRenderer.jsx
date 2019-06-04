@@ -28,9 +28,17 @@ const SortIcon = styled(Icon)`
   margin: 0.3rem;
 `;
 
-const AscSortIcon = () => <SortIcon type="arrow-up" />;
-const DescSortIcon = () => <SortIcon type="arrow-down" />;
-const NoSortIcon = () => null;
+const AscSortIcon = () => (
+  <span className="t-sort-asc">
+    <SortIcon type="arrow-up" />
+  </span>
+);
+const DescSortIcon = () => (
+  <span className="t-sort-desc">
+    <SortIcon type="arrow-down" />
+  </span>
+);
+const NoSortIcon = () => <span className="t-sort-none">{"  "}a</span>;
 
 const SORTS = {
   ASC: "asc",
@@ -91,13 +99,15 @@ export function HeaderRenderer({
     <Header onClick={sortColumn}>
       <div style={{ flexGrow: 1 }}>
         <span className="ag-header-cell-text">{displayName}</span>
-        {sortDirection === SORTS.ASC ? (
-          <AscSortIcon />
-        ) : sortDirection === SORTS.DESC ? (
-          <DescSortIcon />
-        ) : (
-          <NoSortIcon />
-        )}
+        <span className="t-sort">
+          {sortDirection === SORTS.ASC ? (
+            <AscSortIcon />
+          ) : sortDirection === SORTS.DESC ? (
+            <DescSortIcon />
+          ) : (
+            <NoSortIcon />
+          )}
+        </span>
       </div>
       <div onClick={e => e.stopPropagation()}>
         {enableMenu ? (

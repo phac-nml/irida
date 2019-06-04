@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -20,6 +21,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(className = "t-field-switch")
 	private List<WebElement> fieldSwitches;
+
+	@FindBy(className = "ag-header-cell")
+	private List<WebElement> headerCells;
 
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
@@ -160,5 +164,57 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public int getTourStep() {
 		return Integer.parseInt(tourStepBadge.getText());
+	}
+
+	private String getColumnSort(WebElement cell) {
+		String sortClass = cell.findElement(By.cssSelector(".t-sort > span"))
+				.getAttribute("class");
+
+		return sortClass.equals("t-sort-asc") ? "asc" : sortClass.equals("t-sort-desc") ? "desc" : "none";
+	}
+
+	private WebElement getHeaderElement(String headerName) {
+		for (WebElement header : headerCells) {
+			String headerText = header.findElement(By.className("ag-header-cell-text"))
+					.getText();
+			if (headerText.equals(headerName)) {
+				return header;
+			}
+		}
+		return null;
+	}
+
+	public void sortCellsDescending(String headerName) {
+		WebElement cell = getHeaderElement(headerName);
+		if (cell != null) {
+			String sort = getColumnSort(cell);
+			if (sort.equals("none")) {
+				cell.click();
+				cell.click();
+			} else if (sort.equals("asc")) {
+				cell.click();
+			}
+		}
+	}
+
+	public boolean deleteColumn(String headerName) {
+		try {
+			WebElement cell = getHeaderElement(headerName);
+			if (cell != null) {
+				Actions action = new Actions(driver);
+				action.moveToElement(cell)
+						.perform();
+				waitForElementVisible(By.className("t-header-menu")).click();
+				waitForElementVisible(By.className("t-delete-entries")).click();
+				waitForElementVisible(By.className("t-delete-entries-modal")).click();
+				driver.findElement(By.cssSelector(".ant-btn.ant-btn-danger"))
+						.click();
+				waitForElementVisible(By.className("noty_type__success"));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
