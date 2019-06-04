@@ -1,7 +1,8 @@
 import React from "react";
-import { List } from "immutable";
+import { connect } from "react-redux";
+import isEqual from "lodash/isEqual";
+import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -16,13 +17,15 @@ import {
   SampleNameRenderer
 } from "./renderers";
 import { FIELDS } from "../../constants";
+import { actions as templateActions } from "../../reducers/templates";
+import { actions as entryActions } from "../../reducers/entries";
 
 const { i18n } = window.PAGE;
 
 /**
  * React component to render the ag-grid to the page.
  */
-export class Table extends React.Component {
+export class TableComponent extends React.Component {
   state = {
     entries: null,
     filterCount: 0
@@ -51,7 +54,14 @@ export class Table extends React.Component {
     DateCellRenderer
   };
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.globalFilter !== this.props.globalFilter) {
+      this.api.setQuickFilter(this.props.globalFilter);
+    }
+  }
+
   shouldComponentUpdate(nextProps) {
+    if (nextProps.globalFilter !== this.props.globalFilter) return true;
     /**
      * Check to see if the height of the table needs to be updated.
      * This will only happen  on initial load or if the window height has changed
@@ -60,7 +70,7 @@ export class Table extends React.Component {
       return true;
     }
 
-    if (!nextProps.fields.equals(this.props.fields)) {
+    if (!isEqual(nextProps.fields, this.props.fields)) {
       /*
       This should only happen on the original loading of the table when the
       complete list of UIMetadataTemplateFields are passed.
@@ -69,8 +79,8 @@ export class Table extends React.Component {
     }
 
     if (
-      List.isList(nextProps.entries) &&
-      !nextProps.entries.equals(this.props.entries)
+      isArray(nextProps.entries) &&
+      !isEqual(nextProps.entries, this.props.entries)
     ) {
       /*
       This should only happen on the original loading of the table when the
@@ -84,7 +94,7 @@ export class Table extends React.Component {
       The current template has changed.
       Force the table to update to the new view based on the template fields.
        */
-      const template = nextProps.templates.get(nextProps.current).toJS();
+      const template = nextProps.templates[nextProps.current];
       this.applyTemplate(template.fields);
       return false;
     }
@@ -93,33 +103,22 @@ export class Table extends React.Component {
     The field order for a template can change externally.  Check to see if that
     order has been updated, and adjust the columns accordingly.
      */
-    const oldModified = this.props.templates.getIn([
-      this.props.current,
-      "modified"
-    ]);
-    const newModified = nextProps.templates.getIn([
-      nextProps.current,
-      "modified"
-    ]);
+    const oldModified = this.props.templates[this.props.current].modified;
+    const newModified = nextProps.templates[nextProps.current].modified;
 
-    if (
-      typeof oldModified !== "undefined" &&
-      !newModified.equals(oldModified)
-    ) {
+    if (isEqual(oldModified, newModified)) {
       if (this.colDropped) {
         // Clear the dropped flag as the next update might come from an external source
         this.colDropped = false;
       } else {
-        const fields = newModified.toJS();
-
         /*
         If the length of the modified fields === 0, then the modified template
         was saved ==> the table already reflected this state.  If not the
         template was modified from an external event and therefore needs to
         reflect the changes.
          */
-        if (fields.length > 0) {
-          this.applyTemplate(fields);
+        if (newModified.length > 0) {
+          this.applyTemplate(newModified);
         }
       }
       return false;
@@ -192,14 +191,12 @@ export class Table extends React.Component {
     // Remove sample name
     colOrder.shift();
 
-    const fields = this.props.fields.toJS();
-
     /*
     Remove the hidden ones and just get the field identifiers
      */
     let list = colOrder.map(c => {
       // Get the header name
-      const field = fields.find(f => f.field === c.colId);
+      const field = this.props.fields.find(f => f.field === c.colId);
       field.hide = c.hide;
       return { ...field };
     });
@@ -220,9 +217,10 @@ export class Table extends React.Component {
     const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
       1}-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
-    const template = this.props.templates
-      .getIn([this.props.current, "name"])
-      .replace(this.nameRegex, "_");
+    const template = this.props.templates[this.props.current].name.replace(
+      this.nameRegex,
+      "_"
+    );
     return `${date}-${project}-${template}.${ext}`;
   };
 
@@ -302,9 +300,10 @@ export class Table extends React.Component {
     ws["!ref"] = XLSX.utils.encode_range(range);
 
     /* add worksheet to workbook using the template name */
-    const template = this.props.templates
-      .getIn([this.props.current, "name"])
-      .replace(this.nameRegex, "_");
+    const template = this.props.templates[this.props.current].name.replace(
+      this.nameRegex,
+      "_"
+    );
     workbook.SheetNames.push(template);
     workbook.Sheets[template] = ws;
 
@@ -332,7 +331,7 @@ export class Table extends React.Component {
   };
 
   onSelectionChange = () => {
-    this.props.selectionChange(this.api.getSelectedNodes().length);
+    this.props.selection(this.api.getSelectedNodes().map(n => n.data));
   };
 
   /**
@@ -394,14 +393,6 @@ export class Table extends React.Component {
   };
 
   /**
-   * Search the entire table for a value.
-   * @param {string} value
-   */
-  quickSearch = value => {
-    this.api.setQuickFilter(value);
-  };
-
-  /**
    * Update parent components of the revised filter status.
    * @returns {*}
    */
@@ -421,8 +412,6 @@ export class Table extends React.Component {
   };
 
   render() {
-    const rowData =
-      this.props.entries !== null ? this.props.entries.toJS() : undefined;
     return (
       <div
         className="ag-grid-table-wrapper"
@@ -433,8 +422,8 @@ export class Table extends React.Component {
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
           localeText={i18n.linelist.agGrid}
-          columnDefs={this.props.fields.toJS()}
-          rowData={rowData}
+          columnDefs={this.props.fields}
+          rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
           onGridReady={this.onGridReady}
@@ -456,12 +445,36 @@ export class Table extends React.Component {
   }
 }
 
-Table.propTypes = {
+TableComponent.propTypes = {
   height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
-  fields: ImmutablePropTypes.list.isRequired,
-  entries: ImmutablePropTypes.list,
-  templates: ImmutablePropTypes.list,
+  fields: PropTypes.array.isRequired,
+  entries: PropTypes.array,
+  templates: PropTypes.array,
   current: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired
+  onFilter: PropTypes.func.isRequired,
+  globalFilter: PropTypes.string.isRequired,
+  selection: PropTypes.func.isRequired
 };
+
+const mapStateToProps = state => ({
+  fields: state.fields.fields,
+  templates: state.templates.templates,
+  current: state.templates.current,
+  entries: state.entries.entries,
+  globalFilter: state.entries.globalFilter
+});
+
+const mapDispatchToProps = dispatch => ({
+  tableModified: fields => dispatch(templateActions.tableModified(fields)),
+  entryEdited: (entry, field, label) =>
+    dispatch(entryActions.edited(entry, field, label)),
+  selection: selected => dispatch(entryActions.selection(selected))
+});
+
+export const Table = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  null,
+  { forwardRef: true }
+)(TableComponent);

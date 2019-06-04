@@ -374,7 +374,7 @@ Each project can be accessed by a unique URL.
 | Name | Description |
 |------|-------------|
 | `self` | A link to this project |
-| `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users) |
+| `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users)) |
 | `project/samples` | A link to view the collection of samples that are contained within this project. |
 | `project/analyses` | A link to the analyses shared with this project. |
 
@@ -420,7 +420,6 @@ Each project can be accessed by a unique URL.
 ```
 
 #### Project Analyses
-{:.no_toc}
 
 Lists all the analysis submission objects that have been shared with the particular project.
 
@@ -433,11 +432,11 @@ Lists all the analysis submission objects that have been shared with the particu
 | `project` | A link back to the individual project for these shared analyses. |
 
 ##### Properties
-
+{:.no_toc}
 Each Analysis Submission under `resources` has the same properties as for [Analysis Submssions](#properties-7).
 
 ##### Example Response
-
+{:.no_toc}
 ```json
 {
   "resource" : {
@@ -476,6 +475,63 @@ Each Analysis Submission under `resources` has the same properties as for [Analy
   }
 
 ```
+
+#### Project Users
+
+Lists all the users currently added to a project (the same format as [the list of users](#users)).
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | The link back to this collection of users. |
+
+##### Example Response
+{:.no_toc}
+
+```json
+{
+  "resource" : {
+    "resources" : [ {
+      "username" : "test",
+      "email" : "test@nowhere.ca",
+      "firstName" : "Test",
+      "lastName" : "User",
+      "phoneNumber" : "1234",
+      "enabled" : true,
+      "systemRole" : "ROLE_USER",
+      "createdDate" : 1557259560000,
+      "modifiedDate" : 1557259560000,
+      "locale" : "en",
+      "label" : "Test User",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/users/test"
+      }, {
+        "rel" : "relationship",
+        "href" : "http://localhost:8080/api/projects/10/users/test"
+      } ],
+      "identifier" : "5"
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/10/users"
+    } ]
+  }
+}
+```
+
+##### Adding a user to a project
+{:.no_toc}
+To add a user to a project, `POST` the following properties to the project/users endpoint:
+
+
+| Name | Description | Validation |
+|------|-------------|------------|
+| `userId` | The user's username. | Required. |
+| `role` | The user's role on the project | Optional. Allowed values: [`PROJECT_USER`, `PROJECT_OWNER`]. |
+
 
 ### Samples
 

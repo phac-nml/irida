@@ -196,8 +196,8 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		public void configure(WebSecurity web) throws Exception {
 			web.ignoring()
 					.antMatchers("/node_modules/**")
-					.antMatchers("/resources/**")
-					.antMatchers("/public/**");
+					.antMatchers("/dist/**")
+					.antMatchers("/resources/**");
 		}
 
 		@Override
@@ -225,6 +225,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests().antMatchers("/login**").permitAll()
 				.antMatchers("/resources/**").permitAll()
+				.antMatchers("/dist/**").permitAll()
 				.antMatchers("/password_reset/**").permitAll()
 				.antMatchers("/**").fullyAuthenticated()
 			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);

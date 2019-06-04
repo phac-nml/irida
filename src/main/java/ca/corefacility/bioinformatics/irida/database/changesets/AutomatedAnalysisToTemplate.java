@@ -19,8 +19,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Liquibase update to convert the project settings for automated Assembly and SISTR checkboxes to analysis templates.
@@ -39,9 +44,26 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		IridaWorkflow assemblyWorkflow = null;
 		IridaWorkflow sistrWorkflow = null;
 
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date today = new Date();
+
 		//get the workflow information from the service
 		try {
 			assemblyWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+
+			logger.debug("Updating automated assembly project settings");
+
+			//get the workflow identifiers
+			UUID assemblyId = assemblyWorkflow.getWorkflowIdentifier();
+			//get the default parameters
+			List<IridaWorkflowParameter> defaultAssemblyParams = assemblyWorkflow.getWorkflowDescription()
+					.getParameters();
+
+			//insert the assembly
+			insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation",
+					"Converted from automated assembly project setting on " + dateFormat.format(today), true,
+					assemblyId, "p.assemble_uploads=1", defaultAssemblyParams);
+
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn(
 					"Assembly workflow not found.  Automated assemblies will not be converted to analysis templates.");
@@ -51,30 +73,8 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		//get the workflow information from the service
 		try {
 			sistrWorkflow = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.");
-			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
-		}
 
-		//update assemblies
-		if (assemblyWorkflow != null) {
-			logger.debug("Upadting automated assembly project settings");
-
-			//get the workflow identifiers
-			UUID assemblyId = assemblyWorkflow.getWorkflowIdentifier();
-			//get the default parameters
-			List<IridaWorkflowParameter> defaultAssemblyParams = assemblyWorkflow.getWorkflowDescription()
-					.getParameters();
-
-			//insert the assembly
-			insertWorkflow(jdbcTemplate, "Automated AssemblyAnnotation", true, assemblyId, "p.assemble_uploads=1",
-					defaultAssemblyParams);
-
-		}
-
-		//update SISTR
-		if (sistrWorkflow != null) {
-			logger.debug("Upadting automated SISTR project settings");
+			logger.debug("Updating automated SISTR project settings");
 			//get the workflow identifiers
 			UUID sistrId = sistrWorkflow.getWorkflowIdentifier();
 
@@ -83,48 +83,74 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 					.getParameters();
 
 			//insert the sistr entries without metadata
-			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", false, sistrId, "p.sistr_typing_uploads='AUTO'",
-					defaultSistrParams);
+			insertWorkflow(jdbcTemplate, "Automated SISTR Typing",
+					"Converted from automated SISTR typing project setting on " + dateFormat.format(today), false,
+					sistrId, "p.sistr_typing_uploads='AUTO'", defaultSistrParams);
 			//insert the sistr entries with metadata
-			insertWorkflow(jdbcTemplate, "Automated SISTR Typing", true, sistrId,
-					"p.sistr_typing_uploads='AUTO_METADATA'", defaultSistrParams);
+			insertWorkflow(jdbcTemplate, "Automated SISTR Typing",
+					"Converted from automated SISTR typing project setting on " + dateFormat.format(today), true,
+					sistrId, "p.sistr_typing_uploads='AUTO_METADATA'", defaultSistrParams);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("SISTR workflow not found.  Automated SISTR will not be converted to analysis templates.");
+			//Note this will definitely happen in the galaxy CI tests as only SNVPhyl and a test workflow are configured.
 		}
 
 		return new SqlStatement[0];
 	}
 
-	private void insertWorkflow(JdbcTemplate jdbcTemplate, String name, boolean updateSamples, UUID workflowId,
-			String where, List<IridaWorkflowParameter> params) {
+	private void insertWorkflow(JdbcTemplate jdbcTemplate, String name, String description, boolean updateSamples,
+			UUID workflowId, String where, List<IridaWorkflowParameter> params) {
 		/*
 		 * we're borrowing the 'automated' flag here to mark entries we need to add params to later.  at this point
 		 * there'll be nothing with a '1' in the automated flag.  we'll clear it later.
 		 */
 
-		int updateSampleBit = updateSamples ? 1 : 0;
+		//first get the project ids that have an automated submission
+		String idSql = "SELECT p.id FROM project p WHERE " + where;
+		List<Long> projectIds = jdbcTemplate.queryForList(idSql, Long.class);
 
-		String assemblyInsert =
-				"INSERT INTO analysis_submission (DTYPE, name, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) select 'AnalysisSubmissionTemplate', '"
-						+ name + "', now(), 'LOW', " + updateSampleBit + ", '" + workflowId.toString()
-						+ "', 1, p.id, 1 FROM project p WHERE " + where;
+		//build the params for the insert submission
+		List<Object[]> queryParams = projectIds.stream()
+				.map(p -> {
+					return new Object[] { name, description, updateSamples, workflowId.toString(), p };
+				})
+				.collect(Collectors.toList());
 
-		int update = jdbcTemplate.update(assemblyInsert);
+		//then insert the submisisons for each project
+		String submissionInsert = "INSERT INTO analysis_submission (DTYPE, name, analysis_description, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) VALUES ('AnalysisSubmissionTemplate', ?, ?, now(), 'LOW', ?, ?, 1, ?, 1)";
+		int[] updates = jdbcTemplate.batchUpdate(submissionInsert, queryParams);
+
+		//check if we did any updates
+		int update = IntStream.of(updates)
+				.sum();
 
 		//if we added anything, add the params
 		if (update > 0) {
 
 			// Insert the default params for the analysis type
 			for (IridaWorkflowParameter p : params) {
-				String assemblyParamInsert =
-						"INSERT INTO analysis_submission_parameters (id, name, value) SELECT a.id, '" + p.getName()
-								+ "', '" + p.getDefaultValue()
-								+ "' FROM analysis_submission a where a.name=? AND a.automated=1";
 
-				jdbcTemplate.update(assemblyParamInsert, name);
+				//first get the analysis submission ids we're inserting for
+				String paramSelect = "SELECT a.id FROM analysis_submission a WHERE a.name=? AND a.automated=1";
+				List<Long> submissionIds = jdbcTemplate.queryForList(paramSelect, Long.class, name);
+
+				//build the argument list for the query
+				List<Object[]> submissionParamArgs = submissionIds.stream()
+						.map(i -> {
+							return new Object[] { i, p.getName(), p.getDefaultValue() };
+						})
+						.collect(Collectors.toList());
+
+				//then insert the params for each submission
+				String paramInsert = "INSERT INTO analysis_submission_parameters (id, name,value) VALUES (?, ?, ?)";
+				jdbcTemplate.batchUpdate(paramInsert, submissionParamArgs);
 			}
 
 			// remove the automated=1
 			String removeAutomatedSql = "UPDATE analysis_submission SET automated=null WHERE DTYPE = 'AnalysisSubmissionTemplate' AND name=?";
 			jdbcTemplate.update(removeAutomatedSql, name);
+		} else {
+			logger.debug("No automated analyeses added for " + name);
 		}
 	}
 
