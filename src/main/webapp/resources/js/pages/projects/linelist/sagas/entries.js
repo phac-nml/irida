@@ -48,6 +48,10 @@ export function* entryEditedSaga() {
   }
 }
 
+/**
+ * Saga to remove all metadata entries from a metadata field.
+ * @returns {IterableIterator<any>}
+ */
 export function* removeFieldEntriesSaga() {
   while (true) {
     const { field } = yield take(types.REMOVE_DATA);

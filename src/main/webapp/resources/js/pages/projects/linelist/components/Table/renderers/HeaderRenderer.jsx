@@ -4,6 +4,9 @@ import styled from "styled-components";
 import { Icon } from "antd";
 import { MetadataFieldMenu } from "../../MetadataFieldMenu";
 
+/**
+ * Renderer for the line list table headers.
+ */
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -60,11 +63,18 @@ export function HeaderRenderer({
   const [sortDirection, setSortDirection] = useState(SORTS.NONE);
 
   useEffect(() => {
+    // Since this overwrites the default ag-grid table headers,
+    // we need to hook into their sort system.
     column.addEventListener("sortChanged", onSortChanged);
     onSortChanged();
+    // This reoves the listener when the header is removed from the page.
     return () => column.removeEventListener("sortChanged", onSortChanged);
   }, []);
 
+  /**
+   * Handle updating the UI during a sort event.
+   * @param event
+   */
   const sortColumn = event => {
     const order =
       sortDirection === SORTS.ASC
@@ -75,6 +85,9 @@ export function HeaderRenderer({
     setSort(order, event.shiftKey);
   };
 
+  /**
+   * Determine the direction of the sort.
+   */
   const onSortChanged = () => {
     if (column.isSortAscending()) {
       setSortDirection(SORTS.ASC);
@@ -85,13 +98,29 @@ export function HeaderRenderer({
     }
   };
 
+  /**
+   * Click handler for displaying the sort menu.
+   * @param event
+   */
   const showMenu = event => {
+    // Stop the event from propagating, because it will
+    // trigger the column sort.
     event.stopPropagation();
     showColumnMenu(menuButton);
   };
 
+  /**
+   * Redux method call to remove the column data.
+   * @param {object} field
+   * @returns {*}
+   */
   const deleteColumnData = field => api.removeColumnData(field);
 
+  /**
+   * Determine if the data in the column is deletable.
+   * @param  {object} field
+   * @returns {boolean}
+   */
   const canDeleteField = ({ field }) =>
     !(field.includes("irida-static") || field === "icons");
 
