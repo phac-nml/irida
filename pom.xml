@@ -25,30 +25,37 @@
 		<developer>
 			<id>aaron</id>
 			<name>Aaron Petkau</name>
-			<email>aaron.petkau@phac-aspc.gc.ca</email>
+			<email>aaron.petkau@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>http://www.canada.ca/</organizationUrl>
 		</developer>
 		<developer>
 			<id>josh</id>
 			<name>Josh Adam</name>
-			<email>josh.adam@phac-aspc.gc.ca</email>
+			<email>josh.adam@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>http://www.canada.ca/</organizationUrl>
 		</developer>
 		<developer>
 			<id>tom</id>
 			<name>Thomas Matthews</name>
-			<email>thomas.matthews@phac-aspc.gc.ca</email>
+			<email>thomas.matthews@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>http://www.canada.ca/</organizationUrl>
 		</developer>
 		<developer>
-			<id>franklin</id>
-			<name>Franklin Bristow</name>
-			<email>franklin.bristow@phac-aspc.gc.ca</email>
+			<id>deep</id>
+			<name>Sukhdeep Sidhu</name>
+			<email>sukhdeep.sidhu@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>http://www.canada.ca/</organizationUrl>
+		</developer>
+		<developer>
+			<id>jeff</id>
+			<name>Jeffrey Thiessen</name>
+			<email>jeffrey.thiessen@canada.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>http://www.canada.ca/</organizationUrl>
 		</developer>
 	</developers>
 	<repositories>
