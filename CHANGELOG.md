@@ -1,6 +1,10 @@
 Changes
 =======
 
+19.05 to 19.09
+--------------
+* [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
+
 19.01 to 19.05
 ---------------
 * [Documentation]: Added the CalVer updates to the documentation getting started guide.
