@@ -85,8 +85,10 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 
 			for (AnalysisSubmissionTemplate template : analysisTemplates) {
 
+				//check that the template is for the current version of the workflow.  If not it'll be disabled.
 				template = checkCurrentWorkflowVersion(template);
 
+				//ensure the template is enabled
 				if (template.isEnabled()) {
 
 					// build an SubmittableAnalysisSubmission
@@ -106,15 +108,15 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 					Project project = template.getSubmittedProject();
 					pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
 
+					//check if we have to do any legacy updates
 					legacyFileProcessorCompatibility(submission, sequencingObject);
 
+					//set the status message for the template
 					SimpleDateFormat sdf;
 					sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String date = sdf.format(new Date());
-
 					String message = messageSource.getMessage("analysis.template.status.lastlaunched",
 							new Object[] { date }, Locale.getDefault());
-
 					template.setStatusMessage(message);
 
 					analysisTemplateRepository.save(template);
@@ -134,59 +136,71 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		return false;
 	}
 
+	/**
+	 * Check the given {@link AnalysisSubmissionTemplate} to see if it's the current version of the workflow.  If it
+	 * isn't, it should be disabled as arguments may not line up.
+	 *
+	 * @param template the {@link AnalysisSubmissionTemplate} to check
+	 * @return the same {@link AnalysisSubmissionTemplate}, but disabled and updated if it shouldn't be run.
+	 */
 	private AnalysisSubmissionTemplate checkCurrentWorkflowVersion(AnalysisSubmissionTemplate template) {
 		UUID workflowId = template.getWorkflowId();
 
+		//get the workflow for the template
 		IridaWorkflow iridaWorkflow = null;
-
 		try {
 			iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
 
 		} catch (IridaWorkflowNotFoundException e) {
+			//if the workflow doesn't exist
 			logger.warn("Project " + template.getSubmittedProject()
 					.getId() + " attempted to run workflow " + workflowId
 					+ " but it does not exist.  This template will be disabled.", e);
 
+			//disable the template and set a message in the status
 			template.setEnabled(false);
-
 			String message = messageSource.getMessage("analysis.template.status.notexists", null, Locale.getDefault());
-
 			template.setStatusMessage(message);
+
 			analysisTemplateRepository.save(template);
 		}
 
+		//if we have a workflow
 		if (iridaWorkflow != null) {
 			AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 					.getAnalysisType();
 
+			//check that the workflow has a default version
 			IridaWorkflow defaultWorkflow = null;
 			try {
 				defaultWorkflow = workflowsService.getDefaultWorkflowByType(analysisType);
 			} catch (IridaWorkflowNotFoundException e) {
+				//if no default
 				logger.warn("Project " + template.getSubmittedProject()
 						.getId() + " attempted to run workflow type " + analysisType.getType()
 						+ " but there is no default workflow for this type.  This template will be disabled.", e);
 
+				//disable the template and set a message in the status
 				template.setEnabled(false);
-
 				String message = messageSource.getMessage("analysis.template.status.nodefault", null,
 						Locale.getDefault());
-
 				template.setStatusMessage(message);
+
 				analysisTemplateRepository.save(template);
 			}
 
+			//if we have a default but it's not the same as the template's workflow
 			if (defaultWorkflow != null && !workflowId.equals(defaultWorkflow.getWorkflowIdentifier())) {
 				logger.warn("Project " + template.getSubmittedProject()
 						.getId() + " attempted to run workflow " + workflowId
 						+ " but is no longer the default workflow for this type.  This template will be disabled.");
 
+				//disable the template and set a message in the status
 				template.setEnabled(false);
-
 				String message = messageSource.getMessage("analysis.template.status.outdated", null,
 						Locale.getDefault());
-
 				template.setStatusMessage(message);
+
 				analysisTemplateRepository.save(template);
 			}
 
