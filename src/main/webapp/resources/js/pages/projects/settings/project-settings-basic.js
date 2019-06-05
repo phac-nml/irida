@@ -1,3 +1,6 @@
+import $ from "jquery";
+import "../../../../sass/pages/project-settings-basic.scss";
+
 const projectSettings = (function(page, notifications) {
   $("#coverage-save").on("click", function() {
     const genomeSize = $("#genome-size").val();
