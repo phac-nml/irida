@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -58,37 +59,6 @@ public class Project extends IridaResourceSupport
 
 	private String remoteURL;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectUserJoin> users;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<UserGroupProjectJoin> groups;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectSampleJoin> samples;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "subject")
-	private List<RelatedProjectJoin> relatedProjects;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
-	private List<RelatedProjectJoin> projectsRelatedTo;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectReferenceFileJoin> referenceFiles;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectMetadataTemplateJoin> metadataTemplates;
-	
-	@NotAudited
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy = "project")
-	private List<ProjectEvent> events;
-	
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectAnalysisSubmissionJoin> analysisSubmissions;
-	
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<NcbiExportSubmission> ncbiSubmissions;
-
 	private String organism;
 	
 	@Min(1)
@@ -110,6 +80,44 @@ public class Project extends IridaResourceSupport
 	@Column(name = "sync_frequency")
 	@Enumerated(EnumType.STRING)
 	private ProjectSyncFrequency syncFrequency;
+
+	/*
+	 * This group of properties are here to ensure cascading deletion by JPA when a project is deleted.  They are not used within the class.
+	 */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectUserJoin> users;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<UserGroupProjectJoin> groups;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectSampleJoin> samples;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "subject")
+	private List<RelatedProjectJoin> relatedProjects;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
+	private List<RelatedProjectJoin> projectsRelatedTo;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectReferenceFileJoin> referenceFiles;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectMetadataTemplateJoin> metadataTemplates;
+
+	@NotAudited
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "project")
+	private List<ProjectEvent> events;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectAnalysisSubmissionJoin> analysisSubmissions;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "submittedProject")
+	private List<AnalysisSubmissionTemplate> analysisTemplates;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<NcbiExportSubmission> ncbiSubmissions;
+	//End of cascade deletion properties
 
 	public Project() {
 		createdDate = new Date();
