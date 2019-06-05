@@ -36,7 +36,7 @@
                         <span th:utext="#{project.settings.automated.template.type(${template.analysisType})}">_type_</span>
                     </div>
                     <div class="list-group-item-text">
-                        <span th:text="${template.statusMessage}">_status_</span>
+                        <span th:utext="#{project.settings.automated.template.status(${template.statusMessage})}">_status_</span>
                     </div>
                 </li>
             </ul>
