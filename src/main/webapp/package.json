@@ -126,6 +126,7 @@
     "webpack-merge": "^4.2.1"
   },
   "resolutions": {
-    "jquery": "3.4.0"
+    "jquery": "3.4.0",
+    "fstream": "1.0.12"
   }
 }
