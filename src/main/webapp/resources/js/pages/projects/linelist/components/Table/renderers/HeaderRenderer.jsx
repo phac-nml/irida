@@ -38,7 +38,7 @@ const DescSortIcon = () => (
     <SortIcon type="arrow-down" />
   </span>
 );
-const NoSortIcon = () => <span className="t-sort-none">{"  "}a</span>;
+const NoSortIcon = () => <span className="t-sort-none" />;
 
 const SORTS = {
   ASC: "asc",
