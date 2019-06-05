@@ -112,12 +112,12 @@ public class AutomatedAnalysisToTemplate implements CustomSqlChange {
 		//build the params for the insert submission
 		List<Object[]> queryParams = projectIds.stream()
 				.map(p -> {
-					return new Object[] { name, description, updateSamples, workflowId.toString(), p };
+					return new Object[] { name, description, updateSamples, workflowId.toString(), p, description };
 				})
 				.collect(Collectors.toList());
 
 		//then insert the submisisons for each project
-		String submissionInsert = "INSERT INTO analysis_submission (DTYPE, name, analysis_description, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated) VALUES ('AnalysisSubmissionTemplate', ?, ?, now(), 'LOW', ?, ?, 1, ?, 1)";
+		String submissionInsert = "INSERT INTO analysis_submission (DTYPE, name, analysis_description, created_date, priority, update_samples, workflow_id, submitter, submitted_project_id, automated, enabled, status_message) VALUES ('AnalysisSubmissionTemplate', ?, ?, now(), 'LOW', ?, ?, 1, ?, 1, 1, ?)";
 		int[] updates = jdbcTemplate.batchUpdate(submissionInsert, queryParams);
 
 		//check if we did any updates
