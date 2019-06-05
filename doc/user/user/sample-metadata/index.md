@@ -134,3 +134,10 @@ Hovering over the `Export` button which will reveal a dropdown where you can sel
 
 Values within the metadata table can be updated by double clicking on the cell you want to modify, enter the new value and press enter.  The new value will be automatically saved.  Once a cell has been edited, a notification will display with a "undo" button, that will revert the value back to the original.
 
+#### Removing Data from an Entire Column
+
+All the entries in a specific column can be removed.  The currently logged in user must be a manager on the project and the **sample cannot be locked from modification**.
+
+Hovering the cursor over the header of the column will reveal a menu icon (three vertical dots).  Clicking on this will open a dropdown menu where the user can select "Remove Metadata Entries".  Clicking on this option will open a confirmatory modal window.  Selecting the "Remove Entries" button will remove all the non-locked entries in that column, and the table will update.
+
+![Removing Data from an Entire Column](images/remove-column-entries.gif)
