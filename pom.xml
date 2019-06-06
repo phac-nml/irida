@@ -51,13 +51,6 @@
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
-			<id>franklin</id>
-			<name>Franklin Bristow</name>
-			<email>franklin.bristow@phac-aspc.gc.ca</email>
-			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
-		</developer>
-		<developer>
 			<id>jeff</id>
 			<name>Jeffrey Thiessen</name>
 			<email>jeffrey.thiessen@canada.ca</email>
@@ -65,6 +58,17 @@
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 	</developers>
+	<contributors>
+		<contributor>
+			<name>Franklin Bristow</name>
+			<email>fbristow@cs.umanitoba.ca</email>
+			<organization>Department of Computer Science - University of Manitoba</organization>
+			<organizationUrl>https://www.cs.umanitoba.ca</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</contributor>
+	</contributors>
 	<repositories>
 		<repository>
 			<id>repo.springsource.org</id>
