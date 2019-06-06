@@ -13,6 +13,7 @@ Changes
 * [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
 * [UI/Developer]: Updated `axios` to fix vulnerability.
 * [UI/Developer]: Updated `fstream` to fix vulnerability.
+* [Developer]: Update pom file to reflect active IRIDA developers.
 * [UI]: Added the ability to delete all the data in a column in the line list table.
 
 19.01 to 19.05
