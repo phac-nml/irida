@@ -392,7 +392,14 @@ public class SNVPhylAnalysisIT {
 		assertTrue("Should have found both reads and reference input tools.", foundReadsInputTool
 				&& foundReferenceInputTool);
 		
+		// At the end, verify that these sequence files did get automatically uncompressed
+		assertEquals("Should have 2 pairs of files", 2, sequenceFilePairA.getFiles().size());
+		for (SequenceFile file : sequenceFilePairA.getFiles()) {
+			assertFalse("Sequence files were compressed", file.getFile().toString().endsWith(".gz"));
+		}
+		
 		// At the end, verify that the sequence files did not get automatically decompressed.
+		assertEquals("Should have 2 pairs of files", 2, sequenceFilePairB.getFiles().size());
 		for (SequenceFile file : sequenceFilePairB.getFiles()) {
 			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
 		}
