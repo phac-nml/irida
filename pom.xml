@@ -51,6 +51,13 @@
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
+			<id>franklin</id>
+			<name>Franklin Bristow</name>
+			<email>franklin.bristow@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
+		</developer>
+		<developer>
 			<id>jeff</id>
 			<name>Jeffrey Thiessen</name>
 			<email>jeffrey.thiessen@canada.ca</email>
