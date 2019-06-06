@@ -27,35 +27,35 @@
 			<name>Aaron Petkau</name>
 			<email>aaron.petkau@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.canada.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>josh</id>
 			<name>Josh Adam</name>
 			<email>josh.adam@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.canada.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>tom</id>
 			<name>Thomas Matthews</name>
 			<email>thomas.matthews@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.canada.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>deep</id>
 			<name>Sukhdeep Sidhu</name>
 			<email>sukhdeep.sidhu@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.canada.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>jeff</id>
 			<name>Jeffrey Thiessen</name>
 			<email>jeffrey.thiessen@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.canada.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 	</developers>
 	<repositories>
