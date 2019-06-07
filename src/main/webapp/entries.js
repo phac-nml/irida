@@ -32,7 +32,6 @@ module.exports = {
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
-  "basic-settings": "./resources/js/pages/projects/settings/BasicSettings.jsx",
   "project-settings-remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
