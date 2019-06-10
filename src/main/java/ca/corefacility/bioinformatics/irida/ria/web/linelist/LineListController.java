@@ -159,8 +159,7 @@ public class LineListController {
 			message = messages.getMessage("linelist.removeMetadata.complete",
 					new Object[] { label, project.getLabel() }, locale);
 		} else if (lockedCount == 1) {
-			message = messages.getMessage("linelist.removeMetadata.oneLockedSamples",
-					new Object[] { project.getLabel(), label }, locale);
+			message = messages.getMessage("linelist.removeMetadata.oneLockedSamples", new Object[] {}, locale);
 		} else {
 			message = messages.getMessage("linelist.removeMetadata.lockedSamples",
 					new Object[] { lockedCount, project.getLabel(), label }, locale);
