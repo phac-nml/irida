@@ -138,6 +138,6 @@ Values within the metadata table can be updated by double clicking on the cell y
 
 All the entries in a specific column can be removed.  The currently logged in user must be a manager on the project and the **sample cannot be locked from modification**.
 
-Hovering the cursor over the header of the column will reveal a menu icon (three vertical dots).  Clicking on this will open a dropdown menu where the user can select "Remove Metadata Entries".  Clicking on this option will open a confirmatory modal window.  Selecting the "Remove Entries" button will remove all the non-locked entries in that column, and the table will update.
+Hovering the cursor over the header of the column will reveal a menu icon (three vertical dots).  Clicking on this will open a dropdown menu where the user can select "Remove Metadata Entries".  Clicking on this option will open a confirmatory modal window.  Selecting the "Remove Entries" button will remove all data in the column (data from locked cells will not be deleted), and the table will update.
 
 ![Removing Data from an Entire Column](images/remove-column-entries.gif)
