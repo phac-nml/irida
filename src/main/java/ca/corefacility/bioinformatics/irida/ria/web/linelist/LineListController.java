@@ -9,7 +9,6 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +36,6 @@ import com.google.common.collect.ImmutableMap;
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
 @Controller
-@Scope("session")
 @RequestMapping("/linelist")
 public class LineListController {
 	private ProjectService projectService;
