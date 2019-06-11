@@ -16,7 +16,7 @@ import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 
-const deps = ["ngAria", "ui.bootstrap", "irida.cart"];
+const deps = ["ui.bootstrap", "irida.cart"];
 
 const app = angular.module("irida", deps);
 

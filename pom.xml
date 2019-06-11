@@ -25,32 +25,50 @@
 		<developer>
 			<id>aaron</id>
 			<name>Aaron Petkau</name>
-			<email>aaron.petkau@phac-aspc.gc.ca</email>
+			<email>aaron.petkau@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>josh</id>
 			<name>Josh Adam</name>
-			<email>josh.adam@phac-aspc.gc.ca</email>
+			<email>josh.adam@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>tom</id>
 			<name>Thomas Matthews</name>
-			<email>thomas.matthews@phac-aspc.gc.ca</email>
+			<email>thomas.matthews@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
-			<id>franklin</id>
-			<name>Franklin Bristow</name>
-			<email>franklin.bristow@phac-aspc.gc.ca</email>
+			<id>deep</id>
+			<name>Sukhdeep Sidhu</name>
+			<email>sukhdeep.sidhu@canada.ca</email>
 			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
+		</developer>
+		<developer>
+			<id>jeff</id>
+			<name>Jeffrey Thiessen</name>
+			<email>jeffrey.thiessen@canada.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 	</developers>
+	<contributors>
+		<contributor>
+			<name>Franklin Bristow</name>
+			<email>fbristow@cs.umanitoba.ca</email>
+			<organization>Department of Computer Science - University of Manitoba</organization>
+			<organizationUrl>https://www.cs.umanitoba.ca</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</contributor>
+	</contributors>
 	<repositories>
 		<repository>
 			<id>repo.springsource.org</id>

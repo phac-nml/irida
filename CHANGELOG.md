@@ -9,6 +9,12 @@ Changes
 * [REST/Developer]: REST API applications can now select which role to add users to a project.
 * [UI/Developer]: Cleaned up some of the redux set up on the linelist page.
 * [UI/Developer]: Removed loading Bootstrap through `bower` and moved it into the webpack build.
+* [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
+* [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
+* [UI/Developer]: Updated `axios` to fix vulnerability.
+* [UI/Developer]: Updated `fstream` to fix vulnerability.
+* [Developer]: Update pom file to reflect active IRIDA developers.
+* [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
 
 19.01 to 19.05
 ---------------
