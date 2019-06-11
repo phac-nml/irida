@@ -55,7 +55,7 @@ public class LineListControllerTest {
 				return "Foobar";
 			}
 		};
-		lineListController.getProjectSamplesMetadataEntries(projectId, principal);
+		lineListController.getProjectSamplesMetadataEntries(projectId);
 		verify(sampleService, times(1)).getSamplesForProject(any(Project.class));
 	}
 }

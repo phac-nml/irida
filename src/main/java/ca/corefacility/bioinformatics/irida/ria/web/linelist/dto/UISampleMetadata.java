@@ -24,7 +24,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 	public static final String EDITABLE = "editable";
 	public static final String OWNER = "owner";
 
-	public UISampleMetadata(ProjectSampleJoin join, boolean editable) {
+	public UISampleMetadata(ProjectSampleJoin join, boolean canModifySample) {
 		Project project = join.getSubject();
 		Sample sample = join.getObject();
 
@@ -37,7 +37,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 		this.put(MODIFIED_DATE, sample.getModifiedDate()
 				.toString());
 		this.putAll(getAllMetadataForSample(sample));
-		this.put(EDITABLE, String.valueOf(editable));
+		this.put(EDITABLE, String.valueOf(canModifySample));
 		this.put(OWNER, String.valueOf(join.isOwner()));
 	}
 

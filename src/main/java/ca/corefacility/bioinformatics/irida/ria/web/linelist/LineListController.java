@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,8 +29,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
@@ -60,13 +57,11 @@ public class LineListController {
 	 * {@link  Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
-	 * @param principal {@link Principal}
 	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
-	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId, Principal principal) {
-		this.permissions.setPrincipalPermissions(principal);
+	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		Project project = projectService.read(projectId);
 
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
@@ -126,34 +121,24 @@ public class LineListController {
 	 *
 	 * @param label     {@link String} the name of the {@link MetadataTemplateField}
 	 * @param projectId {@link Long} identifier for the {@link Project}
-	 * @param principal {@link Principal}
 	 * @param locale {@link Locale}
 	 * @return {@link UIRemoveMetadataFieldResponse} a description of what happened when the entries were removed
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.DELETE)
 	@ResponseBody
 	public UIRemoveMetadataFieldResponse removeDataFromMetadataField(@RequestParam String label,
-			@RequestParam Long projectId, Principal principal, Locale locale) {
-		this.permissions.setPrincipalPermissions(principal);
+			@RequestParam Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
 		List<Join<Project, Sample>> projectSampleJoins = sampleService.getSamplesForProject(project);
-		int lockedCount = 0;
-		for (Join<Project, Sample> join : projectSampleJoins) {
-			Sample sample = join.getObject();
+		List<Sample> samples = projectSampleJoins.stream()
+				.map(Join::getObject)
+				.filter(s -> permissions.canModifySample(s))
+				.collect(Collectors.toList());
 
-			/*
-			Fields can only be removed by a project that has full access to the sample, or
-			one of the system administrators.
-			 */
-			if (this.permissions.canModifySample(sample)) {
-				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				metadata.remove(field);
-				sampleService.updateFields(sample.getId(), ImmutableMap.of("metadata", metadata));
-			} else {
-				lockedCount++;
-			}
-		}
+		sampleService.removeMetadataFieldFromSamples(samples, field);
+
+		int lockedCount = projectSampleJoins.size() - samples.size();
 		String message;
 		if (lockedCount == 0) {
 			message = messages.getMessage("linelist.removeMetadata.complete",
@@ -171,15 +156,13 @@ public class LineListController {
 	 * Get a {@link List} of all {@link MetadataTemplate} associated with the project.
 	 *
 	 * @param projectId {@link Long} Identifier for the project to get id's for.
-	 * @param principal {@link Principal}
 	 * @param locale    {@link Locale} Locale of the currently logged in user.
 	 * @return {@link List}
 	 */
 	@RequestMapping("/templates")
 	@ResponseBody
-	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Principal principal, Locale locale) {
+	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		this.permissions.setPrincipalPermissions(principal);
 		boolean canEdit = this.permissions.canModifyProject(project);
 		List<UIMetadataTemplate> templates = new ArrayList<>();
 
@@ -278,16 +261,14 @@ public class LineListController {
 	 *
 	 * @param template  {@link UIMetadataTemplate}
 	 * @param projectId {@link Long} project identifier
-	 * @param principal {@link Principal}
 	 * @param locale {@link Locale}
 	 * @param response  {@link HttpServletResponse}
 	 * @return saved or updated {@link UIMetadataTemplate}
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
-			@RequestParam Long projectId, Principal principal, Locale locale, HttpServletResponse response) {
+			@RequestParam Long projectId, Locale locale, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
-		this.permissions.setPrincipalPermissions(principal);
 		boolean canModifyProject = this.permissions.canModifyProject(project);
 
 		// Get or create the template fields.
@@ -335,6 +316,8 @@ public class LineListController {
 	 */
 	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
+		boolean isManager = permissions.canModifyProject(project);
+
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
 				project);
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
@@ -366,7 +349,7 @@ public class LineListController {
 		}
 
 		List<AgGridColumn> fields = fieldSet.stream()
-				.map(f -> new UIMetadataField(f, false, true))
+				.map(f -> new UIMetadataField(f, false, permissions.canModifyProject(project)))
 				.sorted((f1, f2) -> f1.getHeaderName()
 						.compareToIgnoreCase(f2.getHeaderName()))
 				.collect(Collectors.toList());

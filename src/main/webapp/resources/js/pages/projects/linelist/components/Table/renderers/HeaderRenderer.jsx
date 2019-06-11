@@ -116,14 +116,6 @@ export function HeaderRenderer({
    */
   const deleteColumnData = field => api.removeColumnData(field);
 
-  /**
-   * Determine if the data in the column is deletable.
-   * @param  {object} field
-   * @returns {boolean}
-   */
-  const canDeleteField = ({ field }) =>
-    !(field.includes("irida-static") || field === "icons");
-
   return (
     <Header onClick={sortColumn}>
       <div style={{ flexGrow: 1 }}>
@@ -150,7 +142,7 @@ export function HeaderRenderer({
             <Icon type="filter" />
           </span>
         ) : null}
-        {canDeleteField(column.colDef) ? (
+        {column.colDef.editable ? (
           <span className="utility-icon t-header-menu">
             <MetadataFieldMenu
               field={column.colDef}
