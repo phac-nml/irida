@@ -6,6 +6,8 @@ import { red6 } from "../../styles/colors";
 import { useInterval } from "../../hooks/useInterval";
 import { SPACE_SM } from "../../styles/spacing";
 
+const { i18n } = window.TL;
+
 /**
  * Modal displayed when the user has had not server interaction within
  * a given time span
@@ -53,9 +55,9 @@ export default function SessionModal({
       visible={visibility}
       onOk={keepSession}
       onCancel={logout}
-      title="session_modal_title"
-      okText="session_modal_okText"
-      cancelText="session_modal_cancelText"
+      title={i18n.session_modal_title}
+      okText={i18n.session_modal_okText}
+      cancelText={i18n.session_modal_cancelText}
       width={350}
       maskClosable={false}
       closable={false}
@@ -64,17 +66,25 @@ export default function SessionModal({
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "center",
           padding: `0 ${SPACE_SM}`
         }}
       >
-        <Icon
-          type="clock-circle"
-          theme="twoTone"
-          style={{ fontSize: 30 }}
-          twoToneColor={red6}
-        />
-        <span style={{ paddingLeft: SPACE_SM }}>
-          "session_modal_intro"
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center"
+          }}
+        >
+          <Icon
+            type="clock-circle"
+            theme="twoTone"
+            style={{ fontSize: 30 }}
+            twoToneColor={red6}
+          />
+          <span style={{ paddingLeft: SPACE_SM }}>
+            {i18n.session_modal_intro}
+          </span>
         </span>
       </div>
       <section
@@ -82,14 +92,13 @@ export default function SessionModal({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          fontSize: 60
+          fontSize: 40
         }}
       >
         {format(remainingTime)}
       </section>
-      <section>
-        Please click "Continue" to keep working;
-        <br /> or click "Log Off" to end your session now.
+      <section style={{ textAlign: "center" }}>
+        {i18n.session_modal_description}
       </section>
     </Modal>
   ) : (
@@ -128,7 +137,7 @@ export default function SessionModal({
 }
 
 SessionModal.propTypes = {
-  displayTime: PropTypes.num.isRequired,
+  displayTime: PropTypes.number.isRequired,
   resetTimeout: PropTypes.func.isRequired,
   visibility: PropTypes.bool.isRequired
 };

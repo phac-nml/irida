@@ -24,7 +24,10 @@ export function Session() {
    */
   const MODAL_TIMEOUT = 120000;
 
-  const SESSION_LENGTH = window.TL.SESSION_LENGTH * 1000; // Originally stored in seconds
+  /*
+  Adding an extra 5 seconds to confirm the server has timed out.
+   */
+  const SESSION_LENGTH = window.TL.SESSION_LENGTH * 1000 + 5000;
 
   const [visible, setVisibility] = useState(false);
 
