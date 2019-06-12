@@ -16,6 +16,7 @@ Changes
 * [Developer]: Update pom file to reflect active IRIDA developers.
 * [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
 * [UI/Developer]: Updated to latest `react-redux` to use new hooks API.
+* [UI]: Updated session expiration modal.
 
 19.01 to 19.05
 ---------------
