@@ -26,7 +26,7 @@ export default function SessionModal({
 
   useEffect(() => {
     const modalTimeout = setTimeout(
-      () => window.location.reload(false),
+      () => window.location.reload(),
       displayTime + 5000 // Adding 5 seconds to display the logged out message
     );
 
@@ -104,7 +104,7 @@ export default function SessionModal({
   ) : (
     <Modal
       visible={visibility}
-      title={`SESSION TIMEOUT`}
+      title={i18n.session_modal_title}
       width={350}
       closable={false}
       maskClosable={false}
