@@ -5,9 +5,10 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:prettier/recommended",
     "plugin:jsx-a11y/recommended",
+    "prettier",
     "prettier/react"
   ],
-  plugins: ["react", "import", "jsx-a11y"],
+  plugins: ["react", "import", "jsx-a11y", "react-hooks"],
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module",
@@ -21,6 +22,9 @@ module.exports = {
     node: true
   },
   rules: {
-    "prettier/prettier": "error"
+    "react/prop-types": 0,
+    "no-console": 1,
+    "react-hooks/rules-of-hooks": 2,
+    "react-hooks/exhaustive-deps": 1
   }
 };
