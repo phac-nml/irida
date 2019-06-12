@@ -329,5 +329,11 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
 			final Sort sort);
 
+	/**
+	 * Remove a list of {@link MetadataTemplateField} from all {@link Sample}s
+	 *
+	 * @param samples {@link List} of {@link Sample}
+	 * @param field   {@link MetadataTemplateField} to be removed from the {@link Sample}
+	 */
 	public void removeMetadataFieldFromSamples(List<Sample> samples, MetadataTemplateField field);
 }
