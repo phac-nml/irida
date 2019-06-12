@@ -128,8 +128,7 @@ export default function SessionModal({
           twoToneColor={red6}
         />
         <span style={{ paddingLeft: SPACE_SM }}>
-          Your session has expired. <br />
-          You will be redirected to the Login page.
+          {i18n.session_timeout_modal_desc}
         </span>
       </div>
     </Modal>

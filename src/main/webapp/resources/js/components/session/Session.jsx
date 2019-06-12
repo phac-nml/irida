@@ -1,6 +1,5 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
-
-const SessionModal = lazy(() => import("./SessionModal"));
+import React, { useEffect, useState } from "react";
+import SessionModal from "./SessionModal";
 
 function interceptHTTP(handler) {
   // Capture all ajax requests, these will indicate a need to reset the timeout.
@@ -25,9 +24,11 @@ export function Session() {
   const MODAL_TIMEOUT = 120000;
 
   /*
+  Spring Session length.
+  Initially set in seconds by spring, but we need it in milliseconds.
   Adding an extra 5 seconds to confirm the server has timed out.
    */
-  const SESSION_LENGTH = window.TL.SESSION_LENGTH * 1000 + 5000;
+  const SESSION_LENGTH = window.TL.SESSION_LENGTH * 1000;
 
   const [visible, setVisibility] = useState(false);
 
@@ -45,12 +46,10 @@ export function Session() {
   useEffect(() => interceptHTTP(() => resetTimeout()), []);
 
   return visible ? (
-    <Suspense fallback={<div />}>
-      <SessionModal
-        displayTime={MODAL_TIMEOUT}
-        resetTimeout={resetTimeout}
-        visibility={visible}
-      />
-    </Suspense>
+    <SessionModal
+      displayTime={MODAL_TIMEOUT}
+      resetTimeout={resetTimeout}
+      visibility={visible}
+    />
   ) : null;
 }
