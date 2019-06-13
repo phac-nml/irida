@@ -39,6 +39,8 @@ import java.util.*;
 public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(AutomatedAnalysisFileProcessor.class);
 
+	private static final SimpleDateFormat LAUNCHED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final ProjectSampleJoinRepository psjRepository;
 	private final AnalysisSubmissionRepository submissionRepository;
@@ -112,9 +114,7 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 					legacyFileProcessorCompatibility(submission, sequencingObject);
 
 					//set the status message for the template
-					SimpleDateFormat sdf;
-					sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String date = sdf.format(new Date());
+					String date = LAUNCHED_DATE_FORMAT.format(new Date());
 					String message = messageSource.getMessage("analysis.template.status.lastlaunched",
 							new Object[] { date }, Locale.getDefault());
 					template.setStatusMessage(message);
