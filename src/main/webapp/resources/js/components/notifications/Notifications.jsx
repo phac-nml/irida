@@ -32,15 +32,16 @@ export function Notifications() {
 
   function showUndoNotification({ detail }) {
     const { text, callback } = detail;
+    const key = `open${Date.now()}`;
 
     const clickHandler = () => {
-      noti.close();
+      notification.close(key);
       callback();
     };
 
-    const noti = notification.open({
+    notification.open({
       description: <React.Fragment>{text}</React.Fragment>,
-      key: `open${Date.now()}`,
+      key,
       btn: (
         <Button type="primary" size="small" onClick={clickHandler}>
           UNDO
