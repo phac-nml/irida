@@ -87,7 +87,7 @@ public class FastqcFileProcessor implements FileProcessor {
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
 				.fastqcVersion(FastQCApplication.VERSION)
 				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", new Object[] {FastQCApplication.VERSION},
 						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(

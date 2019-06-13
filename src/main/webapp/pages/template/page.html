@@ -3,7 +3,7 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{template/base}">
 <head>
-	<link rel="stylesheet" th:href="@{/resources/dist/css/app.bundle.css}">
+	<link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -80,13 +80,10 @@
 		};
 	</script>
 
-	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
-	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
-	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
-	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-	<script th:src="@{/resources/dist/js/app.bundle.js}"></script>
+	<script th:src="@{/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">
 		<!--/* optional script tags */-->

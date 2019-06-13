@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const entries = require("./entries.js");
 
-const BUILD_PATH = path.resolve(__dirname, "resources/dist");
+const BUILD_PATH = path.resolve(__dirname, "dist");
 
 const config = {
   externals: {
@@ -23,7 +23,7 @@ const config = {
   entry: entries,
   output: {
     path: BUILD_PATH,
-    publicPath: `/resources/dist/`,
+    publicPath: `/dist/`,
     filename: "js/[name].bundle.js"
   },
   module: {
@@ -70,6 +70,15 @@ const config = {
           {
             loader: "expose-loader",
             options: "jQuery"
+          }
+        ]
+      },
+      {
+        test: require.resolve("angular"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "angular"
           }
         ]
       }

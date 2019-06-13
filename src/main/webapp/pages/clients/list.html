@@ -4,7 +4,7 @@
       data-layout-decorate="~{clients/_base}">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/clients-list.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/clients-list.bundle.css}">
 </head>
 <body>
 <th:block layout:fragment="page">
@@ -34,7 +34,7 @@
     </div>
 </th:block>
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/dist/js/clients-list.bundle.js}"></script>
+    <script th:src="@{/dist/js/clients-list.bundle.js}"></script>
 </th:block>
 </body>
 </html>

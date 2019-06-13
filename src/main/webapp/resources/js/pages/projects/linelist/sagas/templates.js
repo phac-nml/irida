@@ -41,7 +41,7 @@ export function* saveTemplateSaga() {
       const { data: response } = yield call(saveTemplate, data);
       yield put(actions.savedTemplate(response.UIMetadataTemplate));
       // Delay allows for displaying the saved message
-      yield call(delay, 2500);
+      yield delay(2500);
       yield put(actions.savedComplete());
     } catch (error) {
       // TODO: (Josh | 2018-05-14) Handle this in the UI
