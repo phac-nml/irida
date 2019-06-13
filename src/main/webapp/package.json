@@ -19,7 +19,6 @@
   ],
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@bassettsj/livestamp": "^2.0.0",
     "@fortawesome/fontawesome-free": "^5.5.0",
     "@reach/router": "^1.2.1",
     "ag-grid-community": "^20.0.0",

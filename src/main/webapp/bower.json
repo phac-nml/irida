@@ -7,7 +7,6 @@
     "**/*.txt"
   ],
   "dependencies": {
-    "livestampjs": "1.1.2",
     "select2": "3.5.0",
     "bower": "*",
     "angular-ui-router": "0.2.13",
