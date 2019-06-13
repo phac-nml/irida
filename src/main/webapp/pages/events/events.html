@@ -14,7 +14,7 @@
         <div class="event-date" data-toggle="tooltip"
              th:title="${#dates.format(event.event.createdDate, dateFormat)}"
              th:with="dateFormat=#{locale.date.long}">
-            <span data:livestamp="${event.event.createdDate}"></span>
+            <span th:with="dateFormat=#{locale.date.long}" th:text="${#dates.format(event.event.createdDate, dateFormat)}"></span>
         </div>
     </li>
     <li class="list-group-item" th:if="${#lists.isEmpty(events)}" th:text="#{event.no_activities}">
