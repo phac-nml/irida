@@ -2,6 +2,11 @@ import Noty from "noty";
 import "noty/src/noty.scss";
 import "noty/src/themes/relax.scss";
 
+import {
+  MESSAGE_EVENT,
+  NOTIFICATION_EVENT
+} from "../components/notifications/Notifications";
+
 /**
  * Default noty notification library options object for initialization of notification of success.
  *
@@ -41,7 +46,13 @@ const defaultErrorConfig = Object.assign({}, defaultConfig, {
  * @param params Object with `text` key containing notification text, and overrides to default parameters.
  */
 export function showNotification(params) {
-  return new Noty(Object.assign({}, defaultConfig, params)).show();
+  const event = new CustomEvent(MESSAGE_EVENT, {
+    detail: {
+      text: params.text.trim(),
+      type: params.type
+    }
+  });
+  window.dispatchEvent(event);
 }
 
 /**
@@ -52,37 +63,42 @@ export function showNotification(params) {
  * @param params Object with `text` key containing error info, and overrides to default parameters.
  */
 export function showErrorNotification(params) {
-  return new Noty(Object.assign({}, defaultErrorConfig, params)).show();
+  showNotification({ text: params.text, type: "error" });
 }
 
 /**
  * Show UI notification when a value has been changed and provide the capability to undo it.
  * @param {object} params - overwrite the default configuration
- * @param {function} cb - undo callback
+ * @param {function} callback - undo callback
  */
-export function showUndoNotification(params, cb) {
-  const n = new Noty(
-    Object.assign(
-      {},
-      defaultConfig,
-      {
-        type: "alert",
-        timeout: 6000,
-        buttons: [
-          Noty.button(
-            "UNDO",
-            "t-undo-edit btn btn-default btn-xs pull-right spaced-bottom",
-            () => {
-              typeof cb === "function" ? cb() : null;
-              n.close();
-            }
-          )
-        ]
-      },
-      params
-    )
-  );
-  return n.show();
+export function showUndoNotification(params, callback) {
+  const event = new CustomEvent(NOTIFICATION_EVENT, {
+    detail: { callback, text: params.text }
+  });
+  window.dispatchEvent(event);
+
+  // const n = new Noty(
+  //   Object.assign(
+  //     {},
+  //     defaultConfig,
+  //     {
+  //       type: "alert",
+  //       timeout: 6000,
+  //       buttons: [
+  //         Noty.button(
+  //           "UNDO",
+  //           "t-undo-edit btn btn-default btn-xs pull-right spaced-bottom",
+  //           () => {
+  //             typeof cb === "function" ? cb() : null;
+  //             n.close();
+  //           }
+  //         )
+  //       ]
+  //     },
+  //     params
+  //   )
+  // );
+  // return n.show();
 }
 
 // TODO: Remove this after all notification usages are through a webpack bundle.
