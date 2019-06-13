@@ -27,6 +27,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	@NotNull
 	private boolean enabled;
 
+	@Lob
 	@Column(name = "status_message")
 	private String statusMessage;
 
