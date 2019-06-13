@@ -4,7 +4,7 @@
       data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{metadata-template.title}">Title</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/create-metadata-template.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/dist/css/create-metadata-template.bundle.css}"/>
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -118,7 +118,7 @@
 
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/create-metadata-template.bundle.js}"></script>
+    <script th:src="@{/dist/js/create-metadata-template.bundle.js}"></script>
 </th:block>
 </body>
 </html>

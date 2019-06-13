@@ -4,10 +4,13 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
-19.01 to 19.04
+19.05 to 19.09
+--------------
+
+19.01 to 19.05
 --------------
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
-* This upgrade will remove FastQC resuts from the database and move them to the file system.  It is **strongly** recommended to make a backup of your database before this upgrade.  Before upgrading you should read more at https://irida.corefacility.ca/documentation/administrator/upgrades/#1904.
+* This upgrade will remove FastQC resuts from the database and move them to the file system.  It is **strongly** recommended to make a backup of your database before this upgrade.  Before upgrading you should read more at https://irida.corefacility.ca/documentation/administrator/upgrades/#1905.
 
 19.01 to 19.01.2
 ----------------

@@ -17,14 +17,12 @@ env:
 
 services:
   - docker
+  - mysql
 
 dist: xenial
 
-addons:
-  mariadb: '10.1'
-
 jdk:
-  - openjdk8
+  - openjdk11
 
 rvm:
   - 2.4.1

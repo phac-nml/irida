@@ -4,7 +4,7 @@
 	  data-layout-decorate="~{samples/_base}">
 <head>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" th:href="@{/resources/dist/css/sample-files.bundle.css}">
+	<link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
 	<script th:inline="javascript">
 		var PAGE = {
 			sample: {
@@ -390,7 +390,7 @@
 		</form>
 	</script>
 
-	<script th:src="@{/resources/dist/js/sample-files.bundle.js}"></script>
+	<script th:src="@{/dist/js/sample-files.bundle.js}"></script>
 </th:block>
 </body>
 </html>

@@ -1,4 +1,3 @@
-import { fromJS, List } from "immutable";
 import { types as templateActionTypes } from "./templates";
 import { isDate } from "../../../../utilities/date-utilities";
 import { FIELDS, TYPES } from "../constants";
@@ -44,14 +43,19 @@ function getColumnDefinition(col) {
 
   if (field === FIELDS.icons) {
     Object.assign(col, {
+      filter: undefined,
       cellRenderer: "IconCellRenderer"
     });
   } else if (type === TYPES.date) {
     Object.assign(col, dateColumn);
   } else if (field === FIELDS.sampleName) {
     Object.assign(col, {
-      cellRenderer: "SampleNameRenderer"
+      cellRenderer: "SampleNameRenderer",
+      filter: "agTextColumnFilter"
     });
+  } else {
+    // Default to text filter
+    Object.assign(col, { filter: "agTextColumnFilter" });
   }
 
   /*
@@ -85,27 +89,30 @@ export const types = {
   LOAD_SUCCESS: "METADATA/FIELDS/LOAD_SUCCESS"
 };
 
-export const initialState = fromJS({
+export const initialState = {
   initializing: true, // Is the API call currently being made
   error: false, // Was there an error making the api call}
-  fields: List() // List of metadata fields ==> used for table headers
-});
+  fields: [] // List of metadata fields ==> used for table headers
+};
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
-      return state.set("initializing", true).set("error", false);
+      return { ...state, initializing: true, error: false };
     case templateActionTypes.LOAD_SUCCESS:
-      return state
-        .set("initializing", false)
-        .set("error", false)
-        .delete("fields")
-        .set("fields", fromJS(formatColumns(action.templates[0].fields)));
+      return {
+        ...state,
+        initializing: false,
+        error: false,
+        fields: formatColumns(action.templates[0].fields)
+      };
     case types.LOAD_ERROR:
-      return state
-        .set("initializing", false)
-        .set("error", true)
-        .set("fields", List());
+      return {
+        ...state,
+        initializing: false,
+        error: true,
+        fields: []
+      };
     default:
       return state;
   }
