@@ -1,4 +1,5 @@
 import angular from "angular";
+import "./modules/cart/irida.cart";
 import "./pages/search/irida.search";
 // Import css
 import "../sass/app.scss";
@@ -15,7 +16,7 @@ import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 
-const deps = ["ui.bootstrap"];
+const deps = ["ui.bootstrap", "irida.cart"];
 
 const app = angular.module("irida", deps);
 
