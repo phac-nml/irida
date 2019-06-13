@@ -17,6 +17,7 @@ Changes
 * [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
 * [UI/Developer]: Updated to latest `react-redux` to use new hooks API.
 * [UI]: Updated session expiration modal.
+* [UI]: Removed `momentjs` from being loaded on every page.
 
 19.01 to 19.05
 ---------------
