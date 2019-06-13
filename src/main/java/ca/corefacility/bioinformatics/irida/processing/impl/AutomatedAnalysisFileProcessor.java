@@ -227,7 +227,7 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		for (Join<Project, Sample> j : projectForSample) {
 
 			//get the analysis templates for that project
-			List<AnalysisSubmissionTemplate> analysisSubmissionTemplatesForProject = analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(
+			List<AnalysisSubmissionTemplate> analysisSubmissionTemplatesForProject = analysisTemplateRepository.getEnabledAnalysisSubmissionTemplatesForProject(
 					j.getSubject());
 
 			//check if the project owns this sample
