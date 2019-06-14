@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Button, message, notification } from "antd";
-import PropTypes from "prop-types";
 
 export const MESSAGE_EVENT = "EVENT/MESSAGE";
 export const NOTIFICATION_EVENT = "EVENT/NOTIFICATION";
@@ -31,7 +30,7 @@ export function Notifications() {
   }
 
   function showUndoNotification({ detail }) {
-    const { text, callback } = detail;
+    const { text, description, callback } = detail;
     const key = `open${Date.now()}`;
 
     const clickHandler = () => {
@@ -40,7 +39,8 @@ export function Notifications() {
     };
 
     notification.open({
-      description: <React.Fragment>{text}</React.Fragment>,
+      message: text,
+      description,
       key,
       btn: (
         <Button type="primary" size="small" onClick={clickHandler}>

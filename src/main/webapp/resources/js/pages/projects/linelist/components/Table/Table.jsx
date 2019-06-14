@@ -370,7 +370,7 @@ export class TableComponent extends React.Component {
         : i18n.linelist.editing.undo.empty;
       showUndoNotification(
         {
-          text: text``
+          text: text
             .replace("[SAMPLE_NAME]", data[FIELDS.sampleName])
             .replace("[FIELD]", headerName)
             .replace("[NEW_VALUE]", data[field])
