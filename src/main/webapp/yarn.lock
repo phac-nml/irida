@@ -735,10 +735,6 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@bassettsj/livestamp@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@bassettsj/livestamp/-/livestamp-2.0.0.tgz#87640e82bb241b820407fb39275c77436e1bcf85"
-
 "@emotion/is-prop-valid@^0.7.3":
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.7.3.tgz#a6bf4fa5387cbba59d44e698a4680f481a8da6cc"

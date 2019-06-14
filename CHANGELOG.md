@@ -18,6 +18,7 @@ Changes
 * [UI/Developer]: Updated to latest `react-redux` to use new hooks API.
 * [UI]: Updated session expiration modal.
 * [UI]: Removed `momentjs` from being loaded on every page.
+* [UI]: Removed `livestampjs` as a project dependency.
 
 19.01 to 19.05
 ---------------

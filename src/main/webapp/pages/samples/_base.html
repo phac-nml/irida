@@ -66,8 +66,8 @@
                             <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
                         </div>
                         <div th:text="#{samples.details.modified}">Modified</div>
-                        <div class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
-                             th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></div>
+                        <div class="sidebar__value" id="sb-modified"
+                             th:text="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></div>
                     </div>
                     <div th:if="${sample.isRemote()}" th:with="status=${sample.getRemoteStatus()}">
                         <div class="sidebar__item">
@@ -97,9 +97,6 @@
     </div>
 </div>
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-
     <th:block layout:fragment="scripts"></th:block>
 </th:block>
 </body>
