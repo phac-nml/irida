@@ -118,6 +118,8 @@ test_ui() {
     then
         SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROME_DRIVER"
     else
+        # create the $TMP_DIRECTORY/irida folder before docker runs so that root doesn't create it
+        mkdir -p $TMP_DIRECTORY/irida
         # reuse selenium docker image if it exists
         docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
         SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Djetty.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
