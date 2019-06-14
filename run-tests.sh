@@ -118,12 +118,13 @@ test_ui() {
     then
         SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROME_DRIVER"
     else
-        docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
-        SELENIUM_OPTS="-Dwebdriver.selenium_url=http://localhost:4444/wd/hub -Djetty.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
+        # reuse selenium docker image if it exists
+        docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
+        SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Djetty.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
     fi
 	mvn clean verify -B -Pui_testing $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
-	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $SELENIUM_DOCKER_NAME; fi
+	if [[ "$DO_KILL_DOCKER" = true && "$SELENIUM_DOCKER" = true ]]; then docker rm -f -v $SELENIUM_DOCKER_NAME; fi
 	return $exit_code
 }
 
