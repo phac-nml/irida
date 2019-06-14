@@ -5,7 +5,7 @@
         data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
-  <link rel="stylesheet" th:href="@{/resources/dist/css/project-add-sample.bundle.css}">
+  <link rel="stylesheet" th:href="@{/dist/css/project-add-sample.bundle.css}">
   <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}">
   <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}">
   <script th:inline="javascript">
@@ -60,7 +60,7 @@
 
 <th:block layout:fragment="scripts">
   <script th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
-  <script th:src="@{/resources/dist/js/project-add-sample.bundle.js}"></script>
+  <script th:src="@{/dist/js/project-add-sample.bundle.js}"></script>
 </th:block>
 </body>
 

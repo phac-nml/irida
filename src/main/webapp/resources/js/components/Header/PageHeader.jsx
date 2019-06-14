@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { render } from "react-dom";
+import { Session } from "../session/Session";
 import { blue1 } from "../../styles/colors";
 
 /*
@@ -8,7 +9,7 @@ Webpack does not know what the servlet context path is.  To fix this, webpack ex
 the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
-__webpack_public_path__ = `${window.TL.BASE_URL}resources/dist/`;
+__webpack_public_path__ = `${window.TL.BASE_URL}dist/`;
 
 const GalaxyAlert = React.lazy(() => import("./GalaxyAlert"));
 
@@ -25,7 +26,8 @@ export class PageHeader extends React.Component {
 
   render() {
     return (
-      <div>
+      <>
+        <Session/>
         {this.state.inGalaxy ? (
           <Suspense
             fallback={
@@ -40,7 +42,7 @@ export class PageHeader extends React.Component {
             <GalaxyAlert />
           </Suspense>
         ) : null}
-      </div>
+      </>
     );
   }
 }

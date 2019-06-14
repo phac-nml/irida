@@ -47,6 +47,7 @@ const POPOVER_OPTIONS = {
   trigger: "click",
   placement: "auto right",
   html: true,
+  sanitize: false,
   template: $("#popover-template").clone()
 };
 

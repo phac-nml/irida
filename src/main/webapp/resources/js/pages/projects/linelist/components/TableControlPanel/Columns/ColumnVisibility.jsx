@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { List, Switch } from "antd";
 import { FIELDS } from "../../../constants";
 
@@ -14,7 +13,7 @@ export default class ColumnVisibility extends React.Component {
     /**
      * A list of Metadata templates related to the project.
      */
-    templates: ImmutablePropTypes.list.isRequired,
+    templates: PropTypes.array.isRequired,
     /**
      * The index in the templates that is currently displayed.
      */
@@ -38,21 +37,22 @@ export default class ColumnVisibility extends React.Component {
    * @param {array} columns - list of all the columns
    */
   fieldUpdated = (item, checked, columns) => {
-    item.hide = !checked;
-    this.setState({ columns });
-
     /*
     Update the global state with the modified template.
      */
-    this.props.templateModified(columns);
+    this.props.templateModified(item);
   };
 
   render() {
     let columns = [];
-    if (this.props.templates.size > 0) {
-      const template = this.props.templates.get(this.props.current).toJS();
-      columns =
-        template.modified.length === 0 ? template.fields : template.modified;
+    if (this.props.templates.length > 0) {
+      const template = this.props.templates[this.props.current];
+
+      columns = [
+        ...(template.modified.length === 0
+          ? template.fields
+          : template.modified)
+      ];
     }
 
     return (
