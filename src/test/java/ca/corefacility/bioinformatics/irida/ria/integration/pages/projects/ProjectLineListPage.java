@@ -10,6 +10,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
+
 /**
  * Represents page found at url: /projects/{projectId}/linelist
  */
@@ -209,8 +211,8 @@ public class ProjectLineListPage extends ProjectPageBase {
 				waitForElementVisible(By.className("t-delete-entries-modal")).click();
 				driver.findElement(By.cssSelector(".ant-btn.ant-btn-danger"))
 						.click();
-				waitForElementVisible(By.className("noty_type__success"));
-				return true;
+				PageUtilities utilities = new PageUtilities(driver);
+				return utilities.checkSuccessNotification();
 			}
 			return false;
 		} catch (Exception e) {
