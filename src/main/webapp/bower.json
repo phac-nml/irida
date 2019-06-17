@@ -10,7 +10,6 @@
     "select2": "3.5.0",
     "bower": "*",
     "angular-ui-router": "0.2.13",
-    "datatables": "^1.10.15",
     "angular-bootstrap-switch": "0.4.0",
     "ng-file-upload": "5.0.8",
     "marked": "0.3.3",
@@ -29,7 +28,6 @@
   "devDependencies": {},
   "resolutions": {
     "angular": ">=1.4.0",
-    "datatables": "^1.10.15",
     "angular-bootstrap": "0.14.3"
   }
 }
