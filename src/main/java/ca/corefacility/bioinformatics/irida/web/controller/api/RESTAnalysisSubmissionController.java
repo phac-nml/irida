@@ -1,14 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +12,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -44,6 +34,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+
+import com.google.common.collect.ImmutableMap;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * REST controller to manage sharing of {@link AnalysisSubmission},
@@ -235,10 +230,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		/*
 		 * Add links to the available files
 		 */
-		for (String name : analysis.getAnalysisOutputFileNames()) {
-			analysis.add(
-					linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(identifier, name))
-							.withRel(FILE_REL + "/" + name));
+		for (Map.Entry<String, AnalysisOutputFile> entry : analysis.getAnalysisOutputFilesMap()
+				.entrySet()) {
+			analysis.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(identifier,
+					entry.getValue()
+							.getId())).withRel(FILE_REL + "/" + entry.getKey()));
 		}
 
 		model.addAttribute(RESOURCE_NAME, analysis);
@@ -248,27 +244,19 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 	/**
 	 * Get an analysis output file for a given submission
-	 * 
-	 * @param submissionId
-	 *            The {@link AnalysisSubmission} id
-	 * @param fileType
-	 *            The {@link AnalysisOutputFile} type as defined in the
-	 *            {@link Analysis} subclass
+	 *
+	 * @param submissionId The {@link AnalysisSubmission} id
+	 * @param fileId       The {@link AnalysisOutputFile} id
 	 * @return {@link ModelMap} containing the {@link AnalysisOutputFile}
 	 */
-	@RequestMapping("/{submissionId}/analysis/file/{fileType}")
-	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable String fileType) {
+	@RequestMapping("/{submissionId}/analysis/file/{fileId}")
+	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
 		ModelMap model = new ModelMap();
-		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
 
-		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
-			throw new EntityNotFoundException("Analysis is not completed");
-		}
-
-		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileType);
+		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
 		analysisOutputFile.add(
-				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId, fileType))
-						.withSelfRel());
+				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId,
+						analysisOutputFile.getId())).withSelfRel());
 
 		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 
@@ -278,26 +266,46 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	/**
 	 * Get the actual file contents for an analysis output file.
 	 *
-	 * @param submissionId
-	 *            The {@link AnalysisSubmission} id
-	 * @param fileType
-	 *            The {@link AnalysisOutputFile} type as defined in the
-	 *            {@link Analysis} subclass
-	 * @return a {@link FileSystemResource} containing the contents of the
-	 *         {@link AnalysisOutputFile}.
+	 * @param submissionId The {@link AnalysisSubmission} id
+	 * @param fileId       The {@link AnalysisOutputFile} id
+	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
 	 */
-	@RequestMapping(value = "/{submissionId}/analysis/file/{fileType}", produces = MediaType.TEXT_PLAIN_VALUE)
+	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
 	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
-			@PathVariable String fileType) {
+			@PathVariable Long fileId) {
+		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
+		return new FileSystemResource(analysisOutputFile.getFile()
+				.toFile());
+	}
+
+	/**
+	 * Get the {@link AnalysisOutputFile} for an {@link AnalysisSubmission} and given file ID
+	 *
+	 * @param submissionId the ID of the {@link AnalysisSubmission}
+	 * @param fileId       the ID of the {@link AnalysisOutputFile}
+	 * @return the {@link AnalysisOutputFile} if available
+	 */
+	private AnalysisOutputFile getOutputFileForSubmission(Long submissionId, Long fileId) {
+		ModelMap model = new ModelMap();
 		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
 
 		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
 			throw new EntityNotFoundException("Analysis is not completed");
 		}
 
-		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileType);
-		return new FileSystemResource(analysisOutputFile.getFile().toFile());
+		Optional<AnalysisOutputFile> outputFileOpt = read.getAnalysis()
+				.getAnalysisOutputFiles()
+				.stream()
+				.filter(f -> f.getId()
+						.equals(fileId))
+				.findFirst();
+
+		if (!outputFileOpt.isPresent()) {
+			throw new EntityNotFoundException("No output file with this id " + fileId);
+		}
+
+		return outputFileOpt.get();
 	}
 
 	/**

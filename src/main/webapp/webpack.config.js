@@ -9,8 +9,7 @@ const BUILD_PATH = path.resolve(__dirname, "dist");
 const config = {
   externals: {
     jquery: "jQuery",
-    angular: "angular",
-    moment: "moment"
+    angular: "angular"
   },
   stats: {
     children: false,

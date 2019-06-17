@@ -5,10 +5,9 @@
                 <div class="announcement-content pull-left">
                     <marked th:inline="text">[[${ann.getMessage()}]]</marked>
                 </div>
-                <div class="pull-right announcement-info">
-                    <div class="announcement-date" th:with="dateFormat=#{locale.date.long}" uib-tooltip-placement="top"
-                         data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
-                         data:livestamp="${ann.createdDate}">
+                <div class="announcement-info">
+                    <div class="announcement-date" th:with="dateFormat=#{locale.date.long}"
+                         th:text="${#dates.format(ann.getCreatedDate(), dateFormat)}">
                     </div>
                     <div class='btn-group pull-right announcement-markread'>
                     <button class="btn btn-default btn-xs"
