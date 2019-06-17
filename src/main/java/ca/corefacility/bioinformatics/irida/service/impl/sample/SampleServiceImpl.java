@@ -577,6 +577,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#samples, 'canUpdateSample')")
+	@Transactional
 	@Override
 	public void removeMetadataFieldFromSamples(List<Sample> samples, MetadataTemplateField field) {
 		samples.forEach(sample -> {
