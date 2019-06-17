@@ -6,7 +6,6 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 public class AssociatedProjectEditPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectEditPage.class);
@@ -73,10 +73,9 @@ public class AssociatedProjectEditPage extends AbstractPage {
 		waitForAjax();
 	}
 
-	public boolean checkNotyStatus(String status) {
-		WebElement noty = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("noty_type__" + status)));
-		return noty.isDisplayed();
+	public boolean checkSuccessNotification() {
+		PageUtilities utilities = new PageUtilities(driver);
+		return utilities.checkSuccessNotification();
 	}
 
 	// ************************************************************************************************

@@ -43,7 +43,12 @@ export function Notifications() {
       description,
       key,
       btn: (
-        <Button type="primary" size="small" onClick={clickHandler}>
+        <Button
+          className="t-undo-btn"
+          type="primary"
+          size="small"
+          onClick={clickHandler}
+        >
           UNDO
         </Button>
       )
