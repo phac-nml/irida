@@ -19,6 +19,7 @@ Changes
 * [UI]: Updated session expiration modal.
 * [UI]: Removed `momentjs` from being loaded on every page.
 * [UI]: Removed `livestampjs` as a project dependency.
+* [REST]: Changed the URL suffix to analysis output files to be a numerical id instead of a hash key.  Files with a `.` in the name were having issues resolving.  No change in `rel`s so applications should work as usual.
 * [UI]: Removed `noty` as a `bower` dependency.
 
 19.01 to 19.05
