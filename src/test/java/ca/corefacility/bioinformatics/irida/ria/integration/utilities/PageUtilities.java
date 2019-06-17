@@ -59,7 +59,7 @@ public class PageUtilities {
 	}
 
 	public boolean checkSuccessNotification() {
-		return checkNotyNotification("noty_type__success");
+		return checkNotyNotification("ant-message-success");
 	}
 
 	public boolean checkWarningNotification() {
