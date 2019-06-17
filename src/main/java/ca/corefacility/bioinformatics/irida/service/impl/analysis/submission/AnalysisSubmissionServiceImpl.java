@@ -447,7 +447,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasPermission(#projectsToShare, 'canManageLocalProjectSettings')")
 	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
-			String analysisDescription, Project projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResults) {
+			String statusMessage, String analysisDescription, Project projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResults) {
 
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -475,6 +476,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				}
 			}
 		}
+
+		template.setStatusMessage(statusMessage);
 
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());

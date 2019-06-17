@@ -8,11 +8,15 @@ public class TemplateResponse {
 	private Long id;
 	private String name;
 	private String analysisType;
+	private boolean enabled;
+	private String statusMessage;
 
-	public TemplateResponse(Long id, String name, String analysisType) {
+	public TemplateResponse(Long id, String name, String analysisType, boolean enabled, String statusMessage) {
 		this.id = id;
 		this.name = name;
 		this.analysisType = analysisType;
+		this.statusMessage = statusMessage;
+		this.enabled = enabled;
 	}
 
 	public Long getId() {
@@ -27,4 +31,11 @@ public class TemplateResponse {
 		return analysisType;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
+	}
 }

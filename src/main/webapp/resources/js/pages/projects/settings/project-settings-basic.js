@@ -1,3 +1,6 @@
+import $ from "jquery";
+import "../../../../sass/pages/project-settings-basic.scss";
+
 const projectSettings = (function(page, notifications) {
   $("#coverage-save").on("click", function() {
     const genomeSize = $("#genome-size").val();
@@ -51,27 +54,6 @@ const projectSettings = (function(page, notifications) {
     toggleDeleteButton();
   });
 
-  /**
-   * Button for removing an analysis template from a project.  This should show a confirmation modal
-   */
-  $(".analysis-remove").on("click", function() {
-    const templateId = $(this)
-      .closest("tr")
-      .data("analysis");
-
-    /*
-    Display the confirmation modal for removing a template from the project.
-     */
-    $("#removeAnalysisTemplateModal").load(
-      `${window.PAGE.urls.deleteModal}#removeAnalysisTemplateModalGen`,
-      { templateId },
-      function() {
-        const modal = $(this);
-        modal.modal("show");
-      }
-    );
-  });
-
   function toggleDeleteButton() {
     if ($("#confirm-deletion").is(":checked")) {
       $("#submit-delete").prop("disabled", false);
@@ -79,4 +61,29 @@ const projectSettings = (function(page, notifications) {
       $("#submit-delete").prop("disabled", true);
     }
   }
+
+  /**
+   * Open a confirmation modal for removing an automated analysis pipeline
+   * @param {number} templateId - the id for the analysis to remove
+   */
+  const displayRemoveAnalysisModal = templateId => {
+    $("#removeAnalysisTemplateModal").load(
+      `${window.PAGE.urls.deleteModal}#removeAnalysisTemplateModalGen`,
+      { templateId },
+      function() {
+        $(this).modal("show");
+      }
+    );
+  };
+
+  /*
+  Submission handler for when the user clicks on the remove analysis button.
+   */
+  $(".remove-analysis-form").on("submit", function(e) {
+    e.preventDefault();
+    const templateId = $(this)
+      .find(`input[name="templateId"]`)
+      .val();
+    displayRemoveAnalysisModal(templateId);
+  });
 })(window.PAGE, window.notifications);

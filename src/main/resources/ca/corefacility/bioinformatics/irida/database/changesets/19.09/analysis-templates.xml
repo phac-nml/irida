@@ -14,6 +14,8 @@
                              referencedTableName="project"/>
             </column>
             <column name="automated" type="bit(1)"/>
+            <column name="enabled" type="bit(1)"/>
+            <column name="status_message" type="longtext"/>
         </addColumn>
 
         <addColumn tableName="analysis_submission_AUD">
@@ -22,6 +24,8 @@
             </column>
             <column name="submitted_project_id" type="bigint(20)"/>
             <column name="automated" type="bit(1)"/>
+            <column name="enabled" type="bit(1)"/>
+            <column name="status_message" type="longtext"/>
         </addColumn>
 
         <!--Drop old notnulls since the table now has the template also encoded -->

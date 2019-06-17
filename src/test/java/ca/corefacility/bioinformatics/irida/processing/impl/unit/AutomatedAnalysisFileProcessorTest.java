@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
 
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -57,6 +58,9 @@ public class AutomatedAnalysisFileProcessorTest {
 	@Mock
 	private AnalysisSubmissionTemplateRepository templateRepository;
 
+	@Mock
+	private MessageSource messageSource;
+
 	private AutomatedAnalysisFileProcessor processor;
 
 	IridaWorkflow assemblyWorkflow;
@@ -68,7 +72,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		MockitoAnnotations.initMocks(this);
 
 		processor = new AutomatedAnalysisFileProcessor(ssoRepository, psjRepository, submissionRepository,
-				templateRepository, pasRepository, workflowsService, objectRepository);
+				templateRepository, pasRepository, workflowsService, objectRepository, messageSource);
 
 		//assembly
 		UUID assemblyID = UUID.randomUUID();
@@ -107,7 +111,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		AnalysisSubmission built = new AnalysisSubmission.Builder(assemblyTemplate).inputFiles(Sets.newHashSet(pair))
 				.build();
 
-		when(templateRepository.getAnalysisSubmissionTemplatesForProject(project)).thenReturn(
+		when(templateRepository.getEnabledAnalysisSubmissionTemplatesForProject(project)).thenReturn(
 				Lists.newArrayList(assemblyTemplate));
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
@@ -129,7 +133,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		Sample sample = new Sample();
 		Project project = new Project();
 
-		when(templateRepository.getAnalysisSubmissionTemplatesForProject(project)).thenReturn(
+		when(templateRepository.getEnabledAnalysisSubmissionTemplatesForProject(project)).thenReturn(
 				Lists.newArrayList());
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
@@ -156,7 +160,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		AnalysisSubmission built = new AnalysisSubmission.Builder(assemblyTemplate).inputFiles(Sets.newHashSet(pair))
 				.build();
 
-		when(templateRepository.getAnalysisSubmissionTemplatesForProject(project)).thenReturn(
+		when(templateRepository.getEnabledAnalysisSubmissionTemplatesForProject(project)).thenReturn(
 				Lists.newArrayList(assemblyTemplate));
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(

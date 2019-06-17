@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -23,8 +24,16 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	@JoinColumn(name = "submitted_project_id")
 	private Project submittedProject;
 
+	@NotNull
+	private boolean enabled;
+
+	@Lob
+	@Column(name = "status_message")
+	private String statusMessage;
+
 	protected AnalysisSubmissionTemplate() {
 		super();
+		enabled = true;
 	}
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, IridaWorkflowNamedParameters namedParameters,
@@ -65,7 +74,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	public void setReferenceFile(ReferenceFile referenceFile) {
 		this.referenceFile = referenceFile;
 	}
-	
+
 	public Project getSubmittedProject() {
 		return submittedProject;
 	}
@@ -92,5 +101,21 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	@Override
 	public int compareTo(AnalysisSubmissionTemplate o) {
 		return modifiedDate.compareTo(o.modifiedDate);
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
 	}
 }

@@ -96,7 +96,7 @@ public class ProjectSettingsController {
 			typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
 		}
 
-		return new TemplateResponse(template.getId(), template.getName(), typeString);
+		return new TemplateResponse(template.getId(), template.getName(), typeString, template.isEnabled(), template.getStatusMessage());
 	}
 
 	/**
