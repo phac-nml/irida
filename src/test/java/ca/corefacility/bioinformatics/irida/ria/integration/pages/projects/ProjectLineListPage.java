@@ -42,7 +42,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "t-modal-save-template-btn")
 	private WebElement modalSaveTemplateBtn;
 
-	@FindBy(className = "t-undo-edit")
+	@FindBy(className = "t-undo-btn")
 	private WebElement undoEditBtn;
 
 	@FindBy(className = "t-columns-panel-toggle")
@@ -129,7 +129,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void cancelCellEdit() {
-		waitForTime(200);
+		waitForElementToBeClickable(undoEditBtn);
 		undoEditBtn.click();
 	}
 

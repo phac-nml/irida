@@ -62,10 +62,6 @@ public class PageUtilities {
 		return checkNotyNotification("ant-message-success");
 	}
 
-	public boolean checkWarningNotification() {
-		return checkNotyNotification("noty_type_warning");
-	}
-
 	private boolean checkNotyNotification(String type) {
 		boolean present = false;
 		try {
