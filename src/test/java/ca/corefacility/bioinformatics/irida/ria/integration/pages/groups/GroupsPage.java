@@ -117,7 +117,7 @@ public class GroupsPage extends AbstractPage {
 		waitForAjax();
 	}
 
-	public boolean notySuccessDisplayed() {
+	public boolean checkSuccessNotificationStatus() {
 		PageUtilities utilities = new PageUtilities(driver);
 		return utilities.checkSuccessNotification();
 	}
