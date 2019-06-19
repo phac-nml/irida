@@ -191,14 +191,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 			throw new ConstraintViolationException(constraintViolations);
 		}
 
-		// check if the entity exists in the database
-		if (!exists(id)) {
-			throw new EntityNotFoundException("Entity not found.");
-		}
-
 		// at this point, everything is A-OK, so go through the act of updating
 		// the entity:
-		// return repository.update(id, updatedFields);
 		return repository.save(instance);
 	}
 	
