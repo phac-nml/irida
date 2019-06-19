@@ -14,8 +14,7 @@
     "marked": "0.3.3",
     "angular-marked": "0.0.18",
     "angular-bootstrap": "0.14.3",
-    "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6",
-    "angular-bootstrap-lightbox": "^0.12.0"
+    "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6"
   },
   "devDependencies": {},
   "resolutions": {
