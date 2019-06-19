@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
  * <p>
@@ -76,18 +76,9 @@ public class ProjectMembersPage extends AbstractPage {
 		waitForAjax();
 	}
 
-	public boolean notySuccessDisplayed() {
-		logger.debug("Checking if noty success");
-		boolean present = false;
-		try {
-			(new WebDriverWait(driver, 10)).until(
-					ExpectedConditions.presenceOfElementLocated(By.className("noty_type__success")));
-			present = true;
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
+	public boolean checkSuccessNotification() {
+		PageUtilities utilities = new PageUtilities(driver);
+		return utilities.checkSuccessNotification();
 	}
 
 	public boolean addGroupButtonDisplayed() {
