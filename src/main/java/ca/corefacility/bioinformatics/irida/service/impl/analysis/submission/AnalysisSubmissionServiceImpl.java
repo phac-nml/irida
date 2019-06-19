@@ -333,6 +333,29 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return super.update(submission);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updateEmailPipelineResult(AnalysisSubmission submission, boolean emailPipelineResult) {
+		submission.setEmailPipelineResult(emailPipelineResult);
+
+		return super.update(submission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName) {
+		submission.setName(analysisName);
+
+		return super.update(submission);
+	}
+
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user) {

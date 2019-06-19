@@ -3,6 +3,23 @@
  */
 import axios from "axios";
 
+export async function updateAnalysisEmailPipelineResult(
+  submissionId,
+  emailPipelineResult
+) {
+  axios.patch(`${window.TL.BASE_URL}analysis/ajax/emailpipelineresult/`, {
+    analysisSubmissionId: submissionId,
+    emailPipelineResult: emailPipelineResult
+  });
+}
+
+export async function updateAnalysisName(submissionId, analysisName) {
+  axios.patch(`${window.TL.BASE_URL}analysis/ajax/updateanalysisname/`, {
+    analysisSubmissionId: submissionId,
+    analysisName: analysisName
+  });
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
@@ -27,7 +44,7 @@ export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
       `${
-        window.PAGE.URLS.base
+        window.TL.BASE_URL
       }analysis/ajax/project/${projectId}/shared-analysis-outputs`
     );
     return { data };

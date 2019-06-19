@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisEmailPipelineResult;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisName;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
@@ -232,6 +235,7 @@ public class AnalysisController {
 	 * @param locale       User's locale
 	 * @return name of the details page view
 	 */
+
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
@@ -246,7 +250,6 @@ public class AnalysisController {
 
 		model.addAttribute("canShareToSamples", canShareToSamples);
 
-
 		UUID workflowUUID = submission.getWorkflowId();
 		logger.trace("Workflow ID is " + workflowUUID);
 
@@ -256,64 +259,67 @@ public class AnalysisController {
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
-		String viewName = getViewForAnalysisType(analysisType);
+
 		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
 
-		// Input files
-		// - Paired
-		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
-				submission, SequenceFilePair.class);
-		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
-			if (a.sample == null && b.sample == null) {
-				return 0;
-			} else if (a.sample == null) {
-				return -1;
-			} else if (b.sample == null) {
-				return 1;
-			}
-			return a.sample.getLabel()
-					.compareTo(b.sample.getLabel());
-		}).collect(Collectors.toList());
-		model.addAttribute("paired_end", sampleFiles);
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
+		return "analysis";
+	}
 
-		if (iridaWorkflow.getWorkflowDescription()
-				.requiresReference() && submission.getReferenceFile()
-				.isPresent()) {
-			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
-			model.addAttribute("referenceFile", submission.getReferenceFile()
-					.get());
-		} else {
-			logger.debug("No reference file required for workflow.");
-		}
+	/**
+	 * Return an individual analysis submission
+	 *
+	 * @param submissionId the ID of the submission
+	 * @return submission via ajax
+	 */
 
-		/*
-		 * Preview information
-		 */
-		try {
-			if (submission.getAnalysisState()
-					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
-					tree(submission, model);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
-					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
-					model.addAttribute("bio_hansel", true);
-				}
-			}
+	@RequestMapping(value = "ajax/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public AnalysisSubmission ajaxGetAnalysisBySubmissionId(@PathVariable Long submissionId) {
+		logger.debug("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		logger.debug("Analysis Submission: " + submission);
 
-		} catch (IOException e) {
-			logger.error("Couldn't get preview for analysis", e);
-		}
+		return submission;
+	}
 
-		return viewName;
+	/**
+	 * Update an analysis email pipeline completion result
+	 *
+	 * @param parameters parameters which include the submission id and
+	 *                   the new email pipeline result value
+	 * @return redirect to the analysis page after update
+	 */
+	@RequestMapping(value = "/ajax/emailpipelineresult", method = RequestMethod.PATCH)
+	public String ajaxUpdateEmailPipelineResultBySubmissionId(@RequestBody AnalysisEmailPipelineResult parameters) {
+		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
+		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+		analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
+		logger.debug("Email pipeline result updated for: " + submission);
+
+		return "redirect:/analysis/" + parameters.getAnalysisSubmissionId();
+	}
+
+	/**
+	 * Update an analysis name
+	 *
+	 * @param parameters parameters which include the submission id and the new name
+	 * @return redirect to the analysis page after update
+	 */
+	@RequestMapping(value = "/ajax/updateanalysisname", method = RequestMethod.PATCH)
+	public String ajaxUpdateNameBySubmissionId(@RequestBody AnalysisName parameters) {
+		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
+		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+		analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
+		logger.debug("Name updated for: " + submission);
+
+		return "redirect:/analysis/" + parameters.getAnalysisSubmissionId();
 	}
 
 	/**

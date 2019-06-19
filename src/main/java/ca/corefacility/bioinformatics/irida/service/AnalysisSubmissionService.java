@@ -253,6 +253,26 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
 
 	/**
+	 * Update the emailPipelineResult of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param emailPipelineResult  the new emailPipelineResult
+	 * @return the updated submission
+	 */
+	public AnalysisSubmission updateEmailPipelineResult(AnalysisSubmission submission, boolean emailPipelineResult);
+
+
+	/**
+	 * Update the name of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param name   the new name of the analysis
+	 * @return the updated submission
+	 */
+	public AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName);
+
+
+	/**
 	 * Get all {@link User} generated {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
 	 * @param user {@link User}
 	 * @return List of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
