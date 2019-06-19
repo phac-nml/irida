@@ -65,6 +65,10 @@ public class LineListController {
 		Project project = projectService.read(projectId);
 
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
+		/*
+		Generate the list of sample metadata to return to the UI.  For each sample we must make sure that
+		the currently logged in user has the authority to modify it.
+		 */
 		return projectSamples.stream()
 				.map(join -> {
 					ProjectSampleJoin psj = (ProjectSampleJoin)join;
