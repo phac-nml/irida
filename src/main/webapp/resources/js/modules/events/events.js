@@ -4,7 +4,6 @@
  */
 
 import angular from "angular";
-import "@bassettsj/livestamp";
 import "../../../sass/modules/events.scss";
 
 /**

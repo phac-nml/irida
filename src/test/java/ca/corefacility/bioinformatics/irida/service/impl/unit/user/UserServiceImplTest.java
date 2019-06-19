@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,7 +7,6 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -32,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -42,6 +37,11 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * Testing the behavior of {@link UserServiceImpl}
@@ -97,7 +97,6 @@ public class UserServiceImplTest {
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).findOne(id);
 		verify(userRepository).save(persisted);
-		verify(userRepository).exists(id);
 	}
 
 	@Test
