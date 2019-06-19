@@ -5241,10 +5241,6 @@ normalize-url@^3.0.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-3.3.0.tgz#b2e1c4dc4f7c6d57743df733a4f5978d18650559"
 
-noty@^3.2.0-beta:
-  version "3.2.0-beta"
-  resolved "https://registry.yarnpkg.com/noty/-/noty-3.2.0-beta.tgz#cd1117277a1b83c9b08dfc78f968c6c5960d3cfa"
-
 npm-bundled@^1.0.1:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/npm-bundled/-/npm-bundled-1.0.6.tgz#e7ba9aadcef962bb61248f91721cd932b3fe6bdd"
