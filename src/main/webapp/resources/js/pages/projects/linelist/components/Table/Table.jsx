@@ -367,14 +367,14 @@ export class TableComponent extends React.Component {
       const text = Boolean(data[field])
         ? i18n(
             "linelist.editing.undo.full",
-            `<strong>${data[FIELDS.sampleName]}</strong>`,
-            `<strong>${headerName}</strong>`,
-            `<strong>${data[field]}</strong>`
+            `${data[FIELDS.sampleName]}`,
+            `${headerName}`,
+            `${data[field]}`
           )
         : i18n(
             "linelist.editing.undo.empty",
-          `<strong>${headerName}</strong>`,
-            `<strong>${data[FIELDS.sampleName]}</strong>`
+          `${headerName}`,
+            `${data[FIELDS.sampleName]}`
           );
       showUndoNotification(
         {
