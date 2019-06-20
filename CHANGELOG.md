@@ -24,6 +24,7 @@ Changes
 * [Developer]: Removed unnecessary `exists` call in `updateFields` method which was causing some hibernate caching issues.
 * [UI]: Removed `noty` as `yarn` dependency, only using `ant.design` notifications.
 * [UI/Developer]: Removed `datatables` as a bower dependency.
+* [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
 
 19.01 to 19.05
 ---------------
