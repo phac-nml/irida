@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { Button, Checkbox, Card } from "antd";
 
 export function AnalysisShare() {
-  const [canShareToSamples, setCanShareToSamples] = useState(true);
   return (
       <>
         <h2 style={{fontWeight: "bold"}}>Results</h2>

@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Button, Checkbox, Input, List, Col } from "antd";
+import { Button, Checkbox, Input, List, Col, Tabs } from "antd";
+import { AnalysisSamples } from "./AnalysisSamples"
+import { AnalysisShare } from "./AnalysisShare"
+import { AnalysisDelete } from "./AnalysisDelete"
 
 import {
-    getAnalysisBySubmissionId
+    updateAnalysisEmailPipelineResult,
+    updateAnalysisName
 } from "../../../apis/analysis/analysis";
 
-const specialtyAnalysisTypes = [
-    'bio_hansel',
-    'sistr',
-    'SNVPhyl Phylogenomics'
-];
+import {
+  formatDate,
+  getHumanizedDuration
+} from "../../../utilities/date-utilities";
+
+const TabPane = Tabs.TabPane;
 
 const analysisDetails = [
   {
@@ -27,60 +32,102 @@ const analysisDetails = [
   },
   {
     title: 'Created',
-    desc: `${window.PAGE.analysisCreatedDate}`
+    desc: formatDate({ date: window.PAGE.analysisCreatedDate })
   },
   {
     title: 'Duration',
-    desc: '23 minutes'
+    desc: getHumanizedDuration({ date: window.PAGE.duration })
   },
 ];
 
-export default function AnalysisDetails() {
-  const [analysis, setAnalysis] = useState({  });
+export function AnalysisDetails() {
+    const [analysisName, setAnalysisName] = useState(window.PAGE.analysis.name);
     const [emailPipelineResult, setEmailPipelineResult] = useState(window.PAGE.analysisEmailPipelineResult);
-    const [analysisType, setAnalysisType] = useState("bio_hansel");
-    const [workflowName, setWorkflowName] = useState(window.PAGE.workflowName);
     const [version, setVersion] = useState(window.PAGE.version);
-    function fetchAnalysis() {
-      getAnalysisBySubmissionId(103).then( data => {
-          setAnalysis(data.data);
-          console.log(data.data);
-      })
+    const [updatePermission, setUpdatePermission] = useState(window.PAGE.updatePermission);
+    const [duration, setDuration] = useState(window.PAGE.duration);
+
+    function onChange(e)
+    {
+        updateAnalysisEmailPipelineResult(window.PAGE.analysis.identifier, e.target.checked);
     }
 
-    useEffect(() => {fetchAnalysis()},[]);
+    function updateSubmissionName()
+    {
+        const updatedAnalysisName = document.getElementById("analysis-name").value.trim();
+
+        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== analysisName))
+        {
+            setAnalysisName(updatedAnalysisName);
+            updateAnalysisName(window.PAGE.analysis.identifier, updatedAnalysisName);
+        }
+    }
 
   return (
       <>
-        <h2 style={{fontWeight: "bold"}}>Details</h2>
-        <br /><br />
+          <Tabs defaultActiveKey="4" tabPosition="left" style={{marginLeft:150, paddingTop:25}}>
+              <TabPane tab="Analysis" key="4" style={{minWidth:300}}>
+                  <Col span={12}>
+                     <h2 style={{fontWeight: "bold"}}>Details</h2>
+                      <br /><br />
 
-        <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-          <label style={{fontWeight: "bold", marginBottom: "25px !important"}}>Analysis Name</label>
-          <Input size="large" placeholder="Analysis-Salmonella" id="analysis-name" />
-        </Col>
-        <br />
-        <Col xs={{ span: 4, offset: 1 }} lg={{ span: 4, offset: 0 }}>
-          <Button size="large" type="primary" style={{marginTop: "5px"}}>Update</Button>
-        </Col>
+                      <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
+                        <label style={{fontWeight: "bold", marginBottom: "25px !important"}}>Analysis Name</label>
+                        <Input size="large" placeholder={analysisName} id="analysis-name" />
+                      </Col>
+                      <br />
+                      {updatePermission ?
+                          <Col xs={{ span: 4, offset: 1 }} lg={{ span: 4, offset: 1 }}>
+                            <Button size="large" type="primary" style={{marginTop: "5px"}} onClick={() => updateSubmissionName()}>Update</Button>
+                          </Col>
+                      :
+                          ""
+                      }
 
-        <br /><br /><br /><br />
-        <List
-          itemLayout="horizontal"
-          dataSource={ldata}
-          renderItem={item => (
-            <List.Item>
-              <List.Item.Meta
-                title={<span style={{fontWeight: "bold"}}>{item.title}</span>}
-                description={<span>{item.desc}</span>}
-              />
-            </List.Item>
-          )}
-        />
-        <hr style={{backgroundColor: "#E8E8E8", height: "1px", border: "0"}} />
-        <br />
-        <p style={{fontWeight: "bold"}}>Receive an email upon analysis completion</p>
-        <Checkbox>Yes, I want to receive an email once this analysis completes</Checkbox>
+                      <br /><br /><br /><br />
+                      <List
+                        itemLayout="horizontal"
+                        dataSource={analysisDetails}
+                        renderItem={item => (
+                          <List.Item>
+                            <List.Item.Meta
+                              title={<span style={{fontWeight: "bold"}}>{item.title}</span>}
+                              description={<span>{item.desc}</span>}
+                            />
+                          </List.Item>
+                        )}
+                      />
+                      <hr style={{backgroundColor: "#E8E8E8", height: "1px", border: "0"}} />
+                      <br />
+                      <p style={{fontWeight: "bold"}}>Receive an email upon analysis completion</p>
+                      <Checkbox onChange={onChange} defaultChecked={emailPipelineResult}>Yes, I want to receive an email once this analysis completes</Checkbox>
+                  </Col>
+              </TabPane>
+
+              <TabPane tab="Samples" key="5">
+                  <Col span={12}>
+                      <AnalysisSamples />
+                  </Col>
+              </TabPane>
+
+              {updatePermission ?
+                  <TabPane tab="Share Results" key="6">
+                      <Col span={12}>
+                          <AnalysisShare />
+                      </Col>
+                  </TabPane>
+                  : ""
+              }
+
+              {updatePermission ?
+                  <TabPane tab="Delete Analysis" key={!updatePermission ? "6" : "7"}>
+                      <Col span={12}>
+                          <AnalysisDelete />
+                      </Col>
+                  </TabPane>
+                  :""
+              }
+          </Tabs>
       </>
   );
 }

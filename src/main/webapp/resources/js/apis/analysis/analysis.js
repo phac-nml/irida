@@ -7,7 +7,7 @@ export async function updateAnalysisEmailPipelineResult(
   submissionId,
   emailPipelineResult
 ) {
-  axios.patch(`${window.TL.BASE_URL}analysis/ajax/emailpipelineresult/`, {
+  axios.patch(`${window.TL.BASE_URL}analysis/ajax/updateemailpipelineresult/`, {
     analysisSubmissionId: submissionId,
     emailPipelineResult: emailPipelineResult
   });

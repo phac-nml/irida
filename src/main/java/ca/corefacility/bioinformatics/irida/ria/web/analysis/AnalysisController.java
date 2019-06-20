@@ -244,8 +244,9 @@ public class AnalysisController {
 
 		boolean canShareToSamples = false;
 		if (submission.getAnalysis() != null) {
-			canShareToSamples = analysisSubmissionSampleProcessor
-					.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+			canShareToSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+					submission.getAnalysis()
+							.getAnalysisType());
 		}
 
 		model.addAttribute("canShareToSamples", canShareToSamples);
@@ -260,33 +261,21 @@ public class AnalysisController {
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 
-		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null,
+				analysisType.getType(), locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
-
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
+
+		Long duration = getAnalysisDuration(submission);
+		model.addAttribute("duration", duration);
+
 		return "analysis";
-	}
-
-	/**
-	 * Return an individual analysis submission
-	 *
-	 * @param submissionId the ID of the submission
-	 * @return submission via ajax
-	 */
-
-	@RequestMapping(value = "ajax/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public AnalysisSubmission ajaxGetAnalysisBySubmissionId(@PathVariable Long submissionId) {
-		logger.debug("reading analysis submission " + submissionId);
-		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		logger.debug("Analysis Submission: " + submission);
-
-		return submission;
 	}
 
 	/**
@@ -296,8 +285,8 @@ public class AnalysisController {
 	 *                   the new email pipeline result value
 	 * @return redirect to the analysis page after update
 	 */
-	@RequestMapping(value = "/ajax/emailpipelineresult", method = RequestMethod.PATCH)
-	public String ajaxUpdateEmailPipelineResultBySubmissionId(@RequestBody AnalysisEmailPipelineResult parameters) {
+	@RequestMapping(value = "/ajax/updateemailpipelineresult", method = RequestMethod.PATCH)
+	public String ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters) {
 		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 		analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
@@ -313,7 +302,7 @@ public class AnalysisController {
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/updateanalysisname", method = RequestMethod.PATCH)
-	public String ajaxUpdateNameBySubmissionId(@RequestBody AnalysisName parameters) {
+	public String ajaxUpdateSubmissionName(@RequestBody AnalysisName parameters) {
 		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 		analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
@@ -1121,6 +1110,24 @@ public class AnalysisController {
 		}
 
 		return viewName;
+	}
+
+	/**
+	 * Get the {@link AnalysisSubmission} duration
+	 *
+	 * @param submission the {@link AnalysisSubmission} to get duration for
+	 * @return duration of submission
+	 */
+	private Long getAnalysisDuration(AnalysisSubmission submission)
+	{
+		Long duration = 0L;
+
+		if(submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+			analysesListingService.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+					.getCreatedDate());
+		}
+
+		return duration;
 	}
 
 	/**
