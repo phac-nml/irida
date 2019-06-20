@@ -23,6 +23,7 @@ Changes
 * [UI]: Removed `noty` as a `bower` dependency.
 * [Developer]: Removed unnecessary `exists` call in `updateFields` method which was causing some hibernate caching issues.
 * [UI]: Removed `noty` as `yarn` dependency, only using `ant.design` notifications.
+* [UI/Developer]: Removed `datatables` as a bower dependency.
 
 19.01 to 19.05
 ---------------
