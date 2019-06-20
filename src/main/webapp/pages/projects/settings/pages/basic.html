@@ -52,7 +52,7 @@
 
             <div class="alert alert-info" th:if="${analysisTemplates.isEmpty()}" th:text="#{project.settings.automated.empty}">_Add one below_</div>
 
-            <a class="btn btn-default" href="/cart/pipelines" th:href="@{/cart/pipelines(automatedProject=${project.id})}" role="button" th:if="${manageMembers}">
+            <a class="btn btn-default" id="create-auto-analysis" href="/cart/pipelines" th:href="@{/cart/pipelines(automatedProject=${project.id})}" role="button" th:if="${manageMembers}">
                 <i class="fas fa-plus"></i>
                 <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
             </a>

@@ -76,12 +76,13 @@ export default class Pipeline extends React.Component {
             {this.props.name}
           </Heading>
         }
+        className={`t-pipeline-card`}
         actions={
           this.props.displaySelect
             ? [
                 <Button
                   size="small"
-                  className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
+                  className={`t-${this.props.name.replace(/\s/g, "_")}_btn t-select-pipeline`}
                   href={pipelineUrl}
                 >
                   {getI18N("pipelines.cart.select")}
