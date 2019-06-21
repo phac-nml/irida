@@ -7,7 +7,7 @@ Internationalization
 ==========================================================
 
 ## Default Internationalization
-Default internationalization can be set in `/src/main/resources/configuration.properties` in the property `default.locale`.  This value should be set to the string representation for the locale you want to set.
+Default internationalization can be set in the `src/main/resources/configuration.properties` file via the `default.locale` property. This value should be set to the string representation (eg. `en` for `Locale.ENGLISH`) for the locale you want to set.
 
 All internationalization terms should be put into the appropriate language messages bundle which can be found in `src/main/resources/i18n/messages_[locale].properties`. 
 
