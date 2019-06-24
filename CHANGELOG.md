@@ -23,6 +23,9 @@ Changes
 * [UI]: Removed `noty` as a `bower` dependency.
 * [Developer]: Removed unnecessary `exists` call in `updateFields` method which was causing some hibernate caching issues.
 * [UI]: Removed `noty` as `yarn` dependency, only using `ant.design` notifications.
+* [UI/Developer]: Removed `datatables` as a bower dependency.
+* [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
+* [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack.
 
 19.01 to 19.05
