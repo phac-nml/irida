@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Card } from "antd";
+import { AnalysisContext } from '../../../state/AnalysisState'
 
 export function AnalysisShare() {
-  return (
+    const { state } = useContext(AnalysisContext);
+    return (
       <>
         <h2 style={{fontWeight: "bold"}}>Results</h2>
         <br />
@@ -14,7 +16,7 @@ export function AnalysisShare() {
 
         <br /><br />
 
-        {canShareToSamples ?
+        {state.canShareToSamples ?
             <Card
               title="Save Results"
             >
@@ -23,5 +25,5 @@ export function AnalysisShare() {
             :""
         }
       </>
-  );
+    );
 }
