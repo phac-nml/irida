@@ -18,6 +18,7 @@ SEQUENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/sequence-file-base-XXXXXXXX`
 REFERENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/reference-file-base-XXXXXXXX`
 OUTPUT_FILE_DIR=`mktemp -d $TMP_DIRECTORY/output-file-base-XXXXXXXX`
 SELENIUM_DOCKER_NAME=irida-selenium
+SELENIUM_DOCKER_tag=3.14.0
 SELENIUM_URL=http://localhost:4444/wd/hub
 HOSTNAME=`hostname`
 
@@ -57,7 +58,7 @@ pretest_cleanup() {
 		return
 	else
 		DB_ERR="Failed to clean/create new database named '$DATABASE_NAME'. Perhaps you need to grant permission first with 'echo \"grant all privileges on $DATABASE_NAME.* to '$DATABASE_USER'@'localhost';\" | mysql -u root -p'."
-	
+
 		set -x
 		echo "drop database if exists $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
 		if [ $? -ne 0 ];
@@ -71,12 +72,12 @@ pretest_cleanup() {
 			set +x
 			exit_error $DB_ERR
 		fi
-	
+
 		if [ "$(docker ps | grep $GALAXY_DOCKER_NAME)" != "" ];
 		then
 			docker rm -f -v $GALAXY_DOCKER_NAME
 		fi
-	
+
 		tmp_dir_cleanup
 	fi
 }
@@ -121,8 +122,7 @@ test_ui() {
         # create the $TMP_DIRECTORY/irida folder before docker runs so that root doesn't create it
         mkdir -p $TMP_DIRECTORY/irida
         # reuse selenium docker image if it exists
-        docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
-        SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Djetty.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
+        docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:$SELENIUM_DOCKER_VERSION SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Djetty.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
     fi
 	mvn clean verify -B -Pui_testing $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
