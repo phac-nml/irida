@@ -20,32 +20,32 @@
     </script>
 </head>
 <body>
-<div layout:fragment="page">
+<div id="root" layout:fragment="page">
 
-    <main class="col-md-12" property="mainContentOfPage">
-        <h1 th:text="#{projects.title}"></h1>
+<!--    <main class="col-md-12" property="mainContentOfPage">-->
+<!--        <h1 th:text="#{projects.title}"></h1>-->
 
-        <table id="projects" class="table table-striped"
-               cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
-                <th data-data="name" th:text="#{projects.table.name}"></th>
-                <th data-data="organism" th:text="#{projects.table.organism}"></th>
-                <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
-                <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
-                <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
-            </tr>
-            </thead>
-        </table>
-    </main>
+<!--        <table id="projects" class="table table-striped"-->
+<!--               cellspacing="0" width="100%">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th data-data="id" width="20" th:text="#{projects.table.id}"></th>-->
+<!--                <th data-data="name" th:text="#{projects.table.name}"></th>-->
+<!--                <th data-data="organism" th:text="#{projects.table.organism}"></th>-->
+<!--                <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>-->
+<!--                <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>-->
+<!--                <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--        </table>-->
+<!--    </main>-->
 
-    <div class="hidden" id="export-btn-text">
-        <i class="fa fa-download" aria-hidden="true"></i>
-        &nbsp;<th:block th:text="#{projects.export}"/>
-        <i class="fa fa-caret-down" aria-hidden="true">
-        </i>
-    </div>
+<!--    <div class="hidden" id="export-btn-text">-->
+<!--        <i class="fa fa-download" aria-hidden="true"></i>-->
+<!--        &nbsp;<th:block th:text="#{projects.export}"/>-->
+<!--        <i class="fa fa-caret-down" aria-hidden="true">-->
+<!--        </i>-->
+<!--    </div>-->
 </div>
 
 <th:block layout:fragment="scripts">

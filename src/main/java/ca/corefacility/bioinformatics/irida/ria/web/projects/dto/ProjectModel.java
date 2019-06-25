@@ -1,0 +1,53 @@
+package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
+
+import java.util.Date;
+
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+
+public class ProjectModel {
+	private Long id;
+	private String label;
+	private String organism;
+	private Long samples;
+	private Date createdDate;
+	private Date modifiedDate;
+	private boolean isRemote;
+
+	public ProjectModel(Project project, Long samples) {
+		this.id = project.getId();
+		this.label = project.getLabel();
+		this.organism = project.getOrganism();
+		this.samples = samples;
+		this.createdDate = project.getCreatedDate();
+		this.modifiedDate = project.getModifiedDate();
+		this.isRemote = project.isRemote();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
+
+	public long getSamples() {
+		return samples;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public boolean isRemote() {
+		return isRemote;
+	}
+}
