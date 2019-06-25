@@ -1,7 +1,7 @@
-import React, { useEffect, useReducer, useRef } from "react";
-import { Button, Icon, Input, Table, Typography } from "antd";
-import Highlighter from "react-highlight-words";
+import React, { useEffect, useReducer } from "react";
+import { Button, Col, Icon, Input, Row, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
+import { blue6 } from "../../../styles/colors";
 
 const { Text } = Typography;
 
@@ -33,7 +33,6 @@ const reducer = (state, action) => {
 
 export function ProjectsTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const searchRef = useRef(null);
 
   useEffect(() => {
     fetch();
@@ -146,13 +145,17 @@ export function ProjectsTable() {
       },
       render: (text, data) => (
         <a href={`${window.TL.BASE_URL}projects/${data.id}`}>
-          <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-            searchWords={[state.search[dataIndex]]}
-            autoEscape
-            textToHighlight={text.toString()}
-          />
-          {data.remote ? <Icon type="swap" /> : null}
+          <Text
+            ellipsis={true}
+            style={{
+              width: 250,
+              display: "inline-block",
+              color: blue6,
+              textDecoration: "underline"
+            }}
+          >
+            {text}
+          </Text>
         </a>
       )
     };
@@ -164,13 +167,24 @@ export function ProjectsTable() {
       dataIndex: "id",
       key: "identifier",
       sorter: true,
-      width: 100
+      width: 50
+    },
+    {
+      title: "",
+      dataIndex: "remote",
+      key: "remote",
+      width: 30,
+      render: remote =>
+        remote ? (
+          <Icon type="swap" title="Remote Project" style={{ cursor: "help" }} />
+        ) : null
     },
     {
       title: "Name",
       dataIndex: "label",
       key: "label",
       sorter: true,
+      width: 300,
       ...getColumnSearchProps("label")
     },
     {
@@ -180,7 +194,7 @@ export function ProjectsTable() {
       sorter: true,
       width: 150,
       render: text => (
-        <Text style={{ width: 150 }} ellipsis={true} title={text}>
+        <Text style={{ width: 135 }} ellipsis={true} title={text}>
           {text}
         </Text>
       )
@@ -196,7 +210,7 @@ export function ProjectsTable() {
       dataIndex: "createdDate",
       key: "created",
       sorter: true,
-      width: 200,
+      width: 240,
       render: date => new Date(date).toLocaleString()
     },
     {
@@ -204,22 +218,24 @@ export function ProjectsTable() {
       dataIndex: "modifiedDate",
       key: "modified",
       sorter: true,
-      width: 200,
+      width: 240,
       render: date => new Date(date).toLocaleString()
     }
   ];
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <Table
-        rowKey={record => record.id}
-        loading={state.loading}
-        pagination={state.pagination}
-        columns={columns}
-        dataSource={state.data}
-        onChange={handleTableChange}
-      />
-    </div>
+    <Row>
+      <Col>
+        <Table
+          rowKey={record => record.id}
+          loading={state.loading}
+          pagination={state.pagination}
+          columns={columns}
+          dataSource={state.data}
+          onChange={handleTableChange}
+        />
+      </Col>
+    </Row>
   );
 }
 

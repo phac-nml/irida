@@ -3,11 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import javax.persistence.criteria.*;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -33,18 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -64,11 +52,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.*;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -812,7 +796,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	/**
 	 * Search for projects using a few different types of search fields.
-	 * 
+	 *
 	 * @param allFields
 	 *            the search criteria to apply to all fields
 	 * @param projectNameFilter
@@ -826,11 +810,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private static final Specification<Project> searchForProjects(final String allFields,
 			final String projectNameFilter, final String organismNameFilter, final User user) {
 		return new Specification<Project>() {
-			
+
 			/**
 			 * This {@link Predicate} considers *all* fields on a
 			 * {@link Project} with an OR filter.
-			 * 
+			 *
 			 * @param root
 			 *            the root of the query
 			 * @param query
@@ -846,11 +830,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				allFieldsPredicates.add(cb.like(root.get("id").as(String.class), "%" + allFields + "%"));
 				return cb.or(allFieldsPredicates.toArray(new Predicate[0]));
 			}
-			
+
 			/**
 			 * This {@link Predicate} considers each specific field on
 			 * {@link Project} separately and joins them with an AND filter.
-			 * 
+			 *
 			 * @param root
 			 *            the root of the query
 			 * @param query
@@ -872,11 +856,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 				return cb.and(filterPredicates.toArray(new Predicate[0]));
 			}
-			
+
 			/**
 			 * This {@link Predicate} filters out {@link Project}s for the
 			 * specific user where they are assigned individually as a member.
-			 * 
+			 *
 			 * @param root
 			 *            the root of the query
 			 * @param query
@@ -894,12 +878,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 						.where(cb.equal(userMemberJoin.get("user"), user));
 				return cb.in(root.get("id")).value(userMemberSelect);
 			}
-			
+
 			/**
 			 * This {@link Predicate} filters out {@link Project}s for the
 			 * specific user where they are assigned transitively through a
 			 * {@link UserGroup}.
-			 * 
+			 *
 			 * @param root
 			 *            the root of the query
 			 * @param query
@@ -918,7 +902,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 						.where(cb.equal(groupMemberJoin.join("userGroup").join("users").get("user"), user));
 				return cb.in(root.get("id")).value(groupMemberSelect);
 			}
-			
+
 			/**
 			 * {@inheritDoc}
 			 */
@@ -927,7 +911,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					final CriteriaBuilder cb) {
 				final Predicate allFieldsPredicate = allFieldsPredicate(root, query, cb);
 				final Predicate specificFiltersPredicate = specificFiltersPredicate(root, query, cb);
-				
+
 				final Predicate projectMember = cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
 				if (user != null) {
 					return cb.and(allFieldsPredicate, specificFiltersPredicate, projectMember);
