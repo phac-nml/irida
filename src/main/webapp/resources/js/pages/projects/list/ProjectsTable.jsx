@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer, useRef } from "react";
-import { Button, Icon, Input, Table } from "antd";
+import { Button, Icon, Input, Table, Typography } from "antd";
 import Highlighter from "react-highlight-words";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 
-const initialState = { loading: true, search: "" };
+const { Text } = Typography;
 
-
+const initialState = { loading: true, search: {} };
 
 const TYPES = {
   SET_DATA: "PROJECTS/SET_DATA",
@@ -64,84 +64,99 @@ export function ProjectsTable() {
     fetch({ current: current - 1, pageSize, sortDirection, sortField });
   };
 
-  const handleSearch = (selectedKeys, confirm) => {
+  const handleSearch = (dataIndex, selectedKeys, confirm) => {
     confirm();
     dispatch({
       type: TYPES.SEARCH,
       payload: {
-        search: selectedKeys[0]
+        search: { [dataIndex]: selectedKeys[0] }
       }
     });
   };
 
-  const handleReset = clearFilters => {
+  const handleReset = (dataIndex, clearFilters) => {
     clearFilters();
     dispatch({
       type: TYPES.SEARCH,
       payload: {
-        search: ""
+        search: { [dataIndex]: "" }
       }
     });
   };
 
-  const getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters
-    }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={searchRef}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
-        />
-        <Button
-          type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm)}
-          icon="search"
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
-        </Button>
-        <Button
-          onClick={() => handleReset(clearFilters)}
-          size="small"
-          style={{ width: 90 }}
-        >
-          Reset
-        </Button>
-      </div>
-    ),
-    filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
-      if (visible) {
-        setTimeout(() => searchRef.select());
-      }
-    },
-    render: text => (
-      <Highlighter
-        highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-        searchWords={[state.search]}
-        autoEscape
-        textToHighlight={text.toString()}
+  const getColumnSearchProps = dataIndex => {
+    const SearchInput = React.forwardRef((props, ref) => (
+      <Input
+        {...props}
+        ref={ref}
+        style={{ width: 188, marginBottom: 8, display: "block" }}
       />
-    )
-  });
+    ));
+    const searchRef = React.createRef();
+    return {
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters
+      }) => (
+        <div style={{ padding: 8 }}>
+          <SearchInput
+            ref={searchRef}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={e =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onPressEnter={() => handleSearch(dataIndex, selectedKeys, confirm)}
+          />
+          <Button
+            type="primary"
+            onClick={() => handleSearch(dataIndex, selectedKeys, confirm)}
+            icon="search"
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => handleReset(dataIndex, clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </div>
+      ),
+      filterIcon: filtered => (
+        <Icon
+          type="search"
+          style={{ color: filtered ? "#1890ff" : undefined }}
+        />
+      ),
+      onFilter: (value, record) =>
+        record[dataIndex]
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: visible => {
+        if (visible) {
+          setTimeout(() => searchRef.current.select());
+        }
+      },
+      render: (text, data) => (
+        <a href={`${window.TL.BASE_URL}projects/${data.id}`}>
+          <Highlighter
+            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+            searchWords={[state.search[dataIndex]]}
+            autoEscape
+            textToHighlight={text.toString()}
+          />
+          {data.remote ? <Icon type="swap" /> : null}
+        </a>
+      )
+    };
+  };
 
   const columns = [
     {
@@ -156,25 +171,32 @@ export function ProjectsTable() {
       dataIndex: "label",
       key: "label",
       sorter: true,
-      render: (label, data) => (
-        <a href={`${window.TL.BASE_URL}projects/${data.id}`}>
-          {label}
-          {data.remote ? <Icon type="swap"/> : null}
-        </a>
-      ),
       ...getColumnSearchProps("label")
     },
-    { title: "Organism", dataIndex: "organism", key: "organism", sorter: true },
+    {
+      title: "Organism",
+      dataIndex: "organism",
+      key: "organism",
+      sorter: true,
+      width: 150,
+      render: text => (
+        <Text style={{ width: 150 }} ellipsis={true} title={text}>
+          {text}
+        </Text>
+      )
+    },
     {
       title: "Samples",
       dataIndex: "samples",
-      key: "samples"
+      key: "samples",
+      width: 100
     },
     {
       title: "Created",
       dataIndex: "createdDate",
       key: "created",
       sorter: true,
+      width: 200,
       render: date => new Date(date).toLocaleString()
     },
     {
@@ -182,6 +204,7 @@ export function ProjectsTable() {
       dataIndex: "modifiedDate",
       key: "modified",
       sorter: true,
+      width: 200,
       render: date => new Date(date).toLocaleString()
     }
   ];
