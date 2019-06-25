@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Button, Checkbox, Card } from "antd";
 import { AnalysisContext } from '../../../state/AnalysisState'
 
-export function AnalysisShare() {
+export default function AnalysisShare() {
     const { state } = useContext(AnalysisContext);
     return (
       <>

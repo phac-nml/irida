@@ -4,7 +4,7 @@ import { Button, Collapse, Icon } from "antd";
 
 const Panel = Collapse.Panel;
 
-export function AnalysisSamples() {
+export default function AnalysisSamples() {
   return (
       <>
         <h2 style={{fontWeight: "bold"}}>Samples</h2>

@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, Suspense, lazy } from "react";
 import PropTypes from "prop-types";
-import { Button, Checkbox, Input, List, Col, Tabs } from "antd";
-import { AnalysisSamples } from "./AnalysisSamples"
-import { AnalysisShare } from "./AnalysisShare"
-import { AnalysisDelete } from "./AnalysisDelete"
-import { AnalysisContext } from '../../../state/AnalysisState'
+import { Button, Checkbox, Input, List, Col, Row, Tabs } from "antd";
+import { AnalysisContext } from '../../../state/AnalysisState';
+import { getI18N } from "../../../utilities/i18n-utilties";
+
+const AnalysisSamples = React.lazy(() => import ('./AnalysisSamples'));
+const AnalysisShare = React.lazy(() => import ('./AnalysisShare'));
+const AnalysisDelete = React.lazy(() => import ('./AnalysisDelete'));
 
 import {
     updateAnalysisEmailPipelineResult,
@@ -23,27 +25,31 @@ export function AnalysisDetails() {
 
     const analysisDetails = [
       {
-        title: 'ID',
-        desc: `${state.analysis.identifier}`,
+        title: getI18N("analysis.tab.content.analysis.id"),
+        desc: state.analysis.identifier,
       },
       {
-        title: 'Pipeline',
-        desc: `${state.workflowName} (${state.version}) `
+        title: getI18N("analysis.tab.content.analysis.pipeline"),
+        desc: `${state.workflowName} (${state.version})`
       },
       {
-        title: 'Priority',
-        desc: `${state.analysis.priority}`
+        title: getI18N("analysis.tab.content.analysis.priority"),
+        desc: state.analysis.priority
       },
       {
-        title: 'Created',
+        title: getI18N("analysis.tab.content.analysis.created"),
         desc: formatDate({ date: state.analysisCreatedDate })
       },
       {
-        title: 'Duration',
+        title: getI18N("analysis.tab.content.analysis.duration"),
         desc: getHumanizedDuration({ date: state.duration })
       },
     ];
 
+    /*
+        On change of checkbox to receive/not receive an email upon
+        pipeline completion update emailPipelineResult field
+    */
     function onChange(e)
     {
         updateAnalysisEmailPipelineResult(state.analysis.identifier, e.target.checked);
@@ -56,7 +62,6 @@ export function AnalysisDetails() {
         if((updatedAnalysisName  !== "") && (updatedAnalysisName !== state.analysisName))
         {
             updateAnalysisName(state.analysis.identifier, updatedAnalysisName);
-
             dispatch({ type: 'analysisName', analysisName: updatedAnalysisName });
         }
     }
@@ -64,25 +69,25 @@ export function AnalysisDetails() {
   return (
       <>
           <Tabs defaultActiveKey="4" tabPosition="left" style={{marginLeft:150, paddingTop:25}}>
-              <TabPane tab="Analysis" key="4" style={{minWidth:300}}>
+              <TabPane tab={getI18N("analysis.tab.analysis")} key="4" style={{minWidth:300}}>
                   <Col span={12}>
-                     <h2 style={{fontWeight: "bold"}}>Details</h2>
-                      <br /><br />
+                    <h2 style={{fontWeight: "bold"}} className="spaced-bottom">{getI18N("analysis.tab.content.analysis.details")}</h2>
 
+                    <Row>
                       <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                        <label style={{fontWeight: "bold", marginBottom: "25px !important"}}>Analysis Name</label>
+                        <label style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.analysis-name")}</label>
                         <Input size="large" placeholder={state.analysisName} id="analysis-name" />
                       </Col>
-                      <br />
-                      {state.updatePermission ?
-                          <Col xs={{ span: 4, offset: 1 }} lg={{ span: 4, offset: 1 }}>
-                            <Button size="large" type="primary" style={{marginTop: "5px"}} onClick={() => updateSubmissionName()}>Update</Button>
-                          </Col>
-                      :
-                          ""
-                      }
 
-                      <br /><br /><br /><br />
+                      {state.updatePermission ?
+                          <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
+                            <Button size="large" type="primary" className="spaced-left__sm spaced-top__lg" onClick={() => updateSubmissionName()}>{getI18N("analysis.tab.content.analysis.update.button")}</Button>
+                          </Col>
+                        : null
+                      }
+                    </Row>
+
+                      <div className="spaced-top__lg">
                       <List
                         itemLayout="horizontal"
                         dataSource={analysisDetails}
@@ -95,35 +100,49 @@ export function AnalysisDetails() {
                           </List.Item>
                         )}
                       />
+                      </div>
                       <hr style={{backgroundColor: "#E8E8E8", height: "1px", border: "0"}} />
                       <br />
-                      <p style={{fontWeight: "bold"}}>Receive an email upon analysis completion</p>
-                      <Checkbox onChange={onChange} defaultChecked={state.emailPipelineResult}>Yes, I want to receive an email once this analysis completes</Checkbox>
+                      <p style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.receive-email-upon-analysis-completion")}</p>
+                      <Checkbox
+                        onChange={onChange}
+                        disabled={
+                            ((state.isCompleted) || (state.isError)) ?
+                                true : false
+                        }
+                        defaultChecked={state.emailPipelineResult}>
+                            {getI18N("analysis.tab.content.analysis.checkbox.label")}
+                      </Checkbox>
                   </Col>
               </TabPane>
 
-              <TabPane tab="Samples" key="5">
+              <TabPane tab={getI18N("analysis.tab.samples")} key="5">
                   <Col span={12}>
+                    <Suspense fallback={<div>Loading...</div>}>
                       <AnalysisSamples />
+                    </Suspense>
                   </Col>
               </TabPane>
 
-              {state.updatePermission ?
-                  <TabPane tab="Share Results" key="6">
+              { state.updatePermission ?
+                [
+                  <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
                       <Col span={12}>
+                        <Suspense fallback={<div>Loading...</div>}>
                           <AnalysisShare />
+                        </Suspense>
                       </Col>
-                  </TabPane>
-                  : ""
-              }
+                  </TabPane>,
 
-              {state.updatePermission ?
-                  <TabPane tab="Delete Analysis" key={!state.updatePermission ? "6" : "7"}>
+                  <TabPane tab={getI18N("analysis.tab.delete-analysis")} key="7">
                       <Col span={12}>
+                        <Suspense fallback={<div>Loading...</div>}>
                           <AnalysisDelete />
+                        </Suspense>
                       </Col>
                   </TabPane>
-                  :""
+                ]
+                : null
               }
           </Tabs>
       </>

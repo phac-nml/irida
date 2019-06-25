@@ -11,13 +11,40 @@
         <script th:inline="javascript">
           window.PAGE = {
             analysis: [[${analysisSubmission}]],
+            analysisState: [[${analysisSubmission.getAnalysisState()}]],
             analysisCreatedDate: [[${analysisSubmission.getCreatedDate()}]],
             workflowName: [[${workflowName}]],
             version: [[${version}]],
             updatePermission: [[${updatePermission}]],
             canShareToSamples: [[${canShareToSamples}]],
             analysisEmailPipelineResult: [[${analysisSubmission.getEmailPipelineResult()}]],
-            duration: [[${duration}]]
+            duration: [[${duration}]],
+            i18n: {
+                "analysis.tab.output-files": /*[[#{analysis.tab.output-files}]]*/ "Output Files",
+                "analysis.tab.provenance": /*[[#{analysis.tab.provenance}]]*/ "Provenance",
+                "analysis.tab.settings": /*[[#{analysis.tab.settings}]]*/ "Settings",
+                "analysis.tab.analysis": /*[[#{analysis.tab.analysis}]]*/ "Analysis",
+                "analysis.tab.samples": /*[[#{analysis.tab.samples}]]*/ "Samples",
+                "analysis.tab.delete-analysis": /*[[#{analysis.tab.delete-analysis}]]*/ "Delete Analysis",
+                "analysis.tab.content.analysis.details": /*[[#{analysis.tab.content.analysis.details}]]*/ "Details",
+                "analysis.tab.content.analysis.analysis-name": /*[[#{analysis.tab.content.analysis.analysis-name}]]*/ "Analysis Name",
+                "analysis.tab.content.analysis.id": /*[[#{analysis.tab.content.analysis.id}]]*/ "ID",
+                "analysis.tab.content.analysis.pipeline": /*[[#{analysis.tab.content.analysis.pipeline}]]*/ "Pipeline",
+                "analysis.tab.content.analysis.priority": /*[[#{analysis.tab.content.analysis.priority}]]*/ "Priority",
+                "analysis.tab.content.analysis.created": /*[[#{analysis.tab.content.analysis.created}]]*/ "Created",
+                "analysis.tab.content.analysis.duration": /*[[#{analysis.tab.content.analysis.duration}]]*/ "Duration",
+                "analysis.tab.content.analysis.receive-email-upon-analysis-completion": /*[[#{analysis.tab.content.analysis.receive-email-upon-analysis-completion}]]*/ "Receive an email upon analysis completion",
+                "analysis.tab.content.analysis.checkbox.label": /*[[#{analysis.tab.content.analysis.checkbox.label}]]*/ "Yes, I want to receive an email once this analysis completes",
+                "analysis.tab.content.samples.samples": /*[[#{analysis.tab.content.samples.samples}]]*/ "Samples",
+                "analysis.tab.content.share.results.results": /*[[#{analysis.tab.content.share.results.results}]]*/ "Results",
+                "analysis.tab.content.share.results.share-results-with-projects": /*[[#{analysis.tab.content.share.results.share-results-with-projects}]]*/ "Share Results with Projects",
+                "analysis.tab.content.delete.permanent-action-warning": /*[[#{analysis.tab.content.delete.permanent-action-warning}]]*/ "Warning! Deletion of an analysis is a permanent action!",
+                "analysis.tab.content.delete.checkbox-confirmation-label": /*[[#{analysis.tab.content.delete.checkbox-confirmation-label}]]*/ "Confirm analysis deletion",
+                "analysis.tab.content.delete.button": /*[[#{analysis.tab.content.delete.button}]]*/ "Delete",
+                "analysis.tab.content.analysis.update.button": /*[[#{analysis.tab.content.analysis.update.button}]]*/ "Update",
+                "analysis.tab.share-results": /*[[#{analysis.tab.share-results}]]*/ "Share Results",
+                "analysis.tab.delete-analysis": /*[[#{analysis.tab.delete-analysis}]]*/ "Delete Analysis"
+            }
           };
         </script>
     </head>

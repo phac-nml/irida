@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Alert, Popconfirm, message } from "antd";
 
-export function AnalysisDelete() {
+export default function AnalysisDelete() {
   return (
       <>
         <h2 style={{fontWeight: "bold"}}>Delete Analysis</h2>
