@@ -641,7 +641,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<Project> findAllProjects(String searchValue, int currentPage, int length, Sort sort) {
 		final PageRequest pr = new PageRequest(currentPage, length, sort);
-		return projectRepository.findAll(searchForProjects(searchValue, null, null, null), pr);
+		return projectRepository.findAll(searchForProjects(null, searchValue, null, null), pr);
 	}
 
 	/**

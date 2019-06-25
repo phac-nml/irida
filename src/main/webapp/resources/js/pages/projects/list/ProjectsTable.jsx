@@ -1,19 +1,33 @@
 import React, { useEffect, useReducer } from "react";
-import { Button, Col, Icon, Input, Row, Table, Typography } from "antd";
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Input,
+  Layout,
+  Menu,
+  PageHeader,
+  Table,
+  Typography
+} from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { blue6 } from "../../../styles/colors";
 
 const { Text } = Typography;
+const { Content } = Layout;
 
 const initialState = { loading: true, search: {} };
 
 const TYPES = {
+  LOADING: "PROJECTS/LOADING",
   SET_DATA: "PROJECTS/SET_DATA",
   SEARCH: "PROJECTS/SEARCH"
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case TYPES.LOADING:
+      return { ...state, loading: true };
     case TYPES.SET_DATA:
       return {
         ...state,
@@ -31,6 +45,20 @@ const reducer = (state, action) => {
   }
 };
 
+/**
+ * Download table in specified format.
+ * @param {string} format format of downloaded doc.
+ */
+function downloadItem({ format = "xlsx" }) {
+  const url = `${window.PAGE.urls.export}&dtf=${format}`;
+  const anchor = document.createElement("a");
+  anchor.style.display = "none";
+  anchor.href = url;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+}
+
 export function ProjectsTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -46,6 +74,8 @@ export function ProjectsTable() {
       sortDirection: "ascend"
     }
   ) => {
+    dispatch({ type: TYPES.LOADING });
+    params.search = state.search.label;
     getPagedProjectsForUser(params).then(data =>
       dispatch({
         type: TYPES.SET_DATA,
@@ -71,6 +101,7 @@ export function ProjectsTable() {
         search: { [dataIndex]: selectedKeys[0] }
       }
     });
+    fetch();
   };
 
   const handleReset = (dataIndex, clearFilters) => {
@@ -81,6 +112,7 @@ export function ProjectsTable() {
         search: { [dataIndex]: "" }
       }
     });
+    fetch();
   };
 
   const getColumnSearchProps = dataIndex => {
@@ -223,10 +255,34 @@ export function ProjectsTable() {
     }
   ];
 
+  const exportMenu = (
+    <Menu>
+      <Menu.Item key="excel" onClick={() => downloadItem({ format: "xlsx" })}>
+        <Icon type="file-excel" />
+        Excel
+      </Menu.Item>
+      <Menu.Item key="csv" onClick={() => downloadItem({ format: "csv" })}>
+        <Icon type="file" />
+        CSV
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
-    <Row>
-      <Col>
+    <Layout style={{ padding: 24, height: "100%", minHeight: "100%" }}>
+      <Content style={{ backgroundColor: "#ffffff", margin: 0 }}>
+        <PageHeader
+          title="Projects"
+          extra={
+            <Dropdown overlay={exportMenu}>
+              <Button>
+                Export <Icon type="down" />
+              </Button>
+            </Dropdown>
+          }
+        />
         <Table
+          style={{ margin: "6px 24px 0 24px" }}
           rowKey={record => record.id}
           loading={state.loading}
           pagination={state.pagination}
@@ -234,8 +290,8 @@ export function ProjectsTable() {
           dataSource={state.data}
           onChange={handleTableChange}
         />
-      </Col>
-    </Row>
+      </Content>
+    </Layout>
   );
 }
 
