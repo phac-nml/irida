@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	protected static final String BASE_URL = System.getProperty("server.base.url") + "/";
+	protected static final String BASE_URL = System.getProperty("server.base.url", "http://localhost:" + System.getProperty("jetty.port", "8080")) + "/";
 	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	protected final int DEFAULT_WAIT = 500;
