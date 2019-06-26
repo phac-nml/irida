@@ -18,7 +18,7 @@ SEQUENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/sequence-file-base-XXXXXXXX`
 REFERENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/reference-file-base-XXXXXXXX`
 OUTPUT_FILE_DIR=`mktemp -d $TMP_DIRECTORY/output-file-base-XXXXXXXX`
 SELENIUM_DOCKER_NAME=irida-selenium
-SELENIUM_DOCKER_TAG=3.14.0
+SELENIUM_DOCKER_TAG=latest
 SELENIUM_URL=http://localhost:4444/wd/hub
 HOSTNAME=`hostname`
 

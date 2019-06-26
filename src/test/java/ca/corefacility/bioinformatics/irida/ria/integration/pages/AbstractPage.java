@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -238,8 +239,8 @@ public class AbstractPage {
 	 */
 	public void waitForJQueryAjaxResponse() {
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until((Predicate<WebDriver>) input ->
-						(Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery.active == 0"));
+				.until((ExpectedCondition<Boolean>) wd ->
+						(Boolean) ((JavascriptExecutor) wd).executeScript("return jQuery.active == 0"));
 	}
 
 	/**
