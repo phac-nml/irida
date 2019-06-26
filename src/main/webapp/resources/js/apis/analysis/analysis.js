@@ -20,6 +20,13 @@ export async function updateAnalysisName(submissionId, analysisName) {
   });
 }
 
+export async function deleteAnalysis(submissionId) {
+  const res = await axios.delete(
+    `${window.TL.BASE_URL}analysis/ajax/delete/${submissionId}`
+  );
+  return res.data;
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.

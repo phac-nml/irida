@@ -8,6 +8,7 @@ const AnalysisSamples = React.lazy(() => import ('./AnalysisSamples'));
 const AnalysisShare = React.lazy(() => import ('./AnalysisShare'));
 const AnalysisDelete = React.lazy(() => import ('./AnalysisDelete'));
 
+
 import {
     updateAnalysisEmailPipelineResult,
     updateAnalysisName
@@ -50,13 +51,11 @@ export function AnalysisDetails() {
         On change of checkbox to receive/not receive an email upon
         pipeline completion update emailPipelineResult field
     */
-    function onChange(e)
-    {
+    function onChange(e){
         updateAnalysisEmailPipelineResult(state.analysis.identifier, e.target.checked);
     }
 
-    function updateSubmissionName()
-    {
+    function updateSubmissionName(){
         const updatedAnalysisName = document.getElementById("analysis-name").value.trim();
 
         if((updatedAnalysisName  !== "") && (updatedAnalysisName !== state.analysisName))
@@ -79,7 +78,7 @@ export function AnalysisDetails() {
                         <Input size="large" placeholder={state.analysisName} id="analysis-name" />
                       </Col>
 
-                      {state.updatePermission ?
+                      { state.updatePermission ?
                           <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                             <Button size="large" type="primary" className="spaced-left__sm spaced-top__lg" onClick={() => updateSubmissionName()}>{getI18N("analysis.tab.content.analysis.update.button")}</Button>
                           </Col>
@@ -102,7 +101,6 @@ export function AnalysisDetails() {
                       />
                       </div>
                       <hr style={{backgroundColor: "#E8E8E8", height: "1px", border: "0"}} />
-                      <br />
                       <p style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.receive-email-upon-analysis-completion")}</p>
                       <Checkbox
                         onChange={onChange}

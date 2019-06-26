@@ -34,8 +34,8 @@ export default function Analysis() {
                     <AnalysisSteps />
                 </div>
                 <Tabs defaultActiveKey={
-                    analysisTypesWithAdditionalPage.indexOf(state.workflowName) > -1 && state.isCompleted ?
-                    "0" : "4"}
+                    ((state.isError) || (analysisTypesWithAdditionalPage.indexOf(state.workflowName) > -1 && state.isCompleted)) ?
+                    "0" : "3"}
                     animated={false}
                 >
                     {
@@ -72,12 +72,12 @@ export default function Analysis() {
                         ]
                         :
                             state.isError ?
-                                <TabPane tab="Job Error" key="3">
+                                <TabPane tab="Job Error" key="0">
                                     <AnalysisError />
                                 </TabPane>
                             : null
                     }
-                    <TabPane tab="Settings" key="4">
+                    <TabPane tab="Settings" key="3">
                         <AnalysisDetails />
                     </TabPane>
                 </Tabs>
