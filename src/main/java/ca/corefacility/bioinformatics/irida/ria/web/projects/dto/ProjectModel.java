@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 public class ProjectModel {
 	private Long id;
-	private String label;
+	private String name;
 	private String organism;
 	private Long samples;
 	private Date createdDate;
@@ -15,7 +15,7 @@ public class ProjectModel {
 
 	public ProjectModel(Project project, Long samples) {
 		this.id = project.getId();
-		this.label = project.getLabel();
+		this.name = project.getName();
 		this.organism = project.getOrganism();
 		this.samples = samples;
 		this.createdDate = project.getCreatedDate();
@@ -27,8 +27,8 @@ public class ProjectModel {
 		return id;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
 	}
 
 	public String getOrganism() {

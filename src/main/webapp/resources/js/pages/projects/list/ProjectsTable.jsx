@@ -12,17 +12,27 @@ import {
   Typography
 } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { blue6 } from "../../../styles/colors";
 
 const { Text } = Typography;
 const { Content } = Layout;
 
-const initialState = { loading: true, search: "" };
+const initialState = {
+  loading: true,
+  search: "",
+  current: 1,
+  pageSize: 10,
+  total: undefined,
+  order: "descend",
+  field: "modifiedDate"
+};
 
 const TYPES = {
   LOADING: "PROJECTS/LOADING",
   SET_DATA: "PROJECTS/SET_DATA",
-  SEARCH: "PROJECTS/SEARCH"
+  SEARCH: "PROJECTS/SEARCH",
+  TABLE_CHANGE: "PROJECTS/TABLE_CHANGE"
 };
 
 const reducer = (state, action) => {
@@ -34,7 +44,12 @@ const reducer = (state, action) => {
         ...state,
         data: action.payload.projects,
         loading: false,
-        pagination: { ...state.pagination, total: action.payload.total }
+        total: action.payload.total
+      };
+    case TYPES.TABLE_CHANGE:
+      return {
+        ...state,
+        ...action.payload
       };
     case TYPES.SEARCH:
       return {
@@ -65,18 +80,18 @@ export function ProjectsTable() {
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [state.current, state.pageSize, state.field, state.order, state.search]);
 
-  const fetch = (
-    params = {
-      current: 0,
-      pageSize: 10,
-      sortField: "modifiedDate",
-      sortDirection: "descend"
-    }
-  ) => {
+  const fetch = () => {
     dispatch({ type: TYPES.LOADING });
-    params.search = state.search.label || "";
+    const params = {
+      current: state.current - 1, // Offset since table starts on page 1
+      pageSize: state.pageSize,
+      sortField: state.field,
+      sortDirection: state.order,
+      search: state.search
+    };
+    console.log(state);
     getPagedProjectsForUser(params).then(data =>
       dispatch({
         type: TYPES.SET_DATA,
@@ -86,113 +101,27 @@ export function ProjectsTable() {
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
-    const { current, pageSize } = pagination;
+    console.log(pagination, sorter);
+    const { pageSize, current } = pagination;
     const { order, field } = sorter;
-    const sortDirection = typeof order === "undefined" ? "ascend" : order;
-    const sortField = typeof field === "undefined" ? "modifiedDate" : field;
-    // Current offset by 1 because the server Page object starts at 0.
-    fetch({ current: current - 1, pageSize, sortDirection, sortField });
+    dispatch({
+      type: TYPES.TABLE_CHANGE,
+      payload: {
+        pageSize,
+        current,
+        order: order || "descend",
+        field: field || "modifiedDate"
+      }
+    });
   };
 
-  const handleSearch = (dataIndex, selectedKeys, confirm) => {
-    confirm();
+  const onSearch = value =>
     dispatch({
       type: TYPES.SEARCH,
       payload: {
-        search: { [dataIndex]: selectedKeys[0] }
+        search: value
       }
     });
-    fetch();
-  };
-
-  const handleReset = (dataIndex, clearFilters) => {
-    clearFilters();
-    dispatch({
-      type: TYPES.SEARCH,
-      payload: {
-        search: { [dataIndex]: "" }
-      }
-    });
-    fetch();
-  };
-
-  const getColumnSearchProps = dataIndex => {
-    const SearchInput = React.forwardRef((props, ref) => (
-      <Input
-        {...props}
-        ref={ref}
-        style={{ width: 188, marginBottom: 8, display: "block" }}
-      />
-    ));
-    const searchRef = React.createRef();
-    return {
-      filterDropdown: ({
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters
-      }) => (
-        <div style={{ padding: 8 }}>
-          <SearchInput
-            ref={searchRef}
-            placeholder={`Search ${dataIndex}`}
-            value={selectedKeys[0]}
-            onChange={e =>
-              setSelectedKeys(e.target.value ? [e.target.value] : [])
-            }
-            onPressEnter={() => handleSearch(dataIndex, selectedKeys, confirm)}
-          />
-          <Button
-            type="primary"
-            onClick={() => handleSearch(dataIndex, selectedKeys, confirm)}
-            icon="search"
-            size="small"
-            style={{ width: 90, marginRight: 8 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => handleReset(dataIndex, clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-        </div>
-      ),
-      filterIcon: filtered => (
-        <Icon
-          type="search"
-          style={{ color: filtered ? "#1890ff" : undefined }}
-        />
-      ),
-      onFilter: (value, record) =>
-        record[dataIndex]
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
-      onFilterDropdownVisibleChange: visible => {
-        if (visible) {
-          setTimeout(() => searchRef.current.select());
-        }
-      },
-      render: (text, data) => (
-        <a href={`${window.TL.BASE_URL}projects/${data.id}`}>
-          <Text
-            ellipsis={true}
-            style={{
-              width: 250,
-              display: "inline-block",
-              color: blue6,
-              textDecoration: "underline"
-            }}
-          >
-            {text}
-          </Text>
-        </a>
-      )
-    };
-  };
 
   const columns = [
     {
@@ -207,6 +136,7 @@ export function ProjectsTable() {
       dataIndex: "remote",
       key: "remote",
       width: 30,
+      sorter: (a, b) => Number(a) - Number(b),
       render: remote =>
         remote ? (
           <Icon type="swap" title="Remote Project" style={{ cursor: "help" }} />
@@ -214,11 +144,20 @@ export function ProjectsTable() {
     },
     {
       title: "Name",
-      dataIndex: "label",
-      key: "label",
+      dataIndex: "name",
+      key: "name",
       sorter: true,
       width: 300,
-      ...getColumnSearchProps("label")
+      render: (name, data) => (
+        <a href={`${window.TL.BASE_URL}projects/${data.id}`} title={name}>
+          <Text
+            ellipsis
+            style={{ width: 270, color: blue6, textDecoration: "underline" }}
+          >
+            {name}
+          </Text>
+        </a>
+      )
     },
     {
       title: "Organism",
@@ -243,16 +182,17 @@ export function ProjectsTable() {
       dataIndex: "createdDate",
       key: "created",
       sorter: true,
-      width: 240,
-      render: date => new Date(date).toLocaleString()
+      width: 230,
+      render: date => formatInternationalizedDateTime(date)
     },
     {
       title: "Modified",
       dataIndex: "modifiedDate",
       key: "modified",
       sorter: true,
-      width: 240,
-      render: date => new Date(date).toLocaleString()
+      width: 230,
+      defaultSortOrder: "descend",
+      render: date => formatInternationalizedDateTime(date)
     }
   ];
 
@@ -277,7 +217,7 @@ export function ProjectsTable() {
           extra={
             <Form layout="inline">
               <Form.Item>
-                <Input.Search  />
+                <Input.Search onSearch={onSearch} />
               </Form.Item>
               <Form.Item>
                 <Dropdown overlay={exportMenu} key="export">
@@ -293,7 +233,10 @@ export function ProjectsTable() {
           style={{ margin: "6px 24px 0 24px" }}
           rowKey={record => record.id}
           loading={state.loading}
-          pagination={state.pagination}
+          pagination={{
+            total: state.total,
+            pageSize: state.pageSize
+          }}
           columns={columns}
           dataSource={state.data}
           onChange={handleTableChange}
@@ -302,5 +245,3 @@ export function ProjectsTable() {
     </Layout>
   );
 }
-
-ProjectsTable.propTypes = {};
