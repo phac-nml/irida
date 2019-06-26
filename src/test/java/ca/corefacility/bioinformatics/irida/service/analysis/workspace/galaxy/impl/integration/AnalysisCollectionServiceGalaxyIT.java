@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -61,12 +62,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.ElementResp
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
- * 
+ *
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -89,7 +89,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	@Autowired
 	private SampleRepository sampleRepository;
-	
+
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
 
@@ -118,7 +118,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	/**
 	 * Sets up variables for testing.
-	 * 
+	 *
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 * @throws IridaWorkflowLoadException
@@ -129,12 +129,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
-		
+
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "analysisCollectionTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);
-		
+
 		sequenceFilePathAInvalidName = tempDir.resolve("testDataA_R_INVALID_1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathAInvalidName, StandardCopyOption.REPLACE_EXISTING);
 
@@ -151,7 +151,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		pairSequenceFiles1A.add(sequenceFilePathA);
 		pairSequenceFiles2A = new ArrayList<>();
 		pairSequenceFiles2A.add(sequenceFilePath2A);
-		
+
 		pairSequenceFiles1AInvalidName = new ArrayList<>();
 		pairSequenceFiles1AInvalidName.add(sequenceFilePathAInvalidName);
 
@@ -165,7 +165,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	/**
 	 * Tests successfully getting a map of samples and sequence files (single).
-	 * 
+	 *
 	 * @throws DuplicateSampleException
 	 */
 	@Test
@@ -187,12 +187,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	/**
 	 * Tests failing to get a map of samples and sequence files (single).
-	 * 
+	 *
 	 * @throws DuplicateSampleException
 	 */
 	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {		
+	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {
 		List<SingleEndSequenceFile> seqObjects = databaseSetupGalaxyITService
 				.setupSequencingObjectInDatabase(1L, sequenceFilePathA, sequenceFilePath2A);
 
@@ -201,7 +201,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	/**
 	 * Tests successfully getting a map of samples and sequence files (pair).
-	 * 
+	 *
 	 * @throws DuplicateSampleException
 	 */
 	@Test
@@ -222,7 +222,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	/**
 	 * Tests failing to get a map of samples and sequence files (pair).
-	 * 
+	 *
 	 * @throws DuplicateSampleException
 	 */
 	@Test(expected = DuplicateSampleException.class)
@@ -236,7 +236,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	/**
 	 * Tests successfully uploading a single end sequence file to Galaxy and
 	 * constructing a collection.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -254,10 +254,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Library createdLibrary = librariesClient.createLibrary(library);
 
 		Set<SingleEndSequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
-		
+
 
 		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
-		
+
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(
@@ -288,7 +288,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	/**
 	 * Tests successfully uploading a paired-end sequence file to Galaxy and
 	 * constructing a collection.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test
@@ -374,11 +374,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 		assertEquals("reverse file in Galaxy is named incorrectly", sequenceFilePath2A.getFileName().toString(),
 				sequenceFile2Dataset.getName());
 	}
-	
+
 	/**
 	 * Tests failing to upload a paired-end sequence file to Galaxy and
 	 * constructing a collection due to no found forward file.
-	 * 
+	 *
 	 * @throws ExecutionManagerException
 	 */
 	@Test(expected = NoSuchElementException.class)
@@ -404,11 +404,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
-		return Maps.uniqueIndex(historyContents, historyContent -> historyContent.getName());
+		return historyContents.stream().collect(Collectors.toMap(HistoryContents::getName, historyContent->historyContent));
 	}
 
 	private Map<String, CollectionElementResponse> collectionElementsAsMap(
 			List<CollectionElementResponse> collectionElements) {
-		return Maps.uniqueIndex(collectionElements, collectionElement -> collectionElement.getElementIdentifier());
+		return collectionElements.stream().collect(Collectors.toMap(CollectionElementResponse::getElementIdentifier, collectionElement->collectionElement));
 	}
 }

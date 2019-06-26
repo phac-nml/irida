@@ -1051,7 +1051,7 @@
 		<commons.cli.version>1.2</commons.cli.version>
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<guava.version>17.0</guava.version>
+		<guava.version>28.0-jre</guava.version>
 		<spring.version>4.2.3.RELEASE</spring.version>
 		<spring.security.version>4.0.4.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
@@ -1140,7 +1140,7 @@
 		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
-		<!-- Set to 'local' to use the local version stored in irida-api, or set 
+		<!-- Set to 'local' to use the local version stored in irida-api, or set
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
