@@ -47,7 +47,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void clickDeleteButton() {
 		logger.debug("clicking remove button");
-		
+
 		WebElement findElement = new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
 				.until(ExpectedConditions.presenceOfElementLocated(By.className("t-remove-btn")));
 		findElement.click();
@@ -78,7 +78,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void clickConnect() {
 		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("oauth-connect-link ")));
+				.className("oauth-connect-link")));
 		connectButton.click();
 
 		waitForAjax();
@@ -89,9 +89,9 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		driver.switchTo().frame("oauth-connect-frame");
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
-		
+
 		driver.switchTo().defaultContent();
-		
+
 		waitForTime(8000);
 	}
 
@@ -119,7 +119,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 				logger.debug("Got stale element reference exception when trying to get text on h1, trying again.");
 			}
 		} while (!deleted);
-		
+
 
 		return deleted;
 	}
