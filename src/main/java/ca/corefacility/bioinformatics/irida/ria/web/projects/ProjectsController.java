@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.domain.Page;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -56,10 +55,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -540,42 +535,6 @@ public class ProjectsController {
 			elements.add(transformTreeNode);
 		}
 		return elements;
-	}
-
-	/**
-	 * User mapping to get a list of all project they are on.
-	 *
-	 * @param params {@link DataTablesParams} passed from the UI DataTables instance.
-	 * @return {@link DataTablesResponse}
-	 */
-	@RequestMapping("/projects/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getAjaxProjectList(@DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService.findProjectsForUser(params.getSearchValue(), params.getCurrentPage(),
-				params.getLength(), params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent()
-				.stream()
-				.map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
-	}
-
-	/**
-	 * Admin mapping to get a list of all project they are on.
-	 *
-	 * @param params {@link DataTablesParams} passed from the UI DataTables instance.
-	 * @return {@link DataTablesResponse}
-	 */
-	@RequestMapping("/projects/admin/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getAjaxAdminProjectsList(@DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService.findAllProjects(params.getSearchValue(), params.getCurrentPage(),
-				params.getLength(), params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent()
-				.stream()
-				.map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
 	}
 
 	/**

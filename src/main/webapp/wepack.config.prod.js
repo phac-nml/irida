@@ -8,6 +8,9 @@ const BUILD_PATH = path.resolve(__dirname, "dist");
 exports.config = {
   mode: "production",
   devtool: "source-map",
+  optimization: {
+    minimize: false,
+  },
   plugins: [
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production")

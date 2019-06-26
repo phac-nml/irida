@@ -6,7 +6,7 @@
     <title th:text="#{projects.title}">List of Projects</title>
     <link rel="stylesheet" th:href="@{/dist/css/projects.bundle.css}">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = {
           urls: {
             projects: /*[[@{${ajaxURL}}]]*/ "",
             project: /*[[@{/projects/}]]*/ "",

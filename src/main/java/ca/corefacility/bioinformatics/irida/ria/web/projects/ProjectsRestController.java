@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,9 +31,18 @@ public class ProjectsRestController {
 	}
 
 	@RequestMapping
-	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest) {
-		final Page<Project> page = projectService.findAllProjects("", projectsRequest.getCurrent(),
-				projectsRequest.getPageSize(), projectsRequest.getSort());
+	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest,
+			HttpServletRequest request) {
+		boolean all = request.getHeader("referer")
+				.endsWith("all");
+		final Page<Project> page;
+		if (all) {
+			page = projectService.findAllProjects(projectsRequest.getSearch(), projectsRequest.getCurrent(),
+					projectsRequest.getPageSize(), projectsRequest.getSort());
+		} else {
+			page = projectService.findProjectsForUser(projectsRequest.getSearch(), projectsRequest.getCurrent(),
+					projectsRequest.getPageSize(), projectsRequest.getSort());
+		}
 		List<ProjectModel> projects = page.getContent()
 				.stream()
 				.map(p -> new ProjectModel(p, sampleService.getNumberOfSamplesForProject(p)))

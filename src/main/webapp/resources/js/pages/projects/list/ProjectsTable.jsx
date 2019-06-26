@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import {
   Button,
   Dropdown,
+  Form,
   Icon,
   Input,
   Layout,
@@ -16,7 +17,7 @@ import { blue6 } from "../../../styles/colors";
 const { Text } = Typography;
 const { Content } = Layout;
 
-const initialState = { loading: true, search: {} };
+const initialState = { loading: true, search: "" };
 
 const TYPES = {
   LOADING: "PROJECTS/LOADING",
@@ -68,14 +69,14 @@ export function ProjectsTable() {
 
   const fetch = (
     params = {
-      current: 1,
+      current: 0,
       pageSize: 10,
       sortField: "modifiedDate",
-      sortDirection: "ascend"
+      sortDirection: "descend"
     }
   ) => {
     dispatch({ type: TYPES.LOADING });
-    params.search = state.search.label;
+    params.search = state.search.label || "";
     getPagedProjectsForUser(params).then(data =>
       dispatch({
         type: TYPES.SET_DATA,
@@ -274,11 +275,18 @@ export function ProjectsTable() {
         <PageHeader
           title="Projects"
           extra={
-            <Dropdown overlay={exportMenu}>
-              <Button>
-                Export <Icon type="down" />
-              </Button>
-            </Dropdown>
+            <Form layout="inline">
+              <Form.Item>
+                <Input.Search  />
+              </Form.Item>
+              <Form.Item>
+                <Dropdown overlay={exportMenu} key="export">
+                  <Button>
+                    Export <Icon type="down" />
+                  </Button>
+                </Dropdown>
+              </Form.Item>
+            </Form>
           }
         />
         <Table
