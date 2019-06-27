@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Button, Checkbox, Alert, Popconfirm, message, Row } from "antd";
 import { AnalysisContext } from '../../../state/AnalysisState';
 import { showNotification } from "../../../modules/notifications";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
 import {
     deleteAnalysis
@@ -24,26 +25,28 @@ export default function AnalysisDelete() {
 
     function handleDeleteConfirm()
     {
-        deleteAnalysis(state.analysis.identifier).then(res =>
-            showNotification({ text: res.result})
-        );
+        if(deleteConfirm) {
+            deleteAnalysis(state.analysis.identifier).then(res =>
+                showNotification({ text: res.result})
+            );
 
-        window.setTimeout(function() {
-          window.location.replace(window.TL.BASE_URL);
-        }, 3500);
+            window.setTimeout(function() {
+              window.location.replace(window.TL.BASE_URL);
+            }, 3500);
+        }
     }
 
     return (
         <>
             <h1>{deleteConfirm}</h1>
-            <h2 style={{fontWeight: "bold"}}>Delete Analysis</h2>
-            <strong className="spaced-top__sm"><Alert message="Warning! Deletion of an analysis is a permanent action!" type="warning" /></strong>
+            <h2 style={{fontWeight: "bold"}}>{getI18N("analysis.tab.delete-analysis")}</h2>
+            <strong className="spaced-top__sm"><Alert message={getI18N("analysis.tab.content.delete.permanent-action-warning")} type="warning" /></strong>
             <Row className="spaced-top__lg">
-                <Checkbox onChange={onChange}>Confirm analysis deletion</Checkbox>
+                <Checkbox onChange={onChange}>{getI18N("analysis.tab.content.delete.checkbox-confirmation-label")}</Checkbox>
             </Row>
             <Row>
-                <Popconfirm placement="top" title="Delete Analysis 1?" okText="Confirm" cancelText="Cancel" onConfirm={handleDeleteConfirm}>
-                    <Button type="danger" className="spaced-top__lg" disabled={deleteConfirm ? false : true} >Delete</Button>
+                <Popconfirm placement="top" title={`Delete Analysis ${state.analysisName}?`} okText="Confirm" cancelText="Cancel" onConfirm={handleDeleteConfirm}>
+                    <Button type="danger" className="spaced-top__lg" disabled={deleteConfirm ? false : true} >{getI18N("analysis.tab.content.delete.button")}</Button>
                 </Popconfirm>
             </Row>
         </>

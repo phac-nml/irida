@@ -15,6 +15,7 @@ const initialState = {
   analysis: window.PAGE.analysis,
   analysisName: window.PAGE.analysis.name,
   analysisState: window.PAGE.analysisState,
+  analysisType: window.PAGE.analysisType,
   emailPipelineResult: window.PAGE.analysisEmailPipelineResult,
   workflowName: window.PAGE.workflowName,
   version: window.PAGE.version,
@@ -30,7 +31,7 @@ const initialState = {
     ERROR: 6
   },
   analysisCreatedDate: window.PAGE.analysisCreatedDate,
-  canSharetoSamples: window.PAGE.canShareToSamples,
+  canShareToSamples: window.PAGE.canShareToSamples,
   isCompleted: window.PAGE.analysisState == "COMPLETED" ? true : false,
   isError: window.PAGE.analysisState == "ERROR" ? true : false
 };

@@ -27,6 +27,36 @@ export async function deleteAnalysis(submissionId) {
   return res.data;
 }
 
+export async function getSharedProjects(submissionId) {
+  const res = await axios.get(
+    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`
+  );
+  return res;
+}
+
+export async function updateSharedProjects(
+  submissionId,
+  projectId,
+  shareStatus
+) {
+  const res = await axios.post(
+    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`,
+    {
+      projectId: projectId,
+      shareStatus,
+      shareStatus
+    }
+  );
+  return res.data;
+}
+
+export async function saveToRelatedSamples(submissionId) {
+  const res = await axios.post(
+    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/save-results`
+  );
+  return res.data;
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
