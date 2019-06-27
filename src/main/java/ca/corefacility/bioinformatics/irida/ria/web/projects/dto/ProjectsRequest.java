@@ -2,6 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import org.springframework.data.domain.Sort;
 
+/**
+ * Handles the conversion of the HttpRequestBody into an object.
+ * This specifically has information need to handle the paging for the
+ * Projects listing table in the UI - filter, search, sort.
+ */
 public class ProjectsRequest {
 	private String search;
 	private int current;

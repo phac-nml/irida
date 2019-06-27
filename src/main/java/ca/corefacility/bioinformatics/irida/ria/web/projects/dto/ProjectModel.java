@@ -4,6 +4,9 @@ import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+/**
+ * Representation of a {@link Project} used in the UI Projects listing table.
+ */
 public class ProjectModel {
 	private Long id;
 	private String name;

@@ -18,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectsRespons
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Controller for handling all ajax requests on the Projects listing page.
+ */
 @RestController
 @RequestMapping("/ajax/projects")
 public class ProjectsRestController {
@@ -30,9 +33,15 @@ public class ProjectsRestController {
 		this.sampleService = sampleService;
 	}
 
+	/**
+	 * Handle request for get a filtered and sorted list of projects for a user or administrator
+	 *
+	 * @param projectsRequest {@link ProjectsRequest} Details about what is needed in the table (sort, filter, and search).
+	 * @param request         {@link HttpServletRequest}
+	 * @return {@link ProjectsResponse}
+	 */
 	@RequestMapping
-	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest,
-			HttpServletRequest request) {
+	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest, HttpServletRequest request) {
 		boolean all = request.getHeader("referer")
 				.endsWith("all");
 		final Page<Project> page;
