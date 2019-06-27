@@ -91,7 +91,6 @@ export function ProjectsTable() {
       sortDirection: state.order,
       search: state.search
     };
-    console.log(state);
     getPagedProjectsForUser(params).then(data =>
       dispatch({
         type: TYPES.SET_DATA,
@@ -101,7 +100,6 @@ export function ProjectsTable() {
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
-    console.log(pagination, sorter);
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
     dispatch({
@@ -136,7 +134,6 @@ export function ProjectsTable() {
       dataIndex: "remote",
       key: "remote",
       width: 30,
-      sorter: (a, b) => Number(a) - Number(b),
       render: remote =>
         remote ? (
           <Icon type="swap" title="Remote Project" style={{ cursor: "help" }} />
