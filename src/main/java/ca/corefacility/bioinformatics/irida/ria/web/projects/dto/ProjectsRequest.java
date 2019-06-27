@@ -49,9 +49,16 @@ public class ProjectsRequest {
 		this.sortDirection = sortDirection;
 	}
 
+	/**
+	 * Since we he need an actual {@link Sort} object and cannot pass this from
+	 * the client, we create one from the information fathered from the client
+	 * Direction of sort
+	 * Column (attribute) of sort
+	 *
+	 * @return {@link Sort}
+	 */
 	public Sort getSort() {
-		Sort.Direction direction = this.sortDirection
-				.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
+		Sort.Direction direction = this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		return new Sort(new Sort.Order(direction, this.sortField));
 	}
 }
