@@ -1,15 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
-public class AnalysisName {
+public class AnalysisSubmissionInfo {
 	private Long analysisSubmissionId;
 	private String analysisName;
+	private AnalysisSubmission.Priority priority;
 
-	public AnalysisName() {
+	public AnalysisSubmissionInfo() {
 	}
 
-	public AnalysisName(Long submissionId, String analysisName) {
+	public AnalysisSubmissionInfo(Long submissionId, String analysisName, AnalysisSubmission.Priority priority) {
 		this.analysisSubmissionId = submissionId;
 		this.analysisName = analysisName;
+		this.priority = priority;
 	}
 
 	public Long getAnalysisSubmissionId() {
@@ -26,5 +29,13 @@ public class AnalysisName {
 
 	public void setAnalysisName(String analysisName) {
 		this.analysisName = analysisName;
+	}
+
+	public AnalysisSubmission.Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(AnalysisSubmission.Priority priority) {
+		this.priority = priority;
 	}
 }

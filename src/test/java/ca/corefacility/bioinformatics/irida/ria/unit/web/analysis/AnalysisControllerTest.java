@@ -32,10 +32,12 @@ import org.springframework.ui.ExtendedModelMap;
 import java.io.IOException;
 import java.util.*;
 
+import static liquibase.util.SystemUtils.USER_NAME;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.security.Principal;
 /**
  */
 public class AnalysisControllerTest {
@@ -100,7 +102,8 @@ public class AnalysisControllerTest {
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
+		Principal principal = () -> USER_NAME;
+		String detailsPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
 		assertEquals("Tree preview should be set", "tree", model.get("preview"));
@@ -130,7 +133,8 @@ public class AnalysisControllerTest {
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
+		Principal principal = () -> USER_NAME;
+		String detailsPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
 		assertFalse("No preview should be available", model.containsAttribute("preview"));
@@ -152,7 +156,8 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
 				.thenReturn(createUnknownWorkflow(workflowId));
 
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
+		Principal principal = () -> USER_NAME;
+		String detailsPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
 
 		assertFalse("No preview should be set", model.containsAttribute("preview"));

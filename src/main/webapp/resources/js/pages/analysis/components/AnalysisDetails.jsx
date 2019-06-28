@@ -1,17 +1,18 @@
 import React, { useContext, Suspense, lazy } from "react";
 import PropTypes from "prop-types";
-import { Button, Checkbox, Input, List, Col, Row, Tabs } from "antd";
+import { Button, Checkbox, Input, List, Col, Row, Tabs, Select } from "antd";
 import { AnalysisContext } from '../../../state/AnalysisState';
 import { getI18N } from "../../../utilities/i18n-utilties";
+import { showNotification } from "../../../modules/notifications";
 
 const AnalysisSamples = React.lazy(() => import ('./AnalysisSamples'));
 const AnalysisShare = React.lazy(() => import ('./AnalysisShare'));
 const AnalysisDelete = React.lazy(() => import ('./AnalysisDelete'));
-
+const Option = Select;
 
 import {
     updateAnalysisEmailPipelineResult,
-    updateAnalysisName
+    updateAnalysis
 } from "../../../apis/analysis/analysis";
 
 import {
@@ -35,7 +36,7 @@ export function AnalysisDetails() {
       },
       {
         title: getI18N("analysis.tab.content.analysis.priority"),
-        desc: state.analysis.priority
+        desc: state.priority
       },
       {
         title: getI18N("analysis.tab.content.analysis.created"),
@@ -60,9 +61,18 @@ export function AnalysisDetails() {
 
         if((updatedAnalysisName  !== "") && (updatedAnalysisName !== state.analysisName))
         {
-            updateAnalysisName(state.analysis.identifier, updatedAnalysisName);
+            updateAnalysis(state.analysis.identifier, updatedAnalysisName, null).then(res =>
+                showNotification({ text: res.message})
+            );
             dispatch({ type: 'analysisName', analysisName: updatedAnalysisName });
         }
+    }
+
+    function updateAnalysisPriority(updatedPriority) {
+        updateAnalysis(state.analysis.identifier, null, updatedPriority).then(res =>
+            showNotification({ text: res.message})
+        );
+        dispatch({ type: 'priority', priority: updatedPriority });
     }
 
   return (
@@ -85,6 +95,20 @@ export function AnalysisDetails() {
                         : null
                       }
                     </Row>
+
+                    { state.isAdmin && state.analysisState == "NEW" ?
+                        <Row className="spaced-top">
+                            <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
+                                <label style={{fontWeight: "bold"}}>Priority</label>
+                                <Select defaultValue={state.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
+                                  <Select.Option key="LOW" value="LOW">LOW</Select.Option>
+                                  <Select.Option key="MED" value="MEDIUM">MEDIUM</Select.Option>
+                                  <Select.Option key="HIGH" value="HIGH">HIGH</Select.Option>
+                                </Select>
+                            </Col>
+                        </Row>
+                        : null
+                    }
 
                       <div className="spaced-top__lg">
                       <List

@@ -6,6 +6,8 @@ const reducer = (state, action) => {
       return { ...state, analysisName: action.analysisName };
     case "emailPipelineResult":
       return { ...state, emailPipelineResult: action.emailPipelineResult };
+    case "priority":
+      return { ...state, priority: action.priority };
     default:
       return;
   }
@@ -21,6 +23,7 @@ const initialState = {
   version: window.PAGE.version,
   updatePermission: window.PAGE.updatePermission,
   duration: window.PAGE.duration,
+  isAdmin: window.PAGE.isAdmin,
   stateMap: {
     NEW: 0,
     PREPARING: 1,
@@ -33,7 +36,8 @@ const initialState = {
   analysisCreatedDate: window.PAGE.analysisCreatedDate,
   canShareToSamples: window.PAGE.canShareToSamples,
   isCompleted: window.PAGE.analysisState == "COMPLETED" ? true : false,
-  isError: window.PAGE.analysisState == "ERROR" ? true : false
+  isError: window.PAGE.analysisState == "ERROR" ? true : false,
+  priority: window.PAGE.priority
 };
 
 const AnalysisContext = React.createContext(initialState);

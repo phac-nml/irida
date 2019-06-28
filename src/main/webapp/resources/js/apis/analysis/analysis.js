@@ -13,11 +13,16 @@ export async function updateAnalysisEmailPipelineResult(
   });
 }
 
-export async function updateAnalysisName(submissionId, analysisName) {
-  axios.patch(`${window.TL.BASE_URL}analysis/ajax/updateanalysisname/`, {
-    analysisSubmissionId: submissionId,
-    analysisName: analysisName
-  });
+export async function updateAnalysis(submissionId, analysisName, priority) {
+  const res = await axios.patch(
+    `${window.TL.BASE_URL}analysis/ajax/updateanalysis/`,
+    {
+      analysisSubmissionId: submissionId,
+      analysisName: analysisName,
+      priority: priority
+    }
+  );
+  return res.data;
 }
 
 export async function deleteAnalysis(submissionId) {
@@ -43,8 +48,7 @@ export async function updateSharedProjects(
     `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`,
     {
       projectId: projectId,
-      shareStatus,
-      shareStatus
+      shareStatus: shareStatus
     }
   );
   return res.data;

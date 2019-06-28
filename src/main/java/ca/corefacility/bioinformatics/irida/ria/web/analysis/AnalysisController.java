@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
@@ -55,9 +55,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisEmailPipelineResult;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisName;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisSubmissionInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -237,10 +237,13 @@ public class AnalysisController {
 	 */
 
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
+
+		final User currentUser = userService.getUserByUsername(principal.getName());
+		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
 
 		boolean canShareToSamples = false;
 		if (submission.getAnalysis() != null) {
@@ -301,14 +304,25 @@ public class AnalysisController {
 	 * @param parameters parameters which include the submission id and the new name
 	 * @return redirect to the analysis page after update
 	 */
-	@RequestMapping(value = "/ajax/updateanalysisname", method = RequestMethod.PATCH)
-	public String ajaxUpdateSubmissionName(@RequestBody AnalysisName parameters) {
+	@RequestMapping(value = "/ajax/updateanalysis", method = RequestMethod.PATCH)
+	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters) {
+		String message = "";
 		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
-		analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
-		logger.debug("Name updated for: " + submission);
 
-		return "redirect:/analysis/" + parameters.getAnalysisSubmissionId();
+		if(parameters.getAnalysisName() != null) {
+			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
+			logger.debug("Name updated for: " + submission);
+			message= "Analysis name updated to: " + parameters.getAnalysisName();
+		}
+
+		else if(parameters.getPriority() != null) {
+			analysisSubmissionService.updatePriority(submission, parameters.getPriority());
+			logger.debug("Priority updated for: " + submission);
+			message = "Priority updated to " + parameters.getPriority() + " for " + submission.getName();
+		}
+
+		return ImmutableMap.of("result", "success", "message", message);
 	}
 
 	/**
@@ -324,7 +338,7 @@ public class AnalysisController {
 	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
 	public String editAnalysis(@PathVariable Long submissionId, @RequestParam String name,
 			@RequestParam(required = false, defaultValue = "") AnalysisSubmission.Priority priority, Model model,
-			Locale locale) {
+			final Principal principal, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
 		submission.setName(name);
@@ -344,11 +358,12 @@ public class AnalysisController {
 
 		if (error) {
 			model.addAttribute("updateError", true);
-			return getDetailsPage(submissionId, model, locale);
+			return getDetailsPage(submissionId, model, principal, locale);
 		}
 
 		return "redirect:/analysis/" + submissionId;
 	}
+
 
 	/**
 	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}
