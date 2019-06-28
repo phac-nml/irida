@@ -67,6 +67,9 @@
                         </div>
                         <div class="form-group">
                             <label for="language" th:text="#{user.language}">_Language_</label>
+                            <div>
+                                    <small class="text-muted" th:utext="#{user.language.login}"></small>
+                                </div>
                             <select id="language" name="locale" class="form-control input-full" >
                                 <option th:each="locale : ${locales}" th:text="${locale.getDisplayName()}" th:value="${locale.getLanguage()}" th:selected="${user.locale == locale.getLanguage()}"></option>
                             </select>

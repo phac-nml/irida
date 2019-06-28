@@ -40,8 +40,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		HttpSession session = httpServletRequest.getSession();
 		User user = (User) authentication.getPrincipal();
 
+		//set the user's selected locale
 		Locale locale = Locale.forLanguageTag(user.getLocale());
-
 		localeResolver.setLocale(httpServletRequest, httpServletResponse, locale);
 
 		// Add gravatar url as to the session for use in thymeleaf templates.
