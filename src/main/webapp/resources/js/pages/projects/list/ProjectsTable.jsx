@@ -1,31 +1,30 @@
 import React, { useEffect, useReducer } from "react";
 import {
   Button,
+  Col,
   Dropdown,
-  Form,
   Icon,
   Input,
-  Layout,
   Menu,
-  PageHeader,
+  Row,
   Table,
   Typography
 } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { blue6 } from "../../../styles/colors";
+import { PageWrapper } from "../../../components/page/PageWrapper";
 
 const { Text } = Typography;
-const { Content } = Layout;
 
 const initialState = {
-  loading: true,
-  search: "",
-  current: 1,
-  pageSize: 10,
-  total: undefined,
-  order: "descend",
-  field: "modifiedDate"
+  loading: true, // true when table fetching data
+  search: "", // Search query
+  current: 1, // Current page in pagination
+  pageSize: 10, // Current table size
+  total: undefined, // Total number of elements in the table
+  order: "descend", // Sort direction
+  field: "modifiedDate" // Sort field
 };
 
 const TYPES = {
@@ -38,8 +37,14 @@ const TYPES = {
 const reducer = (state, action) => {
   switch (action.type) {
     case TYPES.LOADING:
+      /*
+      Case when API is fetching updated data.
+       */
       return { ...state, loading: true };
     case TYPES.SET_DATA:
+      /*
+      Case when API has returned data and needs to set it into the table.
+       */
       return {
         ...state,
         data: action.payload.projects,
@@ -47,17 +52,23 @@ const reducer = (state, action) => {
         total: action.payload.total
       };
     case TYPES.TABLE_CHANGE:
+      /*
+      Case when the user has changed page or sort
+       */
       return {
         ...state,
         ...action.payload
       };
     case TYPES.SEARCH:
+      /*
+      Case when the user is filtered the table
+       */
       return {
         ...state,
         search: action.payload.search
       };
     default:
-      throw new Error();
+      throw new Error(`No action found for type: ${action.type}`);
   }
 };
 
@@ -75,6 +86,11 @@ function downloadItem({ format = "xlsx" }) {
   document.body.removeChild(anchor);
 }
 
+/**
+ * Component to display a
+ * @returns {*}
+ * @constructor
+ */
 export function ProjectsTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -195,50 +211,65 @@ export function ProjectsTable() {
 
   const exportMenu = (
     <Menu>
-      <Menu.Item key="excel" onClick={() => downloadItem({ format: "xlsx" })}>
-        <Icon type="file-excel" />
-        Excel
+      <Menu.Item key="excel">
+        <a
+          href={`${
+            window.TL.BASE_URL
+          }projects/ajax/export?dtf=xlsx&admin=${window.location.href.endsWith(
+            "all"
+          )}`}
+          download={`IRIDA_projects_${new Date().getTime()}`}
+        >
+          <Icon className="spaced-right__sm" type="file-excel" />
+          Excel
+        </a>
       </Menu.Item>
-      <Menu.Item key="csv" onClick={() => downloadItem({ format: "csv" })}>
-        <Icon type="file" />
-        CSV
+      <Menu.Item key="csv">
+        <a
+          href={`${
+            window.TL.BASE_URL
+          }projects/ajax/export?dtf=csv&admin=${window.location.href.endsWith(
+            "all"
+          )}`}
+          download={`IRIDA_projects_${new Date().getTime()}`}
+        >
+          <Icon className="spaced-right__sm" type="file" />
+          CSV
+        </a>
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Layout style={{ padding: 24, height: "100%", minHeight: "100%" }}>
-      <Content style={{ backgroundColor: "#ffffff", margin: 0 }}>
-        <PageHeader
-          title="Projects"
-          extra={
-            <Form layout="inline">
-              <Form.Item>
-                <Input.Search onSearch={onSearch} />
-              </Form.Item>
-              <Form.Item>
-                <Dropdown overlay={exportMenu} key="export">
-                  <Button>
-                    Export <Icon type="down" />
-                  </Button>
-                </Dropdown>
-              </Form.Item>
-            </Form>
-          }
-        />
-        <Table
-          style={{ margin: "6px 24px 0 24px" }}
-          rowKey={record => record.id}
-          loading={state.loading}
-          pagination={{
-            total: state.total,
-            pageSize: state.pageSize
-          }}
-          columns={columns}
-          dataSource={state.data}
-          onChange={handleTableChange}
-        />
-      </Content>
-    </Layout>
+    <PageWrapper
+      title={"__PROJECTS__"}
+      headerExtras={
+        <Row gutter={12} style={{ marginRight: 18 }}>
+          <Col span={18}>
+            <Input.Search onSearch={onSearch} />
+          </Col>
+          <Col span={6}>
+            <Dropdown overlay={exportMenu} key="export">
+              <Button>
+                Export <Icon type="down" />
+              </Button>
+            </Dropdown>
+          </Col>
+        </Row>
+      }
+    >
+      <Table
+        style={{ margin: "6px 24px 0 24px" }}
+        rowKey={record => record.id}
+        loading={state.loading}
+        pagination={{
+          total: state.total,
+          pageSize: state.pageSize
+        }}
+        columns={columns}
+        dataSource={state.data}
+        onChange={handleTableChange}
+      />
+    </PageWrapper>
   );
 }
