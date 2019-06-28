@@ -216,8 +216,8 @@ public class UsersControllerTest {
 		HttpServletRequest request = new MockHttpServletRequest();
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, "checked", null,
-				model, principal, request);
+		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null,null, "checked", null,
+				model, principal, request, Locale.ENGLISH);
 
 		assertEquals("redirect:/users/1", updateUser);
 
@@ -246,8 +246,9 @@ public class UsersControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(userService.updateFields(userId, expected)).thenThrow(dataIntegrityViolationException);
 
-		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,
-				principal, new MockHttpServletRequest());
+		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, null, "checked", null,
+				model,
+				principal, new MockHttpServletRequest(), Locale.ENGLISH);
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
@@ -285,7 +286,7 @@ public class UsersControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
 		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), password, null, model,
-				principal);
+				principal, Locale.ENGLISH);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
@@ -312,7 +313,7 @@ public class UsersControllerTest {
 		when(passwordResetService.create(any(PasswordReset.class))).thenReturn(reset);
 
 		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), null, "checked", model,
-				principal);
+				principal, Locale.ENGLISH);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
@@ -329,7 +330,7 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User u = new User(1L, username, email, password, null, null, null);
 
-		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model, principal, Locale.ENGLISH);
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
 		@SuppressWarnings("unchecked")
@@ -370,7 +371,7 @@ public class UsersControllerTest {
 		when(userService.create(any(User.class))).thenThrow(exception);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(u, "ROLE_USER", password, "checked", model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, "ROLE_USER", password, "checked", model, principal, Locale.ENGLISH);
 
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));

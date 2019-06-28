@@ -79,6 +79,8 @@ public class UsersController {
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
+	private static final List<Locale> LOCALES = Lists.newArrayList(Locale.ENGLISH);
+
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final PasswordResetService passwordResetService;
@@ -227,11 +229,11 @@ public class UsersController {
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
-			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
-			@RequestParam(required = false) String confirmPassword, Model model, Principal principal, HttpServletRequest request) {
+			@RequestParam(required = false, name = "locale") String userLocale,
+			@RequestParam(required = false) String password,
+			@RequestParam(required = false) String enabled, @RequestParam(required = false) String confirmPassword,
+			Model model, Principal principal, HttpServletRequest request, Locale requestLocale) {
 		logger.debug("Updating user " + userId);
-
-		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -253,9 +255,13 @@ public class UsersController {
 			updatedValues.put("phoneNumber", phoneNumber);
 		}
 
+		if(!Strings.isNullOrEmpty(userLocale)){
+			updatedValues.put("locale", userLocale);
+		}
+
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+				errors.put("password", messageSource.getMessage("user.edit.password.match", null, requestLocale));
 			} else {
 				updatedValues.put("password", password);
 			}
@@ -290,7 +296,7 @@ public class UsersController {
 				}
 
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				errors = handleCreateUpdateException(ex, locale);
+				errors = handleCreateUpdateException(ex, requestLocale);
 
 				model.addAttribute("errors", errors);
 
@@ -322,6 +328,8 @@ public class UsersController {
 		model.addAttribute("user", user);
 
 		Locale locale = LocaleContextHolder.getLocale();
+
+		model.addAttribute("locales", LOCALES);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
@@ -356,6 +364,8 @@ public class UsersController {
 	public String createUserPage(Model model) {
 
 		Locale locale = LocaleContextHolder.getLocale();
+
+		model.addAttribute("locales", LOCALES);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
@@ -400,13 +410,11 @@ public class UsersController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String submitCreateUser(@ModelAttribute User user, @RequestParam String systemRole,
 			@RequestParam String confirmPassword, @RequestParam(required = false) String requireActivation, Model model,
-			Principal principal) {
+			Principal principal, Locale locale) {
 
 		Map<String, String> errors = new HashMap<>();
 
 		String returnView = null;
-
-		Locale locale = LocaleContextHolder.getLocale();
 
 		User creator = userService.getUserByUsername(principal.getName());
 
