@@ -199,30 +199,19 @@ public class UsersController {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId
-	 *            The id of the user to edit (required)
-	 * @param firstName
-	 *            The firstname to update
-	 * @param lastName
-	 *            the lastname to update
-	 * @param email
-	 *            the email to update
-	 * @param phoneNumber
-	 *            the phone number to update
-	 * @param systemRole
-	 *            the role to update
-	 * @param password
-	 *            the password to update
-	 * @param confirmPassword
-	 *            password confirmation
-	 * @param model
-	 *            The model to work on
-	 * @param enabled
-	 *            whether the user account should be enabled or disabled.
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @param request
-	 * 		      the request
+	 * @param userId          The id of the user to edit (required)
+	 * @param firstName       The firstname to update
+	 * @param lastName        the lastname to update
+	 * @param email           the email to update
+	 * @param phoneNumber     the phone number to update
+	 * @param systemRole      the role to update
+	 * @param userLocale      The locale the user selected
+	 * @param password        the password to update
+	 * @param confirmPassword password confirmation
+	 * @param model           The model to work on
+	 * @param enabled         whether the user account should be enabled or disabled.
+	 * @param principal       a reference to the logged in user.
+	 * @param request         the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
@@ -230,9 +219,9 @@ public class UsersController {
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
 			@RequestParam(required = false, name = "locale") String userLocale,
-			@RequestParam(required = false) String password,
-			@RequestParam(required = false) String enabled, @RequestParam(required = false) String confirmPassword,
-			Model model, Principal principal, HttpServletRequest request, Locale requestLocale) {
+			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
+			@RequestParam(required = false) String confirmPassword, Model model, Principal principal,
+			HttpServletRequest request) {
 		logger.debug("Updating user " + userId);
 
 		Map<String, String> errors = new HashMap<>();
@@ -255,13 +244,13 @@ public class UsersController {
 			updatedValues.put("phoneNumber", phoneNumber);
 		}
 
-		if(!Strings.isNullOrEmpty(userLocale)){
+		if (!Strings.isNullOrEmpty(userLocale)) {
 			updatedValues.put("locale", userLocale);
 		}
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-				errors.put("password", messageSource.getMessage("user.edit.password.match", null, requestLocale));
+				errors.put("password", messageSource.getMessage("user.edit.password.match", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", password);
 			}
@@ -290,13 +279,14 @@ public class UsersController {
 
 				// If the user is updating their account make sure you update it in the sesion variable
 				// this will update the users gravatar!
-				if (user != null && principal.getName().equals(user.getUsername())) {
+				if (user != null && principal.getName()
+						.equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
 
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				errors = handleCreateUpdateException(ex, requestLocale);
+				errors = handleCreateUpdateException(ex, request.getLocale());
 
 				model.addAttribute("errors", errors);
 
@@ -391,19 +381,13 @@ public class UsersController {
 	/**
 	 * Create a new user object
 	 *
-	 * @param user
-	 *            User to create as a motel attribute
-	 * @param systemRole
-	 *            The system role to give to the user
-	 * @param confirmPassword
-	 *            Password confirmation
-	 * @param requireActivation
-	 *            Checkbox whether the user account needs to be activated
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            The user creating the object
-	 *
+	 * @param user              User to create as a motel attribute
+	 * @param systemRole        The system role to give to the user
+	 * @param confirmPassword   Password confirmation
+	 * @param requireActivation Checkbox whether the user account needs to be activated
+	 * @param model             Model for the view
+	 * @param principal         The user creating the object
+	 * @param locale            The logged in user's request locale
 	 * @return A redirect to the user details view
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -427,7 +411,8 @@ public class UsersController {
 		}
 
 		// check validity of password
-		if (!user.getPassword().equals(confirmPassword)) {
+		if (!user.getPassword()
+				.equals(confirmPassword)) {
 			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 		}
 

@@ -216,8 +216,8 @@ public class UsersControllerTest {
 		HttpServletRequest request = new MockHttpServletRequest();
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null,null, "checked", null,
-				model, principal, request, Locale.ENGLISH);
+		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, null, "checked",
+				null, model, principal, request);
 
 		assertEquals("redirect:/users/1", updateUser);
 
@@ -247,8 +247,7 @@ public class UsersControllerTest {
 		when(userService.updateFields(userId, expected)).thenThrow(dataIntegrityViolationException);
 
 		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, null, "checked", null,
-				model,
-				principal, new MockHttpServletRequest(), Locale.ENGLISH);
+				model, principal, new MockHttpServletRequest());
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
