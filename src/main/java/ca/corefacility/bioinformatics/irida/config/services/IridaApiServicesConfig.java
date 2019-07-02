@@ -157,7 +157,7 @@ public class IridaApiServicesConfig {
 			source.setBasenames(RESOURCE_LOCATIONS);
 		}
 
-		source.setFallbackToSystemLocale(true);
+		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		source.setCommonMessages(properties);
 
