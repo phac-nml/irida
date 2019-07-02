@@ -574,9 +574,9 @@ public class ProjectsController {
 		List<DTProject> dtProjects = projects.stream()
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
-		List<String> headers = ImmutableList.of("id", "name", "organism", "samples", "created", "modified")
+		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name", "ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date", "ProjectsTable_th_modified_date")
 				.stream()
-				.map(h -> messageSource.getMessage("projects.table." + h, new Object[] {}, locale))
+				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
 		// Create the filename

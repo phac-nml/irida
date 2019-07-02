@@ -14,6 +14,7 @@ import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { blue6 } from "../../../styles/colors";
 import { PageWrapper } from "../../../components/page/PageWrapper";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
 const { Text } = Typography;
 
@@ -73,20 +74,6 @@ const reducer = (state, action) => {
 };
 
 /**
- * Download table in specified format.
- * @param {string} format format of downloaded doc.
- */
-function downloadItem({ format = "xlsx" }) {
-  const url = `${window.PAGE.urls.export}&dtf=${format}`;
-  const anchor = document.createElement("a");
-  anchor.style.display = "none";
-  anchor.href = url;
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-}
-
-/**
  * Component to display a
  * @returns {*}
  * @constructor
@@ -139,7 +126,7 @@ export function ProjectsTable() {
 
   const columns = [
     {
-      title: "ID",
+      title: getI18N("ProjectsTable_th_id"),
       dataIndex: "id",
       key: "identifier",
       sorter: true,
@@ -156,7 +143,7 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      title: "Name",
+      title: getI18N("ProjectsTable_th_name"),
       dataIndex: "name",
       key: "name",
       sorter: true,
@@ -173,7 +160,7 @@ export function ProjectsTable() {
       )
     },
     {
-      title: "Organism",
+      title: getI18N("ProjectsTable_th_organism"),
       dataIndex: "organism",
       key: "organism",
       sorter: true,
@@ -185,13 +172,13 @@ export function ProjectsTable() {
       )
     },
     {
-      title: "Samples",
+      title: getI18N("ProjectsTable_th_samples"),
       dataIndex: "samples",
       key: "samples",
       width: 100
     },
     {
-      title: "Created",
+      title: getI18N("ProjectsTable_th_created_date"),
       dataIndex: "createdDate",
       key: "created",
       sorter: true,
@@ -199,7 +186,7 @@ export function ProjectsTable() {
       render: date => formatInternationalizedDateTime(date)
     },
     {
-      title: "Modified",
+      title: getI18N("ProjectsTable_th_modified_date"),
       dataIndex: "modifiedDate",
       key: "modified",
       sorter: true,
@@ -209,32 +196,29 @@ export function ProjectsTable() {
     }
   ];
 
+  const IS_ADMIN = window.location.href.endsWith("all");
   const exportMenu = (
     <Menu>
       <Menu.Item key="excel">
         <a
           href={`${
             window.TL.BASE_URL
-          }projects/ajax/export?dtf=xlsx&admin=${window.location.href.endsWith(
-            "all"
-          )}`}
+          }projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file-excel" />
-          Excel
+          {getI18N("ProjectsTable_export_excel")}
         </a>
       </Menu.Item>
       <Menu.Item key="csv">
         <a
           href={`${
             window.TL.BASE_URL
-          }projects/ajax/export?dtf=csv&admin=${window.location.href.endsWith(
-            "all"
-          )}`}
+          }projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file" />
-          CSV
+          {getI18N("ProjectsTable_export_csv")}
         </a>
       </Menu.Item>
     </Menu>
@@ -242,7 +226,7 @@ export function ProjectsTable() {
 
   return (
     <PageWrapper
-      title={"__PROJECTS__"}
+      title={getI18N("ProjectsTable_header")}
       headerExtras={
         <Row gutter={12} style={{ marginRight: 18 }}>
           <Col span={18}>
@@ -251,7 +235,7 @@ export function ProjectsTable() {
           <Col span={6}>
             <Dropdown overlay={exportMenu} key="export">
               <Button>
-                Export <Icon type="down" />
+                {getI18N("ProjectsTable_export")} <Icon type="down" />
               </Button>
             </Dropdown>
           </Col>
