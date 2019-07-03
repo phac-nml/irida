@@ -26,7 +26,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectsPage page = ProjectsPage.goToProjectsPage(driver(), true);
 		assertEquals("Should be 8 projects", 8, page.getNumberOfProjects());
-		List<String> projectNames = page.getProjectsSortListByColumnName("Name");
+		List<String> projectNames = page.getProjectsSortListByColumnName("Project Name");
 		assertFalse("Projects name should not be sorted originally", Ordering.natural()
 				.isOrdered(projectNames));
 		page.sortProjectTableBy("Name");
