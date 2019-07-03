@@ -29,13 +29,13 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		List<String> projectNames = page.getProjectsSortListByColumnName("Project Name");
 		assertFalse("Projects name should not be sorted originally", Ordering.natural()
 				.isOrdered(projectNames));
-		page.sortProjectTableBy("Name");
-		projectNames = page.getProjectsSortListByColumnName("Name");
+		page.sortProjectTableBy("Project Name");
+		projectNames = page.getProjectsSortListByColumnName("Project Name");
 		assertTrue("Project names should now be sorted", Ordering.natural()
 				.isOrdered(projectNames));
 
-		page.sortProjectTableBy("Name");
-		projectNames = page.getProjectsSortListByColumnName("Name");
+		page.sortProjectTableBy("Project Name");
+		projectNames = page.getProjectsSortListByColumnName("Project Name");
 		assertTrue("Project names should be sorted reverse.", Ordering.natural()
 				.reverse()
 				.isOrdered(projectNames));
