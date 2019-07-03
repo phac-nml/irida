@@ -71,8 +71,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Configuration for the IRIDA platform.
- * 
- * 
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
@@ -126,12 +124,25 @@ public class IridaApiServicesConfig {
 	@Value("${irida.workflow.analysis.threads}")
 	private int analysisTaskThreads;
 
+	@Value("${locales.enabled}")
+	private String availableLocales;
+
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
+	}
+
+	@Bean
+	public IridaLocaleList installedLocales() {
+
+		String[] localeArray = availableLocales.split(",");
+		List<Locale> collect = Arrays.stream(localeArray)
+				.map(l -> Locale.forLanguageTag(l))
+				.collect(Collectors.toList());
+		return new IridaLocaleList(collect);
 	}
 
 	@Bean
@@ -419,6 +430,21 @@ public class IridaApiServicesConfig {
 	@Conditional(NreplServerSpringCondition.class)
 	public NreplServerSpring nRepl() {
 		return new NreplServerSpring(nreplPort);
+	}
+
+	/**
+	 * Inner class storing the enabled locales for IRIDA
+	 */
+	public static class IridaLocaleList {
+		private List<Locale> locales;
+
+		public IridaLocaleList(List<Locale> locales) {
+			this.locales = locales;
+		}
+
+		public List<Locale> getLocales() {
+			return locales;
+		}
 	}
 }
 

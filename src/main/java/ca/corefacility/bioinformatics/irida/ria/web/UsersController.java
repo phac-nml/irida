@@ -15,10 +15,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -79,7 +81,7 @@ public class UsersController {
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
-	private static final List<Locale> LOCALES = Lists.newArrayList(Locale.ENGLISH);
+	private List<Locale> locales;
 
 	private final UserService userService;
 	private final ProjectService projectService;
@@ -93,12 +95,14 @@ public class UsersController {
 
 	@Autowired
 	public UsersController(UserService userService, ProjectService projectService,
-			PasswordResetService passwordResetService, EmailController emailController, MessageSource messageSource) {
+			PasswordResetService passwordResetService, EmailController emailController, MessageSource messageSource,
+			IridaApiServicesConfig.IridaLocaleList locales) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
+		this.locales = locales.getLocales();
 	}
 
 	/**
@@ -319,7 +323,7 @@ public class UsersController {
 
 		Locale locale = LocaleContextHolder.getLocale();
 
-		model.addAttribute("locales", LOCALES);
+		model.addAttribute("locales", locales);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
@@ -355,7 +359,7 @@ public class UsersController {
 
 		Locale locale = LocaleContextHolder.getLocale();
 
-		model.addAttribute("locales", LOCALES);
+		model.addAttribute("locales", locales);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
