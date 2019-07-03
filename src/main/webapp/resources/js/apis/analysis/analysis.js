@@ -73,3 +73,9 @@ export async function prepareAnalysisOutputsDownload(outputs) {
     return { error: error };
   }
 }
+
+export async function fetchPagedAnalyses(params) {
+  return axios
+    .post(`${window.TL.BASE_URL}ajax/analyses/list`, params)
+    .then(response => response.data);
+}

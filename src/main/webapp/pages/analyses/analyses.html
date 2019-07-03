@@ -4,15 +4,14 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/analyses-table.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/analyses.bundle.css}">
 </head>
 <body>
-<div class="col-md-12" layout:fragment="page">
-    <h1 th:text="#{${userList} ? 'analyses.user.page-title' : 'analyses.admin.page-title'}">_Analyses_</h1>
-    <th:block th:replace="analyses/analyses-table :: table"/>
+<div class="root" layout:fragment="page">
+
 </div>
 <th:block layout:fragment="scripts">
-    <th:block th:replace="analyses/analyses-table :: scripts"/>
+    <script th:src="@{/dist/js/analyses.bundle.js}"></script>
 </th:block>
 </body>
 </html>
