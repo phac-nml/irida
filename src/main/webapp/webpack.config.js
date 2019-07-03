@@ -29,10 +29,8 @@ const config = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude(path) {
-          return path.match(/node_modules/);
-        },
-        use: "babel-loader"
+        exclude: /(node_modules|bower_components)/,
+        use: "babel-loader?cacheDirectory"
       },
       {
         test: /\.(css|sass|scss)$/,
