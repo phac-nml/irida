@@ -1,25 +1,32 @@
 import React, { useReducer } from "react";
 
+const TYPES = {
+  DETAILS: "ANALYSIS_DETAILS",
+  ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME",
+  EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
+  PRIORITY: "UPDATED_PRIORITY"
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
-    case "analysisName":
+    case TYPES.DETAILS:
+      return {
+        ...state,
+        emailPipelineResult: action.emailPipelineResult,
+        priority: action.priority,
+        workflowName: action.workflowName,
+        version: action.version,
+        analysisCreatedDate: action.analysisCreatedDate,
+        duration: action.duration,
+        priorities: action.priorities,
+        canShareToSamples: action.canShareToSamples
+      };
+    case TYPES.ANALYSIS_NAME:
       return { ...state, analysisName: action.analysisName };
-    case "emailPipelineResult":
+    case TYPES.EMAIL_PIPELINE_RESULT:
       return { ...state, emailPipelineResult: action.emailPipelineResult };
-    case "priority":
+    case TYPES.PRIORITY:
       return { ...state, priority: action.priority };
-    case "workflowName":
-      return { ...state, workflowName: action.workflowName };
-    case "version":
-      return { ...state, version: action.version };
-    case "analysisCreatedDate":
-      return { ...state, analysisCreatedDate: action.analysisCreatedDate };
-    case "duration":
-      return { ...state, duration: action.duration };
-    case "priorities":
-      return { ...state, priorities: action.priorities };
-    case "canShareToSamples":
-      return { ...state, canShareToSamples: action.canShareToSamples };
     default:
       return;
   }
@@ -30,7 +37,7 @@ const initialState = {
   analysisName: window.PAGE.analysis.name,
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
-  emailPipelineResult: false,
+  emailPipelineResult: window.PAGE.analysis.emailPipelineResult,
   workflowName: null,
   version: null,
   updatePermission: window.PAGE.updatePermission,

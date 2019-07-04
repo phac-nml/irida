@@ -29,14 +29,16 @@ export function AnalysisDetails() {
     useEffect(() => {
         //get required variables and dispatch to reducer
         const detailsVariables = getVariablesForDetails(state.analysis.identifier).then(res => {
-          dispatch({ type: 'workflowName', workflowName: res.data.workflowName})
-          dispatch({ type: 'version', version: res.data.version })
-          dispatch({ type: 'priority', priority: res.data.priority })
-          dispatch({ type: 'analysisCreatedDate', analysisCreatedDate: res.data.createdDate })
-          dispatch({ type: 'duration', duration: res.data.duration })
-          dispatch({ type: 'priorities', priorities: res.data.priorities })
-          dispatch({ type: 'canShareToSamples', canShareToSamples: res.data.canShareToSamples })
-          dispatch({ type: 'emailPipelineResult', emailPipelineResult: res.data.emailPipelineResult })
+          dispatch({
+              type: 'ANALYSIS_DETAILS',
+              workflowName: res.data.workflowName,
+              version: res.data.version,
+              priority: res.data.priority,
+              analysisCreatedDate: res.data.createdDate,
+              duration: res.data.duration,
+              priorities: res.data.priorities,
+              canShareToSamples: res.data.canShareToSamples,
+              emailPipelineResult: res.data.emailPipelineResult})
         });
     }, []);
 
@@ -71,7 +73,7 @@ export function AnalysisDetails() {
         updateAnalysisEmailPipelineResult(state.analysis.identifier, e.target.checked).then(res =>
           showNotification({ text: res.message})
         );
-        dispatch({ type: 'emailPipelineResult', emailPipelineResult: e.target.checked })
+        dispatch({ type: 'UPDATED_EMAIL_PIPELINE_RESULT', emailPipelineResult: e.target.checked })
     }
 
     function updateSubmissionName(){
@@ -81,7 +83,7 @@ export function AnalysisDetails() {
             updateAnalysis(state.analysis.identifier, updatedAnalysisName, null).then(res =>
                 showNotification({ text: res.message})
             );
-            dispatch({ type: 'analysisName', analysisName: updatedAnalysisName });
+            dispatch({ type: 'UPDATED_ANALYSIS_NAME', analysisName: updatedAnalysisName });
         }
     }
 
@@ -89,7 +91,7 @@ export function AnalysisDetails() {
         updateAnalysis(state.analysis.identifier, null, updatedPriority).then(res =>
             showNotification({ text: res.message})
         );
-        dispatch({ type: 'priority', priority: updatedPriority });
+        dispatch({ type: 'UPDATED_PRIORITY', priority: updatedPriority });
     }
 
     function renderPriorities() {
@@ -158,7 +160,7 @@ export function AnalysisDetails() {
                             ((state.isCompleted) || (state.isError)) ?
                                 true : false
                         }
-                        checked={state.emailPipelineResult}>
+                        defaultChecked={state.emailPipelineResult}>
                             {getI18N("analysis.tab.content.analysis.checkbox.label")}
                       </Checkbox>
                   </Col>
