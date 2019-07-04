@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { fetchPagedAnalyses } from "../../apis/analysis/analysis";
 import { Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
@@ -9,8 +9,6 @@ import {
 } from "../../components/ant.design/table-renderers";
 
 const initialState = {
-  analyses: undefined,
-  total: undefined,
   search: "",
   current: 1,
   pageSize: 10,
@@ -19,7 +17,6 @@ const initialState = {
 };
 
 const TYPES = {
-  LOADING: "ANALYSES/LOADING",
   LOADED: "ANALYSES_TABLE/LOADED",
   SEARCH: "ANALYSES_TABLE/SEARCH",
   TABLE_CHANGE: "ANALYSES_TABLE/TABLE_CHANGE"
@@ -27,8 +24,6 @@ const TYPES = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case TYPES.LOADING:
-      return { ...state, loading: true };
     case TYPES.LOADED:
       return {
         ...state,
@@ -48,13 +43,10 @@ const reducer = (state, action) => {
 
 export function AnalysesTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [analyses, setAnalyses] = useState(undefined);
+  const [total, setTotal] = useState(undefined);
 
   useEffect(() => {
-    fetch();
-  }, [state.current, state.pageSize, state.column, state.order, state.search]);
-
-  const fetch = () => {
-    dispatch({ type: TYPES.LOADING });
     const params = {
       current: state.current - 1,
       pageSize: state.pageSize,
@@ -63,16 +55,11 @@ export function AnalysesTable() {
       search: state.search
     };
 
-    fetchPagedAnalyses(params).then(data =>
-      dispatch({
-        type: TYPES.LOADED,
-        payload: {
-          total: data.total,
-          analyses: data.analyses
-        }
-      })
-    );
-  };
+    fetchPagedAnalyses(params).then(data => {
+      setAnalyses(data.analyses);
+      setTotal(data.total);
+    });
+  }, [state]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
@@ -133,11 +120,11 @@ export function AnalysesTable() {
     <PageWrapper title={"__ANALYSES__"}>
       <Table
         style={{ margin: "6px 24px 0 24px" }}
-        reowKey={record => record.id}
+        rowKey={record => record.id}
         loading={state.loading}
-        pagination={{ total: state.total, pageSize: state.pageSize }}
+        pagination={{ total, pageSize: state.pageSize }}
         columns={columns}
-        dataSource={state.analyses}
+        dataSource={analyses}
         onChange={handleTableChange}
       />
     </PageWrapper>
