@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Button,
   Col,
@@ -11,10 +11,13 @@ import {
   Typography
 } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { blue6 } from "../../../styles/colors";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
+import {
+  dateColumnFormat,
+  idColumnFormat,
+  nameColumnFormat
+} from "../../../components/ant.design/table-renderers";
 
 const { Text } = Typography;
 
@@ -29,29 +32,12 @@ const initialState = {
 };
 
 const TYPES = {
-  LOADING: "PROJECTS/LOADING",
-  SET_DATA: "PROJECTS/SET_DATA",
   SEARCH: "PROJECTS/SEARCH",
   TABLE_CHANGE: "PROJECTS/TABLE_CHANGE"
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case TYPES.LOADING:
-      /*
-      Case when API is fetching updated data.
-       */
-      return { ...state, loading: true };
-    case TYPES.SET_DATA:
-      /*
-      Case when API has returned data and needs to set it into the table.
-       */
-      return {
-        ...state,
-        data: action.payload.projects,
-        loading: false,
-        total: action.payload.total
-      };
     case TYPES.TABLE_CHANGE:
       /*
       Case when the user has changed page or sort
@@ -80,13 +66,12 @@ const reducer = (state, action) => {
  */
 export function ProjectsTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [total, setTotal] = useState(undefined);
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState(undefined);
 
   useEffect(() => {
-    fetch();
-  }, [state.current, state.pageSize, state.field, state.order, state.search]);
-
-  const fetch = () => {
-    dispatch({ type: TYPES.LOADING });
+    setLoading(true);
     const params = {
       current: state.current - 1, // Offset since table starts on page 1
       pageSize: state.pageSize,
@@ -94,13 +79,12 @@ export function ProjectsTable() {
       sortDirection: state.order,
       search: state.search
     };
-    getPagedProjectsForUser(params).then(data =>
-      dispatch({
-        type: TYPES.SET_DATA,
-        payload: data
-      })
-    );
-  };
+    getPagedProjectsForUser(params).then(data => {
+      setProjects(data.projects);
+      setTotal(data.total);
+      setLoading(false);
+    });
+  }, [state]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
@@ -120,17 +104,15 @@ export function ProjectsTable() {
     dispatch({
       type: TYPES.SEARCH,
       payload: {
-        search: value
+        search: value,
+        currnet: 0
       }
     });
 
   const columns = [
     {
-      title: getI18N("ProjectsTable_th_id"),
-      dataIndex: "id",
-      key: "identifier",
-      sorter: true,
-      width: 50
+      ...idColumnFormat(),
+      title: getI18N("ProjectsTable_th_id")
     },
     {
       title: "",
@@ -143,21 +125,8 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      title: getI18N("ProjectsTable_th_name"),
-      dataIndex: "name",
-      key: "name",
-      sorter: true,
-      width: 300,
-      render: (name, data) => (
-        <a href={`${window.TL.BASE_URL}projects/${data.id}`} title={name}>
-          <Text
-            ellipsis
-            style={{ width: 270, color: blue6, textDecoration: "underline" }}
-          >
-            {name}
-          </Text>
-        </a>
-      )
+      ...nameColumnFormat(`${window.TL.BASE_URL}projects/`),
+      title: getI18N("ProjectsTable_th_name")
     },
     {
       title: getI18N("ProjectsTable_th_organism"),
@@ -178,21 +147,17 @@ export function ProjectsTable() {
       width: 100
     },
     {
+      ...dateColumnFormat(),
       title: getI18N("ProjectsTable_th_created_date"),
       dataIndex: "createdDate",
-      key: "created",
-      sorter: true,
-      width: 230,
-      render: date => formatInternationalizedDateTime(date)
+      key: "created"
     },
     {
+      ...dateColumnFormat(),
       title: getI18N("ProjectsTable_th_modified_date"),
       dataIndex: "modifiedDate",
       key: "modified",
-      sorter: true,
-      width: 230,
-      defaultSortOrder: "descend",
-      render: date => formatInternationalizedDateTime(date)
+      defaultSortOrder: "descend"
     }
   ];
 
@@ -245,13 +210,13 @@ export function ProjectsTable() {
       <Table
         style={{ margin: "6px 24px 0 24px" }}
         rowKey={record => record.id}
-        loading={state.loading}
+        loading={loading}
         pagination={{
-          total: state.total,
+          total: total,
           pageSize: state.pageSize
         }}
         columns={columns}
-        dataSource={state.data}
+        dataSource={projects}
         onChange={handleTableChange}
       />
     </PageWrapper>
