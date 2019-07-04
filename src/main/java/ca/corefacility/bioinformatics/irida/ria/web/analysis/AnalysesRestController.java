@@ -2,10 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,51 +17,71 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.WorkflowState;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.google.common.base.Strings;
 
 @RestController
 @RequestMapping("/ajax/analyses")
 public class AnalysesRestController {
 
 	private AnalysisSubmissionService analysisSubmissionService;
+	private AnalysisTypesService analysisTypesService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
+	private IridaWorkflowsService workflowsService;
 
 	@Autowired
 	public AnalysesRestController(AnalysisSubmissionService analysisSubmissionService,
+			AnalysisTypesService analysisTypesService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission,
+			IridaWorkflowsService workflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
+		this.analysisTypesService = analysisTypesService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
+		this.workflowsService = workflowsService;
 	}
 
 	@RequestMapping("/states")
-	public List<WorkflowState> getAnalysisStates(Locale locale) {
+	public List<AnalysisStateModel> getAnalysisStates(Locale locale) {
 		List<AnalysisState> states = Arrays.asList(AnalysisState.values());
 		return states.stream()
-				.map(s -> new WorkflowState(messageSource.getMessage("analysis.state." + s, new Object[] {}, locale),
+				.map(s -> new AnalysisStateModel(
+						messageSource.getMessage("analysis.state." + s, new Object[] {}, locale),
 						s.name()))
+				.collect(Collectors.toList());
+	}
+
+	@RequestMapping("/types")
+	public List<AnalysisTypeModel> getWorkflowTypes(Locale locale) {
+		Set<AnalysisType> types = workflowsService.getRegisteredWorkflowTypes();
+		return types.stream()
+				.map(t -> new AnalysisTypeModel(
+						messageSource.getMessage("workflow." + t.getType() + ".title", new Object[] {}, locale),
+						t.getType()))
 				.collect(Collectors.toList());
 	}
 
 	@RequestMapping("/list")
 	public AnalysesListResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
-			@RequestParam(required = false, defaultValue = "user") String type, Locale locale) {
+			@RequestParam(required = false, defaultValue = "user") String type, Locale locale)
+			throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -79,12 +96,26 @@ public class AnalysesRestController {
 			type = "user";
 		}
 
+		/*
+		Check to see if we are filtering by workflow type
+		 */
+		Set<UUID> workflowIds = null;
+		if (!Strings.isNullOrEmpty(analysesListRequest.getFilters()
+				.getType())) {
+			AnalysisType workflowType = analysisTypesService.fromString(analysesListRequest.getFilters()
+					.getType());
+			Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(workflowType);
+			workflowIds = workflows.stream()
+					.map(IridaWorkflow::getWorkflowIdentifier)
+					.collect(Collectors.toSet());
+		}
+
 		Page<AnalysisSubmission> page;
 		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
 				analysesListRequest.getSort());
 		page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null,
 				analysesListRequest.getFilters()
-						.getState(), null, pageRequest);
+						.getState(), workflowIds, pageRequest);
 
 		List<AnalysisModel> analyses = page.getContent()
 				.stream()

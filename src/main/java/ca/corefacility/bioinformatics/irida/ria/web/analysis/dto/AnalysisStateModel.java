@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
-public class WorkflowState {
+public class AnalysisStateModel {
 	private String text;
 	private String value;
 
-	public WorkflowState(String text, String value) {
+	public AnalysisStateModel(String text, String value) {
 		this.text = text;
 		this.value = value;
 	}

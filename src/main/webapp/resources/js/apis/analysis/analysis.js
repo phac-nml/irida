@@ -85,3 +85,9 @@ export async function fetchAllPipelinesStates() {
     .get(`${window.TL.BASE_URL}ajax/analyses/states`)
     .then(response => response.data);
 }
+
+export async function fetchAllPipelinesTypes() {
+  return axios
+    .get(`${window.TL.BASE_URL}ajax/analyses/types`)
+    .then(response => response.data);
+}

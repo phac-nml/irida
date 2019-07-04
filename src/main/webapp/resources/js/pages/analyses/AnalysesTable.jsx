@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
 import {
   fetchAllPipelinesStates,
+  fetchAllPipelinesTypes,
   fetchPagedAnalyses
 } from "../../apis/analysis/analysis";
 import { Input, Row, Table } from "antd";
@@ -53,9 +54,11 @@ export function AnalysesTable() {
   const [analyses, setAnalyses] = useState(undefined);
   const [total, setTotal] = useState(undefined);
   const [pipelineStates, setPipelineStates] = useState(undefined);
+  const [types, setTypes] = useState(undefined);
 
   useEffect(() => {
     fetchAllPipelinesStates().then(data => setPipelineStates(data));
+    fetchAllPipelinesTypes().then(data => setTypes(data));
   }, []);
 
   useEffect(() => {
@@ -120,7 +123,9 @@ export function AnalysesTable() {
     {
       title: "Type",
       key: "type",
-      dataIndex: "type"
+      dataIndex: "type",
+      filterMultiple: false,
+      filters: types
     },
     {
       title: "Submitter",
