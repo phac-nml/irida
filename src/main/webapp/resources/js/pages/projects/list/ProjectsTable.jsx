@@ -104,7 +104,8 @@ export function ProjectsTable() {
     dispatch({
       type: TYPES.SEARCH,
       payload: {
-        search: value
+        search: value,
+        currnet: 0
       }
     });
 
