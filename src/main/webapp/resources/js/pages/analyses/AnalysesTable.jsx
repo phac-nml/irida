@@ -43,10 +43,12 @@ const reducer = (state, action) => {
 
 export function AnalysesTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [loading, setLoading] = useState(false);
   const [analyses, setAnalyses] = useState(undefined);
   const [total, setTotal] = useState(undefined);
 
   useEffect(() => {
+    setLoading(true);
     const params = {
       current: state.current - 1,
       pageSize: state.pageSize,
@@ -58,6 +60,7 @@ export function AnalysesTable() {
     fetchPagedAnalyses(params).then(data => {
       setAnalyses(data.analyses);
       setTotal(data.total);
+      setLoading(false);
     });
   }, [state]);
 
@@ -78,7 +81,7 @@ export function AnalysesTable() {
   const onSearch = value =>
     dispatch({
       type: TYPES.SEARCH,
-      payload: { search: value }
+      payload: { search: value, current: 0 }
     });
 
   const columns = [
@@ -121,7 +124,7 @@ export function AnalysesTable() {
       <Table
         style={{ margin: "6px 24px 0 24px" }}
         rowKey={record => record.id}
-        loading={state.loading}
+        loading={loading}
         pagination={{ total, pageSize: state.pageSize }}
         columns={columns}
         dataSource={analyses}

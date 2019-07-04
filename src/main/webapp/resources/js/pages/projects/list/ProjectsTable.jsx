@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Button,
   Col,
@@ -32,29 +32,12 @@ const initialState = {
 };
 
 const TYPES = {
-  LOADING: "PROJECTS/LOADING",
-  SET_DATA: "PROJECTS/SET_DATA",
   SEARCH: "PROJECTS/SEARCH",
   TABLE_CHANGE: "PROJECTS/TABLE_CHANGE"
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case TYPES.LOADING:
-      /*
-      Case when API is fetching updated data.
-       */
-      return { ...state, loading: true };
-    case TYPES.SET_DATA:
-      /*
-      Case when API has returned data and needs to set it into the table.
-       */
-      return {
-        ...state,
-        data: action.payload.projects,
-        loading: false,
-        total: action.payload.total
-      };
     case TYPES.TABLE_CHANGE:
       /*
       Case when the user has changed page or sort
@@ -83,13 +66,12 @@ const reducer = (state, action) => {
  */
 export function ProjectsTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [total, setTotal] = useState(undefined);
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState(undefined);
 
   useEffect(() => {
-    fetch();
-  }, [state.current, state.pageSize, state.field, state.order, state.search]);
-
-  const fetch = () => {
-    dispatch({ type: TYPES.LOADING });
+    setLoading(true);
     const params = {
       current: state.current - 1, // Offset since table starts on page 1
       pageSize: state.pageSize,
@@ -97,13 +79,12 @@ export function ProjectsTable() {
       sortDirection: state.order,
       search: state.search
     };
-    getPagedProjectsForUser(params).then(data =>
-      dispatch({
-        type: TYPES.SET_DATA,
-        payload: data
-      })
-    );
-  };
+    getPagedProjectsForUser(params).then(data => {
+      setProjects(data.projects);
+      setTotal(data.total);
+      setLoading(false);
+    });
+  }, [state]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
@@ -130,7 +111,7 @@ export function ProjectsTable() {
   const columns = [
     {
       ...idColumnFormat(),
-      title: getI18N("ProjectsTable_th_id"),
+      title: getI18N("ProjectsTable_th_id")
     },
     {
       title: "",
@@ -144,7 +125,7 @@ export function ProjectsTable() {
     },
     {
       ...nameColumnFormat(`${window.TL.BASE_URL}projects/`),
-      title: getI18N("ProjectsTable_th_name"),
+      title: getI18N("ProjectsTable_th_name")
     },
     {
       title: getI18N("ProjectsTable_th_organism"),
@@ -168,7 +149,7 @@ export function ProjectsTable() {
       ...dateColumnFormat(),
       title: getI18N("ProjectsTable_th_created_date"),
       dataIndex: "createdDate",
-      key: "created",
+      key: "created"
     },
     {
       ...dateColumnFormat(),
@@ -228,13 +209,13 @@ export function ProjectsTable() {
       <Table
         style={{ margin: "6px 24px 0 24px" }}
         rowKey={record => record.id}
-        loading={state.loading}
+        loading={loading}
         pagination={{
-          total: state.total,
+          total: total,
           pageSize: state.pageSize
         }}
         columns={columns}
-        dataSource={state.data}
+        dataSource={projects}
         onChange={handleTableChange}
       />
     </PageWrapper>
