@@ -52,7 +52,8 @@ const reducer = (state, action) => {
        */
       return {
         ...state,
-        search: action.payload.search
+        search: action.payload.search,
+        current: 1
       };
     default:
       throw new Error(`No action found for type: ${action.type}`);
@@ -104,8 +105,7 @@ export function ProjectsTable() {
     dispatch({
       type: TYPES.SEARCH,
       payload: {
-        search: value,
-        currnet: 0
+        search: value
       }
     });
 

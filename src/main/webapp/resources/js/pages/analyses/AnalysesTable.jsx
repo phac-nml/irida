@@ -1,6 +1,9 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
-import { fetchPagedAnalyses } from "../../apis/analysis/analysis";
-import { Table } from "antd";
+import React, { useEffect, useReducer, useState } from "react";
+import {
+  fetchAllPipelinesStates,
+  fetchPagedAnalyses
+} from "../../apis/analysis/analysis";
+import { Input, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
@@ -13,7 +16,8 @@ const initialState = {
   current: 1,
   pageSize: 10,
   order: "descend",
-  column: "createdDate"
+  column: "createdDate",
+  filters: {}
 };
 
 const TYPES = {
@@ -31,6 +35,8 @@ const reducer = (state, action) => {
         analyses: action.payload.analyses,
         total: action.payload.total
       };
+    case TYPES.SEARCH:
+      return { ...state, search: action.payload.search, current: 1 };
     case TYPES.TABLE_CHANGE:
       return {
         ...state,
@@ -46,6 +52,11 @@ export function AnalysesTable() {
   const [loading, setLoading] = useState(false);
   const [analyses, setAnalyses] = useState(undefined);
   const [total, setTotal] = useState(undefined);
+  const [pipelineStates, setPipelineStates] = useState(undefined);
+
+  useEffect(() => {
+    fetchAllPipelinesStates().then(data => setPipelineStates(data));
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -54,7 +65,8 @@ export function AnalysesTable() {
       pageSize: state.pageSize,
       sortColumn: state.column,
       sortDirection: state.order,
-      search: state.search
+      search: state.search,
+      filters: state.filters
     };
 
     fetchPagedAnalyses(params).then(data => {
@@ -67,13 +79,16 @@ export function AnalysesTable() {
   const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
+    const formattedFilter = {};
+    Object.keys(filters).forEach(f => (formattedFilter[f] = filters[f][0]));
     dispatch({
       type: TYPES.TABLE_CHANGE,
       payload: {
         pageSize,
         current,
         order: order || "descend",
-        column: field || "createdDate"
+        column: field || "createdDate",
+        filters: formattedFilter
       }
     });
   };
@@ -81,7 +96,7 @@ export function AnalysesTable() {
   const onSearch = value =>
     dispatch({
       type: TYPES.SEARCH,
-      payload: { search: value, current: 0 }
+      payload: { search: value, current: 1 }
     });
 
   const columns = [
@@ -93,7 +108,9 @@ export function AnalysesTable() {
       title: "State",
       key: "state",
       dataIndex: "state",
-      width: 100
+      width: 100,
+      filterMultiple: false,
+      filters: pipelineStates
     },
     {
       ...nameColumnFormat(`${window.TL.BASE_URL}analysis/`),
@@ -120,7 +137,14 @@ export function AnalysesTable() {
   ];
 
   return (
-    <PageWrapper title={"__ANALYSES__"}>
+    <PageWrapper
+      title={"__ANALYSES__"}
+      headerExtras={
+        <Row gutter={12} style={{ marginRight: 18 }}>
+          <Input.Search onSearch={onSearch} />
+        </Row>
+      }
+    >
       <Table
         style={{ margin: "6px 24px 0 24px" }}
         rowKey={record => record.id}

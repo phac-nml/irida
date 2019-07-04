@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.WorkflowState;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -51,6 +53,15 @@ public class AnalysesRestController {
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
 	}
 
+	@RequestMapping("/states")
+	public List<WorkflowState> getAnalysisStates(Locale locale) {
+		List<AnalysisState> states = Arrays.asList(AnalysisState.values());
+		return states.stream()
+				.map(s -> new WorkflowState(messageSource.getMessage("analysis.state." + s, new Object[] {}, locale),
+						s.name()))
+				.collect(Collectors.toList());
+	}
+
 	@RequestMapping("/list")
 	public AnalysesListResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
 			@RequestParam(required = false, defaultValue = "user") String type, Locale locale) {
@@ -69,9 +80,11 @@ public class AnalysesRestController {
 		}
 
 		Page<AnalysisSubmission> page;
-		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(),
-				analysesListRequest.getPageSize(), analysesListRequest.getSort());
-		page = analysisSubmissionService.listAllSubmissions(null, null, null, null, pageRequest);
+		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
+				analysesListRequest.getSort());
+		page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null,
+				analysesListRequest.getFilters()
+						.getState(), null, pageRequest);
 
 		List<AnalysisModel> analyses = page.getContent()
 				.stream()

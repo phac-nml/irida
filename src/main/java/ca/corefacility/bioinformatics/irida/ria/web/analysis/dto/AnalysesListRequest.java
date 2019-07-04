@@ -8,6 +8,7 @@ public class AnalysesListRequest {
 	private String sortColumn;
 	private String sortDirection;
 	private String search;
+	private AnalysesFilters filters;
 
 	public AnalysesListRequest() {}
 
@@ -41,6 +42,14 @@ public class AnalysesListRequest {
 
 	public void setSearch(String search) {
 		this.search = search;
+	}
+
+	public AnalysesFilters getFilters() {
+		return filters;
+	}
+
+	public void setFilters(AnalysesFilters filters) {
+		this.filters = filters;
 	}
 
 	/**

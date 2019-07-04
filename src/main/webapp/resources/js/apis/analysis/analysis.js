@@ -79,3 +79,9 @@ export async function fetchPagedAnalyses(params) {
     .post(`${window.TL.BASE_URL}ajax/analyses/list`, params)
     .then(response => response.data);
 }
+
+export async function fetchAllPipelinesStates() {
+  return axios
+    .get(`${window.TL.BASE_URL}ajax/analyses/states`)
+    .then(response => response.data);
+}
