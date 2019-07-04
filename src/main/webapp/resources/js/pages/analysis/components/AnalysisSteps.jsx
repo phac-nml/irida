@@ -1,23 +1,26 @@
 import React, { useContext } from "react";
-import PropTypes from "prop-types";
 import { Steps } from "antd";
-import { AnalysisContext } from '../../../state/AnalysisState'
-
+import { AnalysisContext } from "../../../state/AnalysisState";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
 const Step = Steps.Step;
 
 export function AnalysisSteps() {
-    const { state } = useContext(AnalysisContext);
-    return (
-      <>
-        <Steps current={state.stateMap[state.analysisState]} status="finish" style={{paddingBottom: "15px"}}>
-          <Step title="Queued" />
-          <Step title="Preparing" />
-          <Step title="Submitting" />
-          <Step title="Running" />
-          <Step title="Completing" />
-          <Step title="Completed" />
-        </Steps>
-      </>
-    );
+  const { state } = useContext(AnalysisContext);
+  return (
+    <>
+      <Steps
+        current={state.stateMap[state.analysisState]}
+        status="finish"
+        style={{ paddingBottom: "15px" }}
+      >
+        <Step title={getI18N("analysis.state.NEW")} />
+        <Step title={getI18N("analysis.state.PREPARING")} />
+        <Step title={getI18N("analysis.state.SUBMITTING")} />
+        <Step title={getI18N("analysis.state.RUNNING")} />
+        <Step title={getI18N("analysis.state.COMPLETING")} />
+        <Step title={getI18N("analysis.state.COMPLETED")} />
+      </Steps>
+    </>
+  );
 }
