@@ -11,16 +11,9 @@
         <script th:inline="javascript">
           window.PAGE = {
             analysis: [[${analysisSubmission}]],
-            priority: [[${analysisSubmission.priority}]],
             analysisState: [[${analysisSubmission.getAnalysisState()}]],
             analysisType: [[${analysisType}]],
-            analysisCreatedDate: [[${analysisSubmission.getCreatedDate()}]],
-            workflowName: [[${workflowName}]],
-            version: [[${version}]],
             updatePermission: [[${updatePermission}]],
-            canShareToSamples: [[${canShareToSamples}]],
-            analysisEmailPipelineResult: [[${analysisSubmission.getEmailPipelineResult()}]],
-            duration: [[${duration}]],
             isAdmin: [[${isAdmin}]],
             i18n: {
                 "analysis.tab.output-files": /*[[#{analysis.tab.output-files}]]*/ "Output Files",

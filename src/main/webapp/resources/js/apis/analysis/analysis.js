@@ -3,15 +3,45 @@
  */
 import axios from "axios";
 
+/*
+ * Get all the data required for the analysis -> details page.
+ * @param {number} submissionId Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getVariablesForDetails(submissionId) {
+  const res = await axios.get(
+    `${window.TL.BASE_URL}analysis/ajax/getDataForDetailsTab/${submissionId}`
+  );
+  return res;
+}
+
+/*
+ * Updates user preference to either receive or not receive an email on
+ * analysis error or completion.
+ * @param {number} submissionId Submission ID
+ * @param {boolean} emailPipelineResult True or False
+ */
 export async function updateAnalysisEmailPipelineResult(
   submissionId,
   emailPipelineResult
 ) {
-  axios.patch(`${window.TL.BASE_URL}analysis/ajax/updateemailpipelineresult/`, {
-    analysisSubmissionId: submissionId,
-    emailPipelineResult: emailPipelineResult
-  });
+  const res = await axios.patch(
+    `${window.TL.BASE_URL}analysis/ajax/updateemailpipelineresult/`,
+    {
+      analysisSubmissionId: submissionId,
+      emailPipelineResult: emailPipelineResult
+    }
+  );
+  return res.data;
 }
+
+/*
+ * Updates analysis name and/or analysis priority.
+ * @param {number} submissionId Submission ID
+ * @param {string} analysisName Name of analysis
+ * @param {string} priority [LOW, MEDIUM, HIGH]
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 
 export async function updateAnalysis(submissionId, analysisName, priority) {
   const res = await axios.patch(
@@ -25,6 +55,11 @@ export async function updateAnalysis(submissionId, analysisName, priority) {
   return res.data;
 }
 
+/*
+ * Deletes the analysis.
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function deleteAnalysis(submissionId) {
   const res = await axios.delete(
     `${window.TL.BASE_URL}analysis/ajax/delete/${submissionId}`
@@ -32,6 +67,11 @@ export async function deleteAnalysis(submissionId) {
   return res.data;
 }
 
+/*
+ * Gets all projects that this analysis can be shared with.
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function getSharedProjects(submissionId) {
   const res = await axios.get(
     `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`
@@ -39,6 +79,13 @@ export async function getSharedProjects(submissionId) {
   return res;
 }
 
+/*
+ * Updates whether or not an analysis is shared with a project.
+ * @param {number} submissionID Submission ID
+ * @param {number} projectID Project ID
+ * @param {boolean} shareStatus True of False
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function updateSharedProjects(
   submissionId,
   projectId,
@@ -54,6 +101,11 @@ export async function updateSharedProjects(
   return res.data;
 }
 
+/*
+ * Saves analysis to related samples.
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function saveToRelatedSamples(submissionId) {
   const res = await axios.post(
     `${window.TL.BASE_URL}analysis/ajax/${submissionId}/save-results`

@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
+import java.sql.Struct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -245,18 +246,6 @@ public class AnalysisController {
 		final User currentUser = userService.getUserByUsername(principal.getName());
 		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
 
-		boolean canShareToSamples = false;
-		if (submission.getAnalysis() != null) {
-			canShareToSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
-					submission.getAnalysis()
-							.getAnalysisType());
-		}
-
-		model.addAttribute("canShareToSamples", canShareToSamples);
-
-		UUID workflowUUID = submission.getWorkflowId();
-		logger.trace("Workflow ID is " + workflowUUID);
-
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
 		// Get the name of the workflow
@@ -264,19 +253,10 @@ public class AnalysisController {
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 
-		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null,
-				analysisType.getType(), locale);
-		model.addAttribute("workflowName", workflowName);
-		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
-				.getVersion());
-
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-
-		Long duration = getAnalysisDuration(submission);
-		model.addAttribute("duration", duration);
 
 		return "analysis";
 	}
@@ -289,13 +269,67 @@ public class AnalysisController {
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/updateemailpipelineresult", method = RequestMethod.PATCH)
-	public String ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters) {
-		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
+	public Map<String, String> ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters) {
+		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 		analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
-		logger.debug("Email pipeline result updated for: " + submission);
+		logger.trace("Email pipeline result updated for: " + submission);
 
-		return "redirect:/analysis/" + parameters.getAnalysisSubmissionId();
+		String message = "";
+		if(parameters.getEmailPipelineResult()) {
+			message = "You will receive an email upon completion or error";
+		}
+		else {
+			message = "You will not receive an email upon completion or error";
+		}
+
+
+		return ImmutableMap.of("result", "success", "message", message);
+	}
+
+	/**
+	 * Get data required by analysis settings -> details page
+	 *
+	 * @param submissionId analysis submission id to get data for
+	 * @return map of data
+	 */
+	@RequestMapping(value = "/ajax/getDataForDetailsTab/{submissionId}", method = RequestMethod.GET)
+	public Map<String, Object> ajaxGetDataForDetailsTab(@PathVariable Long submissionId, Locale locale) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
+
+		// Get the name of the workflow
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null,
+				analysisType.getType(), locale);
+
+		String version = iridaWorkflow.getWorkflowDescription().getVersion();
+		String priority = submission.getPriority().toString();
+		String duration = getAnalysisDuration(submission).toString();
+		AnalysisSubmission.Priority [] priorities = AnalysisSubmission.Priority.values();
+		boolean emailPipelineResult = submission.getEmailPipelineResult();
+
+		boolean canShareToSamples = false;
+		if (submission.getAnalysis() != null) {
+			canShareToSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+					submission.getAnalysis()
+							.getAnalysisType());
+		}
+
+		Map<String,Object> detailsPageMap = new HashMap<>();
+		detailsPageMap.put("result", "success");
+		detailsPageMap.put("workflowName", workflowName);
+		detailsPageMap.put("version", version);
+		detailsPageMap.put("priority", priority);
+		detailsPageMap.put("duration", duration);
+		detailsPageMap.put("createdDate", submission.getCreatedDate().toString());
+		detailsPageMap.put("priorities", priorities);
+		detailsPageMap.put("canShareToSamples", canShareToSamples);
+		detailsPageMap.put("emailPipelineResult", emailPipelineResult);
+		return detailsPageMap;
+
 	}
 
 	/**
@@ -307,63 +341,23 @@ public class AnalysisController {
 	@RequestMapping(value = "/ajax/updateanalysis", method = RequestMethod.PATCH)
 	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters) {
 		String message = "";
-		logger.debug("reading analysis submission " + parameters.getAnalysisSubmissionId());
+		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 
 		if(parameters.getAnalysisName() != null) {
 			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
-			logger.debug("Name updated for: " + submission);
+			logger.trace("Name updated for: " + submission);
 			message= "Analysis name updated to: " + parameters.getAnalysisName();
 		}
 
 		else if(parameters.getPriority() != null) {
 			analysisSubmissionService.updatePriority(submission, parameters.getPriority());
-			logger.debug("Priority updated for: " + submission);
+			logger.trace("Priority updated for: " + submission);
 			message = "Priority updated to " + parameters.getPriority() + " for " + submission.getName();
 		}
 
 		return ImmutableMap.of("result", "success", "message", message);
 	}
-
-	/**
-	 * Update an analysis name
-	 *
-	 * @param submissionId ID of the submission to update
-	 * @param name         name to update the analysis to
-	 * @param priority     the priority to update the analysis to.  Note only admins will be allowed to update priority
-	 * @param model        model for view
-	 * @param locale       locale of the user
-	 * @return redirect to the analysis page after update
-	 */
-	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
-	public String editAnalysis(@PathVariable Long submissionId, @RequestParam String name,
-			@RequestParam(required = false, defaultValue = "") AnalysisSubmission.Priority priority, Model model,
-			final Principal principal, Locale locale) {
-		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-
-		submission.setName(name);
-
-		boolean error = false;
-
-		try {
-			analysisSubmissionService.update(submission);
-			// Setting the priority as a separate call as it's not allowed to be updated with the normal update
-			if (priority != null) {
-				analysisSubmissionService.updatePriority(submission, priority);
-			}
-		} catch (Exception e) {
-			logger.error("Error while updating analysis", e);
-			error = true;
-		}
-
-		if (error) {
-			model.addAttribute("updateError", true);
-			return getDetailsPage(submissionId, model, principal, locale);
-		}
-
-		return "redirect:/analysis/" + submissionId;
-	}
-
 
 	/**
 	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}

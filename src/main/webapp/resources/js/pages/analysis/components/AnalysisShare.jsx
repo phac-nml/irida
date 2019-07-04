@@ -15,7 +15,7 @@ export default function AnalysisShare() {
     const { state } = useContext(AnalysisContext);
     const [sharedProjects, setSharedProjects] = useState(null);
 
-    function createSharedProjectsList()
+    function renderSharedProjectsList()
     {
         const projectList = [];
 
@@ -63,7 +63,7 @@ export default function AnalysisShare() {
           title="Share Results with Projects"
         >
             { sharedProjects !== null ?
-                createSharedProjectsList() : null
+                renderSharedProjectsList() : null
             }
         </Card>
 

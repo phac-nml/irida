@@ -38,7 +38,6 @@ export default function AnalysisDelete() {
 
     return (
         <>
-            <h1>{deleteConfirm}</h1>
             <h2 style={{fontWeight: "bold"}}>{getI18N("analysis.tab.delete-analysis")}</h2>
             <strong className="spaced-top__sm"><Alert message={getI18N("analysis.tab.content.delete.permanent-action-warning")} type="warning" /></strong>
             <Row className="spaced-top__lg">

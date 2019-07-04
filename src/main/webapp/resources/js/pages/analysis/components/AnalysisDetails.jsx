@@ -1,4 +1,4 @@
-import React, { useContext, Suspense, lazy } from "react";
+import React, { useContext, Suspense, lazy, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Input, List, Col, Row, Tabs, Select } from "antd";
 import { AnalysisContext } from '../../../state/AnalysisState';
@@ -12,7 +12,8 @@ const Option = Select;
 
 import {
     updateAnalysisEmailPipelineResult,
-    updateAnalysis
+    updateAnalysis,
+    getVariablesForDetails
 } from "../../../apis/analysis/analysis";
 
 import {
@@ -25,8 +26,22 @@ const TabPane = Tabs.TabPane;
 export function AnalysisDetails() {
     const { state, dispatch } = useContext(AnalysisContext);
 
-    const analysisDetails = [
-      {
+    useEffect(() => {
+        //get required variables and dispatch to reducer
+        const detailsVariables = getVariablesForDetails(state.analysis.identifier).then(res => {
+          dispatch({ type: 'workflowName', workflowName: res.data.workflowName})
+          dispatch({ type: 'version', version: res.data.version })
+          dispatch({ type: 'priority', priority: res.data.priority })
+          dispatch({ type: 'analysisCreatedDate', analysisCreatedDate: res.data.createdDate })
+          dispatch({ type: 'duration', duration: res.data.duration })
+          dispatch({ type: 'priorities', priorities: res.data.priorities })
+          dispatch({ type: 'canShareToSamples', canShareToSamples: res.data.canShareToSamples })
+          dispatch({ type: 'emailPipelineResult', emailPipelineResult: res.data.emailPipelineResult })
+        });
+    }, []);
+
+
+    const analysisDetails = [{
         title: getI18N("analysis.tab.content.analysis.id"),
         desc: state.analysis.identifier,
       },
@@ -52,15 +67,17 @@ export function AnalysisDetails() {
         On change of checkbox to receive/not receive an email upon
         pipeline completion update emailPipelineResult field
     */
-    function onChange(e){
-        updateAnalysisEmailPipelineResult(state.analysis.identifier, e.target.checked);
+    function updateEmailPipelineResult(e){
+        updateAnalysisEmailPipelineResult(state.analysis.identifier, e.target.checked).then(res =>
+          showNotification({ text: res.message})
+        );
+        dispatch({ type: 'emailPipelineResult', emailPipelineResult: e.target.checked })
     }
 
     function updateSubmissionName(){
         const updatedAnalysisName = document.getElementById("analysis-name").value.trim();
 
-        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== state.analysisName))
-        {
+        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== state.analysisName)) {
             updateAnalysis(state.analysis.identifier, updatedAnalysisName, null).then(res =>
                 showNotification({ text: res.message})
             );
@@ -75,6 +92,17 @@ export function AnalysisDetails() {
         dispatch({ type: 'priority', priority: updatedPriority });
     }
 
+    function renderPriorities() {
+        const priorityList = [];
+
+        for(let priority of state.priorities) {
+            priorityList.push(
+              <Select.Option key={priority} value={priority}>{priority}</Select.Option>
+            )
+        }
+        return priorityList;
+    }
+
   return (
       <>
           <Tabs defaultActiveKey="4" tabPosition="left" style={{marginLeft:150, paddingTop:25}}>
@@ -85,7 +113,7 @@ export function AnalysisDetails() {
                     <Row>
                       <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                         <label style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.analysis-name")}</label>
-                        <Input size="large" placeholder={state.analysisName} id="analysis-name" />
+                        <Input size="large" placeholder={state.analysis.name} id="analysis-name" />
                       </Col>
 
                       { state.updatePermission ?
@@ -101,9 +129,7 @@ export function AnalysisDetails() {
                             <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                                 <label style={{fontWeight: "bold"}}>Priority</label>
                                 <Select defaultValue={state.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
-                                  <Select.Option key="LOW" value="LOW">LOW</Select.Option>
-                                  <Select.Option key="MED" value="MEDIUM">MEDIUM</Select.Option>
-                                  <Select.Option key="HIGH" value="HIGH">HIGH</Select.Option>
+                                  {renderPriorities()}
                                 </Select>
                             </Col>
                         </Row>
@@ -127,12 +153,12 @@ export function AnalysisDetails() {
                       <hr style={{backgroundColor: "#E8E8E8", height: "1px", border: "0"}} />
                       <p style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.receive-email-upon-analysis-completion")}</p>
                       <Checkbox
-                        onChange={onChange}
+                        onChange={updateEmailPipelineResult}
                         disabled={
                             ((state.isCompleted) || (state.isError)) ?
                                 true : false
                         }
-                        defaultChecked={state.emailPipelineResult}>
+                        checked={state.emailPipelineResult}>
                             {getI18N("analysis.tab.content.analysis.checkbox.label")}
                       </Checkbox>
                   </Col>
