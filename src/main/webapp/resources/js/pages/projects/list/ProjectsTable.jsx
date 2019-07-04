@@ -105,7 +105,7 @@ export function ProjectsTable() {
       type: TYPES.SEARCH,
       payload: {
         search: value,
-        currnet: 0
+        current: 1
       }
     });
 
