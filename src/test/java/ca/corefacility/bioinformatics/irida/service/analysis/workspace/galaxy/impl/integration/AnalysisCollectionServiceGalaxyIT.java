@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -94,6 +95,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 	
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
+	
+	@Autowired
+	private GzipFileProcessor gzipFileProcessor;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
@@ -185,6 +189,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 		pairSequenceFilesCompressedA.add(sequenceFilePathCompressedA);
 		pairSequenceFilesCompressedB = new ArrayList<>();
 		pairSequenceFilesCompressedB.add(sequenceFilePathCompressedB);
+		
+		gzipFileProcessor.setDisableFileProcessor(false);
 	}
 
 	/**
@@ -325,6 +331,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testUploadSequenceFilesSingleCompressedSuccess() throws ExecutionManagerException {
+		gzipFileProcessor.setDisableFileProcessor(true);
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesSingleCompressedSuccess");
@@ -474,6 +481,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testUploadSequenceFilesPairedCompressedSuccess() throws ExecutionManagerException {
+		gzipFileProcessor.setDisableFileProcessor(true);
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPairedCompressedSuccess");

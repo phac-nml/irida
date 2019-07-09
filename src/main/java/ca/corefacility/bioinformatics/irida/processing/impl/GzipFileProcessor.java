@@ -36,6 +36,7 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final String GZIP_EXTENSION = ".gz";
 
 	private final SequenceFileRepository sequenceFileRepository;
+	private boolean disableFileProcessor = false;
 	private boolean removeCompressedFile;
 
 	@Autowired
@@ -60,6 +61,16 @@ public class GzipFileProcessor implements FileProcessor {
 	public void setRemoveCompressedFiles(boolean removeCompressedFile) {
 		this.removeCompressedFile = removeCompressedFile;
 	}
+	
+	/**
+	 * Disables this file processor from processing files.
+	 * 
+	 * @param disableFileProcessor True if this processor should be disabled, false
+	 *                             otherwise.
+	 */
+	public void setDisableFileProcessor(boolean disableFileProcessor) {
+		this.disableFileProcessor = disableFileProcessor;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -67,8 +78,12 @@ public class GzipFileProcessor implements FileProcessor {
 	@Transactional
 	@Override
 	public void process(SequencingObject sequencingObject) {
-		for (SequenceFile file : sequencingObject.getFiles()) {
-			processSingleFile(file);
+		if (!disableFileProcessor) {
+			for (SequenceFile file : sequencingObject.getFiles()) {
+				processSingleFile(file);
+			}
+		} else {
+			logger.debug("Not running process. It has been disabled");
 		}
 	}
 
@@ -81,6 +96,11 @@ public class GzipFileProcessor implements FileProcessor {
 	 *             if an error occurs while processing
 	 */
 	public void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
+		if (disableFileProcessor) {
+			logger.debug("Not running processSingleFile. It has been disabled");
+			return;
+		}
+		
 		Path file = sequenceFile.getFile();
 		String nameWithoutExtension = file.getFileName().toString();
 
@@ -150,7 +170,7 @@ public class GzipFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public Boolean modifiesFile() {
-		return true;
+		return !disableFileProcessor;
 	}
 
 	/*
