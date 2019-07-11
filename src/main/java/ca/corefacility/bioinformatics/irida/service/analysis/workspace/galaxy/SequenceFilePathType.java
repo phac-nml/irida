@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -20,8 +21,9 @@ public class SequenceFilePathType {
 	 * Creates a new {@link SequenceFilePathType}.
 	 * 
 	 * @param sequenceFile The specific sequence file.
+	 * @throws IOException If there was an error reading the sequence file.
 	 */
-	public SequenceFilePathType(IridaSequenceFile sequenceFile) {
+	public SequenceFilePathType(IridaSequenceFile sequenceFile) throws IOException {
 		checkNotNull(sequenceFile, "sequenceFile is null");
 
 		this.path = sequenceFile.getFile();

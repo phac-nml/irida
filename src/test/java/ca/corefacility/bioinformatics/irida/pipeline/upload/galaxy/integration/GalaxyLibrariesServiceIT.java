@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -86,9 +87,10 @@ public class GalaxyLibrariesServiceIT {
 	/**
 	 * Sets up variables for tests
 	 * @throws URISyntaxException 
+	 * @throws IOException 
 	 */
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
@@ -118,8 +120,9 @@ public class GalaxyLibrariesServiceIT {
 	 * 
 	 * @param path The path.
 	 * @return A new {@link SequenceFilePathType}.
+	 * @throws IOException 
 	 */
-	private SequenceFilePathType createPathType(Path path) {
+	private SequenceFilePathType createPathType(Path path) throws IOException {
 		return new SequenceFilePathType(new SequenceFile(path));
 	}
 	

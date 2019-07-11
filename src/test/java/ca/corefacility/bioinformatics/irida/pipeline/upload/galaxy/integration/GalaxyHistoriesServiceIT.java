@@ -140,8 +140,9 @@ public class GalaxyHistoriesServiceIT {
 	 * 
 	 * @param path The path.
 	 * @return A new {@link SequenceFilePathType}.
+	 * @throws IOException 
 	 */
-	private SequenceFilePathType createPathType(Path path) {
+	private SequenceFilePathType createPathType(Path path) throws IOException {
 		return new SequenceFilePathType(new SequenceFile(path));
 	}
 	

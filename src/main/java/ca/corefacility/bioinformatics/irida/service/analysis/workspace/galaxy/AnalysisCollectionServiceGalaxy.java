@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,10 +63,11 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @return A CollectionResponse for the dataset collection constructed from the
 	 *         given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
+	 * @throws IOException If there was an error reading the sequence file.
 	 */
 	public CollectionResponse uploadSequenceFilesSingleEnd(
 			Map<Sample, ? extends IridaSingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
-			Library workflowLibrary) throws ExecutionManagerException {
+			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
@@ -113,10 +115,11 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @return A CollectionResponse for the dataset collection constructed from the
 	 *         given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
+	 * @throws IOException If there was an error reading the sequence file.
 	 */
 	public CollectionResponse uploadSequenceFilesPaired(
 			Map<Sample, ? extends IridaSequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
-			Library workflowLibrary) throws ExecutionManagerException {
+			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());

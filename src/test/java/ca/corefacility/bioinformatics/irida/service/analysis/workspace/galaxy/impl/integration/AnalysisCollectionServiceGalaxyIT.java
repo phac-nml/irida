@@ -268,10 +268,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 * constructing a collection.
 	 * 
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesSingleSuccess() throws ExecutionManagerException {
+	public void testUploadSequenceFilesSingleSuccess() throws ExecutionManagerException, IOException {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesSingleSuccess");
@@ -327,10 +328,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 * constructing a collection.
 	 * 
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesSingleCompressedSuccess() throws ExecutionManagerException {
+	public void testUploadSequenceFilesSingleCompressedSuccess() throws ExecutionManagerException, IOException {
 		gzipFileProcessor.setDisableFileProcessor(true);
 
 		History history = new History();
@@ -378,10 +380,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 * constructing a collection.
 	 * 
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesPairedSuccess() throws ExecutionManagerException {
+	public void testUploadSequenceFilesPairedSuccess() throws ExecutionManagerException, IOException {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPaired");
@@ -477,10 +480,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 * and constructing a collection.
 	 * 
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesPairedCompressedSuccess() throws ExecutionManagerException {
+	public void testUploadSequenceFilesPairedCompressedSuccess() throws ExecutionManagerException, IOException {
 		gzipFileProcessor.setDisableFileProcessor(true);
 
 		History history = new History();
@@ -535,10 +539,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 * constructing a collection due to no found forward file.
 	 * 
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test(expected = NoSuchElementException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesPairedFailForward() throws ExecutionManagerException {
+	public void testUploadSequenceFilesPairedFailForward() throws ExecutionManagerException, IOException {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPairedFailForward");
