@@ -41,7 +41,7 @@
                         </div>
                         <form class="remove-analysis-form" th:if="${manageMembers}">
                             <input type="hidden" name="templateId" th:value="${template.id}">
-                            <button type="submit" class="auto-analysis-status__submit">
+                            <button type="submit" class="auto-analysis-status__submit t-remove-auto-analysis">
                                 <span><i class="fas fa-times"></i> <th:block
                                         th:text="#{project.settings.automated.template.remove}"/></span>
                             </button>

@@ -12,11 +12,14 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
+/**
+ * Test for the project settings processing page
+ */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
-	public void testCreateAutomatedPipeline() {
+	public void testCreateRemoveAutomatedPipeline() {
 		Long projectId = 1L;
 
 		LoginPage.loginAsAdmin(driver());
@@ -38,6 +41,11 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("should be 1 automated analysis", 1, processingPage.countAutomatedAnalyses());
 
+		processingPage.removeFirstAnalysis();
+
+		processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
+
+		assertEquals("should be no automated analyses", 0, processingPage.countAutomatedAnalyses());
 	}
 
 }
