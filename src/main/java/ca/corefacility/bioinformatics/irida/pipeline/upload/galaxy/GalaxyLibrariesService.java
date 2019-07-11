@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.SequenceFilePathType;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
@@ -179,7 +180,7 @@ public class GalaxyLibrariesService {
 	 * complete.
 	 * 
 	 * @param paths
-	 *            The set of paths (and file types) to upload.
+	 *            The set of paths to upload.
 	 * @param library
 	 *            The library to initially upload the file into.
 	 * @param dataStorage
@@ -189,8 +190,9 @@ public class GalaxyLibrariesService {
 	 * @throws UploadException
 	 *             If there was an issue uploading the file to Galaxy.
 	 */
-	public Map<Path, String> filesToLibraryWait(Set<SequenceFilePathType> paths,
-			Library library, DataStorage dataStorage) throws UploadException {
+	public Map<Path, String> filesToLibraryWait(Set<Path> paths,
+			Library library, DataStorage dataStorage)
+			throws UploadException {
 		checkNotNull(paths, "paths is null");
 		final int pollingTimeMillis = libraryPollingTime*1000;
 
@@ -198,18 +200,19 @@ public class GalaxyLibrariesService {
 
 		try {
 			// upload all files to library first
-			for (SequenceFilePathType path : paths) {
-				String datasetLibraryId = fileToLibrary(path.getPath(), path.getFileType(),
+			for (Path path : paths) {
+				InputFileType fileType = getFileType(path);
+				String datasetLibraryId = fileToLibrary(path, fileType,
 						library, dataStorage);
-				datasetLibraryIdsMap.put(path.getPath(), datasetLibraryId);
+				datasetLibraryIdsMap.put(path, datasetLibraryId);
 			}
 
 			Future<Void> waitForLibraries = executor.submit(new Callable<Void>(){
 				@Override
 				public Void call() throws Exception {
 					// wait for uploads to finish
-					for (SequenceFilePathType path : paths) {
-						String datasetLibraryId = datasetLibraryIdsMap.get(path.getPath());
+					for (Path path : paths) {
+						String datasetLibraryId = datasetLibraryIdsMap.get(path);
 						LibraryDataset libraryDataset = librariesClient.showDataset(
 								library.getId(), datasetLibraryId);
 						while (!LIBRARY_OK_STATE.equals(libraryDataset.getState())) {
@@ -236,7 +239,7 @@ public class GalaxyLibrariesService {
 			});
 			
 			waitForLibraries.get(libraryUploadTimeout, TimeUnit.SECONDS);
-		} catch (RuntimeException e) {
+		} catch (RuntimeException | IOException e) {
 			throw new UploadException(e);
 		} catch (TimeoutException e) {
 			throw new UploadTimeoutException("Timeout while uploading, time limit = " + libraryUploadTimeout + " seconds", e);
@@ -251,6 +254,12 @@ public class GalaxyLibrariesService {
 		}
 
 		return datasetLibraryIdsMap;
+	}
+	
+	private InputFileType getFileType(Path path) throws IOException {
+		checkArgument(path.toFile().exists(), "path=[" + path + "] does not exist");
+		
+		return (FileUtils.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER); 
 	}
 
 	/**

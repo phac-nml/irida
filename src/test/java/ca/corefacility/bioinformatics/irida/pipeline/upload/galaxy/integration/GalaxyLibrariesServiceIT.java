@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.SequenceFilePathType;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -62,11 +61,6 @@ public class GalaxyLibrariesServiceIT {
 	private Path dataFile2;
 	private Path dataFileCompressed;
 	private Path dataFileFail;
-	
-	private SequenceFilePathType dataFileType;
-	private SequenceFilePathType dataFileType2;
-	private SequenceFilePathType dataFileTypeCompressed;
-	private SequenceFilePathType dataFileTypeFail;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
 	private LibrariesClient librariesClient;
@@ -107,23 +101,6 @@ public class GalaxyLibrariesServiceIT {
 		
 		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"fail.fastq.gz").toURI());
-		
-		dataFileType = createPathType(dataFile);
-		dataFileType2 = createPathType(dataFile2);
-		dataFileTypeCompressed = createPathType(dataFileCompressed);
-		dataFileTypeFail = createPathType(dataFileFail);
-	}
-	
-	/**
-	 * Creates a new {@link SequenceFilePathType} from a {@link Path} (instead of
-	 * from a {@link SequenceFile}).
-	 * 
-	 * @param path The path.
-	 * @return A new {@link SequenceFilePathType}.
-	 * @throws IOException 
-	 */
-	private SequenceFilePathType createPathType(Path path) throws IOException {
-		return new SequenceFilePathType(new SequenceFile(path));
 	}
 	
 	/**
@@ -182,7 +159,7 @@ public class GalaxyLibrariesServiceIT {
 	public void testFilesToLibraryWaitSuccess() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitSuccess");
 		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(
-				Sets.newHashSet(dataFileType, dataFileType2, dataFileTypeCompressed), library, DataStorage.LOCAL);
+				Sets.newHashSet(dataFile, dataFile2, dataFileCompressed), library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
 		assertEquals(3, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
@@ -219,7 +196,7 @@ public class GalaxyLibrariesServiceIT {
 			throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
-		galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFileType),
+		galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
 				library, DataStorage.LOCAL);
 	}
 
@@ -234,7 +211,7 @@ public class GalaxyLibrariesServiceIT {
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileType, dataFileType2), library,
+		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,
 				DataStorage.LOCAL);
 	}
 	
@@ -248,7 +225,7 @@ public class GalaxyLibrariesServiceIT {
 	@Test(expected = UploadErrorException.class)
 	public void testFilesToLibraryWaitFailDatasetError() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailDatasetError");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileTypeFail, dataFileType2), library,
+		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), library,
 				DataStorage.LOCAL);
 	}
 	
@@ -260,7 +237,7 @@ public class GalaxyLibrariesServiceIT {
 	@Test
 	public void testDeleteLibrarySuccess() throws ExecutionManagerException {
 		Library library = buildEmptyLibrary("testDeleteLibrarySuccess");
-		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFileType),
+		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
 				library, DataStorage.LOCAL);
 		String datasetId = datasetsMap.get(dataFile);
 		assertNotNull("Dataset not uploaded correctly", librariesClient.showDataset(library.getId(), datasetId));

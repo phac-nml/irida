@@ -13,7 +13,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDe
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -73,16 +72,14 @@ public class AnalysisCollectionServiceGalaxy {
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
 		description.setName(COLLECTION_NAME_SINGLE);
 
-		Set<SequenceFilePathType> pathsToUpload = Sets.newHashSet();
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
 			IridaSingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
 			samplesMap.put(sequenceFile.getSequenceFile().getFile(), sample);
-			pathsToUpload.add(new SequenceFilePathType(sequenceFile.getSequenceFile()));
 		}
 
 		// upload files to library and then to a history
-		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
+		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(samplesMap.keySet(),
 				workflowHistory, workflowLibrary, DataStorage.LOCAL);
 
 		for (Path sequenceFilePath : samplesMap.keySet()) {
@@ -127,7 +124,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		Map<Sample, Path> samplesMapPairForward = new HashMap<>();
 		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
-		Set<SequenceFilePathType> pathsToUpload = new HashSet<>();
+		Set<Path> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			IridaSequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
 			IridaSequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
@@ -135,8 +132,8 @@ public class AnalysisCollectionServiceGalaxy {
 
 			samplesMapPairForward.put(sample, fileForward.getFile());
 			samplesMapPairReverse.put(sample, fileReverse.getFile());
-			pathsToUpload.add(new SequenceFilePathType(fileForward));
-			pathsToUpload.add(new SequenceFilePathType(fileReverse));
+			pathsToUpload.add(fileForward.getFile());
+			pathsToUpload.add(fileReverse.getFile());
 		}
 
 		// upload files to library and then to a history

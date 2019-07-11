@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -123,14 +122,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	public SequenceFile(Path sampleFile) {
 		this();
 		this.file = sampleFile;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isGzipped() throws IOException {
-		return FileUtils.isGzipped(file);
 	}
 
 	@Override

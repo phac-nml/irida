@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -26,14 +25,6 @@ public interface IridaSequenceFile {
 	 * @return the physical location of the file.
 	 */
 	public Path getFile();
-	
-	/**
-	 * Returns whether or not the file is gzipped.
-	 * 
-	 * @return True if gzipped, false otherwise.
-	 * @throws IOException If there was an error reading the file.
-	 */
-	public boolean isGzipped() throws IOException;
 
 	/**
 	 * Get a map of optional key/value pair properties
