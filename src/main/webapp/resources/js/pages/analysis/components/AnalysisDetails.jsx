@@ -28,7 +28,7 @@ export function AnalysisDetails() {
 
     useEffect(() => {
         //get required variables and dispatch to reducer
-        const detailsVariables = getVariablesForDetails(state.analysis.identifier).then(res => {
+        getVariablesForDetails(state.analysis.identifier).then(res => {
           dispatch({
               type: 'ANALYSIS_DETAILS',
               workflowName: res.data.workflowName,
@@ -41,7 +41,6 @@ export function AnalysisDetails() {
               emailPipelineResult: res.data.emailPipelineResult})
         });
     }, []);
-
 
     const analysisDetails = [{
         title: getI18N("analysis.tab.content.analysis.id"),

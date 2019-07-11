@@ -4,7 +4,23 @@ const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
   ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME",
   EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
-  PRIORITY: "UPDATED_PRIORITY"
+  PRIORITY: "UPDATED_PRIORITY",
+  SAMPLES: "SAMPLES_LIST",
+  SEQUENCE_FILE_PAIR: "SEQUENCE_FILE_PAIR_LIST"
+};
+
+const stateMap = {
+  NEW: 0,
+  PREPARING: 1,
+  SUBMITTING: 2,
+  RUNNING: 3,
+  COMPLETING: 4,
+  COMPLETED: 5,
+  NEW_ERROR: 0,
+  PREPARING_ERROR: 1,
+  SUBMITTING_ERROR: 2,
+  RUNNING_ERROR: 3,
+  COMPLETING_ERROR: 4
 };
 
 const reducer = (state, action) => {
@@ -27,6 +43,10 @@ const reducer = (state, action) => {
       return { ...state, emailPipelineResult: action.emailPipelineResult };
     case TYPES.PRIORITY:
       return { ...state, priority: action.priority };
+    case TYPES.SAMPLES:
+      return { ...state, samples: action.samples };
+    case TYPES.SEQUENCE_FILE_PAIR:
+      return { ...state, sequenceFilePairList: action.sequenceFilePairList };
     default:
       return;
   }
@@ -43,21 +63,15 @@ const initialState = {
   updatePermission: window.PAGE.updatePermission,
   duration: null,
   isAdmin: window.PAGE.isAdmin,
-  stateMap: {
-    NEW: 0,
-    PREPARING: 1,
-    SUBMITTING: 2,
-    RUNNING: 3,
-    COMPLETING: 4,
-    COMPLETED: 5,
-    ERROR: 6
-  },
+  stateMap: stateMap,
   analysisCreatedDate: null,
   canShareToSamples: false,
   isCompleted: window.PAGE.analysisState == "COMPLETED" ? true : false,
-  isError: window.PAGE.analysisState == "ERROR" ? true : false,
+  isError: window.PAGE.analysisState.includes("ERROR") ? true : false,
   priority: null,
-  priorities: []
+  priorities: [],
+  samples: [],
+  sequenceFilePairList: []
 };
 
 const AnalysisContext = React.createContext(initialState);

@@ -49,21 +49,29 @@ export default function AnalysisDelete() {
         </Checkbox>
       </Row>
       <Row>
-        <Popconfirm
-          placement="top"
-          title={`Delete Analysis ${state.analysisName}?`}
-          okText="Confirm"
-          cancelText="Cancel"
-          onConfirm={handleDeleteConfirm}
-        >
-          <Button
-            type="danger"
-            className="spaced-top__lg"
-            disabled={deleteConfirm ? false : true}
-          >
-            {getI18N("analysis.tab.content.delete.button")}
-          </Button>
-        </Popconfirm>
+        { deleteConfirm ?
+            <Popconfirm
+              placement="top"
+              title={`Delete Analysis ${state.analysisName}?`}
+              okText="Confirm"
+              cancelText="Cancel"
+              onConfirm={handleDeleteConfirm}
+            >
+              <Button
+                type="danger"
+                className="spaced-top__lg"
+              >
+                {getI18N("analysis.tab.content.delete.button")}
+              </Button>
+            </Popconfirm>
+            :
+              <Button
+                type="danger"
+                className="spaced-top__lg"
+                disabled={true}
+              >
+                {getI18N("analysis.tab.content.delete.button")}
+              </Button> }
       </Row>
     </>
   );

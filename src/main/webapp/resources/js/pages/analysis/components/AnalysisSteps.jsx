@@ -11,7 +11,7 @@ export function AnalysisSteps() {
     <>
       <Steps
         current={state.stateMap[state.analysisState]}
-        status="finish"
+        status={state.isError ? "error" : "finish"}
         style={{ paddingBottom: "15px" }}
       >
         <Step title={getI18N("analysis.state.NEW")} />

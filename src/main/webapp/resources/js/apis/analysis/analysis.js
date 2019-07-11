@@ -16,6 +16,18 @@ export async function getVariablesForDetails(submissionId) {
 }
 
 /*
+ * Get analysis input files
+ * @param {number} submissionId Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getAnalysisInputFiles(submissionId) {
+  const res = await axios.get(
+    `${window.TL.BASE_URL}analysis/ajax/getAnalysisInputFiles/${submissionId}`
+  );
+  return res;
+}
+
+/*
  * Updates user preference to either receive or not receive an email on
  * analysis error or completion.
  * @param {number} submissionId Submission ID

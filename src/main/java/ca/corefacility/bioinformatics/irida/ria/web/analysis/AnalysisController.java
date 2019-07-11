@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -55,10 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisEmailPipelineResult;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisSubmissionInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -329,7 +327,47 @@ public class AnalysisController {
 		detailsPageMap.put("canShareToSamples", canShareToSamples);
 		detailsPageMap.put("emailPipelineResult", emailPipelineResult);
 		return detailsPageMap;
+	}
 
+	/**
+	 * Get analysis input files
+	 *
+	 * @param submissionId analysis submission id to get data for
+	 * @return map of input files
+	 */
+	@RequestMapping(value = "/ajax/getAnalysisInputFiles/{submissionId}", method = RequestMethod.GET)
+	public Map<String, Object> ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, Locale locale) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SequenceFilePair.class);
+
+		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
+			if (a.sample == null && b.sample == null) {
+				return 0;
+			} else if (a.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return a.sample.getLabel()
+					.compareTo(b.sample.getLabel());
+		}).collect(Collectors.toList());
+
+		ArrayList<SequenceFile> seqFilePairs = new ArrayList<>();
+
+		for(SampleFiles f : sampleFiles)
+		{
+			seqFilePairs.add(f.getSequenceFilePair().getForwardSequenceFile());
+			seqFilePairs.add(f.getSequenceFilePair().getReverseSequenceFile());
+		}
+
+		Map<String,Object> inputFilesMap = new HashMap<>();
+		inputFilesMap.put("result", "success");
+		inputFilesMap.put("samples", sampleFiles);
+		inputFilesMap.put("seqFilePairs", seqFilePairs);
+		return inputFilesMap;
 	}
 
 	/**
