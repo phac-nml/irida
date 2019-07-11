@@ -30,7 +30,6 @@ export function* entryEditedSaga() {
   // Always true, that way it can the listener is set up every time.
   while (true) {
     const { entry, label, field } = yield take(types.EDITED);
-    console.log(entry, label, field);
     yield call(
       saveMetadataEntryField,
       entry[FIELDS.sampleId],

@@ -134,10 +134,10 @@ public class RESTAnalysisSubmissionControllerIT {
 		
 		asAdmin().expect().body("resource.executionManagerFileId", equalTo("123-456-789")).and()
 				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(Link.REL_SELF))
-				.when().get(ANALYSIS_BASE + "/1/analysis/file/tree");
+				.when().get(ANALYSIS_BASE + "/1/analysis/file/1");
 
 		// get the tree file
 		asAdmin().given().header("Accept", NewickFileView.DEFAULT_CONTENT_TYPE).expect().body(containsString("c6706"))
-				.when().get(ANALYSIS_BASE + "/1/analysis/file/tree");
+				.when().get(ANALYSIS_BASE + "/1/analysis/file/1");
 	}
 }
