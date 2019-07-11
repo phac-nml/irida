@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecutio
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -118,6 +119,9 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private EmailController emailController;
+	
+	@Autowired
+	private GzipFileProcessor gzipFileProcessor;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -234,6 +238,8 @@ public class SNVPhylAnalysisIT {
 		vcf2core3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/vcf2core.tsv").toURI());
 		filterStats3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/filterStats.txt").toURI());
 		snvAlign3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvAlignment.phy").toURI());
+		
+		gzipFileProcessor.setDisableFileProcessor(false);
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -274,6 +280,8 @@ public class SNVPhylAnalysisIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
+		gzipFileProcessor.setDisableFileProcessor(true);
+		
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
 		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
