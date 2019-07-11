@@ -15,8 +15,7 @@ public class FileUtils {
 	/**
 	 * Determines if a file is compressed. Adapted from stackoverflow answer:
 	 * 
-	 * @see http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream
-	 *      -is-gzipped#answer-8620778
+	 * @see <a href="http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped#answer-8620778">stackoverflow</a>
 	 * 
 	 * @param file A file to test.
 	 * 
