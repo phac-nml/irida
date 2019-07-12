@@ -101,7 +101,9 @@ public class ProjectSamplesMetadataTemplateController {
 		for (String field : fields) {
 			MetadataTemplateField f = metadataTemplateService.readMetadataFieldByLabel(field);
 			if (f == null) {
-				templateFields.add(new MetadataTemplateField(field, "text"));
+				MetadataTemplateField templateField = metadataTemplateService.saveMetadataField(
+						new MetadataTemplateField(field, "text"));
+				templateFields.add(templateField);
 			} else {
 				templateFields.add(f);
 			}

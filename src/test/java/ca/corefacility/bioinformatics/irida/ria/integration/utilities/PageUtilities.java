@@ -59,11 +59,7 @@ public class PageUtilities {
 	}
 
 	public boolean checkSuccessNotification() {
-		return checkNotyNotification("noty_type__success");
-	}
-
-	public boolean checkWarningNotification() {
-		return checkNotyNotification("noty_type_warning");
+		return checkNotyNotification("ant-message-success");
 	}
 
 	private boolean checkNotyNotification(String type) {

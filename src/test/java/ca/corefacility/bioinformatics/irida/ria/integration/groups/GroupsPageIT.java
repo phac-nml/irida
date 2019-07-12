@@ -44,10 +44,10 @@ public class GroupsPageIT extends AbstractIridaUIITChromeDriver {
 		final String role = "GROUP_MEMBER";
 		groupsPage = GroupsPage.goToGroupPage(driver(), groupId);
 		groupsPage.addGroupMember(searchTermUc, role);
-		assertTrue("Noty success should be displayed", groupsPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", groupsPage.checkSuccessNotificationStatus());
 		groupsPage = GroupsPage.goToGroupPage(driver(), anotherGroupId);
 		groupsPage.addGroupMember(searchTermLc, role);
-		assertTrue("Noty success should be displayed", groupsPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", groupsPage.checkSuccessNotificationStatus());
 	}
 
 	@Test
@@ -55,6 +55,6 @@ public class GroupsPageIT extends AbstractIridaUIITChromeDriver {
 		groupsPage = GroupsPage.goToCreateGroupPage(driver());
 		groupsPage.goToGroupsPage();
 		groupsPage.removeUserGroupWithProjectLinks();
-		assertTrue("Noty success should be displayed", groupsPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", groupsPage.checkSuccessNotificationStatus());
 	}
 }

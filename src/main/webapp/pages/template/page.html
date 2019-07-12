@@ -60,11 +60,13 @@
 					"last" : /*[[#{table.last}]]*/ 'Last'
 				}
 			},
-			date: {
-				moment: {
-					short: /*[[#{moment.short}]]*/ 'Do MMM YYYY',
-					full: /*[[#{moment.full}]]*/ 'MMM D, YYYY h:mm:ss a'
-				}
+			i18n: {
+				session_modal_intro: /*[[#{session_modal_intro}]]*/ "session_modal_intro",
+				session_modal_title: /*[[#{session_modal_title}]]*/ "session_modal_title",
+				session_modal_okText: /*[[#{session_modal_okText}]]*/ "session_modal_okText",
+				session_modal_cancelText: /*[[#{session_modal_cancelText}]]*/ "session_modal_cancelText",
+				session_modal_description: /*[[#{session_modal_description}]]*/ "session_modal_description",
+				session_timeout_modal_desc: /*[[#{session_timeout_modal_desc}]]*/ "session_timeout_modal_desc"
 			}
 		};
 	</script>
@@ -81,10 +83,6 @@
 	</script>
 
 	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
-	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
-	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
-	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
-	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
 	<script th:src="@{/dist/js/app.bundle.js}"></script>
 

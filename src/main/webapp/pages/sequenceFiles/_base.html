@@ -25,13 +25,13 @@
             <b th:text="#{sf.no-results}">There is no FastQC data available for this file.</b>
         </div>
         <th:block th:if="${fastQC}">
-            <main id="fastQC-details" class="col-md-8 col-md-push-4" layout:fragment="main">
+            <main id="fastQC-details" class="col-md-9 col-md-push-3" layout:fragment="main">
                 <!--/*/r
                 This is where the main content of every project page will go.
                 /*/-->
             </main>
 
-            <aside class="col-md-4 col-md-pull-8 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
+            <aside class="col-md-3 col-md-pull-9 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{sf.sidebar.details}">__FILE_DETAILS__</b>

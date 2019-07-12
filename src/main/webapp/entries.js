@@ -4,9 +4,16 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: ["@babel/polyfill", "expose-loader?$!jquery"],
+  vendor: [
+    "@babel/polyfill",
+    "expose-loader?$!jquery",
+    "expose-loader?angular!angular",
+    "./resources/js/vendors"
+  ],
+  "angular-st": "expose-loader?angular!angular", // This is just here for pages that need their own angular.
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
+  "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
@@ -65,5 +72,7 @@ module.exports = {
   "groups-list": "./resources/js/pages/users/groups-list.js",
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
-  search: "./resources/js/pages/search/search.js"
+  search: "./resources/js/pages/search/search.js",
+  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
+  "run-files": "./resources/js/pages/sequence-files/run-files.js"
 };
