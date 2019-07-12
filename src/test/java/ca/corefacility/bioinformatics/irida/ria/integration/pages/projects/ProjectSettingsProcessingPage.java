@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class ProjectSettingsProcessingPage extends AbstractPage {
 
-	@FindBy(id = "create-auto-analysis")
+	private static final String CREATE_BUTTON_ID = "create-auto-analysis";
+	@FindBy(id = CREATE_BUTTON_ID)
 	private WebElement createAnalysisButton;
 
 	@FindBy(className = "auto-analysis-status")
@@ -35,6 +36,11 @@ public class ProjectSettingsProcessingPage extends AbstractPage {
 
 	public static ProjectSettingsProcessingPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ProjectSettingsProcessingPage.class);
+	}
+
+	public boolean isCreateAnalysisButtonVisible() {
+		return driver.findElements(By.id(CREATE_BUTTON_ID))
+				.size() > 0;
 	}
 
 	public void clickCreateAnalysis() {

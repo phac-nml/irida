@@ -6,11 +6,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.BasicPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsProcessingPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Test for the project settings processing page
@@ -19,13 +19,14 @@ import static junit.framework.TestCase.assertTrue;
 public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
-	public void testCreateRemoveAutomatedPipeline() {
+	public void testCreateAutomatedPipeline() {
 		Long projectId = 1L;
 
 		LoginPage.loginAsAdmin(driver());
 		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
+		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
 
-		assertEquals("should be no automated analyses", 0, processingPage.countAutomatedAnalyses());
+		assertTrue("create analysis button should be visible", processingPage.isCreateAnalysisButtonVisible());
 		processingPage.clickCreateAnalysis();
 
 		CartPage cartPage = CartPage.initPage(driver());
@@ -39,13 +40,33 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 		processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
 
-		assertEquals("should be 1 automated analysis", 1, processingPage.countAutomatedAnalyses());
+		assertEquals("should be 2 automated analysis", 2, processingPage.countAutomatedAnalyses());
+	}
+
+	@Test
+	public void testRemoveAutomatedPipeline() {
+		Long projectId = 1L;
+
+		LoginPage.loginAsAdmin(driver());
+		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
+		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
 
 		processingPage.removeFirstAnalysis();
 
 		processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
 
 		assertEquals("should be no automated analyses", 0, processingPage.countAutomatedAnalyses());
+
+	}
+
+	@Test
+	public void testProcessingPageAsRegularUser() {
+		Long projectId = 1L;
+		LoginPage.loginAsUser(driver());
+		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
+		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
+
+		assertFalse("create analysis button should NOT be visible", processingPage.isCreateAnalysisButtonVisible());
 	}
 
 }

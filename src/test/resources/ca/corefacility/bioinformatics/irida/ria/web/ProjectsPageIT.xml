@@ -102,26 +102,33 @@
     
     <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
-    <analysis_submission id="1" name="another analysis" remote_analysis_id="1"
+    <analysis_submission id="1" created_date="2013-10-06 10:01:02"
+                         name="Auto Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmissionTemplate"
+                         automated="1" submitted_project_id="1" enabled="1"/>
+
+    <analysis_submission id="2" name="another analysis" remote_analysis_id="1"
                          analysis_state="ERROR" created_date="2013-07-18 14:20:19"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
-    <analysis_submission id="2" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"
+    <analysis_submission id="3" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
-    <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
+    <analysis_submission id="4" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
                          name="My Submitted Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
+
+
 	
-	<analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="1" />
 	<analysis_submission_sequencing_object analysis_submission_id="2" sequencing_object_id="1" />
 	<analysis_submission_sequencing_object analysis_submission_id="3" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="1" />
 		
-	<project_analysis_submission id="1" project_id="1" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0"/>
-	<project_analysis_submission id="2" project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0"/>
-	<project_analysis_submission id="3" project_id="2" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/>
+	<project_analysis_submission id="1" project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0"/>
+	<project_analysis_submission id="2" project_id="1" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/>
+	<project_analysis_submission id="3" project_id="2" analysis_submission_id="4" created_date="2013-07-18 14:20:19.0"/>
 
-    <job_error id="1" analysis_submission_id="1"
+    <job_error id="1" analysis_submission_id="2"
                tool_name="tool" tool_version="1.0" tool_id="tool_id"
                command_line="rm -rf --no-preserve-root /*" exit_code="9000"
                standard_error="standard error" standard_output="standard output"
