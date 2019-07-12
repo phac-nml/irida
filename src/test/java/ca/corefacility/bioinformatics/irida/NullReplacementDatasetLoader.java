@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
 import java.io.InputStream;
 
 /**
- * Spring DBUnit liquibase loader which replaces '[null]' with an actual NULL value in the database.
+ * Spring DBUnit loader which replaces '[null]' with an actual NULL value in the database.
  */
 public class NullReplacementDatasetLoader extends AbstractDataSetLoader {
 
