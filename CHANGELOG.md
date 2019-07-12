@@ -8,6 +8,24 @@ Changes
 * [UI/Developer]: Moved the path of compiled JavaScript and CSS to `src/main/webapp`.
 * [REST/Developer]: REST API applications can now select which role to add users to a project.
 * [UI/Developer]: Cleaned up some of the redux set up on the linelist page.
+* [UI/Developer]: Removed loading Bootstrap through `bower` and moved it into the webpack build.
+* [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
+* [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
+* [UI/Developer]: Updated `axios` to fix vulnerability.
+* [UI/Developer]: Updated `fstream` to fix vulnerability.
+* [Developer]: Update pom file to reflect active IRIDA developers.
+* [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
+* [UI/Developer]: Updated to latest `react-redux` to use new hooks API.
+* [UI]: Updated session expiration modal.
+* [UI]: Removed `momentjs` from being loaded on every page.
+* [UI]: Removed `livestampjs` as a project dependency.
+* [REST]: Changed the URL suffix to analysis output files to be a numerical id instead of a hash key.  Files with a `.` in the name were having issues resolving.  No change in `rel`s so applications should work as usual.
+* [UI]: Removed `noty` as a `bower` dependency.
+* [Developer]: Removed unnecessary `exists` call in `updateFields` method which was causing some hibernate caching issues.
+* [UI]: Removed `noty` as `yarn` dependency, only using `ant.design` notifications.
+* [UI/Developer]: Removed `datatables` as a bower dependency.
+* [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
+* [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
 
 19.01 to 19.05
 ---------------

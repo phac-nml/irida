@@ -8,14 +8,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.NoSuchElementException;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
  * Page to represent the group page.
@@ -118,17 +117,9 @@ public class GroupsPage extends AbstractPage {
 		waitForAjax();
 	}
 
-	public boolean notySuccessDisplayed() {
-		boolean present;
-		try {
-			(new WebDriverWait(driver, 10)).until(
-					ExpectedConditions.presenceOfElementLocated(By.className("noty_type__success")));
-			present = true;
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
+	public boolean checkSuccessNotificationStatus() {
+		PageUtilities utilities = new PageUtilities(driver);
+		return utilities.checkSuccessNotification();
 	}
 
 	private void waitForAjax() {
