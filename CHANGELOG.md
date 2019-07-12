@@ -26,6 +26,7 @@ Changes
 * [UI/Developer]: Removed `datatables` as a bower dependency.
 * [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
 * [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
+* [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 
 19.01 to 19.05
 ---------------
