@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -339,6 +340,7 @@ public class AnalysisController {
 	public Map<String, Object> ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		ReferenceFile referenceFile = null;
 
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
@@ -355,18 +357,37 @@ public class AnalysisController {
 					.compareTo(b.sample.getLabel());
 		}).collect(Collectors.toList());
 
-		ArrayList<SequenceFile> seqFilePairs = new ArrayList<>();
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
-		for(SampleFiles f : sampleFiles)
+		if (iridaWorkflow.getWorkflowDescription()
+				.requiresReference() && submission.getReferenceFile()
+				.isPresent()) {
+
+			referenceFile = submission.getReferenceFile().get();
+		} else {
+			logger.debug("No reference file required for workflow.");
+		}
+
+		ArrayList<SequenceFile> seqFilePairs = new ArrayList<>();
+		ArrayList<String> seqFileSizes = new ArrayList<>();
+
+		for(SampleFiles sampleFile : sampleFiles)
 		{
-			seqFilePairs.add(f.getSequenceFilePair().getForwardSequenceFile());
-			seqFilePairs.add(f.getSequenceFilePair().getReverseSequenceFile());
+			SequenceFile forward = sampleFile.getSequenceFilePair().getForwardSequenceFile();
+			SequenceFile reverse = sampleFile.getSequenceFilePair().getReverseSequenceFile();
+
+			seqFilePairs.add(forward);
+			seqFilePairs.add(reverse);
+			seqFileSizes.add(forward.getFileSize());
+			seqFileSizes.add(reverse.getFileSize());
 		}
 
 		Map<String,Object> inputFilesMap = new HashMap<>();
 		inputFilesMap.put("result", "success");
 		inputFilesMap.put("samples", sampleFiles);
+		inputFilesMap.put("referenceFile", referenceFile);
 		inputFilesMap.put("seqFilePairs", seqFilePairs);
+		inputFilesMap.put("seqFilePairSizes", seqFileSizes);
 		return inputFilesMap;
 	}
 
