@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import ca.corefacility.bioinformatics.irida.NullReplacementDatasetLoader;
+import ca.corefacility.bioinformatics.irida.utils.NullReplacementDatasetLoader;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;

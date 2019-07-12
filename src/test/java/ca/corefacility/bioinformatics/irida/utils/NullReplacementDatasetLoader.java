@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida;
+package ca.corefacility.bioinformatics.irida.utils;
 
 import com.github.springtestdbunit.dataset.AbstractDataSetLoader;
 import org.dbunit.dataset.IDataSet;
