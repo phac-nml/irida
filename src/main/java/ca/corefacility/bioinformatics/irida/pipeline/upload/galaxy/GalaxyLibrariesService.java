@@ -256,6 +256,12 @@ public class GalaxyLibrariesService {
 		return datasetLibraryIdsMap;
 	}
 	
+	/**
+	 * Given a {@link Path}, gets the {@link InputFileType} for the data type to upload to Galaxy.
+	 * @param path The path to upload.
+	 * @return The {@link InputFileType} for the data to upload to Galaxy.
+	 * @throws IOException If there was an error reading the file to determine the file type.
+	 */
 	private InputFileType getFileType(Path path) throws IOException {
 		checkArgument(path.toFile().exists(), "path=[" + path + "] does not exist");
 		
