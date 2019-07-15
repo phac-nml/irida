@@ -28,7 +28,7 @@
     "angular-bootstrap-lightbox": "^0.12.0",
     "angular-bootstrap-switch": "^0.5.2",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "^3.16.3",
+    "antd": "^3.19.8",
     "axios": "^0.19.0",
     "bootstrap": "3.4.1",
     "bootstrap-daterangepicker": "^3.0.3",

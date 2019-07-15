@@ -12,6 +12,7 @@ Changes
 * [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
 * [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
 * [UI/Developer]: Updated `axios` to fix vulnerability.
+* [Workflow]: Fixing bug so that fastq files uploaded to Galaxy will be "fastqsanger" when uncompressed and "fastqsanger.gz" when compressed.
 * [UI/Developer]: Updated `fstream` to fix vulnerability.
 * [Developer]: Update pom file to reflect active IRIDA developers.
 * [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
@@ -26,6 +27,7 @@ Changes
 * [UI/Developer]: Removed `datatables` as a bower dependency.
 * [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
 * [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
+* [Documentation]: Fixed `shed-tools` command to include `install` subcommand for installing Galaxy tools.
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 
 19.01 to 19.05
