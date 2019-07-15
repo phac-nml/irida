@@ -11,7 +11,7 @@ The short version is to:
 2. Install tools
 
    ```bash
-   shed-tools --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --api_key [api key]
+   shed-tools install --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --api_key [api key]
    ```
 
    Please replace **url-to-galaxy** and **api key** with appropriate values for your Galaxy instance.

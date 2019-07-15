@@ -27,6 +27,7 @@ Changes
 * [UI/Developer]: Removed `datatables` as a bower dependency.
 * [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
 * [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
+* [Documentation]: Fixed `shed-tools` command to include `install` subcommand for installing Galaxy tools.
 
 19.01 to 19.05
 ---------------
