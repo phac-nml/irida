@@ -53,8 +53,8 @@ export default function AnalysisDelete() {
             <Popconfirm
               placement="top"
               title={`Delete Analysis ${state.analysisName}?`}
-              okText="Confirm"
-              cancelText="Cancel"
+              okText={getI18N("analysis.tab.content.delete.confirm")}
+              cancelText={getI18N("analysis.tab.content.delete.cancel")}
               onConfirm={handleDeleteConfirm}
             >
               <Button

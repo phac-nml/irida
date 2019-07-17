@@ -106,7 +106,11 @@ export function AnalysisDetails() {
 
   return (
       <>
-          <Tabs defaultActiveKey="4" tabPosition="left" style={{marginLeft:150, paddingTop:25}}>
+          <Tabs defaultActiveKey="4"
+                tabPosition="left"
+                style={{marginLeft:150, paddingTop:25}}
+                animated={false}
+          >
               <TabPane tab={getI18N("analysis.tab.analysis")} key="4" style={{minWidth:300}}>
                   <Col span={12}>
                     <h2 style={{fontWeight: "bold"}} className="spaced-bottom">{getI18N("analysis.tab.content.analysis.details")}</h2>
@@ -175,14 +179,16 @@ export function AnalysisDetails() {
 
               { state.updatePermission ?
                 [
-                  <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
-                      <Col span={12}>
-                        <Suspense fallback={<div>Loading...</div>}>
-                          <AnalysisShare />
-                        </Suspense>
-                      </Col>
-                  </TabPane>,
-
+                    !state.isError ?
+                      <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
+                          <Col span={12}>
+                            <Suspense fallback={<div>Loading...</div>}>
+                              <AnalysisShare />
+                            </Suspense>
+                          </Col>
+                      </TabPane>
+                      : null
+                     ,
                   <TabPane tab={getI18N("analysis.tab.delete-analysis")} key="7">
                       <Col span={12}>
                         <Suspense fallback={<div>Loading...</div>}>

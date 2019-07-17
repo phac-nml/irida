@@ -47,6 +47,7 @@ export default function AnalysisShare() {
 
   useEffect(() => {
     getSharedProjects(state.analysis.identifier).then(res =>
+      //List of projects which results can be shared with
       setSharedProjects(res.data)
     );
   }, []);
@@ -58,7 +59,11 @@ export default function AnalysisShare() {
       </h2>
       <br />
       <Card title="Share Results with Projects">
-        {sharedProjects !== null ? renderSharedProjectsList() : null}
+        { sharedProjects !== null ?
+            renderSharedProjectsList()
+            :
+            <p>{getI18N("analysis.tab.content.share.no-projects-to-share-results-with")}</p>
+        }
       </Card>
 
       <br />

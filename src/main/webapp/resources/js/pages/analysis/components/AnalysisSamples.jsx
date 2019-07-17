@@ -24,19 +24,27 @@ export default function AnalysisSamples() {
     });
   }, []);
 
+  const downloadReferenceFile = () => {
+    if (state.referenceFile.identifier !== undefined)
+    {
+        window.open(`${window.TL.BASE_URL}referenceFiles/download/${state.referenceFile.identifier}`, '_blank');
+    }
+  };
+
   const renderReferenceFile = () => {
     const referenceFile = [];
 
     referenceFile.push(
-        <h4 key="reference-file-0-heading" style={{fontWeight: "bold"}}>Reference File</h4>,
+        <h4 key="reference-file-0-heading" style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.samples.reference-file")}</h4>,
         <Row key="row-filename">
             <span key="reference-file-0-file">{state.referenceFile.label}</span>
             <Button
                 key="reference-file-0-download-button"
                 className="pull-right"
                 style={{marginTop: "0.5em"}} type="primary"
+                onClick={() => {downloadReferenceFile()}}
             >
-                <Icon type="download" /> Download Reference File
+                <Icon type="download" /> {getI18N("analysis.tab.content.samples.download-reference-file")}
             </Button>
         </Row>,
      );
@@ -52,15 +60,20 @@ export default function AnalysisSamples() {
           samplesList.push(
             <Card
                 type="inner"
-                title={<a target="_blank" href={`${window.TL.BASE_URL}samples/${state.samples[i].sample.identifier}/details`}><Icon type="filter" rotate="180" /> {state.samples[i].sample.sampleName}</a>}
-                extra={<a href="#">Details</a>}
+                title={
+                    <a
+                        target="_blank"
+                        href={`${window.TL.BASE_URL}samples/${state.samples[i].sample.identifier}/details`}>
+                            <Icon type="filter" rotate="180" /> {state.samples[i].sample.sampleName}
+                    </a>}
+                extra={<a href="#">{getI18N("analysis.tab.content.samples.details")}</a>}
                 key={`sample${i}`}
             >
                 <Row>
                     <a
                         target="_blank"
-                        href={`${window.TL.BASE_URL}sequenceFiles/${state.samples[i].sequenceFilePair.identifier}/file/${state.sequenceFilePairList[pairIndex + 1].identifier}/summary`}>
-                        <Icon type="arrow-right" /> {state.sequenceFilePairList[pairIndex].label}
+                        href={`${window.TL.BASE_URL}sequenceFiles/${state.samples[i].sequenceFilePair.identifier}/file/${state.sequenceFilePairList[pairIndex].identifier}/summary`}>
+                            <Icon type="arrow-right" /> {state.sequenceFilePairList[pairIndex].label}
                    </a>
                    <span style={{float: 'right'}}>{state.sequenceFileSizeList[pairIndex]}</span>
                 </Row>
@@ -68,7 +81,7 @@ export default function AnalysisSamples() {
                     <a
                         target="_blank"
                         href={`${window.TL.BASE_URL}sequenceFiles/${state.samples[i].sequenceFilePair.identifier}/file/${state.sequenceFilePairList[pairIndex + 1].identifier}/summary`}>
-                        <Icon type="arrow-left" /> {state.sequenceFilePairList[pairIndex+1].label}
+                            <Icon type="arrow-left" /> {state.sequenceFilePairList[pairIndex+1].label}
                     </a>
                     <span style={{float: 'right'}}>{state.sequenceFileSizeList[pairIndex+1]}</span>
                 </Row>
