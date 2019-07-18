@@ -481,12 +481,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>${selenium-driver.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
 			<version>${selenium-driver.version}</version>
 			<scope>test</scope>
@@ -1051,7 +1045,7 @@
 		<commons.cli.version>1.2</commons.cli.version>
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<guava.version>17.0</guava.version>
+		<guava.version>28.0-jre</guava.version>
 		<spring.version>4.2.3.RELEASE</spring.version>
 		<spring.security.version>4.0.4.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
@@ -1092,8 +1086,8 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
-		<selenium-driver.version>2.52.0</selenium-driver.version>
-		<selenium-chrome-driver.version>2.52.0</selenium-chrome-driver.version>
+		<selenium-driver.version>3.141.59</selenium-driver.version>
+		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
 		<attoparser.version>2.0.4.RELEASE</attoparser.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
@@ -1140,7 +1134,7 @@
 		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
-		<!-- Set to 'local' to use the local version stored in irida-api, or set 
+		<!-- Set to 'local' to use the local version stored in irida-api, or set
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
