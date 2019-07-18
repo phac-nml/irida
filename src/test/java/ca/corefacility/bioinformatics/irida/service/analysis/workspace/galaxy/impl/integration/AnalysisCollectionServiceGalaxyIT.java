@@ -40,11 +40,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -94,14 +97,22 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
+	private GzipFileProcessor gzipFileProcessor;
+
+	@Autowired
 	@Qualifier("rootTempDirectory")
 	private Path rootTempDirectory;
+
+	private String sequenceFileNameCompressedA = "testDataCompressed_1.fastq.gz";
+	private String sequenceFileNameCompressedB = "testDataCompressed_2.fastq.gz";
 
 	private Path sequenceFilePathA;
 	private Path sequenceFilePathAInvalidName;
 	private Path sequenceFilePath2A;
 	private Path sequenceFilePathB;
 	private Path sequenceFilePath2B;
+	private Path sequenceFilePathCompressedA;
+	private Path sequenceFilePathCompressedB;
 
 	private List<Path> pairSequenceFiles1A;
 	private List<Path> pairSequenceFiles1AInvalidName;
@@ -109,6 +120,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	private List<Path> pairSequenceFiles1AB;
 	private List<Path> pairSequenceFiles2AB;
+
+	private List<Path> pairSequenceFilesCompressedA;
+	private List<Path> pairSequenceFilesCompressedB;
 
 	private static final String INPUTS_SINGLE_NAME = "irida_sequence_files_single";
 	private static final String INPUTS_PAIRED_NAME = "irida_sequence_files_paired";
@@ -130,6 +144,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
 
+		Path sequenceFilePathRealCompressed = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("testData3.fastq.gz").toURI());
+
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "analysisCollectionTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
@@ -147,6 +164,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 		sequenceFilePath2B = tempDir.resolve("testDataB_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2B, StandardCopyOption.REPLACE_EXISTING);
 
+		sequenceFilePathCompressedA = tempDir.resolve(sequenceFileNameCompressedA);
+		Files.copy(sequenceFilePathRealCompressed, sequenceFilePathCompressedA, StandardCopyOption.REPLACE_EXISTING);
+
+		sequenceFilePathCompressedB = tempDir.resolve(sequenceFileNameCompressedB);
+		Files.copy(sequenceFilePathRealCompressed, sequenceFilePathCompressedB, StandardCopyOption.REPLACE_EXISTING);
+
 		pairSequenceFiles1A = new ArrayList<>();
 		pairSequenceFiles1A.add(sequenceFilePathA);
 		pairSequenceFiles2A = new ArrayList<>();
@@ -161,6 +184,13 @@ public class AnalysisCollectionServiceGalaxyIT {
 		pairSequenceFiles2AB = new ArrayList<>();
 		pairSequenceFiles2AB.add(sequenceFilePath2A);
 		pairSequenceFiles2AB.add(sequenceFilePath2B);
+
+		pairSequenceFilesCompressedA = new ArrayList<>();
+		pairSequenceFilesCompressedA.add(sequenceFilePathCompressedA);
+		pairSequenceFilesCompressedB = new ArrayList<>();
+		pairSequenceFilesCompressedB.add(sequenceFilePathCompressedB);
+
+		gzipFileProcessor.setDisableFileProcessor(false);
 	}
 
 	/**
@@ -238,10 +268,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 * constructing a collection.
 	 *
 	 * @throws ExecutionManagerException
+	 * @throws IOException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesSingleSuccess() throws ExecutionManagerException {
+	public void testUploadSequenceFilesSingleSuccess() throws ExecutionManagerException, IOException {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesSingleSuccess");
@@ -253,15 +284,16 @@ public class AnalysisCollectionServiceGalaxyIT {
 		library.setName("testUploadSequenceFilesSingleSuccess");
 		Library createdLibrary = librariesClient.createLibrary(library);
 
-		Set<SingleEndSequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
+		Set<SingleEndSequenceFile> sequenceFiles = Sets
+				.newHashSet(databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
 
-
-		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
+		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		Sample sample1 = sampleRepository.findOne(1L);
 
-		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(
-				sampleSequenceFiles, createdHistory, createdLibrary);
+		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
+				.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -272,10 +304,16 @@ public class AnalysisCollectionServiceGalaxyIT {
 		assertTrue("dataset collection with name " + INPUTS_SINGLE_NAME + " should have been created in history",
 				contentsMap.containsKey(INPUTS_SINGLE_NAME));
 
+		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFilePathA.getFileName().toString()).getId());
+		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(),
+				sequenceFileACompressedDataset.getDataTypeExt());
+
 		// verify correct collection has been created
-		assertEquals("constructed dataset collection should have been " + DatasetCollectionType.LIST
-				+ " but is instead " + collectionResponse.getCollectionType(), DatasetCollectionType.LIST.toString(),
-				collectionResponse.getCollectionType());
+		assertEquals(
+				"constructed dataset collection should have been " + DatasetCollectionType.LIST + " but is instead "
+						+ collectionResponse.getCollectionType(),
+				DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
 		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
 		assertEquals("dataset collection should have only 1 element", 1, collectionElements.size());
 		Map<String, CollectionElementResponse> collectionElementsMap = collectionElementsAsMap(collectionElements);
@@ -286,14 +324,67 @@ public class AnalysisCollectionServiceGalaxyIT {
 	}
 
 	/**
+	 * Tests successfully uploading a compressed single end sequence file to Galaxy and
+	 * constructing a collection.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSequenceFilesSingleCompressedSuccess() throws ExecutionManagerException, IOException {
+		gzipFileProcessor.setDisableFileProcessor(true);
+
+		History history = new History();
+		history.setName("testUploadSequenceFilesSingleCompressedSuccess");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
+		History createdHistory = historiesClient.create(history);
+
+		Library library = new Library();
+		library.setName("testUploadSequenceFilesSingleCompressedSuccess");
+		Library createdLibrary = librariesClient.createLibrary(library);
+
+		Set<SingleEndSequenceFile> sequenceFiles = Sets.newHashSet(
+				databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathCompressedA));
+
+		SingleEndSequenceFile singleEndSequenceFile = sequenceFiles.iterator().next();
+		for (SequenceFile file : singleEndSequenceFile.getFiles()) {
+			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
+		}
+
+		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
+
+		analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory,
+				createdLibrary);
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals("historyContents should have size 2", 2, historyContents.size());
+		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
+		assertTrue("sequenceFile should have been uploaded to history",
+				contentsMap.containsKey(sequenceFileNameCompressedA));
+		assertTrue("dataset collection with name " + INPUTS_SINGLE_NAME + " should have been created in history",
+				contentsMap.containsKey(INPUTS_SINGLE_NAME));
+
+		// verify correct file types
+		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFileNameCompressedA).getId());
+		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
+				sequenceFileACompressedDataset.getDataTypeExt());
+	}
+
+	/**
 	 * Tests successfully uploading a paired-end sequence file to Galaxy and
 	 * constructing a collection.
 	 *
 	 * @throws ExecutionManagerException
+	 * @throws IOException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesPairedSuccess() throws ExecutionManagerException {
+	public void testUploadSequenceFilesPairedSuccess() throws ExecutionManagerException, IOException {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPaired");
@@ -313,8 +404,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Sample sample1 = sampleRepository.findOne(1L);
 
-		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(
-				sampleSequenceFilePairs, createdHistory, createdLibrary);
+		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
+				.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -326,6 +417,14 @@ public class AnalysisCollectionServiceGalaxyIT {
 				contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
 		assertTrue("the history should have a dataset collection with name " + INPUTS_PAIRED_NAME,
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
+
+		// verify correct file types
+		Dataset sequenceFileADataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFilePathA.toFile().getName()).getId());
+		Dataset sequenceFileBDataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFilePath2A.toFile().getName()).getId());
+		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(), sequenceFileADataset.getDataTypeExt());
+		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER.toString(), sequenceFileBDataset.getDataTypeExt());
 
 		// verify correct collection has been created
 		assertEquals("invalid type of dataset collection created", DatasetCollectionType.LIST_PAIRED.toString(),
@@ -346,7 +445,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 				subElementsCollection.getCollectionType());
 		List<CollectionElementResponse> subCollectionElements = subElementsCollection.getElements();
 		assertEquals("invalid number of files for paired dataset collection element", 2, subCollectionElements.size());
-		Map<String, CollectionElementResponse> subCollectionElementsMap = collectionElementsAsMap(subCollectionElements);
+		Map<String, CollectionElementResponse> subCollectionElementsMap = collectionElementsAsMap(
+				subCollectionElements);
 		assertTrue("dataset collection should have a sub-element with name " + FORWARD_NAME,
 				subCollectionElementsMap.containsKey(FORWARD_NAME));
 		assertTrue("dataset collection should have a sub-element with name " + REVERSE_NAME,
@@ -376,14 +476,74 @@ public class AnalysisCollectionServiceGalaxyIT {
 	}
 
 	/**
+	 * Tests successfully uploading a compressed paired-end sequence file to Galaxy
+	 * and constructing a collection.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSequenceFilesPairedCompressedSuccess() throws ExecutionManagerException, IOException {
+		gzipFileProcessor.setDisableFileProcessor(true);
+
+		History history = new History();
+		history.setName("testUploadSequenceFilesPairedCompressedSuccess");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
+		History createdHistory = historiesClient.create(history);
+
+		Library library = new Library();
+		library.setName("testUploadSequenceFilesPairedCompressedSuccess");
+		Library createdLibrary = librariesClient.createLibrary(library);
+
+		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, pairSequenceFilesCompressedA, pairSequenceFilesCompressedB));
+
+		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
+
+		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
+				createdLibrary);
+
+		SequenceFilePair pairedSequenceFile = sequenceFiles.iterator().next();
+		for (SequenceFile file : pairedSequenceFile.getFiles()) {
+			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
+		}
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals("history does not have correct number of files", 3, historyContents.size());
+		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
+		assertTrue(
+				"the history should have a sequence file with name " + sequenceFileNameCompressedA,
+				contentsMap.containsKey(sequenceFileNameCompressedA));
+		assertTrue("the history should have a file with name " + sequenceFileNameCompressedB,
+				contentsMap.containsKey(sequenceFileNameCompressedB));
+		assertTrue("the history should have a dataset collection with name " + INPUTS_PAIRED_NAME,
+				contentsMap.containsKey(INPUTS_PAIRED_NAME));
+
+		// verify correct file types
+		Dataset sequenceFileADataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFileNameCompressedA).getId());
+		Dataset sequenceFileBDataset = historiesClient.showDataset(createdHistory.getId(),
+				contentsMap.get(sequenceFileNameCompressedB).getId());
+		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
+				sequenceFileADataset.getDataTypeExt());
+		assertEquals("Invalid file type", InputFileType.FASTQ_SANGER_GZ.toString(),
+				sequenceFileBDataset.getDataTypeExt());
+	}
+
+	/**
 	 * Tests failing to upload a paired-end sequence file to Galaxy and
 	 * constructing a collection due to no found forward file.
 	 *
 	 * @throws ExecutionManagerException
+	 * @throws IOException
 	 */
 	@Test(expected = NoSuchElementException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUploadSequenceFilesPairedFailForward() throws ExecutionManagerException {
+	public void testUploadSequenceFilesPairedFailForward() throws ExecutionManagerException, IOException {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPairedFailForward");

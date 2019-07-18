@@ -36,7 +36,7 @@ To install all required Galaxy tools for this IRIDA version you can make use of 
 Once Ephemeris is installed, please run the following to install all Galaxy tools for IRIDA:
 
 ```bash
-shed-tools --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --api_key [api key]
+shed-tools install --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --api_key [api key]
 ```
 
 Where `[http://url-to-galaxy]` is the URL to your Galaxy instance for IRIDA and `[api key]` is the API key for your IRIDA Galaxy instance. Please see the [usage of shed-tools](https://ephemeris.readthedocs.io/en/latest/commands/shed-tools.html#usage) for more details.

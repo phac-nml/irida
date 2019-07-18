@@ -253,10 +253,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testPrepareAnalysisFilesSinglePairedSuccess() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSinglePairedSuccess() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SingleEndSequenceFile> singleFiles = Sets.newHashSet(sampleSingleSequenceFileMap.values());
 		Set<SequenceFilePair> pairedFiles = Sets.newHashSet(sampleSequenceFilePairMap.values());
 
@@ -327,10 +328,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testPrepareAnalysisFilesSingleSuccess() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSingleSuccess() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SingleEndSequenceFile> singleFiles = Sets.newHashSet(sampleSingleSequenceFileMap.values());
 		
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
@@ -388,10 +390,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testPrepareAnalysisFilesPairedSuccess() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesPairedSuccess() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SequenceFilePair> pairedFiles = Sets.newHashSet(sampleSequenceFilePairMap.values());
 		
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
@@ -450,9 +453,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = CreateLibraryException.class)
-	public void testPrepareAnalysisFilesNoCreateLibraryFail() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesNoCreateLibraryFail() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
 				.inputFiles(Sets.newHashSet(sampleSingleSequenceFileMap.values())).referenceFile(referenceFile)
 				.build();
@@ -474,10 +478,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	public void testPrepareAnalysisFilesSinglePairedDuplicateFail()
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SingleEndSequenceFile> singleFiles = Sets.newHashSet(sampleSingleSequenceFileMap.values());
 		Set<SequenceFilePair> pairedFiles = Sets.newHashSet(sampleSequenceFilePairMapSampleA.values());
 		
@@ -513,9 +518,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testPrepareAnalysisFilesPairedNoAcceptFail() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesPairedNoAcceptFail() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SequenceFilePair> pairedFiles = Sets.newHashSet(sampleSequenceFilePairMapSampleA.values());
 
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
@@ -544,9 +550,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testPrepareAnalysisFilesSingleNoAcceptFail() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSingleNoAcceptFail() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SingleEndSequenceFile> singleFiles = Sets.newHashSet(sampleSingleSequenceFileMap.values());
 
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
@@ -572,10 +579,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoSubmittedFilesFail()
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFiles(Sets.newHashSet())
 				.referenceFile(referenceFile).build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -595,10 +603,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesRequiresReferenceFail()
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
 				.inputFiles(Sets.newHashSet(sampleSingleSequenceFileMap.values())).build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -615,10 +624,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoRequiresReferenceFail()
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
 				.inputFiles(Sets.newHashSet(sampleSingleSequenceFileMap.values())).referenceFile(referenceFile)
 				.build();
@@ -636,10 +646,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesSinglePairedNoAcceptFail()
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		Set<SequencingObject> joindInputs = Sets.newHashSet(sampleSingleSequenceFileMap.values());
 		joindInputs.addAll(sampleSequenceFilePairMap.values());
 
@@ -669,10 +680,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Test(expected = IridaWorkflowParameterException.class)
-	public void testPrepareAnalysisFilesFailParameters() throws ExecutionManagerException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesFailParameters() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
 				.inputFiles(Sets.newHashSet(sampleSingleSequenceFileMap.values())).referenceFile(referenceFile)
 				.build();
