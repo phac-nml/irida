@@ -5,7 +5,8 @@ const TYPES = {
   ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME",
   EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
   PRIORITY: "UPDATED_PRIORITY",
-  SAMPLES: "SAMPLES_DATA"
+  SAMPLES: "SAMPLES_DATA",
+  UPDATE_SAMPLES: "UPDATE_SAMPLES"
 };
 
 const stateMap = {
@@ -13,13 +14,11 @@ const stateMap = {
   PREPARING: 1,
   SUBMITTING: 2,
   RUNNING: 3,
+  FINISHED_RUNNING: 3,
+  POST_PROCESSING: 4,
+  TRANSFERRING: 4,
   COMPLETING: 4,
-  COMPLETED: 5,
-  NEW_ERROR: 0,
-  PREPARING_ERROR: 1,
-  SUBMITTING_ERROR: 2,
-  RUNNING_ERROR: 3,
-  COMPLETING_ERROR: 4
+  COMPLETED: 5
 };
 
 const reducer = (state, action) => {
@@ -42,6 +41,8 @@ const reducer = (state, action) => {
       return { ...state, emailPipelineResult: action.emailPipelineResult };
     case TYPES.PRIORITY:
       return { ...state, priority: action.priority };
+    case TYPES.UPDATE_SAMPLES:
+      return { ...state, updateSamples: action.updateSamples };
     case TYPES.SAMPLES:
       return {
         ...state,
@@ -76,7 +77,11 @@ const initialState = {
   samples: [],
   sequenceFilePairList: [],
   sequenceFileSizeList: [],
-  referenceFile: []
+  referenceFile: [],
+  updateSamples:
+    window.PAGE.analysis.updateSamples == null
+      ? false
+      : window.PAGE.analysis.updateSamples
 };
 
 const AnalysisContext = React.createContext(initialState);

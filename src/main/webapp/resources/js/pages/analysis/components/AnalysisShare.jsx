@@ -11,7 +11,7 @@ import {
 } from "../../../apis/analysis/analysis";
 
 export default function AnalysisShare() {
-  const { state } = useContext(AnalysisContext);
+  const { state, dispatch } = useContext(AnalysisContext);
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
@@ -42,7 +42,10 @@ export default function AnalysisShare() {
   }
 
   function handleSaveResults() {
-    saveToRelatedSamples(state.analysis.identifier);
+    saveToRelatedSamples(state.analysis.identifier).then(res =>
+        showNotification({ text: res.message })
+    );
+    dispatch({ type: 'UPDATE_SAMPLES', updateSamples: true });
   }
 
   useEffect(() => {
@@ -57,6 +60,7 @@ export default function AnalysisShare() {
       <h2 style={{ fontWeight: "bold" }}>
         {getI18N("analysis.tab.content.share.results.results")}
       </h2>
+
       <br />
       <Card title="Share Results with Projects">
         { sharedProjects !== null ?
@@ -71,24 +75,26 @@ export default function AnalysisShare() {
 
       {state.canShareToSamples ? (
         <Card title={getI18N("analysis.details.save.samples.title")}>
-          <p className="spaced_bottom">
-            {getI18N(
-              `workflow.label.share-analysis-samples.${state.analysisType.type}`
-            )}
-          </p>
-
-          {state.analysis.updateSamples ? (
-            <Alert
-              message={getI18N("analysis.details.save.complete")}
-              type="info"
-            />
-          ) : null}
+          {state.updateSamples ?
+            (
+                <Alert
+                  message={getI18N("analysis.details.save.complete")}
+                  type="info"
+                />
+            ) :
+            <p className="spaced_bottom">
+              {getI18N(
+                `workflow.label.share-analysis-samples.${state.analysisType.type}`
+              )}
+            </p>
+          }
 
           <Button
             type="primary"
             className="spaced-top"
-            disabled={state.analysis.updateSamples ? true : false}
+            disabled={state.updateSamples ? true : false}
             onClick={handleSaveResults}
+            id="save-results-btn"
           >
             {getI18N("analysis.details.save.samples.button")}
           </Button>

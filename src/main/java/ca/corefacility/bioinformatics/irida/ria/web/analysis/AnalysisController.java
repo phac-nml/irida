@@ -232,18 +232,21 @@ public class AnalysisController {
 	 *
 	 * @param submissionId the ID of the submission
 	 * @param model        Model for the view
+	 * @param principal    Principal {@link User}
 	 * @param locale       User's locale
 	 * @return name of the details page view
 	 */
 
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal, Locale locale) {
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal,
+			Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
 		final User currentUser = userService.getUserByUsername(principal.getName());
-		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
+		model.addAttribute("isAdmin", currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN));
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
@@ -265,23 +268,25 @@ public class AnalysisController {
 	 *
 	 * @param parameters parameters which include the submission id and
 	 *                   the new email pipeline result value
+	 * @param locale     User's locale
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/updateemailpipelineresult", method = RequestMethod.PATCH)
-	public Map<String, String> ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters) {
+	public Map<String, String> ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
+			Locale locale) {
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 		analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
 		logger.trace("Email pipeline result updated for: " + submission);
 
 		String message = "";
-		if(parameters.getEmailPipelineResult()) {
-			message = "You will receive an email upon completion or error";
+		if (parameters.getEmailPipelineResult()) {
+			message = messageSource.getMessage("analysis.notification.you.will.receive.an.email", new Object[] {},
+					locale);
+		} else {
+			message = messageSource.getMessage("analysis.notification.you.will.not.receive.an.email", new Object[] {},
+					locale);
 		}
-		else {
-			message = "You will not receive an email upon completion or error";
-		}
-
 
 		return ImmutableMap.of("result", "success", "message", message);
 	}
@@ -290,6 +295,7 @@ public class AnalysisController {
 	 * Get data required by analysis settings -> details page
 	 *
 	 * @param submissionId analysis submission id to get data for
+	 * @param locale       User's locale
 	 * @return map of data
 	 */
 	@RequestMapping(value = "/ajax/getDataForDetailsTab/{submissionId}", method = RequestMethod.GET)
@@ -304,10 +310,12 @@ public class AnalysisController {
 		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null,
 				analysisType.getType(), locale);
 
-		String version = iridaWorkflow.getWorkflowDescription().getVersion();
-		String priority = submission.getPriority().toString();
+		String version = iridaWorkflow.getWorkflowDescription()
+				.getVersion();
+		String priority = submission.getPriority()
+				.toString();
 		String duration = getAnalysisDuration(submission).toString();
-		AnalysisSubmission.Priority [] priorities = AnalysisSubmission.Priority.values();
+		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
 		boolean emailPipelineResult = submission.getEmailPipelineResult();
 
 		boolean canShareToSamples = false;
@@ -317,13 +325,14 @@ public class AnalysisController {
 							.getAnalysisType());
 		}
 
-		Map<String,Object> detailsPageMap = new HashMap<>();
+		Map<String, Object> detailsPageMap = new HashMap<>();
 		detailsPageMap.put("result", "success");
 		detailsPageMap.put("workflowName", workflowName);
 		detailsPageMap.put("version", version);
 		detailsPageMap.put("priority", priority);
 		detailsPageMap.put("duration", duration);
-		detailsPageMap.put("createdDate", submission.getCreatedDate().toString());
+		detailsPageMap.put("createdDate", submission.getCreatedDate()
+				.toString());
 		detailsPageMap.put("priorities", priorities);
 		detailsPageMap.put("canShareToSamples", canShareToSamples);
 		detailsPageMap.put("emailPipelineResult", emailPipelineResult);
@@ -337,7 +346,7 @@ public class AnalysisController {
 	 * @return map of input files
 	 */
 	@RequestMapping(value = "/ajax/getAnalysisInputFiles/{submissionId}", method = RequestMethod.GET)
-	public Map<String, Object> ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, Locale locale) {
+	public Map<String, Object> ajaxGetAnalysisInputFiles(@PathVariable Long submissionId) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		ReferenceFile referenceFile = null;
@@ -345,17 +354,20 @@ public class AnalysisController {
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
 
-		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
-			if (a.sample == null && b.sample == null) {
-				return 0;
-			} else if (a.sample == null) {
-				return -1;
-			} else if (b.sample == null) {
-				return 1;
-			}
-			return a.sample.getLabel()
-					.compareTo(b.sample.getLabel());
-		}).collect(Collectors.toList());
+		List<SampleFiles> sampleFiles = inputFilePairs.stream()
+				.map(SampleFiles::new)
+				.sorted((a, b) -> {
+					if (a.sample == null && b.sample == null) {
+						return 0;
+					} else if (a.sample == null) {
+						return -1;
+					} else if (b.sample == null) {
+						return 1;
+					}
+					return a.sample.getLabel()
+							.compareTo(b.sample.getLabel());
+				})
+				.collect(Collectors.toList());
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
@@ -363,7 +375,8 @@ public class AnalysisController {
 				.requiresReference() && submission.getReferenceFile()
 				.isPresent()) {
 
-			referenceFile = submission.getReferenceFile().get();
+			referenceFile = submission.getReferenceFile()
+					.get();
 		} else {
 			logger.debug("No reference file required for workflow.");
 		}
@@ -371,10 +384,11 @@ public class AnalysisController {
 		ArrayList<SequenceFile> seqFilePairs = new ArrayList<>();
 		ArrayList<String> seqFileSizes = new ArrayList<>();
 
-		for(SampleFiles sampleFile : sampleFiles)
-		{
-			SequenceFile forward = sampleFile.getSequenceFilePair().getForwardSequenceFile();
-			SequenceFile reverse = sampleFile.getSequenceFilePair().getReverseSequenceFile();
+		for (SampleFiles sampleFile : sampleFiles) {
+			SequenceFile forward = sampleFile.getSequenceFilePair()
+					.getForwardSequenceFile();
+			SequenceFile reverse = sampleFile.getSequenceFilePair()
+					.getReverseSequenceFile();
 
 			seqFilePairs.add(forward);
 			seqFilePairs.add(reverse);
@@ -382,7 +396,7 @@ public class AnalysisController {
 			seqFileSizes.add(reverse.getFileSize());
 		}
 
-		Map<String,Object> inputFilesMap = new HashMap<>();
+		Map<String, Object> inputFilesMap = new HashMap<>();
 		inputFilesMap.put("result", "success");
 		inputFilesMap.put("samples", sampleFiles);
 		inputFilesMap.put("referenceFile", referenceFile);
@@ -392,27 +406,28 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Update an analysis name
+	 * Update an analysis name and/or priority
 	 *
-	 * @param parameters parameters which include the submission id and the new name
+	 * @param parameters parameters which include the submission id and the new name and/or priority
+	 * @param locale     User's locale
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/updateanalysis", method = RequestMethod.PATCH)
-	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters) {
+	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale) {
 		String message = "";
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 
-		if(parameters.getAnalysisName() != null) {
+		if (parameters.getAnalysisName() != null) {
 			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
 			logger.trace("Name updated for: " + submission);
-			message= "Analysis name updated to: " + parameters.getAnalysisName();
-		}
-
-		else if(parameters.getPriority() != null) {
+			message = messageSource.getMessage("analysis.notification.analysis.name.updated",
+					new Object[] { parameters.getAnalysisName() }, locale);
+		} else if (parameters.getPriority() != null) {
 			analysisSubmissionService.updatePriority(submission, parameters.getPriority());
 			logger.trace("Priority updated for: " + submission);
-			message = "Priority updated to " + parameters.getPriority() + " for " + submission.getName();
+			message = messageSource.getMessage("analysis.notification.analysis.priority.updated",
+					new Object[] { parameters.getPriority(), submission.getName() }, locale);
 		}
 
 		return ImmutableMap.of("result", "success", "message", message);

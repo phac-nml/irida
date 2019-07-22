@@ -66,7 +66,6 @@ export default function AnalysisSamples() {
                         href={`${window.TL.BASE_URL}samples/${state.samples[i].sample.identifier}/details`}>
                             <Icon type="filter" rotate="180" /> {state.samples[i].sample.sampleName}
                     </a>}
-                extra={<a href="#">{getI18N("analysis.tab.content.samples.details")}</a>}
                 key={`sample${i}`}
             >
                 <Row>
