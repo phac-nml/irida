@@ -15,21 +15,17 @@ export default function AnalysisShare() {
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
-    const projectList = [];
-
-    for (let i = 0; i < sharedProjects.length; i++) {
-      projectList.push(
-        <Row className="spaced-bottom" key={`sharedprojrow${i}`}>
-          <Checkbox
-            key={`sharedproj${i}`}
-            value={sharedProjects[i].project.identifier}
-            onChange={onChange}
-          >
-            {sharedProjects[i].project.name}
-          </Checkbox>
-        </Row>
-      );
-    }
+    const projectList = sharedProjects.map((sharedProject, index) =>
+      <Row className="spaced-bottom" key={`sharedprojrow${index}`}>
+         <Checkbox
+           key={`sharedproj${index}`}
+           value={sharedProject.project.identifier}
+           onChange={onChange}
+         >
+           {sharedProject.project.name}
+         </Checkbox>
+       </Row>
+    );
     return projectList;
   }
 
