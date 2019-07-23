@@ -4,7 +4,7 @@ import {
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
 } from "../../apis/analysis/analysis";
-import { Input, Row, Table } from "antd";
+import { Input, Progress, Row, Table, Tag } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
@@ -113,7 +113,26 @@ export function AnalysesTable() {
       dataIndex: "state",
       width: 100,
       filterMultiple: false,
-      filters: pipelineStates
+      filters: pipelineStates,
+      render(state, data) {
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {data.percentage < 100 && state !== "Error" ? (
+              <>
+                <Progress
+                  type="circle"
+                  percent={data.percentage}
+                  width={25}
+                  style={{ paddingRight: 8 }}
+                />
+                {state}
+              </>
+            ) : (
+              <Tag color={state === "Error" ? "#f50" : "#87d068"}>{state}</Tag>
+            )}
+          </div>
+        );
+      }
     },
     {
       ...nameColumnFormat(`${window.TL.BASE_URL}analysis/`),
