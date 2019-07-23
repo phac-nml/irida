@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecutio
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -118,6 +119,9 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private EmailController emailController;
+	
+	@Autowired
+	private GzipFileProcessor gzipFileProcessor;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -174,9 +178,9 @@ public class SNVPhylAnalysisIT {
 		Path sequenceFilePathRealA2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
 		Path sequenceFilePathRealB1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_1.fastq").toURI());
+				"SNVPhyl/test1/input/fastq/b_1.fastq.gz").toURI());
 		Path sequenceFilePathRealB2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_2.fastq").toURI());
+				"SNVPhyl/test1/input/fastq/b_2.fastq.gz").toURI());
 		Path sequenceFilePathRealC1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
 		Path sequenceFilePathRealC2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
@@ -189,9 +193,9 @@ public class SNVPhylAnalysisIT {
 		sequenceFilePathA2 = tempDir.resolve("a_R2_001.fastq");
 		Files.copy(sequenceFilePathRealA2, sequenceFilePathA2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq");
+		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq.gz");
 		Files.copy(sequenceFilePathRealB1, sequenceFilePathB1, StandardCopyOption.REPLACE_EXISTING);
-		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq");
+		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq.gz");
 		Files.copy(sequenceFilePathRealB2, sequenceFilePathB2, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathC1 = tempDir.resolve("c_R1_001.fastq");
@@ -234,6 +238,8 @@ public class SNVPhylAnalysisIT {
 		vcf2core3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/vcf2core.tsv").toURI());
 		filterStats3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/filterStats.txt").toURI());
 		snvAlign3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvAlignment.phy").toURI());
+		
+		gzipFileProcessor.setDisableFileProcessor(false);
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -274,6 +280,8 @@ public class SNVPhylAnalysisIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
+		gzipFileProcessor.setDisableFileProcessor(true);
+		
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
 		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
@@ -391,6 +399,18 @@ public class SNVPhylAnalysisIT {
 
 		assertTrue("Should have found both reads and reference input tools.", foundReadsInputTool
 				&& foundReferenceInputTool);
+		
+		// At the end, verify that these sequence files did get automatically uncompressed
+		assertEquals("Should have 2 pairs of files", 2, sequenceFilePairA.getFiles().size());
+		for (SequenceFile file : sequenceFilePairA.getFiles()) {
+			assertFalse("Sequence files were compressed", file.getFile().toString().endsWith(".gz"));
+		}
+		
+		// At the end, verify that the sequence files did not get automatically decompressed.
+		assertEquals("Should have 2 pairs of files", 2, sequenceFilePairB.getFiles().size());
+		for (SequenceFile file : sequenceFilePairB.getFiles()) {
+			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
+		}
 	}
 	
 	/**

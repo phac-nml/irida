@@ -341,9 +341,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowException 
+	 * @throws IOException 
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws ExecutionManagerException, NoSuchValueException, InterruptedException, ExecutionException, IridaWorkflowException {
+	public void testExecuteAnalysisSuccess() throws ExecutionManagerException, NoSuchValueException, InterruptedException, ExecutionException, IridaWorkflowException, IOException {
 		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
 				preparedWorkflow);
 
@@ -379,9 +380,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowException 
+	 * @throws IOException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testExecuteAnalysisFailAlreadySubmitted() throws ExecutionManagerException, InterruptedException, ExecutionException, IridaWorkflowException {
+	public void testExecuteAnalysisFailAlreadySubmitted() throws ExecutionManagerException, InterruptedException, ExecutionException, IridaWorkflowException, IOException {
 		analysisPrepared.setAnalysisState(AnalysisState.RUNNING);
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
@@ -393,9 +395,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowException 
+	 * @throws IOException 
 	 */
 	@Test(expected = ExecutionManagerException.class)
-	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException, InterruptedException, ExecutionException, IridaWorkflowException {
+	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException, InterruptedException, ExecutionException, IridaWorkflowException, IOException {
 		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
@@ -413,10 +416,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test(expected = WorkflowException.class)
 	public void testExecuteAnalysisFail() throws ExecutionManagerException, InterruptedException, ExecutionException,
-			IridaWorkflowException {
+			IridaWorkflowException, IOException {
 		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(preparedWorkflow);
 		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenThrow(new WorkflowException());
 		when(analysisSubmissionService.update(analysisPrepared)).thenReturn(analysisSubmitting);
