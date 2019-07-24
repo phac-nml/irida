@@ -11,6 +11,7 @@ import {
   idColumnFormat,
   nameColumnFormat
 } from "../../components/ant.design/table-renderers";
+import { green6, red6 } from "./../../styles/colors";
 
 const initialState = {
   search: "",
@@ -128,7 +129,7 @@ export function AnalysesTable() {
                 {state}
               </>
             ) : (
-              <Tag color={state === "Error" ? "#f50" : "#87d068"}>{state}</Tag>
+              <Tag color={state === "Error" ? red6 : green6}>{state}</Tag>
             )}
           </div>
         );
