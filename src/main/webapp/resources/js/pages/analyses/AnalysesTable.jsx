@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React from "react";
 import { AnalysesConsumer } from "../../contexts/AnalysesContext";
 import { Input, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
@@ -77,7 +77,7 @@ export function AnalysesTable() {
         handleTableChange
       }) => (
         <PageWrapper
-          title={"__ANALYSES__"}
+          title={getI18N("analyses.header")}
           headerExtras={
             <Row gutter={12} style={{ marginRight: 18 }}>
               <Input.Search onSearch={onSearch} />
