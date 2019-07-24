@@ -15,7 +15,7 @@
 				<form th:action="@{/projects/{id}/settings/template/remove(id=${project.id})}" method="POST">
 					<input type="hidden" name="templateId" th:value="${template.id}"/>
 					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">_Close_</button>
-					<button type="submit" class="btn btn-danger" id="remove-member-button" th:text="#{project.settings.automated.modal.remove.button}">_Remove User_</button>
+					<button type="submit" class="btn btn-danger" id="remove-template-button" th:text="#{project.settings.automated.modal.remove.button}">_Remove User_</button>
 				</form>
 			</div>
 		</div>

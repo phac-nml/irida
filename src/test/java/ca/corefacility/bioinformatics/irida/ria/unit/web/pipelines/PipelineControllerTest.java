@@ -39,15 +39,12 @@ import java.security.Principal;
 import java.util.Locale;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -90,7 +87,6 @@ public class PipelineControllerTest {
 		galaxyToolDataService = mock(GalaxyToolDataService.class);
 		emailController = mock(TestEmailController.class);
 
-
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
 				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController);
@@ -108,19 +104,21 @@ public class PipelineControllerTest {
 	}
 
 	@Test
-	public void testGetPhylogenomicsPageWithCart() throws IridaWorkflowNotFoundException, IridaWorkflowNotDisplayableException {
+	public void testGetPhylogenomicsPageWithCart()
+			throws IridaWorkflowNotFoundException, IridaWorkflowNotDisplayableException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String username = "FRED";
 		Principal principal = () -> username;
 		User user = TestDataFactory.constructUser();
 		UUID id = UUID.randomUUID();
 		when(userService.getUserByUsername(username)).thenReturn(user);
-		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class)))
-				.thenReturn(true);
+		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(
+				true);
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
 
-		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class), eq(SingleEndSequenceFile.class)))
-				.thenReturn(TestDataFactory.generateSequencingObjectsForSample(TestDataFactory.constructSample()));
+		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class),
+				eq(SingleEndSequenceFile.class))).thenReturn(
+				TestDataFactory.generateSequencingObjectsForSample(TestDataFactory.constructSample()));
 
 		when(workflowsService.getDisplayableIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
 		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id, null);
@@ -128,5 +126,24 @@ public class PipelineControllerTest {
 				PipelineController.URL_GENERIC_PIPELINE, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
 		assertTrue("Model should contain a list of files.", model.containsKey("projects"));
+	}
+
+	@Test
+	public void getPipelinePageForAutomation()
+			throws IridaWorkflowNotFoundException, IridaWorkflowNotDisplayableException {
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> "FRED";
+		UUID id = UUID.randomUUID();
+
+		Project project = new Project();
+		project.setId(5L);
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(workflowsService.getDisplayableIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
+
+		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id, project.getId());
+
+		assertEquals(project.getId(), model.get("automatedProjectId"));
+		assertNotNull(model.get("automatedProject"));
 	}
 }

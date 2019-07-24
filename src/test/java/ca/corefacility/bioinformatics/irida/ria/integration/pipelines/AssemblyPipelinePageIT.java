@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesAssemblyPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.BasicPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/AssemblyPipelinePageIT.xml")
 public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyPipelinePageIT.class);
-	private PipelinesAssemblyPage page;
+	private BasicPipelinePage page;
 	private CartPage cartPage;
 
 	@Autowired
@@ -36,7 +36,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
 	public void setUpTest() {
-		page = new PipelinesAssemblyPage(driver());
+		page = new BasicPipelinePage(driver());
 		cartPage = new CartPage(driver());
 	}
 
