@@ -99,7 +99,7 @@ export default function AnalysisSamples() {
     <>
       <h2 style={{ fontWeight: "bold", marginBottom: "1em" }}>{getI18N("analysis.tab.samples")}</h2>
        {
-        state.referenceFile ?
+        state.referenceFile == true ?
             <div style={{marginBottom: "2em"}}>
                 {renderReferenceFile()}
             </div>

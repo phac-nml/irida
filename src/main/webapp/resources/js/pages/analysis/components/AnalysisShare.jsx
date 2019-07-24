@@ -58,20 +58,23 @@ export default function AnalysisShare() {
       </h2>
 
       <br />
-      <Card title="Share Results with Projects">
-        { sharedProjects !== null ?
-            renderSharedProjectsList()
-            :
-            <p>{getI18N("analysis.tab.content.share.no-projects-to-share-results-with")}</p>
-        }
-      </Card>
+      { sharedProjects != null ?
+          <Card title="Share Results with Projects">
+            { sharedProjects.length > 0 ?
+                renderSharedProjectsList()
+                :
+                <p>{getI18N("analysis.tab.content.share.no-projects-to-share-results-with")}</p>
+            }
+          </Card>
+          :null
+      }
 
       <br />
       <br />
 
-      {state.canShareToSamples ? (
+      {state.canShareToSamples == true ? (
         <Card title={getI18N("analysis.details.save.samples.title")}>
-          {state.updateSamples ?
+          {state.updateSamples == true ?
             (
                 <Alert
                   message={getI18N("analysis.details.save.complete")}
