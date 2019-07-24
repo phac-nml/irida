@@ -30,6 +30,7 @@ Changes
 * [Documentation]: Fixed `shed-tools` command to include `install` subcommand for installing Galaxy tools.
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
+* [Developer]: Update eslint config to use `babel-parser`.
 
 19.01 to 19.05
 ---------------
