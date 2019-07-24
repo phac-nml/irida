@@ -4,14 +4,14 @@ import {
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
 } from "../../apis/analysis/analysis";
-import { Input, Progress, Row, Table, Tag } from "antd";
+import { Input, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
   idColumnFormat,
   nameColumnFormat
 } from "../../components/ant.design/table-renderers";
-import { green6, red6 } from "./../../styles/colors";
+import { AnalysisState } from "./AnalysisState";
 
 const initialState = {
   search: "",
@@ -116,23 +116,7 @@ export function AnalysesTable() {
       filterMultiple: false,
       filters: pipelineStates,
       render(state, data) {
-        return (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {data.percentage < 100 && state !== "Error" ? (
-              <>
-                <Progress
-                  type="circle"
-                  percent={data.percentage}
-                  width={25}
-                  style={{ paddingRight: 8 }}
-                />
-                {state}
-              </>
-            ) : (
-              <Tag color={state === "Error" ? red6 : green6}>{state}</Tag>
-            )}
-          </div>
-        );
+        return <AnalysisState state={state} percentage={data.percentage} />;
       }
     },
     {
