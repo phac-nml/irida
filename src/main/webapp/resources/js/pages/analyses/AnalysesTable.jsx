@@ -1,6 +1,6 @@
 import React from "react";
 import { AnalysesConsumer } from "../../contexts/AnalysesContext";
-import { Input, Row, Table } from "antd";
+import { Button, Input, Popconfirm, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
@@ -12,8 +12,10 @@ import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 
 export function AnalysesTable() {
-  function createColumns({ types, pipelineStates }) {
-    return [
+  const ADMIN = true;
+
+  function createColumns({ types, pipelineStates, deleteAnalysis }) {
+    const columns = [
       {
         ...idColumnFormat(),
         title: getI18N("analyses.id")
@@ -62,6 +64,27 @@ export function AnalysesTable() {
         }
       }
     ];
+
+    if (ADMIN) {
+      columns.push({
+        title: "",
+        key: "actions",
+        fixed: "right",
+        render: (text, record) => (
+          <Popconfirm
+            placement={"top"}
+            title={"Delete this analysis?"}
+            onConfirm={() => deleteAnalysis(record.id)}
+          >
+            <Button type={"link"} size="small">
+              Delete
+            </Button>
+          </Popconfirm>
+        )
+      });
+    }
+
+    return columns;
   }
 
   return (
@@ -74,7 +97,8 @@ export function AnalysesTable() {
         types,
         pipelineStates,
         onSearch,
-        handleTableChange
+        handleTableChange,
+        deleteAnalysis
       }) => (
         <PageWrapper
           title={getI18N("analyses.header")}
@@ -90,7 +114,7 @@ export function AnalysesTable() {
             rowKey={record => record.id}
             loading={loading}
             pagination={{ total, pageSize }}
-            columns={createColumns({ types, pipelineStates })}
+            columns={createColumns({ types, pipelineStates, deleteAnalysis })}
             dataSource={analyses}
             onChange={handleTableChange}
           />

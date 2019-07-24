@@ -11,10 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -123,6 +120,13 @@ public class AnalysesRestController {
 				.collect(Collectors.toList());
 
 		return new AnalysesListResponse(analyses, page.getTotalElements());
+	}
+
+	@RequestMapping("/delete")
+	@ResponseBody
+	public void deleteAnalysisSubmission(@RequestParam Long id) {
+		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
+		analysisSubmissionService.delete(id);
 	}
 
 	private AnalysisModel createAnalysisModel(AnalysisSubmission submission, Locale locale) {

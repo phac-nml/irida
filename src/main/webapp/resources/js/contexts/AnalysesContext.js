@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import {
+  deleteAnalysisSubmission,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
@@ -56,7 +57,7 @@ function AnalysesProvider({ children }) {
     fetchAllPipelinesTypes().then(data => setTypes(data));
   }, []);
 
-  useEffect(() => {
+  function updateTable() {
     setLoading(true);
     const params = {
       current: state.current - 1,
@@ -72,6 +73,10 @@ function AnalysesProvider({ children }) {
       setTotal(data.total);
       setLoading(false);
     });
+  }
+
+  useEffect(() => {
+    updateTable();
   }, [state]);
 
   const onSearch = value =>
@@ -97,6 +102,8 @@ function AnalysesProvider({ children }) {
     });
   };
 
+  const deleteAnalysis = id => deleteAnalysisSubmission({ id }).then(() => updateTable());
+
   return (
     <Provider
       value={{
@@ -112,7 +119,8 @@ function AnalysesProvider({ children }) {
         search: state.search,
         filters: state.filters,
         onSearch,
-        handleTableChange
+        handleTableChange,
+        deleteAnalysis
       }}
     >
       {children}
