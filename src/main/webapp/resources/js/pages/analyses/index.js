@@ -1,5 +1,11 @@
 import React from "react";
 import { render } from "react-dom";
 import { AnalysesTable } from "./AnalysesTable";
+import { AnalysesProvider } from "../../contexts/AnalysesContext";
 
-render(<AnalysesTable />, document.querySelector("#root"));
+render(
+  <AnalysesProvider>
+    <AnalysesTable />
+  </AnalysesProvider>,
+  document.querySelector("#root")
+);
