@@ -4,74 +4,23 @@
       data-layout-decorate="~{sequenceFiles/_base}">
 <head>
     <title th:text="${file.getLabel()}"></title>
-    <script th:inline="javascript">
-        window.PAGE = {
-            images: [
-                {
-                    "url": /*[[@{/sequenceFiles/img/{objectId}/file/{id}/perbase(objectId=${sequencingObject.getId()},id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
-                    "caption": /*[[#{sf.img.perbase}]]*/ "Quality Score Distribution Over all Sequence Files"
-                },
-                {
-                    "url": /*[[@{/sequenceFiles/img/{objectId}/file/{id}/persequence(objectId=${sequencingObject.getId()},id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
-                    "caption": /*[[#{sf.img.persequence}]]*/ "Quality score distribution over all sequences"
-                },
-                {
-                    "url": /*[[@{/sequenceFiles/img/{objectId}/file/{id}/duplicationlevel(objectId=${sequencingObject.getId()},id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
-                    "caption": /*[[#{sf.img.dublicationlevel}]]*/ "Sequence Duplication Level"
-                }
-            ]
-        };
-    </script>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.css}"/>
-    <style>
-        .modal-dialog {
-            width: 830px!important;
-        }
-        .media:not(:last-of-type) {
-            padding-bottom:1rem;
-        }
-    </style>
 </head>
 <body>
 
 <main layout:fragment="main">
-
-    <p class="lead" th:text="#{fastqc.file.processor.analysis.description(${fastQC.fastqcVersion})}">...</p>
-
     <section class="sequenceFile">
         <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>
 
-        <div ng-controller="FastQCController as fastqc">
-            <div class="media" ng-repeat="image in fastqc.images">
-                <div class="media-left">
-                    <a href="#" ng-click="fastqc.openLightbox($index)">
-                        <img ng-src="{{image.url}}?thumb=true" class="media-object"/>
-                    </a>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading" ng-bind="image.caption"></h4>
-                </div>
-            </div>
-        </div>
+        <p class="lead" th:text="#{fastqc.file.processor.analysis.description(${fastQC.fastqcVersion})}">...</p>
+
+        <img th:src="@{/sequenceFiles/img/{objectId}/file/{id}/perbase(objectId=${sequencingObject.getId()},id=${file.getId()})}"
+             th:alt="#{sf.img.perbase}">
+        <img th:src="@{/sequenceFiles/img/{objectId}/file/{id}/persequence(objectId=${sequencingObject.getId()},id=${file.getId()})}"
+             th:alt="#{sf.img.persequence}">
+        <img th:src="@{/sequenceFiles/img/{objectId}/file/{id}/duplicationlevel(objectId=${sequencingObject.getId()},id=${file.getId()})}"
+             th:alt="#{sf.img.dublicationlevel}">
 
     </section>
 </main>
-
-<th:block layout:fragment="pageScripts">
-    <script type="text/ng-template" id="lightbox.html">
-        <div class="modal-header">
-            <h3 class="modal-title clearfix text-center">
-                <button ng-click="Lightbox.prevImage()" class="btn btn-default btn-sm pull-left"><i class="fa fa-chevron-left fa-fw" aria-hidden="true"></i></button>
-                <span ng-bind="Lightbox.imageCaption"></span>
-                <button ng-click="Lightbox.nextImage()" class="btn btn-default btn-sm pull-right"><i class="fa fa-chevron-right fa-fw" aria-hidden="true"></i></button>
-            </h3>
-        </div>
-        <div class="modal-body">
-            <img ng-src="{{Lightbox.imageUrl}}" alt=""/>
-        </div>
-    </script>
-    <script th:src="@{/resources/bower_components/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.js}"></script>
-    <script th:src="@{/resources/js/pages/sequence-files/sequence-files.js}"></script>
-</th:block>
 </body>
 </html>

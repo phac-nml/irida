@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.linelist;
+package ca.corefacility.bioinformatics.irida.ria.web.components;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,12 +15,12 @@ import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSa
  * linelist page.
  */
 @Component
-public class LineListPermissions {
+public class ProjectPermissions {
 	private UpdateSamplePermission updateSamplePermission;
 	private ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
-	public LineListPermissions(UpdateSamplePermission updateSamplePermission,
+	public ProjectPermissions(UpdateSamplePermission updateSamplePermission,
 			ProjectOwnerPermission projectOwnerPermission) {
 		this.updateSamplePermission = updateSamplePermission;
 		this.projectOwnerPermission = projectOwnerPermission;

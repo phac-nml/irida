@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ProjectPermissions;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -37,13 +38,13 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 public class LineListController {
 	private ProjectService projectService;
 	private SampleService sampleService;
-	private LineListPermissions permissions;
+	private ProjectPermissions permissions;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messages;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, LineListPermissions permissions,
+			MetadataTemplateService metadataTemplateService, ProjectPermissions permissions,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
