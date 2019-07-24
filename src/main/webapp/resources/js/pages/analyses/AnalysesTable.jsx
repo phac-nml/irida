@@ -12,6 +12,8 @@ import {
   nameColumnFormat
 } from "../../components/ant.design/table-renderers";
 import { AnalysisState } from "./AnalysisState";
+import { getI18N } from "./../../utilities/i18n-utilties";
+import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 
 const initialState = {
   search: "",
@@ -106,10 +108,15 @@ export function AnalysesTable() {
   const columns = [
     {
       ...idColumnFormat(),
-      title: "ID"
+      title: getI18N("analyses.id")
     },
     {
-      title: "State",
+      ...nameColumnFormat(`${window.TL.BASE_URL}analysis/`),
+      title: getI18N("analyses.analysis-name"),
+      key: "name"
+    },
+    {
+      title: getI18N("analyses.state"),
       key: "state",
       dataIndex: "state",
       width: 100,
@@ -120,19 +127,14 @@ export function AnalysesTable() {
       }
     },
     {
-      ...nameColumnFormat(`${window.TL.BASE_URL}analysis/`),
-      title: "Pipeline Name",
-      key: "name"
-    },
-    {
-      title: "Type",
+      title: getI18N("analyses.type"),
       key: "type",
       dataIndex: "type",
       filterMultiple: false,
       filters: types
     },
     {
-      title: "Submitter",
+      title: getI18N("analyses.submitter"),
       key: "submitter",
       sorter: true,
       dataIndex: "submitter"
@@ -142,6 +144,14 @@ export function AnalysesTable() {
       title: "Created Date",
       dataIndex: "createdDate",
       key: "createdDate"
+    },
+    {
+      title: getI18N("analysis.duration"),
+      key: "duration",
+      dataIndex: "duration",
+      render(timestamp) {
+        return getHumanizedDuration({ date: timestamp });
+      }
     }
   ];
 
@@ -156,6 +166,7 @@ export function AnalysesTable() {
     >
       <Table
         style={{ margin: "6px 24px 0 24px" }}
+        scroll={{ x: 900 }}
         rowKey={record => record.id}
         loading={loading}
         pagination={{ total, pageSize: state.pageSize }}
