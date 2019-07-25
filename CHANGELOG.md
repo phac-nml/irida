@@ -31,6 +31,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
 * [Developer]: Update eslint config to use `babel-parser`.
+* [API]: Fixed allowing uploading data to non UPLOADING state sequencing runs.
 
 19.01 to 19.05
 ---------------

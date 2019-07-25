@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -400,29 +402,33 @@ public class RESTSampleSequenceFilesController {
 		file.transferTo(target.toFile());
 		logger.trace("Wrote temp file to " + target);
 
-		SequenceFile sf;
-		SequencingRun miseqRun = null;
-		if (fileResource != null) {
-			sf = fileResource.getResource();
-
-			Long miseqRunId = fileResource.getMiseqRunId();
-			if (miseqRunId != null) {
-				miseqRun = miseqRunService.read(miseqRunId);
-				logger.trace("Read miseq run " + miseqRunId);
-			}
-		} else {
-			sf = new SequenceFile();
-		}
-
-		sf.setFile(target);
-
-		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
-		if (miseqRun != null) {
-			singleEndSequenceFile.setSequencingRun(miseqRun);
-			logger.trace("Added seqfile to miseqrun");
-		}
-
 		try {
+
+			SequenceFile sf;
+			SequencingRun miseqRun = null;
+			if (fileResource != null) {
+				sf = fileResource.getResource();
+
+				Long miseqRunId = fileResource.getMiseqRunId();
+				if (miseqRunId != null) {
+					miseqRun = miseqRunService.read(miseqRunId);
+					logger.trace("Read miseq run " + miseqRunId);
+				}
+			} else {
+				sf = new SequenceFile();
+			}
+
+			sf.setFile(target);
+
+			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
+			if (miseqRun != null) {
+				if (miseqRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {
+					throw new IllegalArgumentException("The sequencing run must be in the UPLOADING state to upload data.");
+				}
+				singleEndSequenceFile.setSequencingRun(miseqRun);
+				logger.trace("Added seqfile to miseqrun");
+			}
+
 			// save the seqobject and sample
 			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
 					singleEndSequenceFile, sample);
@@ -469,7 +475,10 @@ public class RESTSampleSequenceFilesController {
 
 		} catch (IllegalArgumentException e) {
 			logger.debug("Error 400 - Bad Request: " + e.getMessage());
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			throw e;
+		} finally {
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
 		}
 
 		// respond to the client
@@ -526,30 +535,27 @@ public class RESTSampleSequenceFilesController {
 		// get the sequencing run
 		SequencingRun sequencingRun = null;
 
-		if (!Objects.equal(fileResource1.getMiseqRunId(), fileResource2.getMiseqRunId())) {
-			throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs");
-		}
-
-		Long runId = fileResource1.getMiseqRunId();
-
-		SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
-
-		if (runId != null) {
-			sequencingRun = miseqRunService.read(runId);
-			sequenceFilePair.setSequencingRun(sequencingRun);
-			logger.trace("Added sequencing run to files" + runId);
-		}
-
 		try {
+			if (!Objects.equal(fileResource1.getMiseqRunId(), fileResource2.getMiseqRunId())) {
+				throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs.");
+			}
+
+			Long runId = fileResource1.getMiseqRunId();
+
+			SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
+
+			if (runId != null) {
+				sequencingRun = miseqRunService.read(runId);
+				if (sequencingRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {
+					throw new IllegalArgumentException("The sequencing run must be in the UPLOADING state to upload data.");
+				}
+				sequenceFilePair.setSequencingRun(sequencingRun);
+				logger.trace("Added sequencing run to files" + runId);
+			}
+
 			// add the files and join
 			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
 					sequenceFilePair, sample);
-			// clean up the temporary files.
-			Files.deleteIfExists(target1);
-			Files.deleteIfExists(temp1);
-			Files.deleteIfExists(target2);
-			Files.deleteIfExists(temp2);
-			logger.trace("Deleted temp files");
 
 			SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
 
@@ -568,7 +574,14 @@ public class RESTSampleSequenceFilesController {
 			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
 		} catch (IllegalArgumentException e) {
 			logger.debug("Error 400 - Bad Request: " + e.getMessage());
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			throw e;
+		} finally {
+			// clean up the temporary files.
+			Files.deleteIfExists(target1);
+			Files.deleteIfExists(temp1);
+			Files.deleteIfExists(target2);
+			Files.deleteIfExists(temp2);
+			logger.trace("Deleted temp files");
 		}
 
 		// respond to the client
