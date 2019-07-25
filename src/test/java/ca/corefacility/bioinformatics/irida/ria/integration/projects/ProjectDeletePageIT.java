@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDeletePage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.*;
 
 /**
  * Test class for deleting a project
@@ -26,10 +26,9 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 	public void deleteProjectAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 
-		ProjectsPage projectsPage = new ProjectsPage(driver());
-		projectsPage.toAdminProjectsPage();
-		projectsPage.doSearch(PROJECT_NAME);
-		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.projectsTableSize());
+		ProjectsPage projectsPage = ProjectsPage.goToProjectsPage(driver(), true);
+		projectsPage.searchTableForProjectName(PROJECT_NAME);
+		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.getNumberOfProjects());
 
 		page = ProjectDeletePage.goTo(driver(), PROJECT_ID);
 
@@ -41,19 +40,18 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 
 		page.deleteProject();
 
-		projectsPage.toAdminProjectsPage();
-		projectsPage.doSearch(PROJECT_NAME);
-		assertEquals("project should no longer exist", 0, projectsPage.projectsTableSize());
+		projectsPage = ProjectsPage.goToProjectsPage(driver(), true);
+		projectsPage.searchTableForProjectName(PROJECT_NAME);
+		assertEquals("project should no longer exist", 0, projectsPage.getNumberOfProjects());
 	}
 
 	@Test
 	public void deleteProjectAsOwner() {
 		LoginPage.loginAsManager(driver());
 
-		ProjectsPage projectsPage = new ProjectsPage(driver());
-		projectsPage.toUserProjectsPage();
-		projectsPage.doSearch(PROJECT_NAME);
-		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.projectsTableSize());
+		ProjectsPage projectsPage = ProjectsPage.goToProjectsPage(driver(), false);
+		projectsPage.searchTableForProjectName(PROJECT_NAME);
+		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.getNumberOfProjects());
 
 		page = ProjectDeletePage.goTo(driver(), PROJECT_ID);
 
@@ -65,9 +63,9 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 
 		page.deleteProject();
 
-		projectsPage.toUserProjectsPage();
-		projectsPage.doSearch(PROJECT_NAME);
-		assertEquals("project should no longer exist", 0, projectsPage.projectsTableSize());
+		projectsPage = ProjectsPage.goToProjectsPage(driver(), false);
+		projectsPage.searchTableForProjectName(PROJECT_NAME);
+		assertEquals("project should no longer exist", 0, projectsPage.getNumberOfProjects());
 	}
 
 }

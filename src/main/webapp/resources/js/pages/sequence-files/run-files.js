@@ -1,7 +1,6 @@
 import $ from "jquery";
 import "./../../vendor/datatables/datatables";
 
-
 $("#filesTable").DataTable();
 
 $("button.download-file").on("click", function() {
