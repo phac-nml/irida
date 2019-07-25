@@ -30,6 +30,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.base.Strings;
 
+/**
+ * Controller to handle ajax requests for Analyses
+ */
 @RestController
 @RequestMapping("/ajax/analyses")
 public class AnalysesRestController {
@@ -43,9 +46,8 @@ public class AnalysesRestController {
 
 	@Autowired
 	public AnalysesRestController(AnalysisSubmissionService analysisSubmissionService,
-			AnalysisTypesService analysisTypesService,
-			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission,
+			AnalysisTypesService analysisTypesService, IridaWorkflowsService iridaWorkflowsService,
+			MessageSource messageSource, UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission,
 			IridaWorkflowsService workflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
@@ -60,21 +62,34 @@ public class AnalysesRestController {
 		List<AnalysisState> states = Arrays.asList(AnalysisState.values());
 		return states.stream()
 				.map(s -> new AnalysisStateModel(
-						messageSource.getMessage("analysis.state." + s, new Object[] {}, locale),
-						s.name()))
+						messageSource.getMessage("analysis.state." + s, new Object[] {}, locale), s.name()))
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns a list of localized names for all available {@link AnalysisType}s.
+	 *
+	 * @param locale the locale of the current user
+	 * @return an internationalized list of analysis type names
+	 */
 	@RequestMapping("/types")
 	public List<AnalysisTypeModel> getWorkflowTypes(Locale locale) {
 		Set<AnalysisType> types = workflowsService.getRegisteredWorkflowTypes();
 		return types.stream()
 				.map(t -> new AnalysisTypeModel(
-						messageSource.getMessage("workflow." + t.getType() + ".title", new Object[] {}, locale),
-						t.getType()))
+						messageSource.getMessage("workflow." + t.getType() + ".title", new Object[] {}, locale), t.getType()))
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns a list of analyses based on paging, sorting and filter requirements sent in {@link AnalysesListRequest}
+	 *
+	 * @param analysesListRequest description of the paging requirements.  Includes sorting, filtering, and paging
+	 * @param type of the list required (whether administrator or user)
+	 * @param locale of the current user
+	 * @return the current contents of the table based on the state requested
+	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
+	 */
 	@RequestMapping("/list")
 	public AnalysesListResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
 			@RequestParam(required = false, defaultValue = "user") String type, Locale locale)
@@ -122,12 +137,18 @@ public class AnalysesRestController {
 		return new AnalysesListResponse(analyses, page.getTotalElements());
 	}
 
+	/**
+	 * Delete a specific {@link AnalysisSubmission}
+	 *
+	 * @param id for the {@link AnalysisSubmission} to delete
+	 */
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void deleteAnalysisSubmission(@RequestParam Long id) {
 		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
 		analysisSubmissionService.delete(id);
 	}
+
 
 	private AnalysisModel createAnalysisModel(AnalysisSubmission submission, Locale locale) {
 		float percentComplete = 0;
