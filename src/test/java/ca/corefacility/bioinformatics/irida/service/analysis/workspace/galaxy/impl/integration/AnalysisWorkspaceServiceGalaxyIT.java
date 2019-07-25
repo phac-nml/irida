@@ -51,7 +51,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
@@ -92,7 +91,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
- * 
+ *
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -118,27 +117,27 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	
+
 	@Autowired
 	private SampleService sampleService;
-	
+
 	@Autowired
 	private SampleRepository sampleRepository;
-	
+
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
 	private Path rootTempDirectory;
-	
+
 	private GalaxyHistoriesService galaxyHistoriesService;
-	
+
 	/**
 	 * Timeout in seconds to stop polling a Galaxy library.
 	 */
 	private static final int LIBRARY_TIMEOUT = 5 * 60;
-	
+
 	/**
 	 * Polling time in seconds to poll a Galaxy library to check if
 	 * datasets have been properly uploaded.
@@ -182,12 +181,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	private static final String INPUTS_SINGLE_NAME = "irida_sequence_files_single";
 	private static final String INPUTS_PAIRED_NAME = "irida_sequence_files_paired";
-	
+
 	private static final String SAMPLE1_NAME = "sample1";
 
 	/**
 	 * Sets up variables for testing.
-	 * 
+	 *
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 * @throws IridaWorkflowLoadException
@@ -200,7 +199,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
 				.toURI());
-		
+
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "workspaceServiceGalaxyTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
@@ -247,7 +246,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests successfully preparing a workspace for analysis.
-	 * 
+	 *
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionManagerException
 	 */
@@ -263,7 +262,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests failure to prepare a workspace for analysis.
-	 * 
+	 *
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionManagerException
 	 */
@@ -280,11 +279,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully preparing single workflow input files for
 	 * execution.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -313,7 +312,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("the returned workflow inputs should not be null", preparedWorkflow.getWorkflowInputs());
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
-		
+
 		// verify correct library is created
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
 		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
@@ -346,17 +345,17 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
-		return Maps.uniqueIndex(historyContents, historyContent -> historyContent.getName());
+		return historyContents.stream().collect(Collectors.toMap(HistoryContents::getName, historyContent->historyContent));
 	}
 
 	/**
 	 * Tests out failing to prepare single workflow input files for execution
 	 * (duplicate samples).
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -388,11 +387,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully preparing paired workflow input files for
 	 * execution.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -422,7 +421,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
-		
+
 		// verify correct library is created
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
 		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
@@ -464,7 +463,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully preparing paired workflow input files for
 	 * execution with parameters.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
@@ -523,7 +522,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully preparing paired workflow input files for
 	 * execution, no parameters set.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
@@ -575,11 +574,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
 		assertEquals("coverageMaxValue should have been changed to default", "10", coverageMaxValue);
 	}
-	
+
 	/**
 	 * Tests out successfully preparing paired workflow input files for
 	 * execution and ignoring default parameters.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
@@ -600,7 +599,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
-		
+
 		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
@@ -630,7 +629,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out failing to prepare paired workflow input files for execution
 	 * with parameters due to an invalid parameter passed.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
@@ -666,11 +665,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out failing to prepare paired workflow input files for execution
 	 * (duplicate sample).
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -700,11 +699,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully preparing paired and single workflow input files
 	 * for execution.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -760,11 +759,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out failing to prepare paired and single workflow input files for
 	 * execution (duplicate samples among single and paired input files).
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -793,11 +792,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests out failure to prepare workflow input files for execution.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test(expected = WorkflowException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -826,14 +825,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
 	 * consisting only of single end sequence reads.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
-	 * @throws IridaWorkflowAnalysisLabelException 
+	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -863,7 +862,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
-		
+
 		Set<SingleEndSequenceFile> submittedSf = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
@@ -890,11 +889,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
-	
+
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
 	 * consisting only of single end sequence reads (for workflow accepting single sample).
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -930,7 +929,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingleSingleSample, false);
-		
+
 		Set<SingleEndSequenceFile> submittedSf = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
@@ -961,7 +960,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
 	 * consisting only of paired sequence reads.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -1001,12 +1000,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPaired, false);
-		
+
 		Set<SingleEndSequenceFile> submittedSingleFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
-		
+
 		assertEquals("the created submission should have no single input files", 0, submittedSingleFiles.size());
 		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
@@ -1032,11 +1031,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
-	
+
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
 	 * consisting only of paired sequence reads.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -1076,12 +1075,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample, false);
-		
+
 		Set<SingleEndSequenceFile> submittedSingleFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
-		
+
 		assertEquals("the created submission should have no single input files", 0, submittedSingleFiles.size());
 		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
@@ -1107,11 +1106,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
-	
+
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
 	 * when sequencing objects are present, but the sample was deleted while pipeline was running.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -1151,7 +1150,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample, false);
-		
+
 		sampleRepository.delete(1L);
 		assertTrue(!sampleService.exists(1L));
 
@@ -1178,7 +1177,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
 	 * consisting of both single and paired sequence reads.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -1225,7 +1224,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
-		
+
 		assertEquals("invalid number of single end input files", 1, singleFiles.size());
 		assertEquals("invalid number of paired end inputs", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
@@ -1254,7 +1253,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests out successfully getting results for an analysis (phylogenomics).
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -1316,7 +1315,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests out failing to get results for an analysis (missing output file).
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException

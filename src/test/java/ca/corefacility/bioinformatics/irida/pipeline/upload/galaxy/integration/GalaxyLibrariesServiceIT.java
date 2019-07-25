@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
@@ -57,6 +59,7 @@ public class GalaxyLibrariesServiceIT {
 	
 	private Path dataFile;
 	private Path dataFile2;
+	private Path dataFileCompressed;
 	private Path dataFileFail;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
@@ -78,9 +81,10 @@ public class GalaxyLibrariesServiceIT {
 	/**
 	 * Sets up variables for tests
 	 * @throws URISyntaxException 
+	 * @throws IOException 
 	 */
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
@@ -91,6 +95,9 @@ public class GalaxyLibrariesServiceIT {
 		
 		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData2.fastq").toURI());
+		
+		dataFileCompressed = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
+				"testData5.fastq.gz").toURI());
 		
 		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"fail.fastq.gz").toURI());
@@ -149,23 +156,33 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws GalaxyDatasetException
 	 */
 	@Test
-	public void testFilesToLibraryWaitSuccess()
-			throws UploadException, GalaxyDatasetException {
+	public void testFilesToLibraryWaitSuccess() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitSuccess");
-		Map<Path,String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2),
-				FILE_TYPE, library, DataStorage.LOCAL);
+		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(
+				Sets.newHashSet(dataFile, dataFile2, dataFileCompressed), library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
-		assertEquals(2, datasetsMap.size());
+		assertEquals(3, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
 		String datasetId2 = datasetsMap.get(dataFile2);
-		
-		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
-				.getLibrariesClient().showDataset(library.getId(), datasetId1);
-		assertNotNull(actualDataset1);
+		String datasetIdCompressed = datasetsMap.get(dataFileCompressed);
 
-		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
-				.getLibrariesClient().showDataset(library.getId(), datasetId2);
+		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetId1);
+		assertNotNull(actualDataset1);
+		assertEquals("Invalid data type extension", actualDataset1.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER.toString());
+
+		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetId2);
 		assertNotNull(actualDataset2);
+		assertEquals("Invalid data type extension", actualDataset2.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER.toString());
+
+		LibraryDataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetIdCompressed);
+		assertNotNull(actualDatasetCompressed);
+		assertEquals("Invalid data type extension", actualDatasetCompressed.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER_GZ.toString());
 	}
 	
 	/**
@@ -180,7 +197,7 @@ public class GalaxyLibrariesServiceIT {
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
 		galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
-				FILE_TYPE, library, DataStorage.LOCAL);
+				library, DataStorage.LOCAL);
 	}
 
 	/**
@@ -194,7 +211,7 @@ public class GalaxyLibrariesServiceIT {
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), FILE_TYPE, library,
+		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,
 				DataStorage.LOCAL);
 	}
 	
@@ -208,7 +225,7 @@ public class GalaxyLibrariesServiceIT {
 	@Test(expected = UploadErrorException.class)
 	public void testFilesToLibraryWaitFailDatasetError() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailDatasetError");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), FILE_TYPE, library,
+		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), library,
 				DataStorage.LOCAL);
 	}
 	
@@ -220,7 +237,7 @@ public class GalaxyLibrariesServiceIT {
 	@Test
 	public void testDeleteLibrarySuccess() throws ExecutionManagerException {
 		Library library = buildEmptyLibrary("testDeleteLibrarySuccess");
-		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile), FILE_TYPE,
+		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
 				library, DataStorage.LOCAL);
 		String datasetId = datasetsMap.get(dataFile);
 		assertNotNull("Dataset not uploaded correctly", librariesClient.showDataset(library.getId(), datasetId));

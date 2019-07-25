@@ -132,10 +132,11 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *             If there was an exception submitting the analysis to the
 	 *             execution manager.
 	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
+	 * @throws IOException If there was an error reading some of the input files.
 	 */
 	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
