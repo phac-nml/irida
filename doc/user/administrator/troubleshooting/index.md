@@ -165,13 +165,13 @@ This lets us see the history of the job as it was processed through IRIDA (and i
 
 Once we have the Galaxy History id, we can move on to logging into Galaxy to view more details about what went wrong with the IRIDA analysis pipeline. The first step is logging into Galaxy as the same user used by IRIDA.
 
-*Note: if you do not know which Galaxy instance IRIDA is making use of, you can find this in the `/etc/irida/irida.conf` file as `galaxy.execution.url=http://GALAXY_URL`. You can find the username as `galaxy.execution.email=galaxy-user@galaxy.org`. IRIDA uses the Galaxy API to login, which is different from the password, so you may have to check with your administrator for the password used to log into Galaxy.*
+*Note: if you do not know which Galaxy instance IRIDA is making use of, you can find this in the `/etc/irida/irida.conf` file as `galaxy.execution.url=http://GALAXY`. You can find the username as `galaxy.execution.email=galaxy-user@galaxy.org`. IRIDA uses the Galaxy API to login, which is different from the password, so you may have to check with your administrator for the password used to log into Galaxy.*
 
 ![galaxy-home.png][]
 
 ### 1.3.2. Viewing all Galaxy histories
 
-Galaxy will default to one of the histories run by IRIDA. To find the correct history though, we'll have to first go to the **Saved Histories** page.
+Galaxy will default to one of the histories run by IRIDA. To see all the Galaxy histories, you can go to the **Saved Histories** page.
 
 ![galaxy-saved-histories.png][]
 
@@ -179,19 +179,48 @@ This should bring us to a list of all the Galaxy histories.
 
 ![galaxy-histories-list.png][]
 
-To switch the the history that we want (the one named by the **Galaxy History id**, e.g., `e85a3be143d5905b`) we need to enter this as a parameter to a specific URL. Note that this is different from the name of the Galaxy history (as shown in the screenshots).
+### 1.3.3. Viewing the correct history
 
-### 1.3.3. Finding the correct history
+To view the correct History in Galaxy, we can skip directly to it using the following URL `http://GALAXY/histories/view?id=[Galaxy History id]` Where **Galaxy History id** is the id we discovered from step 1.2 (e.g., `e85a3be143d5905b`). For example, for me, going to <http://localhost:48888/histories/view?id=e85a3be143d5905b> brings up:
 
-To find the correct history, we first must copy the URL used to switch to a specific Galaxy History. Please click on one of the Galaxy histories shown in the list and hover over the option **Switch**:
+![galaxy-view-history.png][]
 
-![galaxy-history-switch-hover.png][]
+This is the History corresponding to the analysis pipeline in IRIDA that failed. I can now see all the failed jobs (in red). Clicking on the bug icon in one of these jobs will show me the error message (which in this case, is the same as was recorded by IRIDA).
 
-Notice at the bottom of this screenshot there is a URL `localhost:48888/history/list...`. This is the URL we want to copy. To copy it you can right-click while hovering over **Switch** and select the option **Copy Link Location**.
+![galaxy-job-debug.png][]
 
-![galaxy-history-copy-link.png][]
+Clicking the **i** icon gives me more information about the Galaxy job.
 
-This should copy the link. You can now open up a new window (or tab) in your browser and paste the link:
+![galaxy-job-information.png][]
+
+Srolling to the bottom of this screen there is a lot of information about the underlying infrastructure and software:
+
+![galaxy-job-information2.png][]
+
+For example, this contains the exact command-line that was run, system resources uses, the **Runner Job ID** (in this case `50` which is the slurm job id if using slurm to run jobs), as well as the **Path** to the dependency software (in this case `/export/tool_deps/_conda/envs/__prokka@1.13`, which is the location of the conda environment containing Prokka).
+
+### 1.3.4. Diagnosing the problem
+
+All of this information could be useful to figure out the underlying issue for this IRIDA pipeline. In this case, from the **Prokka** error message:
+
+>[tbl2asn] This copy of tbl2asn is more than a year old.  Please download the current version.
+
+This is likely the [Prokka tbl2asn out of date][prokka-tbl2asn] issue. Solving this requires updating `tbl2asn` used by **Prokka**, which will be located under the conda environment (which you can find from the job details information above, in this case it's `/export/tool_deps/_conda/envs/__prokka@1.13`).
+
+Alternatively, if you are using a cluster scheduler to schedule jobs, you may wish to view information from this scheduler for this job. The id to use should be located in the job details information (id `50` shown above). Using this information, you could log into your cluster and run:
+
+```bash
+sacct -j 50 --format="jobid,jobname%20,maxrss,maxrssnode,ntasks,elapsed,state,exitcode"
+```
+
+```
+       JobID              JobName     MaxRSS MaxRSSNode   NTasks    Elapsed      State ExitCode 
+------------ -------------------- ---------- ---------- -------- ---------- ---------- -------- 
+          50           g46_prokka                                  00:01:19  COMPLETED      0:0 
+    50.batch                batch     25128K     node-5        1   00:01:19  COMPLETED      0:0
+```
+
+Here, `sacct` is a command that comes with slurm and lets you look up information about a job run on the cluster (specified as `-j 50`). The `--format=` option specifies what information to print (e.g., **JobID** and **JobName**). The `jobname%20` specifies that the **JobName** column should be 20 characters wide (useful for printing longer names). The **MaxRSSNode** tells you the cluster node the job executed on that used the maximum RSS (Resident Set Size, memory used by software). See documentation about your cluster scheduler for more information.
 
 
 
@@ -203,5 +232,8 @@ This should copy the link. You can now open up a new window (or tab) in your bro
 [galaxy-home.png]: images/galaxy-home.png
 [galaxy-saved-histories.png]: images/galaxy-saved-histories.png
 [galaxy-histories-list.png]: images/galaxy-histories-list.png
-[galaxy-history-switch-hover.png]: images/galaxy-history-switch-hover.png
-[galaxy-history-copy-link.png]: images/galaxy-history-copy-link.png
+[galaxy-view-history.png]: images/galaxy-view-history.png
+[galaxy-job-debug.png]: images/galaxy-job-debug.png
+[galaxy-job-information.png]: images/galaxy-job-information.png
+[galaxy-job-information2.png]: images/galaxy-job-information2.png
+[prokka-tbl2asn]: {{ site.baseurl }}/administrator/faq/#1-tbl2asn-out-of-date
