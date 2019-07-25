@@ -1,131 +1,132 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React from "react";
 import {
   deleteAnalysisSubmission,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
 } from "../apis/analysis/analysis";
+import * as PropTypes from "prop-types";
 
-const { Provider, Consumer } = React.createContext();
+let AnalysesContext;
+const { Provider, Consumer } = (AnalysesContext = React.createContext());
 
-const initialState = {
-  search: "",
-  current: 1,
-  pageSize: 10,
-  order: "descend",
-  column: "createdDate",
-  filters: {}
-};
+/**
+ * Context Provider the the Analyses Table.
+ */
+class AnalysesProvider extends React.Component {
+  static propTypes = {
+    /**
+     * Child element of this react component
+     *
+     * @ignore
+     */
+    children: PropTypes.element
+  };
 
-const TYPES = {
-  LOADED: "ANALYSES_TABLE/LOADED",
-  SEARCH: "ANALYSES_TABLE/SEARCH",
-  TABLE_CHANGE: "ANALYSES_TABLE/TABLE_CHANGE"
-};
+  constructor(props) {
+    super(props);
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case TYPES.LOADED:
-      return {
-        ...state,
-        loading: false,
-        analyses: action.payload.analyses,
-        total: action.payload.total
-      };
-    case TYPES.SEARCH:
-      return { ...state, search: action.payload.search, current: 1 };
-    case TYPES.TABLE_CHANGE:
-      return {
-        ...state,
-        ...action.payload
-      };
-    default:
-      return { ...state };
-  }
-};
-
-function AnalysesProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [loading, setLoading] = useState(false);
-  const [analyses, setAnalyses] = useState(undefined);
-  const [total, setTotal] = useState(undefined);
-  const [pipelineStates, setPipelineStates] = useState(undefined);
-  const [types, setTypes] = useState(undefined);
-
-  useEffect(() => {
-    fetchAllPipelinesStates().then(data => setPipelineStates(data));
-    fetchAllPipelinesTypes().then(data => setTypes(data));
-  }, []);
-
-  function updateTable() {
-    setLoading(true);
-    const params = {
-      current: state.current - 1,
-      pageSize: state.pageSize,
-      sortColumn: state.column,
-      sortDirection: state.order,
-      search: state.search,
-      filters: state.filters
+    this.state = {
+      analyses: undefined,
+      search: "",
+      current: 1,
+      pageSize: 10,
+      order: "descend",
+      column: "createdDate",
+      total: undefined,
+      filters: {},
+      onSearch: this.onSearch,
+      handleTableChange: this.handleTableChange,
+      deleteAnalysis: this.deleteAnalysis
     };
-
-    fetchPagedAnalyses(params).then(data => {
-      setAnalyses(data.analyses);
-      setTotal(data.total);
-      setLoading(false);
-    });
   }
 
-  useEffect(() => {
-    updateTable();
-  }, [state]);
+  /*
+  Made this asynchronous in order to use `await` so that we can get all
+  the required values before we initialize the table.
+   */
+  async componentDidMount() {
+    const [pipelineStates, types] = await Promise.all([
+      fetchAllPipelinesStates(),
+      fetchAllPipelinesTypes()
+    ]);
+    this.setState({ pipelineStates, types }, this.updateTable);
+  }
 
-  const onSearch = value =>
-    dispatch({
-      type: TYPES.SEARCH,
-      payload: { search: value, current: 1 }
+  /**
+   * Called whenever the table needs to be re-rendered.
+   */
+  updateTable = () => {
+    this.setState({ loading: true }, () => {
+      const params = {
+        current: this.state.current - 1,
+        pageSize: this.state.pageSize,
+        sortColumn: this.state.column,
+        sortDirection: this.state.order,
+        search: this.state.search,
+        filters: this.state.filters
+      };
+
+      fetchPagedAnalyses(params).then(data => {
+        this.setState({
+          analyses: data.analyses,
+          total: data.total,
+          loading: false
+        });
+      });
     });
+  };
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  /**
+   * Handles search values entered in the tables global search box.
+   *
+   * @param {string} value - the value to search for
+   */
+  onSearch = value =>
+    this.setState(
+      {
+        search: value
+      },
+      this.updateTable
+    );
+
+  /**
+   * Handler for default table actions (paging, filtering, and sorting)
+   *
+   * @param {object} pagination
+   * @param {object} filters
+   * @param {object} sorter
+   */
+  handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
     const formattedFilter = {};
     Object.keys(filters).forEach(f => (formattedFilter[f] = filters[f][0]));
-    dispatch({
-      type: TYPES.TABLE_CHANGE,
-      payload: {
+
+    this.setState(
+      {
         pageSize,
         current,
         order: order || "descend",
         column: field || "createdDate",
         filters: formattedFilter
-      }
-    });
+      },
+      this.updateTable
+    );
   };
 
-  const deleteAnalysis = id => deleteAnalysisSubmission({ id }).then(() => updateTable());
+  /**
+   * Handler for deleting an analysis.
+   *
+   * @param {number} id
+   * @returns {void | Promise<*>}
+   */
+  deleteAnalysis = id =>
+    deleteAnalysisSubmission({ id }).then(this.updateTable);
 
-  return (
-    <Provider
-      value={{
-        loading,
-        analyses,
-        total,
-        pipelineStates,
-        types,
-        current: state.current,
-        size: state.pageSize,
-        column: state.column,
-        order: state.order,
-        search: state.search,
-        filters: state.filters,
-        onSearch,
-        handleTableChange,
-        deleteAnalysis
-      }}
-    >
-      {children}
-    </Provider>
-  );
+  render() {
+    return <Provider value={this.state}>{this.props.children}</Provider>;
+  }
 }
 
-export { AnalysesProvider, Consumer as AnalysesConsumer };
+export { AnalysesProvider, Consumer as AnalysesConsumer, AnalysesContext };

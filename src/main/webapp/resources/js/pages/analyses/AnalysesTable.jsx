@@ -1,5 +1,5 @@
-import React from "react";
-import { AnalysesConsumer } from "../../contexts/AnalysesContext";
+import React, { useContext } from "react";
+import { AnalysesContext } from "../../contexts/AnalysesContext";
 import { Button, Input, Popconfirm, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
@@ -12,7 +12,18 @@ import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 
 export function AnalysesTable() {
-  const ADMIN = true;
+  const ADMIN = true; // TODO: This needs to be dynamic
+  const {
+    loading,
+    total,
+    pageSize,
+    analyses,
+    types,
+    pipelineStates,
+    onSearch,
+    handleTableChange,
+    deleteAnalysis
+  } = useContext(AnalysesContext);
 
   function createColumns({ types, pipelineStates, deleteAnalysis }) {
     const columns = [
@@ -88,39 +99,25 @@ export function AnalysesTable() {
   }
 
   return (
-    <AnalysesConsumer>
-      {({
-        loading,
-        total,
-        pageSize,
-        analyses,
-        types,
-        pipelineStates,
-        onSearch,
-        handleTableChange,
-        deleteAnalysis
-      }) => (
-        <PageWrapper
-          title={getI18N("analyses.header")}
-          headerExtras={
-            <Row gutter={12} style={{ marginRight: 18 }}>
-              <Input.Search onSearch={onSearch} />
-            </Row>
-          }
-        >
-          <Table
-            style={{ margin: "6px 24px 0 24px" }}
-            scroll={{ x: 900 }}
-            rowKey={record => record.id}
-            loading={loading}
-            pagination={{ total, pageSize }}
-            columns={createColumns({ types, pipelineStates, deleteAnalysis })}
-            dataSource={analyses}
-            onChange={handleTableChange}
-          />
-        </PageWrapper>
-      )}
-    </AnalysesConsumer>
+    <PageWrapper
+      title={getI18N("analyses.header")}
+      headerExtras={
+        <Row gutter={12} style={{ marginRight: 18 }}>
+          <Input.Search onSearch={onSearch} />
+        </Row>
+      }
+    >
+      <Table
+        style={{ margin: "6px 24px 0 24px" }}
+        scroll={{ x: 900 }}
+        rowKey={record => record.id}
+        loading={loading}
+        pagination={{ total, pageSize }}
+        columns={createColumns({ types, pipelineStates, deleteAnalysis })}
+        dataSource={analyses}
+        onChange={handleTableChange}
+      />
+    </PageWrapper>
   );
 }
 
