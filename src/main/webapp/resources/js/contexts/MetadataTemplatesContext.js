@@ -15,6 +15,7 @@ class MetadataTemplatesProvider extends React.Component {
     super(props);
 
     this.state = {
+      width: 0,
       loading: true,
       current: 0,
       templates: undefined,
@@ -39,7 +40,7 @@ class MetadataTemplatesProvider extends React.Component {
       }
     }
 
-    function getColumnDefinition({ field, headerName, type }) {
+    const getColumnDefinition = ({ field, headerName, type }) => {
       const f = {
         key: field,
         title: <div style={{ whiteSpace: "nowrap" }}>{headerName || ""}</div>,
@@ -68,6 +69,7 @@ class MetadataTemplatesProvider extends React.Component {
       switch (field) {
         case FIELDS.sampleName:
           Object.assign(f, {
+            fixed: "left",
             render: (text, data) => (
               <a
                 target="_blank"
@@ -92,6 +94,7 @@ class MetadataTemplatesProvider extends React.Component {
               </>
             ),
             sorter: false,
+            fixed: "left",
             width: 50
           });
           break;
@@ -101,7 +104,7 @@ class MetadataTemplatesProvider extends React.Component {
       }
 
       return f;
-    }
+    };
 
     if (this.state.templates) {
       const { fields } = this.state.templates[this.state.current];

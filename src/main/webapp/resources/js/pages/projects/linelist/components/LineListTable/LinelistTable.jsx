@@ -426,13 +426,13 @@ export class TableComponent extends React.Component {
     return (
       <>
         <MetadataTemplatesConsumer>
-          {({ getCurrentTemplate, loading: templatesLoading }) => (
+          {({ getCurrentTemplate, loading: templatesLoading, width }) => (
             <Table
               rowKey={record => record["irida-static-sample-id"]}
               loading={entriesLoading || templatesLoading}
               columns={getCurrentTemplate()}
               dataSource={entries}
-              scroll={{ x: 1300 }}
+              scroll={{ x: "max-content" }}
               rowSelection={{
                 selectedRowKeys,
                 onChange: onSelectedRowChange,
