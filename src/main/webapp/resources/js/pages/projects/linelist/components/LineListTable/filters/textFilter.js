@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Icon, Input } from "antd";
-import { blue6 } from "../../../../../styles/colors";
+import { blue6 } from "../../../../../../styles/colors";
 
 function getTextSearchProps(dataIndex) {
   let searchInput;
@@ -32,7 +32,6 @@ function getTextSearchProps(dataIndex) {
           ref={node => {
             searchInput = node;
           }}
-          placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])

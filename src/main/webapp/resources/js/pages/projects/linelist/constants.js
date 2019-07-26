@@ -9,5 +9,6 @@ export const FIELDS = {
 
 export const TYPES = {
   date: "date",
-  text: "text"
+  text: "text",
+  icons: "icons"
 };

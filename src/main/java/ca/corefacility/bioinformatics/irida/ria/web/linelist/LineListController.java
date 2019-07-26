@@ -345,7 +345,7 @@ public class LineListController {
 		/*
 		This field is to display to the user any notification icons that they might have (e.g. sample is locked).
 		 */
-		UIMetadataFieldDefault iconField = new UIMetadataFieldDefault("", "icons", "text");
+		UIMetadataFieldDefault iconField = new UIMetadataFieldDefault("", "icons", "icons");
 		iconField.setPinned("left");
 		iconField.setLockPinned(true);
 		iconField.setLockPosition(true);

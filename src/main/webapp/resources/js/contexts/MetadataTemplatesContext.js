@@ -3,7 +3,8 @@ import { fetchTemplates } from "../apis/metadata/templates";
 import { FIELDS, TYPES } from "../pages/projects/linelist/constants";
 import { Icon } from "antd";
 import { formatDate, isDate } from "../utilities/date-utilities";
-import { getTextSearchProps } from "../pages/projects/linelist/components/LineListTable/TextFilter";
+import { getTextSearchProps } from "../pages/projects/linelist/components/LineListTable/filters/TextFilter";
+import { getDateSearchProps } from "../pages/projects/linelist/components/LineListTable/filters/dateFilter";
 
 let MetadataTemplatesContext;
 const {
@@ -62,7 +63,8 @@ class MetadataTemplatesProvider extends React.Component {
           Object.assign(f, {
             render: text => formatDate({ date: text }),
             sorter: (a, b) => dateSorter(a[field], b[field]),
-            width: 200
+            width: 200,
+            ...getDateSearchProps(field)
           });
           break;
         case TYPES.text:
