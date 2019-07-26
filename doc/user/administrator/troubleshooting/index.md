@@ -222,6 +222,78 @@ sacct -j 50 --format="jobid,jobname%20,maxrss,maxrssnode,ntasks,elapsed,state,ex
 
 Here, `sacct` is a command that comes with slurm and lets you look up information about a job run on the cluster (specified as `-j 50`). The `--format=` option specifies what information to print (e.g., **JobID** and **JobName**). The `jobname%20` specifies that the **JobName** column should be 20 characters wide (useful for printing longer names). The **MaxRSSNode** tells you the cluster node the job executed on that used the maximum RSS (Resident Set Size, memory used by software). See documentation about your cluster scheduler for more information.
 
+## 1.4. Viewing additional Galaxy job information
+
+If the instructions for [1.3](#13-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline) do not lead to a solution, there are additional files you can check in Galaxy to help diagnose an issue.
+
+### 1.4.1. Galaxy log files
+
+The Galaxy log files are one possible source of additional information as to what went wrong with an analysis pipeline in IRIDA. These are often located in the files `galaxy/*.log` but this depends a lot on your specific Galaxy setup.
+
+Looking through these log files at around the time of the pipeline error can give you clues as to what went wrong. For example:
+
+```
+galaxy.jobs.runners.drmaa DEBUG 2019-07-30 15:14:49,863 (3362/3363) state change: job finished normally
+galaxy.jobs.output_checker INFO 2019-07-30 15:14:49,934 Job 3362: Fatal error: Exit code 2 ()
+galaxy.jobs.output_checker DEBUG 2019-07-30 15:14:49,934 Tool exit code indicates an error, failing job.
+galaxy.jobs.output_checker DEBUG 2019-07-30 15:14:49,934 job failed, standard error is - [Fatal error: Exit code 2 ()
+/tool_deps/_conda/envs/__refseq_masher@0.1.1/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: numpy.dtype size changed, may indicate binary incompatibility. Expected 96, got 88
+  return f(*args, **kwds)
+2019-07-30 15:14:46,399 WARNING: which exited with non-zero code 1 with command "which mash" [in /tool_deps/_conda/envs/__refseq_masher@0.1.1/lib/python3.6/site-packages/refseq_masher/utils.py:44]
+2019-07-30 15:14:46,399 WARNING:  [in /tool_deps/_conda/envs/__refseq_masher@0.1.1/lib/python3.6/site-packages/refseq_masher/utils.py:45]
+Usage: refseq_masher contains [OPTIONS] INPUT...
+
+Error: Invalid value for "--mash-bin": Mash does not exist at "mash". Please install Mash to your $PATH
+]
+```
+
+These messages indicates that for Galaxy Job **3362** failed with an error. The standard error contains messages `WARNING: which exited with non-zero code 1 with command "which mash" [in /tool_deps/_conda/envs/__refseq_masher@0.1.1`. This suggests that the issue is that the `mash` binary is not available in the conda environment `__refseq_masher@0.1.1`. So, you could activate this environment and check to see what's going on. For example:
+
+```
+# First log into Galaxy machine then use commands like below
+PATH=/tool_deps/_conda/bin/:$PATH conda activate /tool_deps/_conda/envs/__refseq_masher\@0.1.1/
+
+mash
+```
+
+```
+bash: mash: command not found
+```
+
+Huh!? `mash` is not found. You could try re-installing `mash` to this environment (`conda install mash`) and try the tool again.
+
+#### 1.4.1.1. Galaxy Job Numbers in log file
+
+When scanning through the log file you will see lines like:
+
+```
+galaxy.jobs.runners.drmaa INFO 2019-07-30 15:14:44,983 (3362) queued as 3363
+galaxy.jobs DEBUG 2019-07-30 15:14:44,984 (3362) Persisting job destination (destination id: slurm_cluster)
+galaxy.jobs.runners.drmaa DEBUG 2019-07-30 15:14:45,646 (3362/3363) state change: job is running
+...
+galaxy.jobs.runners.drmaa DEBUG 2019-07-30 15:14:49,863 (3362/3363) state change: job finished normally
+```
+
+Here, the number **3362** in `(3362)` or `(3362/3363)` is the Galaxy Job id, which is also displayed in the information for an individual Galaxy Job in the Galaxy interface:
+
+![galaxy-job-id.png][]
+
+While the number **3363** in `queued as 3363` or `(3362/3363)` is the cluster/job runner id. This is also displayed in the information for an individual Galaxy Job in the Galaxy interface:
+
+![job-runner-id.png][]
+
+### 1.4.2. Galaxy job running directories
+
+## 1.5. Rerunning Galaxy jobs
+
+### 1.5.1. Rerunning jobs in Galaxy UI
+
+### 1.5.2. Rerunning jobs from command-line
+
+## 1.6. Examples
+
+### 1.6.1. SNVPhyl pipeline error
+
 
 
 [jobs-all-error-details.png]: images/jobs-all-error-details.png
@@ -237,3 +309,5 @@ Here, `sacct` is a command that comes with slurm and lets you look up informatio
 [galaxy-job-information.png]: images/galaxy-job-information.png
 [galaxy-job-information2.png]: images/galaxy-job-information2.png
 [prokka-tbl2asn]: {{ site.baseurl }}/administrator/faq/#1-tbl2asn-out-of-date
+[galaxy-job-id.png]: images/galaxy-job-id.png
+[job-runner-id.png]: images/job-runner-id.png
