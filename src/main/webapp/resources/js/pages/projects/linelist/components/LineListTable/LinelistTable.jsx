@@ -414,6 +414,9 @@ export class TableComponent extends React.Component {
     this.api.ensureColumnVisible(this.columnApi.getColumnState()[1].colId);
   };
 
+
+  // New
+
   render() {
     const {
       entries,
@@ -426,7 +429,7 @@ export class TableComponent extends React.Component {
     return (
       <>
         <MetadataTemplatesConsumer>
-          {({ getCurrentTemplate, loading: templatesLoading, width }) => (
+          {({ getCurrentTemplate, loading: templatesLoading }) => (
             <Table
               rowKey={record => record["irida-static-sample-id"]}
               loading={entriesLoading || templatesLoading}

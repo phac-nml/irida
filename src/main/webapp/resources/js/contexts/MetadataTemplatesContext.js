@@ -3,6 +3,7 @@ import { fetchTemplates } from "../apis/metadata/templates";
 import { FIELDS, TYPES } from "../pages/projects/linelist/constants";
 import { Icon } from "antd";
 import { formatDate, isDate } from "../utilities/date-utilities";
+import { getTextSearchProps } from "../pages/projects/linelist/components/LineListTable/TextFilter";
 
 let MetadataTemplatesContext;
 const {
@@ -64,6 +65,10 @@ class MetadataTemplatesProvider extends React.Component {
             width: 200
           });
           break;
+        case TYPES.text:
+          Object.assign(f, {
+            ...getTextSearchProps(field)
+          });
       }
 
       switch (field) {
