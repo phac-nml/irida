@@ -60,11 +60,12 @@ export function fromNow({ date }) {
  * @return {string} formatted date
  */
 export function formatDate({ date, format = "lll" }) {
+  if (!date) return "";
   const t = new Date(date);
   if (moment.isDate(t)) {
     return moment(t).format(format);
   }
-  return "";
+  return date;
 }
 
 /**

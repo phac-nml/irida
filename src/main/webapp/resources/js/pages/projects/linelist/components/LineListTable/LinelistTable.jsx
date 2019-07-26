@@ -7,6 +7,10 @@ import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
+
+import { Table } from "antd";
+import { MetadataEntriesContext } from "../../../../../contexts/MetadataEntriesContext";
+import { MetadataTemplatesConsumer } from "../../../../../contexts/MetadataTemplatesContext";
 // Excel export support
 import XLSX from "xlsx";
 
@@ -26,6 +30,8 @@ const { i18n } = window.PAGE;
  * React component to render the ag-grid to the page.
  */
 export class TableComponent extends React.Component {
+  static contextType = MetadataEntriesContext;
+
   state = {
     entries: null,
     filterCount: 0
@@ -409,35 +415,72 @@ export class TableComponent extends React.Component {
   };
 
   render() {
+    const {
+      entries,
+      loading: entriesLoading,
+      selectedRowKeys,
+      onSelectedRowChange,
+      onSelectAll,
+      onSelectNone
+    } = this.context;
     return (
-      <div
-        className="ag-grid-table-wrapper"
-        style={{ height: this.props.height }}
-      >
-        <AgGridReact
-          id="linelist-grid"
-          rowSelection="multiple"
-          onFilterChanged={this.setFilterCount}
-          localeText={i18n.linelist.agGrid}
-          columnDefs={this.props.fields}
-          rowData={this.props.entries}
-          frameworkComponents={this.frameworkComponents}
-          loadingOverlayComponent="LoadingOverlay"
-          onGridReady={this.onGridReady}
-          onDragStopped={this.onColumnDropped}
-          rowDeselection={true}
-          suppressRowClickSelection={true}
-          onSelectionChanged={this.onSelectionChange}
-          defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true,
-            sortable: true,
-            filter: true
-          }}
-          enableCellChangeFlash={true}
-          onCellEditingStarted={this.onCellEditingStarted}
-          onCellEditingStopped={this.onCellEditingStopped}
-        />
-      </div>
+      <>
+        <MetadataTemplatesConsumer>
+          {({ getCurrentTemplate, loading: templatesLoading }) => (
+            <Table
+              rowKey={record => record["irida-static-sample-id"]}
+              loading={entriesLoading || templatesLoading}
+              columns={getCurrentTemplate()}
+              dataSource={entries}
+              scroll={{ x: 1300 }}
+              rowSelection={{
+                selectedRowKeys,
+                onChange: onSelectedRowChange,
+                selections: [
+                  {
+                    key: "all-data",
+                    text: "Select All Samples",
+                    onSelect: onSelectAll
+                  },
+                  {
+                    key: "no-data",
+                    text: "Unselect All Samples",
+                    onSelect: onSelectNone
+                  }
+                ]
+              }}
+            />
+          )}
+        </MetadataTemplatesConsumer>
+        <div
+          className="ag-grid-table-wrapper"
+          style={{ height: this.props.height }}
+        >
+          <AgGridReact
+            id="linelist-grid"
+            rowSelection="multiple"
+            onFilterChanged={this.setFilterCount}
+            localeText={i18n.linelist.agGrid}
+            columnDefs={this.props.fields}
+            rowData={entries}
+            frameworkComponents={this.frameworkComponents}
+            loadingOverlayComponent="LoadingOverlay"
+            onGridReady={this.onGridReady}
+            onDragStopped={this.onColumnDropped}
+            rowDeselection={true}
+            suppressRowClickSelection={true}
+            onSelectionChanged={this.onSelectionChange}
+            defaultColDef={{
+              headerCheckboxSelectionFilteredOnly: true,
+              sortable: true,
+              filter: true
+            }}
+            enableCellChangeFlash={true}
+            onCellEditingStarted={this.onCellEditingStarted}
+            onCellEditingStopped={this.onCellEditingStopped}
+          />
+        </div>
+      </>
     );
   }
 }
@@ -469,7 +512,7 @@ const mapDispatchToProps = dispatch => ({
   selection: selected => dispatch(entryActions.selection(selected))
 });
 
-export const Table = connect(
+export const LinelistTable = connect(
   mapStateToProps,
   mapDispatchToProps,
   null,

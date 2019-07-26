@@ -1,9 +1,11 @@
 import React from "react";
 import { Layout } from "antd";
-import { Table } from "../Table";
+import { LinelistTable } from "../LineListTable";
 import { Toolbar } from "../Toolbar";
 import { InfoBar } from "../InfoBar";
 import TableControlPanel from "../TableControlPanel/TableControlPanel";
+import { MetadataEntriesProvider } from "../../../../../contexts/MetadataEntriesContext";
+import { MetadataTemplatesProvider } from "../../../../../contexts/MetadataTemplatesContext";
 
 const { Sider, Content } = Layout;
 
@@ -101,11 +103,15 @@ export class LineListLayoutComponent extends React.Component {
         />
         <Layout className="ag-theme-balham">
           <Content>
-            <Table
-              ref={tableReference => (this.tableRef = tableReference)}
-              onFilter={this.updateFilterCount}
-              height={this.state.height}
-            />
+            <MetadataTemplatesProvider>
+              <MetadataEntriesProvider>
+                <LinelistTable
+                  ref={tableReference => (this.tableRef = tableReference)}
+                  onFilter={this.updateFilterCount}
+                  height={this.state.height}
+                />
+              </MetadataEntriesProvider>
+            </MetadataTemplatesProvider>
           </Content>
           <Sider
             className="tool-panel-slider"
