@@ -14,48 +14,7 @@ export class LineListLayoutComponent extends React.Component {
 
   state = {
     collapsed: true,
-    height: 800
   };
-
-  /**
-   * Multiple components need to be updated when the window height changes.  This determines
-   * the new height required and sets it into the state.
-   */
-  updateHeight = () => {
-    if (window.innerHeight > 600) {
-      const BOTTOM_BUFFER = 90;
-      /*
-      Determine the height the linelist should be based on the size of the window,
-      and a small buffer at the bottom of the page.
-       */
-      const height =
-        window.innerHeight -
-        this.linelistRef.current.getBoundingClientRect().top -
-        BOTTOM_BUFFER;
-      this.setState({ height });
-    } else {
-      // Just preventing table from getting overly small!
-      this.setState({ height: 300 });
-    }
-  };
-
-  /**
-   * Invoked immediately after a component is mounted (inserted into the tree).
-   * Here we need to determine the initial height for the linelist component
-   * and create an event handler to resize the table vertically if the browser is re-sized.
-   */
-  componentDidMount() {
-    this.updateHeight();
-    window.addEventListener("resize", this.updateHeight);
-  }
-
-  /**
-   * Invoked immediately before a component is unmounted and destroyed.
-   * Here we need ot unregister the event handler to prevent memory leaks in this component.
-   */
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateHeight);
-  }
 
   /**
    * Toggle the open state of the tool panel.
@@ -101,14 +60,13 @@ export class LineListLayoutComponent extends React.Component {
           selectedCount={this.props.selectedCount}
           scrollTableToTop={this.scrollTableToTop}
         />
-        <Layout className="ag-theme-balham">
-          <Content>
+        <Layout>
+          <Content style={{backgroundColor: "white"}}>
             <MetadataTemplatesProvider>
               <MetadataEntriesProvider>
                 <LinelistTable
                   ref={tableReference => (this.tableRef = tableReference)}
                   onFilter={this.updateFilterCount}
-                  height={this.state.height}
                 />
               </MetadataEntriesProvider>
             </MetadataTemplatesProvider>
@@ -122,7 +80,6 @@ export class LineListLayoutComponent extends React.Component {
             collapsed={this.state.collapsed}
           >
             <TableControlPanel
-              height={this.state.height}
               saved={this.props.saved}
               saveTemplate={this.props.saveTemplate}
               useTemplate={this.props.useTemplate}

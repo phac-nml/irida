@@ -4,7 +4,6 @@ import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
@@ -68,13 +67,6 @@ export class TableComponent extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.globalFilter !== this.props.globalFilter) return true;
-    /**
-     * Check to see if the height of the table needs to be updated.
-     * This will only happen  on initial load or if the window height has changed
-     */
-    if (nextProps.height !== this.props.height) {
-      return true;
-    }
 
     if (!isEqual(nextProps.fields, this.props.fields)) {
       /*
@@ -414,7 +406,6 @@ export class TableComponent extends React.Component {
     this.api.ensureColumnVisible(this.columnApi.getColumnState()[1].colId);
   };
 
-
   // New
 
   render() {
@@ -427,69 +418,38 @@ export class TableComponent extends React.Component {
       onSelectNone
     } = this.context;
     return (
-      <>
-        <MetadataTemplatesConsumer>
-          {({ getCurrentTemplate, loading: templatesLoading }) => (
-            <Table
-              rowKey={record => record["irida-static-sample-id"]}
-              loading={entriesLoading || templatesLoading}
-              columns={getCurrentTemplate()}
-              dataSource={entries}
-              scroll={{ x: "max-content" }}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: onSelectedRowChange,
-                selections: [
-                  {
-                    key: "all-data",
-                    text: "Select All Samples",
-                    onSelect: onSelectAll
-                  },
-                  {
-                    key: "no-data",
-                    text: "Unselect All Samples",
-                    onSelect: onSelectNone
-                  }
-                ]
-              }}
-            />
-          )}
-        </MetadataTemplatesConsumer>
-        <div
-          className="ag-grid-table-wrapper"
-          style={{ height: this.props.height }}
-        >
-          <AgGridReact
-            id="linelist-grid"
-            rowSelection="multiple"
-            onFilterChanged={this.setFilterCount}
-            localeText={i18n.linelist.agGrid}
-            columnDefs={this.props.fields}
-            rowData={entries}
-            frameworkComponents={this.frameworkComponents}
-            loadingOverlayComponent="LoadingOverlay"
-            onGridReady={this.onGridReady}
-            onDragStopped={this.onColumnDropped}
-            rowDeselection={true}
-            suppressRowClickSelection={true}
-            onSelectionChanged={this.onSelectionChange}
-            defaultColDef={{
-              headerCheckboxSelectionFilteredOnly: true,
-              sortable: true,
-              filter: true
+      <MetadataTemplatesConsumer>
+        {({ getCurrentTemplate, loading: templatesLoading }) => (
+          <Table
+            rowKey={record => record["irida-static-sample-id"]}
+            loading={entriesLoading || templatesLoading}
+            columns={getCurrentTemplate()}
+            dataSource={entries}
+            scroll={{ x: "max-content" }}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: onSelectedRowChange,
+              selections: [
+                {
+                  key: "all-data",
+                  text: "Select All Samples",
+                  onSelect: onSelectAll
+                },
+                {
+                  key: "no-data",
+                  text: "Unselect All Samples",
+                  onSelect: onSelectNone
+                }
+              ]
             }}
-            enableCellChangeFlash={true}
-            onCellEditingStarted={this.onCellEditingStarted}
-            onCellEditingStopped={this.onCellEditingStopped}
           />
-        </div>
-      </>
+        )}
+      </MetadataTemplatesConsumer>
     );
   }
 }
 
 TableComponent.propTypes = {
-  height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array,

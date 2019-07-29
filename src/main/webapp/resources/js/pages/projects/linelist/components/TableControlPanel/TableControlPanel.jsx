@@ -35,10 +35,5 @@ TableControlPanel.propTypes = {
   /**
    * Function to handle opening and closing the panel
    */
-  togglePanel: PropTypes.func.isRequired,
-  /**
-   * The height of the table.  Requires because the user can change the window height
-   * which will affect the table and control panel components.
-   */
-  height: PropTypes.number.isRequired
+  togglePanel: PropTypes.func.isRequired
 };

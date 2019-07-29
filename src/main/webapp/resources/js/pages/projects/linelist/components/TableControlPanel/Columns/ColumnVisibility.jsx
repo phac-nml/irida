@@ -22,12 +22,7 @@ export default class ColumnVisibility extends React.Component {
      * A callback function for when there is a modification to the current template.
      * This allows the table to be updated.
      */
-    templateModified: PropTypes.func.isRequired,
-    /**
-     * The current height of the table.  This is only used to update the height of the
-     * panel when the user modifies the size of the browser window.
-     */
-    height: PropTypes.number.isRequired
+    templateModified: PropTypes.func.isRequired
   };
 
   /**
@@ -58,7 +53,7 @@ export default class ColumnVisibility extends React.Component {
     return (
       <div className="ag-grid-tool-panel--inner">
         {typeof columns !== "undefined" ? (
-          <div style={{ overflowY: "auto", height: this.props.height - 77 }}>
+          <div style={{ overflowY: "auto" }}>
             <List
               dataSource={columns.filter(
                 f => f.field !== FIELDS.sampleName && f.field !== FIELDS.icons
