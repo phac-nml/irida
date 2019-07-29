@@ -4,8 +4,7 @@ import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import styled from "styled-components";
 
 import { Table } from "antd";
 import { MetadataEntriesContext } from "../../../../../contexts/MetadataEntriesContext";
@@ -22,8 +21,28 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
+import { EditableCell } from "./renderers/EditableCell";
+import { EditableFormRow } from "../../../../../contexts/EditableRowContext";
 
 const { i18n } = window.PAGE;
+
+const EditableTable = styled(Table)`
+  .editable-cell {
+    position: relative;
+  }
+
+  .editable-cell-value-wrap {
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  .editable-row:hover .editable-cell-value-wrap {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 4px 11px;
+    min-height: 30px;
+  }
+`;
 
 /**
  * React component to render the ag-grid to the page.
@@ -417,15 +436,25 @@ export class TableComponent extends React.Component {
       onSelectAll,
       onSelectNone
     } = this.context;
+
+    const components = {
+      body: {
+        row: EditableFormRow,
+        cell: EditableCell
+      }
+    };
+
     return (
       <MetadataTemplatesConsumer>
         {({ getCurrentTemplate, loading: templatesLoading }) => (
-          <Table
+          <EditableTable
+            components={components}
             rowKey={record => record["irida-static-sample-id"]}
             loading={entriesLoading || templatesLoading}
             columns={getCurrentTemplate()}
             dataSource={entries}
             scroll={{ x: "max-content" }}
+            rowClassName={() => "editable-row"}
             rowSelection={{
               selectedRowKeys,
               onChange: onSelectedRowChange,

@@ -42,11 +42,18 @@ class MetadataTemplatesProvider extends React.Component {
       }
     }
 
-    const getColumnDefinition = ({ field, headerName, type }) => {
+    const getColumnDefinition = ({ field, headerName, type, editable }) => {
       const f = {
         key: field,
         title: <div style={{ whiteSpace: "nowrap" }}>{headerName || ""}</div>,
         dataIndex: field,
+        onCell: record => ({
+          editable,
+          record,
+          dataIndex: field,
+          title: headerName,
+          handleSave: () => console.log("IMPLEMENT THIS")
+        }),
         sorter: (a, b) => {
           const af = a[field];
           const bf = b[field];
