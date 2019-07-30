@@ -12,9 +12,7 @@ const USER_TYPE = window.PAGE.type;
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/user/analysis-outputs`
-    );
+    const { data } = await axios.get(`${BASE_URL}/user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error: error };
@@ -74,21 +72,15 @@ export async function prepareAnalysisOutputsDownload(outputs) {
 }
 
 export async function fetchPagedAnalyses(params) {
-  return axios
-    .post(`${BASE_URL}/list`, params)
-    .then(response => response.data);
+  return axios.post(`${BASE_URL}/list`, params).then(response => response.data);
 }
 
 export async function fetchAllPipelinesStates() {
-  return axios
-    .get(`${BASE_URL}/states`)
-    .then(response => response.data);
+  return axios.get(`${BASE_URL}/states`).then(response => response.data);
 }
 
 export async function fetchAllPipelinesTypes() {
-  return axios
-    .get(`${BASE_URL}/types`)
-    .then(response => response.data);
+  return axios.get(`${BASE_URL}/types`).then(response => response.data);
 }
 
 export async function deleteAnalysisSubmission({ id }) {

@@ -19,7 +19,7 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "clearFilterBtn")
 	private WebElement filterClear;
 
-	@FindBy(className = "analysis__state")
+	@FindBy(className = "ant-table-row")
 	private List<WebElement> analysesList;
 
 	@FindBy(className = "download-btn")

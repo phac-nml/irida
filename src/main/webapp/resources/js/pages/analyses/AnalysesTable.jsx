@@ -10,6 +10,7 @@ import {
 import { AnalysisState } from "./AnalysisState";
 import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
+import { getTextSearchProps } from "../../components/ant.design/table-search-props";
 
 export function AnalysesTable() {
   const ADMIN = window.PAGE.type === "admin"; // TODO: This needs to be dynamic
@@ -33,7 +34,8 @@ export function AnalysesTable() {
           width: 300
         }),
         title: getI18N("analyses.analysis-name"),
-        key: "name"
+        key: "name",
+        ...getTextSearchProps("name")
       },
       {
         title: getI18N("analyses.state"),
