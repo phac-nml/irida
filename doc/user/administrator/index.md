@@ -343,4 +343,6 @@ The exports will have one of the following states:
 Troubleshooting
 ===============
 
-To troubleshoot common problems in IRIDA, please see the [Troubleshooting Guide](troubleshooting/)
+To troubleshoot common problems in IRIDA, please see the **Troubleshooting** guides.
+
+ 1. [Troubleshooting Pipelines](troubleshooting/pipelines)

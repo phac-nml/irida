@@ -1,24 +1,22 @@
 ---
 layout: default
-search_title: "Troubleshooting IRIDA"
-description: "A troubleshooting guide for common issues in IRIDA."
+search_title: "Troubleshooting IRIDA Pipelines"
+description: "A troubleshooting guide for common pipeline issues in IRIDA."
 ---
 
-# Troubleshooting Guide
+# Troubleshooting Pipelines Guide
 {:.no_toc}
 
-This document describes common issues with IRIDA and how to resolve them.
+This document describes common issues with IRIDA pipelines and how to resolve them.
 
 * This comment becomes the table of contents
 {:toc}
 
-# 1. Analysis Pipeline Errors
+ When encountering an analysis pipeline error, the first step to troubleshooting is to figure out what sort of error was encountered. There are two types of errors that can occur: error with detailed information, and error with no detailed information.
 
-When encountering an analysis pipeline error, the first step to troubleshooting is to figure out what sort of error was encountered. There are two types of errors that can occur: error with detailed information, and error with no detailed information.
+# 1. Types of IRIDA job errors
 
-## 1.1. Types of IRIDA job errors
-
-### 1.1.1. Error with detailed information
+## 1.1. Error with detailed information
 
 This occurs when one of the Galaxy tools in the workflow reported an error and will show up with the status **Error** and a question mark **?** for more details. The stderr/stdout of the tool will be available in the preview.
 
@@ -30,7 +28,7 @@ Additional details will be available after clicking on the job:
 
 Here, we get the exact tool **Prokka** and version `1.13` that is causing the error, along with additional details about the Galaxy instance where all these tools are being run.
 
-### 1.1.2. Error with no detailed information
+## 1.2. Error with no detailed information
 
 This occurs when there was an issue unrelated to a specific Galaxy tool (and so no detailed information can be obtained about a specific tool).
 
@@ -74,11 +72,11 @@ d dummy datasets., errorCode=400014, traceback=null}
     
 In general, though, you may want to take a look at the specific Galaxy history used by this IRIDA analysis pipeline to run jobs.
 
-## 1.2. Finding the Galaxy History used by an IRIDA pipeline
+# 2. Finding the Galaxy History used by an IRIDA pipeline
 
 As mentioned in section (1), there are two types of errors that can occur in a pipeline: those with detailed information, and those without. Getting the Galaxy History used by the pipeline depends on which type of error you encounter. Once we have the Galaxy History id, we can log into Galaxy to find more information about what was going on with this particular jobs in this Galaxy history.
 
-### 1.2.1. Getting Galaxy History when a job has error details
+## 2.1. Getting Galaxy History when a job has error details
 
 In this case, it's pretty straightforward to get the Galaxy History id, it's displayed in the error details.
 
@@ -86,11 +84,11 @@ In this case, it's pretty straightforward to get the Galaxy History id, it's dis
 
 This tells us that the **Galaxy History ID** used by this pipeline is `e85a3be143d5905b`.
 
-### 1.2.2. Getting Galaxy History when job has no error details
+## 2.2. Getting Galaxy History when job has no error details
 
 In this case, it's a bit more difficult to find the Galaxy History id. We will have to log into the IRIDA database to search for it.
 
-#### 1.2.2.1. Logging into the IRIDA database
+### 2.2.1. Logging into the IRIDA database
 {:.no_toc}
 
 If you log into the machine running the IRIDA instance, you can find the database connection details in the `/etc/irida/irida.conf` file. For example:
@@ -109,7 +107,7 @@ To log into this database, you can run:
 mysql -u test -p --host localhost --database irida_test
 ```
 
-#### 1.2.2.2. Finding the Galaxy History id
+### 2.2.2. Finding the Galaxy History id
 {:.no_toc}
 
 Once we've logged into the database, we can run a query to get the Galaxy History id, but first we need the IRIDA Analysis pipeline id. This can be found in the page listing the pipelines:
@@ -136,7 +134,7 @@ This should give us:
 
 The field containing the Galaxy History id is `remote_analysis_id` (so the value we are looking for is `2a56795cad3c7db3`).
 
-#### 1.2.2.3. What if the Galaxy History id is NULL
+### 2.2.3. What if the Galaxy History id is NULL
 {:.no_toc}
 
 If this value is `NULL`, then it's possible that the error occurred before a Galaxy History was created. You can get more information about the history of this IRIDA analysis pipeline execution from the audit tables (`analysis_submission_AUD`). Please try running:
@@ -159,9 +157,9 @@ SELECT id,name,analysis_state,modified_date,remote_analysis_id FROM analysis_sub
 
 This lets us see the history of the job as it was processed through IRIDA (and includes the `modified_date` giving an idea of when each stage occurred). You can see that the first two states **NEW** and **PREPARING** have a `NULL` value for `remote_analysis_id`. If the IRIDA pipeline errored in these states, there would not have been a Galaxy History created. So, you can skip trying to check the Galaxy History for more details about the job.
 
-## 1.3. Viewing the Galaxy History used by the IRIDA analysis pipeline
+# 3. Viewing the Galaxy History used by the IRIDA analysis pipeline
 
-### 1.3.1. Logging into Galaxy
+## 3.1. Logging into Galaxy
 
 Once we have the Galaxy History id, we can move on to logging into Galaxy to view more details about what went wrong with the IRIDA analysis pipeline. The first step is logging into Galaxy as the same user used by IRIDA.
 
@@ -169,7 +167,7 @@ Once we have the Galaxy History id, we can move on to logging into Galaxy to vie
 
 ![galaxy-home.png][]
 
-### 1.3.2. Viewing all Galaxy histories
+## 3.2. Viewing all Galaxy histories
 
 Galaxy will default to one of the histories run by IRIDA. To see all the Galaxy histories, you can go to the **Saved Histories** page.
 
@@ -179,7 +177,7 @@ This should bring us to a list of all the Galaxy histories.
 
 ![galaxy-histories-list.png][]
 
-### 1.3.3. Viewing the correct history
+## 3.3. Viewing the correct history
 
 To view the correct History in Galaxy, we can skip directly to it using the following URL `http://GALAXY/histories/view?id=[Galaxy History id]` Where **Galaxy History id** is the id we discovered from step 1.2 (e.g., `e85a3be143d5905b`). For example, for me, going to <http://localhost:48888/histories/view?id=e85a3be143d5905b> brings up:
 
@@ -199,7 +197,7 @@ Srolling to the bottom of this screen there is a lot of information about the un
 
 For example, this contains the exact command-line that was run, system resources uses, the **Runner Job ID** (in this case `50` which is the slurm job id if using slurm to run jobs), as well as the **Path** to the dependency software (in this case `/export/tool_deps/_conda/envs/__prokka@1.13`, which is the location of the conda environment containing Prokka).
 
-### 1.3.4. Diagnosing the problem
+## 3.4. Diagnosing the problem
 
 All of this information could be useful to figure out the underlying issue for this IRIDA pipeline. In this case, from the **Prokka** error message:
 
@@ -222,11 +220,11 @@ sacct -j 50 --format="jobid,jobname%20,maxrss,maxrssnode,ntasks,elapsed,state,ex
 
 Here, `sacct` is a command that comes with slurm and lets you look up information about a job run on the cluster (specified as `-j 50`). The `--format=` option specifies what information to print (e.g., **JobID** and **JobName**). The `jobname%20` specifies that the **JobName** column should be 20 characters wide (useful for printing longer names). The **MaxRSSNode** tells you the cluster node the job executed on that used the maximum RSS (Resident Set Size, memory used by software). See documentation about your cluster scheduler for more information.
 
-## 1.4. Viewing additional Galaxy job information
+# 4. Viewing additional Galaxy job information
 
 If the instructions for [1.3](#13-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline) do not lead to a solution, there are additional files you can check in Galaxy to help diagnose an issue.
 
-### 1.4.1. Galaxy log files
+## 4.1. Galaxy log files
 
 The Galaxy log files are one possible source of additional information as to what went wrong with an analysis pipeline in IRIDA. These are often located in the files `galaxy/*.log` but this depends a lot on your specific Galaxy setup.
 
@@ -262,7 +260,7 @@ bash: mash: command not found
 
 Huh!? `mash` is not found. You could try re-installing `mash` to this environment (`conda install mash`) and try the tool again.
 
-#### 1.4.1.1. Galaxy Job Numbers in log file
+### 4.1.1. Galaxy Job Numbers in log file
 
 When scanning through the log file you will see lines like:
 
@@ -282,32 +280,34 @@ While the number **3363** in `queued as 3363` or `(3362/3363)` is the cluster/jo
 
 ![job-runner-id.png][]
 
-### 1.4.2. Galaxy job running directories
-
-## 1.5. Rerunning Galaxy jobs
-
-### 1.5.1. Rerunning jobs in Galaxy UI
-
-### 1.5.2. Rerunning jobs from command-line
-
-## 1.6. Examples
-
-### 1.6.1. SNVPhyl pipeline error
+## 4.2. Galaxy job running directories
 
 
 
-[jobs-all-error-details.png]: images/jobs-all-error-details.png
-[job-error-details.png]: images/job-error-details.png
-[job-error-nodetails.png]: images/job-error-nodetails.png
-[job-details-galaxy-history.png]: images/job-details-galaxy-history.png
-[irida-job-id.png]: images/irida-job-id.png
-[galaxy-home.png]: images/galaxy-home.png
-[galaxy-saved-histories.png]: images/galaxy-saved-histories.png
-[galaxy-histories-list.png]: images/galaxy-histories-list.png
-[galaxy-view-history.png]: images/galaxy-view-history.png
-[galaxy-job-debug.png]: images/galaxy-job-debug.png
-[galaxy-job-information.png]: images/galaxy-job-information.png
-[galaxy-job-information2.png]: images/galaxy-job-information2.png
+# 5. Rerunning Galaxy jobs
+
+## 5.1. Rerunning jobs in Galaxy UI
+
+## 5.2. Rerunning jobs from command-line
+
+# 6. Examples
+
+## 6.1. SNVPhyl pipeline error
+
+
+
+[jobs-all-error-details.png]: ../images/jobs-all-error-details.png
+[job-error-details.png]: ../images/job-error-details.png
+[job-error-nodetails.png]: ../images/job-error-nodetails.png
+[job-details-galaxy-history.png]: ../images/job-details-galaxy-history.png
+[irida-job-id.png]: ../images/irida-job-id.png
+[galaxy-home.png]: ../images/galaxy-home.png
+[galaxy-saved-histories.png]: ../images/galaxy-saved-histories.png
+[galaxy-histories-list.png]: ../images/galaxy-histories-list.png
+[galaxy-view-history.png]: ../images/galaxy-view-history.png
+[galaxy-job-debug.png]: ../images/galaxy-job-debug.png
+[galaxy-job-information.png]: ../images/galaxy-job-information.png
+[galaxy-job-information2.png]: ../images/galaxy-job-information2.png
 [prokka-tbl2asn]: {{ site.baseurl }}/administrator/faq/#1-tbl2asn-out-of-date
-[galaxy-job-id.png]: images/galaxy-job-id.png
-[job-runner-id.png]: images/job-runner-id.png
+[galaxy-job-id.png]: ../images/galaxy-job-id.png
+[job-runner-id.png]: ../images/job-runner-id.png
