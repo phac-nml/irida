@@ -42,7 +42,7 @@ Examples where this error could occur include timeouts when transferring files t
     25 Jul 2019 13:52:30,786 ERROR ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect:65 - Error occured for submission: AnalysisSubmission [id=3, name=AssemblyAnnotation_20190725_SRR1952908, submitter=admin, workflowId=4673cf14-20eb-44e1-986b-ac7714f9a96f, analysisState=SUBMITTING, analysisCleanedState=NOT_CLEANED] changing to state ERROR
 ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException: Timeout while uploading, time limit = 2 seconds
         at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService.filesToLibraryWait(GalaxyLibrariesService.java:245)
-        at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService.filesToLibraryToHistory(GalaxyHistoriesService.java:201)
+        at ca.coyamlrefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService.filesToLibraryToHistory(GalaxyHistoriesService.java:201)
         ...
         at java.lang.Thread.run(Thread.java:748)
 Caused by: java.util.concurrent.TimeoutException
@@ -244,7 +244,7 @@ Error: Invalid value for "--mash-bin": Mash does not exist at "mash". Please ins
 
 These messages indicates that for Galaxy Job **3362** failed with an error. The standard error contains messages `WARNING: which exited with non-zero code 1 with command "which mash" [in /tool_deps/_conda/envs/__refseq_masher@0.1.1`. This suggests that the issue is that the `mash` binary is not available in the conda environment `__refseq_masher@0.1.1`. So, you could activate this environment and check to see what's going on. For example:
 
-```
+```bash
 # First log into Galaxy machine then use commands like below
 PATH=/tool_deps/_conda/bin/:$PATH conda activate /tool_deps/_conda/envs/__refseq_masher\@0.1.1/
 
@@ -307,19 +307,19 @@ In this case, the job id is `3362`.
 
 Once you have the Galaxy job id, and the parent to the working directories, you can change into the job working directory using the following pattern of directory names (where **1234** is the job id):
 
-```
+```bash
 cd database/jobs_directory/001/1234
 ```
 
 As another example, with job `3362` the directory should be:
 
-```
+```bash
 cd database/jobs_directory/003/3362
 ```
 
 For longer job ids (such as **1234567**) there may be more intermediate directories. For example:
 
-```
+```bash
 cd database/jobs_directory/001/234/1234567
 ```
 
@@ -405,8 +405,10 @@ Now, in here lets look at the `tool_script.sh` file:
 ```
 #!/bin/bash
 ...
+
 . /export/tool_deps/_conda/bin/activate '/export/tool_deps/_conda/envs/__refseq_masher@0.1.1' > conda_activate.log 2>&1
 ...
+
 ln -s "/irida/sequence-files/1/2/SRR1952908_1.fastq" "SRR1952908_1.fastq" && ln -s "/irida/sequence-files/2/2/SRR1952908_2.fastq" "SRR1952908_2.fastq" &&  refseq_masher -vv contains --output refseq_masher-contains.tab --output-type tab --top-n-results 0 --parallelism "${GALAXY_SLOTS:-1}" --min-identity 0.9 --max-pvalue 0.01 "SRR1952908_1.fastq" "SRR1952908_2.fastq"
 ```
 
@@ -414,7 +416,7 @@ This file first tries to load up the tool dependencies (`. /export/tool_deps/_co
 
 If you are on a machine that has access to the same conda environment (has access to `/export/tool_deps/_conda/bin/activate ...`), then you could try executing this script yourself (or parts of this script).
 
-```
+```bash
 tool_script.sh
 ```
 
@@ -426,9 +428,233 @@ This could help give you insight into exactly why the specific tool is failing. 
 
 To tie everything together, let's work through troubleshooting a few example pipeline errors in IRIDA.
 
-## 6.1. SNVPhyl pipeline error
+## 6.1. SNVPhyl Pipeline
 
+### 6.1.1. Input data
 
+I submitted the data from the [IRIDA Sample Data][irida-sample-data] download. Specifically, samples from the fastq files in `miseq-run/Data/Intensities/BaseCalls/`, and in `miseq-run-salmonella/`. The reference genome is `references/08-5578.fasta`. I ran this through SNVPhyl with the default parameters:
+
+![snvphyl-pipeline-default.png][]
+
+### 6.1.2. Pipeline error
+
+After a while of running, the pipeline encountered an error:
+
+![snvphyl-pipeline-default-error.png][]
+
+The IRIDA log file contained:
+
+```
+30 Jul 2019 15:15:49,913 ERROR ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl:269 - Workflow for analysis AnalysisSubmission [id=8, name=SNVPhyl_20190730, submitter=admin, workflowId=b7c8b437-3c41-485e-92e5-72b67e37959f, analysisState=RUNNING,
+analysisCleanedState=NOT_CLEANED] in error state WorkflowStatus [state=error, percentComplete=0.85]
+30 Jul 2019 15:15:50,278 ERROR ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl:175 - Error checking state for AnalysisSubmission [id=8, name=SNVPhyl_20190730, submitter=admin, workflowId=b7c8b437-3c41-485e-92e5-72b67e37959f, analysisState=ERROR, analysisCleanedState=NOT_CLEANED]
+java.lang.NullPointerException
+        at ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError.<init>(JobError.java:164)
+        at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService.createNewJobErrors(GalaxyJobErrorsService.java:60)
+        at ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl.handleJobErrors(AnalysisExecutionScheduledTaskImpl.java:195)
+        at ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl.handleWorkflowStatus(AnalysisExecutionScheduledTaskImpl.java:272)
+        at ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl.monitorRunningAnalyses(AnalysisExecutionScheduledTaskImpl.java:173)
+        at ca.corefacility.bioinformatics.irida.config.services.scheduled.AnalysisScheduledTaskConfig.monitorRunningAnalyses(AnalysisScheduledTaskConfig.java:86)
+        at sun.reflect.GeneratedMethodAccessor561.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:498)
+        at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:65)
+        at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54)
+        at org.springframework.security.concurrent.DelegatingSecurityContextRunnable.run(DelegatingSecurityContextRunnable.java:80)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+        at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308)
+        at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180)
+        at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at java.lang.Thread.run(Thread.java:748)
+```
+
+### 6.1.3. Getting the Galaxy History id
+
+First, lets check the Galaxy History used by this analysis pipeline. This pipeline errored without a specific message for an individual tool. So, to get the Galaxy History id we'll have to check the database. See [section (2.2)][section-2.2] for more details.
+
+We get the IRIDA analysis id from the analysis page which is analysis id `8` (shown above). Using this, we can get the Galaxy History id using a query to the IRIDA database:
+
+```sql
+SELECT id,name,analysis_state,remote_analysis_id FROM analysis_submission WHERE id = 8;
+```
+
+```
++----+------------------+----------------+--------------------+
+| id | name             | analysis_state | remote_analysis_id |
++----+------------------+----------------+--------------------+
+|  8 | SNVPhyl_20190730 | ERROR          | 230ca48747e433cc   |
++----+------------------+----------------+--------------------+
+```
+
+So, the History id is `230ca48747e433cc`.
+
+### 6.1.4. View Galaxy History
+
+Lets use this History id to log into Galaxy and view the History. We do this by navigating to `http://GALAXY_URL/histories/view?id=230ca48747e433cc`. This shows us:
+
+![snvphyl-pipeline-default-history.png][]
+
+So, the error was at the **snvTable.tsv** stage of the pipeline. But, looking for more details in the Galaxy UI doesn't get us anywhere:
+
+![snvphyl-pipeline-default-debug.png][]
+
+Looking at the job information for the errored tool gives us a lot more details, but still nothing really stands out.
+
+![snvphyl-pipeline-default-jobinfo.png][]
+
+### 6.1.5. Rerun failed Galaxy job
+
+Just in case this was a random error, lets try rerunning the job that failed in Galaxy.
+
+First, let's switch to the Galaxy history by clicking the **Switch to this history** button:
+
+ ![galaxy-switch-to-history.png][]
+ 
+Now let's rerun the failed job:
+ 
+![snvphyl-pipeline-default-rerun.png][]
+
+Nope, same issue:
+
+![snvphyl-pipeline-default-rerun-error.png][]
+
+### 6.1.6. Examine job working directory
+
+Lets examine the job working directory to see if there are anymore hints as to why the job failed.
+
+First, lets get the job id from the Galaxy job information:
+
+![snvphyl-pipeline-default-galaxy-jobid.png][]
+
+We have a job id of `3410` here. So, lets change into that directory on the Galaxy machine.
+
+```bash
+# Log into Galaxy machine
+
+cd galaxy/database/jobs_directory/003/3410
+ls -1
+```
+
+```
+galaxy_3410.e
+galaxy_3410.ec
+galaxy_3410.o
+galaxy_3410.sh
+...
+tool_script.sh
+working
+```
+
+Lets look at the stderr `galaxy_3410.e`.
+
+```
+Alignment written to snvalign.fasta
+Alignment written to snvalign.phy
+```
+
+So, there's actual text here. Lets also look at stdout `galaxy_3410.o`.
+
+```
+/tool_deps/snvphyl/1.8/nml/package_snvphyl_1_8/a27110fb7e55/snvphyl/positions2snv_alignment.pl -i snvalign-positions.tsv -f fasta --reference-name reference -o snvalign.fasta
+Date: Tue Jul 30 20:15:28 UTC 2019
+Working on snvalign-positions.tsv
+No valid positions were found. Not creating empty alignment file
+/tool_deps/snvphyl/1.8/nml/package_snvphyl_1_8/a27110fb7e55/snvphyl/positions2snv_alignment.pl -i snvalign-positions.tsv -f phylip --reference-name reference -o snvalign.phy
+Date: Tue Jul 30 20:15:29 UTC 2019
+Working on snvalign-positions.tsv
+No valid positions were found. Not creating empty alignment file
+```
+
+So, this looks like a lot more information. It looks like **No valid positions were found** is a likely source of the error.
+
+To get more information, let's look at the intermediate files produced by the tool in the `working/` directory.
+
+```bash
+ls working/ -1
+```
+
+```
+dataset_8030.dat
+dataset_8030.dat.csi
+dataset_8032.dat
+dataset_8032.dat.csi
+dataset_8034.dat
+dataset_8034.dat.csi
+dataset_8036.dat
+dataset_8036.dat.csi
+snvalign-positions.tsv
+snvalign-stats.csv
+```
+
+The files `snvalign-positions.tsv` and `snvalign-stats.csv` would be some of the partial results written by this Galaxy tools. Lets look at this:
+
+```bash
+# `cut` cuts out certain columns from this file
+# `column` lines up these columns when printing the output
+cut -f 1,6 working/snvalign-stats.csv | column -s$'\t' -t
+```
+
+```
+#Reference name                Percentage of valid and included positions in core genome
+gi|662858600|ref|NC_013766.2|  0.00
+all                            0.00
+```
+
+The number `0.00` tells us that **0.00%** of positions were considered as valid by SNVPhyl, which means SNVPhyl will not produce a valid alignment of SNVs. This would explain the message `No valid positions were found. Not creating empty alignment file`.
+
+**Note: for more details on interpreting these files, please see the [SNVPhyl Documentation][snvphyl-docs].**
+
+Let's take a quick look at the `working/snvalign-positions.tsv` file:
+
+```bash
+head working/snvalign-positions.tsv | column -s$'\t' -t
+```
+
+```
+#Chromosome                    Position  Status            Reference  08-5578  08-5923  AE014613  hcc23
+gi|662858600|ref|NC_013766.2|  73        filtered-invalid  T          -        -        -         A
+gi|662858600|ref|NC_013766.2|  78        filtered-invalid  A          -        -        -         T
+gi|662858600|ref|NC_013766.2|  80        filtered-invalid  G          -        -        -         A
+gi|662858600|ref|NC_013766.2|  88        filtered-invalid  C          -        -        -         A
+gi|662858600|ref|NC_013766.2|  90        filtered-invalid  G          -        -        -         C
+gi|662858600|ref|NC_013766.2|  109       filtered-invalid  A          -        -        -         G
+gi|662858600|ref|NC_013766.2|  111       filtered-invalid  G          -        -        -         A
+gi|662858600|ref|NC_013766.2|  128       filtered-invalid  C          -        -        -         A
+gi|662858600|ref|NC_013766.2|  170       filtered-invalid  T          -        -        -         A
+```
+
+It looks like some SNV positions were identified, but they likely all have the status of `filtered-invalid`. We can verify this with:
+
+```bash
+# Prints lines not containing 'filtered'
+grep -v 'filtered' working/snvalign-positions.tsv
+```
+
+```
+#Chromosome     Position        Status  Reference       08-5578 08-5923 AE014613        hcc23
+```
+
+So, no lines (outside of the header line) contain the text `filtered`, so no `valid` SNVs were identified.
+
+### 6.1.7. Testing out a solution
+
+Examining the files in the Galaxy job working directory led us to the conclusion that no `valid` SNVs were identified by SNVPhyl, and so the Galaxy job building the alignment of SNVs failed.
+
+A common cause for this issue is that the [SNV density filtering][snv-density] thresholds are too high (default is to remove regions where there are at 2 or more SNVs in a 500 bp window).
+
+These can be adjusted in the parameters used by SNVPhyl:
+
+![snvphyl-pipeline-no-density-parameters.png][]
+
+Here, I adjusted the **SNV density threshold** of `501` to be greater than the **window size** (`500`).
+
+Rerunning the pipeline with these parameters results in a successfull execution:
+
+![snvphyl-pipeline-no-density-results.png][]
+
+## 6.2. Another example
 
 [jobs-all-error-details.png]: ../images/jobs-all-error-details.png
 [job-error-details.png]: ../images/job-error-details.png
@@ -451,5 +677,20 @@ To tie everything together, let's work through troubleshooting a few example pip
 [rerun-galaxy-job.png]: ../images/rerun-galaxy-job.png
 [section-1]: #1-types-of-irida-job-errors
 [section-2]: #2-finding-the-galaxy-history-used-by-an-irida-pipeline
+[section-2.2]: #22-getting-galaxy-history-when-job-has-no-error-details
 [section-3]: #3-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline
-[section-4.2]: #42-galaxy-job-working-directories 
+[section-4.2]: #42-galaxy-job-working-directories
+[irida-sample-data]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
+[snvphyl-pipeline-default.png]: ../images/snvphyl-pipeline-default.png
+[snvphyl-pipeline-default-error.png]: ../images/snvphyl-pipeline-default-error.png
+[snvphyl-pipeline-default-history.png]: ../images/snvphyl-pipeline-default-history.png
+[snvphyl-pipeline-default-debug.png]: ../images/snvphyl-pipeline-default-debug.png
+[snvphyl-pipeline-default-jobinfo.png]: ../images/snvphyl-pipeline-default-jobinfo.png
+[galaxy-switch-to-history.png]: ../images/galaxy-switch-to-history.png
+[snvphyl-pipeline-default-rerun.png]: ../images/snvphyl-pipeline-default-rerun.png
+[snvphyl-pipeline-default-rerun-error.png]: ../images/snvphyl-pipeline-default-rerun-error.png
+[snvphyl-pipeline-default-galaxy-jobid.png]: ../images/snvphyl-pipeline-default-galaxy-jobid.png
+[snvphyl-docs]: https://snvphyl.readthedocs.io/en/latest/user/output/#core-positions
+[snv-density]: https://snvphyl.readthedocs.io/en/latest/user/parameters/#step-12-consolidate-vcfs
+[snvphyl-pipeline-no-density-parameters.png]: ../images/snvphyl-pipeline-no-density-parameters.png
+[snvphyl-pipeline-no-density-results.png]: ../images/snvphyl-pipeline-no-density-results.png
