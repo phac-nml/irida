@@ -141,10 +141,6 @@ public class AnalysisController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/all")
 	public String getAdminAnalysisList(Model model) {
-		model.addAttribute("userList", false);
-		model.addAttribute("ajaxURL", "/analysis/ajax/list/all");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
 	}
 
@@ -725,42 +721,6 @@ public class AnalysisController {
 				model.addAttribute("preview", "tree");
 			}
 		}
-	}
-
-	/**
-	 * DataTables request handler for an Administrator listing all {@link AnalysisSubmission}
-	 *
-	 * @param params {@link DataTablesParams}
-	 * @param locale {@link Locale}
-	 * @return {@link DataTablesResponse}
-	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
-	 * @throws ExecutionManagerException      If the submission cannot be read properly
-	 */
-	@RequestMapping(value = "/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public DataTablesResponse getSubmissions(@DataTablesRequest DataTablesParams params, Locale locale)
-			throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
-		return analysesListingService.getPagedSubmissions(params, locale, null, null);
-	}
-
-	/**
-	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
-	 *
-	 * @param params    {@link DataTablesParams}
-	 * @param principal {@link Principal}
-	 * @param locale    {@link Locale}
-	 * @return {@link DataTablesResponse}
-	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
-	 * @throws ExecutionManagerException      If the submission cannot be read properly
-	 */
-	@RequestMapping("/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getSubmissionsForUser(@DataTablesRequest DataTablesParams params, Principal principal,
-			Locale locale) throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
-		User user = userService.getUserByUsername(principal.getName());
-		return analysesListingService.getPagedSubmissions(params, locale, user, null);
 	}
 
 	/**

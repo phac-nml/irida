@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -29,13 +31,14 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Controller to handle ajax requests for Analyses
  */
 @RestController
 @RequestMapping("/ajax/analyses")
-public class AnalysesRestController {
+public class AnalysesAjaxController {
 
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
@@ -45,7 +48,7 @@ public class AnalysesRestController {
 	private IridaWorkflowsService workflowsService;
 
 	@Autowired
-	public AnalysesRestController(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, IridaWorkflowsService iridaWorkflowsService,
 			MessageSource messageSource, UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission,
 			IridaWorkflowsService workflowsService) {
@@ -92,21 +95,12 @@ public class AnalysesRestController {
 	 */
 	@RequestMapping("/list")
 	public AnalysesListResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
-			@RequestParam(required = false, defaultValue = "user") String type, Locale locale)
+			HttpServletRequest request, Locale locale)
 			throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		User user = (User) authentication.getPrincipal();
-
-		/*
-		If they are requesting to list all submissions make sure they are truly on the administrator page
-		which would throw a true error and redirect the user else where.
-		 */
-		if (type.equals("all") && !user.getSystemRole()
-				.equals(Role.ROLE_ADMIN)) {
-			type = "user";
-		}
 
 		/*
 		Check to see if we are filtering by workflow type
@@ -125,9 +119,23 @@ public class AnalysesRestController {
 		Page<AnalysisSubmission> page;
 		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
 				analysesListRequest.getSort());
-		page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null,
-				analysesListRequest.getFilters()
-						.getState(), workflowIds, pageRequest);
+
+		/*
+		If they are requesting to list all submissions make sure they are truly on the administrator page
+		which would throw a true error and redirect the user else where.
+		 */
+		String referer = request.getHeader(HttpHeaders.REFERER);
+		if (referer.endsWith("all") && user.getSystemRole()
+				.equals(Role.ROLE_ADMIN)) {
+			// User is an admin and requesting the listing of all pages.
+			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null,
+					analysesListRequest.getFilters()
+							.getState(), workflowIds, pageRequest);
+		} else {
+			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null,
+					analysesListRequest.getFilters()
+							.getState(), user, workflowIds, pageRequest);
+		}
 
 		List<AnalysisModel> analyses = page.getContent()
 				.stream()

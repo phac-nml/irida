@@ -12,7 +12,7 @@ import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 
 export function AnalysesTable() {
-  const ADMIN = true; // TODO: This needs to be dynamic
+  const ADMIN = window.PAGE.type === "admin"; // TODO: This needs to be dynamic
   const {
     loading,
     total,
@@ -28,11 +28,10 @@ export function AnalysesTable() {
   function createColumns({ types, pipelineStates, deleteAnalysis }) {
     const columns = [
       {
-        ...idColumnFormat(),
-        title: getI18N("analyses.id")
-      },
-      {
-        ...nameColumnFormat(`${window.TL.BASE_URL}analysis/`),
+        ...nameColumnFormat({
+          url: `${window.TL.BASE_URL}analysis/`,
+          width: 300
+        }),
         title: getI18N("analyses.analysis-name"),
         key: "name"
       },
@@ -50,6 +49,7 @@ export function AnalysesTable() {
       {
         title: getI18N("analyses.type"),
         key: "type",
+        width: 250,
         dataIndex: "type",
         filterMultiple: false,
         filters: types
@@ -109,7 +109,7 @@ export function AnalysesTable() {
     >
       <Table
         style={{ margin: "6px 24px 0 24px" }}
-        scroll={{ x: 900 }}
+        scroll={{ x: "max-content" }}
         rowKey={record => record.id}
         loading={loading}
         pagination={{ total, pageSize }}

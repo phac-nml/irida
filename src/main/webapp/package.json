@@ -14,8 +14,11 @@
     ]
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions"
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "last 2 Opera versions"
   ],
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
