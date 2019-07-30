@@ -74,7 +74,7 @@ In general, though, you may want to take a look at the specific Galaxy history u
 
 # 2. Finding the Galaxy History used by an IRIDA pipeline
 
-As mentioned in section (1), there are two types of errors that can occur in a pipeline: those with detailed information, and those without. Getting the Galaxy History used by the pipeline depends on which type of error you encounter. Once we have the Galaxy History id, we can log into Galaxy to find more information about what was going on with this particular jobs in this Galaxy history.
+As mentioned in section [(1)][section-1], there are two types of errors that can occur in a pipeline: those with detailed information, and those without. Getting the Galaxy History used by the pipeline depends on which type of error you encounter. Once we have the Galaxy History id, we can log into Galaxy to find more information about what was going on with this particular jobs in this Galaxy history.
 
 ## 2.1. Getting Galaxy History when a job has error details
 
@@ -89,7 +89,6 @@ This tells us that the **Galaxy History ID** used by this pipeline is `e85a3be14
 In this case, it's a bit more difficult to find the Galaxy History id. We will have to log into the IRIDA database to search for it.
 
 ### 2.2.1. Logging into the IRIDA database
-{:.no_toc}
 
 If you log into the machine running the IRIDA instance, you can find the database connection details in the `/etc/irida/irida.conf` file. For example:
 
@@ -108,7 +107,6 @@ mysql -u test -p --host localhost --database irida_test
 ```
 
 ### 2.2.2. Finding the Galaxy History id
-{:.no_toc}
 
 Once we've logged into the database, we can run a query to get the Galaxy History id, but first we need the IRIDA Analysis pipeline id. This can be found in the page listing the pipelines:
 
@@ -135,7 +133,6 @@ This should give us:
 The field containing the Galaxy History id is `remote_analysis_id` (so the value we are looking for is `2a56795cad3c7db3`).
 
 ### 2.2.3. What if the Galaxy History id is NULL
-{:.no_toc}
 
 If this value is `NULL`, then it's possible that the error occurred before a Galaxy History was created. You can get more information about the history of this IRIDA analysis pipeline execution from the audit tables (`analysis_submission_AUD`). Please try running:
 
@@ -222,7 +219,7 @@ Here, `sacct` is a command that comes with slurm and lets you look up informatio
 
 # 4. Viewing additional Galaxy job information
 
-If the instructions for [1.3](#13-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline) do not lead to a solution, there are additional files you can check in Galaxy to help diagnose an issue.
+If the instructions for [(3)][section-3] do not lead to a solution, there are additional files you can check in Galaxy to help diagnose an issue.
 
 ## 4.1. Galaxy log files
 
@@ -280,17 +277,154 @@ While the number **3363** in `queued as 3363` or `(3362/3363)` is the cluster/jo
 
 ![job-runner-id.png][]
 
-## 4.2. Galaxy job running directories
+## 4.2. Galaxy job working directories
 
+For each job that is run in Galaxy, a unique directory is made to store outputs of the job as well as additional information used to run the job. It can sometimes be useful to switch into this directory and explore the contained files to gain more insight about a particular failure.
 
+### 4.2.1 Galaxy configuration
+
+By default, Galaxy will clean up the files in each job directory after the job finishes, but Galaxy can be configured to keep these files. To determine if this information still exists on your filesystem for you to explore, you will have to check the [cleanup_job Galaxy configuration][cleanup_job] parameter in the `config/galaxy.yml` file.
+
+```
+  cleanup_job: onsuccess
+```
+
+Possible values are `always`, `onsuccess`, and `never`. You will want this to be set to either `onsuccess` or `never`, so that Galaxy leaves the job working directories around once the job is completed.
+
+### 4.2.2. Find Galaxy job working directory parent
+
+To find the Galaxy job working directory, you will have to find the parent directory storing these files. By default, this will be `galaxy/database/jobs_directory`, but this is configurable with the [job_working_directory][job_working_directory] configuration option in the `config/galaxy.yml` file.
+
+### 4.2.3. Find Galaxy job id
+
+You will also need the Galaxy job id, which should be available from the Galaxy interface in the job information page.
+
+![galaxy-job-id.png][]
+
+In this case, the job id is `3362`.
+
+### 4.2.4. Find Galaxy job working directory
+
+Once you have the Galaxy job id, and the parent to the working directories, you can change into the job working directory using the following pattern of directory names (where **1234** is the job id):
+
+```
+cd database/jobs_directory/001/1234
+```
+
+As another example, with job `3362` the directory should be:
+
+```
+cd database/jobs_directory/003/3362
+```
+
+For longer job ids (such as **1234567**) there may be more intermediate directories. For example:
+
+```
+cd database/jobs_directory/001/234/1234567
+```
+
+### 4.2.5. Examine job working directory files
+
+Once inside the job working directory there are a number of files that may be useful to examine.
+
+#### 4.2.5.1. Standard out/error
+
+These files are named `galaxy_[JOBID].o` and `galaxy_[JOBID].e`. These should also be available from the Galaxy interface (in the job information page), but can also be inspected here.  For example:
+
+```bash
+cat galaxy_3362.e
+```
+
+```
+/tool_deps/_conda/envs/__refseq_masher@0.1.1/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: numpy.dtype size changed, may indicate binary incompatibility. Expected 96, got 88
+  return f(*args, **kwds)
+2019-07-30 18:29:31,832 WARNING: which exited with non-zero code 1 with command "which mash" [in /tool_deps/_conda/envs/__refseq_masher@0.1.1/lib/python3.6/site-packages/refseq_masher/utils.py:44]
+2019-07-30 18:29:31,832 WARNING:  [in /tool_deps/_conda/envs/__refseq_masher@0.1.1/lib/python3.6/site-packages/refseq_masher/utils.py:45]
+Usage: refseq_masher contains [OPTIONS] INPUT...
+
+Error: Invalid value for "--mash-bin": Mash does not exist at "mash". Please install Mash to your $PATH
+```
+
+#### 4.2.5.2. The `working` directory
+
+This directory is the current working directory of the tool when it's run in Galaxy. It may contain temporary files, or input/output files that were actively being used by the job.
+
+```
+ls working/
+conda_activate.log  SRR1952908_1.fastq  SRR1952908_2.fastq
+```
+
+#### 4.2.5.3. Galaxy and tool scripts
+
+These are the files that get submitted to a cluster/executed by Galaxy on your machine.
+
+1. `galaxy_[JOBID].sh`
+
+    The main script submitted by Galaxy to your cluster.
+
+2. `tool_script.sh`
+
+    The actual file which loads up the environment for your tools and runs the tools. This file should contain the command that is printed by the Galaxy interface as the command-line used to execute the tool.
+    
+    ![galaxy-command-line.png][]
+    
+3. Others
+
+    Other files contain information relating to the machine the tool executed on (memory and cpu info) as well as additional Galaxy files.
 
 # 5. Rerunning Galaxy jobs
 
+Sometimes it can be useful to rerun a Galaxy job that has failed previously to see if the error is reproducible. This can be accomplished through two ways: the Galaxy user interface (UI) or the command-line.
+
 ## 5.1. Rerunning jobs in Galaxy UI
+
+To rerun jobs from the Galaxy UI, you will first have to log into Galaxy and find the appropriate history for the IRIDA analysis pipeline (see section [(2)][section-2] for details).
+
+Once you have the Galaxy History in front of you, you can find the errored job and click the rerun job icon. All the parameters should be defaulted to the same as what the job was initially run with:
+
+![rerun-galaxy-job.png][]
+
+What you should check for when rerunning the job is whether the error is reproducible, or perhaps there is a different error now showing up.
 
 ## 5.2. Rerunning jobs from command-line
 
+**DANGER: Using the instructions in this method (rerunning the `tool_script.sh` file) *will* overwrite the previously generated files by this tool in Galaxy. Please only do this for tools that have errored and where you are certain you do not need previously-generated output files.**
+
+**Use this method only as a last resort and at your own risk.**
+
+If rerunning from the Galaxy UI does not give any clues as to what's going on, as a last resort you can also rerun from the command-line using the same environment as what Galaxy used to load tool dependencies.
+
+To do this, first find and change to the job working directory (as described in section [(4.2)][section-4.2]). For example, for job id `3362` we would change to:
+
+```
+cd database/jobs_directory/003/3362
+```
+
+Now, in here lets look at the `tool_script.sh` file:
+
+```
+#!/bin/bash
+...
+. /export/tool_deps/_conda/bin/activate '/export/tool_deps/_conda/envs/__refseq_masher@0.1.1' > conda_activate.log 2>&1
+...
+ln -s "/irida/sequence-files/1/2/SRR1952908_1.fastq" "SRR1952908_1.fastq" && ln -s "/irida/sequence-files/2/2/SRR1952908_2.fastq" "SRR1952908_2.fastq" &&  refseq_masher -vv contains --output refseq_masher-contains.tab --output-type tab --top-n-results 0 --parallelism "${GALAXY_SLOTS:-1}" --min-identity 0.9 --max-pvalue 0.01 "SRR1952908_1.fastq" "SRR1952908_2.fastq"
+```
+
+This file first tries to load up the tool dependencies (`. /export/tool_deps/_conda/bin/activate ...`). Then, this runs the actual command to produce the results.
+
+If you are on a machine that has access to the same conda environment (has access to `/export/tool_deps/_conda/bin/activate ...`), then you could try executing this script yourself (or parts of this script).
+
+```
+tool_script.sh
+```
+
+This could help give you insight into exactly why the specific tool is failing. However, you may have to modify the script to get it to work properly.
+
+**DANGER: Running `tool_script.sh` *will* overwrite previously generated files by this Galaxy job. Please only do this on jobs you are certain you do not need the output files for anymore.**
+
 # 6. Examples
+
+To tie everything together, let's work through troubleshooting a few example pipeline errors in IRIDA.
 
 ## 6.1. SNVPhyl pipeline error
 
@@ -311,3 +445,11 @@ While the number **3363** in `queued as 3363` or `(3362/3363)` is the cluster/jo
 [prokka-tbl2asn]: {{ site.baseurl }}/administrator/faq/#1-tbl2asn-out-of-date
 [galaxy-job-id.png]: ../images/galaxy-job-id.png
 [job-runner-id.png]: ../images/job-runner-id.png
+[cleanup_job]: https://github.com/galaxyproject/galaxy/blob/v19.05/config/galaxy.yml.sample#L1619
+[job_working_directory]: https://github.com/galaxyproject/galaxy/blob/v19.05/config/galaxy.yml.sample#L487
+[galaxy-command-line.png]: ../images/galaxy-command-line.png
+[rerun-galaxy-job.png]: ../images/rerun-galaxy-job.png
+[section-1]: #1-types-of-irida-job-errors
+[section-2]: #2-finding-the-galaxy-history-used-by-an-irida-pipeline
+[section-3]: #3-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline
+[section-4.2]: #42-galaxy-job-working-directories 
