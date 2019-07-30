@@ -155,7 +155,6 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
 			+ "  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id\n"
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
-			+ "  INNER JOIN sequencing_object seqobj ON o.sequencing_object_id = seqobj.id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
 			+ "WHERE\n"
