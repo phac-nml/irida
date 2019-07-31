@@ -1,6 +1,13 @@
 import React from "react";
-import { Progress, Tag } from "antd";
+import { Badge, Progress } from "antd";
 
+/**
+ * Display the state of an analysis, if it is running show the percentage
+ * @param {string} state
+ * @param {number} percentage
+ * @returns {*}
+ * @constructor
+ */
 export function AnalysisState({ state, percentage }) {
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -14,8 +21,10 @@ export function AnalysisState({ state, percentage }) {
           />
           {state}
         </>
+      ) : state === "Error" ? (
+        <Badge status="error" text={state} />
       ) : (
-        <Tag color={state === "Error" ? "red" : "green"}>{state}</Tag>
+        <Badge status="success" text={state} />
       )}
     </div>
   );
