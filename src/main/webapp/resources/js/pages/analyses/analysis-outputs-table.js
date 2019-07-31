@@ -235,7 +235,7 @@ function getWorkflowInfo(singleSampleOutputs) {
     if (!error) {
       workflowIds[workflowId] = data;
       if (grid) {
-        grid.context.beans.gridApi.beanInstance.redrawRows();
+        grid.gridOptions.api.redrawRows();
       }
     }
   });
