@@ -844,6 +844,70 @@ If everything is working properly (and if the `shovill` job error was just a ran
 
 ![sistr-pipeline-default-completed.png][]
 
+## 6.4. Analysis Pipeline upload timeout
+
+Let us say we have submitted a pipeline and it failed with no job errors:
+
+![job-error-nodetails.png][]
+
+And say the IRIDA log file contains:
+
+```
+31 Jul 2019 15:03:52,910 ERROR ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect:65 - Error occured for submission: AnalysisSubmission [id=11, name=AssemblyAnnotation_20190731_AE014613, submitter=admin, workflowId=4673cf14-20eb-44e1-986b-ac7714f9a96f, analysisState=SUBMITTING, analysisCleanedState=NOT_CLEANED] changing to state ERROR
+ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException: Timeout while uploading, time limit = 2 seconds
+        at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService.filesToLibraryWait(GalaxyLibrariesService.java:245)
+        at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService.filesToLibraryToHistory(GalaxyHistoriesService.java:201)
+        at ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy.uploadSequenceFilesPaired(AnalysisCollectionServiceGalaxy.java:140)
+        at ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy.prepareAnalysisFiles(AnalysisWorkspaceServiceGalaxy.java:231)
+        at ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.executeAnalysis(AnalysisExecutionServiceGalaxyAsync.java:147)
+...
+Caused by: java.util.concurrent.TimeoutException
+        at java.util.concurrent.FutureTask.get(FutureTask.java:205)
+        at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService.filesToLibraryWait(GalaxyLibrariesService.java:241)
+        ... 28 more
+```
+
+Now, this could be caused by too low of a value for the parameter `galaxy.library.upload.timeout` in the `/etc/irida/irida.conf` file, in which case you can increase the value and restart IRIDA.
+
+However, if the `galaxy.library.upload.timeout` value is already set pretty high, there may be some other reason why you are getting this **TimeoutException**.
+
+### 6.4.1. Look at Galaxy upload jobs
+
+Before IRIDA schedules a workflow, it must first get data into Galaxy. These are processed by Galaxy to determine the file type and other metadata about the files. These processing tasks are scheduled as jobs in Galaxy and if these jobs do not get scheduled in time by the underlying scheduler (i.e. SLURM), the `galaxy.library.upload.timeout` may be hit, causing IRIDA to switch this pipeline into an `ERROR` state.
+
+To look at the Galaxy upload jobs, the first method would be to search for them in your queuing system. For example, with SLURM you could run:
+
+```bash
+squeue -a --format="%.10i %.20j %.15u %.8T %.10M %.6D %R %C %m" -u galaxy
+```
+
+Here, `squeue` gives information about the jobs running in SLURM, `--format` defines what to display, and `-u galaxy` shows only jobs for the **galaxy** user (change this value depending on the user running jobs for Galaxy). The results of this command are:
+
+```
+JOBID    NAME                  USER    STATE    TIME  NODES  NODELIST(REASON)  CPUS  MIN_MEMORY
+7793214  g26950_upload1_workf  galaxy  PENDING  0:00  1      (None)            1     2G
+7793215  g26949_upload1_workf  galaxy  PENDING  0:00  1      (Priority)        1     2G
+7793216  g26951_upload1_workf  galaxy  PENDING  0:00  1      (Priority)        1     2G
+```
+
+Here, it looks like there are some Galaxy `upload` jobs, but they are all in the state `PENDING` on the cluster. Now may be a good time to check how busy your cluster is:
+
+```bash
+squeue -a --format="%.10i %.20j %.15u %.8T %.10M %.6D %R %C %m" | grep 'PENDING' -c
+```
+
+```
+500
+```
+
+Hmm... there are **500** jobs in the `PENDING` state on the cluster (including the 3 upload jobs we have scheduled). This may be the cause of the timeout issues for IRIDA analysis pipelines, that the cluster is too busy.
+
+### 6.4.2. Solving the issue
+
+Job scheduling priorities on a cluster is very specific for each institution, so we do not have any single solution for this problem. But we do recommend making sure the Galaxy `upload` jobs are given priority over many other jobs on your cluster if you want IRIDA pipelines (or Galaxy uploads) to be responsive. These jobs should take minimal resources and should only run for at most a few minutes.
+
+Priorizing jobs on a cluster and adjusting Galaxy job queues are beyond the scope of this guide, but we recommend referring to the [Galaxy Cluster][galaxy-cluster] and [Galaxy Job][galaxy-job] documentation for more details.
+
 [jobs-all-error-details.png]: ../images/jobs-all-error-details.png
 [job-error-details.png]: ../images/job-error-details.png
 [job-error-nodetails.png]: ../images/job-error-nodetails.png
@@ -895,3 +959,4 @@ If everything is working properly (and if the `shovill` job error was just a ran
 [sistr-pipeline-default-galaxy-jobinfo.png]: ../images/sistr-pipeline-default-galaxy-jobinfo.png
 [galaxy-job]: https://docs.galaxyproject.org/en/master/admin/jobs.html
 [sistr-pipeline-default-completed.png]: ../images/sistr-pipeline-default-completed.png
+[galaxy-cluster]: https://docs.galaxyproject.org/en/master/admin/cluster.html
