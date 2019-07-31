@@ -428,15 +428,92 @@ This could help give you insight into exactly why the specific tool is failing. 
 
 To tie everything together, let's work through troubleshooting a few example pipeline errors in IRIDA.
 
-## 6.1. SNVPhyl Pipeline
+## 6.1. Assembly and Annotation Pipeline `tbl2asn` error
 
 ### 6.1.1. Input data
+
+I submitted the data from the [IRIDA Sample Data][irida-sample-data] download. Specifically, a sample created samples from the fastq files in `miseq-run/Data/Intensities/BaseCalls/08-5578*.fastq.gz`.
+
+![assembly-pipeline-default.png][]
+
+### 6.1.2. Pipeline error
+
+After a while or running, the pipeline encountered an error:
+
+![assembly-pipeline-default-error.png][]
+
+This error gives us a lot of information as to what went wrong. In particular, we will likely have to update the `tbl2asn` software used by `prokka` (see the [Prokka and tbl2asn section][prokka-tbl2asn] for more details).
+
+### 6.1.2. Find Galaxy History and Prokka dependencies location
+
+To replace `tbl2asn` we'll first need to know where it's located in the Galaxy file system. To do this we'll need to find the Galaxy History used by this IRIDA pipeline. Luckily, this information is reported by IRIDA:
+
+![assembly-pipeline-default-galaxy-history-id.png][]
+
+So, let's go to this Galaxy History by using the URL `http://GALAXY_URL/histories/view?id=f2db41e1fa331b3e`. This shows us:
+
+![assembly-pipeline-default-galaxy-history-error.png][]
+
+Clicking on the **View details** page for one of the failed `Prokka` jobs gives us:
+
+![assembly-pipeline-default-job-details.png][]
+
+So, from this we can see that the `Prokka` dependencies location is:
+
+```
+/export/tool_deps/_conda/envs/__prokka@1.13
+```
+
+### 6.1.3. Replace `tbl2asn`
+
+Lets now log into Galaxy, and following the instructions in the [Prokka and tbl2asn section][prokka-tbl2asn] let's update `tbl2asn`.
+
+```bash
+# Log into Galaxy
+# Change to Prokka environment
+cd /export/tool_deps/_conda/envs/__prokka@1.13
+
+# Find `tbl2asn` binary
+find -iname 'tbl2asn'
+```
+
+```
+./bin/tbl2asn
+```
+
+So, `tbl2asn` is located in `./bin/tbl2asn`. This is the file we have to replace with the file from <ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/>.
+
+```bash
+wget ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz
+gunzip linux64.tbl2asn.gz
+cp linux64.tbl2asn ./bin/tbl2asn
+```
+
+### 6.1.4. Rerunning Prokka in Galaxy
+
+Now that we've replaced it, lets try rerunning Prokka in Galaxy.
+
+First, lets switch to the Galaxy History by going back the the History (`http://GALAXY_URL/histories/view?id=f2db41e1fa331b3e`) and clicking **Switch to this history**:
+
+![galaxy-switch-to-history.png][]
+
+From here, let's rerun the `Prokka` tool:
+
+![assembly-pipeline-default-rerun.png][]
+
+Awesome. It looks like it's all working now:
+
+![assembly-pipeline-default-success.png][]
+
+## 6.2. SNVPhyl Pipeline SNV density filtering error
+
+### 6.2.1. Input data
 
 I submitted the data from the [IRIDA Sample Data][irida-sample-data] download. Specifically, samples from the fastq files in `miseq-run/Data/Intensities/BaseCalls/`, and in `miseq-run-salmonella/`. The reference genome is `references/08-5578.fasta`. I ran this through SNVPhyl with the default parameters:
 
 ![snvphyl-pipeline-default.png][]
 
-### 6.1.2. Pipeline error
+### 6.2.2. Pipeline error
 
 After a while of running, the pipeline encountered an error:
 
@@ -470,7 +547,7 @@ java.lang.NullPointerException
         at java.lang.Thread.run(Thread.java:748)
 ```
 
-### 6.1.3. Getting the Galaxy History id
+### 6.2.3. Getting the Galaxy History id
 
 First, lets check the Galaxy History used by this analysis pipeline. This pipeline errored without a specific message for an individual tool. So, to get the Galaxy History id we'll have to check the database. See [section (2.2)][section-2.2] for more details.
 
@@ -490,7 +567,7 @@ SELECT id,name,analysis_state,remote_analysis_id FROM analysis_submission WHERE 
 
 So, the History id is `230ca48747e433cc`.
 
-### 6.1.4. View Galaxy History
+### 6.2.4. View Galaxy History
 
 Lets use this History id to log into Galaxy and view the History. We do this by navigating to `http://GALAXY_URL/histories/view?id=230ca48747e433cc`. This shows us:
 
@@ -504,7 +581,7 @@ Looking at the job information for the errored tool gives us a lot more details,
 
 ![snvphyl-pipeline-default-jobinfo.png][]
 
-### 6.1.5. Rerun failed Galaxy job
+### 6.2.5. Rerun failed Galaxy job
 
 Just in case this was a random error, lets try rerunning the job that failed in Galaxy.
 
@@ -520,7 +597,7 @@ Nope, same issue:
 
 ![snvphyl-pipeline-default-rerun-error.png][]
 
-### 6.1.6. Examine job working directory
+### 6.2.6. Examine job working directory
 
 Lets examine the job working directory to see if there are anymore hints as to why the job failed.
 
@@ -638,7 +715,7 @@ grep -v 'filtered' working/snvalign-positions.tsv
 
 So, no lines (outside of the header line) contain the text `filtered`, so no `valid` SNVs were identified.
 
-### 6.1.7. Testing out a solution
+### 6.2.7. Testing out a solution
 
 Examining the files in the Galaxy job working directory led us to the conclusion that no `valid` SNVs were identified by SNVPhyl, and so the Galaxy job building the alignment of SNVs failed.
 
@@ -650,11 +727,9 @@ These can be adjusted in the parameters used by SNVPhyl:
 
 Here, I adjusted the **SNV density threshold** of `501` to be greater than the **window size** (`500`).
 
-Rerunning the pipeline with these parameters results in a successfull execution:
+Rerunning the pipeline with these parameters results in a successful execution:
 
 ![snvphyl-pipeline-no-density-results.png][]
-
-## 6.2. Another example
 
 [jobs-all-error-details.png]: ../images/jobs-all-error-details.png
 [job-error-details.png]: ../images/job-error-details.png
@@ -694,3 +769,10 @@ Rerunning the pipeline with these parameters results in a successfull execution:
 [snv-density]: https://snvphyl.readthedocs.io/en/latest/user/parameters/#step-12-consolidate-vcfs
 [snvphyl-pipeline-no-density-parameters.png]: ../images/snvphyl-pipeline-no-density-parameters.png
 [snvphyl-pipeline-no-density-results.png]: ../images/snvphyl-pipeline-no-density-results.png
+[assembly-pipeline-default.png]: ../images/assembly-pipeline-default.png
+[assembly-pipeline-default-error.png]: ../images/assembly-pipeline-default-error.png
+[assembly-pipeline-default-galaxy-history-id.png]: ../images/assembly-pipeline-default-galaxy-history-id.png
+[assembly-pipeline-default-galaxy-history-error.png]: ../images/assembly-pipeline-default-galaxy-history-error.png
+[assembly-pipeline-default-job-details.png]: ../images/assembly-pipeline-default-job-details.png
+[assembly-pipeline-default-rerun.png]: ../images/assembly-pipeline-default-rerun.png
+[assembly-pipeline-default-success.png]: ../images/assembly-pipeline-default-success.png
