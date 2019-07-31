@@ -4,7 +4,6 @@ import { Button, Input, Popconfirm, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
-  idColumnFormat,
   nameColumnFormat
 } from "../../components/ant.design/table-renderers";
 import { AnalysisState } from "./AnalysisState";
@@ -13,7 +12,7 @@ import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../../components/ant.design/table-search-props";
 
 export function AnalysesTable() {
-  const ADMIN = window.PAGE.type === "admin"; // TODO: This needs to be dynamic
+  const ADMIN = window.location.href.endsWith("all");
   const {
     loading,
     total,
@@ -41,7 +40,7 @@ export function AnalysesTable() {
         title: getI18N("analyses.state"),
         key: "state",
         dataIndex: "state",
-        width: 100,
+        width: 130,
         filterMultiple: false,
         filters: pipelineStates,
         render(state, data) {
