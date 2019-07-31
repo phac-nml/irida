@@ -31,6 +31,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
 * [Developer]: Update eslint config to use `babel-parser`.
+* [Developer/UI]: Fixed bug where pipeline name not displayed on Analysis Outputs Table.
 
 19.01 to 19.05
 ---------------
