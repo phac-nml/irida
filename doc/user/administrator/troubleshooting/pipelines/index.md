@@ -731,6 +731,119 @@ Rerunning the pipeline with these parameters results in a successful execution:
 
 ![snvphyl-pipeline-no-density-results.png][]
 
+## 6.3. IRIDA Analysis Pipeline that runs forever
+
+Lets imagine a scenario where a pipeline has started running, but never completes. It appears to be stuck in the `RUNNING` stage.
+
+![sistr-default-pipeline-state.png][]
+
+So, lets take a look at what's going on.
+
+### 6.3.1. Find Galaxy History
+
+Since the pipeline is still running, there is no Galaxy History id displayed in the IRIDA interface. So, you must log into the IRIDA database to find the History id.
+
+For this analysis pipeline, the IRIDA id is `468`, so to find the Galaxy History id, we run the query:
+
+```sql
+SELECT id,name,analysis_state,remote_analysis_id FROM analysis_submission WHERE id = 468;
+```
+
+```
++-----+-------------------------------+----------------+--------------------+
+| id  | name                          | analysis_state | remote_analysis_id |
++-----+-------------------------------+----------------+--------------------+
+| 468 | SISTRTyping_20190731_SH10-001 | RUNNING        | c85e859df31e0b2b   |
++-----+-------------------------------+----------------+--------------------+
+```
+
+The Galaxy History id is in the column **remote_analysis_id** which is `c85e859df31e0b2b`.
+
+We can use this to go to the History in Galaxy by navigating to `http://GALAXY_URL/histories/view?id=c85e859df31e0b2b`. This shows us:
+
+![sistr-pipeline-default-shovill-running.png][]
+
+So, it looks like it's the `shovill` stage (genome assembly) which is stuck and not completing.
+
+### 6.3.2. Cluster/SLURM job info
+
+Lets look into more details on the job that was scheduled to the cluster (using SLURM).
+
+First, we must get the Galaxy Job ID, which can be found in the job info page:
+
+![sistr-pipeline-default-galaxy-jobinfo.png][]
+
+From here, we can find the **Job API ID** of `26851`.
+
+When running through this tutorial, I could not see the SLURM job id, so we'll have to find this out another way using the Galaxy **Job API ID**.
+
+We can log into the cluster and run the SLURM command:
+
+```bash
+squeue -a --format="%.10i %.20j %.15u %.8T %.10M %.6D %R %C %m" | grep 26851
+```
+
+```
+   7791919 g26851_shovill_workf    galaxy-irida  RUNNING       2-03:07      1 node-2 8 24G
+```
+
+Lining this up and including the header for this info gives us:
+
+```
+JOBID    NAME                  USER          STATE    TIME     NODES  NODELIST(REASON)  CPUS  MIN_MEMORY
+7791919  g26851_shovill_workf  galaxy-irida  RUNNING  2-03:07  1      node-2            8     24G
+```
+
+So, the command `squeue` prints information about active jobs in the SLURM queue (`--format` is used to choose the information to display). We then use `grep 26851` to search for the Galaxy Job ID, which is printed as part of the **NAME** of the job running with SLURM (which is not the SLURM **JOBID**).
+
+*Note: If this does not work because the Galaxy Job ID does not display as part of the **NAME**, you could also use something like `grep '(26851) queued as' galaxy/*.log` in the Galaxy log files, which should print a line like `(26851) queued as 7791919` showing you exactly what the SLURM job id is.*
+
+Coming back to the SLURM job information we just printed, you can see that the **TIME** is listed as *2 days 3 hours and 7 minutes*. This is way too long for the tool `shovill`, so something has gone wrong.
+
+### 6.3.3. Log into cluster node for more details
+
+To figure out what went wrong, lets try logging into the cluster node running the job `node-2` and looking for more details.
+
+```bash
+ssh node-2
+
+ps aux | grep shovill
+```
+
+```
+... shovill --outdir out --cpus 8 --ram 24 --R1 /irida/file_1.fastq --R2 /irida/file_2.fastq ...
+```
+
+This tells us that `shovill` is running on this machine, but if we run `top` it shows us that `shovill` nor any of its dependencies are running (**0% CPU usage**). So, something strange is going on here.
+
+### 6.3.4. Reschedule SLURM job
+
+Lets log out of the cluster node (`node-2`) running this job and try rescheduling the job on the cluster. To do this, we can just cancel the current job and Galaxy should (if properly configured, see the [Galaxy Job Configuration][galaxy-job] for more information) detect this situation and reschedule `shovill` on the cluster.
+
+To cancel the current job, we first need the cluster (SLURM) job id, which was displayed as **JOBID** when running the `squeue` command in section [(6.3.2)][section-6.3.2] above.
+
+```
+JOBID    NAME                  USER          STATE    TIME     NODES  NODELIST(REASON)  CPUS  MIN_MEMORY
+7791919  g26851_shovill_workf  galaxy-irida  RUNNING  2-03:07  1      node-2            8     24G
+```
+
+Here, the id is `7791919`. So, to cancel the job, we can use the command (required to be run as the same user submitting the Galaxy jobs):
+
+```bash
+scancel 7791919
+```
+
+You should now see that job `7791919` disappears from the cluster queue, and if Galaxy is configured to detect and resubmit jobs that were cancelled, you should now see a new job scheduled for `shovill`.
+
+```
+JOBID    NAME                  USER          STATE    TIME  NODES  NODELIST(REASON)  CPUS  MIN_MEMORY
+7791962  g26851_shovill_workf  galaxy-irida  RUNNING  0:05  1      node-3            8     24G
+```
+
+If everything is working properly (and if the `shovill` job error was just a random error) you should eventually see the IRIDA pipeline complete.
+
+![sistr-pipeline-default-completed.png][]
+
 [jobs-all-error-details.png]: ../images/jobs-all-error-details.png
 [job-error-details.png]: ../images/job-error-details.png
 [job-error-nodetails.png]: ../images/job-error-nodetails.png
@@ -755,6 +868,7 @@ Rerunning the pipeline with these parameters results in a successful execution:
 [section-2.2]: #22-getting-galaxy-history-when-job-has-no-error-details
 [section-3]: #3-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline
 [section-4.2]: #42-galaxy-job-working-directories
+[section-6.3.2]: #632-clusterslurm-job-info
 [irida-sample-data]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
 [snvphyl-pipeline-default.png]: ../images/snvphyl-pipeline-default.png
 [snvphyl-pipeline-default-error.png]: ../images/snvphyl-pipeline-default-error.png
@@ -776,3 +890,8 @@ Rerunning the pipeline with these parameters results in a successful execution:
 [assembly-pipeline-default-job-details.png]: ../images/assembly-pipeline-default-job-details.png
 [assembly-pipeline-default-rerun.png]: ../images/assembly-pipeline-default-rerun.png
 [assembly-pipeline-default-success.png]: ../images/assembly-pipeline-default-success.png
+[sistr-default-pipeline-state.png]: ../images/sistr-default-pipeline-state.png
+[sistr-pipeline-default-shovill-running.png]: ../images/sistr-pipeline-default-shovill-running.png
+[sistr-pipeline-default-galaxy-jobinfo.png]: ../images/sistr-pipeline-default-galaxy-jobinfo.png
+[galaxy-job]: https://docs.galaxyproject.org/en/master/admin/jobs.html
+[sistr-pipeline-default-completed.png]: ../images/sistr-pipeline-default-completed.png
