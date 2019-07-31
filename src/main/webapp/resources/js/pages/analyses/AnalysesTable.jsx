@@ -11,6 +11,11 @@ import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../../components/ant.design/table-search-props";
 
+/**
+ * Displays the Analyses Table for both user and admin pages.
+ * @returns {*}
+ * @constructor
+ */
 export function AnalysesTable() {
   const ADMIN = window.location.href.endsWith("all");
   const {
