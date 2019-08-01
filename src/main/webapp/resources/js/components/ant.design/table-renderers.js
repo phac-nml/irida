@@ -5,6 +5,13 @@ import { formatInternationalizedDateTime } from "../../utilities/date-utilities"
 
 const { Text } = Typography;
 
+export const idColumnFormat = () => ({
+  dataIndex: "id",
+  key: "identifier",
+  sorter: true,
+  width: 50
+});
+
 export const nameColumnFormat = ({ url, width }) => {
   return {
     dataIndex: "name",
