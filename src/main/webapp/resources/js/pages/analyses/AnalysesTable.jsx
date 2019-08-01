@@ -45,7 +45,6 @@ export function AnalysesTable() {
         title: getI18N("analyses.state"),
         key: "state",
         dataIndex: "state",
-        width: 130,
         filterMultiple: false,
         filters: pipelineStates,
         render(state, data) {
@@ -86,18 +85,19 @@ export function AnalysesTable() {
       columns.push({
         title: "",
         key: "actions",
-        fixed: "right",
-        render: (text, record) => (
-          <Popconfirm
-            placement={"top"}
-            title={"Delete this analysis?"}
-            onConfirm={() => deleteAnalysis(record.id)}
-          >
-            <Button type={"link"} size="small">
-              Delete
-            </Button>
-          </Popconfirm>
-        )
+        render(text, record) {
+          return (
+            <Popconfirm
+              placement={"top"}
+              title={"Delete this analysis?"}
+              onConfirm={() => deleteAnalysis(record.id)}
+            >
+              <Button type={"link"} size="small">
+                Delete
+              </Button>
+            </Popconfirm>
+          );
+        }
       });
     }
 
