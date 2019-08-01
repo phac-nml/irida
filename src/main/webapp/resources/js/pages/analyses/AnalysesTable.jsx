@@ -85,6 +85,7 @@ export function AnalysesTable() {
       columns.push({
         title: "",
         key: "actions",
+        fixed: "right",
         render(text, record) {
           return (
             <Popconfirm
