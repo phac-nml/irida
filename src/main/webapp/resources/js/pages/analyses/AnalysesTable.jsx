@@ -87,7 +87,7 @@ export function AnalysesTable() {
         key: "actions",
         fixed: "right",
         render(text, record) {
-          return (
+          return record.modifiable ? (
             <Popconfirm
               placement={"top"}
               title={"Delete this analysis?"}
@@ -97,7 +97,7 @@ export function AnalysesTable() {
                 Delete
               </Button>
             </Popconfirm>
-          );
+          ) : null;
         }
       });
     }
