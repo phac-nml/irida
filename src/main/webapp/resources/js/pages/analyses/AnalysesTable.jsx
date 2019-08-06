@@ -109,7 +109,7 @@ export function AnalysesTable() {
     <PageWrapper
       title={getI18N("analyses.header")}
       headerExtras={
-        <Row gutter={12} style={{ marginRight: 18 }}>
+        <Row gutter={12}>
           <Input.Search onSearch={onSearch} />
         </Row>
       }
