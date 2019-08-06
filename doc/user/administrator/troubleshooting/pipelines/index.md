@@ -42,7 +42,7 @@ Examples where this error could occur include timeouts when transferring files t
     25 Jul 2019 13:52:30,786 ERROR ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect:65 - Error occured for submission: AnalysisSubmission [id=3, name=AssemblyAnnotation_20190725_SRR1952908, submitter=admin, workflowId=4673cf14-20eb-44e1-986b-ac7714f9a96f, analysisState=SUBMITTING, analysisCleanedState=NOT_CLEANED] changing to state ERROR
 ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException: Timeout while uploading, time limit = 2 seconds
         at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService.filesToLibraryWait(GalaxyLibrariesService.java:245)
-        at ca.coyamlrefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService.filesToLibraryToHistory(GalaxyHistoriesService.java:201)
+        at ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService.filesToLibraryToHistory(GalaxyHistoriesService.java:201)
         ...
         at java.lang.Thread.run(Thread.java:748)
 Caused by: java.util.concurrent.TimeoutException
@@ -188,7 +188,7 @@ Clicking the **i** icon gives me more information about the Galaxy job.
 
 ![galaxy-job-information.png][]
 
-Srolling to the bottom of this screen there is a lot of information about the underlying infrastructure and software:
+Scrolling to the bottom of this screen there is a lot of information about the underlying infrastructure and software:
 
 ![galaxy-job-information2.png][]
 
@@ -422,7 +422,7 @@ tool_script.sh
 
 This could help give you insight into exactly why the specific tool is failing. However, you may have to modify the script to get it to work properly.
 
-**DANGER: Running `tool_script.sh` *will* overwrite previously generated files by this Galaxy job. Please only do this on jobs you are certain you do not need the output files for anymore.**
+**DANGER: Running `tool_script.sh` *will* overwrite previously generated files by this Galaxy job. Please only do this on jobs you are certain you do not need the output files.**
 
 # 6. Examples
 
@@ -438,7 +438,7 @@ I submitted the data from the [IRIDA Sample Data][irida-sample-data] download. S
 
 ### 6.1.2. Pipeline error
 
-After a while or running, the pipeline encountered an error:
+After a while of running, the pipeline encountered an error:
 
 ![assembly-pipeline-default-error.png][]
 
@@ -906,7 +906,7 @@ Hmm... there are **500** jobs in the `PENDING` state on the cluster (including t
 
 Job scheduling priorities on a cluster is very specific for each institution, so we do not have any single solution for this problem. But we do recommend making sure the Galaxy `upload` jobs are given priority over many other jobs on your cluster if you want IRIDA pipelines (or Galaxy uploads) to be responsive. These jobs should take minimal resources and should only run for at most a few minutes.
 
-Priorizing jobs on a cluster and adjusting Galaxy job queues are beyond the scope of this guide, but we recommend referring to the [Galaxy Cluster][galaxy-cluster] and [Galaxy Job][galaxy-job] documentation for more details.
+Prioritizing jobs on a cluster and adjusting Galaxy job queues are beyond the scope of this guide, but we recommend referring to the [Galaxy Cluster][galaxy-cluster] and [Galaxy Job][galaxy-job] documentation for more details.
 
 [jobs-all-error-details.png]: ../images/jobs-all-error-details.png
 [job-error-details.png]: ../images/job-error-details.png
