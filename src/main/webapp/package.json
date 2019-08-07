@@ -93,7 +93,7 @@
     "babel-plugin-import": "^1.12.0",
     "bootstrap-sass": "^3.3.7",
     "bower": "^1.7.7",
-    "chromedriver": "2.46",
+    "chromedriver": "76.0.0",
     "clean-webpack-plugin": "^1.0.1",
     "css-loader": "^2.1.0",
     "cssnano": "^4.1.10",
