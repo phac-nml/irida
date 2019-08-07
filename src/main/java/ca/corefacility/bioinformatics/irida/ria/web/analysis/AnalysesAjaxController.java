@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -15,22 +16,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -80,7 +81,8 @@ public class AnalysesAjaxController {
 		Set<AnalysisType> types = workflowsService.getRegisteredWorkflowTypes();
 		return types.stream()
 				.map(t -> new AnalysisTypeModel(
-						messageSource.getMessage("workflow." + t.getType() + ".title", new Object[] {}, locale), t.getType()))
+						messageSource.getMessage("workflow." + t.getType() + ".title", new Object[] {}, locale),
+						t.getType()))
 				.collect(Collectors.toList());
 	}
 
@@ -88,15 +90,13 @@ public class AnalysesAjaxController {
 	 * Returns a list of analyses based on paging, sorting and filter requirements sent in {@link AnalysesListRequest}
 	 *
 	 * @param analysesListRequest description of the paging requirements.  Includes sorting, filtering, and paging
-	 * @param type of the list required (whether administrator or user)
-	 * @param locale of the current user
+	 * @param locale              of the current user
 	 * @return the current contents of the table based on the state requested
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
 	 */
 	@RequestMapping("/list")
 	public AnalysesListResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
-			HttpServletRequest request, Locale locale)
-			throws IridaWorkflowNotFoundException {
+			HttpServletRequest request, Locale locale) throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -105,15 +105,19 @@ public class AnalysesAjaxController {
 		/*
 		Check to see if we are filtering by workflow type
 		 */
-		Set<UUID> workflowIds = null;
-		if (!Strings.isNullOrEmpty(analysesListRequest.getFilters()
-				.getType())) {
-			AnalysisType workflowType = analysisTypesService.fromString(analysesListRequest.getFilters()
-					.getType());
-			Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(workflowType);
-			workflowIds = workflows.stream()
-					.map(IridaWorkflow::getWorkflowIdentifier)
-					.collect(Collectors.toSet());
+		Set<UUID> workflowIds = new HashSet<>();
+		if (analysesListRequest.getFilters()
+				.getType()
+				.size() > 0) {
+			List<String> workflowTypesFilter = analysesListRequest.getFilters()
+					.getType();
+			for (String type : workflowTypesFilter) {
+				AnalysisType workflowType = analysisTypesService.fromString(type);
+				Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(workflowType);
+				workflowIds.addAll(workflows.stream()
+						.map(IridaWorkflow::getWorkflowIdentifier)
+						.collect(Collectors.toSet()));
+			}
 		}
 
 		Page<AnalysisSubmission> page;
@@ -157,25 +161,9 @@ public class AnalysesAjaxController {
 		analysisSubmissionService.delete(id);
 	}
 
-
 	private AnalysisModel createAnalysisModel(AnalysisSubmission submission, Locale locale) {
 		float percentComplete = 0;
 		AnalysisState analysisState = submission.getAnalysisState();
-		JobError error = null;
-		if (analysisState.equals(AnalysisState.ERROR)) {
-			try {
-				error = analysisSubmissionService.getFirstJobError(submission.getId());
-			} catch (ExecutionManagerException e) {
-				// Leave error set to null for now.
-			}
-		} else {
-			try {
-				percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
-			} catch (ExecutionManagerException e) {
-				// Leave the percentage set to 0.
-			}
-		}
-
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
 		String workflowType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType()
@@ -195,8 +183,13 @@ public class AnalysesAjaxController {
 		return new AnalysisModel(submission, state, duration, workflow, percentComplete, updatePermission);
 	}
 
-	private JobError getFirstJobError(AnalysisSubmission submission) throws ExecutionManagerException {
-		return analysisSubmissionService.getFirstJobError(submission.getId());
+	@RequestMapping("/download/{id}")
+	public void downloadAnalysis(@PathVariable Long id, HttpServletResponse response) {
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(id);
+
+		Analysis analysis = analysisSubmission.getAnalysis();
+		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
+		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 import React from "react";
 import {
   deleteAnalysisSubmission,
+  downloadAnalysis,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
@@ -35,9 +36,12 @@ class AnalysesProvider extends React.Component {
       column: "createdDate",
       total: undefined,
       filters: {},
+      clearFilters: this.clearFilters,
       onSearch: this.onSearch,
       handleTableChange: this.handleTableChange,
-      deleteAnalysis: this.deleteAnalysis
+      deleteAnalysis: this.deleteAnalysis,
+      downloadAnalysis: this.downloadAnalysis,
+      updateTable: this.updateTable
     };
   }
 
@@ -50,7 +54,7 @@ class AnalysesProvider extends React.Component {
       fetchAllPipelinesStates(),
       fetchAllPipelinesTypes()
     ]);
-    this.setState({ pipelineStates, types }, this.updateTable);
+    this.setState({ pipelineStates, types });
   }
 
   /**
@@ -80,15 +84,11 @@ class AnalysesProvider extends React.Component {
   /**
    * Handles search values entered in the tables global search box.
    *
-   * @param {string} value - the value to search for
+   * @param {string} search - the value to search for
    */
-  onSearch = value =>
-    this.setState(
-      {
-        search: value
-      },
-      this.updateTable
-    );
+  onSearch = search => this.setState({ search });
+
+  clearFilters = () => this.setState({ filters: {}, search: "" });
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
@@ -100,19 +100,14 @@ class AnalysesProvider extends React.Component {
   handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
-    const formattedFilter = {};
-    Object.keys(filters).forEach(f => (formattedFilter[f] = filters[f][0]));
 
-    this.setState(
-      {
-        pageSize,
-        current,
-        order: order || "descend",
-        column: field || "createdDate",
-        filters: formattedFilter
-      },
-      this.updateTable
-    );
+    this.setState({
+      pageSize,
+      current,
+      order: order || "descend",
+      column: field || "createdDate",
+      filters
+    }, () => this.updateTable());
   };
 
   /**
@@ -123,6 +118,8 @@ class AnalysesProvider extends React.Component {
    */
   deleteAnalysis = id =>
     deleteAnalysisSubmission({ id }).then(this.updateTable);
+
+  downloadAnalysis = id => downloadAnalysis({ id });
 
   render() {
     return <Provider value={this.state}>{this.props.children}</Provider>;

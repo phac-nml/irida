@@ -86,3 +86,7 @@ export async function fetchAllPipelinesTypes() {
 export async function deleteAnalysisSubmission({ id }) {
   return axios.delete(`${BASE_URL}/delete?id=${id}`);
 }
+
+export function downloadAnalysis({ id }) {
+  return axios.get(`${BASE_URL}/download/${id}`);
+}

@@ -4,6 +4,9 @@ import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+/**
+ * Used to represent an {@link AnalysisSubmission} for consumption by the user interface.
+ */
 public class AnalysisModel {
 	private Long id;
 	private String name;

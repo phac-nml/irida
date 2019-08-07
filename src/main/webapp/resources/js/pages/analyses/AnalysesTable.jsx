@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AnalysesContext } from "../../contexts/AnalysesContext";
-import { Button, Input, Popconfirm, Row, Table } from "antd";
+import { Button, Icon, Input, Popconfirm, Row, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
@@ -10,6 +10,7 @@ import { AnalysisState } from "./AnalysisState";
 import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../../components/ant.design/table-search-props";
+import { SPACE_SM } from "../../styles/spacing";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -25,10 +26,14 @@ export function AnalysesTable() {
     analyses,
     types,
     pipelineStates,
-    onSearch,
+    search,
     handleTableChange,
-    deleteAnalysis
+    deleteAnalysis,
+    downloadAnalysis,
+    updateTable
   } = useContext(AnalysesContext);
+
+  useEffect(() => updateTable(), [search, pipelineStates, types]);
 
   function createColumns({ types, pipelineStates, deleteAnalysis }) {
     const columns = [
@@ -56,7 +61,7 @@ export function AnalysesTable() {
         key: "type",
         width: 250,
         dataIndex: "type",
-        filterMultiple: false,
+        filterMultiple: true,
         filters: types
       },
       {
@@ -88,15 +93,33 @@ export function AnalysesTable() {
         fixed: "right",
         render(text, record) {
           return record.modifiable ? (
-            <Popconfirm
-              placement={"top"}
-              title={"Delete this analysis?"}
-              onConfirm={() => deleteAnalysis(record.id)}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}
             >
-              <Button type={"link"} size="small">
-                Delete
-              </Button>
-            </Popconfirm>
+              {record.state === "Error" ? (
+                <span />
+              ) : (
+                <Button
+                  type={"link"}
+                  onClick={() => downloadAnalysis(record.id)}
+                >
+                  <Icon type="download" />
+                </Button>
+              )}
+              <Popconfirm
+                placement={"top"}
+                title={"Delete this analysis?"}
+                onConfirm={() => deleteAnalysis(record.id)}
+              >
+                <Button type={"link"} size="small">
+                  <Icon type="delete" theme="twoTone" />
+                </Button>
+              </Popconfirm>
+            </div>
           ) : null;
         }
       });
@@ -106,14 +129,7 @@ export function AnalysesTable() {
   }
 
   return (
-    <PageWrapper
-      title={getI18N("analyses.header")}
-      headerExtras={
-        <Row gutter={12}>
-          <Input.Search onSearch={onSearch} />
-        </Row>
-      }
-    >
+    <PageWrapper title={getI18N("analyses.header")}>
       <Table
         style={{ margin: "6px 24px 0 24px" }}
         scroll={{ x: "max-content" }}
