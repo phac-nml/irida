@@ -386,17 +386,17 @@ public class RESTSampleSequenceFilesController {
 			HttpServletResponse response) throws IOException {
 		ModelMap modelMap = new ModelMap();
 
-		try {
-			logger.debug("Adding sequence file to sample " + sampleId);
-			logger.trace("Uploaded file size: " + file.getSize() + " bytes");
-			// load the sample from the database
-			Sample sample = sampleService.read(sampleId);
-			logger.trace("Read sample " + sampleId);
-			// prepare a new sequence file using the multipart file supplied by the
-			// caller
-			Path temp = Files.createTempDirectory(null);
-			Path target = temp.resolve(file.getOriginalFilename());
+		logger.debug("Adding sequence file to sample " + sampleId);
+		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
+		// load the sample from the database
+		Sample sample = sampleService.read(sampleId);
+		logger.trace("Read sample " + sampleId);
+		// prepare a new sequence file using the multipart file supplied by the
+		// caller
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
 
+		try {
 			// Changed to MultipartFile.transerTo(File) because it was truncating
 			// large files to 1039956336 bytes
 			// target = Files.write(target, file.getBytes());
@@ -516,15 +516,16 @@ public class RESTSampleSequenceFilesController {
 
 		ModelMap modelMap = new ModelMap();
 
+		// confirm that a relationship exists between the project and the sample
+		Sample sample = sampleService.read(sampleId);
+		logger.trace("Read sample " + sampleId);
+		// create temp files
+		Path temp1 = Files.createTempDirectory(null);
+		Path target1 = temp1.resolve(file1.getOriginalFilename());
+		Path temp2 = Files.createTempDirectory(null);
+		Path target2 = temp2.resolve(file2.getOriginalFilename());
+
 		try {
-			// confirm that a relationship exists between the project and the sample
-			Sample sample = sampleService.read(sampleId);
-			logger.trace("Read sample " + sampleId);
-			// create temp files
-			Path temp1 = Files.createTempDirectory(null);
-			Path target1 = temp1.resolve(file1.getOriginalFilename());
-			Path temp2 = Files.createTempDirectory(null);
-			Path target2 = temp2.resolve(file2.getOriginalFilename());
 			// transfer the files to temp directories
 			file1.transferTo(target1.toFile());
 			file2.transferTo(target2.toFile());
