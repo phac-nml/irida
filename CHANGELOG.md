@@ -31,7 +31,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
 * [Developer]: Update eslint config to use `babel-parser`.
-* [API]: Fixed allowing uploading data to non UPLOADING state sequencing runs.
+* [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
 
 19.01 to 19.05
 ---------------

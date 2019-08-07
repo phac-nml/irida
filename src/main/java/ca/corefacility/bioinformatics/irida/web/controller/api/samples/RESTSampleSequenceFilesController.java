@@ -386,22 +386,22 @@ public class RESTSampleSequenceFilesController {
 			HttpServletResponse response) throws IOException {
 		ModelMap modelMap = new ModelMap();
 
-		logger.debug("Adding sequence file to sample " + sampleId);
-		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
-		// load the sample from the database
-		Sample sample = sampleService.read(sampleId);
-		logger.trace("Read sample " + sampleId);
-		// prepare a new sequence file using the multipart file supplied by the
-		// caller
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		// Changed to MultipartFile.transerTo(File) because it was truncating
-		// large files to 1039956336 bytes
-		// target = Files.write(target, file.getBytes());
-		file.transferTo(target.toFile());
-		logger.trace("Wrote temp file to " + target);
-
 		try {
+			logger.debug("Adding sequence file to sample " + sampleId);
+			logger.trace("Uploaded file size: " + file.getSize() + " bytes");
+			// load the sample from the database
+			Sample sample = sampleService.read(sampleId);
+			logger.trace("Read sample " + sampleId);
+			// prepare a new sequence file using the multipart file supplied by the
+			// caller
+			Path temp = Files.createTempDirectory(null);
+			Path target = temp.resolve(file.getOriginalFilename());
+
+			// Changed to MultipartFile.transerTo(File) because it was truncating
+			// large files to 1039956336 bytes
+			// target = Files.write(target, file.getBytes());
+			file.transferTo(target.toFile());
+			logger.trace("Wrote temp file to " + target);
 
 			SequenceFile sf;
 			SequencingRun miseqRun = null;
@@ -515,26 +515,27 @@ public class RESTSampleSequenceFilesController {
 		logger.trace("Second uploaded file size: " + file2.getSize() + " bytes");
 
 		ModelMap modelMap = new ModelMap();
-		// confirm that a relationship exists between the project and the sample
-		Sample sample = sampleService.read(sampleId);
-		logger.trace("Read sample " + sampleId);
-		// create temp files
-		Path temp1 = Files.createTempDirectory(null);
-		Path target1 = temp1.resolve(file1.getOriginalFilename());
-		Path temp2 = Files.createTempDirectory(null);
-		Path target2 = temp2.resolve(file2.getOriginalFilename());
-		// transfer the files to temp directories
-		file1.transferTo(target1.toFile());
-		file2.transferTo(target2.toFile());
-		// create the model objects
-		SequenceFile sf1 = fileResource1.getResource();
-		SequenceFile sf2 = fileResource2.getResource();
-		sf1.setFile(target1);
-		sf2.setFile(target2);
-		// get the sequencing run
-		SequencingRun sequencingRun = null;
 
 		try {
+			// confirm that a relationship exists between the project and the sample
+			Sample sample = sampleService.read(sampleId);
+			logger.trace("Read sample " + sampleId);
+			// create temp files
+			Path temp1 = Files.createTempDirectory(null);
+			Path target1 = temp1.resolve(file1.getOriginalFilename());
+			Path temp2 = Files.createTempDirectory(null);
+			Path target2 = temp2.resolve(file2.getOriginalFilename());
+			// transfer the files to temp directories
+			file1.transferTo(target1.toFile());
+			file2.transferTo(target2.toFile());
+			// create the model objects
+			SequenceFile sf1 = fileResource1.getResource();
+			SequenceFile sf2 = fileResource2.getResource();
+			sf1.setFile(target1);
+			sf2.setFile(target2);
+			// get the sequencing run
+			SequencingRun sequencingRun = null;
+
 			if (!Objects.equal(fileResource1.getMiseqRunId(), fileResource2.getMiseqRunId())) {
 				throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs.");
 			}
