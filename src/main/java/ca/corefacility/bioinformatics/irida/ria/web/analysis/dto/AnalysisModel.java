@@ -12,13 +12,13 @@ public class AnalysisModel {
 	private String name;
 	private Date createdDate;
 	private String submitter;
-	private String state;
+	private AnalysisStateModel state;
 	private String type;
 	private float percentage;
 	private long duration;
 	private boolean modifiable;
 
-	public AnalysisModel(AnalysisSubmission submission, String state, Long duration, String type, float percentage,
+	public AnalysisModel(AnalysisSubmission submission, AnalysisStateModel state, Long duration, String type, float percentage,
 			boolean modifiable) {
 		this.id = submission.getId();
 		this.name = submission.getLabel();
@@ -44,7 +44,7 @@ public class AnalysisModel {
 		return createdDate;
 	}
 
-	public String getState() {
+	public AnalysisStateModel getState() {
 		return state;
 	}
 

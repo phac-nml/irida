@@ -207,13 +207,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param state       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> state,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest);
 
 	/**
@@ -221,12 +221,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param state       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> state,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
@@ -234,13 +234,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states      Set of {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the restults to show
 	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**

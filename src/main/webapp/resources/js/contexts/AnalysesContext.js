@@ -36,7 +36,6 @@ class AnalysesProvider extends React.Component {
       column: "createdDate",
       total: undefined,
       filters: {},
-      clearFilters: this.clearFilters,
       onSearch: this.onSearch,
       handleTableChange: this.handleTableChange,
       deleteAnalysis: this.deleteAnalysis,
@@ -54,7 +53,7 @@ class AnalysesProvider extends React.Component {
       fetchAllPipelinesStates(),
       fetchAllPipelinesTypes()
     ]);
-    this.setState({ pipelineStates, types });
+    this.setState({ pipelineStates, types }, this.updateTable);
   }
 
   /**
@@ -86,9 +85,7 @@ class AnalysesProvider extends React.Component {
    *
    * @param {string} search - the value to search for
    */
-  onSearch = search => this.setState({ search });
-
-  clearFilters = () => this.setState({ filters: {}, search: "" });
+  onSearch = search => this.setState({ search }, this.updateTable);
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
@@ -101,13 +98,16 @@ class AnalysesProvider extends React.Component {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
 
-    this.setState({
-      pageSize,
-      current,
-      order: order || "descend",
-      column: field || "createdDate",
-      filters
-    }, () => this.updateTable());
+    this.setState(
+      {
+        pageSize,
+        current,
+        order: order || "descend",
+        column: field || "createdDate",
+        filters
+      },
+      this.updateTable
+    );
   };
 
   /**

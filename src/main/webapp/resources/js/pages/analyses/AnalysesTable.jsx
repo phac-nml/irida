@@ -26,14 +26,10 @@ export function AnalysesTable() {
     analyses,
     types,
     pipelineStates,
-    search,
     handleTableChange,
     deleteAnalysis,
-    downloadAnalysis,
-    updateTable
+    downloadAnalysis
   } = useContext(AnalysesContext);
-
-  useEffect(() => updateTable(), [search, pipelineStates, types]);
 
   function createColumns({ types, pipelineStates, deleteAnalysis }) {
     const columns = [
@@ -50,10 +46,15 @@ export function AnalysesTable() {
         title: getI18N("analyses.state"),
         key: "state",
         dataIndex: "state",
-        filterMultiple: false,
+        filterMultiple: true,
         filters: pipelineStates,
         render(state, data) {
-          return <AnalysisState state={state} percentage={data.percentage} />;
+          return (
+            <AnalysisState
+              state={state}
+              percentage={data.percentage}
+            />
+          );
         }
       },
       {

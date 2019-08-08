@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.net.HttpHeaders;
@@ -120,6 +121,15 @@ public class AnalysesAjaxController {
 			}
 		}
 
+		Set<AnalysisState> stateFilters = new HashSet<>();
+		if (analysesListRequest.getFilters()
+				.getState()
+				.size() > 0) {
+			List<AnalysisState> states = analysesListRequest.getFilters()
+					.getState();
+			stateFilters.addAll(states);
+		}
+
 		Page<AnalysisSubmission> page;
 		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
 				analysesListRequest.getSort());
@@ -132,13 +142,11 @@ public class AnalysesAjaxController {
 		if (referer.endsWith("all") && user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			// User is an admin and requesting the listing of all pages.
-			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null,
-					analysesListRequest.getFilters()
-							.getState(), workflowIds, pageRequest);
+			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
+					workflowIds, pageRequest);
 		} else {
-			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null,
-					analysesListRequest.getFilters()
-							.getState(), user, workflowIds, pageRequest);
+			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null, stateFilters,
+					user, workflowIds, pageRequest);
 		}
 
 		List<AnalysisModel> analyses = page.getContent()
@@ -162,13 +170,13 @@ public class AnalysesAjaxController {
 	}
 
 	private AnalysisModel createAnalysisModel(AnalysisSubmission submission, Locale locale) {
-		float percentComplete = 0;
 		AnalysisState analysisState = submission.getAnalysisState();
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
 		String workflowType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType()
 				.getType();
-		String state = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
+		String stateString = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
+		AnalysisStateModel state = new AnalysisStateModel(stateString, analysisState.toString());
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
@@ -180,7 +188,11 @@ public class AnalysesAjaxController {
 				.getAuthentication();
 		boolean updatePermission = this.updateAnalysisSubmissionPermission.isAllowed(authentication, submission);
 
-		return new AnalysisModel(submission, state, duration, workflow, percentComplete, updatePermission);
+		// There is no percentage completion for ERROR, so we will fake one here.
+		float percentage = analysisState.equals(AnalysisState.ERROR) ?
+				100f :
+				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(analysisState);
+		return new AnalysisModel(submission, state, duration, workflow, percentage, updatePermission);
 	}
 
 	@RequestMapping("/download/{id}")

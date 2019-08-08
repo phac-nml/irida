@@ -2,18 +2,19 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 
 public class AnalysesFilters {
-	private AnalysisState state;
-	private List<String> type = new ArrayList();
+	private List<AnalysisState> state = new ArrayList<>();
+	private List<String> type = new ArrayList<>();
 
-	public void setState(String s) {
-		this.state = AnalysisState.valueOf(s);
+	public void setState(List<String> stateStrings) {
+		this.state = stateStrings.stream().map(AnalysisState::valueOf).collect(Collectors.toList());
 	}
 
-	public AnalysisState getState() {
+	public List<AnalysisState> getState() {
 		return state;
 	}
 
