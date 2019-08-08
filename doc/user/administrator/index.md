@@ -339,3 +339,10 @@ The exports will have one of the following states:
  * `submitted`: Submitted to NCBI
  * `Submission deleted`: Submission deleted
  * `retried`: Retried processing of failed action(s)
+ 
+Troubleshooting
+===============
+
+To troubleshoot common problems in IRIDA, please see the **Troubleshooting** guides.
+
+ 1. [Troubleshooting Pipelines](troubleshooting/pipelines)
