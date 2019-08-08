@@ -16,7 +16,7 @@
 		phoneNumber="0000" username="fbristow" enabled="true" system_role="ROLE_USER"
 		credentialsNonExpired="true" />
 
-	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" sistr_typing_uploads="OFF"/>
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
 
 	<sample id="1" sampleName="sample" createdDate="2013-07-18 14:20:19.0" />
 
@@ -28,11 +28,11 @@
 
 	<analysis_submission id="1" name="sistr"
 		workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
-		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
 
 	<analysis_submission id="2" name="assembly"
 		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
-		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
 
 	<client_details id="1" clientId="testClient"
 		clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />

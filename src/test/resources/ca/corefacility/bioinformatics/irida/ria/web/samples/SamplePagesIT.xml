@@ -14,15 +14,15 @@
 	<project id="1" createdDate="2013-07-12 14:20:19.0" name="project"
 		modifiedDate="2013-07-18 14:20:19.0" organism="E. coli"
 		projectDescription="This is an interesting project description."
-		remoteURL="http://google.ca" sistr_typing_uploads="OFF" />
+		remoteURL="http://google.ca"  />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-		modifiedDate="2013-07-18 14:19:19.0" sistr_typing_uploads="OFF" />
+		modifiedDate="2013-07-18 14:19:19.0"  />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
-		modifiedDate="2013-07-18 14:18:19.0" sistr_typing_uploads="OFF" />
+		modifiedDate="2013-07-18 14:18:19.0"  />
 	<project id="4" createdDate="2013-07-18 14:21:19.0" name="project4"
-		modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
+		modifiedDate="2013-07-18 14:17:19.0"  />
 	<project id="5" createdDate="2013-07-18 14:21:19.0" name="project5"
-		modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
+		modifiedDate="2013-07-18 14:17:19.0"  />
 
 	<project_user id="1" project_id="1" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
@@ -134,12 +134,12 @@
 		analysis_id="1" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
 		submitter="1" remote_workflow_id="1" remote_input_data_id="1"
-		analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="1" />
+		analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 	<analysis_submission id="2" name="my analysis"
 		analysis_id="2" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
 		submitter="1" remote_workflow_id="1" remote_input_data_id="1"
-		analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="1" />
+		analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 
 	<analysis_submission_sequencing_object
 		analysis_submission_id="1" sequencing_object_id="1" />

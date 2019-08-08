@@ -17,8 +17,7 @@
 		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" remoteURL="somewhere"
-		assemble_uploads="0" sistr_typing_uploads="OFF" />
+		projectDescription="description" remoteURL="somewhere" />
 
 	<project_user id="1" project_id="1" user_id="3"
 		createdDate="2013-07-18 14:20:19.0" email_subscription="false"
@@ -30,19 +29,19 @@
 	<analysis_submission id="1" name="another analysis"
 		remote_analysis_id="1" analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f"
-		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 	<analysis_submission id="2" analysis_state="PREPARING"
 		created_date="2013-09-06 10:01:02" name="My Pretend Submission"
 		analysis_id="1" workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7"
-		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 	<analysis_submission id="3" analysis_state="COMPLETED"
 		created_date="2013-09-06 10:01:02" name="My Pretend Submission"
 		analysis_id="1" workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7"
-		submitter="3" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+		submitter="3" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 	<analysis_submission id="4" analysis_state="COMPLETED"
 		created_date="2013-09-06 10:01:02" name="My Pretend Submission"
 		analysis_id="1" workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7"
-		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 		
 	<client_details id="1" clientId="testClient"
 		clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />

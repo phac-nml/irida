@@ -50,17 +50,17 @@
 				   url="http://localhost:8080/api/projects/11" api_id="1"
 				   remote_hash_code="1" read_by="3" last_update="2013-07-18 14:20:19.0" />
 
-	<project id="11" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY" sistr_typing_uploads="OFF" />
-	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" organism="listeria" sistr_typing_uploads="OFF"/>
-	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="6" createdDate="2013-07-18 14:22:19.0" name="project6" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="7" createdDate="2013-07-18 14:22:19.0" name="project7" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="8" createdDate="2013-07-18 14:22:19.0" name="project8" organism="listeria" sistr_typing_uploads="OFF" />
-	<project id="9" createdDate="2013-07-18 14:20:19.0" name="project9" organism="e. coli" sistr_typing_uploads="OFF" />
-	<project id="10" createdDate="2013-07-18 14:22:19.0" name="listeria" organism="" sistr_typing_uploads="OFF"/>
+	<project id="11" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY"  />
+	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" organism="listeria"  />
+	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" organism="listeria" />
+	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" organism="listeria"  />
+	<project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" organism="listeria"  />
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" organism="listeria"  />
+	<project id="6" createdDate="2013-07-18 14:22:19.0" name="project6" organism="listeria"  />
+	<project id="7" createdDate="2013-07-18 14:22:19.0" name="project7" organism="listeria"  />
+	<project id="8" createdDate="2013-07-18 14:22:19.0" name="project8" organism="listeria"  />
+	<project id="9" createdDate="2013-07-18 14:20:19.0" name="project9" organism="e. coli"  />
+	<project id="10" createdDate="2013-07-18 14:22:19.0" name="listeria" organism="" />
 
 	<user_group_project id="1" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_OWNER" project_id="9" user_group_id="1" />
 	<user_group_project id="2" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_USER" project_id="8" user_group_id="1" />
@@ -124,7 +124,7 @@
 	<analysis_submission id="1" name="another analysis"
 						 remote_analysis_id="1" analysis_state="ERROR" created_date="2013-07-18 14:20:19"
 						 workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="3"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 
 	<project_analysis_submission id="1"
 								 project_id="2" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0" />

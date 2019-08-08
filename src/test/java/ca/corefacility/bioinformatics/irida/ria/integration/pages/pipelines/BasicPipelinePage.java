@@ -13,11 +13,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Assembly workflow launch page.
  *
  */
-public class PipelinesAssemblyPage extends AbstractPage {
+public class BasicPipelinePage extends AbstractPage {
 
-	private static final Logger logger = LoggerFactory.getLogger(PipelinesAssemblyPage.class);
+	private static final Logger logger = LoggerFactory.getLogger(BasicPipelinePage.class);
 
-	public PipelinesAssemblyPage(WebDriver driver) {
+	public BasicPipelinePage(WebDriver driver) {
 		super(driver);
 	}
 

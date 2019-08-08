@@ -1,8 +1,10 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.security.Principal;
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

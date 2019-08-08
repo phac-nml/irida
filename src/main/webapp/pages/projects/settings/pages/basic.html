@@ -10,44 +10,52 @@
           'not_set': /*[[#{project.settings.notset}]]*/ '_not set_'
         },
         urls: {
-          'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-          'sistr': /*[[@{/projects/{id}/settings/sistr(id=${project.getId()})}]]*/ '/projects/1/settings/sistr',
-          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
+          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage',
+          'deleteModal': /*[[@{/projects/{id}/settings/template/removeTemplateModal(id=${project.getId()})}]]*/ '/projects/1/setttings/template/removeTemplateModal'
         }
       };
     </script>
+    <link rel="stylesheet" th:href="@{/dist/css/project-settings-basic.bundle.css}">
 </head>
 <body>
 <th:block layout:fragment="settings-content">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
-            <div class="checkbox">
-                <label>
-                    <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"
-                           th:disabled="not ${manageMembers}"/>
-                    <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
-                </label>
+
+            <div class="row">
+                <div class="col-sm-12" th:each="template : ${analysisTemplates}" th:data-analysis="${template.id}">
+                    <div class="auto-analysis-status">
+                        <div style="padding: 15px;">
+                            <h3 class="auto-analysis-status__title">
+                                <i class="spaced-right__sm fas fa-exclamation-triangle" th:if="${! template.enabled}"></i>
+                                <span th:text="${template.name}">_PIPELINE_TITLE_</span>
+                            </h3>
+                            <div class="auto-analysis-status__entry"
+                                 th:utext="#{project.settings.automated.template.type(${template.analysisType})}">_type_
+                            </div>
+                            <div class="auto-analysis-status__entry"
+                                 th:utext="#{project.settings.automated.template.status(${template.statusMessage})}">
+                                _status_
+                            </div>
+                        </div>
+                        <form class="remove-analysis-form" th:if="${manageMembers}">
+                            <input type="hidden" name="templateId" th:value="${template.id}">
+                            <button type="submit" class="auto-analysis-status__submit t-remove-auto-analysis">
+                                <span><i class="fas fa-times"></i> <th:block
+                                        th:text="#{project.settings.automated.template.remove}"/></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <div class="checkbox">
-                    <label for="sistrTypingUploads">
-                        <input type="checkbox" class="js-sistr-checkbox" id="sistrTypingUploads"
-                               th:checked="${#strings.contains(project.sistrTypingUploads, 'AUTO')}"
-                               name="sistrTypingUploads" value="OFF" th:disabled="not ${manageMembers}">
-                        <span th:text="#{projects.create.settings.sistr}">_RUN_SISTR_</span>
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label style="margin-left: 20px;" for="sistrWrites">
-                        <input type="checkbox" class="js-sistr-writes" id="sistrWrites"
-                               th:checked="${#strings.equals(project.sistrTypingUploads, 'AUTO_METADATA')}"
-                               th:disabled="not ${#strings.contains(project.sistrTypingUploads, 'AUTO')}">
-                        <span th:text="#{projects.create.settings.sistr.AUTO_METADATA}">_WRITE_BACK_TO_SAMPLE_METADATA_</span>
-                    </label>
-                </div>
-            </div>
+            <div class="alert alert-info" th:if="${analysisTemplates.isEmpty()}" th:text="#{project.settings.automated.empty}">_Add one below_</div>
+
+            <a class="btn btn-default" id="create-auto-analysis" href="/cart/pipelines" th:href="@{/cart/pipelines(automatedProject=${project.id})}" role="button" th:if="${manageMembers}">
+                <i class="fas fa-plus"></i>
+                <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
+            </a>
         </div>
     </div>
     <div class="row">
@@ -64,7 +72,6 @@
                     th:text="#{form.btn.update}">_save_</button>
         </span>
             </h2>
-
 
             <div class="form-group">
                 <div id="display-coverage" class="row edit-coverage">
@@ -129,10 +136,11 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="removeAnalysisTemplateModal" role="dialog" aria-labelledBy="#deleteConfirmTitle"></div>
 </th:block>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/pages/projects/project-settings-basic.js}"></script>
+    <script th:src="@{/dist/js/project-settings-basic.bundle.js}"></script>
 </th:block>
 
 </body>
