@@ -120,13 +120,11 @@ public class IridaApiServicesConfig {
 
 	@Value("${irida.debug.nrepl.server.port:#{null}}")
 	private Integer nreplPort;
-	
+
 	@Value("${irida.workflow.analysis.threads}")
 	private int analysisTaskThreads;
-
 	@Value("${locales.enabled}")
 	private String availableLocales;
-
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
@@ -287,14 +285,13 @@ public class IridaApiServicesConfig {
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
-			FastqcFileProcessor fastQcFileProcessor, AssemblyFileProcessor assemblyFileProcessor,
-			ChecksumFileProcessor checksumProcessor, CoverageFileProcessor coverageProcessor,
-			SistrTypingFileProcessor sistrTypingFileProcessor) {
+			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
+			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(checksumProcessor, gzipFileProcessor,
-				fastQcFileProcessor, coverageProcessor, assemblyFileProcessor, sistrTypingFileProcessor);
+				fastQcFileProcessor, coverageProcessor, automatedAnalysisFileProcessor);
 
 		if (!decompressFiles) {
 			logger.info("File decompression is disabled [file.processing.decompress=false]");

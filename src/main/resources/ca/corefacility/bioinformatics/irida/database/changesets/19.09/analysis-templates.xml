@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="analysis-templates" author="tom">
+        <addColumn tableName="analysis_submission">
+            <column name="DTYPE" type="varchar(31)" value="AnalysisSubmission">
+                <constraints nullable="false"/>
+            </column>
+            <column name="submitted_project_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_ANALYSIS_TEMPLATE_PROJECT" referencedColumnNames="id"
+                             referencedTableName="project"/>
+            </column>
+            <column name="automated" type="bit(1)"/>
+            <column name="enabled" type="bit(1)"/>
+            <column name="status_message" type="longtext"/>
+        </addColumn>
+
+        <addColumn tableName="analysis_submission_AUD">
+            <column name="DTYPE" type="varchar(31)" value="AnalysisSubmission">
+                <constraints nullable="false"/>
+            </column>
+            <column name="submitted_project_id" type="bigint(20)"/>
+            <column name="automated" type="bit(1)"/>
+            <column name="enabled" type="bit(1)"/>
+            <column name="status_message" type="longtext"/>
+        </addColumn>
+
+        <!--Drop old notnulls since the table now has the template also encoded -->
+        <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_state"
+                               columnDataType="varchar(255)"/>
+        <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_cleaned_state"
+                               columnDataType="varchar(255)"/>
+
+        <!-- Convert all the old project settings automated analyses to analysis_templates -->
+        <customChange
+                class="ca.corefacility.bioinformatics.irida.database.changesets.AutomatedAnalysisToTemplate"/>
+
+        <!--updating old automated runs with the automated=1 flag-->
+        <sql>UPDATE analysis_submission SET automated=0 WHERE DTYPE='AnalysisSubmission'</sql>
+        <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT sistr_typing FROM sequencing_object)
+        </sql>
+        <sql>UPDATE analysis_submission s SET s.automated=1 WHERE s.id IN (SELECT automated_assembly FROM
+            sequencing_object)
+        </sql>
+
+        <sql>UPDATE analysis_submission_AUD SET automated=0</sql>
+        <sql>UPDATE analysis_submission_AUD s SET s.automated=1 WHERE s.id IN (SELECT sistr_typing FROM
+            sequencing_object)
+        </sql>
+        <sql>UPDATE analysis_submission_AUD s SET s.automated=1 WHERE s.id IN (SELECT automated_assembly FROM
+            sequencing_object)
+        </sql>
+
+
+        <!-- Drop the old project columns for automated analyses -->
+        <dropColumn tableName="project" columnName="sistr_typing_uploads"/>
+        <dropColumn tableName="project" columnName="assemble_uploads"/>
+
+        <dropColumn tableName="project_AUD" columnName="sistr_typing_uploads"/>
+        <dropColumn tableName="project_AUD" columnName="assemble_uploads"/>
+
+    </changeSet>
+</databaseChangeLog>

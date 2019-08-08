@@ -47,9 +47,7 @@
     <project id="1"
              name="project1"
              createdDate="2018-07-04 10:00:0.0"
-             organism="Salmonella"
-             sistr_typing_uploads="OFF"
-             assemble_uploads="0"/>
+             organism="Salmonella"/>
     <project_user id="1"
                   project_id="1"
                   user_id="2"
@@ -120,7 +118,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="2"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <project_analysis_submission id="1"
                                  project_id="1"
                                  analysis_submission_id="1"
@@ -154,7 +152,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
     <!--END: analysis_submission 2-->
 
     <!--START: analysis_submission 3-->
@@ -184,7 +182,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
     <!--END: analysis_submission 3-->
 
     <!--START: analysis_submission 4-->
@@ -214,7 +212,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
     <!--END: analysis_submission 4-->
 
     <!--START: analysis_submission 5-->
@@ -244,7 +242,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
     <project_analysis_submission id="2"
                                  project_id="1"
                                  analysis_submission_id="5"
@@ -279,7 +277,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
     <!--END: analysis_submission 6-->
 
     <!--START: analysis_submission 7-->
@@ -309,7 +307,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
     <!--END: analysis_submission 7-->
 
 
@@ -340,7 +338,7 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
     <!--END: analysis_submission 8-->
 
     <sequence_file id="1" created_date="2018-07-04 10:00:0.0"
