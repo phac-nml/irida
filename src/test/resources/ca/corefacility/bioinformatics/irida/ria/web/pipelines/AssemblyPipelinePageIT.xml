@@ -30,7 +30,7 @@
 	<project id="1" createdDate="2013-07-12 14:20:19.0" name="project"
 		modifiedDate="2013-07-18 14:20:19.0" organism="E. coli"
 		projectDescription="This is an interesting project description."
-		remoteURL="http://google.ca" sistr_typing_uploads="OFF" />
+		remoteURL="http://google.ca"  />
 
 	<project_user id="1" project_id="1" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"

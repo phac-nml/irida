@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div id="removeAnalysisTemplateModalGen" class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{project.settings.automated.modal.remove.title}">_Remove Automated Analysis_</h4>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{project.settings.automated.modal.remove.confirm(${template.name})}" />
+			</div>
+			<div class="modal-footer">
+				<form th:action="@{/projects/{id}/settings/template/remove(id=${project.id})}" method="POST">
+					<input type="hidden" name="templateId" th:value="${template.id}"/>
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">_Close_</button>
+					<button type="submit" class="btn btn-danger" id="remove-template-button" th:text="#{project.settings.automated.modal.remove.button}">_Remove User_</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</html>

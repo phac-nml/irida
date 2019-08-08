@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersController;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectMembersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;

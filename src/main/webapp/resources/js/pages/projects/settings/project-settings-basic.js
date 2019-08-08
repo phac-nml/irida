@@ -1,73 +1,7 @@
+import $ from "jquery";
+import "../../../../sass/pages/project-settings-basic.scss";
+
 const projectSettings = (function(page, notifications) {
-  $("#assemble").change(function() {
-    const checkbox = $(this);
-    const assemble = checkbox.is(":checked");
-
-    $.ajax({
-      url: page.urls.assemble,
-      type: "POST",
-      data: {
-        assemble: assemble
-      },
-      statusCode: {
-        200: function(response) {
-          notifications.show({ text: response.result });
-        }
-      },
-      fail: function() {
-        notifications.show({ text: page.i18n.error, type: "error" });
-      }
-    });
-  });
-
-  // Sistr settings
-  const SISTR_TYPES = {
-    off: "OFF",
-    auto: "AUTO",
-    autoMetadata: "AUTO_METADATA"
-  };
-
-  $(".js-sistr-checkbox").on("change", function(e) {
-    const selected = $(e.target).prop("checked");
-    if (selected) {
-      $(".js-sistr-writes").removeAttr("disabled");
-      updateSistrSettings(SISTR_TYPES.auto);
-    } else {
-      $(".js-sistr-writes")
-        .removeAttr("checked")
-        .attr("disabled", true);
-      updateSistrSettings(SISTR_TYPES.off);
-    }
-  });
-
-  $(".js-sistr-writes").on("change", function(e) {
-    const selected = $(e.target).prop("checked");
-    if (selected) {
-      updateSistrSettings(SISTR_TYPES.autoMetadata);
-    } else {
-      updateSistrSettings(SISTR_TYPES.auto);
-    }
-  });
-
-  function updateSistrSettings(sistr) {
-    $(".js-sistr-checkbox").val(sistr);
-    $.ajax({
-      url: page.urls.sistr,
-      type: "POST",
-      data: {
-        sistr
-      },
-      statusCode: {
-        200: function(response) {
-          notifications.show({ text: response.result });
-        }
-      },
-      fail: function() {
-        notifications.show({ text: page.i18n.error, type: "error" });
-      }
-    });
-  }
-
   $("#coverage-save").on("click", function() {
     const genomeSize = $("#genome-size").val();
     const minimumCoverage = $("#minimum-coverage").val();
@@ -127,4 +61,29 @@ const projectSettings = (function(page, notifications) {
       $("#submit-delete").prop("disabled", true);
     }
   }
+
+  /**
+   * Open a confirmation modal for removing an automated analysis pipeline
+   * @param {number} templateId - the id for the analysis to remove
+   */
+  const displayRemoveAnalysisModal = templateId => {
+    $("#removeAnalysisTemplateModal").load(
+      `${window.PAGE.urls.deleteModal}#removeAnalysisTemplateModalGen`,
+      { templateId },
+      function() {
+        $(this).modal("show");
+      }
+    );
+  };
+
+  /*
+  Submission handler for when the user clicks on the remove analysis button.
+   */
+  $(".remove-analysis-form").on("submit", function(e) {
+    e.preventDefault();
+    const templateId = $(this)
+      .find(`input[name="templateId"]`)
+      .val();
+    displayRemoveAnalysisModal(templateId);
+  });
 })(window.PAGE, window.notifications);

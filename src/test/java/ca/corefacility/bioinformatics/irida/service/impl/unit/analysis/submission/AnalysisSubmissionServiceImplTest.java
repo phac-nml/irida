@@ -1,16 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.analysis.submission;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import javax.validation.Validator;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
@@ -20,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTemplateRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
@@ -28,6 +18,16 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import javax.validation.Validator;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link AnalysisSubmissionServiceImpl}.
@@ -41,6 +41,8 @@ public class AnalysisSubmissionServiceImplTest {
 
 	@Mock
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	@Mock
+	private AnalysisSubmissionTemplateRepository analysisTemplateRepository;
 	@Mock
 	private UserRepository userRepository;
 	@Mock
@@ -79,9 +81,9 @@ public class AnalysisSubmissionServiceImplTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
-		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
-				referenceFileRepository, sequencingObjectService, galaxyHistoriesService, pasRepository,
-				jobErrorRepository, iridaWorkflowsService, validator);
+		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository,
+				analysisTemplateRepository, userRepository, referenceFileRepository, sequencingObjectService,
+				galaxyHistoriesService, pasRepository, jobErrorRepository, iridaWorkflowsService, validator);
 		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);

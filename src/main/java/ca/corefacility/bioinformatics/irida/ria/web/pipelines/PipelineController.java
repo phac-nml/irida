@@ -1,22 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -50,12 +33,28 @@ import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for pipeline related views
@@ -71,9 +70,15 @@ public class PipelineController extends BaseController {
 	 */
 	private static final String DEFAULT_WORKFLOW_PARAMETERS_ID = "default";
 	private static final String CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID = "custom";
-	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/cart";
+	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
+	public static final String URL_LAUNCH = "pipelines/pipeline_selection";
 	public static final String URL_GENERIC_PIPELINE = "pipelines/types/generic_pipeline";
+	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
+	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
+	public static final String URI_AJAX_CART_LIST = "/ajax/cart_list.json";
 	// JSON KEYS
+	public static final String JSON_KEY_SAMPLE_ID = "id";
+	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
 	/*
 	 * SERVICES
@@ -126,17 +131,32 @@ public class PipelineController extends BaseController {
 	 * @param principal  the user in the current request
 	 * @param locale     the locale that the user is using
 	 * @param pipelineId the pipeline to load
+	 * @param projectId  Project ID to add a {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate}
+	 *                   if necessary (not required)
 	 * @return a page reference or redirect to load.
 	 */
 	@RequestMapping(value = "/{pipelineId}")
 	public String getSpecifiedPipelinePage(final Model model, Principal principal, Locale locale,
-			@PathVariable UUID pipelineId) {
+			@PathVariable UUID pipelineId, @RequestParam(name = "automatedProject", required = false) Long projectId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 		boolean canUpdateAllSamples;
 
 		Map<Project, List<Sample>> cartMap = cartController.getSelected();
-		// Cannot run a pipeline on an empty cart!
-		if (!cartMap.isEmpty()) {
+
+		Set<Project> projectSet = cartMap.keySet();
+
+		//if we have a project id, overwrite the project set from the cart
+		if (projectId != null) {
+			Project project = projectService.read(projectId);
+			projectSet = Sets.newHashSet(project);
+
+			model.addAttribute("automatedProject", project);
+			//this is separate because the view can't handle dereferencing a null project if one isn't set
+			model.addAttribute("automatedProjectId", project.getId());
+		}
+
+		// Ensure we have something in the cart or an automated pipeline project
+		if (!projectSet.isEmpty()) {
 			Authentication authentication = SecurityContextHolder.getContext()
 					.getAuthentication();
 
@@ -161,15 +181,20 @@ public class PipelineController extends BaseController {
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			final String workflowName = description.getName()
 					.toLowerCase();
-			for (Project project : cartMap.keySet()) {
-				// Check to see if it requires a reference file.
+
+			//loop through the projects in the set to get their files
+			for (Project project : projectSet) {
+				// Check to see if the pipeline requires a reference file.
 				if (description.requiresReference()) {
 					List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(
 							project);
+
+					//add the ref files from the projects
 					for (Join<Project, ReferenceFile> join : joinList) {
 						referenceFileList.add(ImmutableMap.of("project", project, "file", join.getObject()));
 					}
 
+					//if there's no ref files, show the user projects they can add ref files to
 					if (referenceFileList.size() == 0) {
 						if (user.getSystemRole()
 								.equals(Role.ROLE_ADMIN) || projectService.userHasProjectRole(user, project,
@@ -179,45 +204,53 @@ public class PipelineController extends BaseController {
 					}
 				}
 
-				List<Sample> samples = cartMap.get(project);
 				Map<String, Object> projectMap = new HashMap<>();
 				List<Map<String, Object>> sampleList = new ArrayList<>();
-				for (Sample sample : samples) {
-					Map<String, Object> sampleMap = new HashMap<>();
-					sampleMap.put("name", sample.getLabel());
-					sampleMap.put("id", sample.getId()
-							.toString());
-					Map<String, List<? extends Object>> files = new HashMap<>();
 
-					// Paired end reads
-					if (description.acceptsPairedSequenceFiles()) {
-						Collection<SampleSequencingObjectJoin> pairs = sequencingObjectService.getSequencesForSampleOfType(
-								sample, SequenceFilePair.class);
-						files.put("paired_end", pairs.stream()
-								.map(SampleSequencingObjectJoin::getObject)
-								.collect(Collectors.toList()));
+				//if we're not doing automated, get the files from the cart
+				if (projectId == null) {
+					List<Sample> samples = cartMap.get(project);
+					canUpdateAllSamples &= updateSamplePermission.isAllowed(authentication, samples);
+
+					//for each sample in the project in the cart
+					for (Sample sample : samples) {
+						//add the sample detalis
+						Map<String, Object> sampleMap = new HashMap<>();
+						sampleMap.put("name", sample.getLabel());
+						sampleMap.put("id", sample.getId()
+								.toString());
+						Map<String, List<? extends Object>> files = new HashMap<>();
+
+						// get the paired end reads
+						if (description.acceptsPairedSequenceFiles()) {
+							Collection<SampleSequencingObjectJoin> pairs = sequencingObjectService.getSequencesForSampleOfType(
+									sample, SequenceFilePair.class);
+							files.put("paired_end", pairs.stream()
+									.map(SampleSequencingObjectJoin::getObject)
+									.collect(Collectors.toList()));
+						}
+
+						// get the single end reads
+						if (description.acceptsSingleSequenceFiles()) {
+							Collection<SampleSequencingObjectJoin> singles = sequencingObjectService.getSequencesForSampleOfType(
+									sample, SingleEndSequenceFile.class);
+							files.put("single_end", singles.stream()
+									.map(SampleSequencingObjectJoin::getObject)
+									.collect(Collectors.toList()));
+						}
+
+						sampleMap.put("files", files);
+						sampleList.add(sampleMap);
 					}
-
-					// Singe end reads
-					if (description.acceptsSingleSequenceFiles()) {
-						Collection<SampleSequencingObjectJoin> singles = sequencingObjectService.getSequencesForSampleOfType(
-								sample, SingleEndSequenceFile.class);
-						files.put("single_end", singles.stream()
-								.map(SampleSequencingObjectJoin::getObject)
-								.collect(Collectors.toList()));
-					}
-
-					sampleMap.put("files", files);
-					sampleList.add(sampleMap);
 				}
 
+				//add the project info and read samples to a map
 				projectMap.put("id", project.getId()
 						.toString());
 				projectMap.put("name", project.getLabel());
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
 
-				canUpdateAllSamples &= updateSamplePermission.isAllowed(authentication, samples);
 			}
 
 			// Need to add the pipeline parameters
@@ -255,6 +288,19 @@ public class PipelineController extends BaseController {
 			} else {
 				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
 			}
+
+			//getting default pipeline name.  regular pipelines just have a date.  automated ones say it's automated
+			String defaultName = null;
+			if (projectId != null) {
+				defaultName = messageSource.getMessage("workflow.name.automated-prefix",
+						new Object[] { description.getName() }, locale);
+			} else {
+				SimpleDateFormat sdf;
+				sdf = new SimpleDateFormat("yyyyMMdd");
+				String text = sdf.format(new Date());
+				defaultName = description.getName() + "_" + text;
+			}
+
 			// Parameters should be added not matter what, even if they are empty.
 			model.addAttribute("parameters", parameters);
 
@@ -262,7 +308,7 @@ public class PipelineController extends BaseController {
 					messageSource.getMessage("pipeline.title." + description.getName(), null, locale));
 			model.addAttribute("mainTitle",
 					messageSource.getMessage("pipeline.h1." + description.getName(), null, locale));
-			model.addAttribute("name", description.getName());
+			model.addAttribute("name", defaultName);
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("referenceRequired", description.requiresReference());
@@ -403,40 +449,6 @@ public class PipelineController extends BaseController {
 						messageSource.getMessage("pipeline.error.no-reference.pipeline-start", null, locale));
 			}
 
-			// Get a list of the files to submit
-			List<SingleEndSequenceFile> singleEndFiles = new ArrayList<>();
-			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
-			List<Long> single = parameters.getSingle();
-			if (single != null) {
-				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(single);
-
-				readMultiple.forEach(f -> {
-					if (!(f instanceof SingleEndSequenceFile)) {
-						throw new IllegalArgumentException("file " + f.getId() + " not a SingleEndSequenceFile");
-					}
-
-					singleEndFiles.add((SingleEndSequenceFile) f);
-				});
-
-				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(singleEndFiles));
-			}
-			List<Long> paired = parameters.getPaired();
-			if (paired != null) {
-				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(paired);
-
-				readMultiple.forEach(f -> {
-					if (!(f instanceof SequenceFilePair)) {
-						throw new IllegalArgumentException("file " + f.getId() + " not a SequenceFilePair");
-					}
-
-					sequenceFilePairs.add((SequenceFilePair) f);
-				});
-
-				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
-			}
-
 			// Get the pipeline parameters
 			Map<String, String> params = new HashMap<>();
 			IridaWorkflowNamedParameters namedParameters = null;
@@ -464,25 +476,70 @@ public class PipelineController extends BaseController {
 				}
 			}
 
-			List<Project> projectsToShare = new ArrayList<>();
-			List<Long> sharedProjects = parameters.getSharedProjects();
-			if (sharedProjects != null && !sharedProjects.isEmpty()) {
-				projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
-			}
-
 			String analysisDescription = parameters.getDescription();
 			Boolean writeResultsToSamples = parameters.getWriteResultsToSamples();
 			Boolean emailPipelineResult = parameters.getEmailPipelineResult();
 
-			if (description.getInputs()
-					.requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples,
-						emailPipelineResult);
+			//if we have an automated project set, create the new template
+			if (parameters.getAutomatedProject() != null) {
+				Project readProject = projectService.read(parameters.getAutomatedProject());
+
+				String statusMessage = messageSource.getMessage("analysis.template.status.new", null, locale);
+
+				analysisSubmissionService.createSingleSampleSubmissionTemplate(flow, ref, params, namedParameters, name,
+						statusMessage, analysisDescription, readProject, writeResultsToSamples, emailPipelineResult);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples,
-						emailPipelineResult);
+				//otherwise get the project shares and sequence files
+				List<Project> projectsToShare = new ArrayList<>();
+				List<Long> sharedProjects = parameters.getSharedProjects();
+				if (sharedProjects != null && !sharedProjects.isEmpty()) {
+					projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
+				}
+
+				// Get a list of the files to submit
+				List<SingleEndSequenceFile> singleEndFiles = new ArrayList<>();
+				List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
+				List<Long> single = parameters.getSingle();
+				if (single != null) {
+					Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(single);
+
+					readMultiple.forEach(f -> {
+						if (!(f instanceof SingleEndSequenceFile)) {
+							throw new IllegalArgumentException("file " + f.getId() + " not a SingleEndSequenceFile");
+						}
+
+						singleEndFiles.add((SingleEndSequenceFile) f);
+					});
+
+					// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
+					sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(singleEndFiles));
+				}
+				List<Long> paired = parameters.getPaired();
+				if (paired != null) {
+					Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(paired);
+
+					readMultiple.forEach(f -> {
+						if (!(f instanceof SequenceFilePair)) {
+							throw new IllegalArgumentException("file " + f.getId() + " not a SequenceFilePair");
+						}
+
+						sequenceFilePairs.add((SequenceFilePair) f);
+					});
+
+					// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
+					sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
+				}
+
+				if (description.getInputs()
+						.requiresSingleSample()) {
+					analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
+							params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples,
+							emailPipelineResult);
+				} else {
+					analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles,
+							sequenceFilePairs, params, namedParameters, name, analysisDescription, projectsToShare,
+							writeResultsToSamples, emailPipelineResult);
+				}
 			}
 
 		} catch (IridaWorkflowNotFoundException | IridaWorkflowNotDisplayableException e) {
@@ -514,8 +571,7 @@ public class PipelineController extends BaseController {
 	}
 
 	/**
-	 * Save a set of {@link IridaWorkflowNamedParameters} and respond with the
-	 * ID that we saved the new set with.
+	 * Save a set of {@link IridaWorkflowNamedParameters} and respond with the ID that we saved the new set with.
 	 *
 	 * @param params the DTO with the parameters to save.
 	 * @return a map with the ID of the saved named parameters.
@@ -528,19 +584,30 @@ public class PipelineController extends BaseController {
 	}
 
 	/**
-	 * Get a {@link List} of all {@link AnalysisType}s
+	 * Get a {@link List} of all {@link AnalysisType}s.  If this is an automated project, it will only return the
+	 * analyses that can be automated.
 	 *
-	 * @param locale {@link Locale} of the current user
+	 * @param locale           {@link Locale} of the current user
+	 * @param automatedProject Project ID if we're launching an automated project (optional)
 	 * @return {@link List} of localized {@link AnalysisType}
 	 */
 	@RequestMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Pipeline> getWorkflowTypes(Locale locale) {
+	public List<Pipeline> getWorkflowTypes(
+			@RequestParam(required = false, name = "automatedProject") Long automatedProject, Locale locale) {
 		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
 		List<Pipeline> pipelines = new ArrayList<>();
+
 		for (AnalysisType type : analysisTypes) {
 			try {
-				Pipeline workflow = this.createPipeline(type, locale);
-				pipelines.add(workflow);
+				IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);
+				IridaWorkflowDescription description = flow.getWorkflowDescription();
+
+				//if we're setting up an automated project, strip out all the multi-sample pipelines
+				if (automatedProject == null || (description.getInputs()
+						.requiresSingleSample())) {
+					Pipeline workflow = createPipeline(type, locale);
+					pipelines.add(workflow);
+				}
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
 			}
@@ -568,4 +635,5 @@ public class PipelineController extends BaseController {
 		String styleName = analysisType.getType();
 		return new Pipeline(name, description, id, styleName);
 	}
+
 }

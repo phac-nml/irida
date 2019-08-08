@@ -1,9 +1,12 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectSettingsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
