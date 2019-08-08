@@ -103,27 +103,6 @@
                                     </label>
                                 </div>
                             </th:block>
-
-                            <div class="checkbox">
-                                <label for="assemble">
-                                    <input type="checkbox" id="assemble" name="assembleUploads" value="true"/>
-                                    <span th:text="#{projects.create.settings.assemble}">_Assemble_</span>
-                                </label>
-                            </div>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label for="sistrTypingUploads">
-                                    <input type="checkbox" class="js-sistr-checkbox" id="sistrTypingUploads" name="sistrTypingUploads" value="OFF">
-                                    <span th:text="#{projects.create.settings.sistr}">_RUN_SISTR_</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label style="margin-left: 20px;" for="sistrWrites">
-                                    <input type="checkbox" class="js-sistr-writes" id="sistrWrites" disabled>
-                                    <span th:text="#{projects.create.settings.sistr.AUTO_METADATA}">_WRITE_BACK_TO_SAMPLE_METADATA_</span>
-                                </label>
-                            </div>
-                        </div>
                         
                         </div>
                 </div>
@@ -193,32 +172,6 @@
                 $("#cartAlert").hide(time);
             }
         }
-
-        // Sistr settings
-        var SISTR_TYPES = {
-          off: "OFF",
-          auto: "AUTO",
-          autoMetadata: "AUTO_METADATA"
-        };
-        $(".js-sistr-checkbox").on("change", function(e) {
-          var selected = $(e.target).prop("checked");
-          if (selected) {
-            $(".js-sistr-writes").removeAttr("disabled");
-            $(".js-sistr-checkbox").val(SISTR_TYPES.auto);
-          } else {
-            $(".js-sistr-writes").removeAttr("checked").attr("disabled", true);
-            $(".js-sistr-checkbox").val(SISTR_TYPES.off);
-          }
-        });
-
-        $(".js-sistr-writes").on("change", function(e) {
-          var selected = $(e.target).prop("checked");
-          if (selected) {
-            $(".js-sistr-checkbox").val(SISTR_TYPES.autoMetadata);
-          } else {
-            $(".js-sistr-checkbox").val(SISTR_TYPES.auto);
-          }
-        });
 
         /*
             Disables/enables the lockSamples checkbox

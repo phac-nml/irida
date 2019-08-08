@@ -235,7 +235,7 @@ function getWorkflowInfo(singleSampleOutputs) {
     if (!error) {
       workflowIds[workflowId] = data;
       if (grid) {
-        grid.context.beans.gridApi.beanInstance.redrawRows();
+        grid.gridOptions.api.redrawRows();
       }
     }
   });
@@ -338,9 +338,7 @@ async function getTableData(isShared = true) {
       field: "analysisSubmissionName",
       headerName: I18N["analysis-submission"],
       cellRenderer: p =>
-        `<a href="${BASE_URL}analysis/${
-          p.data.analysisSubmissionId
-        }" target="_blank">${p.data.analysisSubmissionName}</a>`
+        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {

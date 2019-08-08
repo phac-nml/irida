@@ -11,7 +11,7 @@
 		phoneNumber="867-5309" username="user" enabled="true" system_role="ROLE_USER"
 		credentialsNonExpired="true" />
 
-	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" sistr_typing_uploads="OFF" />
+	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"  />
 
 	<reference_file id="1" filePath="/" createdDate="2013-07-18 14:20:19.0" />
 

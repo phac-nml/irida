@@ -481,7 +481,7 @@
                     id="analysis-edit-priority"
                   >
                     <option
-                      th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}"
+                      th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AbstractAnalysisSubmission.Priority).values()}"
                       th:text="${priority}"
                       th:value="${priority}"
                       th:selected="${analysisSubmission.priority == priority}"

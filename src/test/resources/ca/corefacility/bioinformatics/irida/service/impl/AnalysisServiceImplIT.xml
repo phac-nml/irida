@@ -12,7 +12,7 @@
 		credentialsNonExpired="true" />
 		
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" remoteURL="somewhere" sistr_typing_uploads="OFF"/>
+		projectDescription="description" remoteURL="somewhere" />
 	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
 		createdDate="2013-07-18 14:20:19.0" email_subscription="false"/>
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
