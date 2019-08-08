@@ -132,7 +132,6 @@ export function AnalysesTable() {
   return (
     <PageWrapper title={getI18N("analyses.header")}>
       <Table
-        style={{ margin: "6px 24px 0 24px" }}
         scroll={{ x: "max-content" }}
         rowKey={record => record.id}
         loading={loading}
