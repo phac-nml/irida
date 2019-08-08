@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" assemble_uploads="0" sistr_typing_uploads="OFF" />
+		projectDescription="description" />
 
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
 		 sampleName="SampleA" />

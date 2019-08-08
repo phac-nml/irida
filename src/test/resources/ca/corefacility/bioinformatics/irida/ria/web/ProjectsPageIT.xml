@@ -25,14 +25,14 @@
     <user_group_member id="1" created_date="2013-07-12 14:20:19.0" role="GROUP_MEMBER" group_id="1" user_id="2" />
 
     <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0"
-             organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" sistr_typing_uploads="OFF"/>
-    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0" projectDescription="This is another interesting project description." organism="Salmonella" remoteURL="http://salmonella-wiki.ca" sistr_typing_uploads="OFF"/>
-    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0" sistr_typing_uploads="OFF" />
-    <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
-    <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
-    <project id="6" organism="E. coli"  createdDate="2013-07-18 14:21:19.0" name="project ABCD" modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
-    <project id="7" organism="E. coli O157:H7"  createdDate="2013-07-18 14:21:19.0" name="project EFGH" modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
-    <project id="8" organism="E. coli K-12"  createdDate="2013-07-18 14:21:19.0" name="project IJKL" modifiedDate="2013-07-18 14:17:19.0" sistr_typing_uploads="OFF" />
+             organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" />
+    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0" projectDescription="This is another interesting project description." organism="Salmonella" remoteURL="http://salmonella-wiki.ca" />
+    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0"  />
+    <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0"  />
+    <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"  />
+    <project id="6" organism="E. coli"  createdDate="2013-07-18 14:21:19.0" name="project ABCD" modifiedDate="2013-07-18 14:17:19.0"  />
+    <project id="7" organism="E. coli O157:H7"  createdDate="2013-07-18 14:21:19.0" name="project EFGH" modifiedDate="2013-07-18 14:17:19.0"  />
+    <project id="8" organism="E. coli K-12"  createdDate="2013-07-18 14:21:19.0" name="project IJKL" modifiedDate="2013-07-18 14:17:19.0"  />
 
 	<project_user id="1" project_id="1" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
@@ -105,13 +105,24 @@
     <analysis_submission id="1" name="another analysis" remote_analysis_id="1"
                          analysis_state="ERROR" created_date="2013-07-18 14:20:19"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         submitted_project_id="[null]" enabled="[null]"/>
     <analysis_submission id="2" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         submitted_project_id="[null]" enabled="[null]"/>
     <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
                          name="My Submitted Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         submitted_project_id="[null]" enabled="[null]"/>
+
+
+    <analysis_submission id="4" created_date="2013-10-06 10:01:02"
+                         name="Auto Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmissionTemplate"
+                         automated="1" submitted_project_id="1" enabled="1"/>
+
+
 	
 	<analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="1" />
 	<analysis_submission_sequencing_object analysis_submission_id="2" sequencing_object_id="1" />

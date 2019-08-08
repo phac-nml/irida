@@ -97,7 +97,7 @@ Samples can also contain assembled genomes.
 
 Genome assemblies can be linked to samples in two ways:
 
-1. By enabling [automated assemblies](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
+1. By enabling the assembly pipeline as an [automated pipeline](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
 2. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
 
 The assembled genome file can be downloaded by clicking the <span class="fa fa-fw fa-download"></span> icon.

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
     <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-             projectDescription="description" remoteURL="somewhere" sistr_typing_uploads="OFF"/>
+             projectDescription="description" remoteURL="somewhere" />
 
     <sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
              sampleName="sample1"/>
@@ -74,40 +74,40 @@
     <analysis_submission id="1" name="another analysis" remote_analysis_id="1" analysis_id="1" reference_file_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="2" analysis_state="PREPARING" created_date="2013-09-06 10:01:02"
                          name="My Pretend Submission" reference_file_id="1"
                          analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="3" analysis_state="SUBMITTING" created_date="2013-10-06 10:01:02" reference_file_id="1"
                          name="My Submitted Submission" analysis_id="1"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="4" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02"
                          name="My Completed Submission"
                          analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" reference_file_id="1" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" reference_file_id="1" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="5" analysis_state="FINISHED_RUNNING" created_date="2013-12-06 10:01:02"
                          reference_file_id="1"
                          name="My Finished Running Submission" analysis_id="1"
                          workflow_id="bac44f4b-46f9-4393-b247-de11a751410e" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="6" analysis_state="COMPLETED" created_date="2014-01-06 10:01:02" reference_file_id="1"
                          name="My Completed Running Submission" analysis_id="1"
                          workflow_id="bac44f4b-46f9-4393-b247-de11a751410e" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="7" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
                          reference_file_id="1"
                          analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="8" analysis_state="NEW" created_date="2013-08-06 10:01:02" name="My Fake Submission"
                          reference_file_id="1"
                          analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="9" name="another analysis" remote_analysis_id="1" analysis_id="1" reference_file_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="2"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
 
     <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" command_line="/bin/snp-matrix" />
     <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" command_line="/bin/vcf2pseudoalign" />

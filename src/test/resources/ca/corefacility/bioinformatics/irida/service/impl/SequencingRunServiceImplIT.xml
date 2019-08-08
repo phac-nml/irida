@@ -92,7 +92,7 @@
 		createdDate="2013-07-18 14:20:19.0" />
 	<sample id="2" sampleName="sample" 
 		createdDate="2013-07-18 14:20:19.0" />
-	<project id="1" name="project 1" createdDate="2013-07-18 14:20:19.0" sistr_typing_uploads="OFF" />
+	<project id="1" name="project 1" createdDate="2013-07-18 14:20:19.0"  />
 
 	<sample_sequencingobject id="1" sequencingobject_id="2"
 		sample_id="1" created_date="2013-07-18 14:20:19.0" />
@@ -113,7 +113,7 @@
 	<analysis_submission id="1" name="my analysis" remote_analysis_id="1"
 						 analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
         
     <analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="6" />
 </dataset>
