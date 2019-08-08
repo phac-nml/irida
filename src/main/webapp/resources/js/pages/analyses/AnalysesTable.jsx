@@ -38,6 +38,16 @@ export function AnalysesTable() {
           url: `${window.TL.BASE_URL}analysis/`,
           width: 300
         }),
+        filterIcon(filtered) {
+          return (
+            <Icon
+              type="filter"
+              theme="filled"
+              style={{ color: filtered ? "#1890ff" : undefined }}
+              className="t-name"
+            />
+          );
+        },
         title: getI18N("analyses.analysis-name"),
         key: "name",
         ...getTextSearchProps("name")
@@ -48,13 +58,18 @@ export function AnalysesTable() {
         dataIndex: "state",
         filterMultiple: true,
         filters: pipelineStates,
-        render(state, data) {
+        filterIcon(filtered) {
           return (
-            <AnalysisState
-              state={state}
-              percentage={data.percentage}
+            <Icon
+              type="filter"
+              theme="filled"
+              style={{ color: filtered ? "#1890ff" : undefined }}
+              className="t-state"
             />
           );
+        },
+        render(state, data) {
+          return <AnalysisState state={state} percentage={data.percentage} />;
         }
       },
       {
@@ -63,6 +78,16 @@ export function AnalysesTable() {
         width: 250,
         dataIndex: "type",
         filterMultiple: true,
+        filterIcon(filtered) {
+          return (
+            <Icon
+              type="filter"
+              theme="filled"
+              style={{ color: filtered ? "#1890ff" : undefined }}
+              className="t-type"
+            />
+          );
+        },
         filters: types
       },
       {
