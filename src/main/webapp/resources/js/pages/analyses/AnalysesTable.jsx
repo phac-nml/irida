@@ -141,7 +141,7 @@ export function AnalysesTable() {
                 title={"Delete this analysis?"}
                 onConfirm={() => deleteAnalysis(record.id)}
               >
-                <Button type={"link"} size="small">
+                <Button type={"link"} size="small" className="t-delete-btn">
                   <Icon type="delete" theme="twoTone" />
                 </Button>
               </Popconfirm>

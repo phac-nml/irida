@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,8 +13,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  */
 public class AnalysesUserPage extends AbstractPage {
-	@FindBy(css = "tbody.ant-table-tbody tr")
+	@FindBy(css = "tbody.ant-table-tbody .t-name")
 	private List<WebElement> rows;
+
+	@FindBy(className = "t-delete-btn")
+	private List<WebElement> deleteRowBtns;
 
 	@FindBy(className = "t-name")
 	private WebElement nameFilterButton;
@@ -37,6 +41,11 @@ public class AnalysesUserPage extends AbstractPage {
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
 	}
 
+	public static AnalysesUserPage initializeAdminPage(WebDriver driver) {
+		get(driver, "analysis/all");
+		return PageFactory.initElements(driver, AnalysesUserPage.class);
+	}
+
 	public int getNumberOfAnalysesDisplayed() {
 		return rows.size();}
 
@@ -53,5 +62,11 @@ public class AnalysesUserPage extends AbstractPage {
 		nameFilterButton.click();
 		waitForElementToBeClickable(nameFilterClear);
 		nameFilterClear.click();
+	}
+
+	public void deleteAnalysis(int row) {
+		waitForElementToBeClickable(deleteRowBtns.get(row)).click();
+		WebElement popover = waitForElementVisible(By.className("ant-popover-inner-content"));
+		popover.findElement(By.cssSelector(".ant-btn.ant-btn-primary.ant-btn-sm")).click();
 	}
 }

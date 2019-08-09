@@ -20,10 +20,14 @@ export const nameColumnFormat = ({ url, width }) => {
     width,
     render(name, data) {
       return (
-        <a href={`${url}/${data.id}`} title={name}>
+        <a className="t-name" href={`${url}/${data.id}`} title={name}>
           <Text
             ellipsis
-            style={{ width: 270, color: blue6, textDecoration: "underline" }}
+            style={{
+              width: width - 40,
+              color: blue6,
+              textDecoration: "underline"
+            }}
           >
             {name}
           </Text>
