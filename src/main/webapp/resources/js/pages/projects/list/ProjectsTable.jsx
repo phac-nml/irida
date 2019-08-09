@@ -125,7 +125,7 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      ...nameColumnFormat(`${window.TL.BASE_URL}projects/`),
+      ...nameColumnFormat(`${window.TL.BASE_URL}projects`),
       title: getI18N("ProjectsTable_th_name")
     },
     {
