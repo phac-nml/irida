@@ -371,7 +371,7 @@ export class TableComponent extends React.Component {
       /*
       Show a notification that allows the user to reverse the change to the value.
        */
-      const text = Boolean(data[field])
+      const text = data[field]
         ? i18n.linelist.editing.undo.full
         : i18n.linelist.editing.undo.empty;
       showUndoNotification(
