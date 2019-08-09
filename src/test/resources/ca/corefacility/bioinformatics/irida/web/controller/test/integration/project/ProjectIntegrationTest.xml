@@ -26,7 +26,7 @@
 		phoneNumber="0000" username="uploader" enabled="true" system_role="ROLE_SEQUENCER"
 		credentialsNonExpired="true" />
 
-	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" sistr_typing_uploads="OFF" />
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22"  />
 
 	<sample id="1"  sampleName="sample"
 		createdDate="2013-07-18 14:20:19.0" />

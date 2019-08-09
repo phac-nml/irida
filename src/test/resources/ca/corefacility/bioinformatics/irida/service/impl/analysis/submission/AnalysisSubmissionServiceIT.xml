@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
     <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-             projectDescription="description" remoteURL="somewhere" assemble_uploads="0" sistr_typing_uploads="OFF"/>
+             projectDescription="description" remoteURL="somewhere" />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-             projectDescription="description" remoteURL="somewhere" assemble_uploads="0" sistr_typing_uploads="OFF"/>
+             projectDescription="description" remoteURL="somewhere" />
 
     <sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
              sampleName="sample1"/>
@@ -45,48 +45,48 @@
 	<analysis_submission id="1" name="my analysis" remote_analysis_id="1"
 						 analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="8" analysis_state="NEW" created_date="2013-08-06 10:01:02" name="My Fake Submission"
 						 analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="2" analysis_state="PREPARING" created_date="2013-09-06 10:01:02"
 						 name="My Pretend Submission"
 						 analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="3" analysis_state="SUBMITTING" created_date="2013-10-06 10:01:02"
 						 name="My Submitted Submission" analysis_id="1"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="4" analysis_state="COMPLETED" created_date="2013-11-06 10:01:02"
 						 name="My Running Submission"
 						 analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="5" analysis_state="FINISHED_RUNNING" created_date="2013-12-06 10:01:02"
 						 name="My Finished Running Submission" analysis_id="1"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="6" analysis_state="COMPLETED" created_date="2014-01-06 10:01:02"
 						 name="My Completed Running Submission" analysis_id="1"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="7" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
 						 analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="9" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
 						 analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="2"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="10" name="my analysis"
 						 remote_analysis_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="11" name="my analysis"
 						 remote_analysis_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 						 workflow_id="d18dfcfe-f10c-48c0-b297-4f90cb9c44bc" submitter="2"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 	<analysis_submission id="12" name="my analysis"
 						 remote_analysis_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 						 workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="2"
-						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0"/>
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
 
     <workflow_named_parameters id="1" created_date="2014-02-06 10:01:02" name="named parameters" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" />
     <workflow_named_parameter_values named_parameters_id="1" named_parameter_name="A really cool parameter" named_parameter_value="A really cool value" />
