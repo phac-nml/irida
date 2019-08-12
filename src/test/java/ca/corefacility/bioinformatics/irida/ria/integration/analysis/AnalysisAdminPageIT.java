@@ -11,10 +11,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import static org.junit.Assert.assertEquals;
 
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
- *
+ * Test for the Analysis Listing page when logged in as an administrator.
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
@@ -32,7 +29,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
 
 		// Test deleting a analysis
-		page.deleteAnalysis(0);
+		page.deleteAnalysis(10);
 		assertEquals("Should have 8 analyses displayed after deleting one", 8, page.getNumberOfAnalysesDisplayed());
 
 	}

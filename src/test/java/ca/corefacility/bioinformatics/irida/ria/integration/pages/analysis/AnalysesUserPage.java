@@ -68,5 +68,6 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForElementToBeClickable(deleteRowBtns.get(row)).click();
 		WebElement popover = waitForElementVisible(By.className("ant-popover-inner-content"));
 		popover.findElement(By.cssSelector(".ant-btn.ant-btn-primary.ant-btn-sm")).click();
+		waitForTime(500);
 	}
 }

@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { AnalysesContext } from "../../contexts/AnalysesContext";
-import { Button, Icon, Input, Popconfirm, Row, Table } from "antd";
+import { Button, Icon, Popconfirm, Table } from "antd";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
@@ -10,7 +10,6 @@ import { AnalysisState } from "./AnalysisState";
 import { getI18N } from "./../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../../components/ant.design/table-search-props";
-import { SPACE_SM } from "../../styles/spacing";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -141,7 +140,7 @@ export function AnalysesTable() {
                 title={"Delete this analysis?"}
                 onConfirm={() => deleteAnalysis(record.id)}
               >
-                <Button type={"link"} size="small" className="t-delete-btn">
+                <Button type="link" className="t-delete-btn">
                   <Icon type="delete" theme="twoTone" />
                 </Button>
               </Popconfirm>
