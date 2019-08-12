@@ -29,12 +29,12 @@ public class AnalysisSubmissionSpecification {
 	 *
 	 * @param search      Basic search string
 	 * @param name        Analysis name
-	 * @param state       {@link AnalysisState}
+	 * @param states       {@link Set} of {@link AnalysisState} to filter by.
 	 * @param workflowIds Set of UUIDs to search
 	 * @param user        The {@link User} owning the analysis
 	 * @param project     A project the analysis is shared with
 	 * @param automated   Whether this analysis submission was submitted as part of an automated process.
-	 * @return Specificaton for this search
+	 * @return {@link Specification} for this search
 	 */
 	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, Set<AnalysisState> states,
 			User user, Set<UUID> workflowIds, Project project, Boolean automated) {
