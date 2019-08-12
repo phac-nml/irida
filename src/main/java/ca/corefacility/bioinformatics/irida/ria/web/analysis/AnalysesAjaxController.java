@@ -62,12 +62,17 @@ public class AnalysesAjaxController {
 		this.workflowsService = workflowsService;
 	}
 
+	/**
+	 * Get a internationalized list of all Analysis pipeline states.
+	 *
+	 * @param locale {@link Locale} Users locale
+	 * @return {@link List} of {@link AnalysisState}
+	 */
 	@RequestMapping("/states")
 	public List<AnalysisStateModel> getAnalysisStates(Locale locale) {
 		List<AnalysisState> states = Arrays.asList(AnalysisState.values());
 		return states.stream()
-				.map(s -> new AnalysisStateModel(
-						messageSource.getMessage("analysis.state." + s, new Object[] {}, locale), s.name()))
+				.map(s -> new AnalysisStateModel(messageSource.getMessage("analysis.state." + s, new Object[] {}, locale), s.name()))
 				.collect(Collectors.toList());
 	}
 
@@ -121,6 +126,9 @@ public class AnalysesAjaxController {
 			}
 		}
 
+		/*
+		Check to see if the filter includes the state.  This can be any number of states.
+		 */
 		Set<AnalysisState> stateFilters = new HashSet<>();
 		if (analysesListRequest.getFilters()
 				.getState()
@@ -149,6 +157,9 @@ public class AnalysesAjaxController {
 					user, workflowIds, pageRequest);
 		}
 
+		/*
+		UI cannot consume it as-is.  Format into something the UI will like use the the AnalysisModel
+		 */
 		List<AnalysisModel> analyses = page.getContent()
 				.stream()
 				.map(submission -> this.createAnalysisModel(submission, locale))
@@ -169,6 +180,13 @@ public class AnalysesAjaxController {
 		analysisSubmissionService.delete(id);
 	}
 
+	/**
+	 * Format an {@link AnalysisSubmission} into something a form that the UI can consume.
+	 *
+	 * @param submission {@link AnalysisSubmission}
+	 * @param locale     {@link Locale}
+	 * @return {@link AnalysisModel}
+	 */
 	private AnalysisModel createAnalysisModel(AnalysisSubmission submission, Locale locale) {
 		AnalysisState analysisState = submission.getAnalysisState();
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
@@ -184,17 +202,24 @@ public class AnalysesAjaxController {
 					.getCreatedDate());
 		}
 
+		/*
+		Check to see if the user has authority to update (delete) this particular submission.
+		 */
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		boolean updatePermission = this.updateAnalysisSubmissionPermission.isAllowed(authentication, submission);
 
 		// There is no percentage completion for ERROR, so we will fake one here.
-		float percentage = analysisState.equals(AnalysisState.ERROR) ?
-				100f :
-				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(analysisState);
+		float percentage = analysisState.equals(AnalysisState.ERROR) ? 100f : AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(analysisState);
 		return new AnalysisModel(submission, state, duration, workflow, percentage, updatePermission);
 	}
 
+	/**
+	 * Download the output files of an {@link AnalysisSubmission}
+	 *
+	 * @param id {@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param response downloaded output files
+	 */
 	@RequestMapping("/download/{id}")
 	public void downloadAnalysis(@PathVariable Long id, HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(id);
