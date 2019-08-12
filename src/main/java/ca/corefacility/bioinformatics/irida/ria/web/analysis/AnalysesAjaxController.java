@@ -96,6 +96,7 @@ public class AnalysesAjaxController {
 	 * Returns a list of analyses based on paging, sorting and filter requirements sent in {@link AnalysesListRequest}
 	 *
 	 * @param analysesListRequest description of the paging requirements.  Includes sorting, filtering, and paging
+	 * @param request {@link HttpServletResponse}
 	 * @param locale              of the current user
 	 * @return the current contents of the table based on the state requested
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found

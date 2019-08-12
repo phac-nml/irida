@@ -28,8 +28,13 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.clearNameFilter();
 		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
 
-		// Test deleting a analysis
-		page.deleteAnalysis(10);
+		/*
+		Test deleting a analysis
+		Need to to start at an offset of 9
+		 - elements 0 - 8 are not displayed on the screen.  This table uses ant.design table with an always visible column for the buttons.
+		 9 - 17 are the actual element displayed within the overlay of the fixed column.
+		 */
+		page.deleteAnalysis(9);
 		assertEquals("Should have 8 analyses displayed after deleting one", 8, page.getNumberOfAnalysesDisplayed());
 
 	}
