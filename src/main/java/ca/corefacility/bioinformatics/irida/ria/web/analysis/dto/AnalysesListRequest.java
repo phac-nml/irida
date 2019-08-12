@@ -2,6 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
 import org.springframework.data.domain.Sort;
 
+/**
+ * Used to handle a UI Request for the Analyses Page.
+ * This is the basic information required to create the table.
+ */
 public class AnalysesListRequest {
 	private int current;
 	private int pageSize;
