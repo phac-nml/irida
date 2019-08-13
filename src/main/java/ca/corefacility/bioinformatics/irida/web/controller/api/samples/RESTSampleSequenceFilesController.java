@@ -436,10 +436,6 @@ public class RESTSampleSequenceFilesController {
 			logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject()
 					.getId());
 
-			// clean up the temporary files.
-			Files.deleteIfExists(target);
-			Files.deleteIfExists(temp);
-			logger.trace("Deleted temp file");
 			// prepare a link to the sequence file itself (on the sequence file
 			// controller)
 			String objectType = objectLabels.get(SingleEndSequenceFile.class);
@@ -476,6 +472,8 @@ public class RESTSampleSequenceFilesController {
 			logger.debug("Error 400 - Bad Request: " + e.getMessage());
 			throw e;
 		} finally {
+			// clean up the temporary files.
+			logger.trace("Deleted temp files");
 			Files.deleteIfExists(target);
 			Files.deleteIfExists(temp);
 		}
@@ -578,11 +576,11 @@ public class RESTSampleSequenceFilesController {
 			throw e;
 		} finally {
 			// clean up the temporary files.
+			logger.trace("Deleted temp files");
 			Files.deleteIfExists(target1);
 			Files.deleteIfExists(temp1);
 			Files.deleteIfExists(target2);
 			Files.deleteIfExists(temp2);
-			logger.trace("Deleted temp files");
 		}
 
 		// respond to the client
