@@ -47,19 +47,16 @@ public class AnalysesAjaxController {
 	private IridaWorkflowsService iridaWorkflowsService;
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
-	private IridaWorkflowsService workflowsService;
 
 	@Autowired
 	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, IridaWorkflowsService iridaWorkflowsService,
-			MessageSource messageSource, UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission,
-			IridaWorkflowsService workflowsService) {
+			MessageSource messageSource, UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
-		this.workflowsService = workflowsService;
 	}
 
 	/**
@@ -84,7 +81,7 @@ public class AnalysesAjaxController {
 	 */
 	@RequestMapping("/types")
 	public List<AnalysisTypeModel> getWorkflowTypes(Locale locale) {
-		Set<AnalysisType> types = workflowsService.getRegisteredWorkflowTypes();
+		Set<AnalysisType> types = iridaWorkflowsService.getRegisteredWorkflowTypes();
 		return types.stream()
 				.map(t -> new AnalysisTypeModel(
 						messageSource.getMessage("workflow." + t.getType() + ".title", new Object[] {}, locale),
@@ -107,7 +104,7 @@ public class AnalysesAjaxController {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
-		User user = (User) authentication.getPrincipal();
+  		User user = (User) authentication.getPrincipal();
 
 		/*
 		Check to see if we are filtering by workflow type
