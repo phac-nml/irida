@@ -221,6 +221,10 @@
           params["paired"] = paired;
         }
 
+        if (window.PAGE.pipeline.automatedProjectId != null) {
+          params["automatedProject"] = window.PAGE.pipeline.automatedProjectId;
+        }
+
         if (
           Object.keys(selectedParameters).length > 0 &&
           selectedParameters.id !== "no_parameters"
