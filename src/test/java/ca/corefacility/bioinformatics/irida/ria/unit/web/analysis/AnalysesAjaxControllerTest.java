@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.security.Principal;
-import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,20 +8,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysesAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesFilters;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
 
 import static org.hamcrest.Matchers.is;
@@ -90,21 +85,5 @@ public class AnalysesAjaxControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].value", is("Pipeline 1")))
 				.andExpect(jsonPath("$[1].value", is("Pipeline 2")));
-	}
-
-	@Test
-	public void testGetPagedAnalyses() throws Exception {
-		AnalysesListRequest request = new AnalysesListRequest();
-		request.setCurrent(0);
-		request.setFilters(new AnalysesFilters());
-		request.setPageSize(10);
-		request.setSortColumn("createdDate");
-		request.setSortDirection("descend");
-
-		mockMvc.perform(get("/ajax/analyses/ list").principal(mock(Principal.class))
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(request))
-				.param("locale", Locale.US.toString()))
-				.andExpect(status().isOk());
 	}
 }
