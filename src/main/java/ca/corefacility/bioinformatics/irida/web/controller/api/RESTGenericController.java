@@ -1,16 +1,15 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import com.google.common.collect.Sets;
+import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -20,14 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
-import com.google.common.collect.Sets;
-import com.google.common.net.HttpHeaders;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 
 
@@ -234,7 +231,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// ask the service to delete the resource specified by the identifier
 		crudService.delete(identifier);
 
-		RootResource rootResource = new RootResource();
+		ResourceSupport rootResource = new ResourceSupport();
 		rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
 
 		modelMap.addAttribute(RESOURCE_NAME, rootResource);
@@ -270,7 +267,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 
 		// create a response including the new location.
 		ModelMap modelMap = new ModelMap();
-		RootResource rootResource = new RootResource();
+		ResourceSupport rootResource = new ResourceSupport();
 		rootResource.add(linkTo(getClass()).slash(id).withSelfRel());
 		rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
 		modelMap.addAttribute(RESOURCE_NAME, rootResource);

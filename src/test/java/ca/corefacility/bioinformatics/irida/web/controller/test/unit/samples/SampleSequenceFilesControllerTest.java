@@ -1,34 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.FileCopyUtils;
-
-import com.google.common.collect.Lists;
-import com.google.common.net.HttpHeaders;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -43,11 +14,33 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
+import com.google.common.collect.Lists;
+import com.google.common.net.HttpHeaders;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link RESTSampleSequenceFilesController}.
@@ -127,8 +120,8 @@ public class SampleSequenceFilesControllerTest {
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
-		assertTrue(o instanceof RootResource);
-		RootResource resource = (RootResource) o;
+		assertTrue(o instanceof ResourceSupport);
+		ResourceSupport resource = (ResourceSupport) o;
 
 		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);

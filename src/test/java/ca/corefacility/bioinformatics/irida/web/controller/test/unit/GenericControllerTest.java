@@ -1,32 +1,25 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
+import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ModelMap;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.hateoas.Link;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ModelMap;
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the {@link RESTGenericController}.
@@ -84,7 +77,7 @@ public class GenericControllerTest {
 	@Test
 	public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
 		ModelMap modelMap = controller.delete(2L);
-		RootResource rootResource = (RootResource) modelMap.get(RESTGenericController.RESOURCE_NAME);
+		ResourceSupport rootResource = (ResourceSupport) modelMap.get(RESTGenericController.RESOURCE_NAME);
 		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION);
 		assertNotNull(l);
 		assertEquals("http://localhost/api/generic", l.getHref());
@@ -133,7 +126,7 @@ public class GenericControllerTest {
 	public void testUpdate() throws InstantiationException, IllegalAccessException {
 		when(crudService.updateFields(identifier, updatedFields)).thenReturn(entity);
 		ModelMap response = controller.update(identifier, updatedFields);
-		RootResource r = (RootResource) response.get(RESTGenericController.RESOURCE_NAME);
+		ResourceSupport r = (ResourceSupport) response.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(r.getLink(Link.REL_SELF));
 		assertNotNull(r.getLink(RESTGenericController.REL_COLLECTION));
 	}

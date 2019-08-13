@@ -1,11 +1,8 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Map;
-
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -15,39 +12,43 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for the {@link RESTRootController}.
  */
 public class RootControllerTest {
 
-    private RESTRootController controller = new RESTRootController();
+	private RESTRootController controller = new RESTRootController();
 
-    @Before
-    public void setUp() {
-        // fake out the servlet response so that the URI builder will work.
-        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
-        controller.initLinks();
-    }
+	@Before
+	public void setUp() {
+		// fake out the servlet response so that the URI builder will work.
+		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
+		RequestContextHolder.setRequestAttributes(ra);
+		controller.initLinks();
+	}
 
-    @Test
-    public void testGetLinks() {
-        Map<String, Class<?>> controllers = RESTRootController.PUBLIC_CONTROLLERS;
-        ModelMap map = controller.getLinks(new MockHttpServletRequest());
-        Object o = map.get(RESTGenericController.RESOURCE_NAME);
-        assertNotNull(o);
-        assertTrue(o instanceof RootResource);
-        RootResource r = (RootResource) o;
-        for (Link l : r.getLinks()) {
-            if (!l.getRel().equals("self")) {
-                assertTrue(controllers.containsKey(l.getRel()));
-            }
-        }
+	@Test
+	public void testGetRootResource() {
+		Map<String, Class<?>> controllers = RESTRootController.PUBLIC_CONTROLLERS;
+		ModelMap map = controller.getLinks(new MockHttpServletRequest());
+		Object o = map.get(RESTGenericController.RESOURCE_NAME);
+		assertNotNull(o);
+		assertTrue(o instanceof RootResource);
+		RootResource r = (RootResource) o;
 
-        assertNotNull(r.getLink("self"));
-    }
+		assertNotNull("IRIDA version should be available", r.getVersion());
+		for (Link l : r.getLinks()) {
+			if (!l.getRel()
+					.equals("self")) {
+				assertTrue(controllers.containsKey(l.getRel()));
+			}
+		}
+
+		assertNotNull(r.getLink("self"));
+	}
 }

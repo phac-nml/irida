@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,6 +35,9 @@ import com.google.common.collect.Sets;
  */
 @Controller
 public class RESTRootController {
+
+	@Value("${irida.version}")
+	private String iridaVersion;
 
 	/**
 	 * A collection of the controllers in our system accessible by all
@@ -81,13 +85,13 @@ public class RESTRootController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/api")
 	public ModelMap getLinks(final HttpServletRequest request) {
-		logger.debug("Discovering application");
-		RootResource resource = new RootResource();
+		RootResource resource = new RootResource(iridaVersion);
 		List<Link> links = new ArrayList<>();
 
 		links.addAll(buildLinks(PUBLIC_CONTROLLERS));
 
-		if (RESTRICTED_ROLES.stream().anyMatch(r -> request.isUserInRole(r))) {
+		if (RESTRICTED_ROLES.stream()
+				.anyMatch(r -> request.isUserInRole(r))) {
 			links.addAll(buildLinks(RESTRICTED_CONTROLLERS));
 		}
 

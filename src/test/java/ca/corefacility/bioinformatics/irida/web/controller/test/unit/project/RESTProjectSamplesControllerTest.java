@@ -1,26 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ModelMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -30,18 +9,32 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ModelMap;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link RESTProjectSamplesController}.
@@ -111,8 +104,8 @@ public class RESTProjectSamplesControllerTest {
 
 		// confirm that the response looks right.
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertTrue(o instanceof RootResource);
-		RootResource resource = (RootResource) o;
+		assertTrue(o instanceof ResourceSupport);
+		ResourceSupport resource = (ResourceSupport) o;
 		List<Link> links = resource.getLinks();
 
 		// should be two links in the response, one back to the individual

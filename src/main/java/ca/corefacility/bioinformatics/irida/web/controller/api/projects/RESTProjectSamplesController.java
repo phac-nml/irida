@@ -9,13 +9,13 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -319,7 +319,7 @@ public class RESTProjectSamplesController {
 		projectService.removeSampleFromProject(p, s);
 
 		// respond to the client.
-		RootResource resource = new RootResource();
+		ResourceSupport resource = new ResourceSupport();
 		// add links back to the collection of samples and to the project
 		// itself.
 		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withRel(
