@@ -36,6 +36,7 @@ Changes
 * [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
 * [Documentation]: Added link to Galaxy Export (Import) tool documentation.
 * [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
+* [UI]: Updated Analyses listing page to use ant.design.
 
 19.01 to 19.05
 ---------------
