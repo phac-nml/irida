@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -54,6 +55,9 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
+
+	@Value("${locales.default}")
+	private String defaultLocaleValue;
 
 	@Autowired
 	private Environment env;
@@ -105,8 +109,11 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Bean(name = "localeResolver")
 	public LocaleResolver localeResolver() {
 		logger.debug("Configuring LocaleResolver");
+
+		Locale defaultLocale = Locale.forLanguageTag(defaultLocaleValue);
+
 		SessionLocaleResolver slr = new SessionLocaleResolver();
-		slr.setDefaultLocale(Locale.ENGLISH);
+		slr.setDefaultLocale(defaultLocale);
 		return slr;
 	}
 
