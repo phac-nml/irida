@@ -1,5 +1,7 @@
 Samples can also be exported directly to Galaxy. Samples exported from IRIDA into Galaxy are loaded into a [Galaxy data library](https://galaxyproject.org/data-libraries/) that can be easily shared with multiple Galaxy users.
 
+*Note: The Galaxy tool being used by this tutorial is located on GitHub <https://github.com/phac-nml/irida-galaxy-importer>. Please see the GitHub page for installation instructions (if the tool is not already installed in your Galaxy instance).*
+
 To export data from IRIDA to Galaxy, start in Galaxy and find the "IRIDA server" tool in the "Get Data" section:
 
 ![IRIDA server import tool.]({{ site.baseurl }}/images/tutorials/common/samples/galaxy-export-inside-galaxy.png)

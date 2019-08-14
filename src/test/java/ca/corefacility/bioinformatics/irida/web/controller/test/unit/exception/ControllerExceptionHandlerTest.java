@@ -77,6 +77,12 @@ public class ControllerExceptionHandlerTest {
     }
 
     @Test
+    public void testHandleArgumentException() {
+        ResponseEntity<ErrorResponse> response = controller.handleArgumentException(new IllegalArgumentException("illegal argument"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
     public void testHandleExistsException() {
         ResponseEntity<ErrorResponse> response = controller.handleExistsException(new EntityExistsException("exists"));
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
