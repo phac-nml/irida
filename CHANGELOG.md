@@ -12,10 +12,30 @@ Changes
 * [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
 * [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
 * [UI/Developer]: Updated `axios` to fix vulnerability.
+* [Workflow]: Fixing bug so that fastq files uploaded to Galaxy will be "fastqsanger" when uncompressed and "fastqsanger.gz" when compressed.
 * [UI/Developer]: Updated `fstream` to fix vulnerability.
 * [Developer]: Update pom file to reflect active IRIDA developers.
 * [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
 * [UI/Developer]: Updated to latest `react-redux` to use new hooks API.
+* [UI]: Updated session expiration modal.
+* [UI]: Removed `momentjs` from being loaded on every page.
+* [UI]: Removed `livestampjs` as a project dependency.
+* [REST]: Changed the URL suffix to analysis output files to be a numerical id instead of a hash key.  Files with a `.` in the name were having issues resolving.  No change in `rel`s so applications should work as usual.
+* [UI]: Removed `noty` as a `bower` dependency.
+* [Developer]: Removed unnecessary `exists` call in `updateFields` method which was causing some hibernate caching issues.
+* [UI]: Removed `noty` as `yarn` dependency, only using `ant.design` notifications.
+* [UI/Developer]: Removed `datatables` as a bower dependency.
+* [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
+* [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
+* [Documentation]: Fixed `shed-tools` command to include `install` subcommand for installing Galaxy tools.
+* [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
+* [Developer]: Updated UI testing to allow using an external selenium webdriver.
+* [Developer]: Update eslint config to use `babel-parser`.
+* [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
+* [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
+* [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
+* [Documentation]: Added link to Galaxy Export (Import) tool documentation.
+* [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
 
 19.01 to 19.05
 ---------------

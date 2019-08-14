@@ -109,6 +109,25 @@ public class ControllerExceptionHandler {
 	}
 
 	/**
+	 * Handle
+	 * {@link IllegalArgumentException}
+	 * .
+	 *
+	 * @param e
+	 *            the exception as thrown by the service.
+	 * @return an appropriate HTTP response.
+	 */
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorResponse> handleArgumentException(IllegalArgumentException e) {
+		String detailedMessage = e.getMessage();
+		logger.info("A client attempted reach a resource with invalid arguments at " + new Date()
+				+ ". Error message: " + detailedMessage);
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setMessage(detailedMessage);
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/**
 	 * Handle {@link javax.validation.ConstraintViolationException}.
 	 * 
 	 * @param e

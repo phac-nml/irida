@@ -154,11 +154,21 @@ Project processing settings can be found in the **Processing** tab in the projec
 
 #### Automated pipelines
 
-A project can be setup to automatically trigger the execution of a pipeline on upload of new data. The two pipelines available to be triggered are the [Assembly](../../tutorials/assembly/) pipeline (for bacterial genomes) and the [SISTR](../sistr/) pipeline (for typing of *Salmonella* genomes). This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
+A project can be setup to automatically trigger the execution of a pipeline on upload of new data.  Any installed pipeline that analyzes individual sample files may be launched on upload (including plugin pipelines).  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
 
-To enable an automated pipeline, check the *Automatically assemble data uploaded to project* or *Automatically type data uploaded to the project with SISTR* boxes.  Any new data uploaded to the project will now trigger the execution of the selected pipelines.
+To set up a new automated pipeline, click the *Add Automated Pipeline* button on the processing page.  
 
-![Automated pipelines check](images/project-settings-automated-pipelines.png)
+![Automated pipelines check](images/project-settings-no-auto-pipelines.png)
+
+After clicking the *Add Automated Pipeline* button you'll be brought to the pipeline list page similar to launching a regular pipeline with data in your cart.  From here you can follow the same process for launching a pipeline including selecting the pipeline, customizing parameters, sharing results, etc.  See more about this process in the [pipelines documentation](../pipelines/#selecting-a-pipeline).
+
+When you have successfully set up your automated analysis pipeline, you'll be returned to the project settings processing page.  Any new data uploaded to the project will now trigger the execution of the selected pipelines.
+
+![Automated pipelines check](images/project-settings-with-auto-pipeline.png)
+
+To remove an automated pipeline, click the *Remove* button below the pipeline description and confirm.  Automated pipelines can only be removed by a project **manager**.
+
+Note that automated pipeline parameters cannot currently be modified after the pipeline has been created.  To modify the parameters for an automated pipeline, you should remove the original automated pipeline and create a new one with the new desired parameters.
 
 #### Project coverage
 

@@ -60,17 +60,14 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
 			+ "  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id\n"
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
-			+ "  INNER JOIN sequencing_object seqobj ON o.sequencing_object_id = seqobj.id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
 			+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id\n"
-			+ "  INNER JOIN project p ON psample.project_id = p.id\n"
 			+ "  INNER JOIN user u ON asub.submitter = u.id\n"
-			+ "  LEFT JOIN project_analysis_submission pasub ON asub.id = pasub.analysis_submission_id\n"
+			+ "  INNER JOIN project_analysis_submission pasub ON asub.id = pasub.analysis_submission_id\n"
 			+ "WHERE\n"
-			+ "  p.id = :projectId\n"
-			+ "  AND asub.workflow_id IN (:workflowIds)\n"
-			+ "  AND pasub.project_id = p.id";
+			+ "  psample.project_id = :projectId\n"
+			+ "  AND asub.workflow_id IN (:workflowIds)\n";
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		// need to explicitly convert UUIDs to String
@@ -113,16 +110,14 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
 			+ "  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id\n"
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
-			+ "  INNER JOIN sequencing_object seqobj ON o.sequencing_object_id = seqobj.id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
 			+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id\n"
-			+ "  INNER JOIN project p ON psample.project_id = p.id\n"
 			+ "  INNER JOIN user u ON asub.submitter = u.id\n"
 			+ "WHERE\n"
-			+ "  p.id = :projectId\n"
+			+ "  psample.project_id = :projectId\n"
 			+ "  AND asub.workflow_id IN (:workflowIds)\n"
-			+ "  AND (seqobj.sistr_typing = asub.id OR seqobj.automated_assembly = asub.id)";
+			+ "  AND asub.automated=1";
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("projectId", projectId);
@@ -160,7 +155,6 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
 			+ "  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id\n"
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
-			+ "  INNER JOIN sequencing_object seqobj ON o.sequencing_object_id = seqobj.id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
 			+ "WHERE\n"

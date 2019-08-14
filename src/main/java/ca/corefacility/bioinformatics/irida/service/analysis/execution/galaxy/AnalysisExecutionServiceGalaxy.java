@@ -84,7 +84,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 */
 	@Override
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		checkArgument(AnalysisState.PREPARED.equals(analysisSubmission.getAnalysisState()), " analysis should be "
 				+ AnalysisState.PREPARED);
 

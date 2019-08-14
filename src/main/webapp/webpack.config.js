@@ -9,8 +9,7 @@ const BUILD_PATH = path.resolve(__dirname, "dist");
 const config = {
   externals: {
     jquery: "jQuery",
-    angular: "angular",
-    moment: "moment"
+    angular: "angular"
   },
   stats: {
     children: false,
@@ -30,10 +29,8 @@ const config = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude(path) {
-          return path.match(/node_modules/);
-        },
-        use: "babel-loader"
+        exclude: /(node_modules|bower_components)/,
+        use: "babel-loader?cacheDirectory"
       },
       {
         test: /\.(css|sass|scss)$/,

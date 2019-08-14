@@ -22,7 +22,8 @@
           parameters: /*[[${parameters}]]*/ [],
           pipelineId: /*[[${pipelineId}]]*/ "pipelineId",
           dynamicSources: /*[[${dynamicSources}]]*/ [],
-          paramsWithChoices: /*[[${paramsWithChoices}]]*/ []
+          paramsWithChoices: /*[[${paramsWithChoices}]]*/ [],
+          automatedProjectId: /*[[${automatedProjectId}]]*/ 0
         }
       };
       /*]]>*/
@@ -45,9 +46,9 @@
                                 <label class="col-sm-2 control-label" for="pipeline-name"
                                        th:text="#{workflow.label.name}">Name</label>
 
-                                <div class="col-md-10" th:with="dateFormat=#{date.iso-8601}">
+                                <div class="col-md-10">
                                     <input id="pipeline-name" class="form-control" type="text"
-                                           th:value="${name + '_' + #calendars.format(#dates.createToday(), dateFormat)}"/>
+                                           th:value="${name}"/>
 
                                     <div ng-show="pipeline.error" class="label label-danger ng-cloak">{{pipeline.error}}
                                     </div>
@@ -196,7 +197,7 @@
                                 <label class="col-sm-2 control-label" th:text="#{workflow.label.share}">_Share results
                                     with
                                     project_</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-10" th:if="${automatedProject == null}">
                                     <div class="row">
                                         <div class="col-md-6 checkbox" th:each="project : ${projects}">
                                             <label>
@@ -207,6 +208,12 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-10" th:if="${automatedProject != null}">
+                                    <div class="row">
+                                        <span th:text="#{workflow.automated.project-share(${automatedProject.name})}">_Analysis results will be automatically shared with Project 1_</span>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="form-group" th:if="${emailConfigured}">
                                 <label class="col-sm-2 control-label" th:text="#{'workflow.label.email'}">_Email Results_</label>
@@ -225,7 +232,7 @@
                 </div>
 
                 <!-- SAMPLES -->
-                <div class="row">
+                <div class="row" th:if="${automatedProject == null}">
                     <div class="col-md-12">
                         <label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
 
@@ -302,19 +309,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="row" th:if="${automatedProject != null}">
+                    <div class="col-md-12">
+                        <span class="lead" th:text="#{workflow.automated.file-message(${automatedProject.name})}">_This pipeline will be run automatically for any files uploaded to project XXXX_</span>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-3 col-sm-3" ng-switch="pipeline.loading">
                 <!-- BUTTONS ON THE SIDE -->
                 <div ng-switch-when="false" class="ng-cloak text-center">
-                    <h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+                    <h2 th:if="${automatedProject == null}" th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+                    <h2 th:if="${automatedProject != null}" th:text="#{workflow.automated.launch.btn}">Ready to Launch?</h2>
 
                     <div data-toggle="tooltip" data-placement="bottom" onmouseenter="$(this).tooltip('show')"
                          data-original-title="{{ pipeline.launchButtonTitle() }}">
                         <button id="btn-launch" class="btn btn-xl btn-danger btn-action"
                                 ng-disabled="pipeline.shouldDisableLaunch()"
                                 ng-click="pipeline.launch()">
-                            <span class="fa fa-rocket"></span>
+                            <span th:if="${automatedProject == null}" class="fas fa-rocket"></span>
+                            <span th:if="${automatedProject != null}" class="fas fa-save"></span>
                         </button>
                     </div>
                 </div>
@@ -325,17 +339,26 @@
                     </div>
                     <div id="pipeline-submitted-success" ng-show="pipeline.success" class="alert alert-success">
                         <i class="far fa-smile-wink fa-2x"></i>&nbsp;
-                        <span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
-                        <br/><br/>
-                        <a id="btn-see-pipeline" class="btn btn-success btn-affixed" href="#"
-                           th:href="@{/analysis}"
-                           th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
-                        </a>
-                        <br/><br/>
-                        <button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
-                                ng-click="pipeline.clearAndRedirect()"
-                                th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
-                        </button>
+                        <th:block th:if="${automatedProject == null}">
+                            <span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
+                            <br/><br/>
+                            <a id="btn-see-pipeline" class="btn btn-success btn-affixed" href="#"
+                            th:href="@{/analysis}"
+                            th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
+                            </a>
+                            <br/></br/>
+                            <button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
+                                    ng-click="pipeline.clearAndRedirect()"
+                                    th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
+                            </button>
+                        </th:block>
+                        <th:block th:if="${automatedProject != null}">
+                            <span th:text="#{workflow.submitted-template-success}">_Template created_</span>
+                            <br/><br/>
+                            <a id="btn-see-pipeline" class="btn btn-success btn-affixed" href="#" 
+                                th:href="@{/projects/{pid}/settings(pid=${automatedProjectId})}" 
+                                th:text="#{workflow.submitted-project-settings}">_Project settings_</a>
+                        </th:block>
                     </div>
                 </div>
             </div>

@@ -499,12 +499,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>${selenium-driver.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
 			<version>${selenium-driver.version}</version>
 			<scope>test</scope>
@@ -734,7 +728,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
-					<release>${java.version}</release>
+					<source>${java.version}</source>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -888,7 +882,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
+							<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
 							</descriptors>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
@@ -1065,7 +1059,7 @@
 		<commons.cli.version>1.2</commons.cli.version>
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.26</slf4j.version>
-		<guava.version>17.0</guava.version>
+		<guava.version>28.0-jre</guava.version>
 		<spring.version>4.2.3.RELEASE</spring.version>
 		<spring.security.version>4.0.4.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
@@ -1106,8 +1100,8 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
-		<selenium-driver.version>2.52.0</selenium-driver.version>
-		<selenium-chrome-driver.version>2.52.0</selenium-chrome-driver.version>
+		<selenium-driver.version>3.141.59</selenium-driver.version>
+		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
 		<attoparser.version>2.0.4.RELEASE</attoparser.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>

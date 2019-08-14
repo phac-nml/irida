@@ -37,6 +37,7 @@ export class Pipelines extends React.Component {
               description={pipeline.description}
               styleName={pipeline.styleName}
               displaySelect={this.props.displaySelect}
+              automatedProject={this.props.automatedProject}
             />
           </Col>
         ))}

@@ -86,6 +86,7 @@ public class GalaxyHistoriesServiceIT {
 	
 	private Path dataFile;
 	private Path dataFile2;
+	private Path dataFileCompressed;
 	private Path dataFileInvalid;
 	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
@@ -178,6 +179,9 @@ public class GalaxyHistoriesServiceIT {
 		
 		dataFile2 = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
 				"testData2.fastq").toURI());
+		
+		dataFileCompressed = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
+				"testData5.fastq.gz").toURI());
 		
 		File invalidFile = File.createTempFile("galaxy-test", ".fastq");
 		invalidFile.delete();
@@ -325,20 +329,31 @@ public class GalaxyHistoriesServiceIT {
 			throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
-		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
-				FILE_TYPE, history, library, DataStorage.LOCAL);
+		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2, dataFileCompressed),
+				history, library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
-		assertEquals(2, datasetsMap.size());
+		assertEquals(3, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
 		String datasetId2 = datasetsMap.get(dataFile2);
+		String datasetIdCompressed = datasetsMap.get(dataFileCompressed);
 		
 		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
 				.getHistoriesClient().showDataset(history.getId(), datasetId1);
 		assertNotNull(actualDataset1);
+		assertEquals("Invalid data type extension", actualDataset1.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER.toString());
 
 		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
 				.getHistoriesClient().showDataset(history.getId(), datasetId2);
 		assertNotNull(actualDataset2);
+		assertEquals("Invalid data type extension", actualDataset2.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER.toString());
+		
+		Dataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetIdCompressed);
+		assertNotNull(actualDatasetCompressed);
+		assertEquals("Invalid data type extension", actualDatasetCompressed.getDataTypeExt(),
+				InputFileType.FASTQ_SANGER_GZ.toString());
 	}
 	
 	/**
@@ -353,7 +368,7 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
 		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
-				FILE_TYPE, history, library, DataStorage.REMOTE);
+				history, library, DataStorage.REMOTE);
 		assertNotNull(datasetsMap);
 		assertEquals(2, datasetsMap.size());
 		String datasetId1 = datasetsMap.get(dataFile);
@@ -381,7 +396,7 @@ public class GalaxyHistoriesServiceIT {
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
 		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
-				FILE_TYPE, history, library, DataStorage.LOCAL);
+				history, library, DataStorage.LOCAL);
 	}
 	
 	/**
@@ -397,7 +412,7 @@ public class GalaxyHistoriesServiceIT {
 		history.setId("invalid");
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
-				FILE_TYPE, history, library, DataStorage.LOCAL);
+				history, library, DataStorage.LOCAL);
 	}
 	
 	/**

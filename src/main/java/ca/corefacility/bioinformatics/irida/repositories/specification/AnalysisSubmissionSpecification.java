@@ -29,25 +29,19 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 public class AnalysisSubmissionSpecification {
 
 	/**
-	 * Search for analyses with a given name, {@link AnalysisState}, or Workflow
-	 * UUID
-	 * 
-	 * @param search
-	 *            Basic search string
-	 * @param name
-	 *            Analysis name
-	 * @param state
-	 *            {@link AnalysisState}
-	 * @param workflowIds
-	 *            Set of UUIDs to search
-	 * @param user
-	 *            The {@link User} owning the analysis
-	 * @param project
-	 *            A project the analysis is shared with
+	 * Search for analyses with a given name, {@link AnalysisState}, or Workflow UUID
+	 *
+	 * @param search      Basic search string
+	 * @param name        Analysis name
+	 * @param state       {@link AnalysisState}
+	 * @param workflowIds Set of UUIDs to search
+	 * @param user        The {@link User} owning the analysis
+	 * @param project     A project the analysis is shared with
+	 * @param automated   Whether this analysis submission was submitted as part of an automated process.
 	 * @return Specificaton for this search
 	 */
 	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state,
-			User user, Set<UUID> workflowIds, Project project) {
+			User user, Set<UUID> workflowIds, Project project, Boolean automated) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
 			public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
@@ -68,6 +62,9 @@ public class AnalysisSubmissionSpecification {
 				}
 				if (user != null) {
 					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("submitter"), user));
+				}
+				if(automated != null){
+					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("automated"), automated));
 				}
 
 				/*
