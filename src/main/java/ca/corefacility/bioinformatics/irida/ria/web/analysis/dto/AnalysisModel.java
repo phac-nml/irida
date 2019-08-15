@@ -14,11 +14,10 @@ public class AnalysisModel {
 	private String submitter;
 	private AnalysisStateModel state;
 	private String type;
-	private float percentage;
 	private long duration;
 	private boolean modifiable;
 
-	public AnalysisModel(AnalysisSubmission submission, AnalysisStateModel state, Long duration, String type, float percentage,
+	public AnalysisModel(AnalysisSubmission submission, AnalysisStateModel state, Long duration, String type,
 			boolean modifiable) {
 		this.id = submission.getId();
 		this.name = submission.getLabel();
@@ -28,7 +27,6 @@ public class AnalysisModel {
 		this.state = state;
 		this.type = type;
 		this.duration = duration;
-		this.percentage = percentage;
 		this.modifiable = modifiable;
 	}
 
@@ -54,10 +52,6 @@ public class AnalysisModel {
 
 	public String getType() {
 		return type;
-	}
-
-	public float getPercentage() {
-		return percentage;
 	}
 
 	public long getDuration() {
