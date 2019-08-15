@@ -4,6 +4,7 @@ Changes
 19.05 to 19.09
 --------------
 * [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
+* [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`. (19.05.2)
 
 19.01 to 19.05
 ---------------
