@@ -68,7 +68,7 @@ export function AnalysesTable() {
           );
         },
         render(state, data) {
-          return <AnalysisState state={state} percentage={data.percentage} />;
+          return <AnalysisState state={state} />;
         }
       },
       {

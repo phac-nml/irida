@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.net.HttpHeaders;
@@ -207,9 +206,7 @@ public class AnalysesAjaxController {
 				.getAuthentication();
 		boolean updatePermission = this.updateAnalysisSubmissionPermission.isAllowed(authentication, submission);
 
-		// There is no percentage completion for ERROR, so we will fake one here.
-		float percentage = analysisState.equals(AnalysisState.ERROR) ? 100f : AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(analysisState);
-		return new AnalysisModel(submission, state, duration, workflow, percentage, updatePermission);
+		return new AnalysisModel(submission, state, duration, workflow, updatePermission);
 	}
 
 	/**
