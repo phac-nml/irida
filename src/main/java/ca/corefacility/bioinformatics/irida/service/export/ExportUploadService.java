@@ -586,10 +586,11 @@ public class ExportUploadService {
 			tries++;
 			try (ByteArrayInputStream stringStream = new ByteArrayInputStream(content.getBytes())) {
 
-				logger.trace("Uploading string to file [" + filename + "]");
+				logger.trace("Uploading string to file [" + filename + "], data_connection_mode ["
+						+ client.getDataConnectionMode() + "]");
 				client.storeFile(filename, stringStream);
-				logger.trace("Finished uploading string to file [" + filename + "]"
-						+ ", response [" + client.getReplyString() + "]");
+				logger.trace("Finished uploading string to file [" + filename + "]" + ", response ["
+						+ client.getReplyString() + "]");
 
 				done = true;
 			} catch (Exception e) {
@@ -626,7 +627,8 @@ public class ExportUploadService {
 			tries++;
 
 			try (InputStream stream = Files.newInputStream(path)) {
-				logger.trace("Uploading path [" + path + "], filename [" + filename + "]");
+				logger.trace("Uploading path [" + path + "], filename [" + filename + "], data_connection_mode ["
+						+ client.getDataConnectionMode() + "]");
 				client.storeFile(filename, stream);
 				logger.trace("Finished uploading path [" + path + "], filename [" + filename + "], response ["
 						+ client.getReplyString() + "]");
