@@ -107,6 +107,8 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
 
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
 
+To add new internationalization to your IRIDA server, see the [internationalization guide](../../developer/interface/i18n/).
+
 The `mail.server.*` configuration parameters will need to correspond to a configured mail server, such as [Postfix][].  This will be used by IRIDA to send email notifications to users on the creation of an account or on password resets.
 
 Analytics
