@@ -27,7 +27,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/project/${projectId}/shared-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -45,7 +45,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/project/${projectId}/automated-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {
