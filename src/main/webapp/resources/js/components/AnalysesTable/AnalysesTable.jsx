@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { AnalysesContext } from "../../contexts/AnalysesContext";
 import { Button, Icon, Popconfirm, Table } from "antd";
-import { PageWrapper } from "../page/PageWrapper";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -154,17 +153,15 @@ export function AnalysesTable() {
   }
 
   return (
-    <PageWrapper title={getI18N("analyses.header")}>
-      <Table
-        scroll={{ x: "max-content" }}
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{ total, pageSize }}
-        columns={createColumns({ types, pipelineStates, deleteAnalysis })}
-        dataSource={analyses}
-        onChange={handleTableChange}
-      />
-    </PageWrapper>
+    <Table
+      scroll={{ x: "max-content" }}
+      rowKey={record => record.id}
+      loading={loading}
+      pagination={{ total, pageSize }}
+      columns={createColumns({ types, pipelineStates, deleteAnalysis })}
+      dataSource={analyses}
+      onChange={handleTableChange}
+    />
   );
 }
 

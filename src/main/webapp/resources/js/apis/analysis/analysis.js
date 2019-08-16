@@ -4,7 +4,7 @@
 import axios from "axios";
 
 const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
-const USER_TYPE = window.PAGE.type;
+const USER_TYPE = window.PAGE?.type;
 
 /**
  * Get all single sample analysis output file info for the principal user.

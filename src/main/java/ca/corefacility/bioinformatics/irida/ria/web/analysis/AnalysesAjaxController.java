@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -144,11 +146,20 @@ public class AnalysesAjaxController {
 		which would throw a true error and redirect the user else where.
 		 */
 		String referer = request.getHeader(HttpHeaders.REFERER);
+
+		// Need to test to see if a project is request.
+		Pattern pattern = Pattern.compile("projects/(\\d+)/analyses");
+		Matcher m = pattern.matcher(referer);
+
+
 		if (referer.endsWith("all") && user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			// User is an admin and requesting the listing of all pages.
 			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
 					workflowIds, pageRequest);
+		} else if (referer.contains("/projects/")) {
+//			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
+//					stateFilters, workflowIds, , pageRequest);
 		} else {
 			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null, stateFilters,
 					user, workflowIds, pageRequest);
