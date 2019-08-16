@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { AnalysesTable } from "./AnalysesTable";
+import { AnalysesTable } from "../../components/AnalysesTable/AnalysesTable";
 import { AnalysesProvider } from "../../contexts/AnalysesContext";
 
 render(

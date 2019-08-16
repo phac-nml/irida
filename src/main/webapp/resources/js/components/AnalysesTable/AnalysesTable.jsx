@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { AnalysesContext } from "../../contexts/AnalysesContext";
 import { Button, Icon, Popconfirm, Table } from "antd";
-import { PageWrapper } from "../../components/page/PageWrapper";
+import { PageWrapper } from "../page/PageWrapper";
 import {
   dateColumnFormat,
   nameColumnFormat
-} from "../../components/ant.design/table-renderers";
+} from "../ant.design/table-renderers";
 import { AnalysisState } from "./AnalysisState";
-import { getI18N } from "./../../utilities/i18n-utilties";
-import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
-import { getTextSearchProps } from "../../components/ant.design/table-search-props";
+import { getI18N } from "../../utilities/i18n-utilties";
+import { getHumanizedDuration } from "../../utilities/date-utilities.js";
+import { getTextSearchProps } from "../ant.design/table-search-props";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
