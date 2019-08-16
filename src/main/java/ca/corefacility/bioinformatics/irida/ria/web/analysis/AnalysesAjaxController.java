@@ -157,7 +157,7 @@ public class AnalysesAjaxController {
 			// User is an admin and requesting the listing of all pages.
 			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
 					workflowIds, pageRequest);
-		} else if (referer.contains("/projects/")) {
+//		} else if (referer.contains("/projects/")) {
 //			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
 //					stateFilters, workflowIds, , pageRequest);
 		} else {
