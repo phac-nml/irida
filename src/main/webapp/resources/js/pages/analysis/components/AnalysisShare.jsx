@@ -11,7 +11,7 @@ import {
 } from "../../../apis/analysis/analysis";
 
 export default function AnalysisShare() {
-  const { state, dispatch } = useContext(AnalysisContext);
+  const { context, dispatch } = useContext(AnalysisContext);
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
@@ -31,21 +31,21 @@ export default function AnalysisShare() {
 
   function onChange(e) {
     updateSharedProjects(
-      state.analysis.identifier,
+      context.analysis.identifier,
       e.target.value,
       e.target.checked
     ).then(res => showNotification({ text: res.message }));
   }
 
   function handleSaveResults() {
-    saveToRelatedSamples(state.analysis.identifier).then(res =>
+    saveToRelatedSamples(context.analysis.identifier).then(res =>
         showNotification({ text: res.message })
     );
     dispatch({ type: 'UPDATE_SAMPLES', updateSamples: true });
   }
 
   useEffect(() => {
-    getSharedProjects(state.analysis.identifier).then(res =>
+    getSharedProjects(context.analysis.identifier).then(res =>
       //List of projects which results can be shared with
       setSharedProjects(res.data)
     );
@@ -72,9 +72,9 @@ export default function AnalysisShare() {
       <br />
       <br />
 
-      {state.canShareToSamples == true ? (
+      {context.canShareToSamples == true ? (
         <Card title={getI18N("analysis.details.save.samples.title")}>
-          {state.updateSamples == true ?
+          {context.updateSamples == true ?
             (
                 <Alert
                   message={getI18N("analysis.details.save.complete")}
@@ -83,7 +83,7 @@ export default function AnalysisShare() {
             ) :
             <p className="spaced_bottom">
               {getI18N(
-                `workflow.label.share-analysis-samples.${state.analysisType.type}`
+                `workflow.label.share-analysis-samples.${context.analysisType.type}`
               )}
             </p>
           }
@@ -91,7 +91,7 @@ export default function AnalysisShare() {
           <Button
             type="primary"
             className="spaced-top"
-            disabled={state.updateSamples ? true : false}
+            disabled={context.updateSamples ? true : false}
             onClick={handleSaveResults}
             id="save-results-btn"
           >

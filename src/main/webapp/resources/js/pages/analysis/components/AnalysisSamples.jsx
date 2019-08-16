@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Row, Icon, Button } from "antd";
-import { AnalysisContext } from "../../../state/AnalysisState";
+import { AnalysisDetailsContext } from '../../../state/AnalysisDetailsContext';
 import { getI18N } from "../../../utilities/i18n-utilties";
 
 import {
@@ -10,10 +10,11 @@ import {
 } from "../../../apis/analysis/analysis";
 
 export default function AnalysisSamples() {
-  const { state, dispatch } = useContext(AnalysisContext);
+  const { context, dispatch } = useContext(AnalysisDetailsContext);
 
   useEffect(() => {
-    getAnalysisInputFiles(state.analysis.identifier).then(res => {
+    getAnalysisInputFiles(context.analysis.identifier).then(res => {
+
       dispatch({
          type: "SAMPLES_DATA",
          samples: res.data.samples,
@@ -25,64 +26,71 @@ export default function AnalysisSamples() {
   }, []);
 
   const downloadReferenceFile = () => {
-    if (state.referenceFile.identifier !== undefined)
+    if (context.referenceFile.identifier !== undefined)
     {
-        window.open(`${window.TL.BASE_URL}referenceFiles/download/${state.referenceFile.identifier}`, '_blank');
+        window.open(`${window.TL.BASE_URL}referenceFiles/download/${context.referenceFile.identifier}`, '_blank');
     }
   };
 
   const renderReferenceFile = () => {
     const referenceFile = [];
 
-    referenceFile.push(
-        <h4 key="reference-file-0-heading" style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.samples.reference-file")}</h4>,
-        <Row key="row-filename">
-            <span key="reference-file-0-file">{state.referenceFile.label}</span>
-            <Button
-                key="reference-file-0-download-button"
-                className="pull-right"
-                style={{marginTop: "0.5em"}} type="primary"
-                onClick={() => {downloadReferenceFile()}}
-            >
-                <Icon type="download" /> {getI18N("analysis.tab.content.samples.download-reference-file")}
-            </Button>
-        </Row>,
-     );
-     return referenceFile;
+    if(context.referenceFile.length == 0)
+    {
+        return null;
+    }
+    else {
+
+        referenceFile.push(
+            <h4 key="reference-file-0-heading" style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.samples.reference-file")}</h4>,
+            <Row key="row-filename">
+                <span key="reference-file-0-file">{context.referenceFile.label}</span>
+                <Button
+                    key="reference-file-0-download-button"
+                    className="pull-right"
+                    style={{marginTop: "0.5em"}} type="primary"
+                    onClick={() => {downloadReferenceFile()}}
+                >
+                    <Icon type="download" /> {getI18N("analysis.tab.content.samples.download-reference-file")}
+                </Button>
+            </Row>,
+         );
+         return referenceFile;
+     }
   };
 
   const renderSamples = () => {
     const samplesList = [];
 
-    if(state.sequenceFilePairList.length > 0) {
+    if(context.sequenceFilePairList.length > 0) {
         let pairIndex = 0;
-        for (let i = 0; i < state.samples.length; i++) {
+        for (let i = 0; i < context.samples.length; i++) {
           samplesList.push(
             <Card
                 type="inner"
                 title={
                     <a
                         target="_blank"
-                        href={`${window.TL.BASE_URL}samples/${state.samples[i].sample.identifier}/details`}>
-                            <Icon type="filter" rotate="180" /> {state.samples[i].sample.sampleName}
+                        href={`${window.TL.BASE_URL}samples/${context.samples[i].sample.identifier}/details`}>
+                            <Icon type="filter" rotate="180" /> {context.samples[i].sample.sampleName}
                     </a>}
                 key={`sample${i}`}
             >
                 <Row>
                     <a
                         target="_blank"
-                        href={`${window.TL.BASE_URL}sequenceFiles/${state.samples[i].sequenceFilePair.identifier}/file/${state.sequenceFilePairList[pairIndex].identifier}/summary`}>
-                            <Icon type="arrow-right" /> {state.sequenceFilePairList[pairIndex].label}
+                        href={`${window.TL.BASE_URL}sequenceFiles/${context.samples[i].sequenceFilePair.identifier}/file/${context.sequenceFilePairList[pairIndex].identifier}/summary`}>
+                            <Icon type="arrow-right" /> {context.sequenceFilePairList[pairIndex].label}
                    </a>
-                   <span style={{float: 'right'}}>{state.sequenceFileSizeList[pairIndex]}</span>
+                   <span style={{float: 'right'}}>{context.sequenceFileSizeList[pairIndex]}</span>
                 </Row>
                 <Row>
                     <a
                         target="_blank"
-                        href={`${window.TL.BASE_URL}sequenceFiles/${state.samples[i].sequenceFilePair.identifier}/file/${state.sequenceFilePairList[pairIndex + 1].identifier}/summary`}>
-                            <Icon type="arrow-left" /> {state.sequenceFilePairList[pairIndex+1].label}
+                        href={`${window.TL.BASE_URL}sequenceFiles/${context.samples[i].sequenceFilePair.identifier}/file/${context.sequenceFilePairList[pairIndex + 1].identifier}/summary`}>
+                            <Icon type="arrow-left" /> {context.sequenceFilePairList[pairIndex+1].label}
                     </a>
-                    <span style={{float: 'right'}}>{state.sequenceFileSizeList[pairIndex+1]}</span>
+                    <span style={{float: 'right'}}>{context.sequenceFileSizeList[pairIndex+1]}</span>
                 </Row>
             </Card>
           );
@@ -97,17 +105,18 @@ export default function AnalysisSamples() {
 
   return (
     <>
+
       <h2 style={{ fontWeight: "bold", marginBottom: "1em" }}>{getI18N("analysis.tab.samples")}</h2>
        {
-        state.referenceFile == true ?
-            <div style={{marginBottom: "2em"}}>
-                {renderReferenceFile()}
-            </div>
+            context.referenceFile ?
+                <div style={{marginBottom: "2em"}}>
+                    {renderReferenceFile()}
+                </div>
             : null
        }
 
       {
-        state.samples.length > 0 ?
+        context.samples.length > 0 ?
             <div>
                 {renderSamples()}
             </div>

@@ -1,7 +1,8 @@
 import React, { useContext, Suspense, lazy, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Input, List, Col, Row, Tabs, Select } from "antd";
-import { AnalysisContext } from '../../../state/AnalysisState';
+import { AnalysisContext, actions } from '../../../state/AnalysisState';
+import { AnalysisDetailsContext } from '../../../state/AnalysisDetailsContext';
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
 
@@ -24,13 +25,14 @@ import {
 const TabPane = Tabs.TabPane;
 
 export function AnalysisDetails() {
-    const { state, dispatch } = useContext(AnalysisContext);
+    const { context, dispatch } = useContext(AnalysisDetailsContext);
 
     useEffect(() => {
         //get required variables and dispatch to reducer
-        getVariablesForDetails(state.analysis.identifier).then(res => {
+        getVariablesForDetails(context.analysis.identifier).then(res => {
           dispatch({
               type: 'ANALYSIS_DETAILS',
+              analysisName: res.data.analysisName,
               workflowName: res.data.workflowName,
               version: res.data.version,
               priority: res.data.priority,
@@ -44,23 +46,23 @@ export function AnalysisDetails() {
 
     const analysisDetails = [{
         title: getI18N("analysis.tab.content.analysis.id"),
-        desc: state.analysis.identifier,
+        desc: context.analysis.identifier,
       },
       {
         title: getI18N("analysis.tab.content.analysis.pipeline"),
-        desc: `${state.workflowName} (${state.version})`
+        desc: `${context.workflowName} (${context.version})`
       },
       {
         title: getI18N("analysis.tab.content.analysis.priority"),
-        desc: state.priority
+        desc: context.priority
       },
       {
         title: getI18N("analysis.tab.content.analysis.created"),
-        desc: formatDate({ date: state.analysisCreatedDate })
+        desc: formatDate({ date: context.analysisCreatedDate })
       },
       {
         title: getI18N("analysis.tab.content.analysis.duration"),
-        desc: getHumanizedDuration({ date: state.duration })
+        desc: getHumanizedDuration({ date: context.duration })
       },
     ];
 
@@ -69,34 +71,34 @@ export function AnalysisDetails() {
         pipeline completion update emailPipelineResult field
     */
     function updateEmailPipelineResult(e){
-        updateAnalysisEmailPipelineResult(state.analysis.identifier, e.target.checked).then(res =>
-          showNotification({ text: res.message})
-        );
-        dispatch({ type: 'UPDATED_EMAIL_PIPELINE_RESULT', emailPipelineResult: e.target.checked })
+        updateAnalysisEmailPipelineResult(context.analysis.identifier, e.target.checked).then(res => {
+          showNotification({ text: res.message});
+          dispatch({ type: 'UPDATED_EMAIL_PIPELINE_RESULT', emailPipelineResult: e.target.checked })
+        });
     }
 
     function updateSubmissionName(){
         const updatedAnalysisName = document.getElementById("analysis-name").value.trim();
 
-        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== state.analysisName)) {
-            updateAnalysis(state.analysis.identifier, updatedAnalysisName, null).then(res =>
-                showNotification({ text: res.message})
-            );
-            dispatch({ type: 'UPDATED_ANALYSIS_NAME', analysisName: updatedAnalysisName });
+        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== context.analysisName)) {
+            updateAnalysis(context.analysis.identifier, updatedAnalysisName, null).then(res => {
+                showNotification({ text: res.message});
+                actions.updateSubmissionName(updatedAnalysisName);
+            });
         }
     }
 
     function updateAnalysisPriority(updatedPriority) {
-        updateAnalysis(state.analysis.identifier, null, updatedPriority).then(res =>
-            showNotification({ text: res.message})
-        );
-        dispatch({ type: 'UPDATED_PRIORITY', priority: updatedPriority });
+        updateAnalysis(context.analysis.identifier, null, updatedPriority).then(res => {
+            showNotification({ text: res.message});
+            dispatch({ type: 'UPDATED_PRIORITY', priority: updatedPriority });
+        });
     }
 
     function renderPriorities() {
         const priorityList = [];
 
-        for(let priority of state.priorities) {
+        for(let priority of context.priorities) {
             priorityList.push(
               <Select.Option key={priority} value={priority}>{priority}</Select.Option>
             )
@@ -118,10 +120,10 @@ export function AnalysisDetails() {
                     <Row>
                       <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                         <label style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.analysis-name")}</label>
-                        <Input size="large" placeholder={state.analysis.name} id="analysis-name" />
+                        <Input size="large" placeholder={context.analysis.name} id="analysis-name" />
                       </Col>
 
-                      { state.updatePermission ?
+                      { context.updatePermission ?
                           <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                             <Button size="large" type="primary" className="spaced-left__sm spaced-top__lg" onClick={() => updateSubmissionName()}>{getI18N("analysis.tab.content.analysis.update.button")}</Button>
                           </Col>
@@ -129,11 +131,11 @@ export function AnalysisDetails() {
                       }
                     </Row>
 
-                    { state.isAdmin && state.analysisState == "NEW" ?
+                    { context.isAdmin && context.analysisState == "NEW" ?
                         <Row className="spaced-top">
                             <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                                 <label style={{fontWeight: "bold"}}>Priority</label>
-                                <Select defaultValue={state.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
+                                <Select defaultValue={context.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
                                   {renderPriorities()}
                                 </Select>
                             </Col>
@@ -160,10 +162,10 @@ export function AnalysisDetails() {
                       <Checkbox
                         onChange={updateEmailPipelineResult}
                         disabled={
-                            ((state.isCompleted) || (state.isError)) ?
+                            ((context.isCompleted) || (context.isError)) ?
                                 true : false
                         }
-                        defaultChecked={state.emailPipelineResult}>
+                        defaultChecked={context.emailPipelineResult}>
                             {getI18N("analysis.tab.content.analysis.checkbox.label")}
                       </Checkbox>
                   </Col>
@@ -177,9 +179,9 @@ export function AnalysisDetails() {
                   </Col>
               </TabPane>
 
-              { state.updatePermission ?
+              { context.updatePermission ?
                 [
-                    !state.isError ?
+                    !context.isError ?
                       <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
                           <Col span={12}>
                             <Suspense fallback={<div>Loading...</div>}>

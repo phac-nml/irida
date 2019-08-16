@@ -399,9 +399,15 @@ public class AnalysisController {
 		Map<String, Object> inputFilesMap = new HashMap<>();
 		inputFilesMap.put("result", "success");
 		inputFilesMap.put("samples", sampleFiles);
-		inputFilesMap.put("referenceFile", referenceFile);
+
+		if(referenceFile != null) {
+			inputFilesMap.put("referenceFile", referenceFile);
+		}
+
 		inputFilesMap.put("seqFilePairs", seqFilePairs);
 		inputFilesMap.put("seqFilePairSizes", seqFileSizes);
+
+
 		return inputFilesMap;
 	}
 

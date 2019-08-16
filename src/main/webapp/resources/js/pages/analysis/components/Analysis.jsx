@@ -11,7 +11,8 @@ import { AnalysisBioHansel } from "./AnalysisBioHansel";
 import { AnalysisSistr } from "./AnalysisSistr";
 import { AnalysisError } from "./AnalysisError";
 
-import { AnalysisContext } from "../../../state/AnalysisState";
+import { AnalysisContext, AnalysisProvider } from "../../../state/AnalysisState";
+import { AnalysisDetailsProvider } from "../../../state/AnalysisDetailsContext";
 
 const TabPane = Tabs.TabPane;
 
@@ -23,43 +24,43 @@ const analysisTypesWithAdditionalPage = [
 ];
 
 export default function Analysis() {
-  const { state } = useContext(AnalysisContext);
+  const { context } = useContext(AnalysisContext);
 
   return (
     <>
       <div
         style={{ marginLeft: "15px", marginRight: "15px", marginTop: "15px" }}
       >
-        <h1>{state.analysisName}</h1>
+        <h1>{context.analysisName}</h1>
         <div>
           <AnalysisSteps />
         </div>
         <Tabs
           defaultActiveKey={
-            state.isError ||
-            (analysisTypesWithAdditionalPage.indexOf(state.workflowName) > -1 &&
-              state.isCompleted)
+            context.isError ||
+            (analysisTypesWithAdditionalPage.indexOf(context.workflowName) > -1 &&
+              context.isCompleted)
               ? "0"
               : "3"
           }
           animated={false}
         >
-          {state.isCompleted ? (
+          {context.isCompleted ? (
             [
-              state.workflowName === "bio_hansel Pipeline" ? (
+              context.workflowName === "bio_hansel Pipeline" ? (
                 <TabPane tab="bio_hansel" key="0">
                   <AnalysisBioHansel />
                 </TabPane>
               ) : null,
 
-              state.workflowName === "SISTR Pipeline" ? (
+              context.workflowName === "SISTR Pipeline" ? (
                 <TabPane tab="sistr" key="0">
                   <AnalysisSistr />
                 </TabPane>
               ) : null,
 
-              state.workflowName === "SNVPhyl Phylogenomics Pipeline" ||
-              state.workflowName == "MentaLiST MLST Pipeline" ? (
+              context.workflowName === "SNVPhyl Phylogenomics Pipeline" ||
+              context.workflowName == "MentaLiST MLST Pipeline" ? (
                 <TabPane tab="Phylogenetic Tree" key="0">
                   <AnalysisPhylogeneticTree />
                 </TabPane>
@@ -73,13 +74,17 @@ export default function Analysis() {
                 <AnalysisProvenance />
               </TabPane>
             ]
-          ) : state.isError ? (
+          ) : context.isError ? (
             <TabPane tab="Job Error" key="0">
               <AnalysisError />
             </TabPane>
           ) : null}
           <TabPane tab="Settings" key="3">
-            <AnalysisDetails />
+            <AnalysisProvider>
+                <AnalysisDetailsProvider>
+                    <AnalysisDetails />
+                </AnalysisDetailsProvider>
+            </AnalysisProvider>
           </TabPane>
         </Tabs>
       </div>

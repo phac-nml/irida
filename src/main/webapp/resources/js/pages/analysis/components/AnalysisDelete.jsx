@@ -7,7 +7,7 @@ import { getI18N } from "../../../utilities/i18n-utilties";
 import { deleteAnalysis } from "../../../apis/analysis/analysis";
 
 export default function AnalysisDelete() {
-  const { state } = useContext(AnalysisContext);
+  const { context } = useContext(AnalysisContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   function onChange(e) {
@@ -20,7 +20,7 @@ export default function AnalysisDelete() {
 
   function handleDeleteConfirm() {
     if (deleteConfirm) {
-      deleteAnalysis(state.analysis.identifier).then(res =>
+      deleteAnalysis(context.analysis.identifier).then(res =>
         showNotification({ text: res.result })
       );
 
@@ -52,7 +52,7 @@ export default function AnalysisDelete() {
         { deleteConfirm ?
             <Popconfirm
               placement="top"
-              title={`Delete Analysis ${state.analysisName}?`}
+              title={`Delete Analysis ${context.analysisName}?`}
               okText={getI18N("analysis.tab.content.delete.confirm")}
               cancelText={getI18N("analysis.tab.content.delete.cancel")}
               onConfirm={handleDeleteConfirm}

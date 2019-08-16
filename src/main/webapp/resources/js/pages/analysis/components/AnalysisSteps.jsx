@@ -6,12 +6,12 @@ import { getI18N } from "../../../utilities/i18n-utilties";
 const Step = Steps.Step;
 
 export function AnalysisSteps() {
-  const { state } = useContext(AnalysisContext);
+  const { context } = useContext(AnalysisContext);
   return (
     <>
       <Steps
-        current={state.stateMap[state.analysisState]}
-        status={state.isError ? "error" : "finish"}
+        current={context.stateMap[context.analysisState]}
+        status={context.isError ? "error" : "finish"}
         style={{ paddingBottom: "15px" }}
       >
         <Step title={getI18N("analysis.state.NEW")} />

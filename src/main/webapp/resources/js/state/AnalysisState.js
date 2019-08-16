@@ -1,12 +1,7 @@
 import React, { useReducer } from "react";
 
 const TYPES = {
-  DETAILS: "ANALYSIS_DETAILS",
-  ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME",
-  EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
-  PRIORITY: "UPDATED_PRIORITY",
-  SAMPLES: "SAMPLES_DATA",
-  UPDATE_SAMPLES: "UPDATE_SAMPLES"
+  ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME"
 };
 
 const stateMap = {
@@ -21,76 +16,43 @@ const stateMap = {
   COMPLETED: 5
 };
 
-const reducer = (state, action) => {
+const reducer = (context, action) => {
+  console.log(action);
   switch (action.type) {
-    case TYPES.DETAILS:
-      return {
-        ...state,
-        emailPipelineResult: action.emailPipelineResult,
-        priority: action.priority,
-        workflowName: action.workflowName,
-        version: action.version,
-        analysisCreatedDate: action.analysisCreatedDate,
-        duration: action.duration,
-        priorities: action.priorities,
-        canShareToSamples: action.canShareToSamples
-      };
     case TYPES.ANALYSIS_NAME:
-      return { ...state, analysisName: action.analysisName };
-    case TYPES.EMAIL_PIPELINE_RESULT:
-      return { ...state, emailPipelineResult: action.emailPipelineResult };
-    case TYPES.PRIORITY:
-      return { ...state, priority: action.priority };
-    case TYPES.UPDATE_SAMPLES:
-      return { ...state, updateSamples: action.updateSamples };
-    case TYPES.SAMPLES:
-      return {
-        ...state,
-        samples: action.samples,
-        sequenceFilePairList: action.sequenceFilePairList,
-        sequenceFileSizeList: action.sequenceFileSizeList,
-        referenceFile: action.referenceFile
-      };
+      return { ...context, analysisName: action.payload.analysisName };
     default:
       return;
   }
 };
 
-const initialState = {
+const initialContext = {
   analysis: window.PAGE.analysis,
   analysisName: window.PAGE.analysis.name,
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
-  emailPipelineResult: window.PAGE.analysis.emailPipelineResult,
-  workflowName: null,
-  version: null,
-  updatePermission: window.PAGE.updatePermission,
-  duration: null,
   isAdmin: window.PAGE.isAdmin,
   stateMap: stateMap,
-  analysisCreatedDate: null,
-  canShareToSamples: false,
   isCompleted: window.PAGE.analysisState == "COMPLETED" ? true : false,
-  isError: window.PAGE.analysisState.includes("ERROR") ? true : false,
-  priority: null,
-  priorities: [],
-  samples: [],
-  sequenceFilePairList: [],
-  sequenceFileSizeList: [],
-  referenceFile: [],
-  updateSamples:
-    window.PAGE.analysis.updateSamples == null
-      ? false
-      : window.PAGE.analysis.updateSamples
+  isError: window.PAGE.analysisState.includes("ERROR") ? true : false
 };
 
-const AnalysisContext = React.createContext(initialState);
+export const actions = {
+  updateSubmissionName: analysisName => ({
+    type: TYPES.ANALYSIS_NAME,
+    payload: {
+      analysisName
+    }
+  })
+};
+
+const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [context, dispatch] = useReducer(reducer, initialContext);
 
   return (
-    <AnalysisContext.Provider value={{ state, dispatch }}>
+    <AnalysisContext.Provider value={{ context, dispatch }}>
       {props.children}
     </AnalysisContext.Provider>
   );
