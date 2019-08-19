@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -32,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.net.HttpHeaders;
@@ -45,16 +47,18 @@ public class AnalysesAjaxController {
 
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
+	private ProjectService projectService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
 
 	@Autowired
 	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
-			AnalysisTypesService analysisTypesService, IridaWorkflowsService iridaWorkflowsService,
+			AnalysisTypesService analysisTypesService, ProjectService projectService, IridaWorkflowsService iridaWorkflowsService,
 			MessageSource messageSource, UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
+		this.projectService = projectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
@@ -148,7 +152,8 @@ public class AnalysesAjaxController {
 		String referer = request.getHeader(HttpHeaders.REFERER);
 
 		// Need to test to see if a project is request.
-		Pattern pattern = Pattern.compile("projects/(\\d+)/analyses");
+		String urlPattern = "/projects/(\\d+)/analyses";
+		Pattern pattern = Pattern.compile(urlPattern);
 		Matcher m = pattern.matcher(referer);
 
 
@@ -157,9 +162,11 @@ public class AnalysesAjaxController {
 			// User is an admin and requesting the listing of all pages.
 			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
 					workflowIds, pageRequest);
-//		} else if (referer.contains("/projects/")) {
-//			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
-//					stateFilters, workflowIds, , pageRequest);
+		} else if (m.find()) {
+			Long projectID = Long.parseLong(m.group(1));
+			Project project = projectService.read(projectID);
+			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
+					stateFilters, workflowIds, project, pageRequest);
 		} else {
 			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null, stateFilters,
 					user, workflowIds, pageRequest);
