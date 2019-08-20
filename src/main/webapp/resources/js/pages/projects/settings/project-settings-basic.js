@@ -54,6 +54,9 @@ const projectSettings = (function(page, notifications) {
     toggleDeleteButton();
   });
 
+  /**
+   * Updating analysis priority on server
+   */
   $("#analysis-priority").on("change", function() {
     const priority = $("#analysis-priority").val();
 
