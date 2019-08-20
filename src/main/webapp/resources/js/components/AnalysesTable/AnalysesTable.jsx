@@ -16,7 +16,7 @@ import { getTextSearchProps } from "../ant.design/table-search-props";
  * @constructor
  */
 export function AnalysesTable() {
-  const ADMIN = window.location.href.endsWith("all");
+  const ADMIN = window.PAGE.admin;
   const {
     loading,
     total,
