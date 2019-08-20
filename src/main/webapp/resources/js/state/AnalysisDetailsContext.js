@@ -2,7 +2,6 @@ import React, { useReducer } from "react";
 
 const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
-  ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME",
   EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
   PRIORITY: "UPDATED_PRIORITY",
   SAMPLES: "SAMPLES_DATA",
@@ -11,8 +10,6 @@ const TYPES = {
 
 const reducer = (context, action) => {
   switch (action.type) {
-    case TYPES.ANALYSIS_NAME:
-      return { ...context, analysisName: action.analysisName };
     case TYPES.DETAILS:
       return {
         ...context,

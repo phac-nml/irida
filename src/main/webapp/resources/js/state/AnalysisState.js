@@ -17,10 +17,9 @@ const stateMap = {
 };
 
 const reducer = (context, action) => {
-  console.log(action);
   switch (action.type) {
     case TYPES.ANALYSIS_NAME:
-      return { ...context, analysisName: action.payload.analysisName };
+      return { ...context, analysisName: action.analysisName };
     default:
       return;
   }
@@ -28,7 +27,7 @@ const reducer = (context, action) => {
 
 const initialContext = {
   analysis: window.PAGE.analysis,
-  analysisName: window.PAGE.analysis.name,
+  analysisName: window.PAGE.analysisName,
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
   isAdmin: window.PAGE.isAdmin,
@@ -37,22 +36,21 @@ const initialContext = {
   isError: window.PAGE.analysisState.includes("ERROR") ? true : false
 };
 
-export const actions = {
-  updateSubmissionName: analysisName => ({
-    type: TYPES.ANALYSIS_NAME,
-    payload: {
-      analysisName
-    }
-  })
-};
-
 const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [context, dispatch] = useReducer(reducer, initialContext);
 
+  function analysisContextUpdateSubmissionName(analysisName) {
+    console.log("UPDATING SUBMISSION NAME");
+    dispatch({ type: "UPDATED_ANALYSIS_NAME", analysisName: analysisName });
+    console.log(context.analysisName);
+  }
+
   return (
-    <AnalysisContext.Provider value={{ context, dispatch }}>
+    <AnalysisContext.Provider
+      value={{ context, dispatch, analysisContextUpdateSubmissionName }}
+    >
       {props.children}
     </AnalysisContext.Provider>
   );

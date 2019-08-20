@@ -11,6 +11,7 @@
         <script th:inline="javascript">
           window.PAGE = {
             analysis: [[${analysisSubmission}]],
+            analysisName: [[${analysisSubmission.getName()}]],
             analysisState: [[${analysisSubmission.getAnalysisState()}]],
             analysisType: [[${analysisType}]],
             updatePermission: [[${updatePermission}]],

@@ -1,7 +1,7 @@
 import React, { useContext, Suspense, lazy, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Input, List, Col, Row, Tabs, Select } from "antd";
-import { AnalysisContext, actions } from '../../../state/AnalysisState';
+import { AnalysisContext } from '../../../state/AnalysisState';
 import { AnalysisDetailsContext } from '../../../state/AnalysisDetailsContext';
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
@@ -26,6 +26,7 @@ const TabPane = Tabs.TabPane;
 
 export function AnalysisDetails() {
     const { context, dispatch } = useContext(AnalysisDetailsContext);
+    const { analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
 
     useEffect(() => {
         //get required variables and dispatch to reducer
@@ -83,7 +84,7 @@ export function AnalysisDetails() {
         if((updatedAnalysisName  !== "") && (updatedAnalysisName !== context.analysisName)) {
             updateAnalysis(context.analysis.identifier, updatedAnalysisName, null).then(res => {
                 showNotification({ text: res.message});
-                actions.updateSubmissionName(updatedAnalysisName);
+                analysisContextUpdateSubmissionName(updatedAnalysisName);
             });
         }
     }

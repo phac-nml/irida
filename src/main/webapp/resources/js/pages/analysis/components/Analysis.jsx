@@ -24,8 +24,8 @@ const analysisTypesWithAdditionalPage = [
 ];
 
 export default function Analysis() {
-  const { context } = useContext(AnalysisContext);
-
+  const { context, analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
+  
   return (
     <>
       <div
