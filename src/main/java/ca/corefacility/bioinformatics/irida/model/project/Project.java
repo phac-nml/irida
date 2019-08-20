@@ -84,7 +84,6 @@ public class Project extends IridaResourceSupport
 
 	@Column(name = "analysis_priority")
 	@Enumerated(EnumType.STRING)
-	@NotNull
 	private AbstractAnalysisSubmission.Priority analysisPriority;
 
 	/*
