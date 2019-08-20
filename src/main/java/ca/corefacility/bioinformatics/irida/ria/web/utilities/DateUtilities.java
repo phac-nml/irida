@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
+/**
+ * Utilities class to help with date conversions.
+ */
 public class DateUtilities {
 
 
