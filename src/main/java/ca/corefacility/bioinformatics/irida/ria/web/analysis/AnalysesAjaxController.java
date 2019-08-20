@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
@@ -199,7 +198,7 @@ public class AnalysesAjaxController {
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
-			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
 					.getCreatedDate());
 		}
 
@@ -226,21 +225,6 @@ public class AnalysesAjaxController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
-	}
-
-	/**
-	 * Get the milliseconds between two {@link Date}s
-	 *
-	 * @param start {@link Date}
-	 * @param end   {@link Date}
-	 * @return {@link Long} milliseconds
-	 */
-	private Long getDurationInMilliseconds(Date start, Date end) {
-		Instant startInstant = start.toInstant();
-		Instant endInstant = end.toInstant();
-		Duration duration = Duration.between(startInstant, endInstant)
-				.abs();
-		return duration.toMillis();
 	}
 }
 
