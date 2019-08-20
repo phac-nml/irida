@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +8,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
@@ -44,6 +45,7 @@ import com.google.common.net.HttpHeaders;
 @RestController
 @RequestMapping("/ajax/analyses")
 public class AnalysesAjaxController {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysesAjaxController.class);
 
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
@@ -193,6 +195,7 @@ public class AnalysesAjaxController {
 	public void deleteAnalysisSubmission(@RequestParam Long id) {
 		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
 		analysisSubmissionService.delete(id);
+		logger.info("Deleted analysis id=" + id);
 	}
 
 	/**
@@ -213,7 +216,7 @@ public class AnalysesAjaxController {
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
-			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
 					.getCreatedDate());
 		}
 
@@ -240,21 +243,6 @@ public class AnalysesAjaxController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
-	}
-
-	/**
-	 * Get the milliseconds between two {@link Date}s
-	 *
-	 * @param start {@link Date}
-	 * @param end   {@link Date}
-	 * @return {@link Long} milliseconds
-	 */
-	private Long getDurationInMilliseconds(Date start, Date end) {
-		Instant startInstant = start.toInstant();
-		Instant endInstant = end.toInstant();
-		Duration duration = Duration.between(startInstant, endInstant)
-				.abs();
-		return duration.toMillis();
 	}
 }
 

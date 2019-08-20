@@ -37,6 +37,8 @@ Changes
 * [Documentation]: Added link to Galaxy Export (Import) tool documentation.
 * [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
 * [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
+* [Developer]: Updates to front-end packages: `antd@3.19.8` -> `antd@3.21.4`, `@babel/polyfill` -> `core-js/stable` & `regenerator-runtime/runtime`, as well as some minor updates to webpack dependencies.
+* [Developer]: Updated to node `v12.8.1`.
 * [UI]: Updated Analyses listing page to use ant.design.
 
 19.01 to 19.05

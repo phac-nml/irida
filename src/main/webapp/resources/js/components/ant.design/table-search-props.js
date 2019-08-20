@@ -1,12 +1,11 @@
 import React from "react";
-import { Button, Icon, Input } from "antd";
-import { blue6 } from "../../styles/colors";
+import { Button, Input } from "antd";
 
 function getTextSearchProps(dataIndex) {
   let searchInput;
   return {
     onFilter: (value, record) => {
-      // Somethings the values can be undefined so give it a default value.
+      // Sometimes the values can be undefined so give it a default value.
       const item = record[dataIndex] || "";
       return item
         .toString()

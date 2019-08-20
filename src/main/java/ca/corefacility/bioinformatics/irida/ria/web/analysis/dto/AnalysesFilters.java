@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 
 /**
- * Represents the filters on teh Analyses Table.
+ * Represents the filters on the Analyses Table.
  */
 public class AnalysesFilters {
 	private List<AnalysisState> state = new ArrayList<>();
