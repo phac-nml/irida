@@ -4,7 +4,7 @@ import { SPACE_XS } from "../../styles/spacing";
 import { green6 } from "../../styles/colors";
 
 /**
- * Display the state of an analysis, if it is running show the percentage
+ * Display the state of an analysis
  * @param {string} state
  * @param {string} type a non-internationalized state
  * @returns {*}
