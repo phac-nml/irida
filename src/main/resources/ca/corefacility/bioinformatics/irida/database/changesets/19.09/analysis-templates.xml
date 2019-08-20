@@ -29,9 +29,7 @@
         </addColumn>
 
         <addColumn tableName="project">
-            <column name="analysis_priority" type="varchar(255)" value="LOW">
-                <constraints nullable="false"/>
-            </column>
+            <column name="analysis_priority" type="varchar(255)" value="LOW"/>
         </addColumn>
 
         <addColumn tableName="project_AUD">

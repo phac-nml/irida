@@ -11,6 +11,7 @@
         },
         urls: {
           'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage',
+          'priority': /*[[@{/projects/{id}/settings/priority(id=${project.getId()})}]]*/ '/projects/1/settings/priority',
           'deleteModal': /*[[@{/projects/{id}/settings/template/removeTemplateModal(id=${project.getId()})}]]*/ '/projects/1/setttings/template/removeTemplateModal'
         }
       };
@@ -56,6 +57,17 @@
                 <i class="fas fa-plus"></i>
                 <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
             </a>
+
+            <div class="row" th:if="${isAdmin}">
+                    <div class="col-sm-12">
+                        <label for="analysis-priority" th:text="#{project.settings.automated.priority}">_Analysis Priority_</label>
+                        <select class="form-control" id="analysis-priority">
+                            <option th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AbstractAnalysisSubmission.Priority).values()}"
+                                th:value="${priority}" th:text="${priority}" th:selected="${priority == project.getAnalysisPriority()}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
         </div>
     </div>
     <div class="row">
