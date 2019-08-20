@@ -56,6 +56,7 @@ export function AnalysesTable() {
         dataIndex: "state",
         filterMultiple: true,
         filters: pipelineStates,
+        width: 150,
         filterIcon(filtered) {
           return (
             <Icon
@@ -90,6 +91,7 @@ export function AnalysesTable() {
       },
       {
         title: getI18N("analyses.submitter"),
+        width: 200,
         key: "submitter",
         sorter: true,
         dataIndex: "submitter"
@@ -103,6 +105,7 @@ export function AnalysesTable() {
       {
         title: getI18N("analysis.duration"),
         key: "duration",
+        width: 150,
         dataIndex: "duration",
         render(timestamp) {
           return getHumanizedDuration({ date: timestamp });
