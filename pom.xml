@@ -1049,7 +1049,7 @@
 		<spring.version>4.3.25.RELEASE</spring.version>
 		<spring.security.version>4.2.13.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
-		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
+		<spring.security.oauth.version>2.0.10.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
 		<mockito.version>1.10.19</mockito.version>
