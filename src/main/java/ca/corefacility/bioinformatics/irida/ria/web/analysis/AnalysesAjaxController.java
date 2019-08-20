@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -40,6 +42,7 @@ import com.google.common.net.HttpHeaders;
 @RestController
 @RequestMapping("/ajax/analyses")
 public class AnalysesAjaxController {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysesAjaxController.class);
 
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
@@ -175,6 +178,7 @@ public class AnalysesAjaxController {
 	public void deleteAnalysisSubmission(@RequestParam Long id) {
 		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
 		analysisSubmissionService.delete(id);
+		logger.info("Deleted analysis id=" + id);
 	}
 
 	/**
