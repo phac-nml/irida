@@ -5,7 +5,8 @@
  */
 module.exports = {
   vendor: [
-    "@babel/polyfill",
+    "core-js/stable",
+    "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
     "expose-loader?angular!angular",
     "./resources/js/vendors"
