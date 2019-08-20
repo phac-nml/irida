@@ -12,22 +12,28 @@ export const idColumnFormat = () => ({
   width: 50
 });
 
-export const nameColumnFormat = url => {
+export const nameColumnFormat = ({ url, width }) => {
   return {
     dataIndex: "name",
     key: "name",
     sorter: true,
-    width: 300,
-    render: (name, data) => (
-      <a href={`${url}/${data.id}`}>
-        <Text
-          ellipsis
-          style={{ width: 270, color: blue6, textDecoration: "underline" }}
-        >
-          {name}
-        </Text>
-      </a>
-    )
+    width,
+    render(name, data) {
+      return (
+        <a className="t-name" href={`${url}/${data.id}`} title={name}>
+          <Text
+            ellipsis
+            style={{
+              width: width - 40,
+              color: blue6,
+              textDecoration: "underline"
+            }}
+          >
+            {name}
+          </Text>
+        </a>
+      );
+    }
   };
 };
 

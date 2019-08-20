@@ -207,7 +207,7 @@ const config = Object.assign({}, tableConfig, {
         d[key] = value;
       }
 
-      displayFilters.call($dt, TABLE_FILTERS);
+      displayFilters(TABLE_FILTERS);
     }
   },
   stateSave: true,
@@ -268,9 +268,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         const link = createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${
-            full.id
-          }`,
+          url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${full.id}`,
           label: full.sampleName,
           classes: ["t-sample-label"]
         });
@@ -584,7 +582,6 @@ clearFilterBtn.addEventListener("click", clearFilters, false);
  */
 function displayFilters(filters) {
   // This should be set by datatable.
-  const table = this;
   const $wrapper = $(`<div class="filter-chip--wrapper"></div>`);
 
   function createChip(name, value, handler) {
@@ -601,7 +598,7 @@ function displayFilters(filters) {
       filters.get(FILTERS.FILTER_BY_NAME),
       () => {
         filters.delete(FILTERS.FILTER_BY_NAME);
-        table.ajax.reload();
+        $dt.ajax.reload();
       }
     );
   }
@@ -612,7 +609,7 @@ function displayFilters(filters) {
       filters.get(FILTERS.FILTER_BY_ORGANISM),
       () => {
         filters.delete(FILTERS.FILTER_BY_ORGANISM);
-        table.ajax.reload();
+        $dt.ajax.reload();
       }
     );
   }
