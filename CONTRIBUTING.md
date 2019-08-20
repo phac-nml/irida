@@ -75,7 +75,7 @@ When you have completed development on your issue, you can submit it to the proj
 
 ### Contributing Internationalizations
 
-IRIDA needs help supporting non-English language users!  To help internationlize IRIDA, see the [IRIDA internationalization devleoper guide](https://irida.corefacility.ca/documentation/developer/interface/i18n).  To submit internationalization files back to IRIDA, submit a pull request as outlined above.
+IRIDA needs help supporting non-English language users!  To help internationalize IRIDA, see the [IRIDA internationalization developer guide](https://irida.corefacility.ca/documentation/developer/interface/i18n).  To submit internationalization files back to IRIDA, submit a pull request as outlined above.
 
 
 Thank you for your interest in contributing to IRIDA.  For any questions or comments on this guide, or other ways you can help contribute to IRIDA, please contact the development team through one of the options outlined in the [Contacting the IRIDA Team](#contacting-the-irida-team) section.
