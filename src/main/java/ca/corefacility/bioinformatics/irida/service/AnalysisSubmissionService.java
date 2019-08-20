@@ -268,12 +268,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       Set of {@link AnalysisState} of the submission to search
+	 * @param states       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
