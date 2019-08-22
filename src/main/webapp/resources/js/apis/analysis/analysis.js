@@ -12,7 +12,7 @@ export async function getVariablesForDetails(submissionId) {
   const res = await axios.get(
     `${window.TL.BASE_URL}analysis/ajax/getDataForDetailsTab/${submissionId}`
   );
-  return res;
+  return res.data;
 }
 
 /*
@@ -24,7 +24,7 @@ export async function getAnalysisInputFiles(submissionId) {
   const res = await axios.get(
     `${window.TL.BASE_URL}analysis/ajax/getAnalysisInputFiles/${submissionId}`
   );
-  return res;
+  return res.data;
 }
 
 /*
@@ -88,7 +88,7 @@ export async function getSharedProjects(submissionId) {
   const res = await axios.get(
     `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`
   );
-  return res;
+  return res.data;
 }
 
 /*
@@ -148,9 +148,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${
-        window.TL.BASE_URL
-      }analysis/ajax/project/${projectId}/shared-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -168,9 +166,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${
-        window.PAGE.URLS.base
-      }analysis/ajax/project/${projectId}/automated-analysis-outputs`
+      `${window.PAGE.URLS.base}analysis/ajax/project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {

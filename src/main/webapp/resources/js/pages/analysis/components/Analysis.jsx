@@ -11,56 +11,56 @@ import { AnalysisBioHansel } from "./AnalysisBioHansel";
 import { AnalysisSistr } from "./AnalysisSistr";
 import { AnalysisError } from "./AnalysisError";
 
-import { AnalysisContext, AnalysisProvider } from "../../../state/AnalysisState";
-import { AnalysisDetailsProvider } from "../../../state/AnalysisDetailsContext";
+import { AnalysisContext, AnalysisProvider } from "../../../contexts/AnalysisContext";
+import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
 
 const TabPane = Tabs.TabPane;
 
 const analysisTypesWithAdditionalPage = [
-  "bio_hansel Pipeline",
-  "SISTR Pipeline",
-  "SNVPhyl Phylogenomics Pipeline",
-  "MentaLiST MLST Pipeline"
+  "BIO_HANSEL",
+  "SISTR_TYPING",
+  "PHYLOGENOMICS",
+  "MLST_MENTALIST"
 ];
 
 export default function Analysis() {
-  const { context, analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
-  
+  const { analysisContext, analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
+
   return (
     <>
       <div
         style={{ marginLeft: "15px", marginRight: "15px", marginTop: "15px" }}
       >
-        <h1>{context.analysisName}</h1>
+        <h1>{analysisContext.analysisName}</h1>
         <div>
           <AnalysisSteps />
         </div>
         <Tabs
           defaultActiveKey={
-            context.isError ||
-            (analysisTypesWithAdditionalPage.indexOf(context.workflowName) > -1 &&
-              context.isCompleted)
+            analysisContext.isError ||
+            (analysisTypesWithAdditionalPage.indexOf(analysisContext.analysisType.type) > -1 &&
+              analysisContext.isCompleted)
               ? "0"
               : "3"
           }
           animated={false}
         >
-          {context.isCompleted ? (
+          {analysisContext.isCompleted ? (
             [
-              context.workflowName === "bio_hansel Pipeline" ? (
+              analysisContext.analysisType.type === "BIO_HANSEL" ? (
                 <TabPane tab="bio_hansel" key="0">
                   <AnalysisBioHansel />
                 </TabPane>
               ) : null,
 
-              context.workflowName === "SISTR Pipeline" ? (
+              analysisContext.analysisType.type === "SISTR_TYPING" ? (
                 <TabPane tab="sistr" key="0">
                   <AnalysisSistr />
                 </TabPane>
               ) : null,
 
-              context.workflowName === "SNVPhyl Phylogenomics Pipeline" ||
-              context.workflowName == "MentaLiST MLST Pipeline" ? (
+              analysisContext.analysisType.type === "PHYLOGENOMICS" ||
+              analysisContext.analysisType.type === "MLST_MENTALIST" ? (
                 <TabPane tab="Phylogenetic Tree" key="0">
                   <AnalysisPhylogeneticTree />
                 </TabPane>
@@ -74,17 +74,15 @@ export default function Analysis() {
                 <AnalysisProvenance />
               </TabPane>
             ]
-          ) : context.isError ? (
+          ) : analysisContext.isError ? (
             <TabPane tab="Job Error" key="0">
               <AnalysisError />
             </TabPane>
           ) : null}
           <TabPane tab="Settings" key="3">
-            <AnalysisProvider>
-                <AnalysisDetailsProvider>
-                    <AnalysisDetails />
-                </AnalysisDetailsProvider>
-            </AnalysisProvider>
+            <AnalysisDetailsProvider>
+                <AnalysisDetails />
+            </AnalysisDetailsProvider>
           </TabPane>
         </Tabs>
       </div>

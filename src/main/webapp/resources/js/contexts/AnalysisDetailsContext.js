@@ -1,4 +1,13 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useContext } from "react";
+
+import {
+  getVariablesForDetails,
+  getAnalysisInputFiles,
+  saveToRelatedSamples
+} from "../apis/analysis/analysis";
+
+import { showNotification } from "../modules/notifications";
+import { AnalysisContext } from "../contexts/AnalysisContext";
 
 const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
@@ -13,14 +22,7 @@ const reducer = (context, action) => {
     case TYPES.DETAILS:
       return {
         ...context,
-        emailPipelineResult: action.emailPipelineResult,
-        priority: action.priority,
-        workflowName: action.workflowName,
-        version: action.version,
-        analysisCreatedDate: action.analysisCreatedDate,
-        duration: action.duration,
-        priorities: action.priorities,
-        canShareToSamples: action.canShareToSamples
+        ...action.payload
       };
     case TYPES.EMAIL_PIPELINE_RESULT:
       return { ...context, emailPipelineResult: action.emailPipelineResult };
@@ -31,10 +33,7 @@ const reducer = (context, action) => {
     case TYPES.SAMPLES:
       return {
         ...context,
-        samples: action.samples,
-        sequenceFilePairList: action.sequenceFilePairList,
-        sequenceFileSizeList: action.sequenceFileSizeList,
-        referenceFile: action.referenceFile
+        ...action.payload
       };
     default:
       return;
@@ -42,15 +41,11 @@ const reducer = (context, action) => {
 };
 
 const initialContext = {
-  analysis: window.PAGE.analysis,
-  analysisState: window.PAGE.analysisState,
-  analysisName: window.PAGE.analysis.name,
   emailPipelineResult: window.PAGE.analysis.emailPipelineResult,
   workflowName: null,
   version: null,
   duration: null,
-  isAdmin: window.PAGE.isAdmin,
-  analysisCreatedDate: null,
+  createdDate: null,
   priority: null,
   priorities: [],
   canShareToSamples: false,
@@ -68,10 +63,40 @@ const initialContext = {
 const AnalysisDetailsContext = React.createContext(initialContext);
 
 function AnalysisDetailsProvider(props) {
-  const [context, dispatch] = useReducer(reducer, initialContext);
+  const [analysisDetailsContext, dispatch] = useReducer(
+    reducer,
+    initialContext
+  );
+  const { analysisContext } = useContext(AnalysisContext);
+
+  function loadAnalysisDetails() {
+    getVariablesForDetails(analysisContext.analysis.identifier).then(data => {
+      dispatch({ type: TYPES.DETAILS, payload: data });
+    });
+  }
+
+  function loadAnalysisSamples() {
+    getAnalysisInputFiles(analysisContext.analysis.identifier).then(data => {
+      dispatch({ type: TYPES.SAMPLES, payload: data });
+    });
+  }
+
+  function saveResultsToRelatedSamples() {
+    saveToRelatedSamples(analysisContext.analysis.identifier).then(res => {
+      showNotification({ text: res.message });
+      dispatch({ type: TYPES.UPDATE_SAMPLES, updateSamples: true });
+    });
+  }
 
   return (
-    <AnalysisDetailsContext.Provider value={{ context, dispatch }}>
+    <AnalysisDetailsContext.Provider
+      value={{
+        analysisDetailsContext,
+        loadAnalysisDetails,
+        loadAnalysisSamples,
+        saveResultsToRelatedSamples
+      }}
+    >
       {props.children}
     </AnalysisDetailsContext.Provider>
   );

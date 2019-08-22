@@ -1,16 +1,17 @@
 import React, { useState, useContext } from "react";
 import { Button, Checkbox, Alert, Popconfirm, Row } from "antd";
-import { AnalysisContext } from "../../../state/AnalysisState";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { showNotification } from "../../../modules/notifications";
 import { getI18N } from "../../../utilities/i18n-utilties";
 
 import { deleteAnalysis } from "../../../apis/analysis/analysis";
 
 export default function AnalysisDelete() {
-  const { context } = useContext(AnalysisContext);
+  const { analysisContext } = useContext(AnalysisContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   function onChange(e) {
+    // Set local state for deleteConfirm
     if (e.target.checked == true) {
       setDeleteConfirm(true);
     } else {
@@ -20,7 +21,7 @@ export default function AnalysisDelete() {
 
   function handleDeleteConfirm() {
     if (deleteConfirm) {
-      deleteAnalysis(context.analysis.identifier).then(res =>
+      deleteAnalysis(analysisContext.analysis.identifier).then(res =>
         showNotification({ text: res.result })
       );
 
@@ -52,7 +53,7 @@ export default function AnalysisDelete() {
         { deleteConfirm ?
             <Popconfirm
               placement="top"
-              title={`Delete Analysis ${context.analysisName}?`}
+              title={`Delete Analysis ${analysisContext.analysisName}?`}
               okText={getI18N("analysis.tab.content.delete.confirm")}
               cancelText={getI18N("analysis.tab.content.delete.cancel")}
               onConfirm={handleDeleteConfirm}

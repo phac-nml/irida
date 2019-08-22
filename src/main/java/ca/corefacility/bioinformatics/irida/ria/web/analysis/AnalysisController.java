@@ -404,8 +404,8 @@ public class AnalysisController {
 			inputFilesMap.put("referenceFile", referenceFile);
 		}
 
-		inputFilesMap.put("seqFilePairs", seqFilePairs);
-		inputFilesMap.put("seqFilePairSizes", seqFileSizes);
+		inputFilesMap.put("sequenceFilePairList", seqFilePairs);
+		inputFilesMap.put("sequenceFileSizeList", seqFileSizes);
 
 
 		return inputFilesMap;

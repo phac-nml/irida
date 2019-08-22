@@ -1,8 +1,7 @@
 import React, { useContext, Suspense, lazy, useEffect } from "react";
-import PropTypes from "prop-types";
 import { Button, Checkbox, Input, List, Col, Row, Tabs, Select } from "antd";
-import { AnalysisContext } from '../../../state/AnalysisState';
-import { AnalysisDetailsContext } from '../../../state/AnalysisDetailsContext';
+import { AnalysisContext } from '../../../contexts/AnalysisContext';
+import { AnalysisDetailsContext } from '../../../contexts/AnalysisDetailsContext';
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
 
@@ -25,45 +24,32 @@ import {
 const TabPane = Tabs.TabPane;
 
 export function AnalysisDetails() {
-    const { context, dispatch } = useContext(AnalysisDetailsContext);
-    const { analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
+    const { analysisDetailsContext, loadAnalysisDetails } = useContext(AnalysisDetailsContext);
+    const { analysisContext, analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
 
     useEffect(() => {
-        //get required variables and dispatch to reducer
-        getVariablesForDetails(context.analysis.identifier).then(res => {
-          dispatch({
-              type: 'ANALYSIS_DETAILS',
-              analysisName: res.data.analysisName,
-              workflowName: res.data.workflowName,
-              version: res.data.version,
-              priority: res.data.priority,
-              analysisCreatedDate: res.data.createdDate,
-              duration: res.data.duration,
-              priorities: res.data.priorities,
-              canShareToSamples: res.data.canShareToSamples,
-              emailPipelineResult: res.data.emailPipelineResult})
-        });
+        loadAnalysisDetails();
     }, []);
 
     const analysisDetails = [{
         title: getI18N("analysis.tab.content.analysis.id"),
-        desc: context.analysis.identifier,
+        desc: analysisContext.analysis.identifier,
       },
       {
         title: getI18N("analysis.tab.content.analysis.pipeline"),
-        desc: `${context.workflowName} (${context.version})`
+        desc: `${analysisDetailsContext.workflowName} (${analysisDetailsContext.version})`
       },
       {
         title: getI18N("analysis.tab.content.analysis.priority"),
-        desc: context.priority
+        desc: analysisDetailsContext.priority
       },
       {
         title: getI18N("analysis.tab.content.analysis.created"),
-        desc: formatDate({ date: context.analysisCreatedDate })
+        desc: formatDate({ date: analysisDetailsContext.createdDate })
       },
       {
         title: getI18N("analysis.tab.content.analysis.duration"),
-        desc: getHumanizedDuration({ date: context.duration })
+        desc: getHumanizedDuration({ date: analysisDetailsContext.duration })
       },
     ];
 
@@ -72,34 +58,37 @@ export function AnalysisDetails() {
         pipeline completion update emailPipelineResult field
     */
     function updateEmailPipelineResult(e){
-        updateAnalysisEmailPipelineResult(context.analysis.identifier, e.target.checked).then(res => {
+        updateAnalysisEmailPipelineResult(analysisContext.analysis.identifier, e.target.checked).then(res => {
           showNotification({ text: res.message});
           dispatch({ type: 'UPDATED_EMAIL_PIPELINE_RESULT', emailPipelineResult: e.target.checked })
         });
     }
 
+    // Update analysis name
     function updateSubmissionName(){
         const updatedAnalysisName = document.getElementById("analysis-name").value.trim();
 
-        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== context.analysisName)) {
-            updateAnalysis(context.analysis.identifier, updatedAnalysisName, null).then(res => {
+        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== analysisDetailsContext.analysisName)) {
+            updateAnalysis(analysisContext.analysis.identifier, updatedAnalysisName, null).then(res => {
                 showNotification({ text: res.message});
                 analysisContextUpdateSubmissionName(updatedAnalysisName);
             });
         }
     }
 
+    // Update analysis priority
     function updateAnalysisPriority(updatedPriority) {
-        updateAnalysis(context.analysis.identifier, null, updatedPriority).then(res => {
+        updateAnalysis(analysisContext.analysis.identifier, null, updatedPriority).then(res => {
             showNotification({ text: res.message});
             dispatch({ type: 'UPDATED_PRIORITY', priority: updatedPriority });
         });
     }
 
+    // Render priorities in priority dropdown (Admins only)
     function renderPriorities() {
         const priorityList = [];
 
-        for(let priority of context.priorities) {
+        for(let priority of analysisDetailsContext.priorities) {
             priorityList.push(
               <Select.Option key={priority} value={priority}>{priority}</Select.Option>
             )
@@ -121,10 +110,10 @@ export function AnalysisDetails() {
                     <Row>
                       <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                         <label style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.analysis-name")}</label>
-                        <Input size="large" placeholder={context.analysis.name} id="analysis-name" />
+                        <Input size="large" placeholder={analysisContext.analysis.name} id="analysis-name" />
                       </Col>
 
-                      { context.updatePermission ?
+                      { analysisDetailsContext.updatePermission ?
                           <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                             <Button size="large" type="primary" className="spaced-left__sm spaced-top__lg" onClick={() => updateSubmissionName()}>{getI18N("analysis.tab.content.analysis.update.button")}</Button>
                           </Col>
@@ -132,11 +121,11 @@ export function AnalysisDetails() {
                       }
                     </Row>
 
-                    { context.isAdmin && context.analysisState == "NEW" ?
+                    { analysisContext.isAdmin && analysisContext.analysisState == "NEW" ?
                         <Row className="spaced-top">
                             <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                                 <label style={{fontWeight: "bold"}}>Priority</label>
-                                <Select defaultValue={context.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
+                                <Select defaultValue={analysisContext.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
                                   {renderPriorities()}
                                 </Select>
                             </Col>
@@ -163,10 +152,10 @@ export function AnalysisDetails() {
                       <Checkbox
                         onChange={updateEmailPipelineResult}
                         disabled={
-                            ((context.isCompleted) || (context.isError)) ?
+                            ((analysisContext.isCompleted) || (analysisContext.isError)) ?
                                 true : false
                         }
-                        defaultChecked={context.emailPipelineResult}>
+                        defaultChecked={analysisDetailsContext.emailPipelineResult}>
                             {getI18N("analysis.tab.content.analysis.checkbox.label")}
                       </Checkbox>
                   </Col>
@@ -180,9 +169,9 @@ export function AnalysisDetails() {
                   </Col>
               </TabPane>
 
-              { context.updatePermission ?
+              { analysisDetailsContext.updatePermission ?
                 [
-                    !context.isError ?
+                    !analysisContext.isError ?
                       <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
                           <Col span={12}>
                             <Suspense fallback={<div>Loading...</div>}>

@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
 import Analysis from "./components/Analysis";
-import { AnalysisProvider } from "../../state/AnalysisState";
+import { AnalysisProvider } from "../../contexts/AnalysisContext";
 /*
 WEBPACK PUBLIC PATH:
 Webpack does not know what the servlet context path is.  To fix this, webpack exposed

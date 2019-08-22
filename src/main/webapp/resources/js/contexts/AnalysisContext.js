@@ -39,17 +39,15 @@ const initialContext = {
 const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
-  const [context, dispatch] = useReducer(reducer, initialContext);
+  const [analysisContext, dispatch] = useReducer(reducer, initialContext);
 
   function analysisContextUpdateSubmissionName(analysisName) {
-    console.log("UPDATING SUBMISSION NAME");
     dispatch({ type: "UPDATED_ANALYSIS_NAME", analysisName: analysisName });
-    console.log(context.analysisName);
   }
 
   return (
     <AnalysisContext.Provider
-      value={{ context, dispatch, analysisContextUpdateSubmissionName }}
+      value={{ analysisContext, analysisContextUpdateSubmissionName }}
     >
       {props.children}
     </AnalysisContext.Provider>

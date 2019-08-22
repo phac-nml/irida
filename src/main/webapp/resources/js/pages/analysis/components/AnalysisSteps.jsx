@@ -1,17 +1,17 @@
 import React, { useContext } from "react";
 import { Steps } from "antd";
-import { AnalysisContext } from "../../../state/AnalysisState";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 
 const Step = Steps.Step;
 
 export function AnalysisSteps() {
-  const { context } = useContext(AnalysisContext);
+  const { analysisContext } = useContext(AnalysisContext);
   return (
     <>
       <Steps
-        current={context.stateMap[context.analysisState]}
-        status={context.isError ? "error" : "finish"}
+        current={analysisContext.stateMap[analysisContext.analysisState]}
+        status={analysisContext.isError ? "error" : "finish"}
         style={{ paddingBottom: "15px" }}
       >
         <Step title={getI18N("analysis.state.NEW")} />

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Checkbox, Card, Row, Alert } from "antd";
-import { AnalysisContext } from "../../../state/AnalysisState";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisDetailsContext } from '../../../contexts/AnalysisDetailsContext';
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
 
@@ -11,7 +12,8 @@ import {
 } from "../../../apis/analysis/analysis";
 
 export default function AnalysisShare() {
-  const { context, dispatch } = useContext(AnalysisContext);
+  const { analysisDetailsContext, saveResultsToRelatedSamples } = useContext(AnalysisDetailsContext);
+  const { analysisContext } = useContext(AnalysisContext);
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
@@ -21,6 +23,7 @@ export default function AnalysisShare() {
            key={`sharedproj${index}`}
            value={sharedProject.project.identifier}
            onChange={onChange}
+           defaultChecked={sharedProject.shared ? true : false}
          >
            {sharedProject.project.name}
          </Checkbox>
@@ -30,24 +33,22 @@ export default function AnalysisShare() {
   }
 
   function onChange(e) {
+    // Updates if analysis is shared with a project or not
     updateSharedProjects(
-      context.analysis.identifier,
+      analysisContext.analysis.identifier,
       e.target.value,
       e.target.checked
     ).then(res => showNotification({ text: res.message }));
   }
 
   function handleSaveResults() {
-    saveToRelatedSamples(context.analysis.identifier).then(res =>
-        showNotification({ text: res.message })
-    );
-    dispatch({ type: 'UPDATE_SAMPLES', updateSamples: true });
+    saveResultsToRelatedSamples();
   }
 
   useEffect(() => {
-    getSharedProjects(context.analysis.identifier).then(res =>
-      //List of projects which results can be shared with
-      setSharedProjects(res.data)
+    getSharedProjects(analysisContext.analysis.identifier).then(data =>
+      //List of projects which results can be shared with (local state)
+      setSharedProjects(data)
     );
   }, []);
 
@@ -57,9 +58,8 @@ export default function AnalysisShare() {
         {getI18N("analysis.tab.content.share.results.results")}
       </h2>
 
-      <br />
       { sharedProjects != null ?
-          <Card title="Share Results with Projects">
+          <Card title="Share Results with Projects" style={{marginTop:"10px"}}>
             { sharedProjects.length > 0 ?
                 renderSharedProjectsList()
                 :
@@ -69,12 +69,9 @@ export default function AnalysisShare() {
           :null
       }
 
-      <br />
-      <br />
-
-      {context.canShareToSamples == true ? (
-        <Card title={getI18N("analysis.details.save.samples.title")}>
-          {context.updateSamples == true ?
+      {analysisDetailsContext.canShareToSamples == true ? (
+        <Card title={getI18N("analysis.details.save.samples.title")} style={{marginTop:"10px"}}>
+          {analysisDetailsContext.updateSamples == true ?
             (
                 <Alert
                   message={getI18N("analysis.details.save.complete")}
@@ -83,7 +80,7 @@ export default function AnalysisShare() {
             ) :
             <p className="spaced_bottom">
               {getI18N(
-                `workflow.label.share-analysis-samples.${context.analysisType.type}`
+                `workflow.label.share-analysis-samples.${analysisContext.analysisType.type}`
               )}
             </p>
           }
@@ -91,7 +88,7 @@ export default function AnalysisShare() {
           <Button
             type="primary"
             className="spaced-top"
-            disabled={context.updateSamples ? true : false}
+            disabled={analysisDetailsContext.updateSamples == true ? true : false}
             onClick={handleSaveResults}
             id="save-results-btn"
           >
