@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+/**
+ * Used as a request to update the analysis name and/or priority.
+ */
+
 public class AnalysisSubmissionInfo {
 	private Long analysisSubmissionId;
 	private String analysisName;

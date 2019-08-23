@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
+/**
+ * Used as a request to update if a user should receive
+ * email an email upon completion or error..
+ */
+
 public class AnalysisEmailPipelineResult {
 	private Long analysisSubmissionId;
 	private boolean emailPipelineResult;
