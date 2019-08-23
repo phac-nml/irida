@@ -6,11 +6,12 @@ import axios from "axios";
 /*
  * Get all the data required for the analysis -> details page.
  * @param {number} submissionId Submission ID
- * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ * @return {Promise<*>} `data` contains the OK response and the details map;
+ *                      `error` contains error information if an error occurred.
  */
 export async function getVariablesForDetails(submissionId) {
   const res = await axios.get(
-    `${window.TL.BASE_URL}analysis/ajax/getDataForDetailsTab/${submissionId}`
+    `${window.TL.BASE_URL}analysis/ajax/details/${submissionId}`
   );
   return res.data;
 }
@@ -18,11 +19,12 @@ export async function getVariablesForDetails(submissionId) {
 /*
  * Get analysis input files
  * @param {number} submissionId Submission ID
- * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ * @return {Promise<*>} `data` contains the OK response and input files data;
+ *                      `error` contains error information if an error occurred.
  */
 export async function getAnalysisInputFiles(submissionId) {
   const res = await axios.get(
-    `${window.TL.BASE_URL}analysis/ajax/getAnalysisInputFiles/${submissionId}`
+    `${window.TL.BASE_URL}analysis/ajax/inputs/${submissionId}`
   );
   return res.data;
 }
@@ -32,13 +34,14 @@ export async function getAnalysisInputFiles(submissionId) {
  * analysis error or completion.
  * @param {number} submissionId Submission ID
  * @param {boolean} emailPipelineResult True or False
+ * @return {Promise<*>} `data` contains the OK response; error` contains error information if an error occurred.
  */
 export async function updateAnalysisEmailPipelineResult(
   submissionId,
   emailPipelineResult
 ) {
   const res = await axios.patch(
-    `${window.TL.BASE_URL}analysis/ajax/updateemailpipelineresult/`,
+    `${window.TL.BASE_URL}analysis/ajax/update-email-pipeline-result/`,
     {
       analysisSubmissionId: submissionId,
       emailPipelineResult: emailPipelineResult
@@ -57,7 +60,7 @@ export async function updateAnalysisEmailPipelineResult(
 
 export async function updateAnalysis(submissionId, analysisName, priority) {
   const res = await axios.patch(
-    `${window.TL.BASE_URL}analysis/ajax/updateanalysis/`,
+    `${window.TL.BASE_URL}analysis/ajax/update-analysis/`,
     {
       analysisSubmissionId: submissionId,
       analysisName: analysisName,

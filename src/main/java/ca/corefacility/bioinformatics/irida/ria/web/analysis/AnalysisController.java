@@ -255,11 +255,6 @@ public class AnalysisController {
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 
-		// Check if user can update analysis
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-
 		return "analysis";
 	}
 
@@ -271,7 +266,7 @@ public class AnalysisController {
 	 * @param locale     User's locale
 	 * @return redirect to the analysis page after update
 	 */
-	@RequestMapping(value = "/ajax/updateemailpipelineresult", method = RequestMethod.PATCH)
+	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
 	public Map<String, String> ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
 			Locale locale) {
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
@@ -292,13 +287,13 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get data required by analysis settings -> details page
+	 * Get analysis details
 	 *
 	 * @param submissionId analysis submission id to get data for
 	 * @param locale       User's locale
-	 * @return map of data
+	 * @return map of analysis details
 	 */
-	@RequestMapping(value = "/ajax/getDataForDetailsTab/{submissionId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/ajax/details/{submissionId}", method = RequestMethod.GET)
 	public Map<String, Object> ajaxGetDataForDetailsTab(@PathVariable Long submissionId, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
@@ -325,6 +320,10 @@ public class AnalysisController {
 							.getAnalysisType());
 		}
 
+		// Check if user can update analysis
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+
 		Map<String, Object> detailsPageMap = new HashMap<>();
 		detailsPageMap.put("result", "success");
 		detailsPageMap.put("workflowName", workflowName);
@@ -334,18 +333,19 @@ public class AnalysisController {
 		detailsPageMap.put("createdDate", submission.getCreatedDate()
 				.toString());
 		detailsPageMap.put("priorities", priorities);
+		detailsPageMap.put("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
 		detailsPageMap.put("canShareToSamples", canShareToSamples);
 		detailsPageMap.put("emailPipelineResult", emailPipelineResult);
 		return detailsPageMap;
 	}
 
 	/**
-	 * Get analysis input files
+	 * Get analysis input files and their sizes
 	 *
 	 * @param submissionId analysis submission id to get data for
-	 * @return map of input files
+	 * @return map of input files and their sizes
 	 */
-	@RequestMapping(value = "/ajax/getAnalysisInputFiles/{submissionId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/ajax/inputs/{submissionId}", method = RequestMethod.GET)
 	public Map<String, Object> ajaxGetAnalysisInputFiles(@PathVariable Long submissionId) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
@@ -407,7 +407,6 @@ public class AnalysisController {
 		inputFilesMap.put("sequenceFilePairList", seqFilePairs);
 		inputFilesMap.put("sequenceFileSizeList", seqFileSizes);
 
-
 		return inputFilesMap;
 	}
 
@@ -418,7 +417,7 @@ public class AnalysisController {
 	 * @param locale     User's locale
 	 * @return redirect to the analysis page after update
 	 */
-	@RequestMapping(value = "/ajax/updateanalysis", method = RequestMethod.PATCH)
+	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
 	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale) {
 		String message = "";
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());

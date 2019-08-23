@@ -49,7 +49,7 @@ const initialContext = {
   priority: null,
   priorities: [],
   canShareToSamples: false,
-  updatePermission: window.PAGE.updatePermission,
+  updatePermission: false,
   samples: [],
   sequenceFilePairList: [],
   sequenceFileSizeList: [],
