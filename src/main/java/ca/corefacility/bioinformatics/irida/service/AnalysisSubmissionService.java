@@ -266,7 +266,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * Update the name of an {@link AnalysisSubmission}
 	 *
 	 * @param submission the submission to update
-	 * @param name   the new name of the analysis
+	 * @param analysisName   the new name of the analysis
 	 * @return the updated submission
 	 */
 	public AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName);
