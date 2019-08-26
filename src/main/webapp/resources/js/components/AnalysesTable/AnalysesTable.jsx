@@ -127,18 +127,19 @@ export function AnalysesTable() {
                 alignItems: "center"
               }}
             >
-              {record.state !== "Completed" ? (
-                <span />
-              ) : (
+              {record.state.VALUE !== "COMPLETED" ? (
                 <a
-                  href={`${window.TL.BASE_URL}analysis/ajax/download/${record.id}`}
+                  href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
                   download
                 >
                   <Icon type="download" />
                 </a>
+              ) : (
+                <span />
               )}
               <Popconfirm
                 placement={"top"}
+                An
                 title={"Delete this analysis?"}
                 onConfirm={() => deleteAnalysis(record.id)}
               >
