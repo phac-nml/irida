@@ -9,6 +9,7 @@ import { AnalysisState } from "./AnalysisState";
 import { getI18N } from "../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
+import { blue6 } from "../../styles/colors";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -41,7 +42,7 @@ export function AnalysesTable() {
             <Icon
               type="filter"
               theme="filled"
-              style={{ color: filtered ? "#1890ff" : undefined }}
+              style={{ color: filtered ? blue6 : undefined }}
               className="t-name"
             />
           );
@@ -62,7 +63,7 @@ export function AnalysesTable() {
             <Icon
               type="filter"
               theme="filled"
-              style={{ color: filtered ? "#1890ff" : undefined }}
+              style={{ color: filtered ? blue6 : undefined }}
               className="t-state"
             />
           );
@@ -82,7 +83,7 @@ export function AnalysesTable() {
             <Icon
               type="filter"
               theme="filled"
-              style={{ color: filtered ? "#1890ff" : undefined }}
+              style={{ color: filtered ? blue6 : undefined }}
               className="t-type"
             />
           );

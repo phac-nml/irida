@@ -47,9 +47,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -722,26 +719,6 @@ public class AnalysisController {
 				model.addAttribute("preview", "tree");
 			}
 		}
-	}
-
-	/**
-	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
-	 *
-	 * @param params    {@link DataTablesParams}
-	 * @param projectId {@link Long}
-	 * @param principal {@link Principal}
-	 * @param locale    {@link Locale}
-	 * @return {@link DataTablesResponse}
-	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws ExecutionManagerException      If the submission cannot be read properly
-	 */
-	@RequestMapping("/ajax/project/{projectId}/list")
-	@ResponseBody
-	public DataTablesResponse getSubmissionsForProject(@DataTablesRequest DataTablesParams params,
-			@PathVariable Long projectId, Principal principal, Locale locale)
-			throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		Project project = projectService.read(projectId);
-		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
 	/**
