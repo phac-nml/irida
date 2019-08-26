@@ -39,6 +39,7 @@ Changes
 * [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
 * [Developer]: Updates to front-end packages: `antd@3.19.8` -> `antd@3.21.4`, `@babel/polyfill` -> `core-js/stable` & `regenerator-runtime/runtime`, as well as some minor updates to webpack dependencies.
 * [Developer]: Updated to node `v12.8.1`.
+* [Developer]: Updated `eslint` to fix security vulnerability.
 
 19.01 to 19.05
 ---------------
