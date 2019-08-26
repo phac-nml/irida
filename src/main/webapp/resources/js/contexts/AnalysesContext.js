@@ -1,7 +1,6 @@
 import React from "react";
 import {
   deleteAnalysisSubmission,
-  downloadAnalysis,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
@@ -38,8 +37,6 @@ class AnalysesProvider extends React.Component {
       filters: {},
       onSearch: this.onSearch,
       handleTableChange: this.handleTableChange,
-      deleteAnalysis: this.deleteAnalysis,
-      downloadAnalysis: this.downloadAnalysis,
       updateTable: this.updateTable
     };
   }

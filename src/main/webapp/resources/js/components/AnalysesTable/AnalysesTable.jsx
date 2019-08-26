@@ -26,8 +26,7 @@ export function AnalysesTable() {
     types,
     pipelineStates,
     handleTableChange,
-    deleteAnalysis,
-    downloadAnalysis
+    deleteAnalysis
   } = useContext(AnalysesContext);
 
   function createColumns({ types, pipelineStates, deleteAnalysis }) {
@@ -128,15 +127,15 @@ export function AnalysesTable() {
                 alignItems: "center"
               }}
             >
-              {record.state === "Error" ? (
+              {record.state !== "Completed" ? (
                 <span />
               ) : (
-                <Button
-                  type={"link"}
-                  onClick={() => downloadAnalysis(record.id)}
+                <a
+                  href={`${window.TL.BASE_URL}analysis/ajax/download/${record.id}`}
+                  download
                 >
                   <Icon type="download" />
-                </Button>
+                </a>
               )}
               <Popconfirm
                 placement={"top"}
