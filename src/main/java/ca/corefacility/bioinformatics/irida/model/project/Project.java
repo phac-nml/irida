@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AbstractAnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -265,10 +266,12 @@ public class Project extends IridaResourceSupport
 		this.maximumCoverage = maximumCoverage;
 	}
 
+	@JsonIgnore
 	public AbstractAnalysisSubmission.Priority getAnalysisPriority() {
 		return analysisPriority;
 	}
 
+	@JsonIgnore
 	public void setAnalysisPriority(AbstractAnalysisSubmission.Priority analysisPriority) {
 		this.analysisPriority = analysisPriority;
 	}
