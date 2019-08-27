@@ -17,7 +17,7 @@ import { blue6 } from "../../styles/colors";
  * @constructor
  */
 export function AnalysesTable() {
-  const CAN_MANAGE = window.PAGE.admin;
+  const CAN_MANAGE = window.PAGE.canManage;
   const {
     loading,
     total,
@@ -36,16 +36,6 @@ export function AnalysesTable() {
           url: `${window.TL.BASE_URL}analysis/`,
           width: 300
         }),
-        filterIcon(filtered) {
-          return (
-            <Icon
-              type="filter"
-              theme="filled"
-              style={{ color: filtered ? blue6 : undefined }}
-              className="t-name"
-            />
-          );
-        },
         title: getI18N("analyses.analysis-name"),
         key: "name",
         ...getTextSearchProps("name")
