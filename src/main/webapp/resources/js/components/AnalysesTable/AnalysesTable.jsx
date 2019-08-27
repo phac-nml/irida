@@ -118,13 +118,13 @@ export function AnalysesTable() {
         render(text, record) {
           return record.state.value === "COMPLETED" ? (
             <Button
-              shape="circle-outline"
+              shape="circle"
+              type="dashed"
               style={{ color: blue6 }}
               href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
               download
-            >
-              <Icon type="download" />
-            </Button>
+              icon="download"
+            />
           ) : null;
         }
       }
@@ -143,9 +143,13 @@ export function AnalysesTable() {
               title={"Delete this analysis?"}
               onConfirm={() => deleteAnalysis(record.id)}
             >
-              <Button shape="circle-outline" className="t-delete-btn">
-                <Icon type="delete" theme="twoTone" />
-              </Button>
+              <Button
+                shape="circle"
+                type="dashed"
+                style={{ color: blue6 }}
+                className="t-delete-btn"
+                icon="delete"
+              />
             </Popconfirm>
           ) : null;
         }
