@@ -84,10 +84,9 @@ public class AnalysisController {
 			.of(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree", BuiltInAnalysisTypes.SISTR_TYPING, "sistr",
 					BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
-	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
-	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
 	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
+	public static final String ANALYSIS_PAGE = "analysis";
 
 	private static final String TREE_EXT = "newick";
 	private static final String EMPTY_TREE = "();";
@@ -244,8 +243,12 @@ public class AnalysisController {
 		model.addAttribute("analysisSubmission", submission);
 
 		final User currentUser = userService.getUserByUsername(principal.getName());
-		model.addAttribute("isAdmin", currentUser.getSystemRole()
-				.equals(Role.ROLE_ADMIN));
+
+		if(currentUser != null) {
+			model.addAttribute("isAdmin", currentUser.getSystemRole()
+					.equals(Role.ROLE_ADMIN));
+		}
+
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
@@ -1182,22 +1185,6 @@ public class AnalysisController {
 		return ImmutableMap.of("fields", fields);
 	}
 
-	/**
-	 * Get the view name for different analysis types
-	 *
-	 * @param type The {@link AnalysisType}
-	 * @return the view name to display
-	 */
-	private String getViewForAnalysisType(AnalysisType type) {
-		String viewName = null;
-		if (PREVIEWS.containsKey(type)) {
-			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
-		} else {
-			viewName = PREVIEW_UNAVAILABLE;
-		}
-
-		return viewName;
-	}
 
 	/**
 	 * Get the {@link AnalysisSubmission} duration

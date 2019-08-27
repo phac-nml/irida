@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
+
 /**
  */
 public class AnalysisControllerTest {
@@ -78,6 +79,7 @@ public class AnalysisControllerTest {
 		analysesListingService = mock(AnalysesListingService.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		analysisOutputFileDownloadManager = mock(AnalysisOutputFileDownloadManager.class);
+		userServiceMock = mock(UserService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
@@ -103,15 +105,14 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		Principal principal = () -> USER_NAME;
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
-		assertEquals("Tree preview should be set", "tree", model.get("preview"));
+		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
+		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
+
+		//assertEquals("Tree should be set", "tree", model.get("phylogeneticiTree"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
-		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
-
 		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				model.get("analysisType"));
 	}
@@ -132,12 +133,12 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
-
 		Principal principal = () -> USER_NAME;
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
-		assertFalse("No preview should be available", model.containsAttribute("preview"));
+		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
+		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
+
+		assertFalse("Phylogenetic Tree tab should not be available", model.containsAttribute("phylogeneticiTree"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 	}
@@ -149,6 +150,8 @@ public class AnalysisControllerTest {
 		Locale locale = Locale.ENGLISH;
 		UUID workflowId = UUID.randomUUID();
 
+		Principal principal = () -> USER_NAME;
+
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
@@ -156,15 +159,11 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
 				.thenReturn(createUnknownWorkflow(workflowId));
 
-		Principal principal = () -> USER_NAME;
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
-
-		assertFalse("No preview should be set", model.containsAttribute("preview"));
+		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal, locale);
+		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 
-		assertEquals("version should be unknown", "unknown", model.get("version"));
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}
 
