@@ -17,7 +17,7 @@ import { blue6 } from "../../styles/colors";
  * @constructor
  */
 export function AnalysesTable() {
-  const ADMIN = window.PAGE.admin;
+  const CAN_MANAGE = window.PAGE.admin;
   const {
     loading,
     total,
@@ -127,8 +127,11 @@ export function AnalysesTable() {
             </Button>
           ) : null;
         }
-      },
-      {
+      }
+    ];
+
+    if (CAN_MANAGE) {
+      columns.push({
         title: "",
         key: "delete",
         fixed: "right",
@@ -146,8 +149,8 @@ export function AnalysesTable() {
             </Popconfirm>
           ) : null;
         }
-      }
-    ];
+      });
+    }
 
     return columns;
   }
