@@ -110,48 +110,44 @@ export function AnalysesTable() {
         render(timestamp) {
           return getHumanizedDuration({ date: timestamp });
         }
-      }
-    ];
-
-    if (ADMIN) {
-      columns.push({
+      },
+      {
         title: "",
-        key: "actions",
+        key: "download",
+        fixed: "right",
+        render(text, record) {
+          return record.state.value === "COMPLETED" ? (
+            <Button
+              shape="circle-outline"
+              style={{ color: blue6 }}
+              href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
+              download
+            >
+              <Icon type="download" />
+            </Button>
+          ) : null;
+        }
+      },
+      {
+        title: "",
+        key: "delete",
         fixed: "right",
         render(text, record) {
           return record.modifiable ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}
+            <Popconfirm
+              placement={"top"}
+              An
+              title={"Delete this analysis?"}
+              onConfirm={() => deleteAnalysis(record.id)}
             >
-              {record.state.VALUE !== "COMPLETED" ? (
-                <a
-                  href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
-                  download
-                >
-                  <Icon type="download" />
-                </a>
-              ) : (
-                <span />
-              )}
-              <Popconfirm
-                placement={"top"}
-                An
-                title={"Delete this analysis?"}
-                onConfirm={() => deleteAnalysis(record.id)}
-              >
-                <Button type="link" className="t-delete-btn">
-                  <Icon type="delete" theme="twoTone" />
-                </Button>
-              </Popconfirm>
-            </div>
+              <Button shape="circle-outline" className="t-delete-btn">
+                <Icon type="delete" theme="twoTone" />
+              </Button>
+            </Popconfirm>
           ) : null;
         }
-      });
-    }
+      }
+    ];
 
     return columns;
   }
