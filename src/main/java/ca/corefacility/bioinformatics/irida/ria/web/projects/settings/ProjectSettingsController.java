@@ -179,6 +179,14 @@ public class ProjectSettingsController {
 		return "redirect: /projects/" + projectId + "/settings/delete";
 	}
 
+	/**
+	 * Set the priority of a given analysis submission
+	 *
+	 * @param projectId The ID of the project to set priority
+	 * @param priority  the priority to set
+	 * @param locale    locale of the logged in user
+	 * @return Success message
+	 */
 	@RequestMapping(value = "/priority", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Map<String, String> updatePrioritySetting(@PathVariable Long projectId,
