@@ -1,5 +1,5 @@
 import React, { useContext, Suspense, lazy, useEffect } from "react";
-import { Button, Checkbox, Input, List, Col, Row, Tabs, Select } from "antd";
+import { Button, Checkbox, Input, List, Col, Row, Tabs, Select, Spin } from "antd";
 import { AnalysisContext } from '../../../contexts/AnalysisContext';
 import { AnalysisDetailsContext } from '../../../contexts/AnalysisDetailsContext';
 import { getI18N } from "../../../utilities/i18n-utilties";
@@ -103,7 +103,7 @@ export function AnalysisDetails() {
                 style={{marginLeft:150, paddingTop:25}}
                 animated={false}
           >
-              <TabPane tab={getI18N("analysis.tab.analysis")} key="4" style={{minWidth:300}}>
+              <TabPane tab={getI18N("analysis.tab.content.analysis.details")} key="4" style={{minWidth:300}}>
                   <Col span={12}>
                     <h2 style={{fontWeight: "bold"}} className="spaced-bottom">{getI18N("analysis.tab.content.analysis.details")}</h2>
 
@@ -163,7 +163,7 @@ export function AnalysisDetails() {
 
               <TabPane tab={getI18N("analysis.tab.samples")} key="5">
                   <Col span={12}>
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<Spin />}>
                       <AnalysisSamples />
                     </Suspense>
                   </Col>
@@ -174,7 +174,7 @@ export function AnalysisDetails() {
                     !analysisContext.isError ?
                       <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
                           <Col span={12}>
-                            <Suspense fallback={<div>Loading...</div>}>
+                            <Suspense fallback={<Spin />}>
                               <AnalysisShare />
                             </Suspense>
                           </Col>
@@ -183,7 +183,7 @@ export function AnalysisDetails() {
                      ,
                   <TabPane tab={getI18N("analysis.tab.delete-analysis")} key="7">
                       <Col span={12}>
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<Spin />}>
                           <AnalysisDelete />
                         </Suspense>
                       </Col>
