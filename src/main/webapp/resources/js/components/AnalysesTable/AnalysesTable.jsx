@@ -116,16 +116,16 @@ export function AnalysesTable() {
         key: "download",
         fixed: "right",
         render(text, record) {
-          return record.state.value === "COMPLETED" ? (
+          return (
             <Button
               shape="circle"
               type="dashed"
-              style={{ color: blue6 }}
+              disabled={record.state.value === "COMPLETED"}
               href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
               download
               icon="download"
             />
-          ) : null;
+          );
         }
       }
     ];
@@ -146,12 +146,13 @@ export function AnalysesTable() {
               <Button
                 shape="circle"
                 type="dashed"
-                style={{ color: blue6 }}
                 className="t-delete-btn"
                 icon="delete"
               />
             </Popconfirm>
-          ) : null;
+          ) : (
+            <span />
+          );
         }
       });
     }
