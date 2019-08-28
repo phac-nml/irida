@@ -555,4 +555,13 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		return modifiedDate.compareTo(o.modifiedDate);
 	}
 
+	/**
+	 * Enum encoding the priority of analysis submissions
+	 */
+	public enum Priority {
+		LOW,
+		MEDIUM,
+		HIGH;
+	}
+
 }

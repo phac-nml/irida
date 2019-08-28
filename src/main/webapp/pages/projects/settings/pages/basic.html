@@ -28,7 +28,7 @@
                 <div class="col-sm-12">
                     <label for="analysis-priority" th:text="#{project.settings.automated.priority}">_Analysis Priority_</label>
                     <select class="form-control" id="analysis-priority">
-                        <option th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AbstractAnalysisSubmission.Priority).values()}"
+                        <option th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}"
                             th:value="${priority}" th:text="${priority}" th:selected="${priority == project.getAnalysisPriority()}">
                         </option>
                     </select>

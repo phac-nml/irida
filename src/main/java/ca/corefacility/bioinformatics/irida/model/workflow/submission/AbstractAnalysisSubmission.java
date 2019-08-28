@@ -288,13 +288,4 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 
 		return false;
 	}
-
-	/**
-	 * Enum encoding the priority of analysis submissions
-	 */
-	public enum Priority {
-		LOW,
-		MEDIUM,
-		HIGH;
-	}
 }

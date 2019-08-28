@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AbstractAnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
@@ -190,7 +191,7 @@ public class ProjectSettingsController {
 	@RequestMapping(value = "/priority", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Map<String, String> updatePrioritySetting(@PathVariable Long projectId,
-			@RequestParam(name = "priority") AbstractAnalysisSubmission.Priority priority, Locale locale) {
+			@RequestParam(name = "priority") AnalysisSubmission.Priority priority, Locale locale) {
 		Project project = projectService.read(projectId);
 
 		Map<String, Object> updates = new HashMap<>();
