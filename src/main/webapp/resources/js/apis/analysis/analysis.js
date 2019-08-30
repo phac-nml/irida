@@ -128,6 +128,14 @@ export async function saveToRelatedSamples(submissionId) {
   return res.data;
 }
 
+export async function getJobErrors(submissionId) {
+  const res = await axios.get(
+    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/job-errors`
+  );
+
+  return res.data;
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
