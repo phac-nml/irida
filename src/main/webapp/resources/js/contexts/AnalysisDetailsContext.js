@@ -3,7 +3,9 @@ import React, { useReducer, useContext } from "react";
 import {
   getVariablesForDetails,
   getAnalysisInputFiles,
-  saveToRelatedSamples
+  saveToRelatedSamples,
+  updateAnalysisEmailPipelineResult,
+  updateAnalysis
 } from "../apis/analysis/analysis";
 
 import { showNotification } from "../modules/notifications";
@@ -54,10 +56,7 @@ const initialContext = {
   sequenceFilePairList: [],
   sequenceFileSizeList: [],
   referenceFile: [],
-  updateSamples:
-    window.PAGE.analysis.updateSamples == null
-      ? false
-      : window.PAGE.analysis.updateSamples
+  updateSamples: window.PAGE.analysis.updateSamples
 };
 
 const AnalysisDetailsContext = React.createContext(initialContext);
@@ -88,13 +87,41 @@ function AnalysisDetailsProvider(props) {
     });
   }
 
+  function analysisDetailsContextUpdateSubmissionPriority(updatedPriority) {
+    updateAnalysis(
+      analysisContext.analysis.identifier,
+      null,
+      updatedPriority
+    ).then(res => {
+      showNotification({ text: res.message });
+      dispatch({ type: TYPES.PRIORITY, priority: updatedPriority });
+    });
+  }
+
+  function analysisDetailsContextUpdateEmailPipelineResult(
+    emailPipelineResult
+  ) {
+    updateAnalysisEmailPipelineResult(
+      analysisContext.analysis.identifier,
+      emailPipelineResult
+    ).then(res => {
+      showNotification({ text: res.message });
+      dispatch({
+        type: TYPES.EMAIL_PIPELINE_RESULT,
+        emailPipelineResult: emailPipelineResult
+      });
+    });
+  }
+
   return (
     <AnalysisDetailsContext.Provider
       value={{
         analysisDetailsContext,
         loadAnalysisDetails,
         loadAnalysisSamples,
-        saveResultsToRelatedSamples
+        saveResultsToRelatedSamples,
+        analysisDetailsContextUpdateSubmissionPriority,
+        analysisDetailsContextUpdateEmailPipelineResult
       }}
     >
       {props.children}

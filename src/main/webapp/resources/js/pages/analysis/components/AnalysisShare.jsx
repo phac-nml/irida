@@ -1,34 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Checkbox, Card, Row, Alert } from "antd";
+import { Button, Checkbox, Card, Row, Alert, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { AnalysisDetailsContext } from '../../../contexts/AnalysisDetailsContext';
+import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
+import { SPACE_SM } from "../../../styles/spacing";
 
 import {
   getSharedProjects,
-  updateSharedProjects,
-  saveToRelatedSamples
+  updateSharedProjects
 } from "../../../apis/analysis/analysis";
 
+const { Title } = Typography;
+
 export default function AnalysisShare() {
-  const { analysisDetailsContext, saveResultsToRelatedSamples } = useContext(AnalysisDetailsContext);
+  const { analysisDetailsContext, saveResultsToRelatedSamples } = useContext(
+    AnalysisDetailsContext
+  );
   const { analysisContext } = useContext(AnalysisContext);
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
-    const projectList = sharedProjects.map((sharedProject, index) =>
+    const projectList = sharedProjects.map((sharedProject, index) => (
       <Row className="spaced-bottom" key={`sharedprojrow${index}`}>
-         <Checkbox
-           key={`sharedproj${index}`}
-           value={sharedProject.project.identifier}
-           onChange={onChange}
-           defaultChecked={sharedProject.shared ? true : false}
-         >
-           {sharedProject.project.name}
-         </Checkbox>
-       </Row>
-    );
+        <Checkbox
+          key={`sharedproj${index}`}
+          value={sharedProject.project.identifier}
+          onChange={onChange}
+          defaultChecked={sharedProject.shared}
+        >
+          {sharedProject.project.name}
+        </Checkbox>
+      </Row>
+    ));
     return projectList;
   }
 
@@ -54,41 +58,51 @@ export default function AnalysisShare() {
 
   return (
     <>
-      <h2 style={{ fontWeight: "bold" }}>
+      <Title level={2}>
         {getI18N("analysis.tab.content.share.results.results")}
-      </h2>
+      </Title>
 
-      { sharedProjects != null ?
-          <Card title="Share Results with Projects" style={{marginTop:"10px"}}>
-            { sharedProjects.length > 0 ?
-                renderSharedProjectsList()
-                :
-                <p>{getI18N("analysis.tab.content.share.no-projects-to-share-results-with")}</p>
-            }
-          </Card>
-          :null
-      }
+      {sharedProjects !== null ? (
+        <Card
+          title={getI18N(
+            "analysis.tab.content.share.results.share-results-with-projects"
+          )}
+          style={{ marginTop: SPACE_SM }}
+        >
+          {sharedProjects.length > 0 ? (
+            renderSharedProjectsList()
+          ) : (
+            <p>
+              {getI18N(
+                "analysis.tab.content.share.no-projects-to-share-results-with"
+              )}
+            </p>
+          )}
+        </Card>
+      ) : null}
 
-      {analysisDetailsContext.canShareToSamples == true ? (
-        <Card title={getI18N("analysis.details.save.samples.title")} style={{marginTop:"10px"}}>
-          {analysisDetailsContext.updateSamples == true ?
-            (
-                <Alert
-                  message={getI18N("analysis.details.save.complete")}
-                  type="info"
-                />
-            ) :
+      {analysisDetailsContext.canShareToSamples ? (
+        <Card
+          title={getI18N("analysis.details.save.samples.title")}
+          style={{ marginTop: SPACE_SM }}
+        >
+          {analysisDetailsContext.updateSamples ? (
+            <Alert
+              message={getI18N("analysis.details.save.complete")}
+              type="info"
+            />
+          ) : (
             <p className="spaced_bottom">
               {getI18N(
                 `workflow.label.share-analysis-samples.${analysisContext.analysisType.type}`
               )}
             </p>
-          }
+          )}
 
           <Button
             type="primary"
             className="spaced-top"
-            disabled={analysisDetailsContext.updateSamples == true ? true : false}
+            disabled={analysisDetailsContext.updateSamples}
             onClick={handleSaveResults}
             id="save-results-btn"
           >

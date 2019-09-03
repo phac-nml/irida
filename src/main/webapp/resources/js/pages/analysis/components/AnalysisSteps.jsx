@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Steps } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const Step = Steps.Step;
 
@@ -12,7 +13,7 @@ export function AnalysisSteps() {
       <Steps
         current={analysisContext.stateMap[analysisContext.analysisState]}
         status={analysisContext.isError ? "error" : "finish"}
-        style={{ paddingBottom: "15px" }}
+        style={{ paddingBottom: SPACE_MD }}
       >
         <Step title={getI18N("analysis.state.NEW")} />
         <Step title={getI18N("analysis.state.PREPARING")} />

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Tabs } from "antd";
+import { Tabs, Typography } from "antd";
 
 //import analysis components required by page
 import { AnalysisDetails } from "./AnalysisDetails";
@@ -10,11 +10,17 @@ import { AnalysisPhylogeneticTree } from "./AnalysisPhylogeneticTree";
 import { AnalysisBioHansel } from "./AnalysisBioHansel";
 import { AnalysisSistr } from "./AnalysisSistr";
 import { AnalysisError } from "./AnalysisError";
+import { getI18N } from "../../../utilities/i18n-utilties";
+import { SPACE_MD } from "../../../styles/spacing";
 
-import { AnalysisContext, AnalysisProvider } from "../../../contexts/AnalysisContext";
+import {
+  AnalysisContext,
+  AnalysisProvider
+} from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
 
 const TabPane = Tabs.TabPane;
+const { Title } = Typography;
 
 const analysisTypesWithAdditionalPage = [
   "BIO_HANSEL",
@@ -24,21 +30,27 @@ const analysisTypesWithAdditionalPage = [
 ];
 
 export default function Analysis() {
-  const { analysisContext, analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
+  const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
+    AnalysisContext
+  );
 
   return (
     <>
       <div
-        style={{ marginLeft: "15px", marginRight: "15px", marginTop: "15px" }}
+        style={{
+          marginLeft: SPACE_MD,
+          marginRight: SPACE_MD,
+          marginTop: SPACE_MD
+        }}
       >
-        <h1>{analysisContext.analysisName}</h1>
-        <div>
-          <AnalysisSteps />
-        </div>
+        <Title>{analysisContext.analysisName}</Title>
+        <AnalysisSteps />
         <Tabs
           defaultActiveKey={
             analysisContext.isError ||
-            (analysisTypesWithAdditionalPage.indexOf(analysisContext.analysisType.type) > -1 &&
+            (analysisTypesWithAdditionalPage.indexOf(
+              analysisContext.analysisType.type
+            ) > -1 &&
               analysisContext.isCompleted)
               ? "0"
               : "3"
@@ -66,22 +78,22 @@ export default function Analysis() {
                 </TabPane>
               ) : null,
 
-              <TabPane tab="Output Files" key="1">
+              <TabPane tab={getI18N("analysis.tab.output-files")} key="1">
                 <AnalysisOutputFiles />
               </TabPane>,
 
-              <TabPane tab="Provenance" key="2">
+              <TabPane tab={getI18N("analysis.tab.provenance")} key="2">
                 <AnalysisProvenance />
               </TabPane>
             ]
           ) : analysisContext.isError ? (
-            <TabPane tab="Job Error" key="0">
+            <TabPane tab={getI18N("analysis.tab.job-error")} key="0">
               <AnalysisError />
             </TabPane>
           ) : null}
-          <TabPane tab="Settings" key="3">
+          <TabPane tab={getI18N("analysis.tab.settings")} key="3">
             <AnalysisDetailsProvider>
-                <AnalysisDetails />
+              <AnalysisDetails />
             </AnalysisDetailsProvider>
           </TabPane>
         </Tabs>

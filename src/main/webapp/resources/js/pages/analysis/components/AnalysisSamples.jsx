@@ -1,118 +1,151 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, Row, Icon, Button } from "antd";
-import { AnalysisDetailsContext } from '../../../contexts/AnalysisDetailsContext';
+import { Card, Row, Col, Icon, Button, Typography } from "antd";
+import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
+import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
+import { SPACE_XS, SPACE_LG } from "../../../styles/spacing";
 
-import {
-    getAnalysisInputFiles,
-    getForwardFile,
-    getReverseFile
-} from "../../../apis/analysis/analysis";
+const { Title } = Typography;
 
 export default function AnalysisSamples() {
-  const { analysisDetailsContext, loadAnalysisSamples } = useContext(AnalysisDetailsContext);
+  const { analysisDetailsContext, loadAnalysisSamples } = useContext(
+    AnalysisDetailsContext
+  );
 
   useEffect(() => {
     loadAnalysisSamples();
   }, []);
 
   const downloadReferenceFile = () => {
-    if (analysisDetailsContext.referenceFile.identifier !== undefined)
-    {
-        window.open(`${window.TL.BASE_URL}referenceFiles/download/${analysisDetailsContext.referenceFile.identifier}`, '_blank');
+    if (analysisDetailsContext.referenceFile.identifier !== undefined) {
+      window.open(
+        `${window.TL.BASE_URL}referenceFiles/download/${analysisDetailsContext.referenceFile.identifier}`,
+        "_blank"
+      );
     }
   };
 
   const renderReferenceFile = () => {
     const referenceFile = [];
 
-    if(analysisDetailsContext.referenceFile.length == 0)
-    {
-        return null;
+    if (analysisDetailsContext.referenceFile.length === 0) {
+      return null;
+    } else {
+      referenceFile.push(
+        <div style={{ marginBottom: SPACE_LG }} key="samplesDiv-1">
+          <h4
+            style={{ fontWeight: FONT_WEIGHT_DEFAULT }}
+            key="reference-file-heading-1"
+          >
+            {getI18N("analysis.tab.content.samples.reference-file")}
+          </h4>
+          <Row key="row-reference-file-1">
+            <span key="reference-file-1">
+              {analysisDetailsContext.referenceFile.label}
+            </span>
+            <Button
+              key="reference-file-1-download-button"
+              className="pull-right"
+              style={{ marginTop: SPACE_XS }}
+              style={{ marginTop: SPACE_XS }}
+              type="primary"
+              onClick={() => {
+                downloadReferenceFile();
+              }}
+            >
+              <Icon type="download" />{" "}
+              {getI18N("analysis.tab.content.samples.download-reference-file")}
+            </Button>
+          </Row>
+        </div>
+      );
+      return referenceFile;
     }
-    else {
-
-        referenceFile.push(
-            <h4 key="reference-file-0-heading" style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.samples.reference-file")}</h4>,
-            <Row key="row-filename">
-                <span key="reference-file-0-file">{analysisDetailsContext.referenceFile.label}</span>
-                <Button
-                    key="reference-file-0-download-button"
-                    className="pull-right"
-                    style={{marginTop: "0.5em"}} type="primary"
-                    onClick={() => {downloadReferenceFile()}}
-                >
-                    <Icon type="download" /> {getI18N("analysis.tab.content.samples.download-reference-file")}
-                </Button>
-            </Row>,
-         );
-         return referenceFile;
-     }
   };
 
   const renderSamples = () => {
     const samplesList = [];
 
-    if(analysisDetailsContext.sequenceFilePairList.length > 0) {
-        let pairIndex = 0;
-        for (let i = 0; i < analysisDetailsContext.samples.length; i++) {
-          samplesList.push(
-            <Card
-                type="inner"
-                title={
-                    <a
-                        target="_blank"
-                        href={`${window.TL.BASE_URL}samples/${analysisDetailsContext.samples[i].sample.identifier}/details`}>
-                            <Icon type="filter" rotate="180" /> {analysisDetailsContext.samples[i].sample.sampleName}
-                    </a>}
-                key={`sample${i}`}
+    if (analysisDetailsContext.sequenceFilePairList.length > 0) {
+      let pairIndex = 0;
+      for (const [
+        index,
+        sampleObj
+      ] of analysisDetailsContext.samples.entries()) {
+        samplesList.push(
+          <Card
+            type="inner"
+            title={
+              <Button
+                type="link"
+                href={`${window.TL.BASE_URL}samples/${sampleObj.sample.identifier}/details`}
+                target="_blank"
+              >
+                <Icon type="filter" rotate="180" />{" "}
+                {sampleObj.sample.sampleName}
+              </Button>
+            }
+            key={`sampleId-${sampleObj.sample.identifier}`}
+          >
+            <Row
+              key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}`}
+              type="flex"
             >
-                <Row>
-                    <a
-                        target="_blank"
-                        href={`${window.TL.BASE_URL}sequenceFiles/${analysisDetailsContext.samples[i].sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}/summary`}>
-                            <Icon type="arrow-right" /> {analysisDetailsContext.sequenceFilePairList[pairIndex].label}
-                   </a>
-                   <span style={{float: 'right'}}>{analysisDetailsContext.sequenceFileSizeList[pairIndex]}</span>
-                </Row>
-                <Row>
-                    <a
-                        target="_blank"
-                        href={`${window.TL.BASE_URL}sequenceFiles/${analysisDetailsContext.samples[i].sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}/summary`}>
-                            <Icon type="arrow-left" /> {analysisDetailsContext.sequenceFilePairList[pairIndex+1].label}
-                    </a>
-                    <span style={{float: 'right'}}>{analysisDetailsContext.sequenceFileSizeList[pairIndex+1]}</span>
-                </Row>
-            </Card>
-          );
-           pairIndex = pairIndex + 2;
-        }
-    }
-    else {
-        samplesList.push(<p key={`no-paired-end-0`}>{getI18N("analysis.input-files.no-paired-end")}</p>);
+              <Col span={12}>
+                <Button
+                  type="link"
+                  target="_blank"
+                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}/summary`}
+                >
+                  <Icon type="arrow-right" />{" "}
+                  {analysisDetailsContext.sequenceFilePairList[pairIndex].label}
+                </Button>
+              </Col>
+              <Col span={12} style={{ textAlign: "right" }}>
+                {analysisDetailsContext.sequenceFileSizeList[pairIndex]}
+              </Col>
+            </Row>
+            <Row
+              key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}`}
+              type="flex"
+            >
+              <Col span={12}>
+                <Button
+                  type="link"
+                  target="_blank"
+                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}/summary`}
+                >
+                  <Icon type="arrow-left" />{" "}
+                  {
+                    analysisDetailsContext.sequenceFilePairList[pairIndex + 1]
+                      .label
+                  }
+                </Button>
+              </Col>
+              <Col span={12} style={{ textAlign: "right" }}>
+                {analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}
+              </Col>
+            </Row>
+          </Card>
+        );
+        pairIndex = pairIndex + 2;
+      }
+    } else {
+      samplesList.push(
+        <p key={`no-paired-end-0`}>
+          {getI18N("analysis.input-files.no-paired-end")}
+        </p>
+      );
     }
     return samplesList;
   };
 
   return (
     <>
+      <Title level={2}>{getI18N("analysis.tab.samples")}</Title>
+      {analysisDetailsContext.referenceFile ? renderReferenceFile() : null}
 
-      <h2 style={{ fontWeight: "bold", marginBottom: "1em" }}>{getI18N("analysis.tab.samples")}</h2>
-       {
-            analysisDetailsContext.referenceFile ?
-                <div style={{marginBottom: "2em"}}>
-                    {renderReferenceFile()}
-                </div>
-            : null
-       }
-
-      {
-        analysisDetailsContext.samples.length > 0 ?
-            <div>
-                {renderSamples()}
-            </div>
-            : null
-        }
+      {analysisDetailsContext.samples.length > 0 ? renderSamples() : null}
     </>
   );
 }
