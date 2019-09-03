@@ -34,14 +34,19 @@ export const nameColumnFormat = ({ url, width }) => {
           href={`${url}/${data.id}`}
           title={name}
           style={{
-            width,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
             textAlign: "left"
           }}
         >
-          <span style={{ width: width - 60 }}>{name}</span>
+          <span
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: width - 50
+            }}
+          >
+            {name}
+          </span>
         </Button>
       );
     }

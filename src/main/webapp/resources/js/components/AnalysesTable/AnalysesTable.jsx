@@ -110,7 +110,7 @@ export function AnalysesTable() {
             <Button
               shape="circle"
               type="dashed"
-              disabled={record.state.value === "COMPLETED"}
+              disabled={record.state.value !== "COMPLETED"}
               href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
               download
               icon="download"
