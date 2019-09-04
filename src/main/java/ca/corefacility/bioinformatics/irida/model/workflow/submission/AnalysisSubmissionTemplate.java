@@ -37,8 +37,8 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	}
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, IridaWorkflowNamedParameters namedParameters,
-			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, Priority priority,
-			boolean emailPipelineResult, Project submittedProject) {
+			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, boolean emailPipelineResult,
+			Project submittedProject) {
 		this();
 		this.name = name;
 		this.workflowId = workflowId;
@@ -46,14 +46,13 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 		this.namedParameters = namedParameters;
 		this.updateSamples = updateSamples;
 		this.analysisDescription = analysisDescription;
-		this.priority = priority;
 		this.emailPipelineResult = emailPipelineResult;
 		this.submittedProject = submittedProject;
 	}
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, Map<String, String> inputParameters,
-			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, Priority priority,
-			boolean emailPipelineResult, Project submittedProject) {
+			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, boolean emailPipelineResult,
+			Project submittedProject) {
 		this();
 		this.name = name;
 		this.workflowId = workflowId;
@@ -61,7 +60,6 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 		this.referenceFile = referenceFile;
 		this.updateSamples = updateSamples;
 		this.analysisDescription = analysisDescription;
-		this.priority = priority;
 		this.emailPipelineResult = emailPipelineResult;
 		this.submittedProject = submittedProject;
 	}
@@ -81,8 +79,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, workflowId, createdDate, modifiedDate, referenceFile, namedParameters, submitter,
-				priority);
+		return Objects.hash(name, workflowId, createdDate, modifiedDate, referenceFile, namedParameters, submitter);
 	}
 
 	@Override
@@ -92,7 +89,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate)
 					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId) && Objects.equals(
 					referenceFile, p.referenceFile) && Objects.equals(namedParameters, p.namedParameters)
-					&& Objects.equals(submitter, p.submitter) && Objects.equals(priority, p.priority);
+					&& Objects.equals(submitter, p.submitter);
 		}
 
 		return false;
