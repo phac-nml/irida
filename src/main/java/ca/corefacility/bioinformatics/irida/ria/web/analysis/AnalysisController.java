@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
@@ -149,11 +150,12 @@ public class AnalysisController {
 	 * @return Name of the analysis page view
 	 */
 	@RequestMapping()
-	public String getUserAnalysisList(Model model) {
-		model.addAttribute("userList", true);
-		model.addAttribute("ajaxURL", "/analysis/ajax/list");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+	public String getUserAnalysisList(Model model, Principal principal) {
+
+		// Determine if the user is an owner or admin.
+		User loggedInUser = userService.getUserByUsername(principal.getName());
+		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
+		model.addAttribute("isAdmin", isAdmin);
 		return PAGE_ANALYSIS_LIST;
 	}
 

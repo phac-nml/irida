@@ -9,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/dist/css/analyses.bundle.css}" />
     <script th:inline="javascript">
       window.PAGE = {
-        canManage: /*[[${isAdmin || isOwner}]]*/ true,
+        canManage: /*[[${isAdmin}]]*/ true,
         i18n: {
           "analyses.header": /*[[#{analyses.header}]]*/ "_ANALYSES_",
           "analyses.id": /*[[#{analyses.id}]]*/ "_ID_",
