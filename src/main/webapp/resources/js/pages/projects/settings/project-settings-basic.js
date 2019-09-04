@@ -54,6 +54,29 @@ const projectSettings = (function(page, notifications) {
     toggleDeleteButton();
   });
 
+  /**
+   * Updating analysis priority on server
+   */
+  $("#analysis-priority").on("change", function() {
+    const priority = $("#analysis-priority").val();
+
+    $.ajax({
+      url: page.urls.priority,
+      type: "POST",
+      data: {
+        priority: priority
+      },
+      statusCode: {
+        200: function(response) {
+          notifications.show({ text: response.result });
+        }
+      },
+      fail: function() {
+        notifications.show({ text: page.i18n.error, type: "error" });
+      }
+    });
+  });
+
   function toggleDeleteButton() {
     if ($("#confirm-deletion").is(":checked")) {
       $("#submit-delete").prop("disabled", false);

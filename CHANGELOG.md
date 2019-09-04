@@ -34,6 +34,12 @@ Changes
 * [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
 * [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
 * [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
+* [Documentation]: Added link to Galaxy Export (Import) tool documentation.
+* [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
+* [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
+* [Developer]: Updates to front-end packages: `antd@3.19.8` -> `antd@3.21.4`, `@babel/polyfill` -> `core-js/stable` & `regenerator-runtime/runtime`, as well as some minor updates to webpack dependencies.
+* [Developer]: Updated to node `v12.8.1`.
+* [Developer]: Updated `eslint` to fix security vulnerability.
 * [UI]: Added the ability to delete all the data in a column in the line list table.
 
 19.01 to 19.05
