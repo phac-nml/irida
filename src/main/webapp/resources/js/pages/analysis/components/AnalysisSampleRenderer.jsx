@@ -6,9 +6,7 @@ import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
 import { Card, Row, Col, Icon, Button } from "antd";
 
 export function AnalysisSampleRenderer() {
-  const { analysisDetailsContext } = useContext(
-    AnalysisDetailsContext
-  );
+  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
 
   const renderSamples = () => {
     const samplesList = [];
@@ -87,9 +85,5 @@ export function AnalysisSampleRenderer() {
     return samplesList;
   };
 
-  return (
-    <>
-        {renderSamples()}
-    </>
-  );
+  return <>{renderSamples()}</>;
 }

@@ -19,9 +19,13 @@ export default function AnalysisSamples() {
   return (
     <>
       <Title level={2}>{getI18N("analysis.tab.samples")}</Title>
-      {analysisDetailsContext.referenceFile ? <AnalysisReferenceFileRenderer /> : null}
+      {analysisDetailsContext.referenceFile ? (
+        <AnalysisReferenceFileRenderer />
+      ) : null}
 
-      {analysisDetailsContext.samples.length > 0 ? <AnalysisSampleRenderer /> : null}
+      {analysisDetailsContext.samples.length > 0 ? (
+        <AnalysisSampleRenderer />
+      ) : null}
     </>
   );
 }

@@ -18,15 +18,12 @@ import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
 
-import {
-  getVariablesForDetails
-} from "../../../apis/analysis/analysis";
+import { getVariablesForDetails } from "../../../apis/analysis/analysis";
 
 import {
   formatDate,
   getHumanizedDuration
 } from "../../../utilities/date-utilities";
-
 
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
 const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
@@ -36,11 +33,12 @@ const { Title, Paragraph } = Typography;
 const TabPane = Tabs.TabPane;
 
 export function AnalysisDetails() {
-  const { analysisDetailsContext,
-          loadAnalysisDetails,
-          analysisDetailsContextUpdateSubmissionPriority,
-          analysisDetailsContextUpdateEmailPipelineResult
-        } = useContext(AnalysisDetailsContext);
+  const {
+    analysisDetailsContext,
+    loadAnalysisDetails,
+    analysisDetailsContextUpdateSubmissionPriority,
+    analysisDetailsContextUpdateEmailPipelineResult
+  } = useContext(AnalysisDetailsContext);
 
   const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
     AnalysisContext
