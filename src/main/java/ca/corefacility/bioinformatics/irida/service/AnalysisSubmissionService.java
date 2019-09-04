@@ -71,6 +71,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			Collection<UUID> workflowIds);
 
 	/**
+	 * Delete multiple {@link AnalysisSubmission}s
+	 *
+	 * @param ids the collection of IDs to delete
+	 */
+	public void deleteMultiple(Collection<Long> ids);
+
+	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *

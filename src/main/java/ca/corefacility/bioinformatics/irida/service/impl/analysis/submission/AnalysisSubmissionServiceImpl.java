@@ -310,6 +310,18 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#ids, 'canUpdateAnalysisSubmission')")
+	@Transactional
+	public void deleteMultiple(Collection<Long> ids) {
+		for (Long id : ids) {
+			delete(id);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canUpdateAnalysisSubmission')")
 	public AnalysisSubmission update(AnalysisSubmission object) {
 		AnalysisSubmission readSubmission = read(object.getId());
