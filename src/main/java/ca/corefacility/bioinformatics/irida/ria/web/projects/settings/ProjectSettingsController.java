@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
@@ -96,7 +97,8 @@ public class ProjectSettingsController {
 			typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
 		}
 
-		return new TemplateResponse(template.getId(), template.getName(), typeString, template.isEnabled(), template.getStatusMessage());
+		return new TemplateResponse(template.getId(), template.getName(), typeString, template.isEnabled(),
+				template.getStatusMessage());
 	}
 
 	/**
@@ -175,6 +177,30 @@ public class ProjectSettingsController {
 		}
 
 		return "redirect: /projects/" + projectId + "/settings/delete";
+	}
+
+	/**
+	 * Set the priority of a given analysis submission
+	 *
+	 * @param projectId The ID of the project to set priority
+	 * @param priority  the priority to set
+	 * @param locale    locale of the logged in user
+	 * @return Success message
+	 */
+	@RequestMapping(value = "/priority", method = RequestMethod.POST)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Map<String, String> updatePrioritySetting(@PathVariable Long projectId,
+			@RequestParam(name = "priority") AnalysisSubmission.Priority priority, Locale locale) {
+		Project project = projectService.read(projectId);
+
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("analysisPriority", priority);
+
+		projectService.updateProjectSettings(project, updates);
+
+		String message = messageSource.getMessage("project.settings.notifications.priority.updated", null, locale);
+
+		return ImmutableMap.of("result", message);
 	}
 
 	/**
