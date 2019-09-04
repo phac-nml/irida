@@ -1,3 +1,11 @@
+/*
+ * This file renders the analysis Share Results component
+ */
+
+/*
+ * The following import statements makes available all the elements
+ * required by the component
+ */
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Checkbox, Card, Row, Alert, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
@@ -14,10 +22,17 @@ import {
 const { Title } = Typography;
 
 export default function AnalysisShare() {
+  /*
+   * The following const statements
+   * make the required contexts which contain
+   * the state and methods available to the component
+   */
   const { analysisDetailsContext, saveResultsToRelatedSamples } = useContext(
     AnalysisDetailsContext
   );
   const { analysisContext } = useContext(AnalysisContext);
+
+  // Local state variable which stores the shared projects
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
@@ -36,8 +51,8 @@ export default function AnalysisShare() {
     return projectList;
   }
 
+  // Updates if analysis is shared with a project or not
   function onChange(e) {
-    // Updates if analysis is shared with a project or not
     updateSharedProjects(
       analysisContext.analysis.identifier,
       e.target.value,
@@ -45,10 +60,14 @@ export default function AnalysisShare() {
     ).then(res => showNotification({ text: res.message }));
   }
 
+  /* Calls method in AnalysisDetailsContext to
+   * to save results to the related samples
+   */
   function handleSaveResults() {
     saveResultsToRelatedSamples();
   }
 
+  // On load gets the projects which the analysis can be shared with
   useEffect(() => {
     getSharedProjects(analysisContext.analysis.identifier).then(data =>
       //List of projects which results can be shared with (local state)
@@ -56,6 +75,9 @@ export default function AnalysisShare() {
     );
   }, []);
 
+  /* Renders the projects which an analysis can be shared with
+   * and a save results to related samples if applicable
+   */
   return (
     <>
       <Title level={2}>

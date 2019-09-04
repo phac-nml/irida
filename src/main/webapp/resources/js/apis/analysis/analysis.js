@@ -52,7 +52,6 @@ export async function updateAnalysisEmailPipelineResult(
  * @param {string} priority [LOW, MEDIUM, HIGH]
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-
 export async function updateAnalysis(submissionId, analysisName, priority) {
   const res = await axios.patch(`${URL}update-analysis/`, {
     analysisSubmissionId: submissionId,

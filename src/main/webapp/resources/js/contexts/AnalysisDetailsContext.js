@@ -43,7 +43,7 @@ const reducer = (context, action) => {
 };
 
 const initialContext = {
-  emailPipelineResult: window.PAGE.analysis.emailPipelineResult,
+  emailPipelineResult: false,
   workflowName: null,
   version: null,
   duration: null,
@@ -56,7 +56,7 @@ const initialContext = {
   sequenceFilePairList: [],
   sequenceFileSizeList: [],
   referenceFile: [],
-  updateSamples: window.PAGE.analysis.updateSamples
+  updateSamples: false
 };
 
 const AnalysisDetailsContext = React.createContext(initialContext);
@@ -108,7 +108,7 @@ function AnalysisDetailsProvider(props) {
       showNotification({ text: res.message });
       dispatch({
         type: TYPES.EMAIL_PIPELINE_RESULT,
-        emailPipelineResult: emailPipelineResult
+        emailPipelineResult
       });
     });
   }

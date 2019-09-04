@@ -1,3 +1,14 @@
+/*
+ * This file renders the details for the analysis as well as,
+ * lazily loads the Samples, Share, and Delete components (component
+ * is only loaded when the corresponding tab is clicked
+ */
+
+/*
+ * The following import statements makes available all the elements
+ *required by the components encompassed within
+ */
+
 import React, { useContext, Suspense, lazy, useEffect } from "react";
 import {
   Button,
@@ -17,6 +28,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
+import { SPACE_MD } from "../../../styles/spacing";
 
 import { getVariablesForDetails } from "../../../apis/analysis/analysis";
 
@@ -33,6 +45,12 @@ const { Title, Paragraph } = Typography;
 const TabPane = Tabs.TabPane;
 
 export function AnalysisDetails() {
+  /*
+   * The following const statements
+   * make the required contexts which contain
+   * the state and methods available to the component
+   */
+
   const {
     analysisDetailsContext,
     loadAnalysisDetails,
@@ -44,10 +62,12 @@ export function AnalysisDetails() {
     AnalysisContext
   );
 
+  // On page load get the analysis details
   useEffect(() => {
     loadAnalysisDetails();
   }, []);
 
+  // List of analysis details
   const analysisDetails = [
     {
       title: getI18N("analysis.tab.content.analysis.id"),
@@ -81,7 +101,12 @@ export function AnalysisDetails() {
 
   // Update analysis name
   function updateSubmissionName(newSubmissionName) {
-    analysisContextUpdateSubmissionName(newSubmissionName);
+    if (
+      newSubmissionName !== "" &&
+      newSubmissionName !== analysisContext.analysisName
+    ) {
+      analysisContextUpdateSubmissionName(newSubmissionName);
+    }
   }
 
   // Update analysis priority
@@ -103,21 +128,23 @@ export function AnalysisDetails() {
     return priorityList;
   }
 
-  function onChange(newSubmissionName) {
-    updateSubmissionName(newSubmissionName);
-  }
-
+  /*
+   * The following renders the analysis details, and tabs
+   * for Samples, Share Results, and Delete Analysis which
+   * the components are only loaded if the corresponding
+   * tab is clicked
+   */
   return (
     <>
       <Tabs
-        defaultActiveKey="4"
+        defaultActiveKey="analysis_details"
         tabPosition="left"
-        style={{ marginLeft: 150, paddingTop: 25 }}
+        style={{ marginLeft: 50, paddingTop: 25 }}
         animated={false}
       >
         <TabPane
           tab={getI18N("analysis.tab.content.analysis.details")}
-          key="4"
+          key="analysis_details"
           style={{ minWidth: 300 }}
         >
           <Col span={12}>
@@ -130,7 +157,8 @@ export function AnalysisDetails() {
                 <label>
                   {getI18N("analysis.tab.content.analysis.analysis-name")}
                 </label>
-                <Paragraph editable={{ onChange: onChange }}>
+
+                <Paragraph editable={{ onChange: updateSubmissionName }}>
                   {analysisContext.analysisName}
                 </Paragraph>
               </Col>
@@ -169,10 +197,8 @@ export function AnalysisDetails() {
               />
             </div>
 
-            <Divider />
-
             {!analysisContext.isCompleted && !analysisContext.isError ? (
-              <section>
+              <section style={{ marginTop: SPACE_MD }}>
                 <Title level={4}>
                   {getI18N(
                     "analysis.tab.content.analysis.receive-email-upon-analysis-completion"
@@ -189,7 +215,7 @@ export function AnalysisDetails() {
           </Col>
         </TabPane>
 
-        <TabPane tab={getI18N("analysis.tab.samples")} key="5">
+        <TabPane tab={getI18N("analysis.tab.samples")} key="analysis_samples">
           <Col span={12}>
             <Suspense fallback={<Spin />}>
               <AnalysisSamples />
@@ -200,7 +226,10 @@ export function AnalysisDetails() {
         {analysisDetailsContext.updatePermission
           ? [
               !analysisContext.isError ? (
-                <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
+                <TabPane
+                  tab={getI18N("analysis.tab.share-results")}
+                  key="analysis_share"
+                >
                   <Col span={12}>
                     <Suspense fallback={<Spin />}>
                       <AnalysisShare />
@@ -208,7 +237,10 @@ export function AnalysisDetails() {
                   </Col>
                 </TabPane>
               ) : null,
-              <TabPane tab={getI18N("analysis.tab.delete-analysis")} key="7">
+              <TabPane
+                tab={getI18N("analysis.tab.delete-analysis")}
+                key="analysis_delete"
+              >
                 <Col span={12}>
                   <Suspense fallback={<Spin />}>
                     <AnalysisDelete />

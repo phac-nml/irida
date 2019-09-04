@@ -1,3 +1,8 @@
+/*
+ * The following import statements makes available all the elements
+ * required by the component
+ */
+
 import React, { useContext } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
@@ -6,6 +11,11 @@ import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
 import { Card, Row, Col, Icon, Button } from "antd";
 
 export function AnalysisSampleRenderer() {
+  /*
+   * The following const statement
+   * make the required context which contains
+   * the state and methods available to the component
+   */
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
 
   const renderSamples = () => {

@@ -32,21 +32,16 @@ function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
 
   function analysisContextUpdateSubmissionName(updatedAnalysisName) {
-    if (
-      updatedAnalysisName !== "" &&
-      updatedAnalysisName !== analysisContext.analysisName
-    ) {
-      updateAnalysis(
-        analysisContext.analysis.identifier,
-        updatedAnalysisName,
-        null
-      ).then(res => {
-        showNotification({ text: res.message });
-        setAnalysisContext(analysisContext => {
-          return { ...analysisContext, analysisName: updatedAnalysisName };
-        });
+    updateAnalysis(
+      analysisContext.analysis.identifier,
+      updatedAnalysisName,
+      null
+    ).then(res => {
+      showNotification({ text: res.message });
+      setAnalysisContext(analysisContext => {
+        return { ...analysisContext, analysisName: updatedAnalysisName };
       });
-    }
+    });
   }
 
   return (
