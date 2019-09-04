@@ -28,10 +28,20 @@
             <column name="status_message" type="longtext"/>
         </addColumn>
 
+        <addColumn tableName="project">
+            <column name="analysis_priority" type="varchar(255)" value="LOW"/>
+        </addColumn>
+
+        <addColumn tableName="project_AUD">
+            <column name="analysis_priority" type="varchar(255)" value="LOW"/>
+        </addColumn>
+
         <!--Drop old notnulls since the table now has the template also encoded -->
         <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_state"
                                columnDataType="varchar(255)"/>
         <dropNotNullConstraint tableName="analysis_submission" columnName="analysis_cleaned_state"
+                               columnDataType="varchar(255)"/>
+        <dropNotNullConstraint tableName="analysis_submission" columnName="priority"
                                columnDataType="varchar(255)"/>
 
         <!-- Convert all the old project settings automated analyses to analysis_templates -->
