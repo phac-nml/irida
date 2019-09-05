@@ -13,6 +13,8 @@
             import: /*[[@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload"
           },
           i18n: {
+            "linelist.loading": /*[[#{linelist.loading}]]*/ "LOADING",
+            "linelist.delete-column-wait": /*[[#{linelist.delete-column-wait}]]*/ "PLEASE WAIT",
             MetadataFieldMenu_remove_entries: /*[[#{MetadataFieldMenu_remove_entries}]]*/ "MetadataFieldMenu_remove_entries",
             RemoveMetadataEntriesModal_title: /*[[#{RemoveMetadataEntriesModal_title}]]*/ "RemoveMetadataEntriesModal_title",
             RemoveMetadataEntriesModal_intro:/*[[#{RemoveMetadataEntriesModal_intro}]]*/ "RemoveMetadataEntriesModal_intro",
@@ -139,7 +141,6 @@
                 exportExcel: /*[[#{linelist.toolbar.exportExcel}]]*/ "exportXLSX",
               },
               agGrid: {
-                loading: /*[[#{linelist.agGrid.loading}]]*/ "__Loading data... this might take a while!__",
                 sampleName: /*[[#{linelist.agGrid.sampleName}]]*/ "Sample Name"
               },
               infobar: {

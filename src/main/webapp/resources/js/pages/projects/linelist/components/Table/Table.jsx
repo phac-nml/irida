@@ -7,6 +7,7 @@ import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import { DeleteColumnOverlay } from "./renderers/DeleteColumnOverlay";
 // Excel export support
 import XLSX from "xlsx";
 
@@ -53,6 +54,7 @@ export class TableComponent extends React.Component {
     SampleNameRenderer,
     IconCellRenderer,
     DateCellRenderer,
+    DeleteColumnOverlay,
     agColumnHeader: HeaderRenderer
   };
 
@@ -63,7 +65,13 @@ export class TableComponent extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.globalFilter !== this.props.globalFilter) return true;
+    if (this.api) {
+      // Using a timeout to stop flickering on small data sets.
+      setTimeout(() => this.api.hideOverlay(), 1000);
+    }
+    if (nextProps.globalFilter !== this.props.globalFilter) {
+      return true;
+    }
     /**
      * Check to see if the height of the table needs to be updated.
      * This will only happen  on initial load or if the window height has changed
@@ -429,6 +437,7 @@ export class TableComponent extends React.Component {
           rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
+          noRowsOverlayComponent="DeleteColumnOverlay"
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
           rowDeselection={true}

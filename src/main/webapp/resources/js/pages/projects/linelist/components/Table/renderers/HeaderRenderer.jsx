@@ -114,7 +114,10 @@ export function HeaderRenderer({
    * @param {object} field
    * @returns {*}
    */
-  const deleteColumnData = field => api.removeColumnData(field);
+  const deleteColumnData = field => {
+    api.showNoRowsOverlay();
+    api.removeColumnData(field);
+  };
 
   return (
     <Header onClick={sortColumn}>
