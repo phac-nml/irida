@@ -1,8 +1,7 @@
-import React, { useReducer } from "react";
+import React, { useState } from "react";
+import { showNotification } from "../modules/notifications";
 
-const TYPES = {
-  ANALYSIS_NAME: "UPDATED_ANALYSIS_NAME"
-};
+import { updateAnalysis } from "../apis/analysis/analysis";
 
 const stateMap = {
   NEW: 0,
@@ -14,15 +13,6 @@ const stateMap = {
   TRANSFERRING: 4,
   COMPLETING: 4,
   COMPLETED: 5
-};
-
-const reducer = (context, action) => {
-  switch (action.type) {
-    case TYPES.ANALYSIS_NAME:
-      return { ...context, analysisName: action.analysisName };
-    default:
-      return;
-  }
 };
 
 const initialContext = {
@@ -39,10 +29,19 @@ const initialContext = {
 const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
-  const [analysisContext, dispatch] = useReducer(reducer, initialContext);
+  const [analysisContext, setAnalysisContext] = useState(initialContext);
 
-  function analysisContextUpdateSubmissionName(analysisName) {
-    dispatch({ type: "UPDATED_ANALYSIS_NAME", analysisName: analysisName });
+  function analysisContextUpdateSubmissionName(updatedAnalysisName) {
+    updateAnalysis(
+      analysisContext.analysis.identifier,
+      updatedAnalysisName,
+      null
+    ).then(res => {
+      showNotification({ text: res.message });
+      setAnalysisContext(analysisContext => {
+        return { ...analysisContext, analysisName: updatedAnalysisName };
+      });
+    });
   }
 
   return (

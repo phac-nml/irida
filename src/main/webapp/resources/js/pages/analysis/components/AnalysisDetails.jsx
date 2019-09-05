@@ -1,197 +1,255 @@
+/*
+ * This file renders the details for the analysis as well as,
+ * lazily loads the Samples, Share, and Delete components (component
+ * is only loaded when the corresponding tab is clicked
+ */
+
+/*
+ * The following import statements makes available all the elements
+ *required by the components encompassed within
+ */
+
 import React, { useContext, Suspense, lazy, useEffect } from "react";
-import { Button, Checkbox, Input, List, Col, Row, Tabs, Select, Spin } from "antd";
-import { AnalysisContext } from '../../../contexts/AnalysisContext';
-import { AnalysisDetailsContext } from '../../../contexts/AnalysisDetailsContext';
+import {
+  Button,
+  Checkbox,
+  Input,
+  List,
+  Col,
+  Row,
+  Tabs,
+  Select,
+  Spin,
+  Divider,
+  Typography
+} from "antd";
+
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
+import { SPACE_MD } from "../../../styles/spacing";
 
-const AnalysisSamples = React.lazy(() => import ('./AnalysisSamples'));
-const AnalysisShare = React.lazy(() => import ('./AnalysisShare'));
-const AnalysisDelete = React.lazy(() => import ('./AnalysisDelete'));
-const Option = Select;
-
-import {
-    updateAnalysisEmailPipelineResult,
-    updateAnalysis,
-    getVariablesForDetails
-} from "../../../apis/analysis/analysis";
+import { getVariablesForDetails } from "../../../apis/analysis/analysis";
 
 import {
   formatDate,
   getHumanizedDuration
 } from "../../../utilities/date-utilities";
 
+const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
+const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
+const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
+const Option = Select;
+const { Title, Paragraph } = Typography;
 const TabPane = Tabs.TabPane;
 
 export function AnalysisDetails() {
-    const { analysisDetailsContext, loadAnalysisDetails } = useContext(AnalysisDetailsContext);
-    const { analysisContext, analysisContextUpdateSubmissionName } = useContext(AnalysisContext);
+  /*
+   * The following const statements
+   * make the required contexts which contain
+   * the state and methods available to the component
+   */
 
-    useEffect(() => {
-        loadAnalysisDetails();
-    }, []);
+  const {
+    analysisDetailsContext,
+    loadAnalysisDetails,
+    analysisDetailsContextUpdateSubmissionPriority,
+    analysisDetailsContextUpdateEmailPipelineResult
+  } = useContext(AnalysisDetailsContext);
 
-    const analysisDetails = [{
-        title: getI18N("analysis.tab.content.analysis.id"),
-        desc: analysisContext.analysis.identifier,
-      },
-      {
-        title: getI18N("analysis.tab.content.analysis.pipeline"),
-        desc: `${analysisDetailsContext.workflowName} (${analysisDetailsContext.version})`
-      },
-      {
-        title: getI18N("analysis.tab.content.analysis.priority"),
-        desc: analysisDetailsContext.priority
-      },
-      {
-        title: getI18N("analysis.tab.content.analysis.created"),
-        desc: formatDate({ date: analysisDetailsContext.createdDate })
-      },
-      {
-        title: getI18N("analysis.tab.content.analysis.duration"),
-        desc: getHumanizedDuration({ date: analysisDetailsContext.duration })
-      },
-    ];
+  const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
+    AnalysisContext
+  );
 
-    /*
+  // On page load get the analysis details
+  useEffect(() => {
+    loadAnalysisDetails();
+  }, []);
+
+  // List of analysis details
+  const analysisDetails = [
+    {
+      title: getI18N("analysis.tab.content.analysis.id"),
+      desc: analysisContext.analysis.identifier
+    },
+    {
+      title: getI18N("analysis.tab.content.analysis.pipeline"),
+      desc: `${analysisDetailsContext.workflowName} (${analysisDetailsContext.version})`
+    },
+    {
+      title: getI18N("analysis.tab.content.analysis.priority"),
+      desc: analysisDetailsContext.priority
+    },
+    {
+      title: getI18N("analysis.tab.content.analysis.created"),
+      desc: formatDate({ date: analysisDetailsContext.createdDate })
+    },
+    {
+      title: getI18N("analysis.tab.content.analysis.duration"),
+      desc: getHumanizedDuration({ date: analysisDetailsContext.duration })
+    }
+  ];
+
+  /*
         On change of checkbox to receive/not receive an email upon
         pipeline completion update emailPipelineResult field
     */
-    function updateEmailPipelineResult(e){
-        updateAnalysisEmailPipelineResult(analysisContext.analysis.identifier, e.target.checked).then(res => {
-          showNotification({ text: res.message});
-          dispatch({ type: 'UPDATED_EMAIL_PIPELINE_RESULT', emailPipelineResult: e.target.checked })
-        });
+  function updateEmailPipelineResult(e) {
+    analysisDetailsContextUpdateEmailPipelineResult(e.target.checked);
+  }
+
+  // Update analysis name
+  function updateSubmissionName(newSubmissionName) {
+    if (
+      newSubmissionName !== "" &&
+      newSubmissionName !== analysisContext.analysisName
+    ) {
+      analysisContextUpdateSubmissionName(newSubmissionName);
     }
+  }
 
-    // Update analysis name
-    function updateSubmissionName(){
-        const updatedAnalysisName = document.getElementById("analysis-name").value.trim();
+  // Update analysis priority
+  function updateAnalysisPriority(updatedPriority) {
+    analysisDetailsContextUpdateSubmissionPriority(updatedPriority);
+  }
 
-        if((updatedAnalysisName  !== "") && (updatedAnalysisName !== analysisDetailsContext.analysisName)) {
-            updateAnalysis(analysisContext.analysis.identifier, updatedAnalysisName, null).then(res => {
-                showNotification({ text: res.message});
-                analysisContextUpdateSubmissionName(updatedAnalysisName);
-            });
-        }
+  // Render priorities in priority dropdown (Admins only)
+  function renderPriorities() {
+    const priorityList = [];
+
+    for (let priority of analysisDetailsContext.priorities) {
+      priorityList.push(
+        <Select.Option key={priority} value={priority}>
+          {priority}
+        </Select.Option>
+      );
     }
+    return priorityList;
+  }
 
-    // Update analysis priority
-    function updateAnalysisPriority(updatedPriority) {
-        updateAnalysis(analysisContext.analysis.identifier, null, updatedPriority).then(res => {
-            showNotification({ text: res.message});
-            dispatch({ type: 'UPDATED_PRIORITY', priority: updatedPriority });
-        });
-    }
-
-    // Render priorities in priority dropdown (Admins only)
-    function renderPriorities() {
-        const priorityList = [];
-
-        for(let priority of analysisDetailsContext.priorities) {
-            priorityList.push(
-              <Select.Option key={priority} value={priority}>{priority}</Select.Option>
-            )
-        }
-        return priorityList;
-    }
-
+  /*
+   * The following renders the analysis details, and tabs
+   * for Samples, Share Results, and Delete Analysis which
+   * the components are only loaded if the corresponding
+   * tab is clicked
+   */
   return (
-      <>
-          <Tabs defaultActiveKey="4"
-                tabPosition="left"
-                style={{marginLeft:150, paddingTop:25}}
-                animated={false}
-          >
-              <TabPane tab={getI18N("analysis.tab.content.analysis.details")} key="4" style={{minWidth:300}}>
-                  <Col span={12}>
-                    <h2 style={{fontWeight: "bold"}} className="spaced-bottom">{getI18N("analysis.tab.content.analysis.details")}</h2>
+    <>
+      <Tabs
+        defaultActiveKey="analysis_details"
+        tabPosition="left"
+        style={{ marginLeft: 50, paddingTop: 25 }}
+        animated={false}
+      >
+        <TabPane
+          tab={getI18N("analysis.tab.content.analysis.details")}
+          key="analysis_details"
+          style={{ minWidth: 300 }}
+        >
+          <Col span={12}>
+            <Title level={2}>
+              {getI18N("analysis.tab.content.analysis.details")}
+            </Title>
 
-                    <Row>
-                      <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                        <label style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.analysis-name")}</label>
-                        <Input size="large" placeholder={analysisContext.analysis.name} id="analysis-name" />
-                      </Col>
+            <Row>
+              <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
+                <label>
+                  {getI18N("analysis.tab.content.analysis.analysis-name")}
+                </label>
 
-                      { analysisDetailsContext.updatePermission ?
-                          <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                            <Button size="large" type="primary" className="spaced-left__sm spaced-top__lg" onClick={() => updateSubmissionName()}>{getI18N("analysis.tab.content.analysis.update.button")}</Button>
-                          </Col>
-                        : null
+                <Paragraph editable={{ onChange: updateSubmissionName }}>
+                  {analysisContext.analysisName}
+                </Paragraph>
+              </Col>
+            </Row>
+
+            {analysisContext.isAdmin &&
+            analysisContext.analysisState === "NEW" ? (
+              <Row>
+                <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
+                  <label>Priority</label>
+                  <Select
+                    defaultValue={analysisContext.analysis.priority}
+                    style={{ width: "100%" }}
+                    onChange={updateAnalysisPriority}
+                  >
+                    {renderPriorities()}
+                  </Select>
+                </Col>
+              </Row>
+            ) : null}
+
+            <div>
+              <List
+                itemLayout="horizontal"
+                dataSource={analysisDetails}
+                renderItem={item => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={
+                        <span style={{ fontWeight: "bold" }}>{item.title}</span>
                       }
-                    </Row>
+                      description={<span>{item.desc}</span>}
+                    />
+                  </List.Item>
+                )}
+              />
+            </div>
 
-                    { analysisContext.isAdmin && analysisContext.analysisState == "NEW" ?
-                        <Row className="spaced-top">
-                            <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                                <label style={{fontWeight: "bold"}}>Priority</label>
-                                <Select defaultValue={analysisContext.analysis.priority} className="form-control" onChange={updateAnalysisPriority}>
-                                  {renderPriorities()}
-                                </Select>
-                            </Col>
-                        </Row>
-                        : null
-                    }
+            {!analysisContext.isCompleted && !analysisContext.isError ? (
+              <section style={{ marginTop: SPACE_MD }}>
+                <Title level={4}>
+                  {getI18N(
+                    "analysis.tab.content.analysis.receive-email-upon-analysis-completion"
+                  )}
+                </Title>
+                <Checkbox
+                  onChange={updateEmailPipelineResult}
+                  defaultChecked={analysisDetailsContext.emailPipelineResult}
+                >
+                  {getI18N("analysis.tab.content.analysis.checkbox.label")}
+                </Checkbox>
+              </section>
+            ) : null}
+          </Col>
+        </TabPane>
 
-                      <div className="spaced-top__lg">
-                      <List
-                        itemLayout="horizontal"
-                        dataSource={analysisDetails}
-                        renderItem={item => (
-                          <List.Item>
-                            <List.Item.Meta
-                              title={<span style={{fontWeight: "bold"}}>{item.title}</span>}
-                              description={<span>{item.desc}</span>}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                      </div>
-                      <hr style={{backgroundColor: "#E8E8E8", height: "1px", border: "0"}} />
-                      <p style={{fontWeight: "bold"}}>{getI18N("analysis.tab.content.analysis.receive-email-upon-analysis-completion")}</p>
-                      <Checkbox
-                        onChange={updateEmailPipelineResult}
-                        disabled={
-                            ((analysisContext.isCompleted) || (analysisContext.isError)) ?
-                                true : false
-                        }
-                        defaultChecked={analysisDetailsContext.emailPipelineResult}>
-                            {getI18N("analysis.tab.content.analysis.checkbox.label")}
-                      </Checkbox>
-                  </Col>
-              </TabPane>
+        <TabPane tab={getI18N("analysis.tab.samples")} key="analysis_samples">
+          <Col span={12}>
+            <Suspense fallback={<Spin />}>
+              <AnalysisSamples />
+            </Suspense>
+          </Col>
+        </TabPane>
 
-              <TabPane tab={getI18N("analysis.tab.samples")} key="5">
+        {analysisDetailsContext.updatePermission
+          ? [
+              !analysisContext.isError ? (
+                <TabPane
+                  tab={getI18N("analysis.tab.share-results")}
+                  key="analysis_share"
+                >
                   <Col span={12}>
                     <Suspense fallback={<Spin />}>
-                      <AnalysisSamples />
+                      <AnalysisShare />
                     </Suspense>
                   </Col>
+                </TabPane>
+              ) : null,
+              <TabPane
+                tab={getI18N("analysis.tab.delete-analysis")}
+                key="analysis_delete"
+              >
+                <Col span={12}>
+                  <Suspense fallback={<Spin />}>
+                    <AnalysisDelete />
+                  </Suspense>
+                </Col>
               </TabPane>
-
-              { analysisDetailsContext.updatePermission ?
-                [
-                    !analysisContext.isError ?
-                      <TabPane tab={getI18N("analysis.tab.share-results")} key="6">
-                          <Col span={12}>
-                            <Suspense fallback={<Spin />}>
-                              <AnalysisShare />
-                            </Suspense>
-                          </Col>
-                      </TabPane>
-                      : null
-                     ,
-                  <TabPane tab={getI18N("analysis.tab.delete-analysis")} key="7">
-                      <Col span={12}>
-                        <Suspense fallback={<Spin />}>
-                          <AnalysisDelete />
-                        </Suspense>
-                      </Col>
-                  </TabPane>
-                ]
-                : null
-              }
-          </Tabs>
-      </>
+            ]
+          : null}
+      </Tabs>
+    </>
   );
 }

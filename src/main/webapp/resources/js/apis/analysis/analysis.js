@@ -3,6 +3,8 @@
  */
 import axios from "axios";
 
+const URL = `${window.TL.BASE_URL}analysis/ajax/`;
+
 /*
  * Get all the data required for the analysis -> details page.
  * @param {number} submissionId Submission ID
@@ -10,9 +12,7 @@ import axios from "axios";
  *                      `error` contains error information if an error occurred.
  */
 export async function getVariablesForDetails(submissionId) {
-  const res = await axios.get(
-    `${window.TL.BASE_URL}analysis/ajax/details/${submissionId}`
-  );
+  const res = await axios.get(`${URL}details/${submissionId}`);
   return res.data;
 }
 
@@ -23,9 +23,7 @@ export async function getVariablesForDetails(submissionId) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getAnalysisInputFiles(submissionId) {
-  const res = await axios.get(
-    `${window.TL.BASE_URL}analysis/ajax/inputs/${submissionId}`
-  );
+  const res = await axios.get(`${URL}inputs/${submissionId}`);
   return res.data;
 }
 
@@ -40,13 +38,10 @@ export async function updateAnalysisEmailPipelineResult(
   submissionId,
   emailPipelineResult
 ) {
-  const res = await axios.patch(
-    `${window.TL.BASE_URL}analysis/ajax/update-email-pipeline-result/`,
-    {
-      analysisSubmissionId: submissionId,
-      emailPipelineResult: emailPipelineResult
-    }
-  );
+  const res = await axios.patch(`${URL}update-email-pipeline-result/`, {
+    analysisSubmissionId: submissionId,
+    emailPipelineResult: emailPipelineResult
+  });
   return res.data;
 }
 
@@ -57,16 +52,12 @@ export async function updateAnalysisEmailPipelineResult(
  * @param {string} priority [LOW, MEDIUM, HIGH]
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-
 export async function updateAnalysis(submissionId, analysisName, priority) {
-  const res = await axios.patch(
-    `${window.TL.BASE_URL}analysis/ajax/update-analysis/`,
-    {
-      analysisSubmissionId: submissionId,
-      analysisName: analysisName,
-      priority: priority
-    }
-  );
+  const res = await axios.patch(`${URL}update-analysis/`, {
+    analysisSubmissionId: submissionId,
+    analysisName: analysisName,
+    priority: priority
+  });
   return res.data;
 }
 
@@ -76,9 +67,7 @@ export async function updateAnalysis(submissionId, analysisName, priority) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function deleteAnalysis(submissionId) {
-  const res = await axios.delete(
-    `${window.TL.BASE_URL}analysis/ajax/delete/${submissionId}`
-  );
+  const res = await axios.delete(`${URL}delete/${submissionId}`);
   return res.data;
 }
 
@@ -88,9 +77,7 @@ export async function deleteAnalysis(submissionId) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getSharedProjects(submissionId) {
-  const res = await axios.get(
-    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`
-  );
+  const res = await axios.get(`${URL}${submissionId}/share`);
   return res.data;
 }
 
@@ -106,13 +93,10 @@ export async function updateSharedProjects(
   projectId,
   shareStatus
 ) {
-  const res = await axios.post(
-    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/share`,
-    {
-      projectId: projectId,
-      shareStatus: shareStatus
-    }
-  );
+  const res = await axios.post(`${URL}${submissionId}/share`, {
+    projectId: projectId,
+    shareStatus: shareStatus
+  });
   return res.data;
 }
 
@@ -122,9 +106,7 @@ export async function updateSharedProjects(
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function saveToRelatedSamples(submissionId) {
-  const res = await axios.post(
-    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/save-results`
-  );
+  const res = await axios.post(`${URL}${submissionId}/save-results`);
   return res.data;
 }
 
@@ -142,9 +124,7 @@ export async function getJobErrors(submissionId) {
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(
-      `${window.PAGE.URLS.base}analysis/ajax/user/analysis-outputs`
-    );
+    const { data } = await axios.get(`${URL}user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error: error };
@@ -159,7 +139,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/shared-analysis-outputs`
+      `${URL}project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -177,7 +157,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${window.PAGE.URLS.base}analysis/ajax/project/${projectId}/automated-analysis-outputs`
+      `${URL}project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -194,7 +174,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${window.PAGE.URLS.base}analysis/ajax/download/prepare`,
+      url: `${URL}download/prepare`,
       data: outputs
     });
     return { data };

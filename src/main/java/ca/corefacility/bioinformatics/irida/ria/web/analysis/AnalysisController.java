@@ -338,6 +338,7 @@ public class AnalysisController {
 		detailsPageMap.put("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
 		detailsPageMap.put("canShareToSamples", canShareToSamples);
 		detailsPageMap.put("emailPipelineResult", emailPipelineResult);
+		detailsPageMap.put("updateSamples", submission.getUpdateSamples());
 		return detailsPageMap;
 	}
 

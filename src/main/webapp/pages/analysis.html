@@ -1,78 +1,79 @@
 <!DOCTYPE html>
 <html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        data-layout-decorate="~{template/page}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
 >
-    <head>
-        <title th:text="test">ANALYSIS RESULTS</title>
-        <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}">
+  <head>
+    <title th:text="test">ANALYSIS RESULTS</title>
+    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
 
-        <script th:inline="javascript">
-          window.PAGE = {
-            analysis: [[${analysisSubmission}]],
-            analysisName: [[${analysisSubmission.getName()}]],
-            analysisState: [[${analysisSubmission.getAnalysisState()}]],
-            analysisType: [[${analysisType}]],
-            isAdmin: [[${isAdmin}]],
-            i18n: {
-                "analysis.tab.output-files": /*[[#{analysis.tab.output-files}]]*/ "Output Files",
-                "analysis.tab.provenance": /*[[#{analysis.tab.provenance}]]*/ "Provenance",
-                "analysis.tab.settings": /*[[#{analysis.tab.settings}]]*/ "Settings",
-                "analysis.tab.analysis": /*[[#{analysis.tab.analysis}]]*/ "Analysis",
-                "analysis.tab.samples": /*[[#{analysis.tab.samples}]]*/ "Samples",
-                "analysis.tab.delete-analysis": /*[[#{analysis.tab.delete-analysis}]]*/ "Delete Analysis",
-                "analysis.tab.content.analysis.details": /*[[#{analysis.tab.content.analysis.details}]]*/ "Details",
-                "analysis.tab.content.analysis.analysis-name": /*[[#{analysis.tab.content.analysis.analysis-name}]]*/ "Analysis Name",
-                "analysis.tab.content.analysis.id": /*[[#{analysis.tab.content.analysis.id}]]*/ "ID",
-                "analysis.tab.content.analysis.pipeline": /*[[#{analysis.tab.content.analysis.pipeline}]]*/ "Pipeline",
-                "analysis.tab.content.analysis.priority": /*[[#{analysis.tab.content.analysis.priority}]]*/ "Priority",
-                "analysis.tab.content.analysis.created": /*[[#{analysis.tab.content.analysis.created}]]*/ "Created",
-                "analysis.tab.content.analysis.duration": /*[[#{analysis.tab.content.analysis.duration}]]*/ "Duration",
-                "analysis.tab.content.analysis.receive-email-upon-analysis-completion": /*[[#{analysis.tab.content.analysis.receive-email-upon-analysis-completion}]]*/ "Receive an email upon analysis completion",
-                "analysis.tab.content.analysis.checkbox.label": /*[[#{analysis.tab.content.analysis.checkbox.label}]]*/ "Yes, I want to receive an email once this analysis completes",
-                "analysis.tab.content.samples.samples": /*[[#{analysis.tab.content.samples.samples}]]*/ "Samples",
-                "analysis.tab.content.share.results.results": /*[[#{analysis.tab.content.share.results.results}]]*/ "Results",
-                "analysis.tab.content.share.results.share-results-with-projects": /*[[#{analysis.tab.content.share.results.share-results-with-projects}]]*/ "Share Results with Projects",
-                "analysis.tab.content.delete.permanent-action-warning": /*[[#{analysis.tab.content.delete.permanent-action-warning}]]*/ "Warning! Deletion of an analysis is a permanent action!",
-                "analysis.tab.content.delete.checkbox-confirmation-label": /*[[#{analysis.tab.content.delete.checkbox-confirmation-label}]]*/ "Confirm analysis deletion",
-                "analysis.tab.content.delete.button": /*[[#{analysis.tab.content.delete.button}]]*/ "Delete",
-                "analysis.tab.content.analysis.update.button": /*[[#{analysis.tab.content.analysis.update.button}]]*/ "Update",
-                "analysis.tab.share-results": /*[[#{analysis.tab.share-results}]]*/ "Share Results",
-                "analysis.tab.delete-analysis": /*[[#{analysis.tab.delete-analysis}]]*/ "Delete Analysis",
-                "analysis.details.save.samples.title": /*[[#{analysis.details.save.samples.title}]]*/ "Save results to samples",
-                "workflow.label.share-analysis-samples.BIO_HANSEL": /*[[#{workflow.label.share-analysis-samples.BIO_HANSEL}]]*/ "INFO",
-                "workflow.label.share-analysis-samples.SISTR_TYPING": /*[[#{workflow.label.share-analysis-samples.SISTR_TYPING}]]*/ "INFO",
-                "analysis.details.save.samples.button": /*[[#{analysis.details.save.samples.button}]]*/ "Save Results",
-                "analysis.details.save.complete": /*[[#{analysis.details.save.complete}]]*/ "",
-                "analysis.state.NEW": /*[[#{analysis.state.NEW}]]*/ "",
-                "analysis.tab.content.share.no-projects-to-share-results-with": /*[[#{analysis.tab.content.share.no-projects-to-share-results-with}]]*/ "No projects to share results with",
-                "analysis.state.PREPARING": /*[[#{analysis.state.PREPARING}]]*/ "",
-                "analysis.state.SUBMITTING": /*[[#{analysis.state.SUBMITTING}]]*/ "",
-                "analysis.state.RUNNING": /*[[#{analysis.state.RUNNING}]]*/ "",
-                "analysis.state.COMPLETING": /*[[#{analysis.state.COMPLETING}]]*/ "",
-                "analysis.state.COMPLETED": /*[[#{analysis.state.COMPLETED}]]*/ "",
-                "analysis.state.ERROR": /*[[#{analysis.state.ERROR}]]*/ "",
-                "analysis.input-files.no-paired-end": /*[[#{analysis.input-files.no-paired-end}]]*/ "NO PAIRED END DATA",
-                "analysis.tab.content.delete.confirm": /*[[#{analysis.tab.content.delete.confirm}]]*/ "Confirm",
-                "analysis.tab.content.delete.cancel": /*[[#{analysis.tab.content.delete.cancel}]]*/ "Cancel",
-                "analysis.tab.content.samples.details": /*[[#{analysis.tab.content.samples.details}]]*/ "Details",
-                "analysis.tab.content.samples.reference-file": /*[[#{analysis.tab.content.samples.reference-file}]]*/ "Reference File",
-                "analysis.tab.content.samples.download-reference-file": /*[[#{analysis.tab.content.samples.download-reference-file}]]*/ "Download Reference File",
-            }
-          };
-        </script>
-    </head>
-    <body>
+    <script th:inline="javascript">
+      window.PAGE = {
+        analysis: [[${analysisSubmission}]],
+        analysisName: [[${analysisSubmission.getName()}]],
+        analysisState: [[${analysisSubmission.getAnalysisState()}]],
+        analysisType: [[${analysisType}]],
+        isAdmin: [[${isAdmin}]],
+        i18n: {
+            "analysis.tab.output-files": /*[[#{analysis.tab.output-files}]]*/ "Output Files",
+            "analysis.tab.provenance": /*[[#{analysis.tab.provenance}]]*/ "Provenance",
+            "analysis.tab.settings": /*[[#{analysis.tab.settings}]]*/ "Settings",
+            "analysis.tab.analysis": /*[[#{analysis.tab.analysis}]]*/ "Analysis",
+            "analysis.tab.samples": /*[[#{analysis.tab.samples}]]*/ "Samples",
+            "analysis.tab.job-error": /*[[#{analysis.tab.job-error}]]*/ "Job Error",
+            "analysis.tab.delete-analysis": /*[[#{analysis.tab.delete-analysis}]]*/ "Delete Analysis",
+            "analysis.tab.content.analysis.details": /*[[#{analysis.tab.content.analysis.details}]]*/ "Details",
+            "analysis.tab.content.analysis.analysis-name": /*[[#{analysis.tab.content.analysis.analysis-name}]]*/ "Analysis Name",
+            "analysis.tab.content.analysis.id": /*[[#{analysis.tab.content.analysis.id}]]*/ "ID",
+            "analysis.tab.content.analysis.pipeline": /*[[#{analysis.tab.content.analysis.pipeline}]]*/ "Pipeline",
+            "analysis.tab.content.analysis.priority": /*[[#{analysis.tab.content.analysis.priority}]]*/ "Priority",
+            "analysis.tab.content.analysis.created": /*[[#{analysis.tab.content.analysis.created}]]*/ "Created",
+            "analysis.tab.content.analysis.duration": /*[[#{analysis.tab.content.analysis.duration}]]*/ "Duration",
+            "analysis.tab.content.analysis.receive-email-upon-analysis-completion": /*[[#{analysis.tab.content.analysis.receive-email-upon-analysis-completion}]]*/ "Receive an email upon analysis completion",
+            "analysis.tab.content.analysis.checkbox.label": /*[[#{analysis.tab.content.analysis.checkbox.label}]]*/ "Yes, I want to receive an email once this analysis completes",
+            "analysis.tab.content.samples.samples": /*[[#{analysis.tab.content.samples.samples}]]*/ "Samples",
+            "analysis.tab.content.share.results.results": /*[[#{analysis.tab.content.share.results.results}]]*/ "Results",
+            "analysis.tab.content.share.results.share-results-with-projects": /*[[#{analysis.tab.content.share.results.share-results-with-projects}]]*/ "Share Results with Projects",
+            "analysis.tab.content.delete.permanent-action-warning": /*[[#{analysis.tab.content.delete.permanent-action-warning}]]*/ "Warning! Deletion of an analysis is a permanent action!",
+            "analysis.tab.content.delete.checkbox-confirmation-label": /*[[#{analysis.tab.content.delete.checkbox-confirmation-label}]]*/ "Confirm analysis deletion",
+            "analysis.tab.content.delete.button": /*[[#{analysis.tab.content.delete.button}]]*/ "Delete",
+            "analysis.tab.content.analysis.rename.button": /*[[#{analysis.tab.content.analysis.rename.button}]]*/ "Rename",
+            "analysis.tab.share-results": /*[[#{analysis.tab.share-results}]]*/ "Share Results",
+            "analysis.tab.delete-analysis": /*[[#{analysis.tab.delete-analysis}]]*/ "Delete Analysis",
+            "analysis.details.save.samples.title": /*[[#{analysis.details.save.samples.title}]]*/ "Save results to samples",
+            "workflow.label.share-analysis-samples.BIO_HANSEL": /*[[#{workflow.label.share-analysis-samples.BIO_HANSEL}]]*/ "INFO",
+            "workflow.label.share-analysis-samples.SISTR_TYPING": /*[[#{workflow.label.share-analysis-samples.SISTR_TYPING}]]*/ "INFO",
+            "analysis.details.save.samples.button": /*[[#{analysis.details.save.samples.button}]]*/ "Save Results",
+            "analysis.details.save.complete": /*[[#{analysis.details.save.complete}]]*/ "",
+            "analysis.state.NEW": /*[[#{analysis.state.NEW}]]*/ "",
+            "analysis.tab.content.share.no-projects-to-share-results-with": /*[[#{analysis.tab.content.share.no-projects-to-share-results-with}]]*/ "No projects to share results with",
+            "analysis.state.PREPARING": /*[[#{analysis.state.PREPARING}]]*/ "",
+            "analysis.state.SUBMITTING": /*[[#{analysis.state.SUBMITTING}]]*/ "",
+            "analysis.state.RUNNING": /*[[#{analysis.state.RUNNING}]]*/ "",
+            "analysis.state.COMPLETING": /*[[#{analysis.state.COMPLETING}]]*/ "",
+            "analysis.state.COMPLETED": /*[[#{analysis.state.COMPLETED}]]*/ "",
+            "analysis.state.ERROR": /*[[#{analysis.state.ERROR}]]*/ "",
+            "analysis.input-files.no-paired-end": /*[[#{analysis.input-files.no-paired-end}]]*/ "NO PAIRED END DATA",
+            "analysis.tab.content.delete.confirm": /*[[#{analysis.tab.content.delete.confirm}]]*/ "Confirm",
+            "analysis.tab.content.delete.cancel": /*[[#{analysis.tab.content.delete.cancel}]]*/ "Cancel",
+            "analysis.tab.content.samples.details": /*[[#{analysis.tab.content.samples.details}]]*/ "Details",
+            "analysis.tab.content.samples.reference-file": /*[[#{analysis.tab.content.samples.reference-file}]]*/ "Reference File",
+            "analysis.tab.content.samples.download-reference-file": /*[[#{analysis.tab.content.samples.download-reference-file}]]*/ "Download Reference File",
+        }
+      };
+    </script>
+  </head>
+  <body>
     <div id="root" style="height: 100%;" layout:fragment="page">
-            <!--
+      <!--
                This is a DOM element for React to render the analysis details into.
                See  src/main/webapp/resources/js/pages/analysis/components/Analysis.jsx
             -->
-        </div>
+    </div>
 
-        <th:block layout:fragment="scripts">
-            <script th:src="@{/dist/js/analysis.bundle.js}"></script>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/analysis.bundle.js}"></script>
     </th:block>
-    </body>
+  </body>
 </html>
