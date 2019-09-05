@@ -147,6 +147,7 @@ public class AnalysisController {
 	 * Get the user {@link Analysis} list page
 	 *
 	 * @param model Model for view variables
+	 * @param principal Principal {@link User}
 	 * @return Name of the analysis page view
 	 */
 	@RequestMapping()
