@@ -6,7 +6,7 @@
 import React, { useContext } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
+import { SPACE_LG } from "../../../styles/spacing";
 import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
 import { Row, Col, Icon, Button } from "antd";
 
@@ -33,23 +33,22 @@ export function AnalysisReferenceFileRenderer() {
             {getI18N("analysis.tab.content.samples.reference-file")}
           </h4>
           <Row key="row-reference-file-1">
-            <span key="reference-file-1">
+            <span key="reference-file-1" style={{display: "flex", "justifyContent": "space-between", alignItems: "center"}}>
               {analysisDetailsContext.referenceFile.label}
+
+                <Button
+                  key="reference-file-1-download-button"
+                  type="default"
+                  onClick={() => {
+                    downloadReferenceFile();
+                  }}
+                >
+                  <Icon type="download" />{" "}
+                  {getI18N("analysis.tab.content.samples.download-reference-file")}
+                </Button>
             </span>
-            <Button
-              key="reference-file-1-download-button"
-              className="pull-right"
-              style={{ marginTop: SPACE_XS }}
-              type="primary"
-              onClick={() => {
-                downloadReferenceFile();
-              }}
-            >
-              <Icon type="download" />{" "}
-              {getI18N("analysis.tab.content.samples.download-reference-file")}
-            </Button>
           </Row>
-        </div>
+         </div>
       );
       return referenceFile;
     }

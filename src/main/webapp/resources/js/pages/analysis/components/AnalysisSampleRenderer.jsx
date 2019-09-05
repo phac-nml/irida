@@ -6,8 +6,6 @@
 import React, { useContext } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
-import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
 import { Card, Row, Col, Icon, Button } from "antd";
 
 export function AnalysisSampleRenderer() {
@@ -44,9 +42,8 @@ export function AnalysisSampleRenderer() {
           >
             <Row
               key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}`}
-              type="flex"
             >
-              <Col span={12}>
+              <span style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <Button
                   type="link"
                   target="_blank"
@@ -55,16 +52,13 @@ export function AnalysisSampleRenderer() {
                   <Icon type="arrow-right" />{" "}
                   {analysisDetailsContext.sequenceFilePairList[pairIndex].label}
                 </Button>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                {analysisDetailsContext.sequenceFileSizeList[pairIndex]}
-              </Col>
+                <span>{analysisDetailsContext.sequenceFileSizeList[pairIndex]}</span>
+              </span>
             </Row>
             <Row
               key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}`}
-              type="flex"
             >
-              <Col span={12}>
+              <span style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <Button
                   type="link"
                   target="_blank"
@@ -76,10 +70,8 @@ export function AnalysisSampleRenderer() {
                       .label
                   }
                 </Button>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                {analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}
-              </Col>
+                <span>{analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}</span>
+              </span>
             </Row>
           </Card>
         );
