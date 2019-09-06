@@ -41,6 +41,7 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [UI]: Updated Analyses listing page to use ant.design.
+* [UI]: Updated project listing linked analyses to use ant.design.
 
 19.01 to 19.05
 ---------------
