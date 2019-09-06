@@ -108,13 +108,12 @@ export function AnalysesTable() {
         render(text, record) {
           return (
             <Button
-              shape="circle"
-              type="dashed"
+              type="link"
+              size="small"
               disabled={record.state.value !== "COMPLETED"}
               href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
               download
-              icon="download"
-            />
+            >Download</Button>
           );
         }
       }
@@ -134,11 +133,9 @@ export function AnalysesTable() {
               onConfirm={() => deleteAnalysis(record.id)}
             >
               <Button
-                shape="circle"
-                type="dashed"
+                type="link"
                 className="t-delete-btn"
-                icon="delete"
-              />
+              >Delete</Button>
             </Popconfirm>
           ) : (
             <span />
