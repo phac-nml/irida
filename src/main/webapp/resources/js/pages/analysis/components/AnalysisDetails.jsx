@@ -24,7 +24,7 @@ import {
   Typography
 } from "antd";
 
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
@@ -164,8 +164,7 @@ export function AnalysisDetails() {
               </Col>
             </Row>
 
-            {analysisContext.isAdmin &&
-            analysisContext.analysisState === "NEW" ? (
+            {isAdmin && analysisContext.analysisState === "NEW" ? (
               <Row>
                 <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
                   <label>Priority</label>

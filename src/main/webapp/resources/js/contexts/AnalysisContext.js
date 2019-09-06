@@ -3,7 +3,7 @@ import { showNotification } from "../modules/notifications";
 
 import { updateAnalysis } from "../apis/analysis/analysis";
 
-const stateMap = {
+export const stateMap = {
   NEW: 0,
   PREPARING: 1,
   SUBMITTING: 2,
@@ -15,13 +15,13 @@ const stateMap = {
   COMPLETED: 5
 };
 
+export const isAdmin = window.PAGE.isAdmin;
+
 const initialContext = {
   analysis: window.PAGE.analysis,
   analysisName: window.PAGE.analysisName,
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
-  isAdmin: window.PAGE.isAdmin,
-  stateMap: stateMap,
   isCompleted: window.PAGE.analysisState == "COMPLETED" ? true : false,
   isError: window.PAGE.analysisState.includes("ERROR") ? true : false
 };
