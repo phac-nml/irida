@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
+import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -61,7 +62,7 @@ public class AnalysisControllerTest {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
-
+	private ExecutionManagerConfig configFileMock;
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
@@ -80,11 +81,13 @@ public class AnalysisControllerTest {
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		analysisOutputFileDownloadManager = mock(AnalysisOutputFileDownloadManager.class);
 		userServiceMock = mock(UserService.class);
+		configFileMock = mock(ExecutionManagerConfig.class);
+
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysesListingService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock);
+				analysisOutputFileDownloadManager, messageSourceMock, configFileMock);
 	}
 
 	@Test

@@ -31,10 +31,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -106,6 +104,7 @@ public class AnalysisController {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+	private ExecutionManagerConfig configFile;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
@@ -114,7 +113,7 @@ public class AnalysisController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysesListingService analysesListingService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, ExecutionManagerConfig configFile) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
@@ -127,6 +126,7 @@ public class AnalysisController {
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.configFile = configFile;
 	}
 
 	// ************************************************************************************************
@@ -630,6 +630,7 @@ public class AnalysisController {
 
 	/**
 	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `jobErrors`
+	 *
 	 * @param submissionId {@link AnalysisSubmission} id
 	 * @return map with list of {@link JobError} under key `jobErrors`
 	 */
@@ -638,8 +639,15 @@ public class AnalysisController {
 	public ImmutableMap<String, Object> getJobErrors(@PathVariable Long submissionId) {
 		try {
 			List<JobError> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
+			String galaxyUrl = "";
+			try {
+				galaxyUrl = configFile.galaxyInstance()
+						.getGalaxyUrl();
+			} catch (ExecutionManagerConfigurationException e) {
+				logger.error("Error " + e);
+			}
 			if (jobErrors != null && !jobErrors.isEmpty()) {
-				return ImmutableMap.of("jobErrors", jobErrors);
+				return ImmutableMap.of("jobErrors", jobErrors, "galaxyUrl", galaxyUrl);
 			}
 		} catch (ExecutionManagerException e) {
 			logger.error("Error " + e);

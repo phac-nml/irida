@@ -43,7 +43,13 @@ export function AnalysisSampleRenderer() {
             <Row
               key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}`}
             >
-              <span style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+              <span
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
                 <Button
                   type="link"
                   target="_blank"
@@ -52,13 +58,21 @@ export function AnalysisSampleRenderer() {
                   <Icon type="arrow-right" />{" "}
                   {analysisDetailsContext.sequenceFilePairList[pairIndex].label}
                 </Button>
-                <span>{analysisDetailsContext.sequenceFileSizeList[pairIndex]}</span>
+                <span>
+                  {analysisDetailsContext.sequenceFileSizeList[pairIndex]}
+                </span>
               </span>
             </Row>
             <Row
               key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}`}
             >
-              <span style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+              <span
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
                 <Button
                   type="link"
                   target="_blank"
@@ -70,7 +84,9 @@ export function AnalysisSampleRenderer() {
                       .label
                   }
                 </Button>
-                <span>{analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}</span>
+                <span>
+                  {analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}
+                </span>
               </span>
             </Row>
           </Card>

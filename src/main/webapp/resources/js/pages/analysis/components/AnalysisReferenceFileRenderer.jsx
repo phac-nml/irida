@@ -33,22 +33,31 @@ export function AnalysisReferenceFileRenderer() {
             {getI18N("analysis.tab.content.samples.reference-file")}
           </h4>
           <Row key="row-reference-file-1">
-            <span key="reference-file-1" style={{display: "flex", "justifyContent": "space-between", alignItems: "center"}}>
+            <span
+              key="reference-file-1"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}
+            >
               {analysisDetailsContext.referenceFile.label}
 
-                <Button
-                  key="reference-file-1-download-button"
-                  type="default"
-                  onClick={() => {
-                    downloadReferenceFile();
-                  }}
-                >
-                  <Icon type="download" />{" "}
-                  {getI18N("analysis.tab.content.samples.download-reference-file")}
-                </Button>
+              <Button
+                key="reference-file-1-download-button"
+                type="default"
+                onClick={() => {
+                  downloadReferenceFile();
+                }}
+              >
+                <Icon type="download" />{" "}
+                {getI18N(
+                  "analysis.tab.content.samples.download-reference-file"
+                )}
+              </Button>
             </span>
           </Row>
-         </div>
+        </div>
       );
       return referenceFile;
     }
