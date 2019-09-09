@@ -10,6 +10,7 @@ Changes
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 * [UI]: Updated sequencing runs table to use Ant Design tables.
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
+* [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 
 19.05 to 19.09
 ---------------
