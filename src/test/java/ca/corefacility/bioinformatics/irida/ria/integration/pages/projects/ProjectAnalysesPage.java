@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 
-public class ProjectAnalysesPage extends AbstractPage {
+public class ProjectAnalysesPage extends AnalysesUserPage {
 
 	public ProjectAnalysesPage(WebDriver driver) {
 		super(driver);
