@@ -205,7 +205,7 @@ export function AnalysisDetails() {
                 </Title>
                 <Checkbox
                   onChange={updateEmailPipelineResult}
-                  defaultChecked={analysisDetailsContext.emailPipelineResult}
+                  checked={analysisDetailsContext.emailPipelineResult}
                 >
                   {getI18N("analysis.tab.content.analysis.checkbox.label")}
                 </Checkbox>
