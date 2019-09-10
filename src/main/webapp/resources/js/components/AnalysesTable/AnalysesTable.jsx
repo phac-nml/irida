@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AnalysesContext } from "../../contexts/AnalysesContext";
-import { Button, Icon, Row, Table } from "antd";
+import { Button, Icon, Popconfirm, Table } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -14,6 +14,7 @@ import { getI18N } from "../../utilities/i18n-utilties";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6 } from "../../styles/colors";
+import { SPACE_MD } from "../../styles/spacing";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -34,6 +35,7 @@ export function AnalysesTable() {
   const [selected, setSelected] = useState([]);
   const [pipelineStates, setPipelineStates] = useState([]);
   const [pipelineTypes, setPipelineTypes] = useState([]);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     Promise.all([fetchAllPipelinesStates(), fetchAllPipelinesTypes()]).then(
@@ -136,6 +138,7 @@ export function AnalysesTable() {
   let rowSelection;
   if (CAN_MANAGE) {
     rowSelection = {
+      selectedRowKeys: selected,
       onChange: selectedRowKeys => setSelected(selectedRowKeys),
       getCheckboxProps: record => ({ name: record.name })
     };
@@ -143,13 +146,26 @@ export function AnalysesTable() {
 
   return (
     <div>
-      <div>
-        <Button
-          onClick={() => deleteAnalyses(selected)}
-          disabled={!selected.length}
+      <div style={{ marginBottom: SPACE_MD }}>
+        <Popconfirm
+          placement="bottomRight"
+          title={getI18N("Confirm delete analyses")}
+          onCancel={() => setDeleting(false)}
+          onConfirm={() =>
+            deleteAnalyses(selected).then(() => {
+              setDeleting(false);
+              setSelected([]);
+            })
+          }
         >
-          DELETE
-        </Button>
+          <Button
+            loading={deleting}
+            disabled={!selected.length}
+            onClick={() => setDeleting(true)}
+          >
+            {getI18N("DELETE")}
+          </Button>
+        </Popconfirm>
       </div>
       <Table
         rowSelection={rowSelection}
