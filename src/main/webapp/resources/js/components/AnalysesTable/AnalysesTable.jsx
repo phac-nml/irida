@@ -149,13 +149,13 @@ export function AnalysesTable() {
       <div style={{ marginBottom: SPACE_MD }}>
         <Popconfirm
           placement="bottomRight"
-          title={getI18N("Confirm delete analyses")}
-          onCancel={() => setDeleting(false)}
+          title={getI18N("analyses.delete-confirm").replace(
+            "[COUNT]",
+            selected.length
+          )}
+          onVisibleChange={visible => setDeleting(visible)}
           onConfirm={() =>
-            deleteAnalyses(selected).then(() => {
-              setDeleting(false);
-              setSelected([]);
-            })
+            deleteAnalyses(selected).then(() => setDeleting(false))
           }
         >
           <Button
@@ -163,7 +163,7 @@ export function AnalysesTable() {
             disabled={!selected.length}
             onClick={() => setDeleting(true)}
           >
-            {getI18N("DELETE")}
+            {getI18N("analyses.delete")}
           </Button>
         </Popconfirm>
       </div>
