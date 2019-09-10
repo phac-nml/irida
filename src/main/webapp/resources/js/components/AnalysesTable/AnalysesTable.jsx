@@ -154,9 +154,7 @@ export function AnalysesTable() {
             selected.length
           )}
           onVisibleChange={visible => setDeleting(visible)}
-          onConfirm={() =>
-            deleteAnalyses(selected).then(() => setDeleting(false))
-          }
+          onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
         >
           <Button
             loading={deleting}
