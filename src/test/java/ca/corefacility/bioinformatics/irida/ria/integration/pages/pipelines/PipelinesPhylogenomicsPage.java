@@ -20,8 +20,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Phylogenomics workflow launch page.
  *
  */
-public class PipelinesPhylogenomicsPage extends AbstractPage {
-	
+public class PipelinesPhylogenomicsPage extends BasicPipelinePage {
+
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPage.class);
 	public PipelinesPhylogenomicsPage(WebDriver driver) {
 		super(driver);
@@ -30,14 +30,10 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public int getReferenceFileCount() {
 		return driver.findElement(By.id("referenceFiles")).findElements(By.tagName("option")).size();
 	}
-	
+
 	public String getSelectedParameterSet() {
 		return driver.findElement(By.id("named-parameters")).findElement(By.cssSelector("[selected='selected']"))
 				.getAttribute("label");
-	}
-
-	public int getNumberOfSamplesDisplayed() {
-		return driver.findElements(By.className("sample-container")).size();
 	}
 
 	public boolean isNoReferenceWarningDisplayed() {
@@ -52,30 +48,9 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		return driver.findElements(By.className("add-ref-file")).size();
 	}
 
-	public boolean isPipelineSubmittedMessageShown() {
-		return driver.findElements(By.id("pipeline-submitted")).size() > 0;
-	}
-
-	public boolean isPipelineSubmittedSuccessMessageShown() {
-		waitForElementVisible(By.id("pipeline-submitted-success"));
-		return true;
-	}
-	
 	public boolean isNameForParametersVisible() {
 		waitForElementVisible(By.id("parameterSetName"));
 		return true;
-	}
-
-	public void clickLaunchPipelineBtn() {
-		boolean clicked = false;
-		do{
-			try {
-				driver.findElement(By.id("btn-launch")).click();
-				clicked = true;
-			} catch (final StaleElementReferenceException ex) {
-				logger.debug("Got stale element reference exception when clicking launch pipeline, trying again.");
-			}
-		} while (!clicked);
 	}
 
 	public void clickPipelineParametersBtn() {
@@ -97,17 +72,17 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		aaf.sendKeys(value);
 		waitForTime(500);
 	}
-	
+
 	public void setNameForSavedParameters(String value) {
 		driver.findElement(By.id("parameterSetName")).clear();
 		driver.findElement(By.id("parameterSetName")).sendKeys(value);
 	}
-	
+
 	public void clickUseParametersButton() {
 		driver.findElement(By.id("para-update-btn")).click();
 		waitForTime(500);
 	}
-	
+
 	public void clickSaveParameters() {
 		driver.findElement(By.id("saveParameters")).click();
 		waitForTime(250);
@@ -136,15 +111,15 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public boolean isCreatePipelineAreaVisible() {
 		return driver.findElements(By.id("pipeline-creation")).size() > 0;
 	}
-	
+
 	public boolean isRemoteSampleDisplayed(){
 		return driver.findElements(By.className("remote-sample-container")).size() > 0;
 	}
-	
+
 	public boolean isReferenceFileNameDisplayed(String fileName) {
 		return driver.findElement(By.id("uploaded-file-name")).getText().equals(fileName);
 	}
-	
+
 	public String selectReferenceFile() throws IOException {
 		//create a temp file copy of the test file so it has a unique name
 		Path path = Paths.get("src/test/resources/files/test_file.fasta");

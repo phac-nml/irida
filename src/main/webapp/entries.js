@@ -4,16 +4,24 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: ["@babel/polyfill", "expose-loader?$!jquery"],
+  vendor: [
+    "core-js/stable",
+    "regenerator-runtime/runtime",
+    "expose-loader?$!jquery",
+    "expose-loader?angular!angular",
+    "./resources/js/vendors"
+  ],
+  "angular-st": "expose-loader?angular!angular", // This is just here for pages that need their own angular.
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
+  "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "project-events": "./resources/js/pages/projects/project-events.js",
-  projects: "./resources/js/pages/projects/projects.js",
+  projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
@@ -30,6 +38,8 @@ module.exports = {
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "project-settings-basic":
+    "./resources/js/pages/projects/settings/project-settings-basic.js",
   "project-settings-remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
@@ -63,5 +73,7 @@ module.exports = {
   "groups-list": "./resources/js/pages/users/groups-list.js",
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
-  search: "./resources/js/pages/search/search.js"
+  search: "./resources/js/pages/search/search.js",
+  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
+  "run-files": "./resources/js/pages/sequence-files/run-files.js"
 };

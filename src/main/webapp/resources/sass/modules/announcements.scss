@@ -1,20 +1,15 @@
 .announcement-item {
   display: flex;
-  align-items: center;
 }
 
 .announcement-info {
   width: 120px;
   min-width: 120px;
-  display: flex;
 }
 
-.announcement-icon .fa {
-  font-size: 1.6em;
-}
 .announcement-date {
   display: inline-block;
-  flex: 1;
+  flex: 0 0 150px;
   color: #666;
   line-height: 18px;
   font-size: 0.7em;

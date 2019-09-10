@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import java.lang.reflect.Field;
-
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
+import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
+import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +42,9 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.servlet.LocaleResolver;
 
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
-import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
-import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
-import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
-import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
+import java.lang.reflect.Field;
 
 /**
  * Configuration for web security using OAuth2
@@ -184,9 +184,12 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Autowired
 		private UserRepository userRepository;
 
+		@Autowired
+		private LocaleResolver localeResolver;
+
 		@Bean
 		public LoginSuccessHandler getLoginSuccessHandler() {
-			return  new LoginSuccessHandler(userRepository);
+			return new LoginSuccessHandler(userRepository, localeResolver);
 		}
 
 		@Autowired
@@ -196,8 +199,8 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		public void configure(WebSecurity web) throws Exception {
 			web.ignoring()
 					.antMatchers("/node_modules/**")
-					.antMatchers("/resources/**")
-					.antMatchers("/public/**");
+					.antMatchers("/dist/**")
+					.antMatchers("/resources/**");
 		}
 
 		@Override
@@ -225,6 +228,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests().antMatchers("/login**").permitAll()
 				.antMatchers("/resources/**").permitAll()
+				.antMatchers("/dist/**").permitAll()
 				.antMatchers("/password_reset/**").permitAll()
 				.antMatchers("/**").fullyAuthenticated()
 			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);

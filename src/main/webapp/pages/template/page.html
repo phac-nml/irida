@@ -3,7 +3,7 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{template/base}">
 <head>
-	<link rel="stylesheet" th:href="@{/resources/dist/css/app.bundle.css}">
+	<link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -46,6 +46,7 @@
 	<script th:inline="javascript">
 		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
+			LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
 		  	URLS: {
 			  cart: {
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
@@ -60,11 +61,13 @@
 					"last" : /*[[#{table.last}]]*/ 'Last'
 				}
 			},
-			date: {
-				moment: {
-					short: /*[[#{moment.short}]]*/ 'Do MMM YYYY',
-					full: /*[[#{moment.full}]]*/ 'MMM D, YYYY h:mm:ss a'
-				}
+			i18n: {
+				session_modal_intro: /*[[#{session_modal_intro}]]*/ "session_modal_intro",
+				session_modal_title: /*[[#{session_modal_title}]]*/ "session_modal_title",
+				session_modal_okText: /*[[#{session_modal_okText}]]*/ "session_modal_okText",
+				session_modal_cancelText: /*[[#{session_modal_cancelText}]]*/ "session_modal_cancelText",
+				session_modal_description: /*[[#{session_modal_description}]]*/ "session_modal_description",
+				session_timeout_modal_desc: /*[[#{session_timeout_modal_desc}]]*/ "session_timeout_modal_desc"
 			}
 		};
 	</script>
@@ -80,13 +83,9 @@
 		};
 	</script>
 
-	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
-	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
-	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
-	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
-	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
+	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-	<script th:src="@{/resources/dist/js/app.bundle.js}"></script>
+	<script th:src="@{/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">
 		<!--/* optional script tags */-->

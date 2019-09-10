@@ -1,5 +1,20 @@
 import moment from "moment";
 
+export function formatInternationalizedDateTime(d, options = {}) {
+  const params = {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    ...options
+  };
+  return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, params).format(
+    new Date(d)
+  );
+}
+
 /**
  * Get how much time has passed since a certain date.
  * @param {Number} now current

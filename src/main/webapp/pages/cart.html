@@ -7,11 +7,12 @@
 >
   <head>
     <title th:text="#{page.cart.title}">MY AWESOME CART</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/cart.bundle.css}" />
+    <link rel="stylesheet" th:href="@{/dist/css/cart.bundle.css}" />
     <style th:text="${pipeline_plugin_style}"></style>
     <script th:inline="javascript">
       window.PAGE = {
         user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org",
+        automatedProject: /*[[${automatedProject}]]*/ "0",
         i18n: {
           "cart.clear": /*[[#{cart.clear}]]*/ "Clear",
           "cart.noneMatchingFilter": /*[[#{cart.noneMatchingFilter}]]*/ "Cart filter error",
@@ -55,7 +56,7 @@
           <input id="js-query" name="json_params" type="hidden">
         </form>
       </div>
-      <script th:src="@{/resources/dist/js/cart.bundle.js}"></script>
+      <script th:src="@{/dist/js/cart.bundle.js}"></script>
     </th:block>
   </body>
 </html>

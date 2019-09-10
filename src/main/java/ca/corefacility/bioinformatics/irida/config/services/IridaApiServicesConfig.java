@@ -1,25 +1,32 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.validation.Validator;
-
+import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
+import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
+import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.*;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.matlux.NreplServerSpring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
@@ -53,45 +54,23 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import javax.validation.Validator;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
-import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
-import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
-import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
-import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
-import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.SistrTypingFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
-import net.matlux.NreplServerSpring;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Configuration for the IRIDA platform.
- * 
- * 
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
@@ -141,16 +120,27 @@ public class IridaApiServicesConfig {
 
 	@Value("${irida.debug.nrepl.server.port:#{null}}")
 	private Integer nreplPort;
-	
+
 	@Value("${irida.workflow.analysis.threads}")
 	private int analysisTaskThreads;
-
+	@Value("${locales.enabled}")
+	private String availableLocales;
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
+	}
+
+	@Bean
+	public IridaLocaleList installedLocales() {
+
+		String[] localeArray = availableLocales.split(",");
+		List<Locale> collect = Arrays.stream(localeArray)
+				.map(l -> Locale.forLanguageTag(l))
+				.collect(Collectors.toList());
+		return new IridaLocaleList(collect);
 	}
 
 	@Bean
@@ -176,7 +166,7 @@ public class IridaApiServicesConfig {
 			source.setBasenames(RESOURCE_LOCATIONS);
 		}
 
-		source.setFallbackToSystemLocale(false);
+		source.setFallbackToSystemLocale(true);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		source.setCommonMessages(properties);
 
@@ -295,14 +285,13 @@ public class IridaApiServicesConfig {
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
-			FastqcFileProcessor fastQcFileProcessor, AssemblyFileProcessor assemblyFileProcessor,
-			ChecksumFileProcessor checksumProcessor, CoverageFileProcessor coverageProcessor,
-			SistrTypingFileProcessor sistrTypingFileProcessor) {
+			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
+			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(checksumProcessor, gzipFileProcessor,
-				fastQcFileProcessor, coverageProcessor, assemblyFileProcessor, sistrTypingFileProcessor);
+				fastQcFileProcessor, coverageProcessor, automatedAnalysisFileProcessor);
 
 		if (!decompressFiles) {
 			logger.info("File decompression is disabled [file.processing.decompress=false]");
@@ -438,6 +427,21 @@ public class IridaApiServicesConfig {
 	@Conditional(NreplServerSpringCondition.class)
 	public NreplServerSpring nRepl() {
 		return new NreplServerSpring(nreplPort);
+	}
+
+	/**
+	 * Inner class storing the enabled locales for IRIDA
+	 */
+	public static class IridaLocaleList {
+		private List<Locale> locales;
+
+		public IridaLocaleList(List<Locale> locales) {
+			this.locales = locales;
+		}
+
+		public List<Locale> getLocales() {
+			return locales;
+		}
 	}
 }
 

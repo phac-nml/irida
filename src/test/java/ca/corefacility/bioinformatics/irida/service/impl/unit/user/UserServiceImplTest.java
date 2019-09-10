@@ -97,7 +97,6 @@ public class UserServiceImplTest {
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).findOne(id);
 		verify(userRepository).save(persisted);
-		verify(userRepository).exists(id);
 	}
 
 	@Test

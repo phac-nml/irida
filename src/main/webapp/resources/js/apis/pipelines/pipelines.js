@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-const URL = `${window.TL.BASE_URL}pipelines/ajax/`;
+const URL = `${window.TL.BASE_URL}pipelines/ajax`;
 
 /**
  * Get the IRIDA workflow description info for a workflow
@@ -26,5 +26,10 @@ export async function getIridaWorkflowDescription(workflowUUID) {
  * Get a listing of all Pipelines in IRIDA.
  * @returns {Promise<AxiosResponse<any> | never>}
  */
-export const fetchIridaAnalysisWorkflows = async () =>
-  axios.get(URL).then(response => response.data);
+export const fetchIridaAnalysisWorkflows = async function() {
+  var ajaxUrl = URL;
+  if (window.PAGE.automatedProject !== null) {
+    ajaxUrl = `${ajaxUrl}?automatedProject=${window.PAGE.automatedProject}`;
+  }
+  return axios.get(ajaxUrl).then(response => response.data);
+};

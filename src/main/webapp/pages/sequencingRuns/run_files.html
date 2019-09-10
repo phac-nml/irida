@@ -3,14 +3,13 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{sequencingRuns/_details_base}">
 <head>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
-	      href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
+	<link rel="stylesheet" th:href="@{/dist/css/run-files.bundle.css}">
 </head>
 <body>
 <main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
-			<table id="filesTable">
+			<table id="filesTable" class="table table-striped">
 				<thead>
 				<tr role="row">
 					<th th:text="#{sequencingruns.files.id}">ID</th>
@@ -46,31 +45,8 @@
 		</div>
 	</div>
 </main>
-<th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
-	        src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-	<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-	        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-	<script>
-		/*<![CDATA[*/
-		$(document).ready(function () {
-			'use strict';
-			var table = $("#filesTable").DataTable();
-
-			$("button.download-file").on("click", function () {
-				var that = $(this);
-				var fileId = that.data("file-id");
-        var objectId = that.data("object-id");
-				var url = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';
-				var iframe = document.createElement("iframe");
-				iframe.src = url + objectId + "/file/" + fileId;
-				iframe.style.display = "none";
-				document.body.appendChild(iframe);
-			});
-		});
-
-		/*]]>*/
-	</script>
+<th:block layout:fragment="scripts">
+	<script src="/dist/js/run-files.bundle.js"></script>
 </th:block>
 </body>
 </html>

@@ -53,7 +53,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Config name for test services that need to be setup.
- * 
+ *
  *
  */
 @Configuration
@@ -68,13 +68,13 @@ public class IridaApiNoGalaxyTestConfig {
 	 */
 	@Bean
 	public Executor uploadExecutor() {
-		return MoreExecutors.sameThreadExecutor();
+		return MoreExecutors.directExecutor();
 	}
-	
+
 	@Bean
 	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
 		return new AnalysisExecutionServiceGalaxyCleanupAsync(null, null, null, null) {
-			
+
 			@Override
 			public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
 					throws ExecutionManagerException {
@@ -83,33 +83,33 @@ public class IridaApiNoGalaxyTestConfig {
 			}
 		};
 	}
-	
+
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService(HistoriesClient historiesClient, ToolsClient toolsClient,
 			GalaxyLibrariesService librariesService) {
 		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService);
 	}
-	
+
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService(LibrariesClient librariesClient) {
 		return new GalaxyLibrariesService(librariesClient, 5, 60, 1);
 	}
-	
+
 	@Bean
 	public LibrariesClient librariesClient() {
 		return new LibrariesClientStub();
 	}
-	
+
 	@Bean
 	public HistoriesClient historiesClient() {
 		return new HistoriesClientStub();
 	}
-	
+
 	@Bean
 	public ToolsClient toolsClient() {
 		return new ToolsClientStub();
 	}
-	
+
 	/**
 	 * Stub class for tests.
 	 */
@@ -200,7 +200,7 @@ public class IridaApiNoGalaxyTestConfig {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	/**
 	 * Stub class for tests.
 	 */
@@ -234,9 +234,9 @@ public class IridaApiNoGalaxyTestConfig {
 		@Override
 		public ClientResponse uploadRequest(FileUploadRequest arg0) {
 			throw new UnsupportedOperationException();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Stub class for tests.
 	 */
@@ -320,6 +320,6 @@ public class IridaApiNoGalaxyTestConfig {
 		@Override
 		public HistoryDeleteResponse deleteHistory(String historyId) {
 			throw new UnsupportedOperationException();
-		}	
+		}
 	}
 }

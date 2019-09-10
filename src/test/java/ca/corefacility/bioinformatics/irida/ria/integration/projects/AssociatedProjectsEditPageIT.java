@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.junit.Before;
@@ -11,12 +7,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/AssociatedProjectsPageIT.xml")
 public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver {
@@ -60,7 +58,7 @@ public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver 
 		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
 		page.clickAssociatedButton(4L);
-		page.checkNotyStatus("success");
+		assertTrue("Should display success notification", page.checkSuccessNotification());
 		assertTrue("Project should be associated", isProjectAssociated(4L));
 	}
 
@@ -69,7 +67,7 @@ public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver 
 		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
 		page.clickAssociatedButton(2L);
-		page.checkNotyStatus("success");
+		assertTrue("Should display success notification", page.checkSuccessNotification());
 		assertFalse("Project should not be associated", isProjectAssociated(2L));
 	}
 
