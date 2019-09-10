@@ -1,11 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  deleteAnalysisSubmission,
-  fetchAllPipelinesStates,
-  fetchAllPipelinesTypes,
+  deleteAnalysisSubmissions,
   fetchPagedAnalyses
 } from "../apis/analysis/analysis";
-import * as PropTypes from "prop-types";
 
 let AnalysesContext;
 const { Provider, Consumer } = (AnalysesContext = React.createContext());
@@ -13,77 +10,44 @@ const { Provider, Consumer } = (AnalysesContext = React.createContext());
 /**
  * Context Provider the the Analyses Table.
  */
-class AnalysesProvider extends React.Component {
-  static propTypes = {
-    /**
-     * Child element of this react component
-     *
-     * @ignore
-     */
-    children: PropTypes.element
-  };
+function AnalysesProvider({ children }) {
+  const [tableState, setTableState] = useState({
+    loading: true,
+    analyses: undefined,
+    search: "",
+    current: 1,
+    pageSize: 10,
+    order: "descend",
+    column: "createdDate",
+    total: undefined,
+    filters: {}
+  });
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      analyses: undefined,
-      search: "",
-      current: 1,
-      pageSize: 10,
-      order: "descend",
-      column: "createdDate",
-      total: undefined,
-      filters: {},
-      onSearch: this.onSearch,
-      handleTableChange: this.handleTableChange,
-      updateTable: this.updateTable,
-      deleteAnalysis: this.deleteAnalysis
-    };
-  }
-
-  /*
-  Made this asynchronous in order to use `await` so that we can get all
-  the required values before we initialize the table.
-   */
-  componentDidMount() {
-    Promise.all([fetchAllPipelinesStates(), fetchAllPipelinesTypes()]).then(
-      ([pipelineStates, types]) => {
-        this.setState({ pipelineStates, types }, this.updateTable);
-      }
-    );
-  }
+  useEffect(() => updateTable(), [
+    tableState.search,
+    tableState.current,
+    tableState.order,
+    tableState.column,
+    tableState.filters
+  ]);
 
   /**
    * Called whenever the table needs to be re-rendered.
    */
-  updateTable = () => {
-    this.setState({ loading: true }, () => {
-      const params = {
-        current: this.state.current - 1,
-        pageSize: this.state.pageSize,
-        sortColumn: this.state.column,
-        sortDirection: this.state.order,
-        search: this.state.search,
-        filters: this.state.filters
-      };
+  const updateTable = () => {
+    setTableState({ ...tableState, loading: true });
 
-      fetchPagedAnalyses(params).then(data => {
-        this.setState({
-          analyses: data.analyses,
-          total: data.total,
-          loading: false
-        });
-      });
+    fetchPagedAnalyses({
+      current: tableState.current - 1,
+      pageSize: tableState.pageSize,
+      sortColumn: tableState.column,
+      sortDirection: tableState.order,
+      search: tableState.search,
+      filters: tableState.filters
+    }).then(({ analyses, total }) => {
+      setTableState({ ...tableState, ...{ total, analyses, loading: false } });
     });
   };
-
-  /**
-   * Handles search values entered in the tables global search box.
-   *
-   * @param {string} search - the value to search for
-   */
-  onSearch = search => this.setState({ search }, this.updateTable);
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
@@ -92,36 +56,35 @@ class AnalysesProvider extends React.Component {
    * @param {object} filters
    * @param {object} sorter
    */
-  handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
-
-    this.setState(
-      {
+    setTableState({
+      ...tableState,
+      ...{
         pageSize,
         current,
         order: order || "descend",
         column: field || "createdDate",
         filters
-      },
-      this.updateTable
-    );
+      }
+    });
   };
 
   /**
    * Handler for deleting an analysis.
    *
-   * @param {number} id
+   * @param {array} ids
    * @returns {void | Promise<*>}
    */
-  deleteAnalysis = id =>
-    deleteAnalysisSubmission({ id }).then(this.updateTable);
+  const deleteAnalyses = ids =>
+    deleteAnalysisSubmissions({ ids }).then(updateTable);
 
-  downloadAnalysis = id => downloadAnalysis({ id });
-
-  render() {
-    return <Provider value={this.state}>{this.props.children}</Provider>;
-  }
+  return (
+    <Provider value={{ ...tableState, handleTableChange, deleteAnalyses }}>
+      {children}
+    </Provider>
+  );
 }
 
 export { AnalysesProvider, Consumer as AnalysesConsumer, AnalysesContext };

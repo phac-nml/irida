@@ -192,10 +192,11 @@ public class AnalysesAjaxController {
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	public void deleteAnalysisSubmission(@RequestParam Long id) {
-		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
-		analysisSubmissionService.delete(id);
-		logger.info("Deleted analysis id=" + id);
+	public void deleteAnalysisSubmission(@RequestParam List<Long> ids) {
+		String foo = "BAR";
+//		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
+//		analysisSubmissionService.delete(id);
+//		logger.info("Deleted analysis id=" + id);
 	}
 
 	/**
