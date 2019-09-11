@@ -128,7 +128,6 @@ export function AnalysesTable() {
           return record.modifiable ? (
             <Popconfirm
               placement={"top"}
-              An
               title={"Delete this analysis?"}
               onConfirm={() => deleteAnalysis(record.id)}
             >
