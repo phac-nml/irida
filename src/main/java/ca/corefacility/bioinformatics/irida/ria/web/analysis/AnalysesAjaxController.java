@@ -188,11 +188,11 @@ public class AnalysesAjaxController {
 	/**
 	 * Delete a specific {@link AnalysisSubmission}
 	 *
-	 * @param id for the {@link AnalysisSubmission} to delete
+	 * @param ids for all {@link AnalysisSubmission}'s to delete
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	public void deleteAnalysisSubmission(@RequestParam List<Long> ids) {
+	public void deleteAnalysisSubmissions(@RequestParam List<Long> ids) {
 		analysisSubmissionService.deleteMultiple(ids);
 	}
 
