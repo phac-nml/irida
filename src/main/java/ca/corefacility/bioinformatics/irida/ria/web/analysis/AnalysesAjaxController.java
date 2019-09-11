@@ -192,8 +192,12 @@ public class AnalysesAjaxController {
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	public void deleteAnalysisSubmissions(@RequestParam List<Long> ids) {
-		analysisSubmissionService.deleteMultiple(ids);
+	public void deleteAnalysisSubmissions(@RequestParam List<Long> ids, HttpServletResponse response) {
+		try {
+			analysisSubmissionService.deleteMultiple(ids);
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
