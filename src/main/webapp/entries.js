@@ -57,9 +57,10 @@ module.exports = {
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
+  "project-analyses": "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
-  "analyses": "./resources/js/pages/analyses/index.js",
+  "analyses": "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
   "users-list": "./resources/js/pages/users/users-list.js",
   "users-password": "./resources/js/pages/users/users-password.js",

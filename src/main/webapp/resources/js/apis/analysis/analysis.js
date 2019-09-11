@@ -4,7 +4,7 @@
 import axios from "axios";
 
 const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
-const USER_TYPE = window.PAGE.type;
+const USER_TYPE = window.PAGE?.type;
 
 /**
  * Get all single sample analysis output file info for the principal user.
@@ -27,7 +27,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/project/${projectId}/shared-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -45,7 +45,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/project/${projectId}/automated-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -85,8 +85,4 @@ export async function fetchAllPipelinesTypes() {
 
 export async function deleteAnalysisSubmission({ id }) {
   return axios.delete(`${BASE_URL}/delete?id=${id}`);
-}
-
-export function downloadAnalysis({ id }) {
-  return axios.get(`${BASE_URL}/download/${id}`);
 }

@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { AnalysesContext } from "../../contexts/AnalysesContext";
 import { Button, Icon, Popconfirm, Table } from "antd";
-import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   dateColumnFormat,
   nameColumnFormat
-} from "../../components/ant.design/table-renderers";
+} from "../ant.design/table-renderers";
 import { AnalysisState } from "./AnalysisState";
-import { getI18N } from "./../../utilities/i18n-utilties";
-import { getHumanizedDuration } from "./../../utilities/date-utilities.js";
-import { getTextSearchProps } from "../../components/ant.design/table-search-props";
+import { getI18N } from "../../utilities/i18n-utilties";
+import { getHumanizedDuration } from "../../utilities/date-utilities.js";
+import { getTextSearchProps } from "../ant.design/table-search-props";
+import { blue6 } from "../../styles/colors";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -17,7 +17,7 @@ import { getTextSearchProps } from "../../components/ant.design/table-search-pro
  * @constructor
  */
 export function AnalysesTable() {
-  const ADMIN = window.location.href.endsWith("all");
+  const CAN_MANAGE = window.PAGE.canManage;
   const {
     loading,
     total,
@@ -26,8 +26,7 @@ export function AnalysesTable() {
     types,
     pipelineStates,
     handleTableChange,
-    deleteAnalysis,
-    downloadAnalysis
+    deleteAnalysis
   } = useContext(AnalysesContext);
 
   function createColumns({ types, pipelineStates, deleteAnalysis }) {
@@ -37,16 +36,6 @@ export function AnalysesTable() {
           url: `${window.TL.BASE_URL}analysis/`,
           width: 300
         }),
-        filterIcon(filtered) {
-          return (
-            <Icon
-              type="filter"
-              theme="filled"
-              style={{ color: filtered ? "#1890ff" : undefined }}
-              className="t-name"
-            />
-          );
-        },
         title: getI18N("analyses.analysis-name"),
         key: "name",
         ...getTextSearchProps("name")
@@ -57,12 +46,13 @@ export function AnalysesTable() {
         dataIndex: "state",
         filterMultiple: true,
         filters: pipelineStates,
+        width: 150,
         filterIcon(filtered) {
           return (
             <Icon
               type="filter"
               theme="filled"
-              style={{ color: filtered ? "#1890ff" : undefined }}
+              style={{ color: filtered ? blue6 : undefined }}
               className="t-state"
             />
           );
@@ -82,7 +72,7 @@ export function AnalysesTable() {
             <Icon
               type="filter"
               theme="filled"
-              style={{ color: filtered ? "#1890ff" : undefined }}
+              style={{ color: filtered ? blue6 : undefined }}
               className="t-type"
             />
           );
@@ -91,6 +81,7 @@ export function AnalysesTable() {
       },
       {
         title: getI18N("analyses.submitter"),
+        width: 200,
         key: "submitter",
         sorter: true,
         dataIndex: "submitter"
@@ -104,48 +95,51 @@ export function AnalysesTable() {
       {
         title: getI18N("analysis.duration"),
         key: "duration",
+        width: 150,
         dataIndex: "duration",
         render(timestamp) {
           return getHumanizedDuration({ date: timestamp });
         }
+      },
+      {
+        title: "",
+        key: "download",
+        fixed: "right",
+        render(text, record) {
+          return (
+            <Button
+              shape="circle-outline"
+              disabled={record.state.value !== "COMPLETED"}
+              href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
+              download
+              icon="download"
+            />
+          );
+        }
       }
     ];
 
-    if (ADMIN) {
+    if (CAN_MANAGE) {
       columns.push({
         title: "",
-        key: "actions",
+        key: "delete",
         fixed: "right",
         render(text, record) {
           return record.modifiable ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}
+            <Popconfirm
+              placement={"top"}
+              title={"Delete this analysis?"}
+              onConfirm={() => deleteAnalysis(record.id)}
             >
-              {record.state === "Error" ? (
-                <span />
-              ) : (
-                <Button
-                  type={"link"}
-                  onClick={() => downloadAnalysis(record.id)}
-                >
-                  <Icon type="download" />
-                </Button>
-              )}
-              <Popconfirm
-                placement={"top"}
-                title={"Delete this analysis?"}
-                onConfirm={() => deleteAnalysis(record.id)}
-              >
-                <Button type="link" className="t-delete-btn">
-                  <Icon type="delete" theme="twoTone" />
-                </Button>
-              </Popconfirm>
-            </div>
-          ) : null;
+              <Button
+                shape="circle-outline"
+                className="t-delete-btn"
+                icon="delete"
+              />
+            </Popconfirm>
+          ) : (
+            <span />
+          );
         }
       });
     }
@@ -154,17 +148,15 @@ export function AnalysesTable() {
   }
 
   return (
-    <PageWrapper title={getI18N("analyses.header")}>
-      <Table
-        scroll={{ x: "max-content" }}
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{ total, pageSize }}
-        columns={createColumns({ types, pipelineStates, deleteAnalysis })}
-        dataSource={analyses}
-        onChange={handleTableChange}
-      />
-    </PageWrapper>
+    <Table
+      scroll={{ x: "max-content" }}
+      rowKey={record => record.id}
+      loading={loading}
+      pagination={{ total, pageSize }}
+      columns={createColumns({ types, pipelineStates, deleteAnalysis })}
+      dataSource={analyses}
+      onChange={handleTableChange}
+    />
   );
 }
 

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   deleteAnalysisSubmission,
-  downloadAnalysis,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes,
   fetchPagedAnalyses
@@ -38,9 +37,8 @@ class AnalysesProvider extends React.Component {
       filters: {},
       onSearch: this.onSearch,
       handleTableChange: this.handleTableChange,
-      deleteAnalysis: this.deleteAnalysis,
-      downloadAnalysis: this.downloadAnalysis,
-      updateTable: this.updateTable
+      updateTable: this.updateTable,
+      deleteAnalysis: this.deleteAnalysis
     };
   }
 
@@ -48,12 +46,12 @@ class AnalysesProvider extends React.Component {
   Made this asynchronous in order to use `await` so that we can get all
   the required values before we initialize the table.
    */
-  async componentDidMount() {
-    const [pipelineStates, types] = await Promise.all([
-      fetchAllPipelinesStates(),
-      fetchAllPipelinesTypes()
-    ]);
-    this.setState({ pipelineStates, types }, this.updateTable);
+  componentDidMount() {
+    Promise.all([fetchAllPipelinesStates(), fetchAllPipelinesTypes()]).then(
+      ([pipelineStates, types]) => {
+        this.setState({ pipelineStates, types }, this.updateTable);
+      }
+    );
   }
 
   /**
