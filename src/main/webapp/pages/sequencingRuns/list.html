@@ -14,7 +14,8 @@
 	</script>
 </head>
 <body>
-    <main layout:fragment="main">
+    <div layout:fragment="main">
+        <div id="root"></div>
         <div class="col-md-12">
             <h1 th:text="#{sequencingruns.title}">_Sequencing runs_</h1>
             
@@ -31,7 +32,7 @@
                 </thead>
             </table>
         </div>
-    </main>
+    </div>
 
 <th:block layout:fragment="scripts">
     <script th:src="@{/dist/js/sequencing-runs.bundle.js}"></script>

@@ -1,3 +1,6 @@
+import React, { useEffect } from "react";
+import { render } from "react-dom";
+import { fetchSequencingRuns } from "../../apis/sequencing-runs/sequencing-runs";
 import "../../vendor/datatables/datatables";
 import $ from "jquery";
 import {
@@ -7,6 +10,15 @@ import {
 } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 
+function RunTable() {
+  useEffect(() => {
+    fetchSequencingRuns().then(data => console.log(data));
+  }, [fetchSequencingRuns]);
+  return <h1>ROOT</h1>;
+}
+
+render(<RunTable />, document.querySelector("#root"));
+
 /*
 Get the table headers and create a look up table for them.
 This give the row name in snake case and its index.
@@ -14,6 +26,7 @@ This give the row name in snake case and its index.
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#sequencingRuns");
 const url = $table.data("url");
+console.log(url + "YOUR MOTHER");
 
 const config = Object.assign({}, tableConfig, {
   ajax: url,
