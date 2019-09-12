@@ -18,6 +18,7 @@ import {
   idColumnFormat,
   nameColumnFormat
 } from "../../../components/ant.design/table-renderers";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const { Text } = Typography;
 
@@ -186,25 +187,22 @@ export function ProjectsTable() {
   );
 
   return (
-    <PageWrapper
-      title={getI18N("ProjectsTable_header")}
-      headerExtras={
-        <Row gutter={12} style={{ marginRight: 18 }}>
-          <Col span={18}>
-            <Input.Search onSearch={onSearch} />
-          </Col>
-          <Col span={6}>
-            <Dropdown overlay={exportMenu} key="export">
-              <Button>
-                {getI18N("ProjectsTable_export")} <Icon type="down" />
-              </Button>
-            </Dropdown>
-          </Col>
-        </Row>
-      }
-    >
+    <PageWrapper title={getI18N("ProjectsTable_header")}>
+      <div
+        style={{
+          paddingBottom: SPACE_MD,
+          display: "flex",
+          justifyContent: "space-between"
+        }}
+      >
+        <Dropdown overlay={exportMenu} key="export">
+          <Button>
+            {getI18N("ProjectsTable_export")} <Icon type="down" />
+          </Button>
+        </Dropdown>
+        <Input.Search style={{width: 300}} onSearch={onSearch} />
+      </div>
       <Table
-        style={{ margin: "6px 24px 0 24px" }}
         rowKey={record => record.id}
         loading={loading}
         pagination={{
