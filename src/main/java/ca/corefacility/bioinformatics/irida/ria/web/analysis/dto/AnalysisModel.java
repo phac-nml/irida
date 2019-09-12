@@ -3,11 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
 
 /**
  * Used to represent an {@link AnalysisSubmission} for consumption by the user interface.
  */
-public class AnalysisModel {
+public class AnalysisModel extends TableModel {
 	private Long id;
 	private String name;
 	private Date createdDate;

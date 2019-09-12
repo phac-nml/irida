@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const URL = `${window.TL.BASE_URL}sequencingRuns/list`;
+const URL = `${window.TL.BASE_URL}ajax/sequencingRuns/list`;
 
-export function fetchSequencingRuns(params) {
-  return axios.get(URL).then(({ data }) => console.log(data));
+export async function fetchSequencingRuns(params) {
+  return axios.post(URL, params).then(({ data }) => data);
 }

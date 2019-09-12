@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AnalysesContext } from "../../contexts/AnalysesContext";
+import { PagedTableContext } from "../../contexts/PagedTableContext";
 import { Button, Icon, Popconfirm, Table } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
 } from "../ant.design/table-renderers";
 import {
+  deleteAnalysisSubmissions,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes
 } from "../../apis/analysis/analysis";
@@ -27,10 +28,19 @@ export function AnalysesTable() {
     loading,
     total,
     pageSize,
-    analyses,
+    dataSource,
     handleTableChange,
-    deleteAnalyses
-  } = useContext(AnalysesContext);
+    updateTable
+  } = useContext(PagedTableContext);
+
+  /**
+   * Handler for deleting an analysis.
+   *
+   * @param {array} ids
+   * @returns {void | Promise<*>}
+   */
+  const deleteAnalyses = ids =>
+    deleteAnalysisSubmissions({ ids }).then(updateTable);
 
   const [selected, setSelected] = useState([]);
   const [pipelineStates, setPipelineStates] = useState([]);
@@ -173,7 +183,7 @@ export function AnalysesTable() {
         loading={loading}
         pagination={{ total, pageSize }}
         columns={columns}
-        dataSource={analyses}
+        dataSource={dataSource}
         onChange={handleTableChange}
       />
     </div>

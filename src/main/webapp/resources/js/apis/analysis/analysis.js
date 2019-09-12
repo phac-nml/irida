@@ -4,7 +4,6 @@
 import axios from "axios";
 
 const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
-const USER_TYPE = window.PAGE?.type;
 
 /**
  * Get all single sample analysis output file info for the principal user.
@@ -69,10 +68,6 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   } catch (error) {
     return { error: error };
   }
-}
-
-export async function fetchPagedAnalyses(params) {
-  return axios.post(`${BASE_URL}/list`, params).then(response => response.data);
 }
 
 export async function fetchAllPipelinesStates() {

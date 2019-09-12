@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { AnalysesProvider } from "../../../contexts/AnalysesContext";
+import { PagedTableProvider } from "../../../contexts/PagedTableContext";
 import { AnalysesTable } from "../../../components/AnalysesTable/AnalysesTable";
 
 function ProjectAnalysesPage() {
@@ -8,8 +8,8 @@ function ProjectAnalysesPage() {
 }
 
 render(
-  <AnalysesProvider>
+  <PagedTableProvider url={`${window.TL.BASE_URL}ajax/analyses/list`}>
     <ProjectAnalysesPage />
-  </AnalysesProvider>,
+  </PagedTableProvider>,
   document.querySelector("#root")
 );
