@@ -189,6 +189,7 @@ public class AnalysesAjaxController {
 	 * Delete a specific {@link AnalysisSubmission}
 	 *
 	 * @param ids for all {@link AnalysisSubmission}'s to delete
+	 * @param response {@link HttpServletResponse}
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
