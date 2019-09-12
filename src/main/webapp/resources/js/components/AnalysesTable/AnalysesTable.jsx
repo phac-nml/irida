@@ -157,6 +157,7 @@ export function AnalysesTable() {
           onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
         >
           <Button
+            className="t-delete-selected"
             loading={deleting}
             disabled={!selected.length}
             onClick={() => setDeleting(true)}
