@@ -43,6 +43,9 @@ export function SequencingRunsList() {
       dataIndex: "user",
       sorter: true,
       render: text => {
+        if (!text) {
+          return null;
+        }
         return (
           <Button
             type="link"
