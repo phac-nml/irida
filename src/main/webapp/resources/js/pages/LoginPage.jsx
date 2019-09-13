@@ -22,6 +22,9 @@ function LoginPage({ form }) {
     <Layout style={{ minHeight: "100vh" }}>
       <LoginContent style={{ display: "flex" }}>
         <LoginWrapper>
+          <div>
+            <img src={`/resources/img/irida_logo_dark.svg`} />
+          </div>
           <Form>
             <Form.Item>
               {getFieldDecorator("username", {
