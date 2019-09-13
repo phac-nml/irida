@@ -6,6 +6,9 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
 
+/**
+ * Model to format a {@link SequencingRun} into a format that can be used in the UI Table.
+ */
 public class SequencingRunModel extends TableModel {
 	private Long id;
 	private String sequencerType;

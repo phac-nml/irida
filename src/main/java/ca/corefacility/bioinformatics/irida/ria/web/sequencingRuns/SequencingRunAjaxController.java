@@ -35,17 +35,22 @@ public class SequencingRunAjaxController {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get the current page contents for a table displaying sequencing runs.
+	 *
+	 * @param sequencingRunsListRequest {@link SequencingRunsListRequest} specifies what data is required.
+	 * @param locale                    {@link Locale}
+	 * @return {@link TableResponse}
+	 */
 	@RequestMapping("/list")
-	public TableResponse listSequencingRuns(
-			@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
+	public TableResponse listSequencingRuns(@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
 		Page<SequencingRun> list = sequencingRunService.list(sequencingRunsListRequest.getCurrent(),
 				sequencingRunsListRequest.getPageSize(), sequencingRunsListRequest.getSort());
 
 		List<TableModel> runs = list.getContent()
 				.stream()
-				.map(s -> new SequencingRunModel(s, messageSource.getMessage(
-						"sequencingruns.status." + s.getUploadStatus()
-								.toString(), new Object[] {}, locale)))
+				.map(s -> new SequencingRunModel(s, messageSource.getMessage("sequencingruns.status." + s.getUploadStatus()
+						.toString(), new Object[] {}, locale)))
 				.collect(Collectors.toList());
 
 		return new TableResponse(runs, list.getTotalElements());
