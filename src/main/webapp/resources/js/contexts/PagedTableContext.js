@@ -5,7 +5,11 @@ let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
 
 /**
- * Context Provider the the Analyses Table.
+ * Provider for all ant.design server paged tables.
+ * @param children Child DOM elements
+ * @param {string} url - to fetch the table contents from
+ * @returns {*}
+ * @constructor
  */
 function PagedTableProvider({ children, url }) {
   const [tableState, setTableState] = useState({
@@ -20,6 +24,9 @@ function PagedTableProvider({ children, url }) {
     filters: {}
   });
 
+  /*
+  Table is updated whenever one of these are changed.
+   */
   useEffect(() => updateTable(), [
     tableState.search,
     tableState.current,
@@ -80,4 +87,8 @@ function PagedTableProvider({ children, url }) {
   );
 }
 
-export { PagedTableProvider, Consumer as PagedTableConsumer, PagedTableContext };
+export {
+  PagedTableProvider,
+  Consumer as PagedTableConsumer,
+  PagedTableContext
+};
