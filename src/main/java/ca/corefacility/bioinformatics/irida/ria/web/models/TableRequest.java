@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 
 import org.springframework.data.domain.Sort;
 
+/**
+ * Default for request for table contents.
+ */
 public class TableRequest {
 	private int current;
 	private int pageSize;

@@ -18,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.Sequencin
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
+/**
+ * Controller to handle AJAX requests for sequencing run data
+ */
 @RestController
 @RequestMapping("/ajax/sequencingRuns")
 public class SequencingRunAjaxController {
