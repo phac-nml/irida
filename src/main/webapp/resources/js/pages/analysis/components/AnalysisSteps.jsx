@@ -26,49 +26,49 @@ export function AnalysisSteps() {
         style={{ paddingBottom: SPACE_MD }}
       >
         <Step
-          title={getI18N("analysis.state.NEW")}
+          title={getI18N("AnalysisSteps.new")}
           icon={
-            analysisContext.analysisState == "NEW" ? (
+            analysisContext.analysisState === "NEW" ? (
               <Icon type="loading" />
             ) : null
           }
         />
         <Step
-          title={getI18N("analysis.state.PREPARING")}
+          title={getI18N("AnalysisSteps.preparing")}
           icon={
-            analysisContext.analysisState == "PREPARING" ? (
+            analysisContext.analysisState === "PREPARING" ? (
               <Icon type="loading" />
             ) : null
           }
         />
         <Step
-          title={getI18N("analysis.state.SUBMITTING")}
+          title={getI18N("AnalysisSteps.submitting")}
           icon={
-            analysisContext.analysisState == "SUBMITTING" ? (
+            analysisContext.analysisState === "SUBMITTING" ? (
               <Icon type="loading" />
             ) : null
           }
         />
         <Step
-          title={getI18N("analysis.state.RUNNING")}
+          title={getI18N("AnalysisSteps.running")}
           icon={
-            analysisContext.analysisState == "RUNNING" ? (
+            analysisContext.analysisState === "RUNNING" ? (
               <Icon type="loading" />
             ) : null
           }
         />
         <Step
-          title={getI18N("analysis.state.COMPLETING")}
+          title={getI18N("AnalysisSteps.completing")}
           icon={
-            analysisContext.analysisState == "COMPLETING" ? (
+            analysisContext.analysisState === "COMPLETING" ? (
               <Icon type="loading" />
             ) : null
           }
         />
         <Step
-          title={getI18N("analysis.state.COMPLETED")}
+          title={getI18N("AnalysisSteps.completed")}
           icon={
-            analysisContext.analysisState == "COMPLETED" ? (
+            analysisContext.analysisState === "COMPLETED" ? (
               <Icon type="loading" />
             ) : null
           }

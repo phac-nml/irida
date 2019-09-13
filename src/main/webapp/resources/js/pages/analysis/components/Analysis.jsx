@@ -103,31 +103,28 @@ export default function Analysis() {
 
               analysisContext.analysisType.type === "PHYLOGENOMICS" ||
               analysisContext.analysisType.type === "MLST_MENTALIST" ? (
-                <TabPane tab="Phylogenetic Tree" key="PHYLOGENOMICS">
+                <TabPane
+                  tab={getI18N("Analysis.phylogeneticTree")}
+                  key="PHYLOGENOMICS"
+                >
                   <AnalysisPhylogeneticTree />
                 </TabPane>
               ) : null,
 
-              <TabPane
-                tab={getI18N("analysis.tab.output-files")}
-                key="OUTPUT_FILES"
-              >
+              <TabPane tab={getI18N("Analysis.outputFiles")} key="OUTPUT_FILES">
                 <AnalysisOutputFiles />
               </TabPane>,
 
-              <TabPane
-                tab={getI18N("analysis.tab.provenance")}
-                key="PROVENANCE"
-              >
+              <TabPane tab={getI18N("Analysis.provenance")} key="PROVENANCE">
                 <AnalysisProvenance />
               </TabPane>
             ]
           ) : analysisContext.isError ? (
-            <TabPane tab={getI18N("analysis.tab.job-error")} key="JOB_ERROR">
+            <TabPane tab={getI18N("Analysis.jobError")} key="JOB_ERROR">
               <AnalysisError />
             </TabPane>
           ) : null}
-          <TabPane tab={getI18N("analysis.tab.settings")} key="SETTINGS">
+          <TabPane tab={getI18N("Analysis.settings")} key="SETTINGS">
             <AnalysisDetailsProvider>
               <AnalysisDetails />
             </AnalysisDetailsProvider>

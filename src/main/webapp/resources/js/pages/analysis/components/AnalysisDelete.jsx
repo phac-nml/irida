@@ -51,28 +51,28 @@ export default function AnalysisDelete() {
   // The following renders the Delete Analysis component view
   return (
     <>
-      <Title level={2}>{getI18N("analysis.tab.delete-analysis")}</Title>
+      <Title level={2}>{getI18N("AnalysisDelete.deleteAnalysis")}</Title>
       <Alert
         message=<strong className="spaced-top__sm">
-          {getI18N("analysis.tab.content.delete.permanent-action-warning")}
+          {getI18N("AnalysisDelete.permanentActionWarning")}
         </strong>
         type="warning"
       />
 
       <Row className="spaced-top__lg">
         <Checkbox onChange={onChange}>
-          {getI18N("analysis.tab.content.delete.checkbox-confirmation-label")}
+          {getI18N("AnalysisDelete.confirmAnalysisDeletion")}
         </Checkbox>
       </Row>
 
       <Row>
         <Popconfirm
           placement="top"
-          title={`${getI18N("analysis.tab.delete-analysis")} ${
+          title={`${getI18N("AnalysisDelete.deleteAnalysis")} ${
             analysisContext.analysisName
           }?`}
-          okText={getI18N("analysis.tab.content.delete.confirm")}
-          cancelText={getI18N("analysis.tab.content.delete.cancel")}
+          okText={getI18N("AnalysisDelete.confirm")}
+          cancelText={getI18N("AnalysisDelete.cancel")}
           onConfirm={handleDeleteConfirm}
           disabled={!deleteConfirm}
         >
@@ -81,7 +81,7 @@ export default function AnalysisDelete() {
             className="spaced-top__lg"
             disabled={!deleteConfirm}
           >
-            {getI18N("analysis.tab.content.delete.button")}
+            {getI18N("AnalysisDelete.delete")}
           </Button>
         </Popconfirm>
       </Row>

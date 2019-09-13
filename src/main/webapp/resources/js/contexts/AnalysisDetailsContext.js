@@ -1,8 +1,15 @@
-import React, { useReducer, useContext } from "react";
+/*
+ * This file contains the state and functions
+ * required for displaying analysis details, and
+ * samples as well as, updating analysis (email
+ * pipeline result, priority).
+ */
 
+import React, { useReducer, useContext, useEffect } from "react";
+
+// Functions required by context
 import {
   getVariablesForDetails,
-  getAnalysisInputFiles,
   saveToRelatedSamples,
   updateAnalysisEmailPipelineResult,
   updateAnalysis
@@ -15,10 +22,10 @@ const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
   EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
   PRIORITY: "UPDATED_PRIORITY",
-  SAMPLES: "SAMPLES_DATA",
   UPDATE_SAMPLES: "UPDATE_SAMPLES"
 };
 
+// Updates the state and returns a new copy.
 const reducer = (context, action) => {
   switch (action.type) {
     case TYPES.DETAILS:
@@ -32,11 +39,6 @@ const reducer = (context, action) => {
       return { ...context, priority: action.priority };
     case TYPES.UPDATE_SAMPLES:
       return { ...context, updateSamples: action.updateSamples };
-    case TYPES.SAMPLES:
-      return {
-        ...context,
-        ...action.payload
-      };
     default:
       return;
   }
@@ -52,10 +54,6 @@ const initialContext = {
   priorities: [],
   canShareToSamples: false,
   updatePermission: false,
-  samples: [],
-  sequenceFilePairList: [],
-  sequenceFileSizeList: [],
-  referenceFile: [],
   updateSamples: false
 };
 
@@ -68,44 +66,54 @@ function AnalysisDetailsProvider(props) {
   );
   const { analysisContext } = useContext(AnalysisContext);
 
-  function loadAnalysisDetails() {
+  // On page load get the analysis details
+  useEffect(() => {
     getVariablesForDetails(analysisContext.analysis.identifier).then(data => {
       dispatch({ type: TYPES.DETAILS, payload: data });
     });
-  }
+  }, [getVariablesForDetails]);
 
-  function loadAnalysisSamples() {
-    getAnalysisInputFiles(analysisContext.analysis.identifier).then(data => {
-      dispatch({ type: TYPES.SAMPLES, payload: data });
-    });
-  }
-
+  /*
+   * Saves results to related samples and updates
+   * `updateSamples` state variable.
+   */
   function saveResultsToRelatedSamples() {
-    saveToRelatedSamples(analysisContext.analysis.identifier).then(res => {
-      showNotification({ text: res.message });
-      dispatch({ type: TYPES.UPDATE_SAMPLES, updateSamples: true });
-    });
+    saveToRelatedSamples(analysisContext.analysis.identifier).then(
+      ({ message }) => {
+        showNotification({ text: message });
+        dispatch({ type: TYPES.UPDATE_SAMPLES, updateSamples: true });
+      }
+    );
   }
 
+  /*
+   * Updates the submission priority, displays a notification
+   * to the user, and updates the `priority` state variable.
+   */
   function analysisDetailsContextUpdateSubmissionPriority(updatedPriority) {
-    updateAnalysis(
-      analysisContext.analysis.identifier,
-      null,
-      updatedPriority
-    ).then(res => {
-      showNotification({ text: res.message });
+    updateAnalysis({
+      submissionId: analysisContext.analysis.identifier,
+      analysisName: null,
+      priority: updatedPriority
+    }).then(({ message }) => {
+      showNotification({ text: message });
       dispatch({ type: TYPES.PRIORITY, priority: updatedPriority });
     });
   }
 
+  /*
+   * Updates if a user wants to receive an email on analysis completion,
+   * displays a notification to the user, and updates the
+   * emailPipelineResult` state variable.
+   */
   function analysisDetailsContextUpdateEmailPipelineResult(
     emailPipelineResult
   ) {
-    updateAnalysisEmailPipelineResult(
-      analysisContext.analysis.identifier,
-      emailPipelineResult
-    ).then(res => {
-      showNotification({ text: res.message });
+    updateAnalysisEmailPipelineResult({
+      submissionId: analysisContext.analysis.identifier,
+      emailPipelineResult: emailPipelineResult
+    }).then(({ message }) => {
+      showNotification({ text: message });
       dispatch({
         type: TYPES.EMAIL_PIPELINE_RESULT,
         emailPipelineResult
@@ -117,8 +125,6 @@ function AnalysisDetailsProvider(props) {
     <AnalysisDetailsContext.Provider
       value={{
         analysisDetailsContext,
-        loadAnalysisDetails,
-        loadAnalysisSamples,
         saveResultsToRelatedSamples,
         analysisDetailsContextUpdateSubmissionPriority,
         analysisDetailsContextUpdateEmailPipelineResult

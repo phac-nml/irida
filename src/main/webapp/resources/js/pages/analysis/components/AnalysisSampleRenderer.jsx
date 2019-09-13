@@ -5,7 +5,7 @@
 
 import React, { useContext } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
+import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
 import { Card, Row, Col, Icon, Button } from "antd";
 
 export function AnalysisSampleRenderer() {
@@ -14,17 +14,17 @@ export function AnalysisSampleRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
+  const { analysisSamplesContext } = useContext(AnalysisSamplesContext);
 
   const renderSamples = () => {
     const samplesList = [];
 
-    if (analysisDetailsContext.sequenceFilePairList.length > 0) {
+    if (analysisSamplesContext.sequenceFilePairList.length > 0) {
       let pairIndex = 0;
       for (const [
         index,
         sampleObj
-      ] of analysisDetailsContext.samples.entries()) {
+      ] of analysisSamplesContext.samples.entries()) {
         samplesList.push(
           <Card
             type="inner"
@@ -41,7 +41,7 @@ export function AnalysisSampleRenderer() {
             key={`sampleId-${sampleObj.sample.identifier}`}
           >
             <Row
-              key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}`}
+              key={`fileId-${analysisSamplesContext.sequenceFilePairList[pairIndex].identifier}`}
             >
               <span
                 style={{
@@ -53,18 +53,18 @@ export function AnalysisSampleRenderer() {
                 <Button
                   type="link"
                   target="_blank"
-                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}/summary`}
+                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisSamplesContext.sequenceFilePairList[pairIndex].identifier}/summary`}
                 >
                   <Icon type="arrow-right" />{" "}
-                  {analysisDetailsContext.sequenceFilePairList[pairIndex].label}
+                  {analysisSamplesContext.sequenceFilePairList[pairIndex].label}
                 </Button>
                 <span>
-                  {analysisDetailsContext.sequenceFileSizeList[pairIndex]}
+                  {analysisSamplesContext.sequenceFileSizeList[pairIndex]}
                 </span>
               </span>
             </Row>
             <Row
-              key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}`}
+              key={`fileId-${analysisSamplesContext.sequenceFilePairList[pairIndex + 1].identifier}`}
             >
               <span
                 style={{
@@ -76,16 +76,16 @@ export function AnalysisSampleRenderer() {
                 <Button
                   type="link"
                   target="_blank"
-                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}/summary`}
+                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisSamplesContext.sequenceFilePairList[pairIndex + 1].identifier}/summary`}
                 >
                   <Icon type="arrow-left" />{" "}
                   {
-                    analysisDetailsContext.sequenceFilePairList[pairIndex + 1]
+                    analysisSamplesContext.sequenceFilePairList[pairIndex + 1]
                       .label
                   }
                 </Button>
                 <span>
-                  {analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}
+                  {analysisSamplesContext.sequenceFileSizeList[pairIndex + 1]}
                 </span>
               </span>
             </Row>
@@ -95,9 +95,7 @@ export function AnalysisSampleRenderer() {
       }
     } else {
       samplesList.push(
-        <p key={`no-paired-end-0`}>
-          {getI18N("analysis.input-files.no-paired-end")}
-        </p>
+        <p key={`no-paired-end-0`}>{getI18N("AnalysisSamples.noPairedEnd")}</p>
       );
     }
     return samplesList;

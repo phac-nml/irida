@@ -328,6 +328,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
+		checkNotNull(priority);
 		submission.setPriority(priority);
 
 		return super.update(submission);
@@ -350,6 +351,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName) {
+		checkNotNull(analysisName);
 		submission.setName(analysisName);
 
 		return super.update(submission);

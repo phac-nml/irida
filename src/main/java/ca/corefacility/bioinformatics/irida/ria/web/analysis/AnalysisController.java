@@ -62,8 +62,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -106,6 +108,7 @@ public class AnalysisController {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+	private EmailController emailController;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
@@ -114,7 +117,7 @@ public class AnalysisController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysesListingService analysesListingService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, EmailController emailController) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
@@ -127,6 +130,7 @@ public class AnalysisController {
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.emailController = emailController;
 	}
 
 	// ************************************************************************************************
@@ -231,24 +235,22 @@ public class AnalysisController {
 	 * @param submissionId the ID of the submission
 	 * @param model        Model for the view
 	 * @param principal    Principal {@link User}
-	 * @param locale       User's locale
 	 * @return name of the details page view
 	 */
 
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal,
-			Locale locale) {
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
 		final User currentUser = userService.getUserByUsername(principal.getName());
 
-		if(currentUser != null) {
+		// AnalysisControllerTest throws a null pointer error if not checked
+		if (currentUser != null) {
 			model.addAttribute("isAdmin", currentUser.getSystemRole()
 					.equals(Role.ROLE_ADMIN));
 		}
-
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
@@ -256,6 +258,7 @@ public class AnalysisController {
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
+		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
 		return "analysis";
 	}
@@ -270,22 +273,31 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
 	public Map<String, String> ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
-			Locale locale) {
+			Locale locale, HttpServletResponse response) {
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
-		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
-		analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
-		logger.trace("Email pipeline result updated for: " + submission);
 
 		String message = "";
-		if (parameters.getEmailPipelineResult()) {
-			message = messageSource.getMessage("analysis.notification.you.will.receive.an.email", new Object[] {},
-					locale);
+		int responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+
+		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
+				!= AnalysisState.ERROR)) {
+			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
+			logger.trace("Email pipeline result updated for: " + submission);
+			responseCode = HttpServletResponse.SC_OK;
+
+			if (parameters.getEmailPipelineResult()) {
+				message = messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale);
+			} else {
+				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
+			}
 		} else {
-			message = messageSource.getMessage("analysis.notification.you.will.not.receive.an.email", new Object[] {},
-					locale);
+			logger.debug("Email on completion preference not updated due to analysis state");
 		}
 
-		return ImmutableMap.of("result", "success", "message", message);
+		response.setStatus(responseCode);
+
+		return ImmutableMap.of("result", Integer.toString(response.getStatus()), "message", message);
 	}
 
 	/**
@@ -311,7 +323,8 @@ public class AnalysisController {
 				.getVersion();
 		String priority = submission.getPriority()
 				.toString();
-		String duration = getAnalysisDuration(submission).toString();
+		Long duration = getAnalysisDuration(submission);
+
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
 		boolean emailPipelineResult = submission.getEmailPipelineResult();
 
@@ -403,7 +416,7 @@ public class AnalysisController {
 		inputFilesMap.put("result", "success");
 		inputFilesMap.put("samples", sampleFiles);
 
-		if(referenceFile != null) {
+		if (referenceFile != null) {
 			inputFilesMap.put("referenceFile", referenceFile);
 		}
 
@@ -421,24 +434,32 @@ public class AnalysisController {
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
-	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale) {
+	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
+			HttpServletResponse response) {
 		String message = "";
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
-
+		int responseCode = HttpServletResponse.SC_OK;
 		if (parameters.getAnalysisName() != null) {
 			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
 			logger.trace("Name updated for: " + submission);
-			message = messageSource.getMessage("analysis.notification.analysis.name.updated",
+			message = messageSource.getMessage("AnalysisDetails.nameUpdated",
 					new Object[] { parameters.getAnalysisName() }, locale);
 		} else if (parameters.getPriority() != null) {
-			analysisSubmissionService.updatePriority(submission, parameters.getPriority());
-			logger.trace("Priority updated for: " + submission);
-			message = messageSource.getMessage("analysis.notification.analysis.priority.updated",
-					new Object[] { parameters.getPriority(), submission.getName() }, locale);
+			if (submission.getAnalysisState() == AnalysisState.NEW) {
+				analysisSubmissionService.updatePriority(submission, parameters.getPriority());
+				logger.trace("Priority updated for: " + submission);
+				message = messageSource.getMessage("AnalysisDetails.priorityUpdated",
+						new Object[] { parameters.getPriority(), submission.getName() }, locale);
+			} else {
+				logger.trace("Unable to update priority as: " + submission + "is no longer in queued state");
+				message = messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale);
+				responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+			}
 		}
+		response.setStatus(responseCode);
 
-		return ImmutableMap.of("result", "success", "message", message);
+		return ImmutableMap.of("result", Integer.toString(response.getStatus()), "message", message);
 	}
 
 	/**
@@ -1198,7 +1219,7 @@ public class AnalysisController {
 		Long duration = 0L;
 
 		if(submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			analysesListingService.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
 					.getCreatedDate());
 		}
 
