@@ -6,8 +6,8 @@
  * The following import statements makes available
  * all the elements required by the component
  */
-import React, { useState, useContext } from "react";
-import { Button, Checkbox, Alert, Popconfirm, Row, Typography } from "antd";
+import React, { useContext } from "react";
+import { Button, Checkbox, Alert, Popconfirm, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { showNotification } from "../../../modules/notifications";
 import { getI18N } from "../../../utilities/i18n-utilties";
@@ -23,29 +23,19 @@ export default function AnalysisDelete() {
    */
   const { analysisContext } = useContext(AnalysisContext);
 
-  // Local state variable which stores the checkbox state
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
-
-  // Set local state for deleteConfirm
-  function onChange(e) {
-    setDeleteConfirm(e.target.checked);
-  }
-
   /* Delete the analysis if the user selected
    * the confirm delete checkbox and clicked
    * confirm within the popup, then redirect
    * to the dashboard
    */
   function handleDeleteConfirm() {
-    if (deleteConfirm) {
-      deleteAnalysis(analysisContext.analysis.identifier).then(res =>
-        showNotification({ text: res.result })
-      );
+    deleteAnalysis(analysisContext.analysis.identifier).then(res =>
+      showNotification({ text: res.result })
+    );
 
-      window.setTimeout(function() {
-        window.location.replace(window.TL.BASE_URL);
-      }, 3500);
-    }
+    window.setTimeout(function() {
+      window.location.replace(window.TL.BASE_URL);
+    }, 3500);
   }
 
   // The following renders the Delete Analysis component view
@@ -59,32 +49,21 @@ export default function AnalysisDelete() {
         type="warning"
       />
 
-      <Row className="spaced-top__lg">
-        <Checkbox onChange={onChange}>
-          {getI18N("AnalysisDelete.confirmAnalysisDeletion")}
-        </Checkbox>
-      </Row>
-
-      <Row>
+      <section>
         <Popconfirm
-          placement="top"
+          placement="right"
           title={`${getI18N("AnalysisDelete.deleteAnalysis")} ${
             analysisContext.analysisName
           }?`}
           okText={getI18N("AnalysisDelete.confirm")}
           cancelText={getI18N("AnalysisDelete.cancel")}
           onConfirm={handleDeleteConfirm}
-          disabled={!deleteConfirm}
         >
-          <Button
-            type="danger"
-            className="spaced-top__lg"
-            disabled={!deleteConfirm}
-          >
+          <Button type="danger" className="spaced-top__lg">
             {getI18N("AnalysisDelete.delete")}
           </Button>
         </Popconfirm>
-      </Row>
+      </section>
     </>
   );
 }

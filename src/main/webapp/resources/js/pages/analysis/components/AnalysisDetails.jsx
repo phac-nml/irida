@@ -16,7 +16,6 @@ import {
   Input,
   List,
   Col,
-  Row,
   Tabs,
   Select,
   Spin,
@@ -143,30 +142,24 @@ export function AnalysisDetails() {
         >
           <Col span={12}>
             <Title level={2}>{getI18N("AnalysisDetails.details")}</Title>
-
-            <Row>
-              <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                <label>{getI18N("AnalysisDetails.name")}</label>
-
-                <Paragraph editable={{ onChange: updateSubmissionName }}>
-                  {analysisContext.analysisName}
-                </Paragraph>
-              </Col>
-            </Row>
+            <>
+              <label>{getI18N("AnalysisDetails.name")}</label>
+              <Paragraph editable={{ onChange: updateSubmissionName }}>
+                {analysisContext.analysisName}
+              </Paragraph>
+            </>
 
             {isAdmin && analysisContext.analysisState === "NEW" ? (
-              <Row>
-                <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                  <label>Priority</label>
-                  <Select
-                    defaultValue={analysisContext.analysis.priority}
-                    style={{ width: "100%" }}
-                    onChange={updateAnalysisPriority}
-                  >
-                    {renderPriorities()}
-                  </Select>
-                </Col>
-              </Row>
+              <>
+                <label>Priority</label>
+                <Select
+                  defaultValue={analysisContext.analysis.priority}
+                  style={{ width: "100%" }}
+                  onChange={updateAnalysisPriority}
+                >
+                  {renderPriorities()}
+                </Select>
+              </>
             ) : null}
 
             <div>
