@@ -5,6 +5,7 @@ import java.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,9 @@ public class LoginController extends BaseController {
 
 
 	private final EmailController emailController;
+
+	@Value("${ui.logo.light}")
+	private String LIGHT_LOGO;
 
 	@Autowired
 	public LoginController(final EmailController emailController) {
@@ -56,6 +60,7 @@ public class LoginController extends BaseController {
 
 		logger.debug("Displaying login page.");
 
+		model.addAttribute("logo", LIGHT_LOGO);
 		model.addAttribute("emailConfigured", emailController.isMailConfigured());
 		model.addAttribute("error", hasError);
 		return LOGIN_PAGE;

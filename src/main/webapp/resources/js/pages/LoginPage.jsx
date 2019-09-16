@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
-import { Form, Icon, Input, Layout } from "antd";
-import { grey1 } from "../styles/colors";
+import { Alert, Button, Card, Form, Icon, Input, Layout } from "antd";
+import { grey1, red6 } from "../styles/colors";
 import { SPACE_MD } from "../styles/spacing";
+import { getI18N } from "../utilities/i18n-utilties";
+
+const LayoutBackground = styled(Layout)`
+  min-height: 100vh;
+`;
 
 const LoginContent = styled(Layout.Content)`
   display: flex;
@@ -11,57 +16,120 @@ const LoginContent = styled(Layout.Content)`
   justify-content: center;
 `;
 
-const LoginWrapper = styled.div`
+const LoginCard = styled(Card)`
+  width: 400px;
   background-color: ${grey1};
-  padding: ${SPACE_MD};
+`;
+
+const Links = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 function LoginPage({ form }) {
-  const { getFieldDecorator } = form;
+  const [loading, setLoading] = useState(false);
+
+  const { getFieldDecorator, getFieldsError } = form;
+  const hasErrors = ((fieldsError = getFieldsError()) =>
+    Object.keys(fieldsError).some(field => fieldsError[field]))();
+
+  function handleSubmit() {
+    if (!hasErrors) {
+      setLoading(true);
+      document.forms["loginForm"].submit();
+    }
+  }
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <LoginContent style={{ display: "flex" }}>
-        <LoginWrapper>
-          <div>
-            <img src={`/resources/img/irida_logo_dark.svg`} />
+    <LayoutBackground>
+      {window.PAGE.hasErrors ? (
+        <Alert
+          style={{ borderBottom: `2px solid ${red6}` }}
+          type="error"
+          message={getI18N("LoginPage.error.message")}
+          description={getI18N("LoginPage.error.description")}
+          banner
+          showIcon
+          closable
+        />
+      ) : null}
+      <LoginContent>
+        <LoginCard>
+          <div style={{ marginBottom: SPACE_MD }}>
+            <img src={window.PAGE.logo} />
           </div>
-          <Form>
+          <Form
+            action={`${window.PAGE.BASE_URL}login`}
+            name="loginForm"
+            method="POST"
+          >
             <Form.Item>
               {getFieldDecorator("username", {
                 rules: [
-                  { required: true, message: "Please input your username!" }
+                  {
+                    required: true,
+                    message: getI18N("LoginPage.username.required")
+                  }
                 ]
               })(
                 <Input
+                  name="username"
                   prefix={
                     <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
                   }
-                  placeholder="Username"
+                  placeholder={getI18N("LoginPage.username")}
                 />
               )}
             </Form.Item>
             <Form.Item>
               {getFieldDecorator("password", {
                 rules: [
-                  { required: true, message: "Please input your Password!" }
+                  {
+                    required: true,
+                    message: getI18N("LoginPage.password.required")
+                  }
                 ]
               })(
                 <Input
+                  name="password"
                   prefix={
                     <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
                   }
                   type="password"
-                  placeholder="Password"
+                  placeholder={getI18N("LoginPage.password")}
                 />
               )}
             </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                loading={loading}
+                htmlType="submit"
+                disabled={hasErrors}
+                block
+                onClick={() => handleSubmit()}
+              >
+                {getI18N("LoginPage.submit")}
+              </Button>
+              {window.PAGE.emailConfigured ? (
+                <Links>
+                  <a href={`${window.PAGE.BASE_URL}password_reset`}>
+                    {getI18N("LoginPage.forgot")}
+                  </a>
+
+                  <a href={`${window.PAGE.BASE_URL}password_reset/activate`}>
+                    {getI18N("LoginPage.activate")}
+                  </a>
+                </Links>
+              ) : null}
+            </Form.Item>
           </Form>
-        </LoginWrapper>
+        </LoginCard>
       </LoginContent>
-    </Layout>
+    </LayoutBackground>
   );
 }
 
-const WrappedLoginForm = Form.create({ name: "login_form" })(LoginPage);
+const WrappedLoginForm = Form.create({ name: "loginForm" })(LoginPage);
 
 render(<WrappedLoginForm />, document.querySelector("#root"));

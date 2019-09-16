@@ -1,16 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}">
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+      <script th:inline="javascript">
+          window.PAGE = {
+            BASE_URL: /*[[@{/}]]*/ "/",
+            logo: /*[[${logo}]]*/ "/resources/img/irida_logo_light.svg",
+            hasErrors: /*[[${error}]]*/ false,
+            emailConfigured: /*[[${emailConfigured}]]*/ false,
+            i18n: {
+              "LoginPage.username": /*[[#{LoginPage.username}]]*/ "LoginPage.username",
+              "LoginPage.username.required": /*[[#{LoginPage.username.required}]]*/ "LoginPage.username.required",
+              "LoginPage.password": /*[[#{LoginPage.password}]]*/ "LoginPage.password",
+              "LoginPage.password.required": /*[[#{LoginPage.password.required}]]*/ "LoginPage.password.required",
+              "LoginPage.submit": /*[[#{LoginPage.submit}]]*/ "LoginPage.submit",
+              "LoginPage.forgot": /*[[#{LoginPage.forgot}]]*/ "LoginPage.forgot",
+              "LoginPage.activate": /*[[#{LoginPage.activate}]]*/ "LoginPage.activate",
+              "LoginPage.error.message": /*[[#{LoginPage.error.message}]]*/ "LoginPage.error.message",
+              "LoginPage.error.description": /*[[#{LoginPage.error.description}]]*/ "LoginPage.error.description"
+            }
+          };
+      </script>
   </head>
   <body>
-    <div id="root"></div>
-
-
+    <div id="root">
+      <!-- Contents rendered from LoginPage.jsx -->
+    </div>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>
