@@ -23,12 +23,19 @@ public class CartPage extends AbstractPage {
 	@FindBy(className = "t-pipelines")
 	private WebElement pipelinesView;
 
+	@FindBy(className = "t-pipeline-card")
+	private List<WebElement> pipelineCards;
+
 	public CartPage(WebDriver driver) {
 		super(driver);
 	}
 
 	public static CartPage goToCart(WebDriver driver) {
 		get(driver, "/cart/pipelines");
+		return initPage(driver);
+	}
+
+	public static CartPage initPage(WebDriver driver) {
 		waitForTime(500);
 		return PageFactory.initElements(driver, CartPage.class);
 	}
@@ -48,6 +55,14 @@ public class CartPage extends AbstractPage {
 				.size();
 	}
 
+	public void selectFirstPipeline() {
+		WebElement pipelineCard = pipelineCards.iterator()
+				.next();
+
+		pipelineCard.findElement(By.className("t-select-pipeline"))
+				.click();
+	}
+
 	public boolean onPipelinesView() {
 		return pipelinesView.isDisplayed();
 	}
@@ -56,7 +71,8 @@ public class CartPage extends AbstractPage {
 		WebElement sample = cartSamples.get(index);
 		WebElement deleteButton = sample.findElement(By.className("t-delete-menu-btn"));
 		Actions actions = new Actions(driver);
-		actions.moveToElement(deleteButton).perform();
+		actions.moveToElement(deleteButton)
+				.perform();
 		WebElement deleteMenu = driver.findElement(By.className("t-delete-menu"));
 		deleteMenu.findElement(By.className("t-delete-sample"))
 				.click();

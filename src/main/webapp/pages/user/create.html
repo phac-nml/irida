@@ -87,6 +87,12 @@
                                    data:msg-hasNumber="#{user.create.phone.no-numbers}"/>
                         </div>
                         <div class="form-group">
+                                <label for="language" th:text="#{user.language}">_Language_</label>
+                                <select id="language", name="locale" class="form-control input-full" th:disabled="${#lists.size(locales) == 1}">
+                                    <option th:each="locale : ${locales}" th:text="${locale.getDisplayName()}" th:value="${locale.getLanguage()}"></option>
+                                </select>
+                            </div>
+                        <div class="form-group">
                             <label for="systemRole" th:text="#{users.role}">_Role_</label>
                             <div class="alert alert-danger"
                                  th:if="${#maps.containsKey(errors, 'role')}"

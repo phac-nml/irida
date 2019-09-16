@@ -1,55 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
-<head>
-    <title th:text="#{projects.title}">List of Projects</title>
-    <link rel="stylesheet" th:href="@{/dist/css/projects.bundle.css}">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{page.projects.title}">List of Projects</title>
+    <link rel="stylesheet" th:href="@{/dist/css/projects.bundle.css}" />
     <script th:inline="javascript">
-      var PAGE = {
-          urls: {
-            projects: /*[[@{${ajaxURL}}]]*/ "",
-            project: /*[[@{/projects/}]]*/ "",
-            export: /*[[@{/projects/ajax/export(admin=${isAdmin})}]]*/ ""
-          },
+      window.PAGE = {
         i18n: {
-          remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
-        },
-        buttons: /*[[${exportTypes}]]*/ []
+          ProjectsTable_th_id: /*[[#{ProjectsTable_th_id}]]*/ "__ID__",
+          ProjectsTable_th_name: /*[[#{ProjectsTable_th_name}]]*/ "__NAME__",
+          ProjectsTable_th_organism: /*[[#{ProjectsTable_th_organism}]]*/ "__ProjectsTable_th_organism__",
+          ProjectsTable_th_samples: /*[[#{ProjectsTable_th_samples}]]*/ "__ProjectsTable_th_samples__",
+          ProjectsTable_th_created_date: /*[[#{ProjectsTable_th_created_date}]]*/ "__ProjectsTable_th_created_date__",
+          ProjectsTable_th_modified_date: /*[[#{ProjectsTable_th_modified_date}]]*/ "__ProjectsTable_th_modified_date__",
+          ProjectsTable_export_excel: /*[[#{ProjectsTable_export_excel}]]*/ "__ProjectsTable_export_excel__",
+          ProjectsTable_export_csv: /*[[#{ProjectsTable_export_csv}]]*/ "__ProjectsTable_export_csv__",
+          ProjectsTable_header: /*[[#{ProjectsTable_header}]]*/ "__ProjectsTable_header__",
+          ProjectsTable_export: /*[[#{ProjectsTable_export}]]*/ "__ProjectsTable_export__"
+        }
       };
     </script>
-</head>
-<body>
-<div layout:fragment="page">
+  </head>
+  <body>
+    <div
+      id="root"
+      style="height: 100%; min-height: 100%"
+      layout:fragment="page"
+    ></div>
 
-    <main class="col-md-12" property="mainContentOfPage">
-        <h1 th:text="#{projects.title}"></h1>
-
-        <table id="projects" class="table table-striped"
-               cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
-                <th data-data="name" th:text="#{projects.table.name}"></th>
-                <th data-data="organism" th:text="#{projects.table.organism}"></th>
-                <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
-                <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
-                <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
-            </tr>
-            </thead>
-        </table>
-    </main>
-
-    <div class="hidden" id="export-btn-text">
-        <i class="fa fa-download" aria-hidden="true"></i>
-        &nbsp;<th:block th:text="#{projects.export}"/>
-        <i class="fa fa-caret-down" aria-hidden="true">
-        </i>
-    </div>
-</div>
-
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/projects.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/projects.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

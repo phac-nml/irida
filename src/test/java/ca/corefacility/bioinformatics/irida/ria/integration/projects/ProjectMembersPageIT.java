@@ -1,5 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.WebElement;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -9,13 +16,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembers
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -64,7 +64,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testEditRole() {
 		membersPage.setRoleForUser(2L, ProjectRole.PROJECT_OWNER.toString());
-		assertTrue("should display success message after updating role.", membersPage.notySuccessDisplayed());
+		assertTrue("should display success message after updating role.", membersPage.checkSuccessNotification());
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		String username = "third guy";
 		membersPage.clickAddMember();
 		membersPage.addUserToProject(username, ProjectRole.PROJECT_USER);
-		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", membersPage.checkSuccessNotification());
 
 		List<String> projectMembersNames = membersPage.getProjectMembersNames();
 		assertTrue(projectMembersNames.contains(username));
@@ -84,9 +84,9 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		membersPage.goToGroupsPage();
 		membersPage.clickAddMember();
 		membersPage.addUserToProject(groupName, ProjectRole.PROJECT_USER);
-		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", membersPage.checkSuccessNotification());
 		membersPage.setRoleForUser(1L, ProjectRole.PROJECT_OWNER.toString());
-		assertTrue("should display success message after updating role.", membersPage.notySuccessDisplayed());
+		assertTrue("should display success message after updating role.", membersPage.checkSuccessNotification());
 		membersPage.clickRemoveUserButton(1L);
 		membersPage.clickModalPopupButton();
 		List<String> groupNames = membersPage.getProjectMembersNames();
@@ -99,7 +99,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		String username = "third guy";
 		membersPage.clickAddMember();
 		membersPage.addUserToProject(username, ProjectRole.PROJECT_OWNER);
-		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", membersPage.checkSuccessNotification());
 		LoginPage.logout(driver());
 		LoginPage.loginAsAnotherUser(driver());
 		membersPage.goToGroupsPage();
@@ -110,7 +110,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 			As the user is a manager on the project they should have the
 			ability to add user groups to the project
 		*/
-		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", membersPage.checkSuccessNotification());
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		String username = "third guy";
 		membersPage.clickAddMember();
 		membersPage.addUserToProject(username, ProjectRole.PROJECT_USER);
-		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		assertTrue("Noty success should be displayed", membersPage.checkSuccessNotification());
 		LoginPage.logout(driver());
 
 		LoginPage.loginAsAnotherUser(driver());

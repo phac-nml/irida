@@ -12,10 +12,10 @@
 		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" remoteURL="somewhere" sistr_typing_uploads="OFF" />
+		projectDescription="description" remoteURL="somewhere"  />
 
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-		projectDescription="description" remoteURL="somewhere" sistr_typing_uploads="OFF" />
+		projectDescription="description" remoteURL="somewhere"  />
 
 	<project_user id="1" createdDate="2013-07-18 14:20:19.0"
 		projectRole="PROJECT_OWNER" project_id="1" user_id="1"
@@ -122,19 +122,19 @@
 		analysis_id="1" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
 		submitter="1" remote_workflow_id="1" remote_input_data_id="1"
-		analysis_cleaned_state="NOT_CLEANED" update_samples="1" priority="MEDIUM" />
+		analysis_cleaned_state="NOT_CLEANED" update_samples="1" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 
 	<analysis_submission id="2" name="my analysis"
 		analysis_id="2" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
 		submitter="1" remote_workflow_id="1" remote_input_data_id="1"
-		analysis_cleaned_state="NOT_CLEANED" update_samples="1" priority="MEDIUM" />
+		analysis_cleaned_state="NOT_CLEANED" update_samples="1" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 		
 	<analysis_submission id="3" name="my analysis"
 		analysis_id="3" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
 		submitter="2" remote_workflow_id="1" remote_input_data_id="1"
-		analysis_cleaned_state="NOT_CLEANED" update_samples="1" priority="MEDIUM" />
+		analysis_cleaned_state="NOT_CLEANED" update_samples="1" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 
 	<analysis_submission_sequencing_object
 		analysis_submission_id="1" sequencing_object_id="1" />

@@ -94,7 +94,7 @@ public class SequenceFilePages extends AbstractPage {
 	//***********************************************************************************************
 
 	public int getChartCount() {
-		return driver.findElements(By.className("media-object")).size();
+		return driver.findElements(By.cssSelector(".sequenceFile img")).size();
 	}
 
 	//***********************************************************************************************

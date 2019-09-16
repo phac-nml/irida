@@ -40,9 +40,10 @@ public interface AnalysisWorkspaceService {
 	 *             If there was an issue preparing the workflow workspace.
 	 * @throws IridaWorkflowException
 	 *             If there was an issue with the IRIDA workflow.
+	 * @throws IOException If there was an error reading some of the input files.            
 	 */
 	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowException;
+			throws ExecutionManagerException, IridaWorkflowException, IOException;
 
 	/**
 	 * Gets an Analysis object containing the results for this analysis. This

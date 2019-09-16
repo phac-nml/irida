@@ -52,11 +52,11 @@ export default function AnalysisShare() {
 
   // Updates if analysis is shared with a project or not
   function onChange(e) {
-    updateSharedProjects(
-      analysisContext.analysis.identifier,
-      e.target.value,
-      e.target.checked
-    ).then(res => showNotification({ text: res.message }));
+    updateSharedProjects({
+      submissionId: analysisContext.analysis.identifier,
+      projectId: e.target.value,
+      shareStatus: e.target.checked
+    }).then(res => showNotification({ text: res.message }));
   }
 
   // On load gets the projects which the analysis can be shared with

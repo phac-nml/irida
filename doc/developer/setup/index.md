@@ -176,7 +176,7 @@ To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel
 * Check the "Enable" checkbox.
 * Node interpreter should be you system node by default.
 * ESLint package is the `eslint` within the projects `node_modules` directory.
-* Configuration file is the `src/main/webapp/.eslintrc.js`. 
+* Configuration file is the `src/main/webapp/.eslintrc.json`. 
 
 <video controls="controls" style="width: 960px">
     <source src="images/intellij-eslint.mp4" type="video/mp4" />

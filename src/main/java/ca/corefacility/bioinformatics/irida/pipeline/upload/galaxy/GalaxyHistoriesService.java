@@ -179,8 +179,6 @@ public class GalaxyHistoriesService {
 	 * 
 	 * @param paths
 	 *            The set of paths to upload.
-	 * @param fileType
-	 *            The file type of the file to upload.
 	 * @param history
 	 *            The history to upload the file into.
 	 * @param library
@@ -193,14 +191,14 @@ public class GalaxyHistoriesService {
 	 *             If there was an issue uploading the file to Galaxy.
 	 */
 	public Map<Path, String> filesToLibraryToHistory(Set<Path> paths,
-			InputFileType fileType, History history, Library library,
+			History history, Library library, 
 			DataStorage dataStorage) throws UploadException {
 		checkNotNull(paths, "paths is null");
 
 		Map<Path, String> datasetIdsMap = new HashMap<>();
 
 		Map<Path, String> datasetLibraryIdsMap = librariesService
-				.filesToLibraryWait(paths, fileType, library, dataStorage);
+				.filesToLibraryWait(paths, library, dataStorage);
 
 		if (datasetLibraryIdsMap.size() != paths.size()) {
 			throw new UploadException(

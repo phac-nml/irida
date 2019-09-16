@@ -5,7 +5,8 @@
  */
 module.exports = {
   vendor: [
-    "@babel/polyfill",
+    "core-js/stable",
+    "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
     "expose-loader?angular!angular",
     "./resources/js/vendors"
@@ -20,7 +21,7 @@ module.exports = {
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "project-events": "./resources/js/pages/projects/project-events.js",
-  projects: "./resources/js/pages/projects/projects.js",
+  projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
@@ -37,6 +38,8 @@ module.exports = {
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "project-settings-basic":
+    "./resources/js/pages/projects/settings/project-settings-basic.js",
   "project-settings-remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
@@ -70,5 +73,7 @@ module.exports = {
   "groups-list": "./resources/js/pages/users/groups-list.js",
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
-  search: "./resources/js/pages/search/search.js"
+  search: "./resources/js/pages/search/search.js",
+  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
+  "run-files": "./resources/js/pages/sequence-files/run-files.js"
 };
