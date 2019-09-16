@@ -41,6 +41,7 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
+* [UI]: New login page with configurable logo.
 
 19.01 to 19.05
 ---------------
