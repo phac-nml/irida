@@ -126,7 +126,7 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      ...nameColumnFormat(`${window.TL.BASE_URL}projects`),
+      ...nameColumnFormat({ url: `${window.TL.BASE_URL}projects` }),
       title: getI18N("ProjectsTable_th_name")
     },
     {
@@ -188,31 +188,33 @@ export function ProjectsTable() {
 
   return (
     <PageWrapper title={getI18N("ProjectsTable_header")}>
-      <div
-        style={{
-          paddingBottom: SPACE_MD,
-          display: "flex",
-          justifyContent: "space-between"
-        }}
-      >
-        <Dropdown overlay={exportMenu} key="export">
-          <Button>
-            {getI18N("ProjectsTable_export")} <Icon type="down" />
-          </Button>
-        </Dropdown>
-        <Input.Search style={{width: 300}} onSearch={onSearch} />
-      </div>
-      <Table
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{
-          total: total,
-          pageSize: state.pageSize
-        }}
-        columns={columns}
-        dataSource={projects}
-        onChange={handleTableChange}
-      />
+      <>
+        <div
+          style={{
+            paddingBottom: SPACE_MD,
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
+          <Dropdown overlay={exportMenu} key="export">
+            <Button>
+              {getI18N("ProjectsTable_export")} <Icon type="down" />
+            </Button>
+          </Dropdown>
+          <Input.Search style={{ width: 300 }} onSearch={onSearch} />
+        </div>
+        <Table
+          rowKey={record => record.id}
+          loading={loading}
+          pagination={{
+            total: total,
+            pageSize: state.pageSize
+          }}
+          columns={columns}
+          dataSource={projects}
+          onChange={handleTableChange}
+        />
+      </>
     </PageWrapper>
   );
 }

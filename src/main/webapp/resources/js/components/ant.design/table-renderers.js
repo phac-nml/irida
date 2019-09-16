@@ -10,7 +10,7 @@ export const idColumnFormat = () => ({
   width: 50
 });
 
-export const nameColumnFormat = ({ url, width }) => {
+export const nameColumnFormat = ({ url, width = 300 }) => {
   return {
     dataIndex: "name",
     key: "name",
