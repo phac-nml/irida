@@ -188,14 +188,17 @@ public class AnalysesAjaxController {
 	/**
 	 * Delete a specific {@link AnalysisSubmission}
 	 *
-	 * @param id for the {@link AnalysisSubmission} to delete
+	 * @param ids for all {@link AnalysisSubmission}'s to delete
+	 * @param response {@link HttpServletResponse}
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	public void deleteAnalysisSubmission(@RequestParam Long id) {
-		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(id);
-		analysisSubmissionService.delete(id);
-		logger.info("Deleted analysis id=" + id);
+	public void deleteAnalysisSubmissions(@RequestParam List<Long> ids, HttpServletResponse response) {
+		try {
+			analysisSubmissionService.deleteMultiple(ids);
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**

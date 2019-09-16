@@ -108,7 +108,7 @@
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
                          submitted_project_id="[null]" enabled="[null]"/>
     <analysis_submission id="2" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"
-                         workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
+                         workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
                          submitted_project_id="[null]" enabled="[null]"/>
     <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"

@@ -83,6 +83,6 @@ export async function fetchAllPipelinesTypes() {
   return axios.get(`${BASE_URL}/types`).then(response => response.data);
 }
 
-export async function deleteAnalysisSubmission({ id }) {
-  return axios.delete(`${BASE_URL}/delete?id=${id}`);
+export async function deleteAnalysisSubmissions({ ids }) {
+  return axios.delete(`${BASE_URL}/delete?ids=${ids.join(",")}`);
 }
