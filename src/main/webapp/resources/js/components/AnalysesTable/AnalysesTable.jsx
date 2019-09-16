@@ -140,7 +140,10 @@ export function AnalysesTable() {
     rowSelection = {
       selectedRowKeys: selected,
       onChange: selectedRowKeys => setSelected(selectedRowKeys),
-      getCheckboxProps: record => ({ name: record.name })
+      getCheckboxProps: record => ({
+        name: record.name,
+        disabled: !record.modifiable
+      })
     };
   }
 

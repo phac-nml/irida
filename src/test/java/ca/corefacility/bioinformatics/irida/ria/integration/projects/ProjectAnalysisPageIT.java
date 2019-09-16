@@ -26,5 +26,10 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 1 Analysis displayed after filtering", 1, projectAnalysesPage.getNumberOfAnalysesDisplayed());
 		projectAnalysesPage.clearNameFilter();
 		assertEquals("Should have 2 analyses displayed", 2, projectAnalysesPage.getNumberOfAnalysesDisplayed());
+
+		// Test deleting an analysis
+		projectAnalysesPage.deleteAnalysis(0);
+		assertEquals("Should only be 1 analysis remaining after deletion", 1,
+				projectAnalysesPage.getNumberOfAnalysesDisplayed());
 	}
 }
