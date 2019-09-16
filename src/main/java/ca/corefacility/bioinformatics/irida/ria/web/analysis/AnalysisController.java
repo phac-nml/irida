@@ -269,6 +269,7 @@ public class AnalysisController {
 	 * @param parameters parameters which include the submission id and
 	 *                   the new email pipeline result value
 	 * @param locale     User's locale
+	 * @param response   HTTP response object
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
@@ -431,6 +432,7 @@ public class AnalysisController {
 	 *
 	 * @param parameters parameters which include the submission id and the new name and/or priority
 	 * @param locale     User's locale
+	 * @param response   HTTP response object
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)

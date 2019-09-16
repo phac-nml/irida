@@ -142,7 +142,7 @@ public class AnalysisControllerTest {
 		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertFalse("Phylogenetic Tree tab should not be available", model.containsAttribute("phylogeneticiTree"));
+		assertFalse("Phylogenetic Tree tab should not be available", model.containsAttribute("phylogeneticTree"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 	}
