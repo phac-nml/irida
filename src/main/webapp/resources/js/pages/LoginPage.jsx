@@ -102,6 +102,7 @@ function LoginPage({ form }) {
             </Form.Item>
             <Form.Item>
               <Button
+                id="t-submit-btn"
                 type="primary"
                 loading={loading}
                 htmlType="submit"

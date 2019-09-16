@@ -24,7 +24,7 @@ public class LoginPage extends AbstractPage {
 	@FindBy(name = "password")
 	private WebElement password;
 
-	@FindBy(id = "submitBtn")
+	@FindBy(id = "t-submit-btn")
 	private WebElement submitBtn;
 
 	public LoginPage(WebDriver driver) {
