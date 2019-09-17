@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 import static org.junit.Assert.*;
@@ -31,9 +29,6 @@ public class AbstractPage {
 
 	protected final int DEFAULT_WAIT = 500;
 
-	@FindBy(className = "error")
-	private WebElement errors;
-
 	protected WebDriver driver;
 
 	public AbstractPage(WebDriver driver) {
@@ -44,8 +39,8 @@ public class AbstractPage {
 		this.driver = driver;
 	}
 
-	public String getErrors() {
-		return errors.getText();
+	public boolean hasLoginError() {
+		return driver.findElement(By.className("t-login-error")).isDisplayed();
 	}
 
 	protected static void get(WebDriver driver, String relativeUrl) {

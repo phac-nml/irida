@@ -1,16 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p> Integration test to ensure that the Login Page works and redirects the user to the dashboard. </p>
@@ -27,7 +26,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		page.login(LoginPage.BAD_USERNAME, LoginPage.GOOD_PASSWORD);
 		assertTrue("Should update the url with '?error=true'", driver().getCurrentUrl().contains("login?error=true"));
-		assertEquals("Should display error on bad login", page.getErrors(), "Incorrect Username or Password");
+		assertTrue("Should display error on bad login", page.hasLoginError());
 	}
 
 	@Test
@@ -35,7 +34,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		page.login(LoginPage.USER_USERNAME, LoginPage.BAD_PASSWORD);
 		assertTrue("Should update the url with '?error=true'", driver().getCurrentUrl().contains("login?error=true"));
-		assertEquals("Should display error on bad login", page.getErrors(), "Incorrect Username or Password");
+		assertTrue("Should display error on bad login", page.hasLoginError());
 	}
 
 	@Test

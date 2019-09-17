@@ -46,7 +46,11 @@ function LoginPage({ form }) {
         <Alert
           style={{ borderBottom: `2px solid ${red6}` }}
           type="error"
-          message={getI18N("LoginPage.error.message")}
+          message={
+            <span className="t-login-error">
+              {getI18N("LoginPage.error.message")}
+            </span>
+          }
           description={getI18N("LoginPage.error.description")}
           banner
           showIcon
