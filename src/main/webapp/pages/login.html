@@ -9,7 +9,7 @@
       <script th:inline="javascript">
           window.PAGE = {
             BASE_URL: /*[[@{/}]]*/ "/",
-            logo: /*[[${logo}]]*/ "/resources/img/irida_logo_light.svg",
+            logo: /*[[@{${@environment.getProperty('ui.logo.light')}}]]*/ "/resources/img/irida_logo_light.svg",
             hasErrors: /*[[${error}]]*/ false,
             emailConfigured: /*[[${emailConfigured}]]*/ false,
             i18n: {

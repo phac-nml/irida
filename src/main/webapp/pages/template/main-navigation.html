@@ -11,8 +11,8 @@
                 <i class="fa fa-bars navbar-collapse-icon" aria-hidden="true"></i>
             </button>
             <a class="navbar-brand" th:href="@{/}">
-                <img class="navbar-logo" src="/resources/img/irida_logo_dark.svg" th:src="@{/resources/img/irida_logo_dark.svg}"
-                     th:alt="#{global.title}"/>
+                <img class="navbar-logo" th:src="@{${@environment.getProperty('ui.logo.dark')}}"
+                     th:alt="#{global.title}" />
             </a>
         </div>
 
