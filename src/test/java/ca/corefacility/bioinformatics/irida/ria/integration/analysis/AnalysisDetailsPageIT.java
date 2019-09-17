@@ -52,7 +52,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
 
-		page.clickEditButton();
+		page.clickSettingsTab();
 
 		assertFalse("priority edit should be hidden", page.priorityEditVisible());
 

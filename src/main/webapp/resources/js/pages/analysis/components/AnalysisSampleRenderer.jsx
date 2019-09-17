@@ -19,7 +19,7 @@ export function AnalysisSampleRenderer() {
   const renderSamples = () => {
     const samplesList = [];
 
-    if (analysisSamplesContext.sequenceFilePairList.length > 0) {
+    if (analysisSamplesContext.samples.length > 0) {
       return (
         <List
           bordered
@@ -29,20 +29,38 @@ export function AnalysisSampleRenderer() {
             return (
               <List.Item>
                 <List.Item.Meta
-                  key={item.id}
+                  key={item.sampleId}
                   avatar={
                     <Avatar>
                       <Icon type="experiment" />
                     </Avatar>
                   }
-                  title={<a href={"#"}>{item.sample.label}</a>}
+                  title={
+                    <a
+                        href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
+                        target="_blank"
+                    >
+                        {item.sampleName}
+                    </a>
+                }
                   description={
                     <div>
-                      {item.sequenceFilePair.files.map(file => (
-                        <div key={`file-${file.id}`}>
-                          <a href={"#"}>{file.fileName}</a>
+                        <div key={`file-${item.forward.identifier}`}>
+                          <a
+                            href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
+                            target="_blank"
+                          >
+                            {item.forward.fileName}
+                          </a>
                         </div>
-                      ))}
+                        <div key={`file-${item.reverse.identifier}`}>
+                            <a
+                              href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
+                              target="_blank"
+                            >
+                                {item.reverse.fileName}
+                            </a>
+                        </div>
                     </div>
                   }
                 />
@@ -51,79 +69,6 @@ export function AnalysisSampleRenderer() {
           }}
         />
       );
-      // let pairIndex = 0;
-      // for (const [
-      //   index,
-      //   sampleObj
-      // ] of analysisSamplesContext.samples.entries()) {
-      //   samplesList.push(
-      //     <Card
-      //       type="inner"
-      //       title={
-      //         <Button
-      //           type="link"
-      //           href={`${window.TL.BASE_URL}samples/${sampleObj.sample.identifier}/details`}
-      //           target="_blank"
-      //         >
-      //           <Icon type="filter" rotate="180" />{" "}
-      //           {sampleObj.sample.sampleName}
-      //         </Button>
-      //       }
-      //       key={`sampleId-${sampleObj.sample.identifier}`}
-      //     >
-      //       <Row
-      //         key={`fileId-${analysisSamplesContext.sequenceFilePairList[pairIndex].identifier}`}
-      //       >
-      //         <span
-      //           style={{
-      //             display: "flex",
-      //             justifyContent: "space-between",
-      //             alignItems: "center"
-      //           }}
-      //         >
-      //           <Button
-      //             type="link"
-      //             target="_blank"
-      //             href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisSamplesContext.sequenceFilePairList[pairIndex].identifier}/summary`}
-      //           >
-      //             <Icon type="arrow-right" />{" "}
-      //             {analysisSamplesContext.sequenceFilePairList[pairIndex].label}
-      //           </Button>
-      //           <span>
-      //             {analysisSamplesContext.sequenceFileSizeList[pairIndex]}
-      //           </span>
-      //         </span>
-      //       </Row>
-      //       <Row
-      //         key={`fileId-${analysisSamplesContext.sequenceFilePairList[pairIndex + 1].identifier}`}
-      //       >
-      //         <span
-      //           style={{
-      //             display: "flex",
-      //             justifyContent: "space-between",
-      //             alignItems: "center"
-      //           }}
-      //         >
-      //           <Button
-      //             type="link"
-      //             target="_blank"
-      //             href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisSamplesContext.sequenceFilePairList[pairIndex + 1].identifier}/summary`}
-      //           >
-      //             <Icon type="arrow-left" />{" "}
-      //             {
-      //               analysisSamplesContext.sequenceFilePairList[pairIndex + 1]
-      //                 .label
-      //             }
-      //           </Button>
-      //           <span>
-      //             {analysisSamplesContext.sequenceFileSizeList[pairIndex + 1]}
-      //           </span>
-      //         </span>
-      //       </Row>
-      //     </Card>
-      //   );
-      //   pairIndex = pairIndex + 2;
-      // }
     } else {
       samplesList.push(
         <p key={`no-paired-end-0`}>{getI18N("AnalysisSamples.noPairedEnd")}</p>

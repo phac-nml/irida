@@ -398,31 +398,30 @@ public class AnalysisController {
 			logger.debug("No reference file required for workflow.");
 		}
 
-		ArrayList<SequenceFile> seqFilePairs = new ArrayList<>();
-		ArrayList<String> seqFileSizes = new ArrayList<>();
+		//List of hashmaps which store the sample info
+		ArrayList<HashMap<String, Object>> sampleList = new ArrayList<>();
 
 		for (SampleFiles sampleFile : sampleFiles) {
-			SequenceFile forward = sampleFile.getSequenceFilePair()
-					.getForwardSequenceFile();
-			SequenceFile reverse = sampleFile.getSequenceFilePair()
-					.getReverseSequenceFile();
-
-			seqFilePairs.add(forward);
-			seqFilePairs.add(reverse);
-			seqFileSizes.add(forward.getFileSize());
-			seqFileSizes.add(reverse.getFileSize());
+			HashMap<String, Object> hashSamples = new HashMap<>();
+			hashSamples.put("sampleName", sampleFile.getSample()
+					.getSampleName());
+			hashSamples.put("sampleId", sampleFile.getSample()
+					.getId());
+			hashSamples.put("sequenceFilePairId", sampleFile.getSequenceFilePair().getId());
+			hashSamples.put("forward", sampleFile.getSequenceFilePair()
+					.getForwardSequenceFile());
+			hashSamples.put("reverse", sampleFile.getSequenceFilePair()
+					.getReverseSequenceFile());
+			sampleList.add(hashSamples);
 		}
 
 		Map<String, Object> inputFilesMap = new HashMap<>();
 		inputFilesMap.put("result", "success");
-		inputFilesMap.put("samples", sampleFiles);
+		inputFilesMap.put("samples", sampleList);
 
 		if (referenceFile != null) {
 			inputFilesMap.put("referenceFile", referenceFile);
 		}
-
-		inputFilesMap.put("sequenceFilePairList", seqFilePairs);
-		inputFilesMap.put("sequenceFileSizeList", seqFileSizes);
 
 		return inputFilesMap;
 	}

@@ -64,7 +64,7 @@ export function AnalysisReferenceFileRenderer() {
   const downloadReferenceFile = () => {
     if (analysisSamplesContext.referenceFile.identifier !== undefined) {
       window.open(
-        `${window.TL.BASE_URL}referenceFiles/download/${analysisSamplessContext.referenceFile.identifier}`,
+        `${window.TL.BASE_URL}referenceFiles/download/${analysisSamplesContext.referenceFile.identifier}`,
         "_blank"
       );
     }

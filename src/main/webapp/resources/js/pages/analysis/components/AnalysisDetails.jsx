@@ -139,6 +139,7 @@ export function AnalysisDetails() {
           tab={getI18N("AnalysisDetails.details")}
           key="analysis_details"
           style={{ minWidth: 300 }}
+          className="t-analysis-settings-tab-details"
         >
           <Col span={12}>
             <Title level={2}>{getI18N("AnalysisDetails.details")}</Title>
@@ -156,6 +157,7 @@ export function AnalysisDetails() {
                   defaultValue={analysisContext.analysis.priority}
                   style={{ width: "100%" }}
                   onChange={updateAnalysisPriority}
+                  className="t-priority-edit"
                 >
                   {renderPriorities()}
                 </Select>
@@ -200,6 +202,7 @@ export function AnalysisDetails() {
         <TabPane
           tab={getI18N("AnalysisSamples.samples")}
           key="analysis_samples"
+          className="t-analysis-settings-tab-samples"
         >
           <Col span={12}>
             <Suspense fallback={<Spin />}>
@@ -215,7 +218,8 @@ export function AnalysisDetails() {
               !analysisContext.isError ? (
                 <TabPane
                   tab={getI18N("AnalysisShare.shareResults")}
-                  key="analysis_share"
+                key="analysis_share"
+                className="t-analysis-settings-tab-share-results"
                 >
                   <Col span={12}>
                     <Suspense fallback={<Spin />}>
@@ -227,6 +231,7 @@ export function AnalysisDetails() {
               <TabPane
                 tab={getI18N("AnalysisDelete.deleteAnalysis")}
                 key="analysis_delete"
+                className="t-analysis-settings-tab-delete-analysis"
               >
                 <Col span={12}>
                   <Suspense fallback={<Spin />}>

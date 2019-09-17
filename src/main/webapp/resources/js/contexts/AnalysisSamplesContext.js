@@ -11,8 +11,6 @@ import { getAnalysisInputFiles } from "../apis/analysis/analysis";
 
 const initialContext = {
   samples: [],
-  sequenceFilePairList: [],
-  sequenceFileSizeList: [],
   referenceFile: []
 };
 
@@ -26,18 +24,11 @@ function AnalysisSamplesProvider(props) {
 
   useEffect(() => {
     getAnalysisInputFiles(analysisContext.analysis.identifier).then(
-      ({
-        samples,
-        sequenceFilePairList,
-        sequenceFileSizeList,
-        referenceFile
-      }) => {
+      ({ samples, referenceFile }) => {
         setAnalysisSamplesContext(analysisSamplesContext => {
           return {
             ...analysisSamplesContext,
             samples: samples,
-            sequenceFilePairList: sequenceFilePairList,
-            sequenceFileSizeList: sequenceFileSizeList,
             referenceFile: referenceFile
           };
         });
