@@ -23,6 +23,7 @@ export function SequencingRunsList() {
         return (
           <Button
             type="link"
+            className="t-run-link"
             href={`${window.TL.BASE_URL}sequencingRuns/${text}`}
           >
             {text}
