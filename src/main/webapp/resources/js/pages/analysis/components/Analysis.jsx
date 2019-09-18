@@ -114,7 +114,7 @@ export default function Analysis() {
                 <TabPane
                   tab={getI18N("Analysis.phylogeneticTree")}
                   key="PHYLOGENOMICS"
-                  className="t-analysis-tab-phylogenetic"    
+                  className="t-analysis-tab-phylogenetic"
                 >
                   <AnalysisPhylogeneticTree />
                 </TabPane>
@@ -137,11 +137,11 @@ export default function Analysis() {
               </TabPane>
             ]
           ) : analysisContext.isError ? (
-              <TabPane
-                tab={getI18N("Analysis.jobError")}
-                key="JOB_ERROR"
-                className="t-analysis-tab-job-error"
-              >
+            <TabPane
+              tab={getI18N("Analysis.jobError")}
+              key="JOB_ERROR"
+              className="t-analysis-tab-job-error"
+            >
               <AnalysisError />
             </TabPane>
           ) : null}

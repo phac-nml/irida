@@ -63,6 +63,14 @@ export function AnalysisDetails() {
   // List of analysis details
   const analysisDetails = [
     {
+      title: getI18N("AnalysisDetails.name"),
+      desc: (
+        <Paragraph editable={{ onChange: updateSubmissionName }}>
+          {analysisContext.analysisName}
+        </Paragraph>
+      )
+    },
+    {
       title: getI18N("AnalysisDetails.id"),
       desc: analysisContext.analysis.identifier
     },
@@ -72,7 +80,10 @@ export function AnalysisDetails() {
     },
     {
       title: getI18N("AnalysisDetails.priority"),
-      desc: analysisDetailsContext.priority
+      desc:
+        isAdmin && analysisContext.analysisState === "NEW"
+          ? renderUpdatePrioritySection()
+          : analysisDetailsContext.priority
     },
     {
       title: getI18N("AnalysisDetails.created"),
@@ -114,11 +125,25 @@ export function AnalysisDetails() {
     for (let priority of analysisDetailsContext.priorities) {
       priorityList.push(
         <Select.Option key={priority} value={priority}>
-          {priority}
+          {getI18N(`AnalysisDetailsPriority.${priority}`)}
         </Select.Option>
       );
     }
     return priorityList;
+  }
+
+  function renderUpdatePrioritySection() {
+    return (
+      <section className="t-priority-edit">
+        <Select
+          defaultValue={analysisContext.analysis.priority}
+          style={{ width: "100%" }}
+          onChange={updateAnalysisPriority}
+        >
+          {renderPriorities()}
+        </Select>
+      </section>
+    );
   }
 
   /*
@@ -143,26 +168,6 @@ export function AnalysisDetails() {
         >
           <Col span={12}>
             <Title level={2}>{getI18N("AnalysisDetails.details")}</Title>
-            <>
-              <label>{getI18N("AnalysisDetails.name")}</label>
-              <Paragraph editable={{ onChange: updateSubmissionName }}>
-                {analysisContext.analysisName}
-              </Paragraph>
-            </>
-
-            {isAdmin && analysisContext.analysisState === "NEW" ? (
-              <>
-                <label>Priority</label>
-                <Select
-                  defaultValue={analysisContext.analysis.priority}
-                  style={{ width: "100%" }}
-                  onChange={updateAnalysisPriority}
-                  className="t-priority-edit"
-                >
-                  {renderPriorities()}
-                </Select>
-              </>
-            ) : null}
 
             <div>
               <List
@@ -184,7 +189,10 @@ export function AnalysisDetails() {
             {window.PAGE.mailConfigured &&
             !analysisContext.isCompleted &&
             !analysisContext.isError ? (
-              <section style={{ marginTop: SPACE_MD }}>
+              <section
+                style={{ marginTop: SPACE_MD }}
+                className="t-email-pipeline-result"
+              >
                 <Title level={4}>
                   {getI18N("AnalysisDetails.receiveEmail")}
                 </Title>
@@ -218,8 +226,8 @@ export function AnalysisDetails() {
               !analysisContext.isError ? (
                 <TabPane
                   tab={getI18N("AnalysisShare.shareResults")}
-                key="analysis_share"
-                className="t-analysis-settings-tab-share-results"
+                  key="analysis_share"
+                  className="t-analysis-settings-tab-share-results"
                 >
                   <Col span={12}>
                     <Suspense fallback={<Spin />}>

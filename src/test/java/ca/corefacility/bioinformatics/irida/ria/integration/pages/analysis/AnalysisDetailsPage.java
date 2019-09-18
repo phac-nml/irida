@@ -115,7 +115,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public boolean priorityEditVisible() {
-		return !driver.findElements(By.id("t-edit-priority")).isEmpty();
+		return !driver.findElements(By.className("t-priority-edit")).isEmpty();
 	}
 
 	/**
@@ -194,5 +194,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public String getLabelForSample(int index) {
 		return sampleLabels.get(index).getText();
+	}
+
+	public boolean emailPipelineResultVisible() {
+		return !driver.findElements(By.className("t-email-pipeline-result")).isEmpty();
 	}
 }

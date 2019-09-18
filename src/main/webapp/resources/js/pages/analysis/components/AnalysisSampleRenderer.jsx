@@ -3,10 +3,13 @@
  * required by the component
  */
 
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
-import { Avatar, Icon, List } from "antd";
+import { Avatar, Icon, List, Input } from "antd";
+import { SPACE_MD } from "../../../styles/spacing";
+
+const { Search } = Input;
 
 export function AnalysisSampleRenderer() {
   /*
@@ -14,7 +17,12 @@ export function AnalysisSampleRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisSamplesContext } = useContext(AnalysisSamplesContext);
+  const { analysisSamplesContext, sampleDisplayHeight } = useContext(
+    AnalysisSamplesContext
+  );
+  const [filteredSamples, setFilteredSamples] = useState(
+    analysisSamplesContext.samples
+  );
 
   const renderSamples = () => {
     const samplesList = [];
@@ -23,9 +31,8 @@ export function AnalysisSampleRenderer() {
       return (
         <List
           bordered
-          dataSource={analysisSamplesContext.samples}
+          dataSource={filteredSamples}
           renderItem={item => {
-            console.log(item);
             return (
               <List.Item>
                 <List.Item.Meta
@@ -37,30 +44,30 @@ export function AnalysisSampleRenderer() {
                   }
                   title={
                     <a
-                        href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
-                        target="_blank"
+                      href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
+                      target="_blank"
                     >
-                        {item.sampleName}
+                      {item.sampleName}
                     </a>
-                }
+                  }
                   description={
                     <div>
-                        <div key={`file-${item.forward.identifier}`}>
-                          <a
-                            href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
-                            target="_blank"
-                          >
-                            {item.forward.fileName}
-                          </a>
-                        </div>
-                        <div key={`file-${item.reverse.identifier}`}>
-                            <a
-                              href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
-                              target="_blank"
-                            >
-                                {item.reverse.fileName}
-                            </a>
-                        </div>
+                      <div key={`file-${item.forward.identifier}`}>
+                        <a
+                          href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
+                          target="_blank"
+                        >
+                          {item.forward.fileName}
+                        </a>
+                      </div>
+                      <div key={`file-${item.reverse.identifier}`}>
+                        <a
+                          href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
+                          target="_blank"
+                        >
+                          {item.reverse.fileName}
+                        </a>
+                      </div>
                     </div>
                   }
                 />
@@ -77,5 +84,41 @@ export function AnalysisSampleRenderer() {
     return samplesList;
   };
 
-  return <>{renderSamples()}</>;
+  /*
+   * if search value is empty display all the samples otherwise
+   * find samples with sample name or files that contain the search string
+   */
+  const searchSamples = searchStr => {
+    if (searchStr === "") {
+      setFilteredSamples(analysisSamplesContext.samples);
+    } else {
+      const samplesContainingSearchValue = [];
+
+      for (const [index, sample] of analysisSamplesContext.samples.entries()) {
+        if (
+          sample.sampleName.includes(searchStr) ||
+          sample.forward.fileName.includes(searchStr) ||
+          sample.reverse.fileName.includes(searchStr)
+        ) {
+          samplesContainingSearchValue.push(sample);
+        }
+      }
+      setFilteredSamples(samplesContainingSearchValue);
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <Search
+          placeholder={getI18N("AnalysisSamples.inputSearchText")}
+          onChange={event => searchSamples(event.target.value)}
+          style={{ width: "100%", marginBottom: SPACE_MD }}
+        />
+        <div style={{ height: sampleDisplayHeight, overflowY: "auto" }}>
+          {renderSamples()}
+        </div>
+      </div>
+    </>
+  );
 }
