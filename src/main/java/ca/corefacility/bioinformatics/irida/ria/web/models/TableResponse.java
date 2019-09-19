@@ -9,8 +9,8 @@ public class TableResponse {
 	private List<TableModel> dataSource;
 	private Long total;
 
-	public TableResponse(List<TableModel> analyses, Long total) {
-		this.dataSource = analyses;
+	public TableResponse(List<TableModel> dataSource, Long total) {
+		this.dataSource = dataSource;
 		this.total = total;
 	}
 
