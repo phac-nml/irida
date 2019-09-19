@@ -25,8 +25,6 @@ export function AnalysisSampleRenderer() {
   );
 
   const renderSamples = () => {
-    const samplesList = [];
-
     if (analysisSamplesContext.samples.length > 0) {
       return (
         <List
@@ -78,11 +76,10 @@ export function AnalysisSampleRenderer() {
         />
       );
     } else {
-      samplesList.push(
+      return (
         <p key={`no-paired-end-0`}>{getI18N("AnalysisSamples.noPairedEnd")}</p>
       );
     }
-    return samplesList;
   };
 
   /*
@@ -93,6 +90,7 @@ export function AnalysisSampleRenderer() {
     if (searchStr === "") {
       setFilteredSamples(analysisSamplesContext.samples);
     } else {
+      searchStr = String(searchStr).toLowerCase();
       const samplesContainingSearchValue = analysisSamplesContext.samples.filter(
         sample =>
           sample.sampleName.includes(searchStr) ||
