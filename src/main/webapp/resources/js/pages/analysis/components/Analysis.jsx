@@ -63,14 +63,14 @@ export default function Analysis() {
           marginTop: SPACE_MD
         }}
       >
-        <Title>
-          {analysisContext.analysisName}
+        <Title style={{ wordBreak: "break-word" }}>
           {analysisContext.analysisState === "COMPLETED" ? (
             <Icon
               type="check-circle"
-              style={{ marginLeft: SPACE_MD, color: "#00ab66" }}
+              style={{ marginRight: SPACE_MD, color: "#00ab66" }}
             />
           ) : null}
+          {analysisContext.analysisName}
         </Title>
         {analysisContext.analysisState !== "COMPLETED" ? (
           <AnalysisSteps />

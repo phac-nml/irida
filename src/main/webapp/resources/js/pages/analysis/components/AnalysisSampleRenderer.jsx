@@ -32,6 +32,7 @@ export function AnalysisSampleRenderer() {
         <List
           bordered
           dataSource={filteredSamples}
+          style={{ height: sampleDisplayHeight, overflowY: "auto" }}
           renderItem={item => {
             return (
               <List.Item>
@@ -92,33 +93,29 @@ export function AnalysisSampleRenderer() {
     if (searchStr === "") {
       setFilteredSamples(analysisSamplesContext.samples);
     } else {
-      const samplesContainingSearchValue = [];
-
-      for (const [index, sample] of analysisSamplesContext.samples.entries()) {
-        if (
+      const samplesContainingSearchValue = analysisSamplesContext.samples.filter(
+        sample =>
           sample.sampleName.includes(searchStr) ||
           sample.forward.fileName.includes(searchStr) ||
           sample.reverse.fileName.includes(searchStr)
-        ) {
-          samplesContainingSearchValue.push(sample);
-        }
-      }
+      );
       setFilteredSamples(samplesContainingSearchValue);
     }
   };
 
   return (
     <>
-      <div>
-        <Search
-          placeholder={getI18N("AnalysisSamples.inputSearchText")}
-          onChange={event => searchSamples(event.target.value)}
-          style={{ width: "100%", marginBottom: SPACE_MD }}
-        />
-        <div style={{ height: sampleDisplayHeight, overflowY: "auto" }}>
+      {analysisSamplesContext.samples.length > 0 ? (
+        <div>
+          <Search
+            placeholder={getI18N("AnalysisSamples.searchSamples")}
+            onChange={event => searchSamples(event.target.value)}
+            style={{ width: "100%", marginBottom: SPACE_MD }}
+            allowClear={true}
+          />
           {renderSamples()}
         </div>
-      </div>
+      ) : null}
     </>
   );
 }
