@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchPageTableUpdate } from "../apis/paged-table/paged-table";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
@@ -41,21 +41,19 @@ function PagedTableProvider({ children, url }) {
   const updateTable = () => {
     setTableState({ ...tableState, loading: true });
 
-    axios
-      .post(url, {
-        current: tableState.current - 1,
-        pageSize: tableState.pageSize,
-        sortColumn: tableState.column,
-        sortDirection: tableState.order,
-        search: tableState.search,
-        filters: tableState.filters
-      })
-      .then(({ data }) => {
-        setTableState({
-          ...tableState,
-          ...{ total: data.total, dataSource: data.dataSource, loading: false }
-        });
+    fetchPageTableUpdate(url, {
+      current: tableState.current - 1,
+      pageSize: tableState.pageSize,
+      sortColumn: tableState.column,
+      sortDirection: tableState.order,
+      search: tableState.search,
+      filters: tableState.filters
+    }).then(data => {
+      setTableState({
+        ...tableState,
+        ...{ total: data.total, dataSource: data.dataSource, loading: false }
       });
+    });
   };
 
   /**
