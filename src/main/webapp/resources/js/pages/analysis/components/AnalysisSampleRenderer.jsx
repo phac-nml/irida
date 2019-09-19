@@ -3,10 +3,13 @@
  * required by the component
  */
 
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { Card, Row, Col, Icon, Button } from "antd";
+import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
+import { Avatar, Icon, List, Input } from "antd";
+import { SPACE_MD } from "../../../styles/spacing";
+
+const { Search } = Input;
 
 export function AnalysisSampleRenderer() {
   /*
@@ -14,94 +17,108 @@ export function AnalysisSampleRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
+  const { analysisSamplesContext, sampleDisplayHeight } = useContext(
+    AnalysisSamplesContext
+  );
+  const [filteredSamples, setFilteredSamples] = useState(
+    analysisSamplesContext.samples
+  );
 
   const renderSamples = () => {
     const samplesList = [];
 
-    if (analysisDetailsContext.sequenceFilePairList.length > 0) {
-      let pairIndex = 0;
-      for (const [
-        index,
-        sampleObj
-      ] of analysisDetailsContext.samples.entries()) {
-        samplesList.push(
-          <Card
-            type="inner"
-            title={
-              <Button
-                type="link"
-                href={`${window.TL.BASE_URL}samples/${sampleObj.sample.identifier}/details`}
-                target="_blank"
-              >
-                <Icon type="filter" rotate="180" />{" "}
-                {sampleObj.sample.sampleName}
-              </Button>
-            }
-            key={`sampleId-${sampleObj.sample.identifier}`}
-          >
-            <Row
-              key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}`}
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-                <Button
-                  type="link"
-                  target="_blank"
-                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex].identifier}/summary`}
-                >
-                  <Icon type="arrow-right" />{" "}
-                  {analysisDetailsContext.sequenceFilePairList[pairIndex].label}
-                </Button>
-                <span>
-                  {analysisDetailsContext.sequenceFileSizeList[pairIndex]}
-                </span>
-              </span>
-            </Row>
-            <Row
-              key={`fileId-${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}`}
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-                <Button
-                  type="link"
-                  target="_blank"
-                  href={`${window.TL.BASE_URL}sequenceFiles/${sampleObj.sequenceFilePair.identifier}/file/${analysisDetailsContext.sequenceFilePairList[pairIndex + 1].identifier}/summary`}
-                >
-                  <Icon type="arrow-left" />{" "}
-                  {
-                    analysisDetailsContext.sequenceFilePairList[pairIndex + 1]
-                      .label
+    if (analysisSamplesContext.samples.length > 0) {
+      return (
+        <List
+          bordered
+          dataSource={filteredSamples}
+          renderItem={item => {
+            return (
+              <List.Item>
+                <List.Item.Meta
+                  key={item.sampleId}
+                  avatar={
+                    <Avatar>
+                      <Icon type="experiment" />
+                    </Avatar>
                   }
-                </Button>
-                <span>
-                  {analysisDetailsContext.sequenceFileSizeList[pairIndex + 1]}
-                </span>
-              </span>
-            </Row>
-          </Card>
-        );
-        pairIndex = pairIndex + 2;
-      }
+                  title={
+                    <a
+                      href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
+                      target="_blank"
+                    >
+                      {item.sampleName}
+                    </a>
+                  }
+                  description={
+                    <div>
+                      <div key={`file-${item.forward.identifier}`}>
+                        <a
+                          href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
+                          target="_blank"
+                        >
+                          {item.forward.fileName}
+                        </a>
+                      </div>
+                      <div key={`file-${item.reverse.identifier}`}>
+                        <a
+                          href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
+                          target="_blank"
+                        >
+                          {item.reverse.fileName}
+                        </a>
+                      </div>
+                    </div>
+                  }
+                />
+              </List.Item>
+            );
+          }}
+        />
+      );
     } else {
       samplesList.push(
-        <p key={`no-paired-end-0`}>
-          {getI18N("analysis.input-files.no-paired-end")}
-        </p>
+        <p key={`no-paired-end-0`}>{getI18N("AnalysisSamples.noPairedEnd")}</p>
       );
     }
     return samplesList;
   };
 
-  return <>{renderSamples()}</>;
+  /*
+   * if search value is empty display all the samples otherwise
+   * find samples with sample name or files that contain the search string
+   */
+  const searchSamples = searchStr => {
+    if (searchStr === "") {
+      setFilteredSamples(analysisSamplesContext.samples);
+    } else {
+      const samplesContainingSearchValue = [];
+
+      for (const [index, sample] of analysisSamplesContext.samples.entries()) {
+        if (
+          sample.sampleName.includes(searchStr) ||
+          sample.forward.fileName.includes(searchStr) ||
+          sample.reverse.fileName.includes(searchStr)
+        ) {
+          samplesContainingSearchValue.push(sample);
+        }
+      }
+      setFilteredSamples(samplesContainingSearchValue);
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <Search
+          placeholder={getI18N("AnalysisSamples.inputSearchText")}
+          onChange={event => searchSamples(event.target.value)}
+          style={{ width: "100%", marginBottom: SPACE_MD }}
+        />
+        <div style={{ height: sampleDisplayHeight, overflowY: "auto" }}>
+          {renderSamples()}
+        </div>
+      </div>
+    </>
+  );
 }

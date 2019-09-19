@@ -34,13 +34,10 @@ export async function getAnalysisInputFiles(submissionId) {
  * @param {boolean} emailPipelineResult True or False
  * @return {Promise<*>} `data` contains the OK response; error` contains error information if an error occurred.
  */
-export async function updateAnalysisEmailPipelineResult(
-  submissionId,
-  emailPipelineResult
-) {
+export async function updateAnalysisEmailPipelineResult(params) {
   const res = await axios.patch(`${URL}update-email-pipeline-result/`, {
-    analysisSubmissionId: submissionId,
-    emailPipelineResult: emailPipelineResult
+    analysisSubmissionId: params.submissionId,
+    emailPipelineResult: params.emailPipelineResult
   });
   return res.data;
 }
@@ -52,11 +49,11 @@ export async function updateAnalysisEmailPipelineResult(
  * @param {string} priority [LOW, MEDIUM, HIGH]
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateAnalysis(submissionId, analysisName, priority) {
+export async function updateAnalysis(params) {
   const res = await axios.patch(`${URL}update-analysis/`, {
-    analysisSubmissionId: submissionId,
-    analysisName: analysisName,
-    priority: priority
+    analysisSubmissionId: params.submissionId,
+    analysisName: params.analysisName,
+    priority: params.priority
   });
   return res.data;
 }
@@ -88,14 +85,10 @@ export async function getSharedProjects(submissionId) {
  * @param {boolean} shareStatus True of False
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateSharedProjects(
-  submissionId,
-  projectId,
-  shareStatus
-) {
-  const res = await axios.post(`${URL}${submissionId}/share`, {
-    projectId: projectId,
-    shareStatus: shareStatus
+export async function updateSharedProjects(params) {
+  const res = await axios.post(`${URL}${params.submissionId}/share`, {
+    projectId: params.projectId,
+    shareStatus: params.shareStatus
   });
   return res.data;
 }

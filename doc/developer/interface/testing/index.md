@@ -6,7 +6,7 @@ layout: default
 User interface testing using [Selenium] and [chromedriver]
 ==========================================================
 
-In order to run the UI tests with [Selenium], you will need the appropriate version of [chromedriver] for your version of [Chrome] or [Chromium].
+In order to run the UI tests with [Selenium], you will need the appropriate version of [chromedriver] for your version of [Chrome] or [Chromium], or you can use a [selenium/standalone-chrome] docker image.
 
 
 
@@ -55,6 +55,12 @@ You need to match up the version of [Chrome] with [chromedriver]. For example, [
 You can specify which [chromedriver] to use with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver` otherwise, the `node_modules` version of [chromedriver] is used for running UI tests.
 
 
+### Using [selenium/standalone-chrome]
+
+To use [selenium/standalone-chrome] you will need to have docker installed on your machine.
+
+Then when running the ui tests make sure to specify the `--selenium-docker` option otherwise, the `node_modules` version of [chromedriver] is used for running UI tests.
+
 
 Running specific UI tests through [IntelliJ] IDEA
 -----------------------------------------------
@@ -89,5 +95,6 @@ After starting the IRIDA UI test server (i.e. `mvn clean jetty:run -B -Pui_testi
 [chromedriver]: http://chromedriver.chromium.org/
 [Chrome]: https://www.google.com/chrome/
 [Chromium]: https://www.chromium.org/
-[Selenium]: http://www.seleniumhq.org/ 
+[Selenium]: http://www.seleniumhq.org/
+[selenium/standalone-chrome]: https://hub.docker.com/r/selenium/standalone-chrome 
 [IntelliJ]: https://www.jetbrains.com/idea/

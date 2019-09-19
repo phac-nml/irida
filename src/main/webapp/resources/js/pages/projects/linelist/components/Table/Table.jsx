@@ -371,12 +371,9 @@ export class TableComponent extends React.Component {
       showUndoNotification(
         {
           text: text
-            .replace(
-              "[SAMPLE_NAME]",
-              `<strong>${data[FIELDS.sampleName]}</strong>`
-            )
-            .replace("[FIELD]", `<strong>${headerName}</strong>`)
-            .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
+            .replace("[SAMPLE_NAME]", data[FIELDS.sampleName])
+            .replace("[FIELD]", headerName)
+            .replace("[NEW_VALUE]", data[field])
         },
         () => {
           /**

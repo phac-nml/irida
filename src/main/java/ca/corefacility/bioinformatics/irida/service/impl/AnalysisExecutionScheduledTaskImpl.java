@@ -142,7 +142,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 				try {
 					submissions.add(analysisExecutionService.executeAnalysis(analysisSubmission));
-				} catch (ExecutionManagerException | IridaWorkflowException e) {
+				} catch (ExecutionManagerException | IridaWorkflowException | IOException e) {
 					logger.error("Error executing submission " + analysisSubmission, e);
 				}
 			}

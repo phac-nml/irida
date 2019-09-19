@@ -90,44 +90,66 @@ export default function Analysis() {
           {analysisContext.isCompleted ? (
             [
               analysisContext.analysisType.type === "BIO_HANSEL" ? (
-                <TabPane tab="bio_hansel" key="BIO_HANSEL">
+                <TabPane
+                  tab="bio_hansel"
+                  key="BIO_HANSEL"
+                  className="t-analysis-tab-bio-hansel"
+                >
                   <AnalysisBioHansel />
                 </TabPane>
               ) : null,
 
               analysisContext.analysisType.type === "SISTR_TYPING" ? (
-                <TabPane tab="sistr" key="SISTR_TYPING">
+                <TabPane
+                  tab="sistr"
+                  key="SISTR_TYPING"
+                  className="t-analysis-tab-sistr-typing"
+                >
                   <AnalysisSistr />
                 </TabPane>
               ) : null,
 
               analysisContext.analysisType.type === "PHYLOGENOMICS" ||
               analysisContext.analysisType.type === "MLST_MENTALIST" ? (
-                <TabPane tab="Phylogenetic Tree" key="PHYLOGENOMICS">
+                <TabPane
+                  tab={getI18N("Analysis.phylogeneticTree")}
+                  key="PHYLOGENOMICS"
+                  className="t-analysis-tab-phylogenetic"
+                >
                   <AnalysisPhylogeneticTree />
                 </TabPane>
               ) : null,
 
               <TabPane
-                tab={getI18N("analysis.tab.output-files")}
+                tab={getI18N("Analysis.outputFiles")}
                 key="OUTPUT_FILES"
+                className="t-analysis-tab-output-files"
               >
                 <AnalysisOutputFiles />
               </TabPane>,
 
               <TabPane
-                tab={getI18N("analysis.tab.provenance")}
+                tab={getI18N("Analysis.provenance")}
                 key="PROVENANCE"
+                className="t-analysis-tab-provenance"
               >
                 <AnalysisProvenance />
               </TabPane>
             ]
           ) : analysisContext.isError ? (
-            <TabPane tab={getI18N("analysis.tab.job-error")} key="JOB_ERROR">
+            <TabPane
+              tab={getI18N("Analysis.jobError")}
+              key="JOB_ERROR"
+              className="t-analysis-tab-job-error"
+            >
               <AnalysisError />
             </TabPane>
           ) : null}
-          <TabPane tab={getI18N("analysis.tab.settings")} key="SETTINGS">
+          <TabPane
+            tab={getI18N("Analysis.settings")}
+            key="SETTINGS"
+            id="t-analysis-tab-settings"
+          >
             <AnalysisDetailsProvider>
               <AnalysisDetails />
             </AnalysisDetailsProvider>

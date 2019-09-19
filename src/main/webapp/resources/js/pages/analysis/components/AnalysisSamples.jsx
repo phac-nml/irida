@@ -7,9 +7,9 @@
  * The following import statements makes available all the elements
  * required by the component
  */
-import React, { useContext, useEffect, useState } from "react";
-import { Card, Row, Col, Icon, Button, Typography } from "antd";
-import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
+import React, { useContext } from "react";
+import { Typography } from "antd";
+import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisReferenceFileRenderer } from "./AnalysisReferenceFileRenderer";
 import { AnalysisSampleRenderer } from "./AnalysisSampleRenderer";
@@ -22,14 +22,7 @@ export default function AnalysisSamples() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisDetailsContext, loadAnalysisSamples } = useContext(
-    AnalysisDetailsContext
-  );
-
-  // Load the analysis samples data on load
-  useEffect(() => {
-    loadAnalysisSamples();
-  }, []);
+  const { analysisSamplesContext } = useContext(AnalysisSamplesContext);
 
   /*
    * If there is a reference file the the AnalysisReferenceFileRenderer
@@ -39,12 +32,12 @@ export default function AnalysisSamples() {
    */
   return (
     <>
-      <Title level={2}>{getI18N("analysis.tab.samples")}</Title>
-      {analysisDetailsContext.referenceFile ? (
+      <Title level={2}>{getI18N("AnalysisSamples.samples")}</Title>
+      {analysisSamplesContext.referenceFile ? (
         <AnalysisReferenceFileRenderer />
       ) : null}
 
-      {analysisDetailsContext.samples.length > 0 ? (
+      {analysisSamplesContext.samples.length > 0 ? (
         <AnalysisSampleRenderer />
       ) : null}
     </>

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
 
-import javax.servlet.http.HttpSession;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -23,8 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -94,33 +90,6 @@ public class ProjectsControllerTest {
 		Model model = new ExtendedModelMap();
 		String page = controller.getProjectsPage(model);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
-	}
-
-	@Test
-	public void testGetAjaxProjectList() {
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-
-		Page<Project> page = getProjectUserJoinPage(user);
-		when(projectService.findProjectsForUser(any(String.class), any(Integer.class), any(Integer.class),
-				any(Sort.class))).thenReturn(page);
-		when(sampleService.getSamplesForProject(any(Project.class)))
-				.thenReturn(TestDataFactory.constructListJoinProjectSample());
-
-		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"), new HashMap<>());
-		DataTablesResponse response = controller.getAjaxProjectList(params);
-		assertEquals("Should have 10 data elements, since page size is 10", 10, response.getData().size());
-	}
-
-	@Test
-	public void testGetAjaxAdminProjectsList() {
-		when(projectService.findAllProjects(any(String.class), any(Integer.class),
-				any(Integer.class), any(Sort.class))).thenReturn(getProjectPage());
-		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
-
-
-		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"), new HashMap<>());
-		DataTablesResponse response = controller.getAjaxAdminProjectsList(params);
-		assertEquals("Should have 10 data elements, since page size is 10", 10, response.getData().size());
 	}
 
 	@Test

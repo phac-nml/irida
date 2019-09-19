@@ -46,6 +46,7 @@
 	<script th:inline="javascript">
 		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
+			LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
 		  	URLS: {
 			  cart: {
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"

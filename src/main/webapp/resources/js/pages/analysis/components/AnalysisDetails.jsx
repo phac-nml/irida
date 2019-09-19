@@ -9,14 +9,13 @@
  *required by the components encompassed within
  */
 
-import React, { useContext, Suspense, lazy, useEffect } from "react";
+import React, { useContext, Suspense, lazy } from "react";
 import {
   Button,
   Checkbox,
   Input,
   List,
   Col,
-  Row,
   Tabs,
   Select,
   Spin,
@@ -24,8 +23,9 @@ import {
   Typography
 } from "antd";
 
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
+import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
 import { SPACE_MD } from "../../../styles/spacing";
@@ -40,7 +40,6 @@ import {
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
 const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
-const Option = Select;
 const { Title, Paragraph } = Typography;
 const TabPane = Tabs.TabPane;
 
@@ -53,7 +52,6 @@ export function AnalysisDetails() {
 
   const {
     analysisDetailsContext,
-    loadAnalysisDetails,
     analysisDetailsContextUpdateSubmissionPriority,
     analysisDetailsContextUpdateEmailPipelineResult
   } = useContext(AnalysisDetailsContext);
@@ -62,31 +60,37 @@ export function AnalysisDetails() {
     AnalysisContext
   );
 
-  // On page load get the analysis details
-  useEffect(() => {
-    loadAnalysisDetails();
-  }, []);
-
   // List of analysis details
   const analysisDetails = [
     {
-      title: getI18N("analysis.tab.content.analysis.id"),
+      title: getI18N("AnalysisDetails.name"),
+      desc: (
+        <Paragraph editable={{ onChange: updateSubmissionName }}>
+          {analysisContext.analysisName}
+        </Paragraph>
+      )
+    },
+    {
+      title: getI18N("AnalysisDetails.id"),
       desc: analysisContext.analysis.identifier
     },
     {
-      title: getI18N("analysis.tab.content.analysis.pipeline"),
+      title: getI18N("AnalysisDetails.pipeline"),
       desc: `${analysisDetailsContext.workflowName} (${analysisDetailsContext.version})`
     },
     {
-      title: getI18N("analysis.tab.content.analysis.priority"),
-      desc: analysisDetailsContext.priority
+      title: getI18N("AnalysisDetails.priority"),
+      desc:
+        isAdmin && analysisContext.analysisState === "NEW"
+          ? renderUpdatePrioritySection()
+          : analysisDetailsContext.priority
     },
     {
-      title: getI18N("analysis.tab.content.analysis.created"),
+      title: getI18N("AnalysisDetails.created"),
       desc: formatDate({ date: analysisDetailsContext.createdDate })
     },
     {
-      title: getI18N("analysis.tab.content.analysis.duration"),
+      title: getI18N("AnalysisDetails.duration"),
       desc: getHumanizedDuration({ date: analysisDetailsContext.duration })
     }
   ];
@@ -121,11 +125,25 @@ export function AnalysisDetails() {
     for (let priority of analysisDetailsContext.priorities) {
       priorityList.push(
         <Select.Option key={priority} value={priority}>
-          {priority}
+          {getI18N(`AnalysisDetailsPriority.${priority}`)}
         </Select.Option>
       );
     }
     return priorityList;
+  }
+
+  function renderUpdatePrioritySection() {
+    return (
+      <section className="t-priority-edit">
+        <Select
+          defaultValue={analysisContext.analysis.priority}
+          style={{ width: "100%" }}
+          onChange={updateAnalysisPriority}
+        >
+          {renderPriorities()}
+        </Select>
+      </section>
+    );
   }
 
   /*
@@ -143,42 +161,13 @@ export function AnalysisDetails() {
         animated={false}
       >
         <TabPane
-          tab={getI18N("analysis.tab.content.analysis.details")}
+          tab={getI18N("AnalysisDetails.details")}
           key="analysis_details"
           style={{ minWidth: 300 }}
+          className="t-analysis-settings-tab-details"
         >
           <Col span={12}>
-            <Title level={2}>
-              {getI18N("analysis.tab.content.analysis.details")}
-            </Title>
-
-            <Row>
-              <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                <label>
-                  {getI18N("analysis.tab.content.analysis.analysis-name")}
-                </label>
-
-                <Paragraph editable={{ onChange: updateSubmissionName }}>
-                  {analysisContext.analysisName}
-                </Paragraph>
-              </Col>
-            </Row>
-
-            {analysisContext.isAdmin &&
-            analysisContext.analysisState === "NEW" ? (
-              <Row>
-                <Col xs={{ span: 12, offset: 0 }} lg={{ span: 12, offset: 0 }}>
-                  <label>Priority</label>
-                  <Select
-                    defaultValue={analysisContext.analysis.priority}
-                    style={{ width: "100%" }}
-                    onChange={updateAnalysisPriority}
-                  >
-                    {renderPriorities()}
-                  </Select>
-                </Col>
-              </Row>
-            ) : null}
+            <Title level={2}>{getI18N("AnalysisDetails.details")}</Title>
 
             <div>
               <List
@@ -197,28 +186,37 @@ export function AnalysisDetails() {
               />
             </div>
 
-            {!analysisContext.isCompleted && !analysisContext.isError ? (
-              <section style={{ marginTop: SPACE_MD }}>
+            {window.PAGE.mailConfigured &&
+            !analysisContext.isCompleted &&
+            !analysisContext.isError ? (
+              <section
+                style={{ marginTop: SPACE_MD }}
+                className="t-email-pipeline-result"
+              >
                 <Title level={4}>
-                  {getI18N(
-                    "analysis.tab.content.analysis.receive-email-upon-analysis-completion"
-                  )}
+                  {getI18N("AnalysisDetails.receiveEmail")}
                 </Title>
                 <Checkbox
                   onChange={updateEmailPipelineResult}
-                  defaultChecked={analysisDetailsContext.emailPipelineResult}
+                  checked={analysisDetailsContext.emailPipelineResult}
                 >
-                  {getI18N("analysis.tab.content.analysis.checkbox.label")}
+                  {getI18N("AnalysisDetails.receiveEmailCheckboxLabel")}
                 </Checkbox>
               </section>
             ) : null}
           </Col>
         </TabPane>
 
-        <TabPane tab={getI18N("analysis.tab.samples")} key="analysis_samples">
+        <TabPane
+          tab={getI18N("AnalysisSamples.samples")}
+          key="analysis_samples"
+          className="t-analysis-settings-tab-samples"
+        >
           <Col span={12}>
             <Suspense fallback={<Spin />}>
-              <AnalysisSamples />
+              <AnalysisSamplesProvider>
+                <AnalysisSamples />
+              </AnalysisSamplesProvider>
             </Suspense>
           </Col>
         </TabPane>
@@ -227,8 +225,9 @@ export function AnalysisDetails() {
           ? [
               !analysisContext.isError ? (
                 <TabPane
-                  tab={getI18N("analysis.tab.share-results")}
+                  tab={getI18N("AnalysisShare.shareResults")}
                   key="analysis_share"
+                  className="t-analysis-settings-tab-share-results"
                 >
                   <Col span={12}>
                     <Suspense fallback={<Spin />}>
@@ -238,8 +237,9 @@ export function AnalysisDetails() {
                 </TabPane>
               ) : null,
               <TabPane
-                tab={getI18N("analysis.tab.delete-analysis")}
+                tab={getI18N("AnalysisDelete.deleteAnalysis")}
                 key="analysis_delete"
+                className="t-analysis-settings-tab-delete-analysis"
               >
                 <Col span={12}>
                   <Suspense fallback={<Spin />}>

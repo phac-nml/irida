@@ -1,9 +1,19 @@
+/*
+ * This file loads basic analysis info from the server.
+ */
+
 import React, { useState } from "react";
 import { showNotification } from "../modules/notifications";
 
+// Functions required by context
 import { updateAnalysis } from "../apis/analysis/analysis";
 
-const stateMap = {
+/*
+ * Since we are using Steps and only want to display
+ * certain ones, we group some of the analysis states
+ * together.
+ */
+export const stateMap = {
   NEW: 0,
   PREPARING: 1,
   SUBMITTING: 2,
@@ -15,15 +25,15 @@ const stateMap = {
   COMPLETED: 5
 };
 
+export const isAdmin = window.PAGE.isAdmin;
+
 const initialContext = {
   analysis: window.PAGE.analysis,
   analysisName: window.PAGE.analysisName,
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
-  isAdmin: window.PAGE.isAdmin,
-  stateMap: stateMap,
-  isCompleted: window.PAGE.analysisState == "COMPLETED" ? true : false,
-  isError: window.PAGE.analysisState.includes("ERROR") ? true : false
+  isCompleted: window.PAGE.analysisState == "COMPLETED",
+  isError: window.PAGE.analysisState.includes("ERROR")
 };
 
 const AnalysisContext = React.createContext(initialContext);
@@ -31,13 +41,17 @@ const AnalysisContext = React.createContext(initialContext);
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
 
+  /*
+   * Updates the submission name, displays a notification
+   * to the user, and updates the `analysisName` state variable.
+   */
   function analysisContextUpdateSubmissionName(updatedAnalysisName) {
-    updateAnalysis(
-      analysisContext.analysis.identifier,
-      updatedAnalysisName,
-      null
-    ).then(res => {
-      showNotification({ text: res.message });
+    updateAnalysis({
+      submissionId: analysisContext.analysis.identifier,
+      analysisName: updatedAnalysisName,
+      priority: null
+    }).then(({ message }) => {
+      showNotification({ text: message });
       setAnalysisContext(analysisContext => {
         return { ...analysisContext, analysisName: updatedAnalysisName };
       });

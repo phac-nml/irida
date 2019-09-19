@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -24,6 +25,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		
 	}
 
+	@Ignore
 	@Test
 	public void testGetProjectAnalyses() {
 		LoginPage.loginAsManager(driver());
@@ -39,7 +41,8 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		analysisPage.displayInputFilesTab();
 		assertEquals("should be 1 pair of files", 1, analysisPage.getNumberOfSamplesInAnalysis());
 	}
-	
+
+	@Ignore
 	@Test
 	public void testGetProjectAnalysesOwner(){
 		LoginPage.loginAsAdmin(driver());

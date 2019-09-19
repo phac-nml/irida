@@ -5,7 +5,7 @@
 
 import React, { useContext } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
+import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
 import { SPACE_LG } from "../../../styles/spacing";
 import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
 import { Row, Col, Icon, Button } from "antd";
@@ -16,12 +16,12 @@ export function AnalysisReferenceFileRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
+  const { analysisSamplesContext } = useContext(AnalysisSamplesContext);
 
   const renderReferenceFile = () => {
     const referenceFile = [];
 
-    if (analysisDetailsContext.referenceFile.length === 0) {
+    if (analysisSamplesContext.referenceFile.length === 0) {
       return null;
     } else {
       referenceFile.push(
@@ -30,7 +30,7 @@ export function AnalysisReferenceFileRenderer() {
             style={{ fontWeight: FONT_WEIGHT_DEFAULT }}
             key="reference-file-heading-1"
           >
-            {getI18N("analysis.tab.content.samples.reference-file")}
+            {getI18N("AnalysisSamples.referenceFile")}
           </h4>
           <Row key="row-reference-file-1">
             <span
@@ -41,7 +41,8 @@ export function AnalysisReferenceFileRenderer() {
                 alignItems: "center"
               }}
             >
-              {analysisDetailsContext.referenceFile.label}
+
+              {analysisSamplesContext.referenceFile.label}
 
               <Button
                 key="reference-file-1-download-button"
@@ -51,9 +52,7 @@ export function AnalysisReferenceFileRenderer() {
                 }}
               >
                 <Icon type="download" />{" "}
-                {getI18N(
-                  "analysis.tab.content.samples.download-reference-file"
-                )}
+                {getI18N("AnalysisSamples.downloadReferenceFile")}
               </Button>
             </span>
           </Row>
@@ -64,9 +63,9 @@ export function AnalysisReferenceFileRenderer() {
   };
 
   const downloadReferenceFile = () => {
-    if (analysisDetailsContext.referenceFile.identifier !== undefined) {
+    if (analysisSamplesContext.referenceFile.identifier !== undefined) {
       window.open(
-        `${window.TL.BASE_URL}referenceFiles/download/${analysisDetailsContext.referenceFile.identifier}`,
+        `${window.TL.BASE_URL}referenceFiles/download/${analysisSamplesContext.referenceFile.identifier}`,
         "_blank"
       );
     }
