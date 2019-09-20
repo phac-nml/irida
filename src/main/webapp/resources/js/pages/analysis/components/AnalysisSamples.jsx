@@ -37,9 +37,7 @@ export default function AnalysisSamples() {
         <AnalysisReferenceFileRenderer />
       ) : null}
 
-      {analysisSamplesContext.samples.length > 0 ? (
-        <AnalysisSampleRenderer />
-      ) : null}
+      <AnalysisSampleRenderer />
     </>
   );
 }
