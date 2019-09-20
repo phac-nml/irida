@@ -51,9 +51,7 @@ export default function AnalysisDelete() {
       <section>
         <Popconfirm
           placement="right"
-          title={`${getI18N("AnalysisDelete.deleteAnalysis")} ${
-            analysisContext.analysisName
-          }?`}
+          title={getI18N("AnalysisDelete.deleteAnalysisSubmission").replace('[NAME]', analysisContext.analysisName)}
           okText={getI18N("AnalysisDelete.confirm")}
           cancelText={getI18N("AnalysisDelete.cancel")}
           onConfirm={handleDeleteConfirm}

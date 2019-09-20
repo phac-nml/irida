@@ -39,7 +39,6 @@ export default function AnalysisShare() {
     return (
       <List
         bordered
-        header={<div>{getI18N("AnalysisShare.shareResultsWithProjects")}</div>}
         dataSource={sharedProjects}
         renderItem={item => {
           return (
@@ -84,7 +83,6 @@ export default function AnalysisShare() {
           <p>{getI18N(`AnalysisShare.${analysisContext.analysisType.type}`)}</p>
           <Button
             type="primary"
-            className="spaced-top"
             onClick={() => saveResultsToRelatedSamples()}
             id="save-results-btn"
           >
@@ -130,19 +128,20 @@ export default function AnalysisShare() {
 
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
-          renderSharedProjectsList()
+          <section style={{marginTop: SPACE_MD}}>
+              <Title level={3}>{getI18N("AnalysisShare.shareResultsWithProjects")}</Title>
+              {renderSharedProjectsList()}
+          </section>
         ) : (
           <p>{getI18N("AnalysisShare.noProjectsToShareResultsWith")}</p>
         )
       ) : null}
 
       {analysisDetailsContext.canShareToSamples ? (
-        <Card
-          title={getI18N("AnalysisShare.saveResults")}
-          style={{ marginTop: SPACE_MD }}
-        >
-          {renderSaveToRelatedSamples()}
-        </Card>
+        <section style={{marginTop: SPACE_MD}}>
+            <Title level={3}>{getI18N("AnalysisShare.saveResults")}</Title>
+            {renderSaveToRelatedSamples()}
+        </section>
       ) : null}
     </>
   );
