@@ -225,7 +225,7 @@ export function AnalysisDetails() {
           ? [
               !analysisContext.isError ? (
                 <TabPane
-                  tab={getI18N("AnalysisShare.shareResults")}
+                  tab={getI18N("AnalysisShare.manageResults")}
                   key="analysis_share"
                   className="t-analysis-settings-tab-share-results"
                 >

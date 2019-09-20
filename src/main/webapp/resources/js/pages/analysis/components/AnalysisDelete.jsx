@@ -43,9 +43,8 @@ export default function AnalysisDelete() {
     <>
       <Title level={2}>{getI18N("AnalysisDelete.deleteAnalysis")}</Title>
       <Alert
-        message=<strong className="spaced-top__sm">
-          {getI18N("AnalysisDelete.permanentActionWarning")}
-        </strong>
+        message={getI18N("AnalysisDelete.permanentActionWarning")}
+        showIcon
         type="warning"
       />
 
