@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import {
-  deleteAnalysisSubmissions,
-  fetchPagedAnalyses
-} from "../apis/analysis/analysis";
+import { fetchPageTableUpdate } from "../apis/paged-table/paged-table";
 
-let AnalysesContext;
-const { Provider, Consumer } = (AnalysesContext = React.createContext());
+let PagedTableContext;
+const { Provider, Consumer } = (PagedTableContext = React.createContext());
 
 /**
- * Context Provider the the Analyses Table.
+ * Provider for all ant.design server paged tables.
+ * @param children Child DOM elements
+ * @param {string} url - to fetch the table contents from
+ * @returns {*}
+ * @constructor
  */
-function AnalysesProvider({ children }) {
+function PagedTableProvider({ children, url }) {
   const [tableState, setTableState] = useState({
     loading: true,
-    analyses: undefined,
+    dataSource: undefined,
     search: "",
     current: 1,
     pageSize: 10,
@@ -23,6 +24,9 @@ function AnalysesProvider({ children }) {
     filters: {}
   });
 
+  /*
+  Table is updated whenever one of these are changed.
+   */
   useEffect(() => updateTable(), [
     tableState.search,
     tableState.current,
@@ -37,15 +41,18 @@ function AnalysesProvider({ children }) {
   const updateTable = () => {
     setTableState({ ...tableState, loading: true });
 
-    fetchPagedAnalyses({
+    fetchPageTableUpdate(url, {
       current: tableState.current - 1,
       pageSize: tableState.pageSize,
       sortColumn: tableState.column,
       sortDirection: tableState.order,
       search: tableState.search,
       filters: tableState.filters
-    }).then(({ analyses, total }) => {
-      setTableState({ ...tableState, ...{ total, analyses, loading: false } });
+    }).then(data => {
+      setTableState({
+        ...tableState,
+        ...{ total: data.total, dataSource: data.dataSource, loading: false }
+      });
     });
   };
 
@@ -71,20 +78,15 @@ function AnalysesProvider({ children }) {
     });
   };
 
-  /**
-   * Handler for deleting an analysis.
-   *
-   * @param {array} ids
-   * @returns {void | Promise<*>}
-   */
-  const deleteAnalyses = ids =>
-    deleteAnalysisSubmissions({ ids }).then(updateTable);
-
   return (
-    <Provider value={{ ...tableState, handleTableChange, deleteAnalyses }}>
+    <Provider value={{ ...tableState, handleTableChange, updateTable }}>
       {children}
     </Provider>
   );
 }
 
-export { AnalysesProvider, Consumer as AnalysesConsumer, AnalysesContext };
+export {
+  PagedTableProvider,
+  Consumer as PagedTableConsumer,
+  PagedTableContext
+};

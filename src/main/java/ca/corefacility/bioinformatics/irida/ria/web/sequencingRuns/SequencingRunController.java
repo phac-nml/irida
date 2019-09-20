@@ -1,18 +1,9 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns;
 
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTSequencingRun;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for displaying and interacting with {@link SequencingRun} objects
@@ -45,18 +37,13 @@ public class SequencingRunController {
 	public static final String ACTIVE_NAV_DETAILS = "details";
 	public static final String ACTIVE_NAV_FILES = "files";
 
-	public static final String UPLOAD_STATUS_MESSAGE_BASE = "sequencingruns.status.";
-
 	private final SequencingRunService sequencingRunService;
 	private final SequencingObjectService objectService;
-	private final MessageSource messageSource;
 
 	@Autowired
-	public SequencingRunController(SequencingRunService sequencingRunService, SequencingObjectService objectService,
-			MessageSource messageSource) {
+	public SequencingRunController(SequencingRunService sequencingRunService, SequencingObjectService objectService) {
 		this.sequencingRunService = sequencingRunService;
 		this.objectService = objectService;
-		this.messageSource = messageSource;
 	}
 
 	/**
@@ -116,28 +103,6 @@ public class SequencingRunController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_FILES);
 
 		return FILES_VIEW;
-	}
-
-	/**
-	 * Get a list of all the sequencing runs
-	 *
-	 * @param params a {@link DataTablesParams} of the sort and paging options
-	 * @param locale the locale used by the browser for the current request.
-	 * @return A DatatablesResponse of DTSequencingRun of the runs
-	 */
-	@RequestMapping(value = "/ajax/list")
-	@ResponseBody
-	public DataTablesResponse listSequencingRuns(@DataTablesRequest DataTablesParams params, Locale locale) {
-
-		Sort sort = params.getSort();
-
-		Page<SequencingRun> list = sequencingRunService.list(params.getCurrentPage(), params.getLength(), sort);
-
-		List<DTSequencingRun> runs = list.getContent().stream().map(s -> new DTSequencingRun(s,
-				messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
-				.collect(Collectors.toList());
-
-		return new DataTablesResponse(params, list, runs);
 	}
 
 	private Model getPageDetails(Long runId, Model model) {

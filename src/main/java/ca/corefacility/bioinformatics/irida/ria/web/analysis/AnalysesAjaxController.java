@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -29,7 +27,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisTypeModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -45,8 +48,6 @@ import com.google.common.net.HttpHeaders;
 @RestController
 @RequestMapping("/ajax/analyses")
 public class AnalysesAjaxController {
-	private static final Logger logger = LoggerFactory.getLogger(AnalysesAjaxController.class);
-
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
 	private ProjectService projectService;
@@ -106,7 +107,7 @@ public class AnalysesAjaxController {
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
 	 */
 	@RequestMapping("/list")
-	public AnalysesListResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
+	public TableResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
 			HttpServletRequest request, Locale locale) throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -177,12 +178,12 @@ public class AnalysesAjaxController {
 		/*
 		UI cannot consume it as-is.  Format into something the UI will like use the the AnalysisModel
 		 */
-		List<AnalysisModel> analyses = page.getContent()
+		List<TableModel> analyses = page.getContent()
 				.stream()
 				.map(submission -> this.createAnalysisModel(submission, locale))
 				.collect(Collectors.toList());
 
-		return new AnalysesListResponse(analyses, page.getTotalElements());
+		return new TableResponse(analyses, page.getTotalElements());
 	}
 
 	/**
