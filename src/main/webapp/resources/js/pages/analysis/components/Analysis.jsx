@@ -22,6 +22,7 @@ import { AnalysisSistr } from "./AnalysisSistr";
 import { AnalysisError } from "./AnalysisError";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SPACE_MD } from "../../../styles/spacing";
+import styled from "styled-components";
 
 import {
   AnalysisContext,
@@ -40,6 +41,12 @@ const analysisTypesWithAdditionalPage = [
   "MLST_MENTALIST"
 ];
 
+const Wrapper = styled.div`
+  margin-left: ${SPACE_MD};
+  margin-right: ${SPACE_MD};
+  margin-top: ${SPACE_MD};
+`;
+
 export default function Analysis() {
   const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
     AnalysisContext
@@ -55,14 +62,8 @@ export default function Analysis() {
    * to the analysis name.
    */
   return (
-    <>
-      <div
-        style={{
-          marginLeft: SPACE_MD,
-          marginRight: SPACE_MD,
-          marginTop: SPACE_MD
-        }}
-      >
+    <Wrapper>
+      <div>
         <Title style={{ wordBreak: "break-word" }}>
           {analysisContext.analysisState === "COMPLETED" ? (
             <Icon
@@ -156,6 +157,6 @@ export default function Analysis() {
           </TabPane>
         </Tabs>
       </div>
-    </>
+    </Wrapper>
   );
 }

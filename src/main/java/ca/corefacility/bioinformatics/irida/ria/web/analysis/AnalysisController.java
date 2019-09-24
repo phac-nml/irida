@@ -55,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajaxResult.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -269,10 +270,10 @@ public class AnalysisController {
 	 *                   the new email pipeline result value
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
-	 * @return redirect to the analysis page after update
+	 * @return dto of response details
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
-	public Map<String, String> ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
+	public ResponseDetails ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
 			Locale locale, HttpServletResponse response) {
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 
@@ -297,7 +298,7 @@ public class AnalysisController {
 
 		response.setStatus(responseCode);
 
-		return ImmutableMap.of("result", Integer.toString(response.getStatus()), "message", message);
+		return new ResponseDetails(Integer.toString(response.getStatus()), message);
 	}
 
 	/**
@@ -305,10 +306,12 @@ public class AnalysisController {
 	 *
 	 * @param submissionId analysis submission id to get data for
 	 * @param locale       User's locale
-	 * @return map of analysis details
+	 * @param response     HTTP response object
+	 * @return dto of analysis details
 	 */
 	@RequestMapping(value = "/ajax/details/{submissionId}", method = RequestMethod.GET)
-	public Map<String, Object> ajaxGetDataForDetailsTab(@PathVariable Long submissionId, Locale locale) {
+	public AnalysisDetails ajaxGetDataForDetailsTab(@PathVariable Long submissionId, Locale locale,
+			HttpServletResponse response) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
@@ -323,7 +326,14 @@ public class AnalysisController {
 				.getVersion();
 		String priority = submission.getPriority()
 				.toString();
-		Long duration = getAnalysisDuration(submission);
+
+		Long duration = 0L;
+
+		if (submission.getAnalysisState()
+				.equals(AnalysisState.COMPLETED)) {
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+					.getCreatedDate());
+		}
 
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
 		boolean emailPipelineResult = submission.getEmailPipelineResult();
@@ -339,30 +349,23 @@ public class AnalysisController {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 
-		Map<String, Object> detailsPageMap = new HashMap<>();
-		detailsPageMap.put("result", "success");
-		detailsPageMap.put("workflowName", workflowName);
-		detailsPageMap.put("version", version);
-		detailsPageMap.put("priority", priority);
-		detailsPageMap.put("duration", duration);
-		detailsPageMap.put("createdDate", submission.getCreatedDate()
-				.toString());
-		detailsPageMap.put("priorities", priorities);
-		detailsPageMap.put("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-		detailsPageMap.put("canShareToSamples", canShareToSamples);
-		detailsPageMap.put("emailPipelineResult", emailPipelineResult);
-		detailsPageMap.put("updateSamples", submission.getUpdateSamples());
-		return detailsPageMap;
+		response.setStatus(HttpServletResponse.SC_OK);
+
+		// details is a DTO (Data Transfer Object)
+		return new AnalysisDetails(Integer.toString(response.getStatus()), workflowName, version, priority, duration,
+				submission.getCreatedDate(), priorities, emailPipelineResult, canShareToSamples,
+				updateAnalysisPermission.isAllowed(authentication, submission), submission.getUpdateSamples());
 	}
 
 	/**
 	 * Get analysis input files and their sizes
 	 *
 	 * @param submissionId analysis submission id to get data for
-	 * @return map of input files and their sizes
+	 * @param response     HTTP response object
+	 * @return dto of analysis input files data
 	 */
 	@RequestMapping(value = "/ajax/inputs/{submissionId}", method = RequestMethod.GET)
-	public Map<String, Object> ajaxGetAnalysisInputFiles(@PathVariable Long submissionId) {
+	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, HttpServletResponse response) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		ReferenceFile referenceFile = null;
@@ -406,7 +409,8 @@ public class AnalysisController {
 					.getSampleName());
 			hashSamples.put("sampleId", sampleFile.getSample()
 					.getId());
-			hashSamples.put("sequenceFilePairId", sampleFile.getSequenceFilePair().getId());
+			hashSamples.put("sequenceFilePairId", sampleFile.getSequenceFilePair()
+					.getId());
 			hashSamples.put("forward", sampleFile.getSequenceFilePair()
 					.getForwardSequenceFile());
 			hashSamples.put("reverse", sampleFile.getSequenceFilePair()
@@ -414,15 +418,9 @@ public class AnalysisController {
 			sampleList.add(hashSamples);
 		}
 
-		Map<String, Object> inputFilesMap = new HashMap<>();
-		inputFilesMap.put("result", "success");
-		inputFilesMap.put("samples", sampleList);
+		response.setStatus(HttpServletResponse.SC_OK);
 
-		if (referenceFile != null) {
-			inputFilesMap.put("referenceFile", referenceFile);
-		}
-
-		return inputFilesMap;
+		return new AnalysisInputFiles(Integer.toString(response.getStatus()), sampleList, referenceFile);
 	}
 
 	/**
@@ -431,10 +429,10 @@ public class AnalysisController {
 	 * @param parameters parameters which include the submission id and the new name and/or priority
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
-	 * @return redirect to the analysis page after update
+	 * @return dto of response details
 	 */
 	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
-	public Map<String, String> ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
+	public ResponseDetails ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
 			HttpServletResponse response) {
 		String message = "";
 		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
@@ -459,7 +457,7 @@ public class AnalysisController {
 		}
 		response.setStatus(responseCode);
 
-		return ImmutableMap.of("result", Integer.toString(response.getStatus()), "message", message);
+		return new ResponseDetails(Integer.toString(response.getStatus()), message);
 	}
 
 	/**
@@ -1205,25 +1203,6 @@ public class AnalysisController {
 			fields.add(metadataField.getLabel());
 		}
 		return ImmutableMap.of("fields", fields);
-	}
-
-
-	/**
-	 * Get the {@link AnalysisSubmission} duration
-	 *
-	 * @param submission the {@link AnalysisSubmission} to get duration for
-	 * @return duration of submission
-	 */
-	private Long getAnalysisDuration(AnalysisSubmission submission)
-	{
-		Long duration = 0L;
-
-		if(submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
-					.getCreatedDate());
-		}
-
-		return duration;
 	}
 
 	/**

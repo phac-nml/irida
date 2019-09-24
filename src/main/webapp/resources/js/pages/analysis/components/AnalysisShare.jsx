@@ -128,9 +128,11 @@ export default function AnalysisShare() {
 
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
-          <section style={{marginTop: SPACE_MD}}>
-              <Title level={3}>{getI18N("AnalysisShare.shareResultsWithProjects")}</Title>
-              {renderSharedProjectsList()}
+          <section style={{ marginTop: SPACE_MD }}>
+            <Title level={3}>
+              {getI18N("AnalysisShare.shareResultsWithProjects")}
+            </Title>
+            {renderSharedProjectsList()}
           </section>
         ) : (
           <p>{getI18N("AnalysisShare.noProjectsToShareResultsWith")}</p>
@@ -138,9 +140,9 @@ export default function AnalysisShare() {
       ) : null}
 
       {analysisDetailsContext.canShareToSamples ? (
-        <section style={{marginTop: SPACE_MD}}>
-            <Title level={3}>{getI18N("AnalysisShare.saveResults")}</Title>
-            {renderSaveToRelatedSamples()}
+        <section style={{ marginTop: SPACE_MD }}>
+          <Title level={3}>{getI18N("AnalysisShare.saveResults")}</Title>
+          {renderSaveToRelatedSamples()}
         </section>
       ) : null}
     </>

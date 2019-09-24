@@ -13,7 +13,7 @@ const URL = `${window.TL.BASE_URL}analysis/ajax/`;
  */
 export async function getVariablesForDetails(submissionId) {
   const res = await axios.get(`${URL}details/${submissionId}`);
-  return res.data;
+  return res.data.analysisDetails;
 }
 
 /*
@@ -24,7 +24,7 @@ export async function getVariablesForDetails(submissionId) {
  */
 export async function getAnalysisInputFiles(submissionId) {
   const res = await axios.get(`${URL}inputs/${submissionId}`);
-  return res.data;
+  return res.data.analysisInputFiles;
 }
 
 /*
@@ -55,7 +55,7 @@ export async function updateAnalysis(params) {
     analysisName: params.analysisName,
     priority: params.priority
   });
-  return res.data;
+  return res.data.responseDetails;
 }
 
 /*

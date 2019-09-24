@@ -21,15 +21,18 @@ export function AnalysisSampleRenderer() {
   const { analysisSamplesContext, sampleDisplayHeight } = useContext(
     AnalysisSamplesContext
   );
-  const [filteredSamples, setFilteredSamples] = useState(
-    analysisSamplesContext.samples
-  );
+
+  const [filteredSamples, setFilteredSamples] = useState(null);
 
   const renderSamples = () => {
     return (
       <List
         bordered
-        dataSource={filteredSamples}
+        dataSource={
+          filteredSamples !== null
+            ? filteredSamples
+            : analysisSamplesContext.samples
+        }
         style={{ height: sampleDisplayHeight, overflowY: "auto" }}
         renderItem={item => {
           return (
@@ -82,7 +85,11 @@ export function AnalysisSampleRenderer() {
    * find samples with sample name or files that contain the search string
    */
   const searchSamples = searchStr => {
-    if (searchStr === "") {
+    if (
+      searchStr.trim() === "" ||
+      searchStr === "undefined" ||
+      searchStr === null
+    ) {
       setFilteredSamples(analysisSamplesContext.samples);
     } else {
       searchStr = String(searchStr).toLowerCase();
