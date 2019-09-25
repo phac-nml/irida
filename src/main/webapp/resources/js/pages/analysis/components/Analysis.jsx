@@ -12,7 +12,7 @@
 import React, { useContext } from "react";
 import { Tabs, Typography, Icon } from "antd";
 
-import { AnalysisDetails } from "./AnalysisDetails";
+import { AnalysisSettings } from "./AnalysisSettings";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { AnalysisProvenance } from "./AnalysisProvenance";
 import { AnalysisOutputFiles } from "./AnalysisOutputFiles";
@@ -152,7 +152,7 @@ export default function Analysis() {
             id="t-analysis-tab-settings"
           >
             <AnalysisDetailsProvider>
-              <AnalysisDetails />
+              <AnalysisSettings />
             </AnalysisDetailsProvider>
           </TabPane>
         </Tabs>

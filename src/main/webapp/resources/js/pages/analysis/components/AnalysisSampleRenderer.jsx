@@ -6,11 +6,10 @@
 import React, { useContext, useState } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
-import { Avatar, Icon, List, Input, Typography } from "antd";
+import { Alert, Avatar, Icon, Input, List, Spin } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
-const { Text } = Typography;
 
 export function AnalysisSampleRenderer() {
   /*
@@ -18,7 +17,7 @@ export function AnalysisSampleRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisSamplesContext, sampleDisplayHeight } = useContext(
+  const { analysisSamplesContext, sampleDisplayHeight, loading } = useContext(
     AnalysisSamplesContext
   );
 
@@ -105,7 +104,11 @@ export function AnalysisSampleRenderer() {
 
   return (
     <>
-      {analysisSamplesContext.samples.length > 0 ? (
+      {analysisSamplesContext.loading ? (
+        <div>
+          <Spin /> {getI18N("Checking for samples")}
+        </div>
+      ) : analysisSamplesContext.samples.length > 0 ? (
         <div>
           <Search
             placeholder={getI18N("AnalysisSamples.searchSamples")}
@@ -116,9 +119,11 @@ export function AnalysisSampleRenderer() {
           {renderSamples()}
         </div>
       ) : (
-        <Text strong key={`no-paired-end-0`}>
-          {getI18N("AnalysisSamples.noPairedEnd")}
-        </Text>
+        <Alert
+          type="info"
+          showIcon
+          message={getI18N("AnalysisSamples.noPairedEnd")}
+        />
       )}
     </>
   );

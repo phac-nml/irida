@@ -22,15 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -55,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.ajaxResult.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -72,6 +62,15 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 /**
  * Controller for Analysis.
@@ -270,35 +269,27 @@ public class AnalysisController {
 	 *                   the new email pipeline result value
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
-	 * @return dto of response details
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
-	public ResponseDetails ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
+	public void ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
 			Locale locale, HttpServletResponse response) {
-		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 
-		String message = "";
-		int responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
-
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
 			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
 			logger.trace("Email pipeline result updated for: " + submission);
-			responseCode = HttpServletResponse.SC_OK;
+			response.setStatus(HttpServletResponse.SC_OK);
 
 			if (parameters.getEmailPipelineResult()) {
-				message = messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale);
+				response.setHeader("message", messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale));
 			} else {
-				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
+				response.setHeader("message", messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale));
 			}
 		} else {
 			logger.debug("Email on completion preference not updated due to analysis state");
 		}
 
-		response.setStatus(responseCode);
-
-		return new ResponseDetails(Integer.toString(response.getStatus()), message);
 	}
 
 	/**
@@ -429,35 +420,26 @@ public class AnalysisController {
 	 * @param parameters parameters which include the submission id and the new name and/or priority
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
-	 * @return dto of response details
 	 */
 	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
-	public ResponseDetails ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
+	public void ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
 			HttpServletResponse response) {
-		String message = "";
-		logger.trace("reading analysis submission " + parameters.getAnalysisSubmissionId());
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
-		int responseCode = HttpServletResponse.SC_OK;
 		if (parameters.getAnalysisName() != null) {
 			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
-			logger.trace("Name updated for: " + submission);
-			message = messageSource.getMessage("AnalysisDetails.nameUpdated",
-					new Object[] { parameters.getAnalysisName() }, locale);
+			response.setHeader("message", messageSource.getMessage("AnalysisDetails.nameUpdated",
+					new Object[] { parameters.getAnalysisName() }, locale));
 		} else if (parameters.getPriority() != null) {
 			if (submission.getAnalysisState() == AnalysisState.NEW) {
 				analysisSubmissionService.updatePriority(submission, parameters.getPriority());
-				logger.trace("Priority updated for: " + submission);
-				message = messageSource.getMessage("AnalysisDetails.priorityUpdated",
-						new Object[] { parameters.getPriority(), submission.getName() }, locale);
+				response.setHeader("message", messageSource.getMessage("AnalysisDetails.priorityUpdated",
+						new Object[] { parameters.getPriority(), submission.getName() }, locale));
 			} else {
 				logger.trace("Unable to update priority as: " + submission + "is no longer in queued state");
-				message = messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale);
-				responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+				response.setHeader("message", messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale));
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		}
-		response.setStatus(responseCode);
-
-		return new ResponseDetails(Integer.toString(response.getStatus()), message);
 	}
 
 	/**

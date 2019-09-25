@@ -9,28 +9,14 @@
  *required by the components encompassed within
  */
 
-import React, { useContext, Suspense, lazy } from "react";
-import {
-  Button,
-  Checkbox,
-  Input,
-  List,
-  Col,
-  Tabs,
-  Select,
-  Spin,
-  Divider,
-  Typography
-} from "antd";
+import React, { Suspense, useContext } from "react";
+import { Checkbox, Col, List, Select, Spin, Tabs, Typography } from "antd";
 
 import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { showNotification } from "../../../modules/notifications";
 import { SPACE_MD } from "../../../styles/spacing";
-
-import { getVariablesForDetails } from "../../../apis/analysis/analysis";
 
 import {
   formatDate,
@@ -43,7 +29,7 @@ const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
 const { Title, Paragraph } = Typography;
 const TabPane = Tabs.TabPane;
 
-export function AnalysisDetails() {
+export function AnalysisSettings() {
   /*
    * The following const statements
    * make the required contexts which contain

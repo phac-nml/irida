@@ -35,11 +35,11 @@ export async function getAnalysisInputFiles(submissionId) {
  * @return {Promise<*>} `data` contains the OK response; error` contains error information if an error occurred.
  */
 export async function updateAnalysisEmailPipelineResult(params) {
-  const res = await axios.patch(`${URL}update-email-pipeline-result/`, {
+  const res = await axios.patch(`${URL}update-email-pipeline-result`, {
     analysisSubmissionId: params.submissionId,
     emailPipelineResult: params.emailPipelineResult
   });
-  return res.data;
+  return res.headers.message;
 }
 
 /*
@@ -55,7 +55,7 @@ export async function updateAnalysis(params) {
     analysisName: params.analysisName,
     priority: params.priority
   });
-  return res.data.responseDetails;
+  return res.headers.message;
 }
 
 /*

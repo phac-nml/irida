@@ -11,7 +11,8 @@ import { getAnalysisInputFiles } from "../apis/analysis/analysis";
 
 const initialContext = {
   samples: [],
-  referenceFile: []
+  referenceFile: [],
+  loading: true
 };
 
 const AnalysisSamplesContext = React.createContext(initialContext);
@@ -31,7 +32,8 @@ function AnalysisSamplesProvider(props) {
           return {
             ...analysisSamplesContext,
             samples: samples,
-            referenceFile: referenceFile
+            referenceFile: referenceFile,
+            loading: false
           };
         });
       }

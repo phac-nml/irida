@@ -7,7 +7,7 @@
  * required by the component
  */
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Checkbox, Card, Alert, Typography, List } from "antd";
+import { Alert, Button, Checkbox, List, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
@@ -135,7 +135,7 @@ export default function AnalysisShare() {
             {renderSharedProjectsList()}
           </section>
         ) : (
-          <p>{getI18N("AnalysisShare.noProjectsToShareResultsWith")}</p>
+          <Alert type="info" showIcon message={getI18N("AnalysisShare.noProjectsToShareResultsWith")}/>
         )
       ) : null}
 

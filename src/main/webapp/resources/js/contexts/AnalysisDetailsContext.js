@@ -95,8 +95,8 @@ function AnalysisDetailsProvider(props) {
       submissionId: analysisContext.analysis.identifier,
       analysisName: null,
       priority: updatedPriority
-    }).then(({ message }) => {
-      showNotification({ text: message });
+    }).then(text => {
+      showNotification({ text });
       dispatch({ type: TYPES.PRIORITY, priority: updatedPriority });
     });
   }
@@ -112,8 +112,8 @@ function AnalysisDetailsProvider(props) {
     updateAnalysisEmailPipelineResult({
       submissionId: analysisContext.analysis.identifier,
       emailPipelineResult: emailPipelineResult
-    }).then(({ message }) => {
-      showNotification({ text: message });
+    }).then(text => {
+      showNotification({ text });
       dispatch({
         type: TYPES.EMAIL_PIPELINE_RESULT,
         emailPipelineResult
