@@ -15,7 +15,10 @@ import {
   updateAnalysis
 } from "../apis/analysis/analysis";
 
-import { showNotification } from "../modules/notifications";
+import {
+  showNotification,
+  showErrorNotification
+} from "../modules/notifications";
 import { AnalysisContext } from "../contexts/AnalysisContext";
 
 const TYPES = {
@@ -95,9 +98,13 @@ function AnalysisDetailsProvider(props) {
       submissionId: analysisContext.analysis.identifier,
       analysisName: null,
       priority: updatedPriority
-    }).then(text => {
-      showNotification({ text });
-      dispatch({ type: TYPES.PRIORITY, priority: updatedPriority });
+    }).then(res => {
+      if (res.type === "error") {
+        showErrorNotification({ text: res.text, type: res.type });
+      } else {
+        showNotification({ text: res });
+        dispatch({ type: TYPES.PRIORITY, priority: updatedPriority });
+      }
     });
   }
 
@@ -112,12 +119,16 @@ function AnalysisDetailsProvider(props) {
     updateAnalysisEmailPipelineResult({
       submissionId: analysisContext.analysis.identifier,
       emailPipelineResult: emailPipelineResult
-    }).then(text => {
-      showNotification({ text });
-      dispatch({
-        type: TYPES.EMAIL_PIPELINE_RESULT,
-        emailPipelineResult
-      });
+    }).then(res => {
+      if (res.type === "error") {
+        showErrorNotification({ text: res.text, type: res.type });
+      } else {
+        showNotification({ text: res });
+        dispatch({
+          type: TYPES.EMAIL_PIPELINE_RESULT,
+          emailPipelineResult
+        });
+      }
     });
   }
 

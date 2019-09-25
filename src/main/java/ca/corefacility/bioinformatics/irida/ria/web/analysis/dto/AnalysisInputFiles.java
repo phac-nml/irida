@@ -10,26 +10,16 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
  */
 
 public class AnalysisInputFiles {
-  private String responseCode;
   private ArrayList<HashMap<String, Object>> samples;
   private ReferenceFile referenceFile;
 
 	public AnalysisInputFiles() {
 	}
 
-	public AnalysisInputFiles(String responseCode, ArrayList<HashMap<String, Object>> samples, ReferenceFile referenceFile) {
-    this.responseCode = responseCode;
+	public AnalysisInputFiles(ArrayList<HashMap<String, Object>> samples, ReferenceFile referenceFile) {
     this.samples = samples;
     this.referenceFile = referenceFile;
   }
-
-	public String getResponseCode() {
-		return responseCode;
-	}
-
-	public void setResponseCode(String responseCode) {
-		this.responseCode = responseCode;
-	}
 
 	public ArrayList<HashMap<String, Object>> getSamples() {
 		return samples;

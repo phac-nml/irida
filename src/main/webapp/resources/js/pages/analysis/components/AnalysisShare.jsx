@@ -135,7 +135,11 @@ export default function AnalysisShare() {
             {renderSharedProjectsList()}
           </section>
         ) : (
-          <Alert type="info" showIcon message={getI18N("AnalysisShare.noProjectsToShareResultsWith")}/>
+          <Alert
+            type="info"
+            showIcon
+            message={getI18N("AnalysisShare.noProjectsToShareResultsWith")}
+          />
         )
       ) : null}
 

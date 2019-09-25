@@ -271,23 +271,28 @@ public class AnalysisController {
 	 * @param response   HTTP response object
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
-	public void ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
-			Locale locale, HttpServletResponse response) {
+	public void ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters, Locale locale,
+			HttpServletResponse response) {
 
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
 			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
 			logger.trace("Email pipeline result updated for: " + submission);
-			response.setStatus(HttpServletResponse.SC_OK);
 
 			if (parameters.getEmailPipelineResult()) {
-				response.setHeader("message", messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale));
+				response.setHeader("message",
+						messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale));
 			} else {
-				response.setHeader("message", messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale));
+				response.setHeader("message",
+						messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale));
 			}
 		} else {
 			logger.debug("Email on completion preference not updated due to analysis state");
+			response.setHeader("message",
+					messageSource.getMessage("AnalysisDetails.emailOnPipelineResultNotUpdated", new Object[] {},
+							locale));
+			response.setStatus(422);
 		}
 
 	}
@@ -343,9 +348,9 @@ public class AnalysisController {
 		response.setStatus(HttpServletResponse.SC_OK);
 
 		// details is a DTO (Data Transfer Object)
-		return new AnalysisDetails(Integer.toString(response.getStatus()), workflowName, version, priority, duration,
-				submission.getCreatedDate(), priorities, emailPipelineResult, canShareToSamples,
-				updateAnalysisPermission.isAllowed(authentication, submission), submission.getUpdateSamples());
+		return new AnalysisDetails(workflowName, version, priority, duration, submission.getCreatedDate(), priorities,
+				emailPipelineResult, canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
+				submission.getUpdateSamples());
 	}
 
 	/**
@@ -411,7 +416,7 @@ public class AnalysisController {
 
 		response.setStatus(HttpServletResponse.SC_OK);
 
-		return new AnalysisInputFiles(Integer.toString(response.getStatus()), sampleList, referenceFile);
+		return new AnalysisInputFiles(sampleList, referenceFile);
 	}
 
 	/**
@@ -436,8 +441,9 @@ public class AnalysisController {
 						new Object[] { parameters.getPriority(), submission.getName() }, locale));
 			} else {
 				logger.trace("Unable to update priority as: " + submission + "is no longer in queued state");
-				response.setHeader("message", messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale));
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.setHeader("message",
+						messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale));
+				response.setStatus(422);
 			}
 		}
 	}
