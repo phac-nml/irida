@@ -9,6 +9,15 @@ import org.springframework.security.oauth2.provider.endpoint.DefaultRedirectReso
  * Redirect resolver for Oauth2 clients that allows any url for redirection
  */
 public class OauthRedirectResolver extends DefaultRedirectResolver {
+  /**
+   * Resolve the redirect for a client
+   *
+   * @param requestedRedirect The requested redirect uri for the client
+   * @param client            The client authorizing a oauth2 request
+   *
+   * @return The requestedRedirect if it would throw a InvalidRequestException in the parent method
+   * @throws OAuth2Exception if client has no authorized grant types or grant type is not a redirect type
+   */
   public String resolveRedirect(String requestedRedirect, ClientDetails client) throws OAuth2Exception {
     try {
       return super.resolveRedirect(requestedRedirect, client);
