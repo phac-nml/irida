@@ -94,8 +94,8 @@ public class IridaOauthSecurityConfig {
     @Override
     public void configure(final HttpSecurity httpSecurity) throws Exception {
       httpSecurity.antMatcher("/api/**").authorizeRequests()
-        .antMatchers("/api/oauth/authorize").fullyAuthenticated()
-        .antMatchers("/api/oauth/authorization/token*").fullyAuthenticated()
+        //.antMatchers("/api/oauth/authorize").fullyAuthenticated()
+        //.antMatchers("/api/oauth/authorization/token*").fullyAuthenticated()
         .regexMatchers(HttpMethod.GET, "/api.*").access("#oauth2.hasScope('read')")
         .regexMatchers("/api.*").access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
       httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
