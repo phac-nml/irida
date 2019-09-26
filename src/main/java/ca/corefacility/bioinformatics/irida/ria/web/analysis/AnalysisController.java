@@ -51,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFil
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -271,30 +272,29 @@ public class AnalysisController {
 	 * @param response   HTTP response object
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
-	public void ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters, Locale locale,
+	public ResponseDetails ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters, Locale locale,
 			HttpServletResponse response) {
 
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+		String message = "";
+
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
 			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
 			logger.trace("Email pipeline result updated for: " + submission);
 
 			if (parameters.getEmailPipelineResult()) {
-				response.setHeader("message",
-						messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale));
+				message = messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale);
 			} else {
-				response.setHeader("message",
-						messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale));
+				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
 			}
 		} else {
 			logger.debug("Email on completion preference not updated due to analysis state");
-			response.setHeader("message",
-					messageSource.getMessage("AnalysisDetails.emailOnPipelineResultNotUpdated", new Object[] {},
-							locale));
+			message = messageSource.getMessage("AnalysisDetails.emailOnPipelineResultNotUpdated", new Object[] {},
+					locale);
 			response.setStatus(422);
 		}
-
+		return new ResponseDetails(message);
 	}
 
 	/**
@@ -427,25 +427,27 @@ public class AnalysisController {
 	 * @param response   HTTP response object
 	 */
 	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
-	public void ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
+	public ResponseDetails ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
 			HttpServletResponse response) {
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+		String message = "";
+
 		if (parameters.getAnalysisName() != null) {
 			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
-			response.setHeader("message", messageSource.getMessage("AnalysisDetails.nameUpdated",
-					new Object[] { parameters.getAnalysisName() }, locale));
+			message = messageSource.getMessage("AnalysisDetails.nameUpdated",
+					new Object[] { parameters.getAnalysisName() }, locale);
 		} else if (parameters.getPriority() != null) {
 			if (submission.getAnalysisState() == AnalysisState.NEW) {
 				analysisSubmissionService.updatePriority(submission, parameters.getPriority());
-				response.setHeader("message", messageSource.getMessage("AnalysisDetails.priorityUpdated",
-						new Object[] { parameters.getPriority(), submission.getName() }, locale));
+				message = messageSource.getMessage("AnalysisDetails.priorityUpdated",
+						new Object[] { parameters.getPriority(), submission.getName() }, locale);
 			} else {
 				logger.trace("Unable to update priority as: " + submission + "is no longer in queued state");
-				response.setHeader("message",
-						messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale));
+				message = messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale);
 				response.setStatus(422);
 			}
 		}
+		return new ResponseDetails(message);
 	}
 
 	/**

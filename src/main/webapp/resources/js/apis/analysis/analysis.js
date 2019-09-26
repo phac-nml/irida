@@ -40,9 +40,9 @@ export async function updateAnalysisEmailPipelineResult(params) {
       analysisSubmissionId: params.submissionId,
       emailPipelineResult: params.emailPipelineResult
     });
-    return res.headers.message;
+    return res.data.responseDetails.message;
   } catch (error) {
-    return { text: error.response.headers.message, type: "error" };
+    return { text: error.response.data.responseDetails.message, type: "error" };
   }
 }
 
@@ -60,9 +60,9 @@ export async function updateAnalysis(params) {
       analysisName: params.analysisName,
       priority: params.priority
     });
-    return res.headers.message;
+    return res.data.responseDetails.message;
   } catch (error) {
-    return { text: error.response.headers.message, type: "error" };
+    return { text: error.response.data.responseDetails.message, type: "error" };
   }
 }
 

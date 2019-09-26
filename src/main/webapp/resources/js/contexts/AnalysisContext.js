@@ -50,7 +50,7 @@ function AnalysisProvider(props) {
       submissionId: analysisContext.analysis.identifier,
       analysisName: updatedAnalysisName,
       priority: null
-    }).then(({ message }) => {
+    }).then(message => {
       showNotification({ text: message });
       setAnalysisContext(analysisContext => {
         return { ...analysisContext, analysisName: updatedAnalysisName };
