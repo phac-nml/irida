@@ -1043,7 +1043,7 @@
 
 		<!-- Dependencies -->
 		<commons.cli.version>1.2</commons.cli.version>
-		<junit.version>4.11</junit.version>
+		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<guava.version>28.0-jre</guava.version>
 		<spring.version>4.3.25.RELEASE</spring.version>
