@@ -166,7 +166,7 @@ public class AnalysesListingService {
 	 * @param end   {@link Date}
 	 * @return {@link Long} milliseconds
 	 */
-	private Long getDurationInMilliseconds(Date start, Date end) {
+	public Long getDurationInMilliseconds(Date start, Date end) {
 		Instant startInstant = start.toInstant();
 		Instant endInstant = end.toInstant();
 		Duration duration = Duration.between(startInstant, endInstant)

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.Analy
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
 
+	@Ignore
 	@Test
 	public void testPageSetUp() throws URISyntaxException, IOException {
 		logger.debug("Testing 'Analysis Details Page'");
@@ -46,19 +48,34 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Sample 1 should not be related to a sample", "Unknown Sample", page.getLabelForSample(0));
 	}
 
+	@Ignore
 	@Test
 	public void testEditPriorityHidden() throws URISyntaxException, IOException {
-
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
 
-		page.clickEditButton();
+		page.clickSettingsTab();
 
 		assertFalse("priority edit should be hidden", page.priorityEditVisible());
 
 		page = AnalysisDetailsPage.initPage(driver(), 8L);
 
 		assertTrue("priority edit should be visible", page.priorityEditVisible());
+	}
+
+	@Ignore
+	@Test
+	public void testUpdateEmailPipelineResult() throws URISyntaxException, IOException {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
+
+		page.clickSettingsTab();
+
+		assertFalse("email pipeline result upon completion should be hidden", page.emailPipelineResultVisible());
+
+		page = AnalysisDetailsPage.initPage(driver(), 8L);
+
+		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
 	}
 
 }
