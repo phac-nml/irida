@@ -270,10 +270,11 @@ public class AnalysisController {
 	 *                   the new email pipeline result value
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
+	 * @return dto with message
 	 */
 	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
-	public ResponseDetails ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters, Locale locale,
-			HttpServletResponse response) {
+	public ResponseDetails ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
+			Locale locale, HttpServletResponse response) {
 
 		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
 		String message = "";
@@ -425,6 +426,7 @@ public class AnalysisController {
 	 * @param parameters parameters which include the submission id and the new name and/or priority
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
+	 * @return dto with message
 	 */
 	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
 	public ResponseDetails ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
