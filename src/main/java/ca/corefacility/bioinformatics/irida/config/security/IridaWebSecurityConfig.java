@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.servlet.LocaleResolver;
@@ -50,10 +51,14 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
+			// @formatter:off
 			web.ignoring()
 					.antMatchers("/node_modules/**")
 					.antMatchers("/dist/**")
 					.antMatchers("/resources/**");
+
+			// @formatter:on
+			web.httpFirewall(new DefaultHttpFirewall());
 		}
 
 		@Override
