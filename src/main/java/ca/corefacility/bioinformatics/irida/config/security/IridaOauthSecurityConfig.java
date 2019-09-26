@@ -93,21 +93,21 @@ public class IridaOauthSecurityConfig {
 
     @Override
     public void configure(final HttpSecurity httpSecurity) throws Exception {
-      httpSecurity.antMatcher("/api*").authorizeRequests()
+      httpSecurity.antMatcher("/api/**").authorizeRequests()
         .antMatchers("/api/oauth/authorize").fullyAuthenticated()
         .antMatchers("/api/oauth/authorization/token*").fullyAuthenticated()
         .regexMatchers(HttpMethod.GET, "/api.*").access("#oauth2.hasScope('read')")
         .regexMatchers("/api.*").access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
-      httpSecurity.antMatcher("/api*").headers().frameOptions().disable();
-      httpSecurity.antMatcher("/api*").csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
+      httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
+      httpSecurity.antMatcher("/api/**").csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
         .disable();
-      httpSecurity.antMatcher("/api*").csrf().disable();
-      httpSecurity.antMatcher("/api*").exceptionHandling().accessDeniedPage("/login?error");
+      httpSecurity.antMatcher("/api/**").csrf().disable();
+      httpSecurity.antMatcher("/api/**").exceptionHandling().accessDeniedPage("/login?error");
 
       // SecurityContextPersistenceFilter appears pretty high up (well
       // before any OAuth related filters), so we'll put our anonymous
       // user filter into the filter chain after that.
-      httpSecurity.antMatcher("/api*").addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
+      httpSecurity.antMatcher("/api/**").addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
         SecurityContextPersistenceFilter.class);
     }
   }
