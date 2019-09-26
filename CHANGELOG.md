@@ -83,6 +83,7 @@ Changes
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
 * [UI]: Fixed bug causing issues with saving Line List templates.
 * [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
+* [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
 
 0.22.0 to 19.01
 ----------------
