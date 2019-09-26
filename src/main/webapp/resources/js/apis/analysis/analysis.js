@@ -13,7 +13,7 @@ const URL = `${window.TL.BASE_URL}analysis/ajax/`;
  */
 export async function getVariablesForDetails(submissionId) {
   const res = await axios.get(`${URL}details/${submissionId}`);
-  return res.data;
+  return res.data.analysisDetails;
 }
 
 /*
@@ -24,7 +24,7 @@ export async function getVariablesForDetails(submissionId) {
  */
 export async function getAnalysisInputFiles(submissionId) {
   const res = await axios.get(`${URL}inputs/${submissionId}`);
-  return res.data;
+  return res.data.analysisInputFiles;
 }
 
 /*
@@ -35,11 +35,15 @@ export async function getAnalysisInputFiles(submissionId) {
  * @return {Promise<*>} `data` contains the OK response; error` contains error information if an error occurred.
  */
 export async function updateAnalysisEmailPipelineResult(params) {
-  const res = await axios.patch(`${URL}update-email-pipeline-result/`, {
-    analysisSubmissionId: params.submissionId,
-    emailPipelineResult: params.emailPipelineResult
-  });
-  return res.data;
+  try {
+    const res = await axios.patch(`${URL}update-email-pipeline-result`, {
+      analysisSubmissionId: params.submissionId,
+      emailPipelineResult: params.emailPipelineResult
+    });
+    return res.data.responseDetails.message;
+  } catch (error) {
+    return { text: error.response.data.responseDetails.message, type: "error" };
+  }
 }
 
 /*
@@ -50,12 +54,16 @@ export async function updateAnalysisEmailPipelineResult(params) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function updateAnalysis(params) {
-  const res = await axios.patch(`${URL}update-analysis/`, {
-    analysisSubmissionId: params.submissionId,
-    analysisName: params.analysisName,
-    priority: params.priority
-  });
-  return res.data;
+  try {
+    const res = await axios.patch(`${URL}update-analysis/`, {
+      analysisSubmissionId: params.submissionId,
+      analysisName: params.analysisName,
+      priority: params.priority
+    });
+    return res.data.responseDetails.message;
+  } catch (error) {
+    return { text: error.response.data.responseDetails.message, type: "error" };
+  }
 }
 
 /*

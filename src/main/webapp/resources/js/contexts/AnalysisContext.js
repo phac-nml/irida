@@ -32,7 +32,7 @@ const initialContext = {
   analysisName: window.PAGE.analysisName,
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
-  isCompleted: window.PAGE.analysisState == "COMPLETED",
+  isCompleted: window.PAGE.analysisState === "COMPLETED",
   isError: window.PAGE.analysisState.includes("ERROR")
 };
 
@@ -50,7 +50,7 @@ function AnalysisProvider(props) {
       submissionId: analysisContext.analysis.identifier,
       analysisName: updatedAnalysisName,
       priority: null
-    }).then(({ message }) => {
+    }).then(message => {
       showNotification({ text: message });
       setAnalysisContext(analysisContext => {
         return { ...analysisContext, analysisName: updatedAnalysisName };

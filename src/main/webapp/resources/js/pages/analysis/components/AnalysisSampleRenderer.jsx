@@ -6,7 +6,7 @@
 import React, { useContext, useState } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
-import { Avatar, Icon, List, Input } from "antd";
+import { Alert, Avatar, Icon, Input, List, Spin } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
@@ -17,71 +17,66 @@ export function AnalysisSampleRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisSamplesContext, sampleDisplayHeight } = useContext(
+  const { analysisSamplesContext, sampleDisplayHeight, loading } = useContext(
     AnalysisSamplesContext
   );
-  const [filteredSamples, setFilteredSamples] = useState(
-    analysisSamplesContext.samples
-  );
+
+  const [filteredSamples, setFilteredSamples] = useState(null);
 
   const renderSamples = () => {
-    const samplesList = [];
-
-    if (analysisSamplesContext.samples.length > 0) {
-      return (
-        <List
-          bordered
-          dataSource={filteredSamples}
-          renderItem={item => {
-            return (
-              <List.Item>
-                <List.Item.Meta
-                  key={item.sampleId}
-                  avatar={
-                    <Avatar>
-                      <Icon type="experiment" />
-                    </Avatar>
-                  }
-                  title={
-                    <a
-                      href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
-                      target="_blank"
-                    >
-                      {item.sampleName}
-                    </a>
-                  }
-                  description={
-                    <div>
-                      <div key={`file-${item.forward.identifier}`}>
-                        <a
-                          href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
-                          target="_blank"
-                        >
-                          {item.forward.fileName}
-                        </a>
-                      </div>
-                      <div key={`file-${item.reverse.identifier}`}>
-                        <a
-                          href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
-                          target="_blank"
-                        >
-                          {item.reverse.fileName}
-                        </a>
-                      </div>
+    return (
+      <List
+        bordered
+        dataSource={
+          filteredSamples !== null
+            ? filteredSamples
+            : analysisSamplesContext.samples
+        }
+        style={{ height: sampleDisplayHeight, overflowY: "auto" }}
+        renderItem={item => {
+          return (
+            <List.Item>
+              <List.Item.Meta
+                key={item.sampleId}
+                avatar={
+                  <Avatar>
+                    <Icon type="experiment" />
+                  </Avatar>
+                }
+                title={
+                  <a
+                    href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
+                    target="_blank"
+                  >
+                    {item.sampleName}
+                  </a>
+                }
+                description={
+                  <div>
+                    <div key={`file-${item.forward.identifier}`}>
+                      <a
+                        href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
+                        target="_blank"
+                      >
+                        {item.forward.fileName}
+                      </a>
                     </div>
-                  }
-                />
-              </List.Item>
-            );
-          }}
-        />
-      );
-    } else {
-      samplesList.push(
-        <p key={`no-paired-end-0`}>{getI18N("AnalysisSamples.noPairedEnd")}</p>
-      );
-    }
-    return samplesList;
+                    <div key={`file-${item.reverse.identifier}`}>
+                      <a
+                        href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
+                        target="_blank"
+                      >
+                        {item.reverse.fileName}
+                      </a>
+                    </div>
+                  </div>
+                }
+              />
+            </List.Item>
+          );
+        }}
+      />
+    );
   };
 
   /*
@@ -89,36 +84,47 @@ export function AnalysisSampleRenderer() {
    * find samples with sample name or files that contain the search string
    */
   const searchSamples = searchStr => {
-    if (searchStr === "") {
+    if (
+      searchStr.trim() === "" ||
+      searchStr === "undefined" ||
+      searchStr === null
+    ) {
       setFilteredSamples(analysisSamplesContext.samples);
     } else {
-      const samplesContainingSearchValue = [];
-
-      for (const [index, sample] of analysisSamplesContext.samples.entries()) {
-        if (
-          sample.sampleName.includes(searchStr) ||
-          sample.forward.fileName.includes(searchStr) ||
-          sample.reverse.fileName.includes(searchStr)
-        ) {
-          samplesContainingSearchValue.push(sample);
-        }
-      }
+      searchStr = String(searchStr).toLowerCase();
+      const samplesContainingSearchValue = analysisSamplesContext.samples.filter(
+        sample =>
+          sample.sampleName.toLowerCase().includes(searchStr) ||
+          sample.forward.fileName.toLowerCase().includes(searchStr) ||
+          sample.reverse.fileName.toLowerCase().includes(searchStr)
+      );
       setFilteredSamples(samplesContainingSearchValue);
     }
   };
 
   return (
     <>
-      <div>
-        <Search
-          placeholder={getI18N("AnalysisSamples.inputSearchText")}
-          onChange={event => searchSamples(event.target.value)}
-          style={{ width: "100%", marginBottom: SPACE_MD }}
-        />
-        <div style={{ height: sampleDisplayHeight, overflowY: "auto" }}>
+      {analysisSamplesContext.loading ? (
+        <div>
+          <Spin /> {getI18N("Checking for samples")}
+        </div>
+      ) : analysisSamplesContext.samples.length > 0 ? (
+        <div>
+          <Search
+            placeholder={getI18N("AnalysisSamples.searchSamples")}
+            onChange={event => searchSamples(event.target.value)}
+            style={{ width: "100%", marginBottom: SPACE_MD }}
+            allowClear={true}
+          />
           {renderSamples()}
         </div>
-      </div>
+      ) : (
+        <Alert
+          type="info"
+          showIcon
+          message={getI18N("AnalysisSamples.noPairedEnd")}
+        />
+      )}
     </>
   );
 }

@@ -12,7 +12,7 @@
 import React, { useContext } from "react";
 import { Tabs, Typography, Icon } from "antd";
 
-import { AnalysisDetails } from "./AnalysisDetails";
+import { AnalysisSettings } from "./AnalysisSettings";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { AnalysisProvenance } from "./AnalysisProvenance";
 import { AnalysisOutputFiles } from "./AnalysisOutputFiles";
@@ -22,6 +22,7 @@ import { AnalysisSistr } from "./AnalysisSistr";
 import { AnalysisError } from "./AnalysisError";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SPACE_MD } from "../../../styles/spacing";
+import styled from "styled-components";
 
 import {
   AnalysisContext,
@@ -40,6 +41,12 @@ const analysisTypesWithAdditionalPage = [
   "MLST_MENTALIST"
 ];
 
+const Wrapper = styled.div`
+  margin-left: ${SPACE_MD};
+  margin-right: ${SPACE_MD};
+  margin-top: ${SPACE_MD};
+`;
+
 export default function Analysis() {
   const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
     AnalysisContext
@@ -55,22 +62,16 @@ export default function Analysis() {
    * to the analysis name.
    */
   return (
-    <>
-      <div
-        style={{
-          marginLeft: SPACE_MD,
-          marginRight: SPACE_MD,
-          marginTop: SPACE_MD
-        }}
-      >
-        <Title>
-          {analysisContext.analysisName}
+    <Wrapper>
+      <div>
+        <Title style={{ wordBreak: "break-word" }}>
           {analysisContext.analysisState === "COMPLETED" ? (
             <Icon
               type="check-circle"
-              style={{ marginLeft: SPACE_MD, color: "#00ab66" }}
+              style={{ marginRight: SPACE_MD, color: "#00ab66" }}
             />
           ) : null}
+          {analysisContext.analysisName}
         </Title>
         {analysisContext.analysisState !== "COMPLETED" ? (
           <AnalysisSteps />
@@ -151,11 +152,11 @@ export default function Analysis() {
             id="t-analysis-tab-settings"
           >
             <AnalysisDetailsProvider>
-              <AnalysisDetails />
+              <AnalysisSettings />
             </AnalysisDetailsProvider>
           </TabPane>
         </Tabs>
       </div>
-    </>
+    </Wrapper>
   );
 }

@@ -43,18 +43,18 @@ export default function AnalysisDelete() {
     <>
       <Title level={2}>{getI18N("AnalysisDelete.deleteAnalysis")}</Title>
       <Alert
-        message=<strong className="spaced-top__sm">
-          {getI18N("AnalysisDelete.permanentActionWarning")}
-        </strong>
+        message={getI18N("AnalysisDelete.permanentActionWarning")}
+        showIcon
         type="warning"
       />
 
       <section>
         <Popconfirm
           placement="right"
-          title={`${getI18N("AnalysisDelete.deleteAnalysis")} ${
+          title={getI18N("AnalysisDelete.deleteAnalysisSubmission").replace(
+            "[NAME]",
             analysisContext.analysisName
-          }?`}
+          )}
           okText={getI18N("AnalysisDelete.confirm")}
           cancelText={getI18N("AnalysisDelete.cancel")}
           onConfirm={handleDeleteConfirm}

@@ -7,12 +7,12 @@
  * required by the component
  */
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Checkbox, Card, Row, Alert, Typography } from "antd";
+import { Alert, Button, Checkbox, List, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
-import { SPACE_SM } from "../../../styles/spacing";
+import { SPACE_MD } from "../../../styles/spacing";
 
 import {
   getSharedProjects,
@@ -36,18 +36,70 @@ export default function AnalysisShare() {
   const [sharedProjects, setSharedProjects] = useState(null);
 
   function renderSharedProjectsList() {
-    return sharedProjects.map((sharedProject, index) => (
-      <Row className="spaced-bottom" key={`sharedprojrow${index}`}>
-        <Checkbox
-          key={`sharedproj${index}`}
-          value={sharedProject.project.identifier}
-          onChange={onChange}
-          defaultChecked={sharedProject.shared}
-        >
-          {sharedProject.project.name}
-        </Checkbox>
-      </Row>
-    ));
+    return (
+      <List
+        bordered
+        dataSource={sharedProjects}
+        renderItem={item => {
+          return (
+            <List.Item>
+              <List.Item.Meta
+                key={item.project.identifier}
+                description={
+                  <div>
+                    <Checkbox.Group
+                      defaultValue={
+                        item.shared ? [item.project.identifier] : []
+                      }
+                    >
+                      <Checkbox
+                        value={item.project.identifier}
+                        onChange={onChange}
+                        defaultChecked={item.shared}
+                      >
+                        {item.project.name}
+                      </Checkbox>
+                    </Checkbox.Group>
+                  </div>
+                }
+              />
+            </List.Item>
+          );
+        }}
+      />
+    );
+  }
+
+  function renderSaveToRelatedSamples() {
+    if (!analysisDetailsContext.updateSamples) {
+      return (
+        <div>
+          <Alert
+            type="warning"
+            showIcon
+            message={getI18N("AnalysisShare.saveResultsPermanent")}
+            style={{ marginBottom: SPACE_MD }}
+          />
+          <p>{getI18N(`AnalysisShare.${analysisContext.analysisType.type}`)}</p>
+          <Button
+            type="primary"
+            onClick={() => saveResultsToRelatedSamples()}
+            id="save-results-btn"
+          >
+            {getI18N("AnalysisShare.saveResultsToSamples")}
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <Alert
+          type="info"
+          showIcon
+          message={getI18N("AnalysisShare.resultsSaved")}
+          style={{ marginBottom: SPACE_MD }}
+        />
+      );
+    }
   }
 
   // Updates if analysis is shared with a project or not
@@ -72,47 +124,30 @@ export default function AnalysisShare() {
    */
   return (
     <>
-      <Title level={2}>{getI18N("AnalysisShare.results")}</Title>
+      <Title level={2}>{getI18N("AnalysisShare.manageResults")}</Title>
 
       {sharedProjects !== null ? (
-        <Card
-          title={getI18N("AnalysisShare.shareResultsWithProjects")}
-          style={{ marginTop: SPACE_SM }}
-        >
-          {sharedProjects.length > 0 ? (
-            renderSharedProjectsList()
-          ) : (
-            <p>{getI18N("AnalysisShare.noProjectsToShareResultsWith")}</p>
-          )}
-        </Card>
+        sharedProjects.length > 0 ? (
+          <section style={{ marginTop: SPACE_MD }}>
+            <Title level={3}>
+              {getI18N("AnalysisShare.shareResultsWithProjects")}
+            </Title>
+            {renderSharedProjectsList()}
+          </section>
+        ) : (
+          <Alert
+            type="info"
+            showIcon
+            message={getI18N("AnalysisShare.noProjectsToShareResultsWith")}
+          />
+        )
       ) : null}
 
       {analysisDetailsContext.canShareToSamples ? (
-        <Card
-          title={getI18N("AnalysisShare.saveResults")}
-          style={{ marginTop: SPACE_SM }}
-        >
-          {analysisDetailsContext.updateSamples ? (
-            <Alert
-              message={getI18N("AnalysisShare.resultsSaved")}
-              type="info"
-            />
-          ) : (
-            <p className="spaced_bottom">
-              {getI18N(`AnalysisShare.${analysisContext.analysisType.type}`)}
-            </p>
-          )}
-
-          <Button
-            type="primary"
-            className="spaced-top"
-            disabled={analysisDetailsContext.updateSamples}
-            onClick={() => saveResultsToRelatedSamples()}
-            id="save-results-btn"
-          >
-            {getI18N("AnalysisShare.saveResultsToSamples")}
-          </Button>
-        </Card>
+        <section style={{ marginTop: SPACE_MD }}>
+          <Title level={3}>{getI18N("AnalysisShare.saveResults")}</Title>
+          {renderSaveToRelatedSamples()}
+        </section>
       ) : null}
     </>
   );
