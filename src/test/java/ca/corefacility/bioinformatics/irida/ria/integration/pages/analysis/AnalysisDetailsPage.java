@@ -50,6 +50,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(css = ".t-paired-end h4 span")
 	private List<WebElement> sampleLabels;
 
+	@FindBy(id = "t-analysis-tab-settings")
+	private WebElement settingsTab;
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -112,7 +115,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public boolean priorityEditVisible() {
-		return !driver.findElements(By.id("analysis-edit-priority")).isEmpty();
+		return !driver.findElements(By.className("t-priority-edit")).isEmpty();
 	}
 
 	/**
@@ -183,7 +186,17 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return divHasJobError.size() > 0;
 	}
 
+	public void clickSettingsTab() {
+		waitForElementVisible(By.id("t-analysis-tab-settings"));
+		settingsTab.click();
+		waitForTime(500);
+	}
+
 	public String getLabelForSample(int index) {
 		return sampleLabels.get(index).getText();
+	}
+
+	public boolean emailPipelineResultVisible() {
+		return !driver.findElements(By.className("t-email-pipeline-result")).isEmpty();
 	}
 }

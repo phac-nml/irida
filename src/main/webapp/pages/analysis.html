@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="test">ANALYSIS RESULTS</title>
+    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
+
+    <script th:inline="javascript">
+      window.PAGE = {
+        analysis: [[${analysisSubmission}]],
+        analysisName: [[${analysisSubmission.getName()}]],
+        analysisState: [[${analysisSubmission.getAnalysisState()}]],
+        analysisType: [[${analysisType}]],
+        isAdmin: [[${isAdmin}]],
+        mailConfigured: [[${mailConfigured}]],
+        i18n: {
+            "Analysis.phylogeneticTree": /*[[#{Analysis.phylogeneticTree}]]*/ "Phylogenetic Tree",
+            "Analysis.outputFiles": /*[[#{Analysis.outputFiles}]]*/ "Output Files",
+            "Analysis.provenance": /*[[#{Analysis.provenance}]]*/ "Provenance",
+            "Analysis.settings": /*[[#{Analysis.settings}]]*/ "Settings",
+            "Analysis.jobError": /*[[#{Analysis.jobError}]]*/ "Job Error",
+            "AnalysisSamples.samples": /*[[#{AnalysisSamples.samples}]]*/ "Samples",
+            "AnalysisSamples.noPairedEnd": /*[[#{AnalysisSamples.noPairedEnd}]]*/ "NO PAIRED END DATA",
+            "AnalysisSamples.referenceFile": /*[[#{AnalysisSamples.referenceFile}]]*/ "Reference File",
+            "AnalysisSamples.downloadReferenceFile": /*[[#{AnalysisSamples.downloadReferenceFile}]]*/ "Download Reference File",
+            "AnalysisDelete.delete": /*[[#{AnalysisDelete.delete}]]*/ "Delete",
+            "AnalysisDelete.deleteAnalysis": /*[[#{AnalysisDelete.deleteAnalysis}]]*/ "Delete Analysis",
+            "AnalysisDelete.permanentActionWarning": /*[[#{AnalysisDelete.permanentActionWarning}]]*/ "Warning! Deletion of an analysis is a permanent action!",
+            "AnalysisDelete.confirmAnalysisDeletion": /*[[#{AnalysisDelete.confirmAnalysisDeletion}]]*/ "Confirm analysis deletion",
+            "AnalysisDelete.confirm": /*[[#{AnalysisDelete.confirm}]]*/ "Confirm",
+            "AnalysisDelete.cancel": /*[[#{AnalysisDelete.cancel}]]*/ "Cancel",
+            "AnalysisDetails.details": /*[[#{AnalysisDetails.details}]]*/ "Details",
+            "AnalysisDetails.name": /*[[#{AnalysisDetails.name}]]*/ "Analysis Name",
+            "AnalysisDetails.id": /*[[#{AnalysisDetails.id}]]*/ "ID",
+            "AnalysisDetails.pipeline": /*[[#{AnalysisDetails.pipeline}]]*/ "Pipeline",
+            "AnalysisDetails.priority": /*[[#{AnalysisDetails.priority}]]*/ "Priority",
+            "AnalysisDetails.created": /*[[#{AnalysisDetails.created}]]*/ "Created",
+            "AnalysisDetails.duration": /*[[#{AnalysisDetails.duration}]]*/ "Duration",
+            "AnalysisDetails.receiveEmail": /*[[#{AnalysisDetails.receiveEmail}]]*/ "Receive an email upon analysis completion",
+            "AnalysisDetails.receiveEmailCheckboxLabel": /*[[#{AnalysisDetails.receiveEmailCheckboxLabel}]]*/ "Yes, I want to receive an email once this analysis completes",
+            "AnalysisShare.saveResultsToSamples": /*[[#{AnalysisShare.saveResultsToSamples}]]*/ "Save results to samples",
+            "AnalysisShare.shareResultsWithProjects": /*[[#{AnalysisShare.shareResultsWithProjects}]]*/ "Share Results with Projects",
+            "AnalysisShare.BIO_HANSEL": /*[[#{AnalysisShare.BIO_HANSEL}]]*/ "INFO",
+            "AnalysisShare.SISTR_TYPING": /*[[#{AnalysisShare.SISTR_TYPING}]]*/ "INFO",
+            "AnalysisShare.ASSEMBLY_ANNOTATION": /*[[#{AnalysisShare.ASSEMBLY_ANNOTATION}]]*/ "INFO",
+            "AnalysisShare.saveResults": /*[[#{AnalysisShare.saveResults}]]*/ "Save Results",
+            "AnalysisShare.resultsSaved": /*[[#{analysis.details.save.complete}]]*/ "",
+            "AnalysisShare.noProjectsToShareResultsWith": /*[[#{AnalysisShare.noProjectsToShareResultsWith}]]*/ "No projects to share results with",
+            "AnalysisSteps.new": /*[[#{AnalysisSteps.new}]]*/ "",
+            "AnalysisSteps.preparing": /*[[#{AnalysisSteps.preparing}]]*/ "",
+            "AnalysisSteps.submitting": /*[[#{AnalysisSteps.submitting}]]*/ "",
+            "AnalysisSteps.running": /*[[#{AnalysisSteps.running}]]*/ "",
+            "AnalysisSteps.completing": /*[[#{AnalysisSteps.completing}]]*/ "",
+            "AnalysisSteps.completed": /*[[#{AnalysisSteps.completed}]]*/ "",
+            "AnalysisSteps.error": /*[[#{AnalysisSteps.error}]]*/ "",
+            "AnalysisDetailsPriority.LOW": /*[[#{AnalysisDetailsPriority.LOW}]]*/ "",
+            "AnalysisDetailsPriority.MEDIUM": /*[[#{AnalysisDetailsPriority.MEDIUM}]]*/ "",
+            "AnalysisDetailsPriority.HIGH": /*[[#{AnalysisDetailsPriority.HIGH}]]*/ "",
+            "AnalysisSamples.searchSamples": /*[[#{AnalysisSamples.searchSamples}]]*/ "",
+            "AnalysisShare.saveResultsPermanent": /*[[#{AnalysisShare.saveResultsPermanent}]]*/ "",
+            "AnalysisShare.manageResults": /*[[#{AnalysisShare.manageResults}]]*/ "",
+            "AnalysisDelete.deleteAnalysisSubmission": /*[[#{AnalysisDelete.deleteAnalysisSubmission}]]*/ ""
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" style="height: 100%;" layout:fragment="page">
+      <!--
+               This is a DOM element for React to render the analysis details into.
+               See  src/main/webapp/resources/js/pages/analysis/components/Analysis.jsx
+            -->
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/analysis.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>

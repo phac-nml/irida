@@ -53,6 +53,10 @@ body {
   }
 }
 
+label.ant-checkbox-wrapper {
+  font-weight: normal;
+}
+
 /****************************************************************************************
 * NOTIFICATION ANIMATIONS
 *****************************************************************************************/
@@ -284,6 +288,10 @@ h2.h2-muted {
 
 .spaced-top {
   margin-top: 1em;
+}
+
+.spaced-top__lg {
+  margin-top: 1.6em;
 }
 
 .spaced-right {
