@@ -9,15 +9,19 @@
  *required by the components encompassed within
  */
 
-import React, { Suspense, useContext } from "react";
+import React, { Suspense, useContext, useState } from "react";
 import { Checkbox, Col, List, Select, Spin, Tabs, Typography } from "antd";
 
 import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
-import { AnalysisDetailsContext, AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
+import {
+  AnalysisDetailsContext,
+  AnalysisDetailsProvider
+} from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisDetails } from "./AnalysisDetails";
 import styled from "styled-components";
+import { navigate } from "@reach/router";
 
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
 const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
@@ -25,13 +29,25 @@ const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
 const TabPane = Tabs.TabPane;
 
 export function AnalysisSettings() {
-  const {
-    analysisDetailsContext
-  } = useContext(AnalysisDetailsContext);
+  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
 
-  const { analysisContext } = useContext(
-    AnalysisContext
+  const { analysisContext } = useContext(AnalysisContext);
+
+
+  const [defaultTabKey, setDefaultTabKey] = useState(
+    window.location.pathname.split("/").pop()
   );
+
+  const updateNav = (key) => {
+    setDefaultTabKey(key);
+    window.history.pushState({ page: key }, window.location.href);
+    navigate(key);
+  };
+
+  window.onpopstate = function(event) {
+    setDefaultTabKey(document.location.href.split("/").pop());
+    navigate(document.location.href.split("/").pop());
+  };
 
   const Wrapper = styled.div`
     margin-left: 50px;
@@ -47,25 +63,27 @@ export function AnalysisSettings() {
   return (
     <Wrapper>
       <Tabs
-        defaultActiveKey="analysis_details"
+          defaultActiveKey={ defaultTabKey === "" ? "details" : defaultTabKey }
+          activeKey={ defaultTabKey === "" ? "details" : defaultTabKey }
+          onChange={updateNav}
         tabPosition="left"
         animated={false}
       >
         <TabPane
           tab={getI18N("AnalysisDetails.details")}
-          key="analysis_details"
+          key="details"
           className="t-analysis-settings-tab-details"
         >
           <Col span={12}>
             <AnalysisDetailsProvider>
-                <AnalysisDetails />
+              <AnalysisDetails />
             </AnalysisDetailsProvider>
           </Col>
         </TabPane>
 
         <TabPane
           tab={getI18N("AnalysisSamples.samples")}
-          key="analysis_samples"
+          key="samples"
           className="t-analysis-settings-tab-samples"
         >
           <Col span={12}>
@@ -82,7 +100,7 @@ export function AnalysisSettings() {
               !analysisContext.isError ? (
                 <TabPane
                   tab={getI18N("AnalysisShare.manageResults")}
-                  key="analysis_share"
+                  key="share"
                   className="t-analysis-settings-tab-share-results"
                 >
                   <Col span={12}>
@@ -94,7 +112,7 @@ export function AnalysisSettings() {
               ) : null,
               <TabPane
                 tab={getI18N("AnalysisDelete.deleteAnalysis")}
-                key="analysis_delete"
+                key="delete"
                 className="t-analysis-settings-tab-delete-analysis"
               >
                 <Col span={12}>

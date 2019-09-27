@@ -9,7 +9,7 @@
  *required by the components encompassed within
  */
 
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Tabs, Typography, Icon } from "antd";
 
 import { AnalysisSettings } from "./AnalysisSettings";
@@ -23,7 +23,7 @@ import { AnalysisError } from "./AnalysisError";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SPACE_MD } from "../../../styles/spacing";
 import styled from "styled-components";
-
+import { navigate } from "@reach/router";
 import {
   AnalysisContext,
   AnalysisProvider
@@ -52,6 +52,21 @@ export default function Analysis() {
     AnalysisContext
   );
 
+  const [defaultTabKey, setDefaultTabKey] = useState(
+    window.location.pathname.split("/").pop()
+  );
+
+  const updateNav = (key) => {
+    setDefaultTabKey(key);
+    window.history.pushState({ page: key }, window.location.href);
+    navigate(key);
+  };
+
+  window.onpopstate = function(event) {
+    setDefaultTabKey(document.location.href.split("/").pop());
+    navigate(document.location.href.split("/").pop());
+  };
+
   /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
@@ -77,15 +92,20 @@ export default function Analysis() {
           <AnalysisSteps />
         ) : null}
         <Tabs
-          defaultActiveKey={
-            analysisContext.isError ||
-            (analysisTypesWithAdditionalPage.indexOf(
-              analysisContext.analysisType.type
-            ) > -1 &&
-              analysisContext.isCompleted)
-              ? analysisContext.analysisType.type
-              : "SETTINGS"
+          activeKey={
+            defaultTabKey === ""
+              ? analysisContext.isError
+                ? "job-error"
+                : analysisTypesWithAdditionalPage.indexOf(
+                    analysisContext.analysisType.type
+                  ) > -1 && analysisContext.isCompleted
+                ? analysisContext.analysisType.type.toLowerCase()
+                : "settings"
+              : (defaultTabKey === "details" || defaultTabKey === "samples" || defaultTabKey === "share" || defaultTabKey === "delete") ?
+                "settings"
+                : defaultTabKey
           }
+          onChange={updateNav}
           animated={false}
         >
           {analysisContext.isCompleted ? (
@@ -93,7 +113,7 @@ export default function Analysis() {
               analysisContext.analysisType.type === "BIO_HANSEL" ? (
                 <TabPane
                   tab="bio_hansel"
-                  key="BIO_HANSEL"
+                  key="bio_hansel"
                   className="t-analysis-tab-bio-hansel"
                 >
                   <AnalysisBioHansel />
@@ -103,7 +123,7 @@ export default function Analysis() {
               analysisContext.analysisType.type === "SISTR_TYPING" ? (
                 <TabPane
                   tab="sistr"
-                  key="SISTR_TYPING"
+                  key="sistr_typing"
                   className="t-analysis-tab-sistr-typing"
                 >
                   <AnalysisSistr />
@@ -114,7 +134,7 @@ export default function Analysis() {
               analysisContext.analysisType.type === "MLST_MENTALIST" ? (
                 <TabPane
                   tab={getI18N("Analysis.phylogeneticTree")}
-                  key="PHYLOGENOMICS"
+                  key="phylogenomics"
                   className="t-analysis-tab-phylogenetic"
                 >
                   <AnalysisPhylogeneticTree />
@@ -123,7 +143,7 @@ export default function Analysis() {
 
               <TabPane
                 tab={getI18N("Analysis.outputFiles")}
-                key="OUTPUT_FILES"
+                key="output-files"
                 className="t-analysis-tab-output-files"
               >
                 <AnalysisOutputFiles />
@@ -131,7 +151,7 @@ export default function Analysis() {
 
               <TabPane
                 tab={getI18N("Analysis.provenance")}
-                key="PROVENANCE"
+                key="provenance"
                 className="t-analysis-tab-provenance"
               >
                 <AnalysisProvenance />
@@ -140,7 +160,7 @@ export default function Analysis() {
           ) : analysisContext.isError ? (
             <TabPane
               tab={getI18N("Analysis.jobError")}
-              key="JOB_ERROR"
+              key="job-error"
               className="t-analysis-tab-job-error"
             >
               <AnalysisError />
@@ -148,7 +168,7 @@ export default function Analysis() {
           ) : null}
           <TabPane
             tab={getI18N("Analysis.settings")}
-            key="SETTINGS"
+            key="settings"
             id="t-analysis-tab-settings"
           >
             <AnalysisDetailsProvider>

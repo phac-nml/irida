@@ -238,7 +238,7 @@ public class AnalysisController {
 	 * @return name of the details page view
 	 */
 
-	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = "/{submissionId}/**", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
@@ -259,6 +259,7 @@ public class AnalysisController {
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
+
 
 		return "analysis";
 	}

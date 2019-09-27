@@ -264,7 +264,7 @@ const config = Object.assign(tableConfig, {
       targets: COLUMNS.NAME,
       render(data, type, full) {
         return createItemLink({
-          url: `${window.PAGE.URLS.analysis}${full.id}`,
+          url: `${window.PAGE.URLS.analysis}${full.id}/`,
           label: data,
           width: undefined
         });
