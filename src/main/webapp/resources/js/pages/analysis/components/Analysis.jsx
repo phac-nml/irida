@@ -56,12 +56,22 @@ export default function Analysis() {
     window.location.pathname.split("/").pop()
   );
 
-  const updateNav = (key) => {
+  /*
+   * Update the defaultTabKey variable with tab key that was clicked,
+   * update the browser history to include the url and then switch over
+   * to tab with key. Used here and for the sub-nav in the AnalysisSettings
+   * component.
+   */
+  const updateNav = key => {
     setDefaultTabKey(key);
     window.history.pushState({ page: key }, window.location.href);
     navigate(key);
   };
 
+  /*
+   * Sets the defaultTabKey variable with tab key (either on forward
+   * or back button click) and switches to the tab with key.
+   */
   window.onpopstate = function(event) {
     setDefaultTabKey(document.location.href.split("/").pop());
     navigate(document.location.href.split("/").pop());
@@ -101,9 +111,12 @@ export default function Analysis() {
                   ) > -1 && analysisContext.isCompleted
                 ? analysisContext.analysisType.type.toLowerCase()
                 : "settings"
-              : (defaultTabKey === "details" || defaultTabKey === "samples" || defaultTabKey === "share" || defaultTabKey === "delete") ?
-                "settings"
-                : defaultTabKey
+              : defaultTabKey === "details" ||
+                defaultTabKey === "samples" ||
+                defaultTabKey === "share" ||
+                defaultTabKey === "delete"
+              ? "settings"
+              : defaultTabKey
           }
           onChange={updateNav}
           animated={false}
@@ -172,7 +185,10 @@ export default function Analysis() {
             id="t-analysis-tab-settings"
           >
             <AnalysisDetailsProvider>
-              <AnalysisSettings />
+              <AnalysisSettings
+                updateNav={updateNav}
+                defaultTabKey={defaultTabKey}
+              />
             </AnalysisDetailsProvider>
           </TabPane>
         </Tabs>

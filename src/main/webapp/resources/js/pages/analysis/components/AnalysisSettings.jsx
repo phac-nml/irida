@@ -28,26 +28,9 @@ const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
 const TabPane = Tabs.TabPane;
 
-export function AnalysisSettings() {
+export function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
-
   const { analysisContext } = useContext(AnalysisContext);
-
-
-  const [defaultTabKey, setDefaultTabKey] = useState(
-    window.location.pathname.split("/").pop()
-  );
-
-  const updateNav = (key) => {
-    setDefaultTabKey(key);
-    window.history.pushState({ page: key }, window.location.href);
-    navigate(key);
-  };
-
-  window.onpopstate = function(event) {
-    setDefaultTabKey(document.location.href.split("/").pop());
-    navigate(document.location.href.split("/").pop());
-  };
 
   const Wrapper = styled.div`
     margin-left: 50px;
@@ -63,9 +46,12 @@ export function AnalysisSettings() {
   return (
     <Wrapper>
       <Tabs
-          defaultActiveKey={ defaultTabKey === "" ? "details" : defaultTabKey }
-          activeKey={ defaultTabKey === "" ? "details" : defaultTabKey }
-          onChange={updateNav}
+        activeKey={
+          props.defaultTabKey === "" || props.defaultTabKey === "settings"
+            ? "details"
+            : props.defaultTabKey
+        }
+        onChange={props.updateNav}
         tabPosition="left"
         animated={false}
       >
