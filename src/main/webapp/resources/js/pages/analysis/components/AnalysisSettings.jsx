@@ -9,7 +9,7 @@
  *required by the components encompassed within
  */
 
-import React, { Suspense, useContext, useState } from "react";
+import React, { Suspense, useContext } from "react";
 import { Checkbox, Col, List, Select, Spin, Tabs, Typography } from "antd";
 
 import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
