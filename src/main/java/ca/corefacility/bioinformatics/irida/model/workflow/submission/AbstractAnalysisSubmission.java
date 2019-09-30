@@ -86,10 +86,6 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	protected String analysisDescription;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	protected AnalysisSubmission.Priority priority;
-
-	@NotNull
 	@Column(name = "email_pipeline_result")
 	protected boolean emailPipelineResult;
 
@@ -148,14 +144,6 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	@JsonIgnore
 	public User getSubmitter() {
 		return submitter;
-	}
-
-	public AnalysisSubmission.Priority getPriority() {
-		return priority;
-	}
-
-	public void setPriority(AnalysisSubmission.Priority priority) {
-		this.priority = priority;
 	}
 
 	/**
@@ -285,8 +273,7 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, workflowId, createdDate, modifiedDate, referenceFile, namedParameters, submitter,
-				priority);
+		return Objects.hash(name, workflowId, createdDate, modifiedDate, referenceFile, namedParameters, submitter);
 	}
 
 	@Override
@@ -296,18 +283,9 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate)
 					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId) && Objects.equals(
 					referenceFile, p.referenceFile) && Objects.equals(namedParameters, p.namedParameters)
-					&& Objects.equals(submitter, p.submitter) && Objects.equals(priority, p.priority);
+					&& Objects.equals(submitter, p.submitter);
 		}
 
 		return false;
-	}
-
-	/**
-	 * Enum encoding the priority of analysis submissions
-	 */
-	public enum Priority {
-		LOW,
-		MEDIUM,
-		HIGH;
 	}
 }

@@ -170,6 +170,8 @@ To remove an automated pipeline, click the *Remove* button below the pipeline de
 
 Note that automated pipeline parameters cannot currently be modified after the pipeline has been created.  To modify the parameters for an automated pipeline, you should remove the original automated pipeline and create a new one with the new desired parameters.
 
+Administrators can change the priority of automated pipelines for a given project.  The default setting for a project is "LOW".
+
 #### Project coverage
 
 IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project in the project settings page.

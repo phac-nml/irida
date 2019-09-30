@@ -166,9 +166,7 @@ export function ProjectsTable() {
     <Menu>
       <Menu.Item key="excel">
         <a
-          href={`${
-            window.TL.BASE_URL
-          }projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`}
+          href={`${window.TL.BASE_URL}projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file-excel" />
@@ -177,9 +175,7 @@ export function ProjectsTable() {
       </Menu.Item>
       <Menu.Item key="csv">
         <a
-          href={`${
-            window.TL.BASE_URL
-          }projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`}
+          href={`${window.TL.BASE_URL}projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file" />

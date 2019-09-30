@@ -12,8 +12,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -81,6 +83,10 @@ public class Project extends IridaResourceSupport
 	@Enumerated(EnumType.STRING)
 	private ProjectSyncFrequency syncFrequency;
 
+	@Column(name = "analysis_priority")
+	@Enumerated(EnumType.STRING)
+	private AnalysisSubmission.Priority analysisPriority;
+
 	/*
 	 * This group of properties are here to ensure cascading deletion by JPA when a project is deleted.  They are not used within the class.
 	 */
@@ -121,6 +127,7 @@ public class Project extends IridaResourceSupport
 
 	public Project() {
 		createdDate = new Date();
+		analysisPriority = AnalysisSubmission.Priority.LOW;
 	}
 
 	/**
@@ -257,5 +264,15 @@ public class Project extends IridaResourceSupport
 	
 	public void setMaximumCoverage(Integer maximumCoverage) {
 		this.maximumCoverage = maximumCoverage;
+	}
+
+	@JsonIgnore
+	public AnalysisSubmission.Priority getAnalysisPriority() {
+		return analysisPriority;
+	}
+
+	@JsonIgnore
+	public void setAnalysisPriority(AnalysisSubmission.Priority analysisPriority) {
+		this.analysisPriority = analysisPriority;
 	}
 }

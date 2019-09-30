@@ -31,7 +31,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
 * [Developer]: Update eslint config to use `babel-parser`.
-* [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
+* [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/user/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
 * [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
 * [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
 * [Documentation]: Added link to Galaxy Export (Import) tool documentation.
@@ -39,6 +39,9 @@ Changes
 * [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
 * [Developer]: Updates to front-end packages: `antd@3.19.8` -> `antd@3.21.4`, `@babel/polyfill` -> `core-js/stable` & `regenerator-runtime/runtime`, as well as some minor updates to webpack dependencies.
 * [Developer]: Updated to node `v12.8.1`.
+* [Developer]: Updated `eslint` to fix security vulnerability.
+* [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
+* [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
 
 19.01 to 19.05
 ---------------
