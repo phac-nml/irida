@@ -21,7 +21,6 @@ import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContex
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisDetails } from "./AnalysisDetails";
 import styled from "styled-components";
-import { navigate } from "@reach/router";
 
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
 const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
