@@ -66,9 +66,8 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			authFailureHandler.setDefaultFailureUrl("/login?error=true");
 			// @formatter:off
 			http.requestMatcher(request -> {
-				return !request.getRequestURI().matches("^.*/api(?!/oauth/authorize|/oauth/authorization/token)(/.*)?$");
+				return !request.getRequestURI().matches("^.*/api(?!/oauth)(/.*)?$");
 			}).authorizeRequests().and()
-
 
 			// Prevent Cross Site Request Forgery
 			.csrf().disable()

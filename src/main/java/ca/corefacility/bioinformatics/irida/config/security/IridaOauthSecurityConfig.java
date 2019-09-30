@@ -16,7 +16,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.*;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -94,8 +93,6 @@ public class IridaOauthSecurityConfig {
     @Override
     public void configure(final HttpSecurity httpSecurity) throws Exception {
       httpSecurity.antMatcher("/api/**").authorizeRequests()
-        //.antMatchers("/api/oauth/authorize").fullyAuthenticated()
-        //.antMatchers("/api/oauth/authorization/token*").fullyAuthenticated()
         .regexMatchers(HttpMethod.GET, "/api.*").access("#oauth2.hasScope('read')")
         .regexMatchers("/api.*").access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
       httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
@@ -162,19 +159,6 @@ public class IridaOauthSecurityConfig {
         .tokenKeyAccess("permitAll()")
         .checkTokenAccess("isAuthenticated()")
         .allowFormAuthenticationForClients();
-      /*oauthServer.passwordEncoder(new PasswordEncoder() {
-
-        @Override
-        public boolean matches(CharSequence rawPassword, String encodedPassword) {
-          return rawPassword.equals(encodedPassword);
-        }
-
-        @Override
-        public String encode(CharSequence rawPassword) {
-          return rawPassword.toString();
-        }
-      });*/
-
     }
 
     @Bean
