@@ -1,30 +1,9 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
-import styled from "styled-components";
 import { Alert, Button, Card, Form, Icon, Input, Layout } from "antd";
 import { grey1 } from "../styles/colors";
 import { SPACE_MD } from "../styles/spacing";
 import { getI18N } from "../utilities/i18n-utilties";
-
-const LayoutBackground = styled(Layout)`
-  min-height: 100vh;
-`;
-
-const LoginContent = styled(Layout.Content)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const LoginCard = styled(Card)`
-  width: 400px;
-  background-color: ${grey1};
-`;
-
-const Links = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
 
 function LoginPage({ form }) {
   const [loading, setLoading] = useState(false);
@@ -41,11 +20,17 @@ function LoginPage({ form }) {
   }
 
   return (
-    <LayoutBackground>
-      <LoginContent>
-        <LoginCard>
+    <Layout style={{ minHeight: "100vh" }}>
+      <Layout.Content
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <Card style={{ width: 400, backgroundColor: grey1 }}>
           <div style={{ marginBottom: SPACE_MD }}>
-            <img src={window.PAGE.logo} />
+            <img src={window.PAGE.logo} alt="IRIDA Platform" />
           </div>
           {window.PAGE.hasErrors ? (
             <Alert
@@ -116,7 +101,9 @@ function LoginPage({ form }) {
                 {getI18N("LoginPage.submit")}
               </Button>
               {window.PAGE.emailConfigured ? (
-                <Links>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
                   <a href={`${window.PAGE.BASE_URL}password_reset`}>
                     {getI18N("LoginPage.forgot")}
                   </a>
@@ -124,13 +111,13 @@ function LoginPage({ form }) {
                   <a href={`${window.PAGE.BASE_URL}password_reset/activate`}>
                     {getI18N("LoginPage.activate")}
                   </a>
-                </Links>
+                </div>
               ) : null}
             </Form.Item>
           </Form>
-        </LoginCard>
-      </LoginContent>
-    </LayoutBackground>
+        </Card>
+      </Layout.Content>
+    </Layout>
   );
 }
 
