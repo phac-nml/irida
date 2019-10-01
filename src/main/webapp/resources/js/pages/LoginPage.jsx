@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
 import { Alert, Button, Card, Form, Icon, Input, Layout } from "antd";
-import { grey1, red6 } from "../styles/colors";
+import { grey1 } from "../styles/colors";
 import { SPACE_MD } from "../styles/spacing";
 import { getI18N } from "../utilities/i18n-utilties";
 
@@ -42,26 +42,25 @@ function LoginPage({ form }) {
 
   return (
     <LayoutBackground>
-      {window.PAGE.hasErrors ? (
-        <Alert
-          style={{ borderBottom: `2px solid ${red6}` }}
-          type="error"
-          message={
-            <span className="t-login-error">
-              {getI18N("LoginPage.error.message")}
-            </span>
-          }
-          description={getI18N("LoginPage.error.description")}
-          banner
-          showIcon
-          closable
-        />
-      ) : null}
       <LoginContent>
         <LoginCard>
           <div style={{ marginBottom: SPACE_MD }}>
             <img src={window.PAGE.logo} />
           </div>
+          {window.PAGE.hasErrors ? (
+            <Alert
+              style={{ marginBottom: 28 }}
+              type="error"
+              message={
+                <span className="t-login-error">
+                  {getI18N("LoginPage.error.message")}
+                </span>
+              }
+              description={getI18N("LoginPage.error.description")}
+              showIcon
+              closable
+            />
+          ) : null}
           <Form
             action={`${window.PAGE.BASE_URL}login`}
             name="loginForm"
