@@ -20,7 +20,7 @@ import {
 
 const { Title, Paragraph } = Typography;
 
-export function AnalysisDetails() {
+export default function AnalysisDetails() {
   /*
    * The following const statements
    * make the required contexts which contain

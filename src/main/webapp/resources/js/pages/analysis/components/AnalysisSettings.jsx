@@ -19,9 +19,9 @@ import {
 } from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisDetails } from "./AnalysisDetails";
 import styled from "styled-components";
 
+const AnalysisDetails = React.lazy(() => import("./AnalysisDetails"));
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
 const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
@@ -60,9 +60,11 @@ export function AnalysisSettings(props) {
           className="t-analysis-settings-tab-details"
         >
           <Col span={12}>
-            <AnalysisDetailsProvider>
-              <AnalysisDetails />
-            </AnalysisDetailsProvider>
+            <Suspense fallback={<Spin />}>
+              <AnalysisDetailsProvider>
+                <AnalysisDetails />
+              </AnalysisDetailsProvider>
+            </Suspense>
           </Col>
         </TabPane>
 
