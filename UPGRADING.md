@@ -6,6 +6,7 @@ upgrading IRIDA that cannot be automated.
 
 19.05 to 19.09
 --------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 
 19.01 to 19.05
 --------------
