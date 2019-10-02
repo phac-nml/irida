@@ -27,26 +27,10 @@
 		<div class="row" layout:fragment="page"></div>
 	</div>
 
-	<script type="text/ng-template" id="/session-modal.html">
-		<div>
-			<div class="modal-header">
-				<b class="modal-title">
-					<span th:text="#{session.timeout-modal.header}"></span>
-					&nbsp;{{timeleft | countdown}}</b>
-			</div>
-			<div class="modal-footer">
-				<a class="btn btn-default" th:href="@{/logout}" th:text="#{session.timeout-modal.logout}">Log me out
-				</a>
-				<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here
-				</button>
-			</div>
-		</div>
-	</script>
-
 	<script th:inline="javascript">
 		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
-			LOCALE: /*[[${#locale}]]*/ "en",
+			LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
 		  	URLS: {
 			  cart: {
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"

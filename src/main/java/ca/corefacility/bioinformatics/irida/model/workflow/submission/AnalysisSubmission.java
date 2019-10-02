@@ -70,6 +70,10 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	protected Set<SequencingObject> inputFiles;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	protected AnalysisSubmission.Priority priority;
+
 	@Column(name = "automated")
 	private boolean automated;
 
@@ -168,6 +172,14 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	 */
 	public void setRemoteWorkflowId(String remoteWorkflowId) {
 		this.remoteWorkflowId = remoteWorkflowId;
+	}
+
+	public AnalysisSubmission.Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(AnalysisSubmission.Priority priority) {
+		this.priority = priority;
 	}
 
 	/**
@@ -282,7 +294,6 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		 */
 		public Builder(AnalysisSubmissionTemplate template) {
 			this(template.getWorkflowId());
-			priority(template.getPriority());
 			name(template.getName());
 			analysisDescription(template.getAnalysisDescription());
 			updateSamples(template.getUpdateSamples());
@@ -443,8 +454,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		}
 
 		/**
-		 * Sets if user should be emailed on
-		 * pipeline completion or error
+		 * Sets if user should be emailed on pipeline completion or error
 		 *
 		 * @param emailPipelineResult If user should be emailed or not
 		 * @return A {@link Builder}
@@ -457,10 +467,11 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 
 		/**
 		 * Set the user who submitted the pipeline
+		 *
 		 * @param submitter {@link User} who submitted the pipeline
 		 * @return a {@link Builder}
 		 */
-		public Builder submitter(User submitter){
+		public Builder submitter(User submitter) {
 			this.submitter = submitter;
 			return this;
 		}
@@ -542,6 +553,15 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@Override
 	public int compareTo(AnalysisSubmission o) {
 		return modifiedDate.compareTo(o.modifiedDate);
+	}
+
+	/**
+	 * Enum encoding the priority of analysis submissions
+	 */
+	public enum Priority {
+		LOW,
+		MEDIUM,
+		HIGH;
 	}
 
 }

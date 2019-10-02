@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>19.09-SNAPSHOT</version>
+	<version>20.01-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -1129,7 +1129,7 @@
 		<maven.site.plugin.version>3.7.1</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
-		<node.version>v11.10.0</node.version>
+		<node.version>v12.8.1</node.version>
 		<yarn.version>v1.15.2</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
