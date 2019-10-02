@@ -238,7 +238,7 @@ public class AnalysisController {
 	 */
 
 	@RequestMapping(value = "/{submissionId}*")
-	public String getDetailsPag2(@PathVariable Long submissionId) {
+	public String getDetailsPageRedirect(@PathVariable Long submissionId) {
 		return "redirect:/analysis/" + submissionId + "/";
 	}
 
