@@ -61,9 +61,7 @@ export function AnalysisSettings(props) {
         >
           <Col span={12}>
             <Suspense fallback={<Spin />}>
-              <AnalysisDetailsProvider>
                 <AnalysisDetails />
-              </AnalysisDetailsProvider>
             </Suspense>
           </Col>
         </TabPane>
