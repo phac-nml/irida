@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { render } from "react-dom";
 import { Button, Col, Form, Icon, Input, Row } from "antd";
 import { getI18N } from "../utilities/i18n-utilties";
+import { grey1 } from "../styles/colors";
 
 function LoginPage({ form }) {
   const [loading, setLoading] = useState(false);
@@ -21,8 +22,9 @@ function LoginPage({ form }) {
     <Row
       style={{
         minHeight: "100vh",
-        backgroundColor: "transparent",
+        backgroundColor: grey1,
         display: "flex",
+        justifyContent: "center",
         alignItems: "center",
         padding: "1rem"
       }}
@@ -30,14 +32,18 @@ function LoginPage({ form }) {
     >
       <Col
         style={{
-          backgroundColor: "white",
           padding: "1rem",
-          maxWidth: 400
+          maxWidth: 400,
+          minWidth: 250
         }}
         xs={24}
         xl={6}
       >
-        <img width={200} src={window.PAGE.logo} alt="IRIDA Platform" />
+        <img
+          style={{ marginBottom: 24 }}
+          src={window.PAGE.logo}
+          alt="IRIDA Platform"
+        />
         <Form
           action={`${window.PAGE.BASE_URL}login`}
           name="loginForm"
