@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
-import { Button, Col, Form, Icon, Input, Row } from "antd";
+import { Alert, Button, Col, Form, Icon, Input, Row } from "antd";
 import { getI18N } from "../utilities/i18n-utilties";
 import { grey1 } from "../styles/colors";
 
@@ -44,6 +44,21 @@ function LoginPage({ form }) {
           src={window.PAGE.logo}
           alt="IRIDA Platform"
         />
+        {window.PAGE.hasErrors ? (
+          <Alert
+            style={{ marginBottom: 28 }}
+            type="error"
+            message={
+              <span className="t-login-error">
+                  {getI18N("LoginPage.error.message")}
+                </span>
+            }
+            description={getI18N("LoginPage.error.description")}
+            showIcon
+            closable
+          />
+        ) : null}
+
         <Form
           action={`${window.PAGE.BASE_URL}login`}
           name="loginForm"
