@@ -661,7 +661,8 @@
 					<properties>
 						<property>
 							<name>listener</name>
-							<value>
+							<!--suppress UnresolvedMavenProperty -->
+                            <value>
 								${integration.test.listener}
 							</value>
 						</property>
@@ -679,12 +680,15 @@
 								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
 								</excludes> -->
 							<includes>
-								<include>${include.tests}</include>
+								<!--suppress UnresolvedMavenProperty -->
+                                <include>${include.tests}</include>
 							</includes>
 							<excludes>
-								<exclude>${exclude.tests}</exclude>
+								<!--suppress UnresolvedMavenProperty -->
+                                <exclude>${exclude.tests}</exclude>
 							</excludes>
-							<argLine>${failsafeArgLine}</argLine>
+							<!--suppress UnresolvedMavenProperty -->
+                            <argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
@@ -710,8 +714,8 @@
 							</value>
 						</property>
 					</properties>
-					<argLine>${surefireArgLine}</argLine>
-					<skipTests>${skip.surefire.tests}</skipTests>
+					<!--suppress UnresolvedMavenProperty -->
+                    <argLine>${surefireArgLine}</argLine>
 				</configuration>
 				<executions>
 					<execution>
@@ -748,7 +752,7 @@
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
 					<quiet>true</quiet>
-					<additionalparam>-Xdoclint:all</additionalparam>
+                    <doclint>all</doclint>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -912,7 +916,7 @@
 							<scanIntervalSeconds>0</scanIntervalSeconds>
 							<stopPort>9966</stopPort>
 							<stopKey>STOP</stopKey>
-							<daemon>true</daemon>
+							<!--<daemon>true</daemon>-->
 							<systemProperties>
 								<systemProperty>
 									<!-- Setting spring profile for integration tests to "it". Also
