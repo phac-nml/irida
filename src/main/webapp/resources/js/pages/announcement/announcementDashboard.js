@@ -1,4 +1,6 @@
 import angular from "angular";
+import "marked";
+import "angular-marked";
 import "./../../../sass/modules/announcements.scss";
 
 /**
