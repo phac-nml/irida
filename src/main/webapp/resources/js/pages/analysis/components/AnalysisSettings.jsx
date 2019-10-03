@@ -27,7 +27,7 @@ const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
 const TabPane = Tabs.TabPane;
 
-export function AnalysisSettings(props) {
+export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
@@ -61,7 +61,7 @@ export function AnalysisSettings(props) {
         >
           <Col span={12}>
             <Suspense fallback={<Spin />}>
-                <AnalysisDetails />
+              <AnalysisDetails />
             </Suspense>
           </Col>
         </TabPane>

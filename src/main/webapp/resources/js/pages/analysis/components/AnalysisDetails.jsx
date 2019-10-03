@@ -18,7 +18,7 @@ import {
   getHumanizedDuration
 } from "../../../utilities/date-utilities";
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 export default function AnalysisDetails() {
   /*
@@ -135,8 +135,8 @@ export default function AnalysisDetails() {
           renderItem={item => (
             <List.Item>
               <List.Item.Meta
-                title={<span style={{ fontWeight: "bold" }}>{item.title}</span>}
-                description={<span>{item.desc}</span>}
+                title={<Text strong>{item.title}</Text>}
+                description={item.desc}
               />
             </List.Item>
           )}

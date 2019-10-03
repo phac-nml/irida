@@ -9,25 +9,26 @@
  *required by the components encompassed within
  */
 
-import React, { useContext, useState } from "react";
-import { Tabs, Typography, Icon } from "antd";
+import React, { useContext, useState, Suspense } from "react";
+import { Tabs, Typography, Icon, Spin } from "antd";
 
-import { AnalysisSettings } from "./AnalysisSettings";
 import { AnalysisSteps } from "./AnalysisSteps";
-import { AnalysisProvenance } from "./AnalysisProvenance";
-import { AnalysisOutputFiles } from "./AnalysisOutputFiles";
-import { AnalysisPhylogeneticTree } from "./AnalysisPhylogeneticTree";
-import { AnalysisBioHansel } from "./AnalysisBioHansel";
-import { AnalysisSistr } from "./AnalysisSistr";
-import { AnalysisError } from "./AnalysisError";
+
+const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
+const AnalysisError = React.lazy(() => import("./AnalysisError"));
+const AnalysisOutputFiles = React.lazy(() => import("./AnalysisOutputFiles"));
+const AnalysisPhylogeneticTree = React.lazy(() =>
+  import("./AnalysisPhylogeneticTree")
+);
+const AnalysisProvenance = React.lazy(() => import("./AnalysisProvenance"));
+const AnalysisSettings = React.lazy(() => import("./AnalysisSettings"));
+const AnalysisSistr = React.lazy(() => import("./AnalysisSistr"));
+
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SPACE_MD } from "../../../styles/spacing";
 import styled from "styled-components";
 import { navigate } from "@reach/router";
-import {
-  AnalysisContext,
-  AnalysisProvider
-} from "../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
 
 const TabPane = Tabs.TabPane;
@@ -129,7 +130,9 @@ export default function Analysis() {
                   key="bio_hansel"
                   className="t-analysis-tab-bio-hansel"
                 >
-                  <AnalysisBioHansel />
+                  <Suspense fallback={<Spin />}>
+                    <AnalysisBioHansel />
+                  </Suspense>
                 </TabPane>
               ) : null,
 
@@ -139,7 +142,9 @@ export default function Analysis() {
                   key="sistr_typing"
                   className="t-analysis-tab-sistr-typing"
                 >
-                  <AnalysisSistr />
+                  <Suspense fallback={<Spin />}>
+                    <AnalysisSistr />
+                  </Suspense>
                 </TabPane>
               ) : null,
 
@@ -150,7 +155,9 @@ export default function Analysis() {
                   key="phylogenomics"
                   className="t-analysis-tab-phylogenetic"
                 >
-                  <AnalysisPhylogeneticTree />
+                  <Suspense fallback={<Spin />}>
+                    <AnalysisPhylogeneticTree />
+                  </Suspense>
                 </TabPane>
               ) : null,
 
@@ -159,7 +166,9 @@ export default function Analysis() {
                 key="output-files"
                 className="t-analysis-tab-output-files"
               >
-                <AnalysisOutputFiles />
+                <Suspense fallback={<Spin />}>
+                  <AnalysisOutputFiles />
+                </Suspense>
               </TabPane>,
 
               <TabPane
@@ -167,7 +176,9 @@ export default function Analysis() {
                 key="provenance"
                 className="t-analysis-tab-provenance"
               >
-                <AnalysisProvenance />
+                <Suspense fallback={<Spin />}>
+                  <AnalysisProvenance />
+                </Suspense>
               </TabPane>
             ]
           ) : analysisContext.isError ? (
@@ -176,7 +187,9 @@ export default function Analysis() {
               key="job-error"
               className="t-analysis-tab-job-error"
             >
-              <AnalysisError />
+              <Suspense fallback={<Spin />}>
+                <AnalysisError />
+              </Suspense>
             </TabPane>
           ) : null}
           <TabPane
@@ -184,12 +197,14 @@ export default function Analysis() {
             key="settings"
             id="t-analysis-tab-settings"
           >
-            <AnalysisDetailsProvider>
-              <AnalysisSettings
-                updateNav={updateNav}
-                defaultTabKey={defaultTabKey}
-              />
-            </AnalysisDetailsProvider>
+            <Suspense fallback={<Spin />}>
+              <AnalysisDetailsProvider>
+                <AnalysisSettings
+                  updateNav={updateNav}
+                  defaultTabKey={defaultTabKey}
+                />
+              </AnalysisDetailsProvider>
+            </Suspense>
           </TabPane>
         </Tabs>
       </div>
