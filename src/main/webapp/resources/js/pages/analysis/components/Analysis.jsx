@@ -42,6 +42,8 @@ const analysisTypesWithAdditionalPage = [
   "MLST_MENTALIST"
 ];
 
+const analysisSettingsTabKeys = ["details", "samples", "share", "delete"];
+
 const Wrapper = styled.div`
   margin-left: ${SPACE_MD};
   margin-right: ${SPACE_MD};
@@ -79,6 +81,35 @@ export default function Analysis() {
   };
 
   /*
+   * Returns tab key string for the activeKey
+   * parameter for Tabs.
+   */
+  const setActiveTabKey = () => {
+    if (defaultTabKey === "") {
+      if (analysisContext.isError) {
+        return "job-error";
+      } else {
+        if (
+          analysisTypesWithAdditionalPage.indexOf(
+            analysisContext.analysisType.type
+          ) > -1 &&
+          analysisContext.isCompleted
+        ) {
+          return analysisContext.analysisType.type.toLowerCase();
+        } else {
+          return "settings";
+        }
+      }
+    } else {
+      if (analysisSettingsTabKeys.indexOf(defaultTabKey) > -1) {
+        return "settings";
+      } else {
+        return defaultTabKey;
+      }
+    }
+  };
+
+  /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
    * The steps the analysis has gone through or is
@@ -103,22 +134,7 @@ export default function Analysis() {
           <AnalysisSteps />
         ) : null}
         <Tabs
-          activeKey={
-            defaultTabKey === ""
-              ? analysisContext.isError
-                ? "job-error"
-                : analysisTypesWithAdditionalPage.indexOf(
-                    analysisContext.analysisType.type
-                  ) > -1 && analysisContext.isCompleted
-                ? analysisContext.analysisType.type.toLowerCase()
-                : "settings"
-              : defaultTabKey === "details" ||
-                defaultTabKey === "samples" ||
-                defaultTabKey === "share" ||
-                defaultTabKey === "delete"
-              ? "settings"
-              : defaultTabKey
-          }
+          activeKey={setActiveTabKey()}
           onChange={updateNav}
           animated={false}
         >
