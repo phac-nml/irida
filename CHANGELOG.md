@@ -44,6 +44,7 @@ Changes
 * [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
 * [UI]: Added the ability to delete multiple analyses from both the Project > Analyses and List All Analyses pages.
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
+* [UI/Developer]: Removed  `marked`, `angular-marked`, and `angular-bootstrap` as bower dependencies.  Added them into yarn install.
 
 19.01 to 19.05
 ---------------
