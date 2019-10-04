@@ -338,9 +338,7 @@ async function getTableData(isShared = true) {
       field: "analysisSubmissionName",
       headerName: I18N["analysis-submission"],
       cellRenderer: p =>
-        `<a href="${BASE_URL}analysis/${
-          p.data.analysisSubmissionId
-        }" target="_blank">${p.data.analysisSubmissionName}</a>`
+        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {

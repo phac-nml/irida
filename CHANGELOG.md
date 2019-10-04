@@ -1,6 +1,10 @@
 Changes
 =======
 
+19.09 to 20.01
+--------------
+* [Developer]: Upgraded development Java version to Java 11 (LTS).
+
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
