@@ -46,6 +46,7 @@ Changes
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
 * [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
+* [UI]: Fixed issue where links to pipelines on the cart page displayed incorrectly.
 
 19.01 to 19.05
 ---------------
