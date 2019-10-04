@@ -1,6 +1,10 @@
 Changes
 =======
 
+19.09 to 20.01
+--------------
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
+
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
