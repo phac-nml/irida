@@ -4,6 +4,8 @@ Changes
 19.09 to 20.01
 --------------
 * [Developer]: Upgraded development Java version to Java 11 (LTS).
+* [UI]: Added the ability to delete multiple analyses from both the Project > Analyses and List All Analyses pages.
+* [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 
 19.05 to 19.09
 ---------------
@@ -46,8 +48,6 @@ Changes
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
 * [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
-* [UI]: Added the ability to delete multiple analyses from both the Project > Analyses and List All Analyses pages.
-* [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 
 19.01 to 19.05
 ---------------
