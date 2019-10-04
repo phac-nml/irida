@@ -1,15 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import java.io.*;
+import java.nio.file.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -34,12 +32,14 @@ import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.*;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import com.google.common.base.Joiner;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  */
@@ -51,7 +51,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String LOCALE_CHANGE_PARAMETER = "lang";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
@@ -99,6 +98,55 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 			}
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
+	}
+
+	@Bean
+	public LoginHandlerInterceptor loginHandlerInterceptor() {
+		/*
+		Check to see if there are custom logos to render to the page.
+		 */
+		File darkLogoFile = new File("/etc/irida/login/irida_logo_dark.svg");
+		if(!darkLogoFile.exists()) {
+			darkLogoFile = new File("../../main/webapp/resources/img/irida_logo_dark.svg");
+		}
+		File lightLogoFile = new File("/etc/irida/login/irida_logo_light.svg");
+		if (!lightLogoFile.exists()) {
+			lightLogoFile = new File("../../main/webapp/resources/img/irida_logo_light.svg");
+		}
+		BufferedReader logoReader;
+		String lightLogo = null;
+		try {
+			logoReader = new BufferedReader(new FileReader(lightLogoFile));
+			lightLogo = logoReader.lines()
+					.collect(Collectors.joining());
+		} catch (FileNotFoundException e) {
+			logger.debug("CANNOT FIND LOGO FILES");
+		}
+
+		String darkLogo = null;
+		try {
+			logoReader = new BufferedReader(new FileReader(darkLogoFile));
+			darkLogo = logoReader.lines()
+					.collect(Collectors.joining());
+		} catch (FileNotFoundException e) {
+			logger.debug("CANNOT FIND LOGO FILES");
+		}
+
+		/*
+		Check to see if there is any custom text to load on the Login Page.
+		 */
+		File customHTML = new File("/etc/irida/login/custom.html");
+		String customText = null;
+		if (customHTML.exists()) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(customHTML));
+				customText = br.lines()
+						.collect(Collectors.joining());
+			} catch (FileNotFoundException e) {
+				logger.trace("No custom HTML file found for the login page.");
+			}
+		}
+		return new LoginHandlerInterceptor(darkLogo, lightLogo, customText);
 	}
 
 	@Bean
@@ -190,6 +238,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
+		registry.addInterceptor(loginHandlerInterceptor());
 	}
 
 	/**

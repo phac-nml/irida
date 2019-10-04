@@ -6,30 +6,54 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
-      <script th:inline="javascript">
-          window.PAGE = {
-            BASE_URL: /*[[@{/}]]*/ "/",
-            logo: /*[[@{${@environment.getProperty('ui.logo.light')}}]]*/ "/resources/img/irida_logo_light.svg",
-            hasErrors: /*[[${error}]]*/ false,
-            emailConfigured: /*[[${emailConfigured}]]*/ false,
-            i18n: {
-              "LoginPage.username": /*[[#{LoginPage.username}]]*/ "LoginPage.username",
-              "LoginPage.username.required": /*[[#{LoginPage.username.required}]]*/ "LoginPage.username.required",
-              "LoginPage.password": /*[[#{LoginPage.password}]]*/ "LoginPage.password",
-              "LoginPage.password.required": /*[[#{LoginPage.password.required}]]*/ "LoginPage.password.required",
-              "LoginPage.submit": /*[[#{LoginPage.submit}]]*/ "LoginPage.submit",
-              "LoginPage.forgot": /*[[#{LoginPage.forgot}]]*/ "LoginPage.forgot",
-              "LoginPage.activate": /*[[#{LoginPage.activate}]]*/ "LoginPage.activate",
-              "LoginPage.error.message": /*[[#{LoginPage.error.message}]]*/ "LoginPage.error.message",
-              "LoginPage.error.description": /*[[#{LoginPage.error.description}]]*/ "LoginPage.error.description"
-            }
-          };
-      </script>
+    <script th:inline="javascript">
+      window.PAGE = {
+        BASE_URL: /*[[@{/}]]*/ "/",
+        logo: /*[[${LIGHT_LOGO}]]*/ "",
+        hasErrors: /*[[${error}]]*/ false,
+        emailConfigured: /*[[${emailConfigured}]]*/ false,
+        i18n: {
+          "LoginPage.username":
+            /*[[#{LoginPage.username}]]*/ "LoginPage.username",
+          "LoginPage.username.required":
+            /*[[#{LoginPage.username.required}]]*/ "LoginPage.username.required",
+          "LoginPage.password":
+            /*[[#{LoginPage.password}]]*/ "LoginPage.password",
+          "LoginPage.password.required":
+            /*[[#{LoginPage.password.required}]]*/ "LoginPage.password.required",
+          "LoginPage.submit": /*[[#{LoginPage.submit}]]*/ "LoginPage.submit",
+          "LoginPage.forgot": /*[[#{LoginPage.forgot}]]*/ "LoginPage.forgot",
+          "LoginPage.activate":
+            /*[[#{LoginPage.activate}]]*/ "LoginPage.activate",
+          "LoginPage.error.message":
+            /*[[#{LoginPage.error.message}]]*/ "LoginPage.error.message",
+          "LoginPage.error.description":
+            /*[[#{LoginPage.error.description}]]*/ "LoginPage.error.description"
+        }
+      };
+    </script>
+    <style>
+      body {
+        min-height: 100vh;
+        background-color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      iframe {
+        border: none;
+        width: 90%;
+      }
+    </style>
   </head>
   <body>
-    <div id="root">
-      <!-- Contents rendered from LoginPage.jsx -->
+    <div class="login-wrapper">
+      <div id="root">
+        <!-- Contents rendered from LoginPage.jsx -->
+      </div>
     </div>
+    <iframe height="600" th:srcdoc="${custom}">HELLO</iframe>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>
