@@ -22,7 +22,7 @@ services:
 dist: xenial
 
 jdk:
-  - openjdk8
+  - openjdk11
 
 rvm:
   - 2.4.1
