@@ -2,10 +2,7 @@
   "name": "irida-ui",
   "version": "1.0.0",
   "appPath": "./",
-  "ignore": [
-    ".jshintrc",
-    "**/*.txt"
-  ],
+  "ignore": [".jshintrc", "**/*.txt"],
   "dependencies": {
     "select2": "3.5.0",
     "bower": "*",
@@ -15,6 +12,6 @@
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": ">=1.4.0",
+    "angular": ">=1.4.0"
   }
 }
