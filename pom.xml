@@ -130,6 +130,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
 			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjweaver</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -180,6 +186,12 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring.data.jpa.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjrt</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -335,6 +347,12 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>${apache.poi.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>stax</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
@@ -535,11 +553,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
@@ -589,6 +602,12 @@
 			<groupId>com.github.jmchilton.blend4j</groupId>
 			<artifactId>blend4j</artifactId>
 			<version>${com.github.jmchilton.blend4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>javax.xml.stream</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Image manipulation -->
@@ -642,7 +661,8 @@
 					<properties>
 						<property>
 							<name>listener</name>
-							<value>
+							<!--suppress UnresolvedMavenProperty -->
+                            <value>
 								${integration.test.listener}
 							</value>
 						</property>
@@ -660,12 +680,15 @@
 								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
 								</excludes> -->
 							<includes>
-								<include>${include.tests}</include>
+								<!--suppress UnresolvedMavenProperty -->
+                                <include>${include.tests}</include>
 							</includes>
 							<excludes>
-								<exclude>${exclude.tests}</exclude>
+								<!--suppress UnresolvedMavenProperty -->
+                                <exclude>${exclude.tests}</exclude>
 							</excludes>
-							<argLine>${failsafeArgLine}</argLine>
+							<!--suppress UnresolvedMavenProperty -->
+                            <argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
@@ -691,8 +714,8 @@
 							</value>
 						</property>
 					</properties>
-					<argLine>${surefireArgLine}</argLine>
-					<skipTests>${skip.surefire.tests}</skipTests>
+					<!--suppress UnresolvedMavenProperty -->
+                    <argLine>${surefireArgLine}</argLine>
 				</configuration>
 				<executions>
 					<execution>
@@ -710,17 +733,7 @@
 				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<compilerId>javac-with-errorprone</compilerId>
-					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.plexus</groupId>
-						<artifactId>plexus-compiler-javac-errorprone</artifactId>
-						<version>${errorprone.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -739,7 +752,7 @@
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
 					<quiet>true</quiet>
-					<additionalparam>-Xdoclint:all</additionalparam>
+                    <doclint>all</doclint>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -872,7 +885,9 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
+							<descriptors>
 							<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
+							</descriptors>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
@@ -895,11 +910,13 @@
 						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>stop</goal>
-							<goal>run-exploded</goal>
+							<goal>start</goal>
 						</goals>
 						<configuration>
 							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<daemon>true</daemon>
+							<stopPort>9966</stopPort>
+							<stopKey>STOP</stopKey>
+							<!--<daemon>true</daemon>-->
 							<systemProperties>
 								<systemProperty>
 									<!-- Setting spring profile for integration tests to "it". Also
@@ -1039,12 +1056,13 @@
 	</build>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
+		<maven.compiler.release>11</maven.compiler.release>
 
 		<!-- Dependencies -->
 		<commons.cli.version>1.2</commons.cli.version>
 		<junit.version>4.11</junit.version>
-		<slf4j.version>1.7.7</slf4j.version>
+		<slf4j.version>1.7.26</slf4j.version>
 		<guava.version>28.0-jre</guava.version>
 		<spring.version>4.2.3.RELEASE</spring.version>
 		<spring.security.version>4.0.4.RELEASE</spring.security.version>
@@ -1061,11 +1079,11 @@
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.7-nml-custom</fastqc.version>
-		<aspectj.version>1.8.1</aspectj.version>
+		<aspectj.version>1.8.2</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.2.0</com.github.jmchilton.blend4j.version>
-		<apache.jena.version>1.1.0</apache.jena.version>
+		<apache.jena.version>3.12.0</apache.jena.version>
 		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
@@ -1100,22 +1118,21 @@
 		<hamcrest.version>1.3</hamcrest.version>
 
 		<!-- plugins -->
-		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
-		<maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
-		<maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
-		<maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
-		<maven.jacoco.plugin.version>0.7.1.201405082137</maven.jacoco.plugin.version>
-		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+		<maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
+		<maven.javadoc.plugin.version>3.1.0</maven.javadoc.plugin.version>
+		<maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
+		<maven.jacoco.plugin.version>0.8.3</maven.jacoco.plugin.version>
+		<maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
-		<maven.jar.plugin.version>2.5</maven.jar.plugin.version>
-		<maven.war.plugin.version>2.5</maven.war.plugin.version>
-		<maven.jetty.plugin.version>9.2.1.v20140609</maven.jetty.plugin.version>
-		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
-		<maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
-		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
-		<maven.site.plugin.version>3.4</maven.site.plugin.version>
+		<maven.war.plugin.version>3.2.2</maven.war.plugin.version>
+		<maven.jetty.plugin.version>9.4.17.v20190418</maven.jetty.plugin.version>
+		<maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
+		<maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
+		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
+		<maven.site.plugin.version>3.7.1</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
-		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+		<frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
 		<node.version>v12.8.1</node.version>
 		<yarn.version>v1.15.2</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
@@ -1134,7 +1151,7 @@
 		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
-		<!-- Set to 'local' to use the local version stored in irida-api, or set
+		<!-- Set to 'local' to use the local version stored in irida-api, or set 
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
