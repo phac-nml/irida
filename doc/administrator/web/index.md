@@ -22,7 +22,7 @@ Prerequisites
 
 The following prerequisites are required for running the IRIDA web interfaces:
 
-* [Java](http://www.oracle.com/technetwork/java/index.html) 8 or higher.
+* [Java](http://www.oracle.com/technetwork/java/index.html) 11 or higher.
 * A working servlet container supporting Servlet 3.0 ([Tomcat](https://tomcat.apache.org/), version 7 or higher, for example)
 * A working database server (the application is tested on [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/)).
 * A working install of Galaxy (we recommend that you run Galaxy and the IRIDA web interface on separate machines).
