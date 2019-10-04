@@ -61,6 +61,10 @@ public class ProjectEventAspectTest {
 	}
 
 	private static class AnnotatedClass {
+
+		public AnnotatedClass() {
+		}
+
 		@LaunchesProjectEvent(TestProjectEvent.class)
 		public void nonReturningMethod(String arg1) {
 		}
