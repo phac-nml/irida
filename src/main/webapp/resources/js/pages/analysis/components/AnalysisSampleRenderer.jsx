@@ -3,7 +3,7 @@
  * required by the component
  */
 
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useLayoutEffect } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
 import { Alert, Avatar, Icon, Input, List, Spin } from "antd";
@@ -24,8 +24,8 @@ export function AnalysisSampleRenderer() {
     getAnalysisInputSamples
   } = useContext(AnalysisSamplesContext);
 
-  useEffect(() => {
-    if (analysisSamplesContext.samples.length === 0) {
+  useLayoutEffect(() => {
+    if (analysisSamplesContext.samples === null) {
       getAnalysisInputSamples();
     }
   }, []);

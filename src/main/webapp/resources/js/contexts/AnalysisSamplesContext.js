@@ -10,7 +10,7 @@ import { AnalysisContext } from "../contexts/AnalysisContext";
 import { getAnalysisInputFiles } from "../apis/analysis/analysis";
 
 const initialContext = {
-  samples: [],
+  samples: null,
   referenceFile: [],
   loading: true
 };
