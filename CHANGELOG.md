@@ -7,6 +7,8 @@ Changes
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
 * [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
 * [UI]: Fixed issue where links to pipelines on the cart page displayed incorrectly.
+* [UI]: Updated project and global analyses listing pages to use Ant Design tables.
+* [UI]: Updated sequencing runs table to use Ant Design tables.
 
 19.05 to 19.09
 ---------------

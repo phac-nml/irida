@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.Collection;
 
@@ -15,16 +8,19 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.google.common.collect.ImmutableSet;
-
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.SequencingRunController;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.SequencingRunController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+
+import com.google.common.collect.ImmutableSet;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class SequencingRunControllerTest {
 	private SequencingRunController controller;
@@ -38,7 +34,7 @@ public class SequencingRunControllerTest {
 		sequencingRunService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new SequencingRunController(sequencingRunService, objectService, messageSource);
+		controller = new SequencingRunController(sequencingRunService, objectService);
 	}
 
 	@Test

@@ -5,22 +5,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import javax.persistence.criteria.*;
 
 import org.springframework.data.jpa.domain.Specification;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 /**
  * Specification for searching {@link AnalysisSubmission} properties
@@ -33,14 +29,14 @@ public class AnalysisSubmissionSpecification {
 	 *
 	 * @param search      Basic search string
 	 * @param name        Analysis name
-	 * @param state       {@link AnalysisState}
+	 * @param states       {@link Set} of {@link AnalysisState} to filter by.
 	 * @param workflowIds Set of UUIDs to search
 	 * @param user        The {@link User} owning the analysis
 	 * @param project     A project the analysis is shared with
 	 * @param automated   Whether this analysis submission was submitted as part of an automated process.
-	 * @return Specificaton for this search
+	 * @return {@link Specification} for this search
 	 */
-	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state,
+	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, Set<AnalysisState> states,
 			User user, Set<UUID> workflowIds, Project project, Boolean automated) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
@@ -54,8 +50,8 @@ public class AnalysisSubmissionSpecification {
 				if (!Strings.isNullOrEmpty(name)) {
 					predicateList.add(criteriaBuilder.like(analysisSubmissionRoot.get("name"), "%" + name + "%"));
 				}
-				if (state != null) {
-					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("analysisState"), state));
+				if (states != null && !states.isEmpty()) {
+					predicateList.add(criteriaBuilder.isTrue(analysisSubmissionRoot.get("analysisState").in(states)));
 				}
 				if (workflowIds != null && !workflowIds.isEmpty()) {
 					predicateList.add(criteriaBuilder.isTrue(analysisSubmissionRoot.get("workflowId").in(workflowIds)));
