@@ -9,6 +9,7 @@ Changes
 * [UI]: Fixed issue where links to pipelines on the cart page displayed incorrectly.
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 * [UI]: Updated sequencing runs table to use Ant Design tables.
+* [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
 
 19.05 to 19.09
 ---------------
