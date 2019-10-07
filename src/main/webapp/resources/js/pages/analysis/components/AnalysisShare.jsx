@@ -10,13 +10,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { Alert, Button, Checkbox, List, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
+import { AnalysisShareContext } from "../../../contexts/AnalysisShareContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { showNotification } from "../../../modules/notifications";
 import { SPACE_MD } from "../../../styles/spacing";
 
 import {
   getSharedProjects,
-  updateSharedProjects
+  updateSharedProject
 } from "../../../apis/analysis/analysis";
 
 const { Title } = Typography;
@@ -31,9 +32,18 @@ export default function AnalysisShare() {
     AnalysisDetailsContext
   );
   const { analysisContext } = useContext(AnalysisContext);
+  const {
+    analysisShareContext,
+    storeSharedProjects,
+    updateSharedProjectShareStatus
+  } = useContext(AnalysisShareContext);
 
   // Local state variable which stores the shared projects
-  const [sharedProjects, setSharedProjects] = useState(null);
+  const [sharedProjects, setSharedProjects] = useState(
+    analysisShareContext.sharedProjects.length > 0
+      ? analysisShareContext.sharedProjects
+      : null
+  );
 
   function renderSharedProjectsList() {
     return (
@@ -104,20 +114,29 @@ export default function AnalysisShare() {
 
   // Updates if analysis is shared with a project or not
   function onChange(e) {
-    updateSharedProjects({
+    updateSharedProject({
       submissionId: analysisContext.analysis.identifier,
       projectId: e.target.value,
       shareStatus: e.target.checked
-    }).then(res => showNotification({ text: res.message }));
+    }).then(res => {
+      showNotification({ text: res.message });
+      updateSharedProjectShareStatus({
+        projectId: e.target.value,
+        shareStatus: e.target.checked
+      });
+    });
   }
 
   // On load gets the projects which the analysis can be shared with
   useEffect(() => {
-    getSharedProjects(analysisContext.analysis.identifier).then(data =>
-      //List of projects which results can be shared with (local state)
-      setSharedProjects(data)
-    );
-  }, [setSharedProjects]);
+    if (analysisShareContext.sharedProjects != sharedProjects) {
+      getSharedProjects(analysisContext.analysis.identifier).then(data => {
+        //List of projects which results can be shared with (local state)
+        setSharedProjects(data);
+        storeSharedProjects({ sharedProjects: data });
+      });
+    }
+  }, []);
 
   /* Renders the projects which an analysis can be shared with
    * and a save results to related samples if applicable

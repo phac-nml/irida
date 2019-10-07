@@ -18,6 +18,7 @@ import {
   AnalysisDetailsProvider
 } from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
+import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import styled from "styled-components";
 
@@ -73,9 +74,7 @@ export default function AnalysisSettings(props) {
         >
           <Col span={12}>
             <Suspense fallback={<Spin />}>
-              <AnalysisSamplesProvider>
-                <AnalysisSamples />
-              </AnalysisSamplesProvider>
+              <AnalysisSamples />
             </Suspense>
           </Col>
         </TabPane>

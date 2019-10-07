@@ -93,7 +93,7 @@ export async function getSharedProjects(submissionId) {
  * @param {boolean} shareStatus True of False
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateSharedProjects(params) {
+export async function updateSharedProject(params) {
   const res = await axios.post(`${URL}${params.submissionId}/share`, {
     projectId: params.projectId,
     shareStatus: params.shareStatus
