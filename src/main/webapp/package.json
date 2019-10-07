@@ -14,8 +14,11 @@
     ]
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions"
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "last 2 Opera versions"
   ],
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
@@ -83,6 +86,7 @@
     "@babel/plugin-proposal-function-sent": "^7.5.0",
     "@babel/plugin-proposal-json-strings": "^7.2.0",
     "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
     "@babel/plugin-proposal-throw-expressions": "^7.2.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-syntax-import-meta": "^7.2.0",
