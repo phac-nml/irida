@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
@@ -17,10 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
-import java.util.*;
 
 /**
  * A service for AnalysisSubmissions.
@@ -69,6 +70,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
 			Collection<UUID> workflowIds);
+
+	/**
+	 * Delete multiple {@link AnalysisSubmission}s
+	 *
+	 * @param ids the collection of IDs to delete
+	 */
+	public void deleteMultiple(Collection<Long> ids);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
@@ -253,13 +261,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest);
 
 	/**
@@ -267,12 +275,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
@@ -280,13 +288,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states      Set of {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the restults to show
 	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**

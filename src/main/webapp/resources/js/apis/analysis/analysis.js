@@ -175,3 +175,15 @@ export async function prepareAnalysisOutputsDownload(outputs) {
     return { error: error };
   }
 }
+
+export async function fetchAllPipelinesStates() {
+  return axios.get(`${BASE_URL}/states`).then(response => response.data);
+}
+
+export async function fetchAllPipelinesTypes() {
+  return axios.get(`${BASE_URL}/types`).then(response => response.data);
+}
+
+export async function deleteAnalysisSubmissions({ ids }) {
+  return axios.delete(`${BASE_URL}/delete?ids=${ids.join(",")}`);
+}
