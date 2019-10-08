@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -25,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 
 import com.google.common.collect.Sets;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * A basis for clients to begin discovering other URLs in our API.
