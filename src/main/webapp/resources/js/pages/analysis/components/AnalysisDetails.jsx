@@ -126,7 +126,7 @@ export default function AnalysisDetails() {
   // The following renders the Analysis Details component view
   return (
     <>
-      <Title level={2}>{getI18N("AnalysisDetails.details")}</Title>
+      <Title level={2} className="t-page-title">{getI18N("AnalysisDetails.details")}</Title>
 
       <div>
         <List

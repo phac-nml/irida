@@ -28,7 +28,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		logger.debug("Testing 'Analysis Details Page'");
 
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
 
 		// Ensure files are displayed
 		page.displayProvenanceView();
@@ -48,34 +48,98 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Sample 1 should not be related to a sample", "Unknown Sample", page.getLabelForSample(0));
 	}
 
-	@Ignore
 	@Test
-	public void testEditPriorityHidden() throws URISyntaxException, IOException {
+	public void testEditPriorityVisibility() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "details");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
 
-		page.clickSettingsTab();
+		// As this analysis is not in NEW state the
+		// edit priority dropdown should not be visible
+		assertFalse("priority edit should be visible", page.priorityEditVisible());
 
-		assertFalse("priority edit should be hidden", page.priorityEditVisible());
-
-		page = AnalysisDetailsPage.initPage(driver(), 8L);
-
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "details");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		// As this analysis is in NEW state the
+		// edit priority dropdown should be visible
 		assertTrue("priority edit should be visible", page.priorityEditVisible());
 	}
 
-	@Ignore
 	@Test
-	public void testUpdateEmailPipelineResult() throws URISyntaxException, IOException {
+	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "details");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		// As this analysis is in COMPLETED state the
+		// Receive Email Upon Pipeline Completion section
+		// should not be visible
+		assertFalse("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
 
-		page.clickSettingsTab();
-
-		assertFalse("email pipeline result upon completion should be hidden", page.emailPipelineResultVisible());
-
-		page = AnalysisDetailsPage.initPage(driver(), 8L);
-
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "details");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		// As this analysis is not in COMPLETED state the
+		// Receive Email Upon Pipeline Completion section
+		// should be visible
 		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
+	}
+
+	@Test
+	// Successfullu completed analysis (COMPLETED state)
+	public void testTabRoutingAnalysisCompleted() throws URISyntaxException, IOException {
+		LoginPage.loginAsManager(driver());
+
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 6L, "output-files");
+		assertTrue("Page title should equal", page.comparePageTitle("Output Files"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "provenance");
+		assertTrue("Page title should equal", page.comparePageTitle("Provenance"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "details");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "samples");
+		assertTrue("Page title should equal", page.comparePageTitle("Samples"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "share");
+		assertTrue("Page title should equal", page.comparePageTitle("Manage Results"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "delete");
+		assertTrue("Page title should equal", page.comparePageTitle("Delete Analysis"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "job-error");
+		assertFalse("Page title should not equal", page.comparePageTitle("Job Error"));
+	}
+
+	@Test
+	//Analysis which did not complete successfully (ERROR State)
+	public void testTabRoutingAnalysisError() throws URISyntaxException, IOException {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 7L, "job-error");
+		assertTrue("Page title should equal", page.comparePageTitle("Job Error"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "output-files");
+		assertFalse("Page title should not equal", page.comparePageTitle("Output Files"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "provenance");
+		assertFalse("Page title should not equal", page.comparePageTitle("Provenance"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "details");
+		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "samples");
+		assertTrue("Page title should equal", page.comparePageTitle("Samples"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "share");
+		assertFalse("Page title should not equal", page.comparePageTitle("Manage Results"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "delete");
+		assertTrue("Page title should equal", page.comparePageTitle("Delete Analysis"));
 	}
 
 }

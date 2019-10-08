@@ -4,5 +4,5 @@ import { Typography } from "antd";
 const { Title } = Typography;
 
 export default function AnalysisOutputFiles() {
-  return <Title level={2}>Output Files</Title>;
+  return <Title level={2} className="t-page-title">Output Files</Title>;
 }

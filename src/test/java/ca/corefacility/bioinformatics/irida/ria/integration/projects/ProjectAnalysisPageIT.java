@@ -35,7 +35,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("should be 2 analyses", 2, page.getNumberOfAnalyses());
 		
 		// checking to ensure the user can see the analysis page
-		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L);
+		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L, "");
 
 		assertTrue("This analysis submission should have job error info", analysisPage.hasJobErrorInfo());
 		analysisPage.displayInputFilesTab();
@@ -51,7 +51,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("should be 2 analyses", 2, page.getNumberOfAnalyses());
 		
-		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L);
+		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L, "");
 
 		assertTrue("This analysis submission should have job error info", analysisPage.hasJobErrorInfo());
 		analysisPage.displayInputFilesTab();

@@ -143,7 +143,7 @@ export default function AnalysisShare() {
    */
   return (
     <>
-      <Title level={2}>{getI18N("AnalysisShare.manageResults")}</Title>
+      <Title level={2} className="t-page-title">{getI18N("AnalysisShare.manageResults")}</Title>
 
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
