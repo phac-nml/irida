@@ -48,9 +48,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionS
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
@@ -146,10 +143,7 @@ public class AnalysisController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/all")
 	public String getAdminAnalysisList(Model model) {
-		model.addAttribute("userList", false);
-		model.addAttribute("ajaxURL", "/analysis/ajax/list/all");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+		model.addAttribute("isAdmin", true);
 		return PAGE_ANALYSIS_LIST;
 	}
 
@@ -157,14 +151,16 @@ public class AnalysisController {
 	 * Get the user {@link Analysis} list page
 	 *
 	 * @param model Model for view variables
+	 * @param principal Principal {@link User}
 	 * @return Name of the analysis page view
 	 */
 	@RequestMapping()
-	public String getUserAnalysisList(Model model) {
-		model.addAttribute("userList", true);
-		model.addAttribute("ajaxURL", "/analysis/ajax/list");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+	public String getUserAnalysisList(Model model, Principal principal) {
+
+		// Determine if the user is an owner or admin.
+		User loggedInUser = userService.getUserByUsername(principal.getName());
+		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
+		model.addAttribute("isAdmin", isAdmin);
 		return PAGE_ANALYSIS_LIST;
 	}
 
@@ -836,62 +832,6 @@ public class AnalysisController {
 				model.addAttribute("preview", "tree");
 			}
 		}
-	}
-
-	/**
-	 * DataTables request handler for an Administrator listing all {@link AnalysisSubmission}
-	 *
-	 * @param params {@link DataTablesParams}
-	 * @param locale {@link Locale}
-	 * @return {@link DataTablesResponse}
-	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
-	 * @throws ExecutionManagerException      If the submission cannot be read properly
-	 */
-	@RequestMapping(value = "/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public DataTablesResponse getSubmissions(@DataTablesRequest DataTablesParams params, Locale locale)
-			throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
-		return analysesListingService.getPagedSubmissions(params, locale, null, null);
-	}
-
-	/**
-	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
-	 *
-	 * @param params    {@link DataTablesParams}
-	 * @param principal {@link Principal}
-	 * @param locale    {@link Locale}
-	 * @return {@link DataTablesResponse}
-	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
-	 * @throws ExecutionManagerException      If the submission cannot be read properly
-	 */
-	@RequestMapping("/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getSubmissionsForUser(@DataTablesRequest DataTablesParams params, Principal principal,
-			Locale locale) throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
-		User user = userService.getUserByUsername(principal.getName());
-		return analysesListingService.getPagedSubmissions(params, locale, user, null);
-	}
-
-	/**
-	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
-	 *
-	 * @param params    {@link DataTablesParams}
-	 * @param projectId {@link Long}
-	 * @param principal {@link Principal}
-	 * @param locale    {@link Locale}
-	 * @return {@link DataTablesResponse}
-	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws ExecutionManagerException      If the submission cannot be read properly
-	 */
-	@RequestMapping("/ajax/project/{projectId}/list")
-	@ResponseBody
-	public DataTablesResponse getSubmissionsForProject(@DataTablesRequest DataTablesParams params,
-			@PathVariable Long projectId, Principal principal, Locale locale)
-			throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		Project project = projectService.read(projectId);
-		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
 	/**

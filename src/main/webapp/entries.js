@@ -57,9 +57,10 @@ module.exports = {
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
+  "project-analyses": "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
-  "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
+  "analyses": "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
   "users-list": "./resources/js/pages/users/users-list.js",
   "users-password": "./resources/js/pages/users/users-password.js",
@@ -69,7 +70,7 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-admin.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
-    "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
+    "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
   "groups-list": "./resources/js/pages/users/groups-list.js",
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
