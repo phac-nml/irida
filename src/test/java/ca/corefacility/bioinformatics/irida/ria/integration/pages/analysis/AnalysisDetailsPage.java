@@ -127,7 +127,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public void displayTreeTools() {
 		setCurrentFile();
-		this.currentFile.findElement(By.className("accordion-toggle")).click();
 	}
 
 	/**
