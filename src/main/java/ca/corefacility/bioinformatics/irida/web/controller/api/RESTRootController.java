@@ -99,8 +99,8 @@ public class RESTRootController {
 		// add a self-rel to the current page
 		resource.add(linkTo(methodOn(RESTRootController.class).getLinks(request)).withSelfRel());
 
-		resource.add(linkTo(methodOn(RESTRootController.class).version()).withRel("version"));
-
+		// Add the version route to the links list
+		links.add(linkTo(methodOn(RESTRootController.class).version()).withRel("version"));
 		// add all of the links to the response
 		resource.add(links);
 
