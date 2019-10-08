@@ -1,15 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import {
-  Button,
-  Col,
-  Dropdown,
-  Icon,
-  Input,
-  Menu,
-  Row,
-  Table,
-  Typography
-} from "antd";
+import { Button, Dropdown, Icon, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
@@ -188,33 +178,31 @@ export function ProjectsTable() {
 
   return (
     <PageWrapper title={getI18N("ProjectsTable_header")}>
-      <>
-        <div
-          style={{
-            paddingBottom: SPACE_MD,
-            display: "flex",
-            justifyContent: "space-between"
-          }}
-        >
-          <Dropdown overlay={exportMenu} key="export">
-            <Button>
-              {getI18N("ProjectsTable_export")} <Icon type="down" />
-            </Button>
-          </Dropdown>
-          <Input.Search style={{ width: 300 }} onSearch={onSearch} />
-        </div>
-        <Table
-          rowKey={record => record.id}
-          loading={loading}
-          pagination={{
-            total: total,
-            pageSize: state.pageSize
-          }}
-          columns={columns}
-          dataSource={projects}
-          onChange={handleTableChange}
-        />
-      </>
+      <div
+        style={{
+          paddingBottom: SPACE_MD,
+          display: "flex",
+          justifyContent: "space-between"
+        }}
+      >
+        <Dropdown overlay={exportMenu} key="export">
+          <Button>
+            {getI18N("ProjectsTable_export")} <Icon type="down" />
+          </Button>
+        </Dropdown>
+        <Input.Search style={{ width: 300 }} onSearch={onSearch} />
+      </div>
+      <Table
+        rowKey={record => record.id}
+        loading={loading}
+        pagination={{
+          total: total,
+          pageSize: state.pageSize
+        }}
+        columns={columns}
+        dataSource={projects}
+        onChange={handleTableChange}
+      />
     </PageWrapper>
   );
 }
