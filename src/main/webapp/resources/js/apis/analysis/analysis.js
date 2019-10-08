@@ -23,8 +23,12 @@ export async function getVariablesForDetails(submissionId) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getAnalysisInputFiles(submissionId) {
-  const res = await axios.get(`${URL}inputs/${submissionId}`);
-  return res.data.analysisInputFiles;
+  try {
+    const res = await axios.get(`${URL}inputs/${submissionId}`);
+    return res.data.analysisInputFiles;
+  } catch (error) {
+    return { samples: [], referenceFile: null };
+  }
 }
 
 /*
