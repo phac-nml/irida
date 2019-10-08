@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 
 import com.google.common.collect.Sets;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * A basis for clients to begin discovering other URLs in our API.
