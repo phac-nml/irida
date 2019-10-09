@@ -20,6 +20,7 @@ module.exports = {
   analysis: "./resources/js/pages/analysis/analysis.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
+  "projects-create": "./resources/js/pages/projects/create/index.js",
   "project-events": "./resources/js/pages/projects/project-events.js",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":

@@ -508,15 +508,15 @@ public class ProjectsController {
 	 * <p>
 	 * Note: If the search term was not included in the results, it will be added as an option
 	 *
-	 * @param searchTerm The term to find taxa for
+	 * @param term The term to find taxa for
 	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
-	public List<Map<String, Object>> searchTaxonomy(@RequestParam String searchTerm) {
-		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);
+	public List<Map<String, Object>> searchTaxonomy(@RequestParam String term) {
+		Collection<TreeNode<String>> search = taxonomyService.search(term);
 
-		TreeNode<String> searchTermNode = new TreeNode<>(searchTerm);
+		TreeNode<String> searchTermNode = new TreeNode<>(term);
 		// add a property to this node to indicate that it's the search term
 		searchTermNode.addProperty("searchTerm", true);
 
