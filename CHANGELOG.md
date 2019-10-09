@@ -1,6 +1,16 @@
 Changes
 =======
 
+19.09 to 20.01
+--------------
+* [Developer]: Upgraded development Java version to Java 11 (LTS).
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
+* [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
+* [UI]: Fixed issue where links to pipelines on the cart page displayed incorrectly.
+* [UI]: Updated project and global analyses listing pages to use Ant Design tables.
+* [UI]: Updated sequencing runs table to use Ant Design tables.
+* [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
+
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
@@ -82,7 +92,6 @@ Changes
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
 * [UI]: Fixed bug causing issues with saving Line List templates.
 * [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
-* [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
 
 0.22.0 to 19.01
 ----------------

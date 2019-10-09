@@ -1,5 +1,30 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.hibernate.TransientPropertyValueException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -32,32 +57,10 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import org.hibernate.TransientPropertyValueException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -149,11 +152,11 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
 
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, project, null);
+				.filterAnalyses(search, name, states, null, workflowIds, project, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -162,10 +165,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, null, null);
+				.filterAnalyses(search, name, states, null, workflowIds, null, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -174,10 +177,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states,
 			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, user, workflowIds, null, false);
+				.filterAnalyses(search, name, states, user, workflowIds, null, false);
 		return super.search(specification, pageRequest);
 	}
 
@@ -304,6 +307,18 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		}
 
 		super.delete(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#ids, 'canUpdateAnalysisSubmission')")
+	@Transactional
+	public void deleteMultiple(Collection<Long> ids) {
+		for (Long id : ids) {
+			delete(id);
+		}
 	}
 
 	/**

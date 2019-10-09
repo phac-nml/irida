@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.submission;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,13 +20,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -48,6 +36,15 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for an analysis service.
@@ -117,7 +114,7 @@ public class AnalysisSubmissionServiceImplIT {
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
-		paged = analysisSubmissionService.listAllSubmissions(null, name, state, null,
+		paged = analysisSubmissionService.listAllSubmissions(null, name, ImmutableSet.of(state), null,
 				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
 		assertEquals(2, paged.getContent().size());
 	}
