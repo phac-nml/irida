@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.provider.endpoint.DefaultRedirectReso
 /**
  * Redirect resolver for Oauth2 clients that allows any url for redirection
  */
+// TODO: 10/9/19  Remove this when registered redirect URIs are added to clients
+@Deprecated
 public class OauthRedirectResolver extends DefaultRedirectResolver {
   /**
    * Resolve the redirect for a client
