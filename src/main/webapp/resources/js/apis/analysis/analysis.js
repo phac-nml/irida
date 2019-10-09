@@ -3,8 +3,11 @@
  */
 import axios from "axios";
 
+// Ajax URL for Analysis
 const URL = `${window.TL.BASE_URL}analysis/ajax/`;
 
+// Ajax URL for Analyses
+const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
 /*
  * Get all the data required for the analysis -> details page.
  * @param {number} submissionId Submission ID
@@ -121,7 +124,7 @@ export async function saveToRelatedSamples(submissionId) {
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(`${URL}user/analysis-outputs`);
+    const { data } = await axios.get(`${BASE_URL}user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error: error };
@@ -171,7 +174,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${URL}download/prepare`,
+      url: `${BASE_URL}download/prepare`,
       data: outputs
     });
     return { data };
