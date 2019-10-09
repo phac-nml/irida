@@ -3,15 +3,15 @@
  */
 import axios from "axios";
 
+const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(
-      `${window.PAGE.URLS.base}analysis/ajax/user/analysis-outputs`
-    );
+    const { data } = await axios.get(`${BASE_URL}/user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error: error };
@@ -26,9 +26,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${
-        window.PAGE.URLS.base
-      }analysis/ajax/project/${projectId}/shared-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -46,9 +44,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${
-        window.PAGE.URLS.base
-      }analysis/ajax/project/${projectId}/automated-analysis-outputs`
+      `${window.TL.BASE_URL}analysis/ajax/project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -65,11 +61,23 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${window.PAGE.URLS.base}analysis/ajax/download/prepare`,
+      url: `${BASE_URL}/download/prepare`,
       data: outputs
     });
     return { data };
   } catch (error) {
     return { error: error };
   }
+}
+
+export async function fetchAllPipelinesStates() {
+  return axios.get(`${BASE_URL}/states`).then(response => response.data);
+}
+
+export async function fetchAllPipelinesTypes() {
+  return axios.get(`${BASE_URL}/types`).then(response => response.data);
+}
+
+export async function deleteAnalysisSubmissions({ ids }) {
+  return axios.delete(`${BASE_URL}/delete?ids=${ids.join(",")}`);
 }

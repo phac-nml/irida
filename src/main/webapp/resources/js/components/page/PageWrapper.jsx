@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Layout, PageHeader } from "antd";
 import { grey1 } from "../../styles/colors";
+import { SPACE_MD } from "../../styles/spacing";
 
 const { Content } = Layout;
 
@@ -16,10 +17,12 @@ const { Content } = Layout;
  */
 export function PageWrapper({ title, headerExtras, children }) {
   return (
-    <Layout style={{ padding: 24, height: "100%", minHeight: "100%" }}>
-      <Content style={{ backgroundColor: grey1, margin: 0 }}>
-        <PageHeader title={title} extra={headerExtras} />
-        {children}
+    <Layout style={{ height: "100%", minHeight: "100%" }}>
+      <PageHeader title={title} extra={headerExtras} />
+      <Content style={{ padding: SPACE_MD }}>
+        <div style={{ padding: SPACE_MD, backgroundColor: grey1 }}>
+          {children}
+        </div>
       </Content>
     </Layout>
   );
