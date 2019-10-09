@@ -10,6 +10,7 @@ Changes
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 * [UI]: Updated sequencing runs table to use Ant Design tables.
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
+* [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
 
 19.05 to 19.09
 ---------------
