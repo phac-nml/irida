@@ -131,7 +131,7 @@ export function AnalysisSampleRenderer() {
         <Alert
           type="info"
           showIcon
-          message={getI18N("AnalysisSamples.noPairedEnd")}
+          message={getI18N("AnalysisSamples.samplesDeleted")}
         />
       )}
     </>

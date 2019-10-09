@@ -368,11 +368,10 @@ public class AnalysisController {
 	 * Get analysis input files and their sizes
 	 *
 	 * @param submissionId analysis submission id to get data for
-	 * @param response     HTTP response object
 	 * @return dto of analysis input files data
 	 */
 	@RequestMapping(value = "/ajax/inputs/{submissionId}", method = RequestMethod.GET)
-	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, HttpServletResponse response) {
+	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		ReferenceFile referenceFile = null;
@@ -412,21 +411,21 @@ public class AnalysisController {
 
 		for (SampleFiles sampleFile : sampleFiles) {
 			HashMap<String, Object> hashSamples = new HashMap<>();
-			hashSamples.put("sampleName", sampleFile.getSample()
-					.getSampleName());
-			hashSamples.put("sampleId", sampleFile.getSample()
-					.getId());
-			hashSamples.put("sequenceFilePairId", sampleFile.getSequenceFilePair()
-					.getId());
-			hashSamples.put("forward", sampleFile.getSequenceFilePair()
-					.getForwardSequenceFile());
-			hashSamples.put("reverse", sampleFile.getSequenceFilePair()
-					.getReverseSequenceFile());
-			sampleList.add(hashSamples);
+			if (sampleFile.getSample() != null) {
+				hashSamples.put("sampleName", sampleFile.getSample()
+						.getSampleName());
+				hashSamples.put("sampleId", sampleFile.getSample()
+						.getId());
+
+				hashSamples.put("sequenceFilePairId", sampleFile.getSequenceFilePair()
+						.getId());
+				hashSamples.put("forward", sampleFile.getSequenceFilePair()
+						.getForwardSequenceFile());
+				hashSamples.put("reverse", sampleFile.getSequenceFilePair()
+						.getReverseSequenceFile());
+				sampleList.add(hashSamples);
+			}
 		}
-
-		response.setStatus(HttpServletResponse.SC_OK);
-
 		return new AnalysisInputFiles(sampleList, referenceFile);
 	}
 
@@ -756,27 +755,30 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale) {
+	public ResponseDetails saveResultsToSamples(@PathVariable Long submissionId, Locale locale, HttpServletResponse response) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
+		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
+
 		if(submission.getUpdateSamples()){
-			String message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
-			return ImmutableMap.of("result", "error", "message", message);
+			message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
+			response.setStatus(422);
 		}
 
 		try {
 			analysisSubmissionSampleProcessor.updateSamples(submission);
-
 			submission.setUpdateSamples(true);
 			analysisSubmissionService.update(submission);
 		} catch (PostProcessingException e) {
-			String message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
-			return ImmutableMap.of("result", "error", "message", message);
+			if (e.toString().contains("Expected one sample; got '0' for analysis [id=" + submissionId + "]")) {
+				message = messageSource.getMessage("AnalysisShare.noSamplesToSaveResults", null, locale);
+			} else {
+				message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
+			}
+			response.setStatus(422);
 		}
 
-		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
-
-		return ImmutableMap.of("result", "success", "message", message);
+		return new ResponseDetails(message);
 	}
 
 	/**
