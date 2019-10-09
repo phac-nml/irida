@@ -168,8 +168,8 @@ public class ClientsController extends BaseController {
 		if (client.getAuthorizedGrantTypes().contains("password")) {
 			model.addAttribute("selectedGrant", "password");
 		} else if (client.getAuthorizedGrantTypes().contains("authorization_code")) {
-		  model.addAttribute("selectedGrant", "authorization_code");
-    }
+			model.addAttribute("selectedGrant", "authorization_code");
+		}
 
 		Set<String> scopes = client.getScope();
 		for (String scope : scopes) {
