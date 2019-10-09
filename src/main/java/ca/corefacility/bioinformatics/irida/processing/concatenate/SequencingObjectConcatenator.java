@@ -19,6 +19,7 @@ import java.util.Optional;
  * @param <Type> the {@link SequencingObject} class to concatenate
  */
 public abstract class SequencingObjectConcatenator<Type extends SequencingObject> {
+	//Valid extensions to try to concatenate with this tool
 	private static final List<String> VALID_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 
 	/**
