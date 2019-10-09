@@ -27,8 +27,10 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 			throws ConcatenateException {
 		Path tempFile;
 
+		String extension = getFileExtension(toConcatenate);
+
 		// create the filename with extension
-		filename = filename + ".fastq";
+		filename = filename + "." + extension;
 		try {
 			// create a temp directory and temp file
 			Path tempDirectory = Files.createTempDirectory(null);
