@@ -18,7 +18,7 @@ import styled from "styled-components";
 const { Paragraph, Text, Title } = Typography;
 const TabPane = Tabs.TabPane;
 
-export function AnalysisError() {
+export default function AnalysisError() {
   const { analysisContext } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
 

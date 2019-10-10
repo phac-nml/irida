@@ -32,7 +32,7 @@ export default function AnalysisSamples() {
    */
   return (
     <>
-      <Title level={2}>{getI18N("AnalysisSamples.samples")}</Title>
+      <Title level={2} className="t-page-title">{getI18N("AnalysisSamples.samples")}</Title>
       {analysisSamplesContext.referenceFile ? (
         <AnalysisReferenceFileRenderer />
       ) : null}

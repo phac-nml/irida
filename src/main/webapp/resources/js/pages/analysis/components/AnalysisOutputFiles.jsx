@@ -1,10 +1,8 @@
 import React from "react";
-import { Table, Icon } from "antd";
+import { Typography } from "antd";
 
-const expandedRowRender = record => <p>{record.description}</p>;
-const showHeader = true;
-const footer = undefined;
+const { Title } = Typography;
 
-export function AnalysisOutputFiles() {
-  return <></>;
+export default function AnalysisOutputFiles() {
+  return <Title level={2} className="t-page-title">Output Files</Title>;
 }

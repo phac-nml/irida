@@ -3,8 +3,8 @@
  */
 import axios from "axios";
 
+// Ajax URL for Analysis
 const URL = `${window.TL.BASE_URL}analysis/ajax/`;
-
 const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
 
 /*
@@ -25,8 +25,12 @@ export async function getVariablesForDetails(submissionId) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getAnalysisInputFiles(submissionId) {
-  const res = await axios.get(`${URL}inputs/${submissionId}`);
-  return res.data.analysisInputFiles;
+  try {
+    const res = await axios.get(`${URL}inputs/${submissionId}`);
+    return res.data.analysisInputFiles;
+  } catch (error) {
+    return { samples: [], referenceFile: null };
+  }
 }
 
 /*
@@ -95,7 +99,7 @@ export async function getSharedProjects(submissionId) {
  * @param {boolean} shareStatus True of False
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateSharedProjects(params) {
+export async function updateSharedProject(params) {
   const res = await axios.post(`${URL}${params.submissionId}/share`, {
     projectId: params.projectId,
     shareStatus: params.shareStatus

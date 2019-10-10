@@ -10,7 +10,7 @@ import { AnalysisContext } from "../contexts/AnalysisContext";
 import { getAnalysisInputFiles } from "../apis/analysis/analysis";
 
 const initialContext = {
-  samples: [],
+  samples: null,
   referenceFile: [],
   loading: true
 };
@@ -24,7 +24,7 @@ function AnalysisSamplesProvider(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [sampleDisplayHeight, setSampleDisplayHeight] = useState(null);
 
-  useEffect(() => {
+  function getAnalysisInputSamples() {
     updateHeight();
     getAnalysisInputFiles(analysisContext.analysis.identifier).then(
       ({ samples, referenceFile }) => {
@@ -38,7 +38,7 @@ function AnalysisSamplesProvider(props) {
         });
       }
     );
-  }, [getAnalysisInputFiles]);
+  }
 
   /*
     On page load gets the max height
@@ -62,7 +62,8 @@ function AnalysisSamplesProvider(props) {
     <AnalysisSamplesContext.Provider
       value={{
         analysisSamplesContext,
-        sampleDisplayHeight
+        sampleDisplayHeight,
+        getAnalysisInputSamples
       }}
     >
       {props.children}

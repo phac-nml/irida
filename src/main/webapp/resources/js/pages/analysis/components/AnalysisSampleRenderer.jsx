@@ -3,7 +3,7 @@
  * required by the component
  */
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useLayoutEffect } from "react";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
 import { Alert, Avatar, Icon, Input, List, Spin } from "antd";
@@ -17,9 +17,18 @@ export function AnalysisSampleRenderer() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisSamplesContext, sampleDisplayHeight, loading } = useContext(
-    AnalysisSamplesContext
-  );
+  const {
+    analysisSamplesContext,
+    sampleDisplayHeight,
+    loading,
+    getAnalysisInputSamples
+  } = useContext(AnalysisSamplesContext);
+
+  useLayoutEffect(() => {
+    if (analysisSamplesContext.samples === null) {
+      getAnalysisInputSamples();
+    }
+  }, []);
 
   const [filteredSamples, setFilteredSamples] = useState(null);
 
@@ -106,7 +115,7 @@ export function AnalysisSampleRenderer() {
     <>
       {analysisSamplesContext.loading ? (
         <div>
-          <Spin /> {getI18N("Checking for samples")}
+          <Spin /> {getI18N("AnalysisSamples.checkingForSamples")}
         </div>
       ) : analysisSamplesContext.samples.length > 0 ? (
         <div>
