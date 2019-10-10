@@ -9,18 +9,19 @@
  *required by the components encompassed within
  */
 
-import React, { useContext, useState, Suspense } from "react";
-import { Tabs, Typography, Icon, Spin } from "antd";
+import React, { Suspense, useContext, useState } from "react";
+import { Icon, Spin, Tabs, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
 import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
-
+import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD, SPACE_SM } from "../../../styles/spacing";
 import styled from "styled-components";
 import { navigate } from "@reach/router";
+import { green6, grey6, red6 } from "../../../styles/colors";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisError = React.lazy(() => import("./AnalysisError"));
@@ -110,6 +111,25 @@ export default function Analysis() {
     }
   };
 
+  const title = (
+    <>
+      {analysisContext.analysisState === "COMPLETED" ? (
+        <Icon
+          type="check-circle"
+          style={{ marginRight: SPACE_SM, color: green6 }}
+        />
+      ) : analysisContext.analysisState === "ERROR" ? (
+        <Icon
+          type="close-circle"
+          style={{ marginRight: SPACE_SM, color: red6 }}
+        />
+      ) : (
+        <Icon type="loading" style={{ marginRight: SPACE_SM, color: grey6 }} />
+      )}
+      {analysisContext.analysisName}
+    </>
+  );
+
   /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
@@ -120,115 +140,98 @@ export default function Analysis() {
    * to the analysis name.
    */
   return (
-    <Wrapper>
-      <div>
-        <Title style={{ wordBreak: "break-word" }}>
-          {analysisContext.analysisState === "COMPLETED" ? (
-            <Icon
-              type="check-circle"
-              style={{ marginRight: SPACE_MD, color: "#00ab66" }}
-            />
-          ) : null}
-          {analysisContext.analysisName}
-        </Title>
-        {analysisContext.analysisState !== "COMPLETED" ? (
-          <AnalysisSteps />
-        ) : null}
-        <Tabs
-          activeKey={setActiveTabKey()}
-          onChange={updateNav}
-          animated={false}
-        >
-          {analysisContext.isCompleted ? (
-            [
-              analysisContext.analysisType.type === "BIO_HANSEL" ? (
-                <TabPane
-                  tab="bio_hansel"
-                  key="bio_hansel"
-                  className="t-analysis-tab-bio-hansel"
-                >
-                  <Suspense fallback={<Spin />}>
-                    <AnalysisBioHansel />
-                  </Suspense>
-                </TabPane>
-              ) : null,
-
-              analysisContext.analysisType.type === "SISTR_TYPING" ? (
-                <TabPane
-                  tab="sistr"
-                  key="sistr_typing"
-                  className="t-analysis-tab-sistr-typing"
-                >
-                  <Suspense fallback={<Spin />}>
-                    <AnalysisSistr />
-                  </Suspense>
-                </TabPane>
-              ) : null,
-
-              analysisContext.analysisType.type === "PHYLOGENOMICS" ||
-              analysisContext.analysisType.type === "MLST_MENTALIST" ? (
-                <TabPane
-                  tab={getI18N("Analysis.phylogeneticTree")}
-                  key="phylogenomics"
-                  className="t-analysis-tab-phylogenetic"
-                >
-                  <Suspense fallback={<Spin />}>
-                    <AnalysisPhylogeneticTree />
-                  </Suspense>
-                </TabPane>
-              ) : null,
-
+    <PageWrapper title={title}>
+      {analysisContext.analysisState !== "COMPLETED" ? <AnalysisSteps /> : null}
+      <Tabs activeKey={setActiveTabKey()} onChange={updateNav} animated={false}>
+        {analysisContext.isCompleted ? (
+          [
+            analysisContext.analysisType.type === "BIO_HANSEL" ? (
               <TabPane
-                tab={getI18N("Analysis.outputFiles")}
-                key="output-files"
-                className="t-analysis-tab-output-files"
+                tab="bio_hansel"
+                key="bio_hansel"
+                className="t-analysis-tab-bio-hansel"
               >
                 <Suspense fallback={<Spin />}>
-                  <AnalysisOutputFiles />
-                </Suspense>
-              </TabPane>,
-
-              <TabPane
-                tab={getI18N("Analysis.provenance")}
-                key="provenance"
-                className="t-analysis-tab-provenance"
-              >
-                <Suspense fallback={<Spin />}>
-                  <AnalysisProvenance />
+                  <AnalysisBioHansel />
                 </Suspense>
               </TabPane>
-            ]
-          ) : analysisContext.isError ? (
+            ) : null,
+
+            analysisContext.analysisType.type === "SISTR_TYPING" ? (
+              <TabPane
+                tab="sistr"
+                key="sistr_typing"
+                className="t-analysis-tab-sistr-typing"
+              >
+                <Suspense fallback={<Spin />}>
+                  <AnalysisSistr />
+                </Suspense>
+              </TabPane>
+            ) : null,
+
+            analysisContext.analysisType.type === "PHYLOGENOMICS" ||
+            analysisContext.analysisType.type === "MLST_MENTALIST" ? (
+              <TabPane
+                tab={getI18N("Analysis.phylogeneticTree")}
+                key="phylogenomics"
+                className="t-analysis-tab-phylogenetic"
+              >
+                <Suspense fallback={<Spin />}>
+                  <AnalysisPhylogeneticTree />
+                </Suspense>
+              </TabPane>
+            ) : null,
+
             <TabPane
-              tab={getI18N("Analysis.jobError")}
-              key="job-error"
-              className="t-analysis-tab-job-error"
+              tab={getI18N("Analysis.outputFiles")}
+              key="output-files"
+              className="t-analysis-tab-output-files"
             >
               <Suspense fallback={<Spin />}>
-                <AnalysisError />
+                <AnalysisOutputFiles />
+              </Suspense>
+            </TabPane>,
+
+            <TabPane
+              tab={getI18N("Analysis.provenance")}
+              key="provenance"
+              className="t-analysis-tab-provenance"
+            >
+              <Suspense fallback={<Spin />}>
+                <AnalysisProvenance />
               </Suspense>
             </TabPane>
-          ) : null}
+          ]
+        ) : analysisContext.isError ? (
           <TabPane
-            tab={getI18N("Analysis.settings")}
-            key="settings"
-            id="t-analysis-tab-settings"
+            tab={getI18N("Analysis.jobError")}
+            key="job-error"
+            className="t-analysis-tab-job-error"
           >
             <Suspense fallback={<Spin />}>
-              <AnalysisDetailsProvider>
-                <AnalysisSamplesProvider>
-                  <AnalysisShareProvider>
-                    <AnalysisSettings
-                      updateNav={updateNav}
-                      defaultTabKey={defaultTabKey}
-                    />
-                  </AnalysisShareProvider>
-                </AnalysisSamplesProvider>
-              </AnalysisDetailsProvider>
+              <AnalysisError />
             </Suspense>
           </TabPane>
-        </Tabs>
-      </div>
-    </Wrapper>
+        ) : null}
+        <TabPane
+          tab={getI18N("Analysis.settings")}
+          key="settings"
+          id="t-analysis-tab-settings"
+        >
+          <Suspense fallback={<Spin />}>
+            <AnalysisDetailsProvider>
+              <AnalysisSamplesProvider>
+                <AnalysisShareProvider>
+                  <AnalysisSettings
+                    updateNav={updateNav}
+                    defaultTabKey={defaultTabKey}
+                  />
+                </AnalysisShareProvider>
+              </AnalysisSamplesProvider>
+            </AnalysisDetailsProvider>
+          </Suspense>
+        </TabPane>
+      </Tabs>
+    </PageWrapper>
   );
 }
