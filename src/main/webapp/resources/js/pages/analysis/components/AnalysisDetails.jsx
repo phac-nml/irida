@@ -18,10 +18,10 @@ import {
   getHumanizedDuration
 } from "../../../utilities/date-utilities";
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
-export function AnalysisDetails() {
-/*
+export default function AnalysisDetails() {
+  /*
    * The following const statements
    * make the required contexts which contain
    * the state and methods available to the component
@@ -126,43 +126,39 @@ export function AnalysisDetails() {
   // The following renders the Analysis Details component view
   return (
     <>
-        <Title level={2}>{getI18N("AnalysisDetails.details")}</Title>
+      <Title level={2} className="t-page-title">{getI18N("AnalysisDetails.details")}</Title>
 
-        <div>
-          <List
-            itemLayout="horizontal"
-            dataSource={analysisDetails}
-            renderItem={item => (
-              <List.Item>
-                <List.Item.Meta
-                  title={
-                    <span style={{ fontWeight: "bold" }}>{item.title}</span>
-                  }
-                  description={<span>{item.desc}</span>}
-                />
-              </List.Item>
-            )}
-          />
-        </div>
+      <div>
+        <List
+          itemLayout="horizontal"
+          dataSource={analysisDetails}
+          renderItem={item => (
+            <List.Item>
+              <List.Item.Meta
+                title={<Text strong>{item.title}</Text>}
+                description={item.desc}
+              />
+            </List.Item>
+          )}
+        />
+      </div>
 
-        {window.PAGE.mailConfigured &&
-        !analysisContext.isCompleted &&
-        !analysisContext.isError ? (
-          <section
-            style={{ marginTop: SPACE_MD }}
-            className="t-email-pipeline-result"
+      {window.PAGE.mailConfigured &&
+      !analysisContext.isCompleted &&
+      !analysisContext.isError ? (
+        <section
+          style={{ marginTop: SPACE_MD }}
+          className="t-email-pipeline-result"
+        >
+          <Title level={4}>{getI18N("AnalysisDetails.receiveEmail")}</Title>
+          <Checkbox
+            onChange={updateEmailPipelineResult}
+            checked={analysisDetailsContext.emailPipelineResult}
           >
-            <Title level={4}>
-              {getI18N("AnalysisDetails.receiveEmail")}
-            </Title>
-            <Checkbox
-              onChange={updateEmailPipelineResult}
-              checked={analysisDetailsContext.emailPipelineResult}
-            >
-              {getI18N("AnalysisDetails.receiveEmailCheckboxLabel")}
-            </Checkbox>
-          </section>
-        ) : null}
+            {getI18N("AnalysisDetails.receiveEmailCheckboxLabel")}
+          </Checkbox>
+        </section>
+      ) : null}
     </>
   );
 }

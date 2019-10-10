@@ -1,9 +1,8 @@
 import React from "react";
-import { Tree, Collapse } from "antd";
+import { Typography } from "antd";
 
-const { TreeNode } = Tree;
-const Panel = Collapse.Panel;
+const { Title } = Typography;
 
-export function AnalysisProvenance() {
-  return <></>;
+export default function AnalysisProvenance() {
+  return <Title level={2} className="t-page-title">Provenance</Title>;
 }

@@ -13,25 +13,24 @@ import React, { Suspense, useContext } from "react";
 import { Checkbox, Col, List, Select, Spin, Tabs, Typography } from "antd";
 
 import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
-import { AnalysisDetailsContext, AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
+import {
+  AnalysisDetailsContext,
+  AnalysisDetailsProvider
+} from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
+import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisDetails } from "./AnalysisDetails";
 import styled from "styled-components";
 
+const AnalysisDetails = React.lazy(() => import("./AnalysisDetails"));
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
 const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
 const TabPane = Tabs.TabPane;
 
-export function AnalysisSettings() {
-  const {
-    analysisDetailsContext
-  } = useContext(AnalysisDetailsContext);
-
-  const { analysisContext } = useContext(
-    AnalysisContext
-  );
+export default function AnalysisSettings(props) {
+  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
+  const { analysisContext } = useContext(AnalysisContext);
 
   const Wrapper = styled.div`
     margin-left: 50px;
@@ -47,32 +46,35 @@ export function AnalysisSettings() {
   return (
     <Wrapper>
       <Tabs
-        defaultActiveKey="analysis_details"
+        activeKey={
+          props.defaultTabKey === "" || props.defaultTabKey === "settings"
+            ? "details"
+            : props.defaultTabKey
+        }
+        onChange={props.updateNav}
         tabPosition="left"
         animated={false}
       >
         <TabPane
           tab={getI18N("AnalysisDetails.details")}
-          key="analysis_details"
+          key="details"
           className="t-analysis-settings-tab-details"
         >
           <Col span={12}>
-            <AnalysisDetailsProvider>
-                <AnalysisDetails />
-            </AnalysisDetailsProvider>
+            <Suspense fallback={<Spin />}>
+              <AnalysisDetails />
+            </Suspense>
           </Col>
         </TabPane>
 
         <TabPane
           tab={getI18N("AnalysisSamples.samples")}
-          key="analysis_samples"
+          key="samples"
           className="t-analysis-settings-tab-samples"
         >
           <Col span={12}>
             <Suspense fallback={<Spin />}>
-              <AnalysisSamplesProvider>
-                <AnalysisSamples />
-              </AnalysisSamplesProvider>
+              <AnalysisSamples />
             </Suspense>
           </Col>
         </TabPane>
@@ -82,7 +84,7 @@ export function AnalysisSettings() {
               !analysisContext.isError ? (
                 <TabPane
                   tab={getI18N("AnalysisShare.manageResults")}
-                  key="analysis_share"
+                  key="share"
                   className="t-analysis-settings-tab-share-results"
                 >
                   <Col span={12}>
@@ -94,7 +96,7 @@ export function AnalysisSettings() {
               ) : null,
               <TabPane
                 tab={getI18N("AnalysisDelete.deleteAnalysis")}
-                key="analysis_delete"
+                key="delete"
                 className="t-analysis-settings-tab-delete-analysis"
               >
                 <Col span={12}>
