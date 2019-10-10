@@ -371,7 +371,7 @@ public class AnalysisController {
 	 * @return dto of analysis input files data
 	 */
 	@RequestMapping(value = "/ajax/inputs/{submissionId}", method = RequestMethod.GET)
-	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, Locale locale) {
+	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		ReferenceFile referenceFile = null;
@@ -406,24 +406,17 @@ public class AnalysisController {
 			logger.debug("No reference file required for workflow.");
 		}
 
-		//List of hashmaps which store the sample info
-		ArrayList<HashMap<String, Object>> sampleList = new ArrayList<>();
+		//List of AnalysisSamples which store the sample info
+		List<AnalysisSamples> sampleList = new ArrayList<>();
 
 		for (SampleFiles sampleFile : sampleFiles) {
-			HashMap<String, Object> hashSamples = new HashMap<>();
 			if (sampleFile.getSample() != null) {
-				hashSamples.put("sampleName", sampleFile.getSample()
-						.getSampleName());
-				hashSamples.put("sampleId", sampleFile.getSample()
-						.getId());
-
-				hashSamples.put("sequenceFilePairId", sampleFile.getSequenceFilePair()
-						.getId());
-				hashSamples.put("forward", sampleFile.getSequenceFilePair()
-						.getForwardSequenceFile());
-				hashSamples.put("reverse", sampleFile.getSequenceFilePair()
-						.getReverseSequenceFile());
-				sampleList.add(hashSamples);
+				sampleList.add(new AnalysisSamples(sampleFile.getSample()
+						.getSampleName(), sampleFile.getSample()
+						.getId(), sampleFile.getSequenceFilePair()
+						.getId(), sampleFile.getSequenceFilePair()
+						.getForwardSequenceFile(), sampleFile.getSequenceFilePair()
+						.getReverseSequenceFile()));
 			}
 		}
 		return new AnalysisInputFiles(sampleList, referenceFile);
@@ -751,16 +744,18 @@ public class AnalysisController {
 	 *
 	 * @param submissionId ID of the {@link AnalysisSubmission}
 	 * @param locale       locale of the logged in user
+	 * @param response     HTTP response object
 	 * @return success message
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseDetails saveResultsToSamples(@PathVariable Long submissionId, Locale locale, HttpServletResponse response) {
+	public ResponseDetails saveResultsToSamples(@PathVariable Long submissionId, Locale locale,
+			HttpServletResponse response) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
 		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
 
-		if(submission.getUpdateSamples()){
+		if (submission.getUpdateSamples()) {
 			message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
 			response.setStatus(422);
 		}
@@ -770,7 +765,8 @@ public class AnalysisController {
 			submission.setUpdateSamples(true);
 			analysisSubmissionService.update(submission);
 		} catch (PostProcessingException e) {
-			if (e.toString().contains("Expected one sample; got '0' for analysis [id=" + submissionId + "]")) {
+			if (e.toString()
+					.contains("Expected one sample; got '0' for analysis [id=" + submissionId + "]")) {
 				message = messageSource.getMessage("AnalysisShare.noSamplesToSaveResults", null, locale);
 			} else {
 				message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
