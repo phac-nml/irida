@@ -41,7 +41,9 @@ export default function AnalysisDelete() {
   // The following renders the Delete Analysis component view
   return (
     <>
-      <Title level={2} className="t-page-title">{getI18N("AnalysisDelete.deleteAnalysis")}</Title>
+      <Title level={2} className="t-page-title">
+        {getI18N("AnalysisDelete.deleteAnalysis")}
+      </Title>
       <Alert
         message={getI18N("AnalysisDelete.permanentActionWarning")}
         showIcon

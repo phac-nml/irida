@@ -33,7 +33,13 @@ export function PageWrapper({ title, headerExtras, children }) {
 }
 
 PageWrapper.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([
+             PropTypes.string,
+             PropTypes.object
+           ]),
   headerExtras: PropTypes.element,
-  children: PropTypes.element.isRequired
+  children: PropTypes.oneOfType([
+     PropTypes.element,
+     PropTypes.array
+   ])
 };
