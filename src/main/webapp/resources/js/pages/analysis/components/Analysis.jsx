@@ -18,9 +18,10 @@ import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContex
 import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD, SPACE_SM } from "../../../styles/spacing";
 import styled from "styled-components";
 import { navigate } from "@reach/router";
+import { green6, grey6, red6 } from "../../../styles/colors";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisError = React.lazy(() => import("./AnalysisError"));
@@ -115,9 +116,16 @@ export default function Analysis() {
       {analysisContext.analysisState === "COMPLETED" ? (
         <Icon
           type="check-circle"
-          style={{ marginRight: SPACE_MD, color: "#00ab66" }}
+          style={{ marginRight: SPACE_SM, color: green6 }}
         />
-      ) : null}
+      ) : analysisContext.analysisState === "ERROR" ? (
+        <Icon
+          type="close-circle"
+          style={{ marginRight: SPACE_SM, color: red6 }}
+        />
+      ) : (
+        <Icon type="loading" style={{ marginRight: SPACE_SM, color: grey6 }} />
+      )}
       {analysisContext.analysisName}
     </>
   );
@@ -133,9 +141,7 @@ export default function Analysis() {
    */
   return (
     <PageWrapper title={title}>
-      {analysisContext.analysisState !== "COMPLETED" ? (
-        <AnalysisSteps />
-      ) : null}
+      {analysisContext.analysisState !== "COMPLETED" ? <AnalysisSteps /> : null}
       <Tabs activeKey={setActiveTabKey()} onChange={updateNav} animated={false}>
         {analysisContext.isCompleted ? (
           [
