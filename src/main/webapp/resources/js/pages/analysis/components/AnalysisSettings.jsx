@@ -13,7 +13,10 @@ import React, { Suspense, useContext } from "react";
 import { Checkbox, Col, List, Select, Spin, Tabs, Typography } from "antd";
 
 import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
-import { AnalysisDetailsContext, AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
+import {
+  AnalysisDetailsContext,
+  AnalysisDetailsProvider
+} from "../../../contexts/AnalysisDetailsContext";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { AnalysisDetails } from "./AnalysisDetails";
@@ -25,13 +28,9 @@ const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
 const TabPane = Tabs.TabPane;
 
 export function AnalysisSettings() {
-  const {
-    analysisDetailsContext
-  } = useContext(AnalysisDetailsContext);
+  const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
 
-  const { analysisContext } = useContext(
-    AnalysisContext
-  );
+  const { analysisContext } = useContext(AnalysisContext);
 
   const Wrapper = styled.div`
     margin-left: 50px;
@@ -58,7 +57,7 @@ export function AnalysisSettings() {
         >
           <Col span={12}>
             <AnalysisDetailsProvider>
-                <AnalysisDetails />
+              <AnalysisDetails />
             </AnalysisDetailsProvider>
           </Col>
         </TabPane>

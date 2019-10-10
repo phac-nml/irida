@@ -38,7 +38,6 @@ export function AnalysisReferenceFileRenderer() {
                 alignItems: "center"
               }}
             >
-
               {analysisSamplesContext.referenceFile.label}
 
               <Button
