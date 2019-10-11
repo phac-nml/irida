@@ -311,10 +311,7 @@
      * Clear the cart and redirect to the projects page
      */
     vm.clearAndRedirect = function() {
-      var clearPromise = CartService.clear();
-
-      // after the cart is cleared, redirect the browser
-      clearPromise.then(function() {
+      CartService.clear().then(function() {
         window.location = page.urls.projectsPage;
       });
     };
