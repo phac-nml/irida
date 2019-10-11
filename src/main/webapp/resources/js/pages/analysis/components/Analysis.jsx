@@ -45,6 +45,12 @@ const analysisTypesWithAdditionalPage = [
 ];
 
 const analysisSettingsTabKeys = ["details", "samples", "share", "delete"];
+const analysisErrorTabKeys = [
+  "job-error-info",
+  "galaxy-parameters",
+  "standard-error",
+  "standard-out"
+];
 
 const Wrapper = styled.div`
   margin-left: ${SPACE_MD};
@@ -105,6 +111,8 @@ export default function Analysis() {
     } else {
       if (analysisSettingsTabKeys.indexOf(defaultTabKey) > -1) {
         return "settings";
+      } else if (analysisErrorTabKeys.indexOf(defaultTabKey) > -1) {
+        return "job-error";
       } else {
         return defaultTabKey;
       }
@@ -209,7 +217,10 @@ export default function Analysis() {
             className="t-analysis-tab-job-error"
           >
             <Suspense fallback={<Spin />}>
-              <AnalysisError />
+              <AnalysisError
+                updateNav={updateNav}
+                defaultTabKey={defaultTabKey}
+              />
             </Suspense>
           </TabPane>
         ) : null}
