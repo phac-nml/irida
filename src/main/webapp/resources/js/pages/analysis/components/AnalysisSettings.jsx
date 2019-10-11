@@ -10,15 +10,10 @@
  */
 
 import React, { Suspense, useContext } from "react";
-import { Checkbox, Col, List, Select, Spin, Tabs, Typography } from "antd";
+import { Col, Spin, Tabs } from "antd";
 
-import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
-import {
-  AnalysisDetailsContext,
-  AnalysisDetailsProvider
-} from "../../../contexts/AnalysisDetailsContext";
-import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
-import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import styled from "styled-components";
 
@@ -32,9 +27,12 @@ export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const Wrapper = styled.div`
-    margin-left: 50px;
-    padding-top: 25px;
+  const StyledTabs = styled(Tabs)`
+    .ant-tabs-tab {
+      @media only screen and (min-width: 800px) {
+        width: 200px;
+      }
+    }
   `;
 
   /*
@@ -44,70 +42,68 @@ export default function AnalysisSettings(props) {
    * tab is clicked
    */
   return (
-    <Wrapper>
-      <Tabs
-        activeKey={
-          props.defaultTabKey === "" || props.defaultTabKey === "settings"
-            ? "details"
-            : props.defaultTabKey
-        }
-        onChange={props.updateNav}
-        tabPosition="left"
-        animated={false}
+    <StyledTabs
+      type="card"
+      activeKey={
+        props.defaultTabKey === "" || props.defaultTabKey === "settings"
+          ? "details"
+          : props.defaultTabKey
+      }
+      onChange={props.updateNav}
+      tabPosition="left"
+    >
+      <TabPane
+        tab={getI18N("AnalysisDetails.details")}
+        key="details"
+        className="t-analysis-settings-tab-details"
       >
-        <TabPane
-          tab={getI18N("AnalysisDetails.details")}
-          key="details"
-          className="t-analysis-settings-tab-details"
-        >
-          <Col span={12}>
-            <Suspense fallback={<Spin />}>
-              <AnalysisDetails />
-            </Suspense>
-          </Col>
-        </TabPane>
+        <Col span={12}>
+          <Suspense fallback={<Spin />}>
+            <AnalysisDetails />
+          </Suspense>
+        </Col>
+      </TabPane>
 
-        <TabPane
-          tab={getI18N("AnalysisSamples.samples")}
-          key="samples"
-          className="t-analysis-settings-tab-samples"
-        >
-          <Col span={12}>
-            <Suspense fallback={<Spin />}>
-              <AnalysisSamples />
-            </Suspense>
-          </Col>
-        </TabPane>
+      <TabPane
+        tab={getI18N("AnalysisSamples.samples")}
+        key="samples"
+        className="t-analysis-settings-tab-samples"
+      >
+        <Col span={12}>
+          <Suspense fallback={<Spin />}>
+            <AnalysisSamples />
+          </Suspense>
+        </Col>
+      </TabPane>
 
-        {analysisDetailsContext.updatePermission
-          ? [
-              !analysisContext.isError ? (
-                <TabPane
-                  tab={getI18N("AnalysisShare.manageResults")}
-                  key="share"
-                  className="t-analysis-settings-tab-share-results"
-                >
-                  <Col span={12}>
-                    <Suspense fallback={<Spin />}>
-                      <AnalysisShare />
-                    </Suspense>
-                  </Col>
-                </TabPane>
-              ) : null,
+      {analysisDetailsContext.updatePermission
+        ? [
+            !analysisContext.isError ? (
               <TabPane
-                tab={getI18N("AnalysisDelete.deleteAnalysis")}
-                key="delete"
-                className="t-analysis-settings-tab-delete-analysis"
+                tab={getI18N("AnalysisShare.manageResults")}
+                key="share"
+                className="t-analysis-settings-tab-share-results"
               >
                 <Col span={12}>
                   <Suspense fallback={<Spin />}>
-                    <AnalysisDelete />
+                    <AnalysisShare />
                   </Suspense>
                 </Col>
               </TabPane>
-            ]
-          : null}
-      </Tabs>
-    </Wrapper>
+            ) : null,
+            <TabPane
+              tab={getI18N("AnalysisDelete.deleteAnalysis")}
+              key="delete"
+              className="t-analysis-settings-tab-delete-analysis"
+            >
+              <Col span={12}>
+                <Suspense fallback={<Spin />}>
+                  <AnalysisDelete />
+                </Suspense>
+              </Col>
+            </TabPane>
+          ]
+        : null}
+    </StyledTabs>
   );
 }
