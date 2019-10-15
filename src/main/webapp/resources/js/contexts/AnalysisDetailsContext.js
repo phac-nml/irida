@@ -81,12 +81,14 @@ function AnalysisDetailsProvider(props) {
    * `updateSamples` state variable.
    */
   function saveResultsToRelatedSamples() {
-    saveToRelatedSamples(analysisContext.analysis.identifier).then(
-      ({ message }) => {
-        showNotification({ text: message });
+    saveToRelatedSamples(analysisContext.analysis.identifier).then(res => {
+      if (res.type === "error") {
+        showErrorNotification({ text: res.text, type: res.type });
+      } else {
+        showNotification({ text: res });
         dispatch({ type: TYPES.UPDATE_SAMPLES, updateSamples: true });
       }
-    );
+    });
   }
 
   /*

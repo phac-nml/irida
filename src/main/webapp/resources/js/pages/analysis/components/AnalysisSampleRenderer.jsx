@@ -41,7 +41,7 @@ export function AnalysisSampleRenderer() {
             ? filteredSamples
             : analysisSamplesContext.samples
         }
-        style={{ height: sampleDisplayHeight, overflowY: "auto" }}
+        style={{ maxHeight: sampleDisplayHeight, overflowY: "auto" }}
         renderItem={item => {
           return (
             <List.Item>
@@ -131,7 +131,7 @@ export function AnalysisSampleRenderer() {
         <Alert
           type="info"
           showIcon
-          message={getI18N("AnalysisSamples.noPairedEnd")}
+          message={getI18N("AnalysisSamples.samplesDeleted")}
         />
       )}
     </>
