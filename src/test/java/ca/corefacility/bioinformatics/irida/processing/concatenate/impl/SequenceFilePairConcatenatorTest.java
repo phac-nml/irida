@@ -1,20 +1,18 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import com.google.common.collect.Lists;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SequenceFilePairConcatenatorTest {
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -38,7 +36,9 @@ public class SequenceFilePairConcatenatorTest {
 		SequenceFile original3 = createSequenceFile("testFile2_F");
 		SequenceFile original4 = createSequenceFile("testFile2_R");
 
-		long originalLength = original1.getFile().toFile().length();
+		long originalLength = original1.getFile()
+				.toFile()
+				.length();
 
 		SequenceFilePair f1 = new SequenceFilePair(original1, original2);
 		SequenceFilePair f2 = new SequenceFilePair(original3, original4);
@@ -51,7 +51,9 @@ public class SequenceFilePairConcatenatorTest {
 		assertTrue("file exists", Files.exists(forward.getFile()));
 		assertTrue("file exists", Files.exists(reverse.getFile()));
 
-		long newFileSize = forward.getFile().toFile().length();
+		long newFileSize = forward.getFile()
+				.toFile()
+				.length();
 
 		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
 
