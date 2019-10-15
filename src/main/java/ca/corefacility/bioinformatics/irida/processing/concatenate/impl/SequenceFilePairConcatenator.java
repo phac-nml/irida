@@ -1,21 +1,21 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 /**
  * {@link SequencingObjectConcatenator} for {@link SequenceFilePair}s
  */
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
-
+	
 	public SequenceFilePairConcatenator() {
 	}
 
@@ -26,9 +26,11 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 
+		String extension = getFileExtension(toConcatenate);
+
 		// create the filenames with F/R for the forward and reverse files
-		String forwardName = filename + "_R1.fastq";
-		String reverseName = filename + "_R2.fastq";
+		String forwardName = filename + "_R1." + extension;
+		String reverseName = filename + "_R2." + extension;
 
 		Path forwardFile;
 		Path reverseFile;
