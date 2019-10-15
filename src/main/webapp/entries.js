@@ -38,6 +38,7 @@ module.exports = {
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
   "project-settings-remote":
@@ -57,10 +58,11 @@ module.exports = {
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
-  "project-analyses": "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
+  "project-analyses":
+    "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
-  "analyses": "./resources/js/pages/analyses/AnalysesPage.jsx",
+  analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
   "users-list": "./resources/js/pages/users/users-list.js",
   "users-password": "./resources/js/pages/users/users-password.js",

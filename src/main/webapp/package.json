@@ -70,7 +70,7 @@
     "redux": "4.0.1",
     "redux-saga": "^1.0.2",
     "regenerator-runtime": "^0.13.3",
-    "select2": "4.0.3",
+    "select2": "^3.5.2-browserify",
     "select2-bootstrap-theme": "0.1.0-beta.10",
     "showdown": "^1.7.4",
     "sortablejs": "^1.5.1",
