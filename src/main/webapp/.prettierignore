@@ -1,2 +1,6 @@
-src/*
-!src/main/webapp/resources/**/*
+node_modules/
+node/
+pages/
+dist/
+resources/bower_components/
+resources/vendor/
