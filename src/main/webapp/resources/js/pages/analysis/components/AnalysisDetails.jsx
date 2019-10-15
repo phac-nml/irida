@@ -129,6 +129,7 @@ export default function AnalysisDetails() {
       <Title level={2} className="t-page-title">
         {getI18N("AnalysisDetails.details")}
       </Title>
+
       <div>
         <List
           itemLayout="horizontal"

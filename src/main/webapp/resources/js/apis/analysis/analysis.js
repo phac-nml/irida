@@ -113,8 +113,12 @@ export async function updateSharedProject(params) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function saveToRelatedSamples(submissionId) {
-  const res = await axios.post(`${URL}${submissionId}/save-results`);
-  return res.data;
+  try {
+    const res = await axios.post(`${URL}${submissionId}/save-results`);
+    return res.data.responseDetails.message;
+  } catch (error) {
+    return { text: error.response.data.message, type: "error" };
+  }
 }
 
 export async function getJobErrors(submissionId) {
