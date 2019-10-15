@@ -13,6 +13,7 @@ Changes
 * [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
 * [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
 * [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
+* [UI/Developer]: Removed `select2` as a bower dependency.
 
 19.05 to 19.09
 ---------------
