@@ -12,8 +12,9 @@ Changes
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
 * [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
 * [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
-* [UI/Developer]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
-* [UI/Developer]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
+* [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
+* [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
+* [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
 
 19.05 to 19.09
 ---------------
