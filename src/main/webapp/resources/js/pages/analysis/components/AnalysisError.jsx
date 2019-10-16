@@ -21,6 +21,7 @@ const TabPane = Tabs.TabPane;
 export default function AnalysisError(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
+  const [ currActiveKey, setCurrActiveKey ] = useState(1);
 
   const StyledTabs = styled(Tabs)`
     .ant-tabs-tab {
@@ -37,171 +38,172 @@ export default function AnalysisError(props) {
     });
   }, []);
 
-  const galaxyJobDetails =
-    jobErrors !== null && "jobErrors" in jobErrors
-      ? [
-          {
-            title: getI18N("AnalysisError.createdDate"),
-            desc: (
-              <Text>
-                {formatDate({
-                  date:
-                    jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                      .createdDate
-                })}
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.updatedDate"),
-            desc: (
-              <Text>
-                {formatDate({
-                  date:
-                    jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                      .updatedDate
-                })}
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.commandLine"),
-            desc: (
-              <div>
-                <Text>
-                  {jobErrors["jobErrors"][
-                    jobErrors["jobErrors"].length - 1
-                  ].commandLine.trim()}
-                </Text>
-              </div>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.exitCode"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .exitCode
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.toolId"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .toolId
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.toolName"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .toolName
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.toolVersion"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .toolVersion
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.toolDescription"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .toolDescription
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.provenanceId"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .provenanceId
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.provenanceUUID"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .provenanceUUID
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.historyId"),
-            desc: (
-              <Button
-                type="link"
-                style={{ paddingLeft: 0 }}
-                href={`${jobErrors["galaxyUrl"]}/histories/view?id=${
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .historyId
-                }`}
-                target="_blank"
-              >
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .historyId
-                }
-              </Button>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.jobId"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .jobId
-                }
-              </Text>
-            )
-          },
-          {
-            title: getI18N("AnalysisError.identifier"),
-            desc: (
-              <Text>
-                {
-                  jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
-                    .identifier
-                }
-              </Text>
-            )
-          }
-        ]
-      : null;
+  // Returns the galaxy job details for the given index
+  function galaxyJobDetails(index) {
+    return([
+      {
+        title: getI18N("AnalysisError.createdDate"),
+        desc: (
+          <Text>
+            {formatDate({
+              date:
+                jobErrors["jobErrors"][index]
+                  .createdDate
+            })}
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.updatedDate"),
+        desc: (
+          <Text>
+            {formatDate({
+              date:
+                jobErrors["jobErrors"][index]
+                  .updatedDate
+            })}
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.commandLine"),
+        desc: (
+          <div>
+            <Text>
+              {jobErrors["jobErrors"][index].commandLine.trim()}
+            </Text>
+          </div>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.exitCode"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .exitCode
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.toolId"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .toolId
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.toolName"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .toolName
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.toolVersion"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .toolVersion
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.toolDescription"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .toolDescription
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.provenanceId"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .provenanceId
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.provenanceUUID"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .provenanceUUID
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.historyId"),
+        desc: (
+          <Button
+            type="link"
+            style={{ paddingLeft: 0 }}
+            href={`${jobErrors["galaxyUrl"]}/histories/view?id=${
+              jobErrors["jobErrors"][index]
+                .historyId
+            }`}
+            target="_blank"
+          >
+            {
+              jobErrors["jobErrors"][index]
+                .historyId
+            }
+          </Button>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.jobId"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .jobId
+            }
+          </Text>
+        )
+      },
+      {
+        title: getI18N("AnalysisError.identifier"),
+        desc: (
+          <Text>
+            {
+              jobErrors["jobErrors"][index]
+                .identifier
+            }
+          </Text>
+        )
+      }
+    ]);
+  }
 
-  const getGalaxyJobInfo = () => {
+  /* Returns a list of the galaxy job information for the provided index
+   * which is pulled from the galaxyJobDetails function above
+   */
+  function getGalaxyJobInfo(index=0) {
     return (
       <List
         itemLayout="horizontal"
-        dataSource={galaxyJobDetails}
+        dataSource={galaxyJobDetails(index)}
         renderItem={item => (
           <List.Item>
             <List.Item.Meta
@@ -212,58 +214,67 @@ export default function AnalysisError(props) {
         )}
       />
     );
-  };
+  }
 
-  const getStandardError = () => {
+  // Returns the standard error for the given index from the jobErrors object
+  function getStandardError(index=0) {
     return (
-      <div>
-        <Col span={12}>
-          <Title level={3}>{getI18N("AnalysisError.standardError")}</Title>
-          <pre style={{ whiteSpace: "pre-wrap" }}>
-            <Text>
-              {jobErrors["jobErrors"][
-                jobErrors["jobErrors"].length - 1
-              ].standardError.trim()}
-            </Text>
-          </pre>
-        </Col>
-      </div>
+      <pre style={{ whiteSpace: "pre-wrap" }}>
+        <Text>
+          {jobErrors["jobErrors"][index].standardError.trim()}
+        </Text>
+      </pre>
     );
-  };
+  }
 
-  const getStandardOutput = () => {
+  // Returns the standard output for the given index from the jobErrors object
+  function getStandardOutput(index=0) {
     return (
-      <div>
-        <Col span={12}>
-          <Title level={3}>{getI18N("AnalysisError.standardOutput")}</Title>
-          <pre style={{ whiteSpace: "pre-wrap" }}>
-            <Text>
-              {jobErrors["jobErrors"][
-                jobErrors["jobErrors"].length - 1
-              ].standardOutput.trim()}
-            </Text>
-          </pre>
-        </Col>
-      </div>
+      <pre style={{ whiteSpace: "pre-wrap" }}>
+        <Text>
+          {jobErrors["jobErrors"][index].standardOutput.trim()}
+        </Text>
+      </pre>
     );
-  };
+  }
 
-  const getGalaxyParameters = () => {
+  // Returns the galaxy parameters for the given index from the jobErrors object
+  function getGalaxyParameters (index=0) {
     return (
-      <div>
-        <Col span={12}>
-          <Title level={3}>{getI18N("AnalysisError.galaxyParameters")}</Title>
-          <pre style={{ whiteSpace: "pre-wrap" }}>
-            <Text>
-              {jobErrors["jobErrors"][
-                jobErrors["jobErrors"].length - 1
-              ].parameters.trim()}
-            </Text>
-          </pre>
-        </Col>
-      </div>
+      <pre style={{ whiteSpace: "pre-wrap" }}>
+        <Text>
+          {jobErrors["jobErrors"][index].parameters.trim()}
+        </Text>
+      </pre>
     );
-  };
+  }
+
+  // Sets the current activekey for the 'Pass' tabs
+  function updateActiveKey(key) {
+    setCurrActiveKey(key.charAt(key.length-1));
+  }
+
+  /* This function will display 'Pass' tabs within the tabpanes if there is
+   * more than one error is returned for an analysis.
+   */
+  function showPassTabs(tabName) {
+    return(<Tabs animated={false} onChange={(key) => updateActiveKey(key)} activeKey={`${tabName}-pass-${currActiveKey}`}>
+        {jobErrors["jobErrors"].map((i, index )=> {
+            if(tabName === "galaxy-parameters") {
+                return <TabPane tab={`Pass ${index+1}`} key={`${tabName}-pass-${index+1}`}>{getGalaxyParameters(index)}</TabPane>
+            }
+            else if(tabName === "job-error-info") {
+                return <TabPane tab={`Pass ${index+1}`} key={`${tabName}-pass-${index+1}`}>{getGalaxyJobInfo(index)}</TabPane>
+            }
+            else if(tabName === "standard-error") {
+                return <TabPane tab={`Pass ${index+1}`} key={`${tabName}-pass-${index+1}`}>{getStandardError(index)}</TabPane>
+            }
+            else if(tabName === "standard-out") {
+                return <TabPane tab={`Pass ${index+1}`} key={`${tabName}-pass-${index+1}`}>{getStandardOutput(index)}</TabPane>
+            }
+        })}
+    </Tabs>);
+  }
 
   return (
     <>
@@ -288,7 +299,7 @@ export default function AnalysisError(props) {
                 <Title level={3}>
                   {getI18N("AnalysisError.galaxyJobInfo")}
                 </Title>
-                {getGalaxyJobInfo()}
+                {jobErrors["jobErrors"].length > 1 ? showPassTabs("job-error-info") : getGalaxyJobInfo()}
               </Col>
             </TabPane>
 
@@ -298,7 +309,10 @@ export default function AnalysisError(props) {
                 tab={getI18N("AnalysisError.galaxyParameters")}
                 key="galaxy-parameters"
               >
-                {getGalaxyParameters()}
+                <Col span={12}>
+                  <Title level={3}>{getI18N("AnalysisError.galaxyParameters")}</Title>
+                  {jobErrors["jobErrors"].length > 1 ? showPassTabs("galaxy-parameters") : getGalaxyParameters()}
+                </Col>
               </TabPane>
             ) : null}
 
@@ -308,7 +322,10 @@ export default function AnalysisError(props) {
                 tab={getI18N("AnalysisError.standardError")}
                 key="standard-error"
               >
-                {getStandardError()}
+                <Col span={12}>
+                  <Title level={3}>{getI18N("AnalysisError.standardError")}</Title>
+                  {jobErrors["jobErrors"].length > 1 ? showPassTabs("standard-error") : getStandardError()}
+                </Col>
               </TabPane>
             ) : null}
             {jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
@@ -317,7 +334,10 @@ export default function AnalysisError(props) {
                 tab={getI18N("AnalysisError.standardOutput")}
                 key="standard-out"
               >
-                {getStandardOutput()}
+                <Col span={12}>
+                  <Title level={3}>{getI18N("AnalysisError.standardOutput")}</Title>
+                  {jobErrors["jobErrors"].length > 1 ? showPassTabs("standard-out") : getStandardOutput()}
+                </Col>
               </TabPane>
             ) : null}
           </StyledTabs>
