@@ -89,7 +89,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
-	@FindBy(className = "select2-selection")
+	@FindBy(css = "a.select2-choice")
 	private WebElement select2Opener;
 
 	@FindBy(className = "select2-search__field")
