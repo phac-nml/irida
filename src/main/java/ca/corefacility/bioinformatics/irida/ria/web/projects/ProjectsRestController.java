@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +36,7 @@ public class ProjectsRestController {
 	 * Handle request for get a filtered and sorted list of projects for a user or administrator
 	 *
 	 * @param projectsRequest {@link ProjectsRequest} Details about what is needed in the table (sort, filter, and search).
-	 * @param request         {@link HttpServletRequest}
+	 * @param admin           {@link Boolean} Is the user on an administration page.
 	 * @return {@link ProjectsResponse}
 	 */
 	@RequestMapping
