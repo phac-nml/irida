@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -41,11 +42,10 @@ public class ProjectsRestController {
 	 * @return {@link ProjectsResponse}
 	 */
 	@RequestMapping
-	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest, HttpServletRequest request) {
-		boolean all = request.getHeader("referer")
-				.endsWith("all");
+	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest,
+			@RequestParam Boolean admin) {
 		final Page<Project> page;
-		if (all) {
+		if (admin) {
 			page = projectService.findAllProjects(projectsRequest.getSearch(), projectsRequest.getCurrent(),
 					projectsRequest.getPageSize(), projectsRequest.getSort());
 		} else {
