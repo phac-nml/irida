@@ -12,7 +12,7 @@ Changes
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
 * [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
 * [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
-* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` as bower dependencies.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 
 19.05 to 19.09
 ---------------
