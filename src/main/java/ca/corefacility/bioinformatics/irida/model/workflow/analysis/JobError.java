@@ -230,7 +230,7 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	 * @return Galaxy tool parameters
 	 */
 	public String getParameters() {
-		return parameters;
+		return getValidJson(parameters);
 	}
 
 	/**
@@ -292,70 +292,61 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 		if (o == null || getClass() != o.getClass())
 			return false;
 		JobError jobError = (JobError) o;
-		return getExitCode() == jobError.getExitCode() &&
-		       Objects.equals(getId(), jobError.getId()) &&
-		       Objects.equals(getToolId(), jobError.getToolId()) &&
-		       Objects.equals(getToolName(), jobError.getToolName()) &&
-		       Objects.equals(getToolVersion(), jobError.getToolVersion()) &&
-		       Objects.equals(getToolDescription(), jobError.getToolDescription()) &&
-		       Objects.equals(getCommandLine(), jobError.getCommandLine()) &&
-		       Objects.equals(getParameters(), jobError.getParameters()) &&
-		       Objects.equals(getStandardError(), jobError.getStandardError()) &&
-		       Objects.equals(getStandardOutput(), jobError.getStandardOutput()) &&
-		       Objects.equals(getProvenanceUUID(), jobError.getProvenanceUUID()) &&
-		       Objects.equals(getProvenanceId(), jobError.getProvenanceId()) &&
-		       Objects.equals(getJobId(), jobError.getJobId()) &&
-		       Objects.equals(getHistoryId(), jobError.getHistoryId()) &&
-		       Objects.equals(getCreatedDate(), jobError.getCreatedDate()) &&
-		       Objects.equals(getUpdatedDate(), jobError.getUpdatedDate()) &&
-		       Objects.equals(getAnalysisSubmission(), jobError.getAnalysisSubmission());
+		return getExitCode() == jobError.getExitCode() && Objects.equals(getId(), jobError.getId()) && Objects.equals(
+				getToolId(), jobError.getToolId()) && Objects.equals(getToolName(), jobError.getToolName())
+				&& Objects.equals(getToolVersion(), jobError.getToolVersion()) && Objects.equals(getToolDescription(),
+				jobError.getToolDescription()) && Objects.equals(getCommandLine(), jobError.getCommandLine())
+				&& Objects.equals(getParameters(), jobError.getParameters()) && Objects.equals(getStandardError(),
+				jobError.getStandardError()) && Objects.equals(getStandardOutput(), jobError.getStandardOutput())
+				&& Objects.equals(getProvenanceUUID(), jobError.getProvenanceUUID()) && Objects.equals(
+				getProvenanceId(), jobError.getProvenanceId()) && Objects.equals(getJobId(), jobError.getJobId())
+				&& Objects.equals(getHistoryId(), jobError.getHistoryId()) && Objects.equals(getCreatedDate(),
+				jobError.getCreatedDate()) && Objects.equals(getUpdatedDate(), jobError.getUpdatedDate())
+				&& Objects.equals(getAnalysisSubmission(), jobError.getAnalysisSubmission());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(),
-				getToolId(),
-				getToolName(),
-				getToolVersion(),
-				getToolDescription(),
-				getCommandLine(),
-				getParameters(),
-				getStandardError(),
-				getStandardOutput(),
-				getProvenanceUUID(),
-				getProvenanceId(),
-				getJobId(),
-				getHistoryId(),
-				getCreatedDate(),
-				getUpdatedDate(),
-				getExitCode(),
+		return Objects.hash(getId(), getToolId(), getToolName(), getToolVersion(), getToolDescription(),
+				getCommandLine(), getParameters(), getStandardError(), getStandardOutput(), getProvenanceUUID(),
+				getProvenanceId(), getJobId(), getHistoryId(), getCreatedDate(), getUpdatedDate(), getExitCode(),
 				getAnalysisSubmission());
 	}
 
 	@Override
 	public String toString() {
-		return "JobError{" + "id=" + id +
-				", toolId='" + toolId + '\'' +
-				", toolName='" + toolName + '\'' +
-				", toolVersion='" + toolVersion + '\'' +
-				", toolDescription='" + toolDescription + '\'' +
-				", commandLine='" + commandLine + '\'' +
-				", parameters='" + parameters + '\'' +
-				", standardError='" + standardError + '\'' +
-				", standardOutput='" + standardOutput + '\'' +
-				", provenanceUUID=" + provenanceUUID +
-				", provenanceId='" + provenanceId + '\'' +
-				", jobId='" + jobId + '\'' +
-				", historyId='" + historyId + '\'' +
-				", createdDate=" + createdDate +
-				", updatedDate=" + updatedDate +
-				", exitCode=" + exitCode +
-				", analysisSubmission=" + analysisSubmission +
-				'}';
+		return "JobError{" + "id=" + id + ", toolId='" + toolId + '\'' + ", toolName='" + toolName + '\''
+				+ ", toolVersion='" + toolVersion + '\'' + ", toolDescription='" + toolDescription + '\''
+				+ ", commandLine='" + commandLine + '\'' + ", parameters='" + parameters + '\'' + ", standardError='"
+				+ standardError + '\'' + ", standardOutput='" + standardOutput + '\'' + ", provenanceUUID="
+				+ provenanceUUID + ", provenanceId='" + provenanceId + '\'' + ", jobId='" + jobId + '\''
+				+ ", historyId='" + historyId + '\'' + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate
+				+ ", exitCode=" + exitCode + ", analysisSubmission=" + analysisSubmission + '}';
 	}
 
 	@Override
 	public int compareTo(JobError o) {
 		return updatedDate.compareTo(o.updatedDate);
 	}
+
+	/*
+	 * Converts a string 'object' to valid JSON
+	 */
+	private String getValidJson(String parameters) {
+		// Since we want to return a valid json string we need to replace all '=' with ':'
+		String tempStr = parameters.replaceAll("=", ":");
+		// remove '{' and '}'
+		tempStr = tempStr.substring(1, tempStr.length() - 1)
+				.trim();
+		// if some keys or values already have double quotes around them then remove them
+		// and replace with an empty space
+		tempStr = tempStr.replace("\"", "");
+		// double quote all keys
+		tempStr = tempStr.replaceAll("([a-zA-Z0-9\\-_|]+)(\\s*\\:)", "\\\"$1\\\"$2");
+		// double quote all values
+		tempStr = tempStr.replaceAll("(\\:\\s*)([a-zA-Z0-9\\-_|?/.\\s]+)", "$1\\\"$2\\\"");
+
+		return '{' + tempStr + '}';
+	}
+
 }

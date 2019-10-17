@@ -68,11 +68,9 @@ export default function AnalysisError(props) {
       {
         title: getI18N("AnalysisError.commandLine"),
         desc: (
-          <div>
             <Text>
               {jobErrors["jobErrors"][index].commandLine.trim()}
             </Text>
-          </div>
         )
       },
       {
@@ -241,11 +239,13 @@ export default function AnalysisError(props) {
   // Returns the galaxy parameters for the given index from the jobErrors object
   function getGalaxyParameters (index=0) {
     return (
-      <pre style={{ whiteSpace: "pre-wrap" }}>
-        <Text>
-          {jobErrors["jobErrors"][index].parameters.trim()}
-        </Text>
-      </pre>
+        <div>
+            <pre>
+                <Text>
+                    {JSON.stringify(JSON.parse(jobErrors["jobErrors"][index].parameters.trim()), null, 3) }
+                </Text>
+            </pre>
+        </div>
     );
   }
 
