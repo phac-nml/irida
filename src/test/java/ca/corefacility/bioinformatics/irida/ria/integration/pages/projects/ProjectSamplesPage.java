@@ -11,6 +11,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
+
 /**
  * <p>
  * Page Object to represent the project samples page.
@@ -423,14 +425,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void enterSelect2Value(String value) {
-		WebElement select2choice = driver.findElement(By.cssSelector("a.select2-choice"));
-		select2choice.click();
-		// Wait for select2 to be open properly.
-		waitForTime(500);
-		sendInputTextSlowly(value, select2Input);
-		// Wait needed to allow select2 to populate.
-		driver.findElement(By.className("select2-input")).sendKeys(Keys.TAB);
-		waitForElementInvisible(By.className("select2-input"));
+		Select2Utility select2Utility = new Select2Utility(driver);
+		select2Utility.openSelect2Input();
+		select2Utility.searchByText(value);
+		select2Utility.selectDefaultMatch();
 	}
 
 	private void shareMoveSamples(String project, boolean owner) {
