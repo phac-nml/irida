@@ -423,13 +423,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void enterSelect2Value(String value) {
-		select2Opener.click();
+		WebElement select2choice = driver.findElement(By.cssSelector("a.select2-choice"));
+		select2choice.click();
 		// Wait for select2 to be open properly.
 		waitForTime(500);
 		sendInputTextSlowly(value, select2Input);
 		// Wait needed to allow select2 to populate.
-		waitForTime(500);
-		select2Input.sendKeys(Keys.RETURN);
+		driver.findElement(By.className("select2-input")).sendKeys(Keys.TAB);
+		waitForElementInvisible(By.className("select2-input"));
 	}
 
 	private void shareMoveSamples(String project, boolean owner) {
