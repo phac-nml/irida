@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
- * 
+ *
  */
 @Controller
 @RequestMapping(value = "/clients")
@@ -96,7 +96,7 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Request for the page to display a list of all clients available.
-	 * 
+	 *
 	 * @return The name of the page.
 	 */
 	@RequestMapping
@@ -106,7 +106,7 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Read an individual client
-	 * 
+	 *
 	 * @param clientId
 	 *            The ID of the client to display
 	 * @param model
@@ -127,16 +127,16 @@ public class ClientsController extends BaseController {
 		model.addAttribute("autoApproveScopes", autoApproveScopes);
 		int allTokensForClient = clientDetailsService.countTokensForClient(client);
 		int activeTokensForClient = clientDetailsService.countActiveTokensForClient(client);
-		
+
 		model.addAttribute("activeTokens",activeTokensForClient);
 		model.addAttribute("expiredTokens",allTokensForClient - activeTokensForClient);
-		
+
 		return CLIENT_DETAILS_PAGE;
 	}
 
 	/**
 	 * Delete all tokens for a given {@link IridaClientDetails}
-	 * 
+	 *
 	 * @param id
 	 *            The database id of the {@link IridaClientDetails} to revoke
 	 *            tokens for
@@ -151,7 +151,7 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Get the page to edit {@link IridaClientDetails}
-	 * 
+	 *
 	 * @param clientId
 	 *            The ID of the {@link IridaClientDetails}
 	 * @param model
@@ -165,10 +165,12 @@ public class ClientsController extends BaseController {
 		model.addAttribute("client", client);
 		// in practise our clients only have 1 grant type, adding it to model to
 		// make it easier
-		if (!client.getAuthorizedGrantTypes().isEmpty()) {
-			model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
+		if (client.getAuthorizedGrantTypes().contains("password")) {
+			model.addAttribute("selectedGrant", "password");
+		} else if (client.getAuthorizedGrantTypes().contains("authorization_code")) {
+			model.addAttribute("selectedGrant", "authorization_code");
 		}
-		
+
 		Set<String> scopes = client.getScope();
 		for (String scope : scopes) {
 			model.addAttribute("given_scope_" + scope, true);
@@ -178,11 +180,11 @@ public class ClientsController extends BaseController {
 		for (String autoScope : autoScopes) {
 			model.addAttribute("given_scope_auto_" + autoScope,true);
 		}
-		
+
 		if(client.getAuthorizedGrantTypes().contains("refresh_token")){
 			model.addAttribute("refresh", true);
 		}
-		
+
 		getAddClientPage(model);
 
 		return EDIT_CLIENT_PAGE;
@@ -240,21 +242,21 @@ public class ClientsController extends BaseController {
 				autoScopes.add("read");
 			}
 		}
-		
+
 		readClient.setScope(scopes);
 		readClient.setAutoApprovableScopes(autoScopes);
-		
+
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();
 			readClient.setClientSecret(clientSecret);
 		}
-		
+
 		if (refresh.equals("refresh")) {
 			readClient.getAuthorizedGrantTypes().add("refresh_token");
 		} else {
 			readClient.getAuthorizedGrantTypes().remove("refresh_token");
 		}
-		
+
 		if(refreshTokenValidity != 0){
 			readClient.setRefreshTokenValiditySeconds(refreshTokenValidity);
 		}
@@ -274,7 +276,7 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Get the create client page
-	 * 
+	 *
 	 * @param model
 	 *            Model for the view
 	 * @return The name of the create client page
@@ -294,7 +296,7 @@ public class ClientsController extends BaseController {
 		if (!model.containsAttribute("given_tokenValidity")) {
 			model.addAttribute("given_tokenValidity", IridaClientDetails.DEFAULT_TOKEN_VALIDITY);
 		}
-		
+
 		model.addAttribute("refresh_validity", IridaClientDetails.DEFAULT_REFRESH_TOKEN_VALIDITY);
 
 		return ADD_CLIENT_PAGE;
@@ -340,15 +342,15 @@ public class ClientsController extends BaseController {
 				autoScopes.add("read");
 			}
 		}
-		
+
 		if(refresh.equals("refresh")){
 			client.getAuthorizedGrantTypes().add("refresh_token");
 		}
 
 		client.setScope(scopes);
 		client.setAutoApprovableScopes(autoScopes);
-		
-		
+
+
 
 		String responsePage;
 		try {
@@ -365,7 +367,7 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Remove a client with the given id
-	 * 
+	 *
 	 * @param id
 	 *            The ID to remove
 	 * @return redirect to the clients list
@@ -402,7 +404,7 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Generate a temporary password for a user
-	 * 
+	 *
 	 * @return A temporary password
 	 */
 	private static String generateClientSecret() {
@@ -453,7 +455,7 @@ public class ClientsController extends BaseController {
 	/**
 	 * Handle the errors that might occur when creating or updating
 	 * {@link IridaClientDetails}
-	 * 
+	 *
 	 * @param caughtException
 	 *            The exception that was thrown when creating or updating
 	 * @param model

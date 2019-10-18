@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -13,23 +24,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnalysis;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Used to create {@link DataTablesResponse}s for all pages that use `analyses-table.js`.
@@ -88,18 +89,19 @@ public class AnalysesListingService {
 		Page<AnalysisSubmission> page;
 		PageRequest pageRequest = new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort());
 
+		Set<AnalysisState> states = state == null ? null : ImmutableSet.of(state);
 		if (user != null) {
 			//if user is set, get submissions for the user
 			page = analysisSubmissionService
-					.listSubmissionsForUser(params.getSearchValue(), name, state, user, workflowIds, pageRequest);
+					.listSubmissionsForUser(params.getSearchValue(), name, states, user, workflowIds, pageRequest);
 		} else if (project != null) {
 			// if the project is set, get submissions for the project
 			page = analysisSubmissionService
-					.listSubmissionsForProject(params.getSearchValue(), name, state, workflowIds, project, pageRequest);
+					.listSubmissionsForProject(params.getSearchValue(), name, states, workflowIds, project, pageRequest);
 		} else {
 			// if neither is set, get admin page
 			page = analysisSubmissionService
-					.listAllSubmissions(params.getSearchValue(), name, state, workflowIds, pageRequest);
+					.listAllSubmissions(params.getSearchValue(), name, states, workflowIds, pageRequest);
 		}
 
 		/*
@@ -145,7 +147,7 @@ public class AnalysesListingService {
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
-			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis().getCreatedDate());
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis().getCreatedDate());
 		}
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -157,20 +159,5 @@ public class AnalysesListingService {
 
 	private JobError getFirstJobError(AnalysisSubmission submission) throws ExecutionManagerException {
 		return analysisSubmissionService.getFirstJobError(submission.getId());
-	}
-
-	/**
-	 * Get the milliseconds between two {@link Date}s
-	 *
-	 * @param start {@link Date}
-	 * @param end   {@link Date}
-	 * @return {@link Long} milliseconds
-	 */
-	private Long getDurationInMilliseconds(Date start, Date end) {
-		Instant startInstant = start.toInstant();
-		Instant endInstant = end.toInstant();
-		Duration duration = Duration.between(startInstant, endInstant)
-				.abs();
-		return duration.toMillis();
 	}
 }

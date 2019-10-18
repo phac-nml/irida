@@ -1,15 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import {
-  Button,
-  Col,
-  Dropdown,
-  Icon,
-  Input,
-  Menu,
-  Row,
-  Table,
-  Typography
-} from "antd";
+import { Button, Dropdown, Icon, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
@@ -18,6 +8,7 @@ import {
   idColumnFormat,
   nameColumnFormat
 } from "../../../components/ant.design/table-renderers";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const { Text } = Typography;
 
@@ -125,7 +116,7 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      ...nameColumnFormat(`${window.TL.BASE_URL}projects`),
+      ...nameColumnFormat({ url: `${window.TL.BASE_URL}projects` }),
       title: getI18N("ProjectsTable_th_name")
     },
     {
@@ -186,25 +177,22 @@ export function ProjectsTable() {
   );
 
   return (
-    <PageWrapper
-      title={getI18N("ProjectsTable_header")}
-      headerExtras={
-        <Row gutter={12} style={{ marginRight: 18 }}>
-          <Col span={18}>
-            <Input.Search onSearch={onSearch} />
-          </Col>
-          <Col span={6}>
-            <Dropdown overlay={exportMenu} key="export">
-              <Button>
-                {getI18N("ProjectsTable_export")} <Icon type="down" />
-              </Button>
-            </Dropdown>
-          </Col>
-        </Row>
-      }
-    >
+    <PageWrapper title={getI18N("ProjectsTable_header")}>
+      <div
+        style={{
+          paddingBottom: SPACE_MD,
+          display: "flex",
+          justifyContent: "space-between"
+        }}
+      >
+        <Dropdown overlay={exportMenu} key="export">
+          <Button>
+            {getI18N("ProjectsTable_export")} <Icon type="down" />
+          </Button>
+        </Dropdown>
+        <Input.Search style={{ width: 300 }} onSearch={onSearch} />
+      </div>
       <Table
-        style={{ margin: "6px 24px 0 24px" }}
         rowKey={record => record.id}
         loading={loading}
         pagination={{

@@ -1,6 +1,6 @@
 import angular from "angular";
 import { CART } from "../../utilities/events-utilities";
-import { removeSample } from "../../apis/cart/cart";
+import { emptyCart, removeSample } from "../../apis/cart/cart";
 
 function CartService(scope, $http) {
   const svc = this;
@@ -9,8 +9,7 @@ function CartService(scope, $http) {
   };
 
   svc.clear = function() {
-    //fire a DELETE to the server on the cart then broadcast the cart update event
-    return $http.delete(urls.all).then(function() {
+    return emptyCart().then(() => {
       const event = new Event(CART.UPDATED);
       document.dispatchEvent(event);
     });
