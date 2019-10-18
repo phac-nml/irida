@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
@@ -101,14 +102,12 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public void addUserToProject(final String username, final ProjectRole role) {
-		WebElement userElement = waitForElementVisible(By.className("select2-selection"));
-		userElement.click();
-		WebElement userField = waitForElementVisible(By.className("select2-search__field"));
-		// we're using select2 on the user element so it ends up being made into
-		// an input box rather than a select.
-		userField.sendKeys(username);
-		WebElement selection = waitForElementVisible(By.className("select2-results__option--highlighted"));
-		selection.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("addMemberModal"))));
+		Select2Utility select2Utility = new Select2Utility(driver);
+		select2Utility.openSelect2Input();
+		select2Utility.searchByText(username);
+		select2Utility.selectDefaultMatch();
 
 		WebElement roleElement = driver.findElement(By.id("add-member-role"));
 		Select roleSelect = new Select(roleElement);

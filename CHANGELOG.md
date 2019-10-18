@@ -15,6 +15,7 @@ Changes
 * [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
 * [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
 * [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2` as bower dependencies.
 
 19.05 to 19.09
 ---------------
