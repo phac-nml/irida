@@ -12,7 +12,7 @@
 	<script th:inline="javascript">
 		var PAGE = {
 			lang: {
-				
+
 			}
 		};
 	</script>
@@ -72,15 +72,15 @@
                                 </label>
                             </div>
 						</div>
-						
-						<div class="form-group" id="refresh-token-container" th:hidden="! ${refresh}">
+
+						<div class="form-group" id="refresh-token-container" th:style="${refresh == true ? 'display:block' : 'display:none'}">
                             <label class="control-label" th:text="#{client.details.refreshTokenValidity}" for="refreshTokenValidity">_Token
                                 Validity_</label>
 
                             <select id="refreshTokenValidity" name="refreshTokenValidity"
                                     class="form-control input-full">
                                 <option class="tokenValidityInSeconds" th:each="time : ${available_refresh_token_validity}"
-                                        th:value="${time}" th:text="${time}" th:selected="${refresh_validity} == ${time}"/>
+                                        th:value="${time}" th:text="${time}" th:selected="${time == client.refreshTokenValiditySeconds}"/>
                             </select>
 
                         </div>
@@ -110,7 +110,7 @@
 										<span th:text="#{client.scope.read}">Read</span> </label>
 								</div>
 							</div>
-                            <div class="col-md-12" id="scope_auto_read_div" th:hidden="${given_scope_read == null}">
+                            <div class="col-md-12" id="scope_auto_read_div" th:style="${given_scope_read == null ? 'display:none' : 'display:block'}">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_read">
                                         <input type="checkbox" id="scope_auto_read" name="scope_auto_read" th:checked="${given_scope_auto_read}" value="read"/>
@@ -125,7 +125,7 @@
 										<span th:text="#{client.scope.write}">Write</span> </label>
 								</div>
 							</div>
-                            <div class="col-md-12" id="scope_auto_write_div" th:hidden="${given_scope_write == null}">
+                            <div class="col-md-12" id="scope_auto_write_div" th:style="${given_scope_write == null ? 'display:none' : 'display:block'}">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_write">
                                         <input type="checkbox" id="scope_auto_write" name="scope_auto_write" th:checked="${given_scope_auto_write}" value="write"/>
