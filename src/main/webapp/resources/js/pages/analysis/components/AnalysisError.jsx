@@ -47,7 +47,7 @@ export default function AnalysisError(props) {
           <Text>
             {formatDate({
               date:
-                jobErrors["jobErrors"][index]
+                jobErrors.galaxyJobErrors[index]
                   .createdDate
             })}
           </Text>
@@ -59,7 +59,7 @@ export default function AnalysisError(props) {
           <Text>
             {formatDate({
               date:
-                jobErrors["jobErrors"][index]
+                jobErrors.galaxyJobErrors[index]
                   .updatedDate
             })}
           </Text>
@@ -69,7 +69,7 @@ export default function AnalysisError(props) {
         title: getI18N("AnalysisError.commandLine"),
         desc: (
             <Text>
-              {jobErrors["jobErrors"][index].commandLine.trim()}
+              {jobErrors.galaxyJobErrors[index].commandLine.trim()}
             </Text>
         )
       },
@@ -78,7 +78,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .exitCode
             }
           </Text>
@@ -89,7 +89,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .toolId
             }
           </Text>
@@ -100,7 +100,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .toolName
             }
           </Text>
@@ -111,7 +111,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .toolVersion
             }
           </Text>
@@ -122,7 +122,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .toolDescription
             }
           </Text>
@@ -133,7 +133,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .provenanceId
             }
           </Text>
@@ -144,7 +144,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .provenanceUUID
             }
           </Text>
@@ -157,13 +157,13 @@ export default function AnalysisError(props) {
             type="link"
             style={{ paddingLeft: 0 }}
             href={`${jobErrors["galaxyUrl"]}/histories/view?id=${
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .historyId
             }`}
             target="_blank"
           >
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .historyId
             }
           </Button>
@@ -174,7 +174,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .jobId
             }
           </Text>
@@ -185,7 +185,7 @@ export default function AnalysisError(props) {
         desc: (
           <Text>
             {
-              jobErrors["jobErrors"][index]
+              jobErrors.galaxyJobErrors[index]
                 .identifier
             }
           </Text>
@@ -219,7 +219,7 @@ export default function AnalysisError(props) {
     return (
       <pre style={{ whiteSpace: "pre-wrap" }}>
         <Text>
-          {jobErrors["jobErrors"][index].standardError.trim()}
+          {jobErrors.galaxyJobErrors[index].standardError.trim()}
         </Text>
       </pre>
     );
@@ -230,7 +230,7 @@ export default function AnalysisError(props) {
     return (
       <pre style={{ whiteSpace: "pre-wrap" }}>
         <Text>
-          {jobErrors["jobErrors"][index].standardOutput.trim()}
+          {jobErrors.galaxyJobErrors[index].standardOutput.trim()}
         </Text>
       </pre>
     );
@@ -242,7 +242,7 @@ export default function AnalysisError(props) {
         <div>
             <pre>
                 <Text>
-                    {JSON.stringify(JSON.parse(jobErrors["jobErrors"][index].parameters.trim()), null, 3) }
+                    {JSON.stringify(JSON.parse(jobErrors.galaxyJobErrors[index].parameters.trim()), null, 3) }
                 </Text>
             </pre>
         </div>
@@ -258,8 +258,11 @@ export default function AnalysisError(props) {
    * more than one error is returned for an analysis.
    */
   function showPassTabs(tabName) {
+    // Since we only need the jobError indexes to generate the tabs we iterate '
+    // over the keys instead of the whole galaxyJobErrors object
     return(<Tabs animated={false} onChange={(key) => updateActiveKey(key)} activeKey={`${tabName}-pass-${currActiveKey}`}>
-        {jobErrors["jobErrors"].map((i, index )=> {
+        {Object.keys(jobErrors.galaxyJobErrors).map(key => {
+            const index = parseInt(key);
             if(tabName === "galaxy-parameters") {
                 return <TabPane tab={`Pass ${index+1}`} key={`${tabName}-pass-${index+1}`}>{getGalaxyParameters(index)}</TabPane>
             }
@@ -279,7 +282,7 @@ export default function AnalysisError(props) {
   return (
     <>
       {jobErrors !== null ? (
-        "jobErrors" in jobErrors ? (
+        jobErrors.galaxyJobErrors !== null ? (
           <StyledTabs
             type="card"
             activeKey={
@@ -299,11 +302,11 @@ export default function AnalysisError(props) {
                 <Title level={3}>
                   {getI18N("AnalysisError.galaxyJobInfo")}
                 </Title>
-                {jobErrors["jobErrors"].length > 1 ? showPassTabs("job-error-info") : getGalaxyJobInfo()}
+                {jobErrors.galaxyJobErrors.length > 1 ? showPassTabs("job-error-info") : getGalaxyJobInfo()}
               </Col>
             </TabPane>
 
-            {jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
+            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
               .parameters ? (
               <TabPane
                 tab={getI18N("AnalysisError.galaxyParameters")}
@@ -311,12 +314,12 @@ export default function AnalysisError(props) {
               >
                 <Col span={12}>
                   <Title level={3}>{getI18N("AnalysisError.galaxyParameters")}</Title>
-                  {jobErrors["jobErrors"].length > 1 ? showPassTabs("galaxy-parameters") : getGalaxyParameters()}
+                  {jobErrors.galaxyJobErrors.length > 1 ? showPassTabs("galaxy-parameters") : getGalaxyParameters()}
                 </Col>
               </TabPane>
             ) : null}
 
-            {jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
+            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
               .standardError ? (
               <TabPane
                 tab={getI18N("AnalysisError.standardError")}
@@ -324,11 +327,11 @@ export default function AnalysisError(props) {
               >
                 <Col span={12}>
                   <Title level={3}>{getI18N("AnalysisError.standardError")}</Title>
-                  {jobErrors["jobErrors"].length > 1 ? showPassTabs("standard-error") : getStandardError()}
+                  {jobErrors.galaxyJobErrors.length > 1 ? showPassTabs("standard-error") : getStandardError()}
                 </Col>
               </TabPane>
             ) : null}
-            {jobErrors["jobErrors"][jobErrors["jobErrors"].length - 1]
+            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
               .standardOutput ? (
               <TabPane
                 tab={getI18N("AnalysisError.standardOutput")}
@@ -336,7 +339,7 @@ export default function AnalysisError(props) {
               >
                 <Col span={12}>
                   <Title level={3}>{getI18N("AnalysisError.standardOutput")}</Title>
-                  {jobErrors["jobErrors"].length > 1 ? showPassTabs("standard-out") : getStandardOutput()}
+                  {jobErrors.galaxyJobErrors.length > 1 ? showPassTabs("standard-out") : getStandardOutput()}
                 </Col>
               </TabPane>
             ) : null}

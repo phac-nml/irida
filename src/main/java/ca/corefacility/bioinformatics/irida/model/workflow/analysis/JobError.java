@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Tool;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Galaxy Job failure information when a tool in a IRIDA workflow produces an error
@@ -230,7 +232,7 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	 * @return Galaxy tool parameters
 	 */
 	public String getParameters() {
-		return getValidJson(parameters);
+		return convertToValidJson(parameters);
 	}
 
 	/**
@@ -330,23 +332,12 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	}
 
 	/*
-	 * Converts a string 'object' to valid JSON
+	 * Converts a string to a valid JSON string
 	 */
-	private String getValidJson(String parameters) {
-		// Since we want to return a valid json string we need to replace all '=' with ':'
-		String tempStr = parameters.replaceAll("=", ":");
-		// remove '{' and '}'
-		tempStr = tempStr.substring(1, tempStr.length() - 1)
-				.trim();
-		// if some keys or values already have double quotes around them then remove them
-		// and replace with an empty space
-		tempStr = tempStr.replace("\"", "");
-		// double quote all keys
-		tempStr = tempStr.replaceAll("([a-zA-Z0-9\\-_|]+)(\\s*\\:)", "\\\"$1\\\"$2");
-		// double quote all values
-		tempStr = tempStr.replaceAll("(\\:\\s*)([a-zA-Z0-9\\-_|?/.\\s]+)", "$1\\\"$2\\\"");
-
-		return '{' + tempStr + '}';
+	private String convertToValidJson(String parameter) {
+		JsonObject validJsonObject = new JsonParser().parse(parameter)
+				.getAsJsonObject();
+		return validJsonObject.toString();
 	}
 
 }

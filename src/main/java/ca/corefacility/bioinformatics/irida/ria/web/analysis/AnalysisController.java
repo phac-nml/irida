@@ -646,16 +646,17 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `jobErrors`
+	 * Get a dto with list of {@link JobError} for an {@link AnalysisSubmission} under key `galaxyJobErrors`
+	 * and the `galaxyUrl` for the galaxy instance
 	 *
 	 * @param submissionId {@link AnalysisSubmission} id
-	 * @return map with list of {@link JobError} under key `jobErrors`
+	 * @return dto with galaxyJobErrors and galaxyUrl
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/job-errors", method = RequestMethod.GET)
 	@ResponseBody
-	public ImmutableMap<String, Object> getJobErrors(@PathVariable Long submissionId) {
+	public AnalysisJobError ajaxGetJobErrors(@PathVariable Long submissionId) {
 		try {
-			List<JobError> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
+			List<JobError> galaxyJobErrors = analysisSubmissionService.getJobErrors(submissionId);
 			String galaxyUrl = "";
 			try {
 				galaxyUrl = configFile.galaxyInstance()
@@ -663,13 +664,15 @@ public class AnalysisController {
 			} catch (ExecutionManagerConfigurationException e) {
 				logger.error("Error " + e);
 			}
-			if (jobErrors != null && !jobErrors.isEmpty()) {
-				return ImmutableMap.of("jobErrors", jobErrors, "galaxyUrl", galaxyUrl);
+			if (galaxyJobErrors != null && !galaxyJobErrors.isEmpty()) {
+				// Return a dto with both galaxyJobErrors and galaxyUrl
+				return new AnalysisJobError(galaxyJobErrors, galaxyUrl);
 			}
 		} catch (ExecutionManagerException e) {
 			logger.error("Error " + e);
 		}
-		return ImmutableMap.of("error", "No JobErrors for AnalysisSubmission [id=" + submissionId + "]");
+		// Return a dto with both galaxyJobErrors and galaxyUrl set to null
+		return new AnalysisJobError();
 	}
 
 	/**
