@@ -39,6 +39,8 @@
 	</changeSet>
 
 	<changeSet id="schema-inconsistencies" author="fbristow">
+		<validCheckSum>7:29590a1337c6c6464c6c3eda9c5fc405</validCheckSum>
+		<validCheckSum>7:6e26442b879ea168750b1a893b3c50b6</validCheckSum>
 		<dropIndex tableName="Revisions" indexName="FK_REVISIONS_CLIENT_DETAILS" />
 
 		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_REVISION"
@@ -74,8 +76,6 @@
 		
 		<dropUniqueConstraint tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY" />
 		<dropForeignKeyConstraint baseTableName="sequence_file_properties" constraintName="FK_SEQUENCE_FILE_PROPERTIES"/>
-		
-		<dropUniqueConstraint tableName="system_role" constraintName="UK_SYSTEM_ROLE_NAME"/>
 		
 		<dropForeignKeyConstraint baseTableName="client_details_auto_approvable_scope" constraintName="FK_CLIENT_DETAILS_AUTO_APPROVABLE_SCOPE" />
 		<dropPrimaryKey tableName="client_details_auto_approvable_scope"/>
