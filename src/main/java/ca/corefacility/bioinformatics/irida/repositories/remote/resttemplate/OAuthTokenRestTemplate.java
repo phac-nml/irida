@@ -11,7 +11,7 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 /**
  * Rest Template used to communicate with OAuth2 enabled REST APIs. Uses a
  * {@link RemoteAPITokenService} to read OAuth2 tokens to use.
- * 
+ *
  *
  */
 public class OAuthTokenRestTemplate extends RestTemplate {
@@ -35,7 +35,7 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 	 * Create a new OAuthTokenRestTemplate with the given
 	 * {@link RemoteAPITokenService} and connecting to the given
 	 * {@link RemoteAPI}
-	 * 
+	 *
 	 * @param tokenService
 	 *            the {@link TokenService} to get OAuth2 tokens from
 	 * @param remoteAPI
@@ -43,15 +43,15 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 	 */
 	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService, RemoteAPI remoteAPI) {
 		super();
-		
+
 		//enable Path deserialization
 		for(HttpMessageConverter<?> conv : getMessageConverters()){
 			if(conv instanceof MappingJackson2HttpMessageConverter){
-				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(new Jdk7Module());
+				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(new Jdk8Module());
 			}
 		}
-		
-		
+
+
 		this.tokenService = tokenService;
 		this.setRemoteAPI(remoteAPI);
 		this.setErrorHandler(errorHandler);
@@ -89,7 +89,7 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 
 	/**
 	 * Set the API this rest template will communicate with
-	 * 
+	 *
 	 * @param remoteAPI
 	 *            the {@link RemoteAPI} that this template communicates with.
 	 */

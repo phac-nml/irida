@@ -12,13 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -106,7 +104,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a model containing all resources of the specified type in the
 	 *         application.
 	 */
-	@RequestMapping(method = RequestMethod.GET)
 	public ModelMap listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
 		ResourceCollection<Type> resources = new ResourceCollection<>();
@@ -136,7 +133,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *            the identifier of the resource to retrieve from the database.
 	 * @return the model and view for the individual resource.
 	 */
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	public ModelMap getResource(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
 
@@ -173,9 +169,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response containing the location of the newly persisted
 	 *         resource.
 	 */
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {		
+	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 
 		// ask the subclass to map the de-serialized request to a concrete
@@ -227,7 +221,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *            the identifier that should be deleted from the database.
 	 * @return a response indicating that the resource was deleted.
 	 */
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	public ModelMap delete(@PathVariable Long identifier) {
 		ModelMap modelMap = new ModelMap();
 
@@ -254,8 +247,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *            the properties to be updated and their new values.
 	 * @return a response indicating that the resource was updated.
 	 */
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
 		// update the resource specified by the client. clients *may* be able
 		// to update the identifier of some resources, and so we should get a

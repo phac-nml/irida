@@ -5,16 +5,21 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -74,6 +79,38 @@ public class RESTUsersController extends RESTGenericController<User> {
 		super(userService, User.class);
 		this.userService = userService;
 		this.projectService = projectService;
+	}
+
+	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	@Override
+	public ModelMap create(@RequestBody User resource, HttpServletResponse response) {
+		return super.create(resource, response);
+	}
+
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@Override
+	public ModelMap delete(@PathVariable Long identifier) {
+		return super.delete(identifier);
+	}
+
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	@Override
+	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
+		return super.update(identifier, representation);
+	}
+
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@Override
+	public ModelMap getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	@Override
+	public ModelMap listAllResources() {
+		return super.listAllResources();
 	}
 
 	/**

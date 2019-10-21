@@ -16,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.*;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -42,180 +43,192 @@ import java.lang.reflect.Field;
  */
 @Configuration
 public class IridaOauthSecurityConfig {
-  private static final Logger logger = LoggerFactory.getLogger(IridaOauthSecurityConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(IridaOauthSecurityConfig.class);
 
-  @Bean
-  @Primary
-  public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails,
-    @Qualifier("iridaTokenStore") TokenStore tokenStore) {
-    DefaultTokenServices services = new DefaultTokenServices();
-    services.setTokenStore(tokenStore);
-    services.setSupportRefreshToken(true);
-    services.setClientDetailsService(clientDetails);
-    return services;
-  }
+	@Bean
+	@Primary
+	public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails,
+			@Qualifier("iridaTokenStore") TokenStore tokenStore) {
+		DefaultTokenServices services = new DefaultTokenServices();
+		services.setTokenStore(tokenStore);
+		services.setSupportRefreshToken(true);
+		services.setClientDetailsService(clientDetails);
+		return services;
+	}
 
-  @Bean
-  public ClientDetailsUserDetailsService clientDetailsUserDetailsService(
-    @Qualifier("clientDetails") ClientDetailsService clientDetails) {
-    ClientDetailsUserDetailsService clientDetailsUserDetailsService = new ClientDetailsUserDetailsService(
-      clientDetails);
+	@Bean
+	public ClientDetailsUserDetailsService clientDetailsUserDetailsService(
+			@Qualifier("clientDetails") ClientDetailsService clientDetails) {
+		ClientDetailsUserDetailsService clientDetailsUserDetailsService = new ClientDetailsUserDetailsService(
+				clientDetails);
 
-    return clientDetailsUserDetailsService;
-  }
+		return clientDetailsUserDetailsService;
+	}
 
-  @Bean
-  public WebResponseExceptionTranslator exceptionTranslator() {
-    return new CustomOAuth2ExceptionTranslator();
-  }
+	@Bean
+	public WebResponseExceptionTranslator exceptionTranslator() {
+		return new CustomOAuth2ExceptionTranslator();
+	}
 
-  /**
-   * Class for configuring the OAuth resource server security
-   */
-  @Configuration
-  @EnableResourceServer
-  @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
-  @Order(Ordered.HIGHEST_PRECEDENCE + 2)
-  protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+	/**
+	 * Class for configuring the OAuth resource server security
+	 */
+	@Configuration
+	@EnableResourceServer
+	@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
+	@Order(Ordered.HIGHEST_PRECEDENCE + 2)
+	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
-    @Autowired
-    private ResourceServerTokenServices tokenServices;
+		@Autowired
+		private ResourceServerTokenServices tokenServices;
 
-    @Autowired
-    private WebResponseExceptionTranslator exceptionTranslator;
+		@Autowired
+		private WebResponseExceptionTranslator exceptionTranslator;
 
-    @Override
-    public void configure(final ResourceServerSecurityConfigurer resources) {
-      resources.resourceId("NmlIrida").tokenServices(tokenServices);
-      forceExceptionTranslator(resources, exceptionTranslator);
-    }
+		@Override
+		public void configure(final ResourceServerSecurityConfigurer resources) {
+			resources.resourceId("NmlIrida").tokenServices(tokenServices);
+			forceExceptionTranslator(resources, exceptionTranslator);
+		}
 
-    @Override
-    public void configure(final HttpSecurity httpSecurity) throws Exception {
-      httpSecurity.antMatcher("/api/**").authorizeRequests()
-        .regexMatchers(HttpMethod.GET, "/api.*").access("#oauth2.hasScope('read')")
-        .regexMatchers("/api.*").access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
-      httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
-      httpSecurity.antMatcher("/api/**").csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
-        .disable();
-      httpSecurity.antMatcher("/api/**").csrf().disable();
-      httpSecurity.antMatcher("/api/**").exceptionHandling().accessDeniedPage("/login?error");
+		@Override
+		public void configure(final HttpSecurity httpSecurity) throws Exception {
+			httpSecurity.antMatcher("/api/**").authorizeRequests()
+					.regexMatchers(HttpMethod.GET, "/api.*").access("#oauth2.hasScope('read')")
+					.regexMatchers("/api.*").access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
+			httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
+			httpSecurity.antMatcher("/api/**").csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
+					.disable();
+			httpSecurity.antMatcher("/api/**").csrf().disable();
+			httpSecurity.antMatcher("/api/**").exceptionHandling().accessDeniedPage("/login?error");
 
-      // SecurityContextPersistenceFilter appears pretty high up (well
-      // before any OAuth related filters), so we'll put our anonymous
-      // user filter into the filter chain after that.
-      httpSecurity.antMatcher("/api/**").addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
-        SecurityContextPersistenceFilter.class);
-    }
-  }
+			// SecurityContextPersistenceFilter appears pretty high up (well
+			// before any OAuth related filters), so we'll put our anonymous
+			// user filter into the filter chain after that.
+			httpSecurity.antMatcher("/api/**").addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
+					SecurityContextPersistenceFilter.class);
+		}
+	}
 
-  /**
-   * Class for configuring the OAuth authorization server
-   */
-  @Configuration
-  @EnableAuthorizationServer
-  protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-    @Autowired
-    @Qualifier("clientDetails")
-    private ClientDetailsService clientDetailsService;
+	/**
+	 * Class for configuring the OAuth authorization server
+	 */
+	@Configuration
+	@EnableAuthorizationServer
+	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+		@Autowired
+		@Qualifier("clientDetails")
+		private ClientDetailsService clientDetailsService;
 
-    @Autowired
-    @Qualifier("iridaTokenStore")
-    private TokenStore tokenStore;
+		@Autowired
+		@Qualifier("iridaTokenStore")
+		private TokenStore tokenStore;
 
-    @Autowired
-    @Qualifier("userAuthenticationManager")
-    private AuthenticationManager authenticationManager;
+		@Autowired
+		@Qualifier("userAuthenticationManager")
+		private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private WebResponseExceptionTranslator exceptionTranslator;
+		@Autowired
+		private WebResponseExceptionTranslator exceptionTranslator;
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-      clients.withClientDetails(clientDetailsService);
-    }
+		@Override
+		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+			clients.withClientDetails(clientDetailsService);
+		}
 
-    @Autowired
-    private ResourceServerTokenServices tokenServices;
+		@Autowired
+		private ResourceServerTokenServices tokenServices;
 
-    @Override
-    public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-      endpoints.tokenStore(tokenStore);
-      endpoints.authenticationManager(authenticationManager);
-      endpoints.authorizationCodeServices(authorizationCodeServices());
-      endpoints.pathMapping("/oauth/token", "/api/oauth/token").allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
-      endpoints.pathMapping("/oauth/check_token", "/api/oauth/check_token");
-      endpoints.pathMapping("/oauth/confirm_access", "/api/oauth/confirm_access");
-      endpoints.pathMapping("/oauth/error", "/api/oauth/error");
-      endpoints.pathMapping("/oauth/authorize", "/api/oauth/authorize");
-      endpoints.tokenServices((DefaultTokenServices)tokenServices);
-      endpoints.exceptionTranslator(exceptionTranslator);
-      // TODO: 10/9/19 Remove the line below when registered redirect URIs are added to clients
-      endpoints.redirectResolver(new OauthRedirectResolver());
-    }
+		@Override
+		public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+			endpoints.tokenStore(tokenStore);
+			endpoints.authenticationManager(authenticationManager);
+			endpoints.authorizationCodeServices(authorizationCodeServices());
+			endpoints.pathMapping("/oauth/token", "/api/oauth/token").allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+			endpoints.pathMapping("/oauth/check_token", "/api/oauth/check_token");
+			endpoints.pathMapping("/oauth/confirm_access", "/api/oauth/confirm_access");
+			endpoints.pathMapping("/oauth/error", "/api/oauth/error");
+			endpoints.pathMapping("/oauth/authorize", "/api/oauth/authorize");
+			endpoints.tokenServices((DefaultTokenServices)tokenServices);
+			endpoints.exceptionTranslator(exceptionTranslator);
+			// TODO: 10/9/19 Remove the line below when registered redirect URIs are added to clients
+			endpoints.redirectResolver(new OauthRedirectResolver());
+		}
 
-    @Override
-    public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-      oauthServer
-        .tokenKeyAccess("permitAll()")
-        .checkTokenAccess("isAuthenticated()")
-        .allowFormAuthenticationForClients();
-    }
+		@Override
+		public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+			oauthServer
+					.tokenKeyAccess("permitAll()")
+					.checkTokenAccess("isAuthenticated()")
+					.allowFormAuthenticationForClients();
+			oauthServer.passwordEncoder(new PasswordEncoder() {
 
-    @Bean
-    public AuthorizationCodeServices authorizationCodeServices() {
-      return new InMemoryAuthorizationCodeServices();
-    }
-  }
+				@Override
+				public boolean matches(CharSequence rawPassword, String encodedPassword) {
+					return rawPassword.equals(encodedPassword);
+				}
 
-  /**
-   * This adds our own custom filter before the OAuth2 filters are run to put an
-   * anonymous authentication object into the security context *before*
-   * {@link ClientDetailsService#loadClientByClientId(String)} is called.
-   */
-  @Configuration
-  @Order(Ordered.HIGHEST_PRECEDENCE)
-  protected static class AuthorizationServerConfigurer extends AuthorizationServerSecurityConfiguration {
-    @Autowired
-    @Qualifier("clientDetails")
-    private ClientDetailsService clientDetailsService;
+				@Override
+				public String encode(CharSequence rawPassword) {
+					return rawPassword.toString();
+				}
+			});
+		}
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      super.configure(http);
-      // SecurityContextPersistenceFilter appears pretty high up (well
-      // before any OAuth related filters), so we'll put our anonymous
-      // user filter into the filter chain after that.
-      http.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
-        SecurityContextPersistenceFilter.class);
-    }
-  }
+		@Bean
+		public AuthorizationCodeServices authorizationCodeServices() {
+			return new InMemoryAuthorizationCodeServices();
+		}
+	}
 
-  /**
-   * Forcibly set the exception translator on the `authenticationEntryPoint`
-   * so that we can supply our own errors on authentication failure. The
-   * `authenticationEntryPoint` field on
-   * {@link AbstractOAuth2SecurityExceptionHandler} is marked `private`, and
-   * is not accessible for customizing.
-   *
-   * @param configurer          the instance of the configurer that we're customizing
-   * @param exceptionTranslator the {@link WebResponseExceptionTranslator} that we want to
-   *                            set.
-   * @param <T>                 The type of security configurer
-   */
-  private static <T> void forceExceptionTranslator(final T configurer,
-    final WebResponseExceptionTranslator exceptionTranslator) {
-    try {
-      final Field authenticationEntryPointField = ReflectionUtils
-        .findField(configurer.getClass(), "authenticationEntryPoint");
-      ReflectionUtils.makeAccessible(authenticationEntryPointField);
-      final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
-        .get(configurer);
+	/**
+	 * This adds our own custom filter before the OAuth2 filters are run to put an
+	 * anonymous authentication object into the security context *before*
+	 * {@link ClientDetailsService#loadClientByClientId(String)} is called.
+	 */
+	@Configuration
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	protected static class AuthorizationServerConfigurer extends AuthorizationServerSecurityConfiguration {
+		@Autowired
+		@Qualifier("clientDetails")
+		private ClientDetailsService clientDetailsService;
 
-      logger.debug("Customizing the authentication entry point by brute force.");
-      authenticationEntryPoint.setExceptionTranslator(exceptionTranslator);
-    } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-      logger.error("Failed to configure the authenticationEntryPoint on ResourceServerSecurityConfigurer.", e);
-    }
-  }
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			super.configure(http);
+			// SecurityContextPersistenceFilter appears pretty high up (well
+			// before any OAuth related filters), so we'll put our anonymous
+			// user filter into the filter chain after that.
+			http.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
+					SecurityContextPersistenceFilter.class);
+		}
+	}
+
+	/**
+	 * Forcibly set the exception translator on the `authenticationEntryPoint`
+	 * so that we can supply our own errors on authentication failure. The
+	 * `authenticationEntryPoint` field on
+	 * {@link AbstractOAuth2SecurityExceptionHandler} is marked `private`, and
+	 * is not accessible for customizing.
+	 *
+	 * @param configurer          the instance of the configurer that we're customizing
+	 * @param exceptionTranslator the {@link WebResponseExceptionTranslator} that we want to
+	 *                            set.
+	 * @param <T>                 The type of security configurer
+	 */
+	private static <T> void forceExceptionTranslator(final T configurer,
+			final WebResponseExceptionTranslator exceptionTranslator) {
+		try {
+			final Field authenticationEntryPointField = ReflectionUtils
+					.findField(configurer.getClass(), "authenticationEntryPoint");
+			ReflectionUtils.makeAccessible(authenticationEntryPointField);
+			final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
+					.get(configurer);
+
+			logger.debug("Customizing the authentication entry point by brute force.");
+			authenticationEntryPoint.setExceptionTranslator(exceptionTranslator);
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			logger.error("Failed to configure the authenticationEntryPoint on ResourceServerSecurityConfigurer.", e);
+		}
+	}
 }

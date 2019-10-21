@@ -50,7 +50,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -80,10 +80,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
-	
+
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
-	
+
 	@Autowired
 	private Environment env;
 
@@ -95,26 +95,26 @@ public class IridaApiServicesConfig {
 
 	@Value("${file.processing.decompress.remove.compressed.file}")
 	private Boolean removeCompressedFiles;
-	
+
 	// the key + colon syntax allows default values. we use `false` here so we can conditionally show tags on the page with thymeleaf
 	@Value("${help.page.title:false}")
 	private String helpPageTitle;
-	
+
 	@Value("${help.page.url:false}")
 	private String helpPageUrl;
-	
+
 	@Value("${help.contact.email:false}")
 	private String helpEmail;
-	
+
 	@Value("${irida.version}")
 	private String iridaVersion;
-	
+
 	@Value("${file.processing.core.size}")
 	private int fpCoreSize;
-	
+
 	@Value("${file.processing.max.size}")
 	private int fpMaxSize;
-	
+
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
 
@@ -127,7 +127,7 @@ public class IridaApiServicesConfig {
 	private String availableLocales;
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
-	
+
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
@@ -146,7 +146,7 @@ public class IridaApiServicesConfig {
 	@Bean
 	public MessageSource messageSource() {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
-		
+
 		final Properties properties = new Properties();
 		properties.setProperty("help.page.title", helpPageTitle);
 		properties.setProperty("help.page.url", helpPageUrl);
@@ -158,7 +158,7 @@ public class IridaApiServicesConfig {
 		try {
 			final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
 			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(), WORKFLOWS_DIRECTORY);
-			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));			
+			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
 			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
 			source.setBasenames(allMessageSources);
 		} catch (IOException e) {
@@ -175,16 +175,16 @@ public class IridaApiServicesConfig {
 		if (!env.acceptsProfiles("prod")) {
 			source.setCacheSeconds(0);
 		}
-		
+
 		try {
 			HierarchicalMessageSource pluginSources = buildIridaPluginMessageSources();
-			
+
 			if (pluginSources != null) {
 				// preserve parent of source MessageSource
 				if (source.getParentMessageSource() != null) {
 					pluginSources.setParentMessageSource(source.getParentMessageSource());
 				}
-				
+
 				source.setParentMessageSource(pluginSources);
 			}
 		} catch (IridaPluginException | IOException e) {
@@ -193,10 +193,10 @@ public class IridaApiServicesConfig {
 
 		return source;
 	}
-	
+
 	/**
 	 * Builds a {@link HierarchicalMessageSource} containing messages for all IRIDA plugins.
-	 * 
+	 *
 	 * @return A {@link HierarchicalMessageSource} for all IRIDA plugins.
 	 */
 	private HierarchicalMessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
@@ -230,11 +230,11 @@ public class IridaApiServicesConfig {
 	/**
 	 * Finds a list of resource paths to directories containing message.properties
 	 * files.
-	 * 
+	 *
 	 * @param classLoader        The {@link ClassLoader} used to get resource paths.
 	 * @param workflowsDirectory The directory containing the workflow files (and
 	 *                           messages.properties files).
-	 * 
+	 *
 	 * @return A {@link List} of resource paths to directories containing
 	 *         message.properties files.
 	 */
@@ -262,10 +262,10 @@ public class IridaApiServicesConfig {
 	/**
 	 * Gets the basename to a classpath resource path given a particular pattern to
 	 * match for the file name.
-	 * 
+	 *
 	 * @param pattern The {@link Pattern} to use for stripping off the filename.
 	 * @param x       The resource to extract the path name from.
-	 * 
+	 *
 	 * @return The basename for a classpath resource path, or null if the pattern
 	 *         does not match the resource.
 	 */
@@ -329,9 +329,9 @@ public class IridaApiServicesConfig {
 
 	/**
 	 * Builds a new {@link Executor} for analysis tasks.
-	 * 
+	 *
 	 * @param userService a reference to the user service.
-	 * 
+	 *
 	 * @return A new {@link Executor} for analysis tasks.
 	 */
 	@Bean
@@ -344,7 +344,7 @@ public class IridaApiServicesConfig {
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextExecutorService(delegateExecutor, schedulerContext);
 	}
-	
+
 	@Bean
 	@DependsOn("springLiquibase")
 	@Profile({ "prod", "analysis" })
@@ -366,10 +366,10 @@ public class IridaApiServicesConfig {
 
 	/**
 	 * Creates a security context object for the analysis tasks.
-	 * 
+	 *
 	 * @param userService
 	 *            A {@link UserService}.
-	 * 
+	 *
 	 * @return A {@link SecurityContext} for the analysis tasks.
 	 */
 	private SecurityContext createAnalysisTaskSecurityContext(UserService userService) {
