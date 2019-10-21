@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFil
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -32,9 +33,12 @@ import org.springframework.ui.ExtendedModelMap;
 import java.io.IOException;
 import java.util.*;
 
+import static liquibase.util.SystemUtils.USER_NAME;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.security.Principal;
 
 /**
  */
@@ -58,6 +62,7 @@ public class AnalysisControllerTest {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+	private EmailController emailControllerMock;
 
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
@@ -76,11 +81,14 @@ public class AnalysisControllerTest {
 		analysesListingService = mock(AnalysesListingService.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		analysisOutputFileDownloadManager = mock(AnalysisOutputFileDownloadManager.class);
+		userServiceMock = mock(UserService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
+		emailControllerMock = mock(EmailController.class);
+
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysesListingService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock);
+				analysisOutputFileDownloadManager, messageSourceMock, emailControllerMock);
 	}
 
 	@Test
@@ -100,15 +108,15 @@ public class AnalysisControllerTest {
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
+		Principal principal = () -> USER_NAME;
 
-		assertEquals("Tree preview should be set", "tree", model.get("preview"));
+		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
+
+		//assertEquals("Tree should be set", "tree", model.get("phylogeneticiTree"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
-		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
-
 		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				model.get("analysisType"));
 	}
@@ -129,11 +137,12 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
+		Principal principal = () -> USER_NAME;
 
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertFalse("No preview should be available", model.containsAttribute("preview"));
+		assertFalse("Phylogenetic Tree tab should not be available", model.containsAttribute("phylogeneticTree"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 	}
@@ -145,6 +154,8 @@ public class AnalysisControllerTest {
 		Locale locale = Locale.ENGLISH;
 		UUID workflowId = UUID.randomUUID();
 
+		Principal principal = () -> USER_NAME;
+
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
@@ -152,14 +163,11 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
 				.thenReturn(createUnknownWorkflow(workflowId));
 
-		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
-
-		assertFalse("No preview should be set", model.containsAttribute("preview"));
+		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 
-		assertEquals("version should be unknown", "unknown", model.get("version"));
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}
 

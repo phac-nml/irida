@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -45,12 +46,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -80,10 +83,9 @@ public class AnalysisController {
 			.of(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree", BuiltInAnalysisTypes.SISTR_TYPING, "sistr",
 					BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
-	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
-	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
 	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
+	public static final String ANALYSIS_PAGE = "analysis";
 
 	private static final String TREE_EXT = "newick";
 	private static final String EMPTY_TREE = "();";
@@ -103,6 +105,7 @@ public class AnalysisController {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+	private EmailController emailController;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
@@ -111,7 +114,7 @@ public class AnalysisController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysesListingService analysesListingService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, EmailController emailController) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
@@ -124,6 +127,7 @@ public class AnalysisController {
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.emailController = emailController;
 	}
 
 	// ************************************************************************************************
@@ -222,30 +226,40 @@ public class AnalysisController {
 	}
 
 	/**
+	 * Redirects to /{submissionId}/* if there is
+	 * no trailing slash at the end of the url
+	 *
+	 * @param submissionId the ID of the submission
+	 * @return redirect
+	 */
+
+	@RequestMapping(value = "/{submissionId}*")
+	public String getDetailsPageRedirect(@PathVariable Long submissionId) {
+		return "redirect:/analysis/" + submissionId + "/";
+	}
+
+	/**
 	 * View details about an individual analysis submission
 	 *
 	 * @param submissionId the ID of the submission
 	 * @param model        Model for the view
-	 * @param locale       User's locale
+	 * @param principal    Principal {@link User}
 	 * @return name of the details page view
 	 */
-	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
+
+	@RequestMapping(value = "/{submissionId}/*", produces = MediaType.TEXT_HTML_VALUE)
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
-		boolean canShareToSamples = false;
-		if (submission.getAnalysis() != null) {
-			canShareToSamples = analysisSubmissionSampleProcessor
-					.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+		final User currentUser = userService.getUserByUsername(principal.getName());
+
+		// AnalysisControllerTest throws a null pointer error if not checked
+		if (currentUser != null) {
+			model.addAttribute("isAdmin", currentUser.getSystemRole()
+					.equals(Role.ROLE_ADMIN));
 		}
-
-		model.addAttribute("canShareToSamples", canShareToSamples);
-
-
-		UUID workflowUUID = submission.getWorkflowId();
-		logger.trace("Workflow ID is " + workflowUUID);
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
@@ -253,103 +267,191 @@ public class AnalysisController {
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
-		String viewName = getViewForAnalysisType(analysisType);
-		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
-		model.addAttribute("workflowName", workflowName);
-		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
-				.getVersion());
+		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
-		// Input files
-		// - Paired
-		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
-				submission, SequenceFilePair.class);
-		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
-			if (a.sample == null && b.sample == null) {
-				return 0;
-			} else if (a.sample == null) {
-				return -1;
-			} else if (b.sample == null) {
-				return 1;
+
+		return "analysis";
+	}
+
+	/**
+	 * Update an analysis email pipeline completion result
+	 *
+	 * @param parameters parameters which include the submission id and
+	 *                   the new email pipeline result value
+	 * @param locale     User's locale
+	 * @param response   HTTP response object
+	 * @return dto with message
+	 */
+	@RequestMapping(value = "/ajax/update-email-pipeline-result", method = RequestMethod.PATCH)
+	public ResponseDetails ajaxUpdateEmailPipelineResult(@RequestBody AnalysisEmailPipelineResult parameters,
+			Locale locale, HttpServletResponse response) {
+
+		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+		String message = "";
+
+		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
+				!= AnalysisState.ERROR)) {
+			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
+			logger.trace("Email pipeline result updated for: " + submission);
+
+			if (parameters.getEmailPipelineResult()) {
+				message = messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale);
+			} else {
+				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
 			}
-			return a.sample.getLabel()
-					.compareTo(b.sample.getLabel());
-		}).collect(Collectors.toList());
-		model.addAttribute("paired_end", sampleFiles);
+		} else {
+			logger.debug("Email on completion preference not updated due to analysis state");
+			message = messageSource.getMessage("AnalysisDetails.emailOnPipelineResultNotUpdated", new Object[] {},
+					locale);
+			response.setStatus(422);
+		}
+		return new ResponseDetails(message);
+	}
+
+	/**
+	 * Get analysis details
+	 *
+	 * @param submissionId analysis submission id to get data for
+	 * @param locale       User's locale
+	 * @param response     HTTP response object
+	 * @return dto of analysis details
+	 */
+	@RequestMapping(value = "/ajax/details/{submissionId}", method = RequestMethod.GET)
+	public AnalysisDetails ajaxGetDataForDetailsTab(@PathVariable Long submissionId, Locale locale,
+			HttpServletResponse response) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
+
+		// Get the name of the workflow
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null,
+				analysisType.getType(), locale);
+
+		String version = iridaWorkflow.getWorkflowDescription()
+				.getVersion();
+		String priority = submission.getPriority()
+				.toString();
+
+		Long duration = 0L;
+
+		if (submission.getAnalysisState()
+				.equals(AnalysisState.COMPLETED)) {
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+					.getCreatedDate());
+		}
+
+		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
+		boolean emailPipelineResult = submission.getEmailPipelineResult();
+
+		boolean canShareToSamples = false;
+		if (submission.getAnalysis() != null) {
+			canShareToSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+					submission.getAnalysis()
+							.getAnalysisType());
+		}
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
-		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
+
+		response.setStatus(HttpServletResponse.SC_OK);
+
+		// details is a DTO (Data Transfer Object)
+		return new AnalysisDetails(workflowName, version, priority, duration, submission.getCreatedDate(), priorities,
+				emailPipelineResult, canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
+				submission.getUpdateSamples());
+	}
+
+	/**
+	 * Get analysis input files and their sizes
+	 *
+	 * @param submissionId analysis submission id to get data for
+	 * @return dto of analysis input files data
+	 */
+	@RequestMapping(value = "/ajax/inputs/{submissionId}", method = RequestMethod.GET)
+	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		ReferenceFile referenceFile = null;
+
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SequenceFilePair.class);
+
+		List<SampleFiles> sampleFiles = inputFilePairs.stream()
+				.map(SampleFiles::new)
+				.sorted((a, b) -> {
+					if (a.sample == null && b.sample == null) {
+						return 0;
+					} else if (a.sample == null) {
+						return -1;
+					} else if (b.sample == null) {
+						return 1;
+					}
+					return a.sample.getLabel()
+							.compareTo(b.sample.getLabel());
+				})
+				.collect(Collectors.toList());
+
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
 		if (iridaWorkflow.getWorkflowDescription()
 				.requiresReference() && submission.getReferenceFile()
 				.isPresent()) {
-			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
-			model.addAttribute("referenceFile", submission.getReferenceFile()
-					.get());
+
+			referenceFile = submission.getReferenceFile()
+					.get();
 		} else {
 			logger.debug("No reference file required for workflow.");
 		}
 
-		/*
-		 * Preview information
-		 */
-		try {
-			if (submission.getAnalysisState()
-					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
-					tree(submission, model);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
-					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
-					model.addAttribute("bio_hansel", true);
-				}
+		//List of AnalysisSamples which store the sample info
+		List<AnalysisSamples> sampleList = new ArrayList<>();
+
+		for (SampleFiles sampleFile : sampleFiles) {
+			if (sampleFile.getSample() != null) {
+				sampleList.add(new AnalysisSamples(sampleFile.getSample()
+						.getSampleName(), sampleFile.getSample()
+						.getId(), sampleFile.getSequenceFilePair()
+						.getId(), sampleFile.getSequenceFilePair()
+						.getForwardSequenceFile(), sampleFile.getSequenceFilePair()
+						.getReverseSequenceFile()));
 			}
-
-		} catch (IOException e) {
-			logger.error("Couldn't get preview for analysis", e);
 		}
-
-		return viewName;
+		return new AnalysisInputFiles(sampleList, referenceFile);
 	}
 
 	/**
-	 * Update an analysis name
+	 * Update an analysis name and/or priority
 	 *
-	 * @param submissionId ID of the submission to update
-	 * @param name         name to update the analysis to
-	 * @param priority     the priority to update the analysis to.  Note only admins will be allowed to update priority
-	 * @param model        model for view
-	 * @param locale       locale of the user
-	 * @return redirect to the analysis page after update
+	 * @param parameters parameters which include the submission id and the new name and/or priority
+	 * @param locale     User's locale
+	 * @param response   HTTP response object
+	 * @return dto with message
 	 */
-	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
-	public String editAnalysis(@PathVariable Long submissionId, @RequestParam String name,
-			@RequestParam(required = false, defaultValue = "") AnalysisSubmission.Priority priority, Model model,
-			Locale locale) {
-		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+	@RequestMapping(value = "/ajax/update-analysis", method = RequestMethod.PATCH)
+	public ResponseDetails ajaxUpdateSubmission(@RequestBody AnalysisSubmissionInfo parameters, Locale locale,
+			HttpServletResponse response) {
+		AnalysisSubmission submission = analysisSubmissionService.read(parameters.getAnalysisSubmissionId());
+		String message = "";
 
-		submission.setName(name);
-
-		boolean error = false;
-
-		try {
-			analysisSubmissionService.update(submission);
-			// Setting the priority as a separate call as it's not allowed to be updated with the normal update
-			if (priority != null) {
-				analysisSubmissionService.updatePriority(submission, priority);
+		if (parameters.getAnalysisName() != null) {
+			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
+			message = messageSource.getMessage("AnalysisDetails.nameUpdated",
+					new Object[] { parameters.getAnalysisName() }, locale);
+		} else if (parameters.getPriority() != null) {
+			if (submission.getAnalysisState() == AnalysisState.NEW) {
+				analysisSubmissionService.updatePriority(submission, parameters.getPriority());
+				message = messageSource.getMessage("AnalysisDetails.priorityUpdated",
+						new Object[] { parameters.getPriority(), submission.getName() }, locale);
+			} else {
+				logger.trace("Unable to update priority as: " + submission + "is no longer in queued state");
+				message = messageSource.getMessage("AnalysisDetails.priorityNotUpdated", new Object[] {}, locale);
+				response.setStatus(422);
 			}
-		} catch (Exception e) {
-			logger.error("Error while updating analysis", e);
-			error = true;
 		}
-
-		if (error) {
-			model.addAttribute("updateError", true);
-			return getDetailsPage(submissionId, model, locale);
-		}
-
-		return "redirect:/analysis/" + submissionId;
+		return new ResponseDetails(message);
 	}
 
 	/**
@@ -642,31 +744,37 @@ public class AnalysisController {
 	 *
 	 * @param submissionId ID of the {@link AnalysisSubmission}
 	 * @param locale       locale of the logged in user
+	 * @param response     HTTP response object
 	 * @return success message
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale) {
+	public ResponseDetails saveResultsToSamples(@PathVariable Long submissionId, Locale locale,
+			HttpServletResponse response) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
-		if(submission.getUpdateSamples()){
-			String message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
-			return ImmutableMap.of("result", "error", "message", message);
+		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
+
+		if (submission.getUpdateSamples()) {
+			message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
+			response.setStatus(422);
 		}
 
 		try {
 			analysisSubmissionSampleProcessor.updateSamples(submission);
-
 			submission.setUpdateSamples(true);
 			analysisSubmissionService.update(submission);
 		} catch (PostProcessingException e) {
-			String message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
-			return ImmutableMap.of("result", "error", "message", message);
+			if (e.toString()
+					.contains("Expected one sample; got '0' for analysis [id=" + submissionId + "]")) {
+				message = messageSource.getMessage("AnalysisShare.noSamplesToSaveResults", null, locale);
+			} else {
+				message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
+			}
+			response.setStatus(422);
 		}
 
-		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
-
-		return ImmutableMap.of("result", "success", "message", message);
+		return new ResponseDetails(message);
 	}
 
 	/**
@@ -1039,23 +1147,6 @@ public class AnalysisController {
 			fields.add(metadataField.getLabel());
 		}
 		return ImmutableMap.of("fields", fields);
-	}
-
-	/**
-	 * Get the view name for different analysis types
-	 *
-	 * @param type The {@link AnalysisType}
-	 * @return the view name to display
-	 */
-	private String getViewForAnalysisType(AnalysisType type) {
-		String viewName = null;
-		if (PREVIEWS.containsKey(type)) {
-			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
-		} else {
-			viewName = PREVIEW_UNAVAILABLE;
-		}
-
-		return viewName;
 	}
 
 	/**

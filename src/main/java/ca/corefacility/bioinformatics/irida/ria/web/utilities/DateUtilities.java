@@ -9,7 +9,6 @@ import java.util.Date;
  */
 public class DateUtilities {
 
-
 	/**
 	 * Get the milliseconds between two {@link Date}s
 	 *

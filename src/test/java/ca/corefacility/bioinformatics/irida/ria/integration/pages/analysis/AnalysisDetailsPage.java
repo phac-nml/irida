@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AnalysisDetailsPage extends AbstractPage {
@@ -50,6 +51,12 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(css = ".t-paired-end h4 span")
 	private List<WebElement> sampleLabels;
 
+	@FindBy(id = "t-analysis-tab-settings")
+	private WebElement settingsTab;
+
+	@FindBy(id = "root")
+	private WebElement rootDiv;
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -58,15 +65,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * Initialize the page so that the default {@link WebElement} have been
 	 * found.
 	 *
-	 * @param driver
-	 *            {@link WebDriver}
-	 * @param analysisId
-	 *            Id the the analysis page to view.
-	 *
+	 * @param driver     {@link WebDriver}
+	 * @param analysisId Id the the analysis page to view.
+	 * @param tabKey     Tab to be active on load
 	 * @return The initialized {@link AnalysisDetailsPage}
 	 */
-	public static AnalysisDetailsPage initPage(WebDriver driver, long analysisId) {
-		get(driver, RELATIVE_URL + analysisId);
+	public static AnalysisDetailsPage initPage(WebDriver driver, long analysisId, String tabKey) {
+		get(driver, RELATIVE_URL + analysisId + "/" + tabKey);
 		return PageFactory.initElements(driver, AnalysisDetailsPage.class);
 	}
 
@@ -89,18 +94,23 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public List<Long> getSharedProjectIds() {
-		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("value")))
+		return shareCheckboxes.stream()
+				.filter(s -> s.isSelected())
+				.map(s -> Long.valueOf(s.getAttribute("value")))
 				.collect(Collectors.toList());
 	}
 
 	public void clickShareBox(Long id) {
 		Optional<WebElement> checkbox = shareCheckboxes.stream()
-				.filter(s -> s.getAttribute("value").equals(id.toString())).findFirst();
+				.filter(s -> s.getAttribute("value")
+						.equals(id.toString()))
+				.findFirst();
 
 		if (!checkbox.isPresent()) {
 			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
 		}
-		checkbox.get().click();
+		checkbox.get()
+				.click();
 	}
 
 	/**
@@ -112,7 +122,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public boolean priorityEditVisible() {
-		return !driver.findElements(By.id("analysis-edit-priority")).isEmpty();
+		return !driver.findElements(By.className("t-priority-edit"))
+				.isEmpty();
 	}
 
 	/**
@@ -127,12 +138,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public void displayTreeTools() {
 		setCurrentFile();
-		this.currentFile.findElement(By.className("accordion-toggle")).click();
+		this.currentFile.findElement(By.className("accordion-toggle"))
+				.click();
 	}
 
 	/**
 	 * Determine the number of files created.
-	 * 
+	 *
 	 * @return {@link Integer}
 	 */
 	public int getNumberOfFilesDisplayed() {
@@ -145,7 +157,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Integer} count of number of tools.
 	 */
 	public int getNumberOfToolsForTree() {
-		return currentFile.findElements(By.className("tool")).size();
+		return currentFile.findElements(By.className("tool"))
+				.size();
 	}
 
 	/**
@@ -156,9 +169,12 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public int getNumberOfParametersForTool() {
 		waitForElementVisible(By.className("tool"));
-		this.currentFile.findElements(By.className("tool")).get(0).click();
+		this.currentFile.findElements(By.className("tool"))
+				.get(0)
+				.click();
 		WebElement paramTable = currentFile.findElement(By.className("parameters"));
-		return paramTable.findElements(By.className("parameter")).size();
+		return paramTable.findElements(By.className("parameter"))
+				.size();
 	}
 
 	/**
@@ -168,7 +184,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 		this.currentFile = null;
 		for (WebElement fileDiv : fileInfo) {
 			WebElement filename = fileDiv.findElement(By.className("name"));
-			if (filename.getText().contains("tree")) {
+			if (filename.getText()
+					.contains("tree")) {
 				this.currentFile = fileDiv;
 				break;
 			}
@@ -183,7 +200,30 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return divHasJobError.size() > 0;
 	}
 
+	public void clickSettingsTab() {
+		waitForElementVisible(By.id("t-analysis-tab-settings"));
+		settingsTab.click();
+		waitForTime(500);
+	}
+
+	public boolean comparePageTitle(String pageTitle) {
+		int titleFound = rootDiv.findElements(By.xpath("//h2[contains(text(),'" + pageTitle + "')]"))
+				.size();
+
+		if (titleFound > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public String getLabelForSample(int index) {
-		return sampleLabels.get(index).getText();
+		return sampleLabels.get(index)
+				.getText();
+	}
+
+	public boolean emailPipelineResultVisible() {
+		return !driver.findElements(By.className("t-email-pipeline-result"))
+				.isEmpty();
 	}
 }

@@ -18,7 +18,11 @@ const { Content } = Layout;
 export function PageWrapper({ title, headerExtras, children }) {
   return (
     <Layout style={{ height: "100%", minHeight: "100%" }}>
-      <PageHeader title={title} extra={headerExtras} />
+      <PageHeader
+        style={{ backgroundColor: grey1 }}
+        title={title}
+        extra={headerExtras}
+      />
       <Content style={{ padding: SPACE_MD }}>
         <div style={{ padding: SPACE_MD, backgroundColor: grey1 }}>
           {children}
@@ -29,7 +33,7 @@ export function PageWrapper({ title, headerExtras, children }) {
 }
 
 PageWrapper.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   headerExtras: PropTypes.element,
-  children: PropTypes.element.isRequired
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
 };
