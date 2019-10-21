@@ -6,7 +6,6 @@ target/
 .checkstyle
 build/
 .DS_Store/
-/src/main/webapp/resources/bower_components/
 irida.iml
 phantomjsdriver.log
 node_modules
