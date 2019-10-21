@@ -8,7 +8,7 @@ function ProjectAnalysesPage() {
 }
 
 render(
-  <PagedTableProvider url={`${window.TL.BASE_URL}ajax/analyses/list`}>
+  <PagedTableProvider url={`${window.PAGE.url}`}>
     <ProjectAnalysesPage />
   </PagedTableProvider>,
   document.querySelector("#root")
