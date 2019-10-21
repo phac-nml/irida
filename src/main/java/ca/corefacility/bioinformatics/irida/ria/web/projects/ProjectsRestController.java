@@ -3,12 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -37,15 +36,14 @@ public class ProjectsRestController {
 	 * Handle request for get a filtered and sorted list of projects for a user or administrator
 	 *
 	 * @param projectsRequest {@link ProjectsRequest} Details about what is needed in the table (sort, filter, and search).
-	 * @param request         {@link HttpServletRequest}
+	 * @param admin           {@link Boolean} Is the user on an administration page.
 	 * @return {@link ProjectsResponse}
 	 */
 	@RequestMapping
-	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest, HttpServletRequest request) {
-		boolean all = request.getHeader("referer")
-				.endsWith("all");
+	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest,
+			@RequestParam Boolean admin) {
 		final Page<Project> page;
-		if (all) {
+		if (admin) {
 			page = projectService.findAllProjects(projectsRequest.getSearch(), projectsRequest.getCurrent(),
 					projectsRequest.getPageSize(), projectsRequest.getSort());
 		} else {
