@@ -20,11 +20,10 @@ export default function TableControlPanel(props) {
           <Button
             tour="tour-columns"
             shape="circle"
+            icon="table"
             className="t-columns-panel-toggle"
             onClick={props.togglePanel}
-          >
-            <i className="fas fa-columns" />
-          </Button>
+          />
         </Tooltip>
       </div>
     </div>

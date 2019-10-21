@@ -46,15 +46,19 @@ public class CartController {
 	 * Get the dedicated page for the Cart
 	 *
 	 * @param model {@link Model}
+	 * @param automatedProject The ID of the automated project to add a pipeline to (optional)
 	 * @return {@link String} path to the cart page template
 	 */
 	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
-	public String getCartPage(Model model) {
+	public String getCartPage(Model model,
+			@RequestParam(required = false, name = "automatedProject")
+					Long automatedProject) {
 		/*
 		 * The cart is dynamically created at runtime using React.
 		 * Base file at src/main/webapp/resources/js/pages/cart/components/Cart.jsx
 		 */
 		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
+		model.addAttribute("automatedProject", automatedProject);
 		return "cart";
 	}
 

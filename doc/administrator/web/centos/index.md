@@ -14,7 +14,7 @@ Installing prerequisites
 All required packages for the web interface are in the CentOS repositories. You can install them with the following commands:
 
     sudo yum -y install epel-release # for the apache native runtime
-    sudo yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
+    sudo yum -y install apr tomcat java-11-openjdk-headless mariadb-server mariadb-client tomcat-native
 
 Starting Tomcat and MariaDB on Startup
 --------------------------------------

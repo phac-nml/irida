@@ -10,7 +10,9 @@ export function formatInternationalizedDateTime(d, options = {}) {
     day: "numeric",
     ...options
   };
-  return new Intl.DateTimeFormat(window.TL.LOCALE, params).format(new Date(d));
+  return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, params).format(
+    new Date(d)
+  );
 }
 
 /**

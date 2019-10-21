@@ -1,9 +1,7 @@
 import React from "react";
-import { Typography } from "antd";
-import { blue6 } from "../../styles/colors";
+import { Button, Icon } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-
-const { Text } = Typography;
+import { blue6 } from "../../styles/colors";
 
 export const idColumnFormat = () => ({
   dataIndex: "id",
@@ -12,22 +10,46 @@ export const idColumnFormat = () => ({
   width: 50
 });
 
-export const nameColumnFormat = url => {
+export const nameColumnFormat = ({ url, width = 300 }) => {
   return {
     dataIndex: "name",
     key: "name",
     sorter: true,
-    width: 300,
-    render: (name, data) => (
-      <a href={`${url}/${data.id}`}>
-        <Text
-          ellipsis
-          style={{ width: 270, color: blue6, textDecoration: "underline" }}
+    width,
+    filterIcon(filtered) {
+      return (
+        <Icon
+          type="filter"
+          theme="filled"
+          style={{ color: filtered ? blue6 : undefined }}
+          className="t-name"
+        />
+      );
+    },
+    render(name, data) {
+      return (
+        <Button
+          type="link"
+          className="t-name"
+          href={`${url}/${data.id}`}
+          title={name}
+          style={{
+            textAlign: "left"
+          }}
         >
-          {name}
-        </Text>
-      </a>
-    )
+          <span
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: width - 50
+            }}
+          >
+            {name}
+          </span>
+        </Button>
+      );
+    }
   };
 };
 

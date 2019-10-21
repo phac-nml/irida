@@ -16,6 +16,8 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -58,6 +60,7 @@ public class SampleSequenceFilesControllerTest {
 	private SequencingRunService miseqRunService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
+	private SequencingRun sequencingRun;
 
 	@Before
 	public void setUp() {
@@ -65,6 +68,7 @@ public class SampleSequenceFilesControllerTest {
 		miseqRunService = mock(SequencingRunService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		analysisService = mock(AnalysisService.class);
+		sequencingRun = mock(SequencingRun.class);
 
 		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
 	}
@@ -229,6 +233,7 @@ public class SampleSequenceFilesControllerTest {
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
 		SequenceFileResource resource = new SequenceFileResource();
+		resource.setMiseqRunId(6L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
 				.toFile()));
@@ -237,6 +242,9 @@ public class SampleSequenceFilesControllerTest {
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
 				.thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
+
+		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
+		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 		
 		ModelMap modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
 		verify(sampleService).read(s.getId());
@@ -267,6 +275,54 @@ public class SampleSequenceFilesControllerTest {
 		Files.delete(f);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNewSequenceFileToSampleCompletedRun() throws IOException {
+		Sample s = TestDataFactory.constructSample();
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
+		SequenceFile sf = so.getSequenceFile();
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
+
+		SequenceFileResource resource = new SequenceFileResource();
+		resource.setMiseqRunId(8L);
+		Path f = Files.createTempFile(null, null);
+		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
+				.toFile()));
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		when(sampleService.read(s.getId())).thenReturn(s);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
+				.thenReturn(sso);
+		when(sequencingObjectService.read(so.getId())).thenReturn(so);
+
+		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
+		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.COMPLETE);
+
+		controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNewSequenceFileToSampleErrorRun() throws IOException {
+		Sample s = TestDataFactory.constructSample();
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
+		SequenceFile sf = so.getSequenceFile();
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
+
+		SequenceFileResource resource = new SequenceFileResource();
+		resource.setMiseqRunId(8L);
+		Path f = Files.createTempFile(null, null);
+		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
+				.toFile()));
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		when(sampleService.read(s.getId())).thenReturn(s);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
+				.thenReturn(sso);
+		when(sequencingObjectService.read(so.getId())).thenReturn(so);
+
+		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
+		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.ERROR);
+
+		controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+	}
+
 	@Test
 	public void testAddNewSequenceFilePairToSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
@@ -288,6 +344,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SequenceFileResource resource1 = new SequenceFileResource();
 		SequenceFileResource resource2 = new SequenceFileResource();
+		resource1.setMiseqRunId(7L);
+		resource2.setMiseqRunId(7L);
 		Path f1 = Files.createTempFile(null, null);
 		Path f2 = Files.createTempFile(null, null);
 		MockMultipartFile mmf1 = new MockMultipartFile(file1Name, file1Name, "blurgh1",
@@ -300,6 +358,10 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
 				.thenReturn(sso);
+
+		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
+
+		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 
 		ModelMap modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2,
 				response);
@@ -369,6 +431,66 @@ public class SampleSequenceFilesControllerTest {
 		
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
 				.thenReturn(sso);
+		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNewSequenceFilePairToSampleCompletedRun() throws IOException {
+		Project p = TestDataFactory.constructProject();
+		Sample s = TestDataFactory.constructSample();
+		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
+
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
+
+		SequenceFileResource resource1 = new SequenceFileResource();
+		SequenceFileResource resource2 = new SequenceFileResource();
+		resource1.setMiseqRunId(4L);
+		resource2.setMiseqRunId(4L);
+		Path f1 = Files.createTempFile(null, null);
+		Path f2 = Files.createTempFile(null, null);
+		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1",
+				FileCopyUtils.copyToByteArray(f1.toFile()));
+		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
+				FileCopyUtils.copyToByteArray(f2.toFile()));
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
+				.thenReturn(sso);
+
+		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
+
+		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.COMPLETE);
+		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNewSequenceFilePairToSampleErrorRun() throws IOException {
+		Project p = TestDataFactory.constructProject();
+		Sample s = TestDataFactory.constructSample();
+		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
+
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
+
+		SequenceFileResource resource1 = new SequenceFileResource();
+		SequenceFileResource resource2 = new SequenceFileResource();
+		resource1.setMiseqRunId(4L);
+		resource2.setMiseqRunId(4L);
+		Path f1 = Files.createTempFile(null, null);
+		Path f2 = Files.createTempFile(null, null);
+		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1",
+				FileCopyUtils.copyToByteArray(f1.toFile()));
+		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
+				FileCopyUtils.copyToByteArray(f2.toFile()));
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
+				.thenReturn(sso);
+
+		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
+
+		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.ERROR);
 		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
 	}
 

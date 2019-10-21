@@ -1,6 +1,22 @@
 Changes
 =======
 
+19.09 to 20.01
+--------------
+* [Developer]: Upgraded development Java version to Java 11 (LTS).
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
+* [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
+* [UI]: Fixed issue where links to pipelines on the cart page displayed incorrectly.
+* [UI]: Updated project and global analyses listing pages to use Ant Design tables.
+* [UI]: Updated sequencing runs table to use Ant Design tables.
+* [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
+* [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
+* [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
+* [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
+* [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
+* [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2` as bower dependencies.
+
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
@@ -31,6 +47,16 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
 * [Developer]: Update eslint config to use `babel-parser`.
+* [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/user/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
+* [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
+* [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
+* [Documentation]: Added link to Galaxy Export (Import) tool documentation.
+* [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
+* [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
+* [Developer]: Updates to front-end packages: `antd@3.19.8` -> `antd@3.21.4`, `@babel/polyfill` -> `core-js/stable` & `regenerator-runtime/runtime`, as well as some minor updates to webpack dependencies.
+* [Developer]: Updated to node `v12.8.1`.
+* [Developer]: Updated `eslint` to fix security vulnerability.
+* [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
 
 19.01 to 19.05
 ---------------
@@ -139,7 +165,7 @@ Changes
 * [Developer]: Updated `yarn` to the current version.
 * [UI/Workflow]: Pipeline analysis output files are rendered in the same order as they appear in the pipeline `irida_workflow.xml` in the `<outputs>` XML element.
 * [Developer]: Can now specify which `chromedriver` to use in UI testing with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver`.
-* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).
+* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).  
 
 0.20.0 to 0.21.0
 ----------------
@@ -150,7 +176,7 @@ Changes
 * [Developer]: Removed old gulp dependencies from the `package.json` file.
 * [Developer]: Update to stable releases of `node` and `yarn`.
 * [Administration]: Disabled automated SISTR results from saving to sample metadata.  Also disabled retrospective results from being added during the database update.  Installations that have already performed the 0.20.0 update will have their retrospective automated SISTR results automatically added to sample metadata.  Installations that jump directly to 0.20.1 and above will not have this data added to sample metadata. (0.20.1)
-* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab.
+* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
 
 0.19.0 to 0.20.0
 ----------------
@@ -177,10 +203,10 @@ Changes
 * [UI]: Fixed issue where time stamps where not displayed on activities pages.
 * [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 * [UI]: Cleaned up sub-navigation elements on samples and files.
-* [UI]: Updated Remote API pages (datatables, and removed Noty modals).
+* [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
 * [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
 * [UI]: Removed search box from sequencing run page.
-* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists.
+* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
 * [UI]: Fixed issue with Upload Sequence Files button when SequenceFiles page resized.
 * [UI]: SISTR able to write metadata back to samples.
 

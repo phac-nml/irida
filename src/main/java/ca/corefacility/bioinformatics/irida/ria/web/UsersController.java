@@ -1,50 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
-import org.springframework.mail.MailSendException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -63,6 +22,33 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.mail.MailSendException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.security.Principal;
+import java.security.SecureRandom;
+import java.util.*;
 
 /**
  * Controller for all {@link User} related views
@@ -79,6 +65,8 @@ public class UsersController {
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
+	private List<Locale> locales;
+
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final PasswordResetService passwordResetService;
@@ -91,12 +79,14 @@ public class UsersController {
 
 	@Autowired
 	public UsersController(UserService userService, ProjectService projectService,
-			PasswordResetService passwordResetService, EmailController emailController, MessageSource messageSource) {
+			PasswordResetService passwordResetService, EmailController emailController, MessageSource messageSource,
+			IridaApiServicesConfig.IridaLocaleList locales) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
+		this.locales = locales.getLocales();
 	}
 
 	/**
@@ -197,41 +187,30 @@ public class UsersController {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId
-	 *            The id of the user to edit (required)
-	 * @param firstName
-	 *            The firstname to update
-	 * @param lastName
-	 *            the lastname to update
-	 * @param email
-	 *            the email to update
-	 * @param phoneNumber
-	 *            the phone number to update
-	 * @param systemRole
-	 *            the role to update
-	 * @param password
-	 *            the password to update
-	 * @param confirmPassword
-	 *            password confirmation
-	 * @param model
-	 *            The model to work on
-	 * @param enabled
-	 *            whether the user account should be enabled or disabled.
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @param request
-	 * 		      the request
+	 * @param userId          The id of the user to edit (required)
+	 * @param firstName       The firstname to update
+	 * @param lastName        the lastname to update
+	 * @param email           the email to update
+	 * @param phoneNumber     the phone number to update
+	 * @param systemRole      the role to update
+	 * @param userLocale      The locale the user selected
+	 * @param password        the password to update
+	 * @param confirmPassword password confirmation
+	 * @param model           The model to work on
+	 * @param enabled         whether the user account should be enabled or disabled.
+	 * @param principal       a reference to the logged in user.
+	 * @param request         the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
+			@RequestParam(required = false, name = "locale") String userLocale,
 			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
-			@RequestParam(required = false) String confirmPassword, Model model, Principal principal, HttpServletRequest request) {
+			@RequestParam(required = false) String confirmPassword, Model model, Principal principal,
+			HttpServletRequest request) {
 		logger.debug("Updating user " + userId);
-
-		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -253,9 +232,13 @@ public class UsersController {
 			updatedValues.put("phoneNumber", phoneNumber);
 		}
 
+		if (!Strings.isNullOrEmpty(userLocale)) {
+			updatedValues.put("locale", userLocale);
+		}
+
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+				errors.put("password", messageSource.getMessage("user.edit.password.match", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", password);
 			}
@@ -284,13 +267,14 @@ public class UsersController {
 
 				// If the user is updating their account make sure you update it in the sesion variable
 				// this will update the users gravatar!
-				if (user != null && principal.getName().equals(user.getUsername())) {
+				if (user != null && principal.getName()
+						.equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
 
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				errors = handleCreateUpdateException(ex, locale);
+				errors = handleCreateUpdateException(ex, request.getLocale());
 
 				model.addAttribute("errors", errors);
 
@@ -322,6 +306,8 @@ public class UsersController {
 		model.addAttribute("user", user);
 
 		Locale locale = LocaleContextHolder.getLocale();
+
+		model.addAttribute("locales", locales);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
@@ -357,6 +343,8 @@ public class UsersController {
 
 		Locale locale = LocaleContextHolder.getLocale();
 
+		model.addAttribute("locales", locales);
+
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
 			String roleMessageName = "systemrole." + role.getName();
@@ -381,32 +369,24 @@ public class UsersController {
 	/**
 	 * Create a new user object
 	 *
-	 * @param user
-	 *            User to create as a motel attribute
-	 * @param systemRole
-	 *            The system role to give to the user
-	 * @param confirmPassword
-	 *            Password confirmation
-	 * @param requireActivation
-	 *            Checkbox whether the user account needs to be activated
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            The user creating the object
-	 *
+	 * @param user              User to create as a motel attribute
+	 * @param systemRole        The system role to give to the user
+	 * @param confirmPassword   Password confirmation
+	 * @param requireActivation Checkbox whether the user account needs to be activated
+	 * @param model             Model for the view
+	 * @param principal         The user creating the object
+	 * @param locale            The logged in user's request locale
 	 * @return A redirect to the user details view
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String submitCreateUser(@ModelAttribute User user, @RequestParam String systemRole,
 			@RequestParam String confirmPassword, @RequestParam(required = false) String requireActivation, Model model,
-			Principal principal) {
+			Principal principal, Locale locale) {
 
 		Map<String, String> errors = new HashMap<>();
 
 		String returnView = null;
-
-		Locale locale = LocaleContextHolder.getLocale();
 
 		User creator = userService.getUserByUsername(principal.getName());
 
@@ -419,7 +399,8 @@ public class UsersController {
 		}
 
 		// check validity of password
-		if (!user.getPassword().equals(confirmPassword)) {
+		if (!user.getPassword()
+				.equals(confirmPassword)) {
 			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 		}
 

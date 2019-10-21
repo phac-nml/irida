@@ -221,6 +221,10 @@
           params["paired"] = paired;
         }
 
+        if (window.PAGE.pipeline.automatedProjectId != null) {
+          params["automatedProject"] = window.PAGE.pipeline.automatedProjectId;
+        }
+
         if (
           Object.keys(selectedParameters).length > 0 &&
           selectedParameters.id !== "no_parameters"
@@ -307,10 +311,7 @@
      * Clear the cart and redirect to the projects page
      */
     vm.clearAndRedirect = function() {
-      var clearPromise = CartService.clear();
-
-      // after the cart is cleared, redirect the browser
-      clearPromise.then(function() {
+      CartService.clear().then(function() {
         window.location = page.urls.projectsPage;
       });
     };

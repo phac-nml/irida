@@ -52,7 +52,9 @@ public class RunAsUserAspectTest {
 	public void testMethodWithArgument() {
 		annotatedClass.methodWithArgument(submittingUser);
 
-		String securedUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+		String securedUserName = SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName();
 		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
 	}
 
@@ -64,7 +66,9 @@ public class RunAsUserAspectTest {
 			// It's a good thing!
 		}
 
-		String securedUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+		String securedUserName = SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName();
 		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
 	}
 
@@ -88,9 +92,14 @@ public class RunAsUserAspectTest {
 
 	private static class AnnotatedClass {
 
+		public AnnotatedClass() {
+		}
+
 		@RunAsUser("#submitter")
 		public void methodWithArgument(User submitter) {
-			String submitterName = SecurityContextHolder.getContext().getAuthentication().getName();
+			String submitterName = SecurityContextHolder.getContext()
+					.getAuthentication()
+					.getName();
 			assertEquals("Should be submitting user", submittingUser.getUsername(), submitterName);
 		}
 

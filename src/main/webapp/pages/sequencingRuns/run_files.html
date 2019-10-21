@@ -1,52 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  data-layout-decorate="~{sequencingRuns/_details_base}">
-<head>
-	<link rel="stylesheet" th:href="@{/dist/css/run-files.bundle.css}">
-</head>
-<body>
-<main layout:fragment="main">
-	<div class="row">
-		<div class="col-md-12">
-			<table id="filesTable" class="table table-striped">
-				<thead>
-				<tr role="row">
-					<th th:text="#{sequencingruns.files.id}">ID</th>
-					<th th:text="#{sequencingruns.files.name}">Name</th>
-					<th th:text="#{sequencingruns.files.size}">Size</th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-        <th:block th:each="seqObject : ${sequencingObjects}">
-  				<tr class="file-row" role="row" th:each="file : ${seqObject.getFiles()}"
-  				    th:id="${'file-row-' + file.identifier}">
-  					<td class="file-id" th:text="${file.identifier}">ID</td>
-  					<td>
-  						<a class="file-name btn btn-default btn-xs"
-  						   th:href="@{/sequencingRuns/{runId}/sequenceFiles/{objId}/file/{id}/summary(runId=${run.getId()}, objId=${seqObject.getId()}, id=${file.getId()})}"
-  						   href="#"
-  						   th:text="${file.label}"></a>
-  					</td>
-  					<td data:order="${file.getFileSize()}" th:text="${file.getFileSize()}"></td>
-  					<td class="file-buttons">
-  						<div class="btn-toolbar pull-right">
-  							<button class="btn btn-primary btn-xs download-file"
-  							        th:attr="data-file-id=${file.getId()},data-object-id=${seqObject.getId()}">
-  								<span class="fa fa-fw fa-download"></span>
-  							</button>
-  						</div>
-  					</td>
-  				</tr>
-        </th:block>
-				</tbody>
-			</table>
-		</div>
-	</div>
-</main>
-<th:block layout:fragment="scripts">
-	<script src="/dist/js/run-files.bundle.js"></script>
-</th:block>
-</body>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{sequencingRuns/_details_base}"
+>
+  <head>
+    <link rel="stylesheet" th:href="@{/dist/css/run-files.bundle.css}" />
+  </head>
+  <body>
+    <main layout:fragment="main">
+      <div class="row">
+        <div class="col-md-12">
+          <table id="filesTable" class="table table-striped">
+            <thead>
+              <tr role="row">
+                <th th:text="#{sequencingruns.files.id}">ID</th>
+                <th th:text="#{sequencingruns.files.name}">Name</th>
+                <th th:text="#{sequencingruns.files.size}">Size</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <th:block th:each="seqObject : ${sequencingObjects}">
+                <tr
+                  class="file-row"
+                  role="row"
+                  th:each="file : ${seqObject.getFiles()}"
+                  th:id="${'file-row-' + file.identifier}"
+                >
+                  <td class="file-id" th:text="${file.identifier}">ID</td>
+                  <td>
+                    <a
+                      class="file-name btn btn-default btn-xs"
+                      th:href="@{/sequencingRuns/{runId}/sequenceFiles/{objId}/file/{id}/summary(runId=${run.getId()}, objId=${seqObject.getId()}, id=${file.getId()})}"
+                      href="#"
+                      th:text="${file.label}"
+                    ></a>
+                  </td>
+                  <td
+                    data:order="${file.getFileSize()}"
+                    th:text="${file.getFileSize()}"
+                  ></td>
+                  <td class="file-buttons">
+                    <div class="btn-toolbar pull-right">
+                      <button
+                        class="btn btn-primary btn-xs download-file"
+                        th:attr="data-file-id=${file.getId()},data-object-id=${seqObject.getId()}"
+                      >
+                        <span class="fa fa-fw fa-download"></span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <th:block layout:fragment="scripts">
+      <script src="/dist/js/run-files.bundle.js"></script>
+    </th:block>
+  </body>
 </html>
