@@ -399,10 +399,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		try {
 			return super.create(analysisSubmission);
 		} catch (final InvalidDataAccessApiUsageException e) {
+
+			//TODO: Remove after test
+			logger.debug("Caught exception", e);
 			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
 			//loop through the causes and see if we have a TransientPropertyValueException
 			Throwable t = e.getCause();
 			while (t != null) {
+				//TODO: Remove after test
+				logger.debug("Got cause", t);
 				if (t instanceof TransientPropertyValueException) {
 					final TransientPropertyValueException propertyException = (TransientPropertyValueException) t.getCause();
 					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
@@ -414,6 +419,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				t = t.getCause();
 			}
 
+			//TODO: Remove after test
+			logger.debug("Didn't get anything, throwing again", e);
 			//if the TransientPropertyValueException wasn't in the causes, throw the original exception
 			throw e;
 		}
