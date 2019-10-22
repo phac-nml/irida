@@ -3,10 +3,17 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{projects/_base}">
 <head>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
-	      href="/resources/bower_components/select2/select2.css"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
-	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" th:href="@{/dist/css/project-metadata-edit.bundle.css}">
+	<script th:inline="javascript">
+		window.PAGE = {
+			urls: {
+				taxonomy: 	/*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search'
+			},
+			i18n: {
+				organism: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism"
+			}
+		};
+	</script>
 </head>
 <body>
 
@@ -64,30 +71,7 @@
 	</section>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
-	        src="/resources/bower_components/select2/select2.min.js"></script>
-	<script>
-		$(function () {
-			$(".organism-select").select2({
-				placeholder       : /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
-				minimumInputLength: 2,
-				ajax              : { // instead of writing the function to execute the request we use Select2's convenient helper
-					url     : /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
-					dataType: 'json',
-					data    : function (term, page) {
-						return {
-							searchTerm: term // search term
-						};
-					},
-					results : function (data, page) { // parse the results into the format expected by Select2.
-						// since we are using custom formatting functions we do not need to alter remote JSON data
-						return {results: data};
-					}
-				}
-
-			});
-		});
-	</script>
+	<script th:src="@{/dist/js/project-metadata-edit.bundle.js}"></script>
 </th:block>
 </body>
 </html>

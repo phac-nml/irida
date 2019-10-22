@@ -1,11 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +37,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.google.common.net.HttpHeaders;
-
 /**
  * Controller to handle ajax requests for Analyses
  */
@@ -57,8 +52,9 @@ public class AnalysesAjaxController {
 
 	@Autowired
 	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
-			AnalysisTypesService analysisTypesService, ProjectService projectService, IridaWorkflowsService iridaWorkflowsService,
-			MessageSource messageSource, UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
+			AnalysisTypesService analysisTypesService, ProjectService projectService,
+			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.projectService = projectService;
@@ -77,7 +73,8 @@ public class AnalysesAjaxController {
 	public List<AnalysisStateModel> getAnalysisStates(Locale locale) {
 		List<AnalysisState> states = Arrays.asList(AnalysisState.values());
 		return states.stream()
-				.map(s -> new AnalysisStateModel(messageSource.getMessage("analysis.state." + s, new Object[] {}, locale), s.name()))
+				.map(s -> new AnalysisStateModel(
+						messageSource.getMessage("analysis.state." + s, new Object[] {}, locale), s.name()))
 				.collect(Collectors.toList());
 	}
 
@@ -101,18 +98,20 @@ public class AnalysesAjaxController {
 	 * Returns a list of analyses based on paging, sorting and filter requirements sent in {@link AnalysesListRequest}
 	 *
 	 * @param analysesListRequest description of the paging requirements.  Includes sorting, filtering, and paging
-	 * @param request {@link HttpServletResponse}
+	 * @param admin               {@link Boolean} whether this is from the admin page.
+	 * @param projectId           {@link Long} if the request is from a specific project
 	 * @param locale              of the current user
 	 * @return the current contents of the table based on the state requested
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
 	 */
 	@RequestMapping("/list")
 	public TableResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
-			HttpServletRequest request, Locale locale) throws IridaWorkflowNotFoundException {
+			@RequestParam(required = false, defaultValue = "false") Boolean admin, @RequestParam(required = false) Long projectId, Locale locale)
+			throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
-  		User user = (User) authentication.getPrincipal();
+		User user = (User) authentication.getPrincipal();
 
 		/*
 		Check to see if we are filtering by workflow type
@@ -148,28 +147,15 @@ public class AnalysesAjaxController {
 		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
 				analysesListRequest.getSort());
 
-		/*
-		If they are requesting to list all submissions make sure they are truly on the administrator page
-		which would throw a true error and redirect the user else where.
-		 */
-		String referer = request.getHeader(HttpHeaders.REFERER);
-
-		// Need to test to see if a project is request.
-		String urlPattern = "/projects/(\\d+)/analyses";
-		Pattern pattern = Pattern.compile(urlPattern);
-		Matcher m = pattern.matcher(referer);
-
-
-		if (referer.endsWith("all") && user.getSystemRole()
+		if (projectId != null) {
+			Project project = projectService.read(projectId);
+			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
+					stateFilters, workflowIds, project, pageRequest);
+		}else if (admin && user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			// User is an admin and requesting the listing of all pages.
 			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
 					workflowIds, pageRequest);
-		} else if (m.find()) {
-			Long projectID = Long.parseLong(m.group(1));
-			Project project = projectService.read(projectID);
-			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
-					stateFilters, workflowIds, project, pageRequest);
 		} else {
 			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null, stateFilters,
 					user, workflowIds, pageRequest);
@@ -189,7 +175,7 @@ public class AnalysesAjaxController {
 	/**
 	 * Delete a specific {@link AnalysisSubmission}
 	 *
-	 * @param ids for all {@link AnalysisSubmission}'s to delete
+	 * @param ids      for all {@link AnalysisSubmission}'s to delete
 	 * @param response {@link HttpServletResponse}
 	 */
 	@RequestMapping("/delete")
@@ -237,7 +223,7 @@ public class AnalysesAjaxController {
 	/**
 	 * Download the output files of an {@link AnalysisSubmission}
 	 *
-	 * @param id {@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param id       {@link Long} identifier for an {@link AnalysisSubmission}
 	 * @param response downloaded output files
 	 */
 	@RequestMapping("/download/{id}")
