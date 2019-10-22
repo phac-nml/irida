@@ -1064,7 +1064,7 @@
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.26</slf4j.version>
 		<guava.version>28.0-jre</guava.version>
-		<spring.version>5.0.15.RELEASE</spring.version>
+		<spring.version>5.1.10.RELEASE</spring.version>
 		<spring.security.version>5.0.13.RELEASE</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
