@@ -388,9 +388,11 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public AnalysisSubmission create(AnalysisSubmission analysisSubmission) throws ConstraintViolationException,
-			EntityExistsException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
+			throws ConstraintViolationException, EntityExistsException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
 
@@ -398,19 +400,21 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			return super.create(analysisSubmission);
 		} catch (final InvalidDataAccessApiUsageException e) {
 			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
-			if (e.getCause() != null) {
-				final Throwable primaryCause = e.getCause();
-				if (primaryCause.getCause() != null
-						&& primaryCause.getCause() instanceof TransientPropertyValueException) {
-					final TransientPropertyValueException propertyException = (TransientPropertyValueException) primaryCause
-							.getCause();
+			//loop through the causes and see if we have a TransientPropertyValueException
+			Throwable t = e.getCause();
+			while (t != null) {
+				if (t instanceof TransientPropertyValueException) {
+					final TransientPropertyValueException propertyException = (TransientPropertyValueException) t.getCause();
 					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
 						throw new UnsupportedOperationException(
 								"You must save the named properties *before* you use them in a submission.", e);
 					}
 				}
+
+				t = t.getCause();
 			}
 
+			//if the TransientPropertyValueException wasn't in the causes, throw the original exception
 			throw e;
 		}
 	}
