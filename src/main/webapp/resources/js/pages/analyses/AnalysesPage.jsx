@@ -7,7 +7,7 @@ import { getI18N } from "../../utilities/i18n-utilties";
 
 render(
   <PageWrapper title={getI18N("analyses.header")}>
-    <PagedTableProvider url={`${window.TL.BASE_URL}ajax/analyses/list`}>
+    <PagedTableProvider url={window.PAGE.url}>
       <AnalysesTable />
     </PagedTableProvider>
   </PageWrapper>,
