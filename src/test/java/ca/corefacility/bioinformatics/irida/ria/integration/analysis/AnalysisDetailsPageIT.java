@@ -110,7 +110,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.comparePageTitle("Delete Analysis"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "job-error");
-		assertFalse("Page title should not equal", page.comparePageTitle("Job Error"));
+		assertFalse("No job error information available alert hidden", page.jobErrorAlertVisible());
 	}
 
 	@Test
@@ -118,7 +118,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	public void testTabRoutingAnalysisError() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 7L, "job-error");
-		assertTrue("Page title should equal", page.comparePageTitle("Job Error"));
+
+		assertTrue("No job error information available alert visible", page.jobErrorAlertVisible());
 
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "output-files");
 		assertFalse("Page title should not equal", page.comparePageTitle("Output Files"));
