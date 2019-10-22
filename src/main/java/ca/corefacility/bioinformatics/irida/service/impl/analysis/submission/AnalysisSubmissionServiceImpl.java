@@ -409,7 +409,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				//TODO: Remove after test
 				logger.debug("Got cause", t);
 				if (t instanceof TransientPropertyValueException) {
-					final TransientPropertyValueException propertyException = (TransientPropertyValueException) t.getCause();
+					final TransientPropertyValueException propertyException = (TransientPropertyValueException) t;
 					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
 						throw new UnsupportedOperationException(
 								"You must save the named properties *before* you use them in a submission.", e);
