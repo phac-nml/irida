@@ -4,6 +4,7 @@ Changes
 19.09 to 20.01
 --------------
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
+* [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2 )
 
 19.05 to 19.09
 ---------------
