@@ -10,6 +10,7 @@
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin}]]*/ true,
+        url: /*[[@{/ajax/analyses/list?admin={isAdmin}(isAdmin=${all})}]]*/ "",
         i18n: {
           "analyses.header": /*[[#{analyses.header}]]*/ "_ANALYSES_",
           "analyses.id": /*[[#{analyses.id}]]*/ "_ID_",
