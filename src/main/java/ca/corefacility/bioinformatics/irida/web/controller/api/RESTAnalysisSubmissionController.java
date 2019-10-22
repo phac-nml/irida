@@ -30,7 +30,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -77,24 +76,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
-	}
-
-	@RequestMapping(method = RequestMethod.GET)
-	@Override
-	public ModelMap listAllResources() {
-		return super.listAllResources();
-	}
-
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
-	@Override
-	public ModelMap delete(@PathVariable Long identifier) {
-		return super.delete(identifier);
-	}
-
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
-	@Override
-	public ModelMap getResource(@PathVariable Long identifier) {
-		return super.getResource(identifier);
 	}
 
 	/**
