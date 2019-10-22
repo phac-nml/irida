@@ -9,6 +9,7 @@
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin or isOwner}]]*/ true,
+        url: /*[[@{/ajax/analyses/list?projectId={id}(id=${project.getId()})}]]*/ "",
         i18n: {
           "analyses.header": /*[[#{analyses.header}]]*/ "_ANALYSES_",
           "analyses.id": /*[[#{analyses.id}]]*/ "_ID_",
