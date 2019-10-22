@@ -1,5 +1,6 @@
 import $ from "jquery";
 import "jquery-validation";
+import "../../vendor/plugins/jquery/select2";
 import {
   sampleNameCharacterValidation,
   validationConfig

@@ -5,7 +5,7 @@
     <title th:text="#{project.settings.page.title.groups}">Title</title>
     <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = {
         i18n: {
           'remove': /*[[#{project.members.edit.remove}]]*/ '_Remove user from project_'
 
@@ -69,8 +69,8 @@
                     <div class="form-group">
                         <label class="control-label" for="add-member-membername"
                                th:text="#{project.members.add.group.name}">_Username_</label>
-                        <select id="add-member-membername" name="memberId" class="form-control input-full"
-                                th:placeholder="#{project.members.add.select-group}"></select>
+                        <input id="add-member-membername" name="memberId" class="form-control input-full"
+                                th:placeholder="#{project.members.add.select-group}"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="add-member-role" th:text="#{project.members.add.role}">_Group
