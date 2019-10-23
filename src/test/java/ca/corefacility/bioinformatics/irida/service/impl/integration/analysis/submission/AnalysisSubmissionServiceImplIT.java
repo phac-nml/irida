@@ -531,7 +531,7 @@ public class AnalysisSubmissionServiceImplIT {
 		try{
 			analysisSubmissionService.create(submission);
 		}catch(Exception e){
-			System.out.println("Caught exception")
+			System.out.println("Caught exception");
 			e.printStackTrace();
 			throw e;
 		}
