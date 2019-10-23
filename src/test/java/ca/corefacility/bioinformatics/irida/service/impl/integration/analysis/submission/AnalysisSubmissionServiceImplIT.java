@@ -528,7 +528,13 @@ public class AnalysisSubmissionServiceImplIT {
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
 				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
-		analysisSubmissionService.create(submission);
+		try{
+			analysisSubmissionService.create(submission);
+		}catch(Exception e){
+			System.out.println("Caught exception")
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Test
