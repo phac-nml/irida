@@ -8,15 +8,15 @@
  */
 import React, { useContext } from "react";
 import { Checkbox, List, Select, Typography } from "antd";
-import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
-import { SPACE_MD } from "../../../styles/spacing";
+import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
+import { getI18N } from "../../../../utilities/i18n-utilties";
+import { AnalysisContext, isAdmin } from "../../../../contexts/AnalysisContext";
+import { SPACE_MD } from "../../../../styles/spacing";
 
 import {
   formatDate,
   getHumanizedDuration
-} from "../../../utilities/date-utilities";
+} from "../../../../utilities/date-utilities";
 
 const { Title, Paragraph, Text } = Typography;
 

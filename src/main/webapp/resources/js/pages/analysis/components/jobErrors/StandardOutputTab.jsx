@@ -2,7 +2,7 @@ import React from "react";
 import { PassTabs } from "./PassTabs";
 import { StandardOutput } from "./StandardOutput";
 import { Col, Typography } from "antd";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilties";
 
 const { Title } = Typography;
 

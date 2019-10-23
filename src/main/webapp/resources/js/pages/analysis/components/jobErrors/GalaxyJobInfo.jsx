@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, List, Typography } from "antd";
-import { Monospace } from "../../../components/typography";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import { formatDate } from "../../../utilities/date-utilities";
+import { Monospace } from "../../../../components/typography";
+import { getI18N } from "../../../../utilities/i18n-utilties";
+import { formatDate } from "../../../../utilities/date-utilities";
 
 const { Text } = Typography;
 

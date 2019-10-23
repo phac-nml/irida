@@ -1,5 +1,5 @@
 import React from "react";
-import { CodeBlock } from "../../../components/typography";
+import { CodeBlock } from "../../../../components/typography";
 
 export function GalaxyParameters({ galaxyJobErrors, currIndex }) {
   // Returns the galaxy parameters for the given index from the jobErrors object

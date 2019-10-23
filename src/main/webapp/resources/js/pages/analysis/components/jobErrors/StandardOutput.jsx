@@ -1,5 +1,5 @@
 import React from "react";
-import { CodeBlock } from "../../../components/typography";
+import { CodeBlock } from "../../../../components/typography";
 
 export function StandardOutput({ galaxyJobErrors, currIndex }) {
   // Returns the standard output for the given index from the jobErrors object

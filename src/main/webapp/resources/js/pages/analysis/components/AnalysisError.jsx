@@ -14,10 +14,18 @@ import { getJobErrors } from "../../../apis/analysis/analysis";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import styled from "styled-components";
 
-const GalaxyJobInfoTab = React.lazy(() => import("./GalaxyJobInfoTab"));
-const GalaxyParametersTab = React.lazy(() => import("./GalaxyParametersTab"));
-const StandardErrorTab = React.lazy(() => import("./StandardErrorTab"));
-const StandardOutputTab = React.lazy(() => import("./StandardOutputTab"));
+const GalaxyJobInfoTab = React.lazy(() =>
+  import("./jobErrors/GalaxyJobInfoTab")
+);
+const GalaxyParametersTab = React.lazy(() =>
+  import("./jobErrors/GalaxyParametersTab")
+);
+const StandardErrorTab = React.lazy(() =>
+  import("./jobErrors/StandardErrorTab")
+);
+const StandardOutputTab = React.lazy(() =>
+  import("./jobErrors/StandardOutputTab")
+);
 
 const TabPane = Tabs.TabPane;
 

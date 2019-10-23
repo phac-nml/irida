@@ -1,33 +1,28 @@
 import React from "react";
 import { PassTabs } from "./PassTabs";
-import { GalaxyJobInfo } from "./GalaxyJobInfo";
+import { GalaxyParameters } from "./GalaxyParameters";
 import { Col, Typography } from "antd";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilties";
 
 const { Title } = Typography;
 
-export default function GalaxyJobInfoTab({
+export default function GalaxyParametersTab({
   currActiveKey,
   updateActiveKey,
-  galaxyJobErrors,
-  galaxyUrl
+  galaxyJobErrors
 }) {
   return (
     <Col span={12}>
-      <Title level={3}>{getI18N("AnalysisError.galaxyJobInfo")}</Title>
+      <Title level={3}>{getI18N("AnalysisError.galaxyParameters")}</Title>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
-          tabName="job-error-info"
+          tabName="galaxy-parameters"
           currActiveKey={currActiveKey}
           updateActiveKey={updateActiveKey}
           galaxyJobErrors={galaxyJobErrors}
-          galaxyUrl={galaxyUrl}
         />
       ) : (
-        <GalaxyJobInfo
-          galaxyJobErrors={galaxyJobErrors}
-          galaxyUrl={galaxyUrl}
-        />
+        <GalaxyParameters galaxyJobErrors={galaxyJobErrors} />
       )}
     </Col>
   );
