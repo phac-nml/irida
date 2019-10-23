@@ -7,7 +7,13 @@ import { StandardOutput } from "./StandardOutput";
 
 const TabPane = Tabs.TabPane;
 
-export function PassTabs(props) {
+export function PassTabs({
+  tabName,
+  currActiveKey,
+  updateActiveKey,
+  galaxyJobErrors,
+  galaxyUrl
+}) {
   /* This function will display 'Pass' tabs within the tabpanes if there is
    * more than one error is returned for an analysis.
    */
@@ -17,10 +23,10 @@ export function PassTabs(props) {
     return (
       <Tabs
         animated={false}
-        onChange={key => props.value.updateActiveKey(key)}
-        activeKey={`${tabName}-pass-${props.value.currActiveKey}`}
+        onChange={key => updateActiveKey(key)}
+        activeKey={`${tabName}-pass-${currActiveKey}`}
       >
-        {Object.keys(props.value.galaxyJobErrors).map(key => {
+        {Object.keys(galaxyJobErrors).map(key => {
           const index = parseInt(key);
           if (tabName === "galaxy-parameters") {
             return (
@@ -29,10 +35,8 @@ export function PassTabs(props) {
                 key={`${tabName}-pass-${index + 1}`}
               >
                 <GalaxyParameters
-                  value={{
-                    galaxyJobErrors: props.value.galaxyJobErrors,
-                    currIndex: index
-                  }}
+                  galaxyJobErrors={galaxyJobErrors}
+                  currIndex={index}
                 />
               </TabPane>
             );
@@ -43,11 +47,9 @@ export function PassTabs(props) {
                 key={`${tabName}-pass-${index + 1}`}
               >
                 <GalaxyJobInfo
-                  value={{
-                    galaxyJobErrors: props.value.galaxyJobErrors,
-                    currIndex: index,
-                    galaxyUrl: props.value.galaxyUrl
-                  }}
+                  galaxyJobErrors={galaxyJobErrors}
+                  galaxyUrl={galaxyUrl}
+                  currIndex={index}
                 />
               </TabPane>
             );
@@ -58,10 +60,8 @@ export function PassTabs(props) {
                 key={`${tabName}-pass-${index + 1}`}
               >
                 <StandardError
-                  value={{
-                    galaxyJobErrors: props.value.galaxyJobErrors,
-                    currIndex: index
-                  }}
+                  galaxyJobErrors={galaxyJobErrors}
+                  currIndex={index}
                 />
               </TabPane>
             );
@@ -72,10 +72,8 @@ export function PassTabs(props) {
                 key={`${tabName}-pass-${index + 1}`}
               >
                 <StandardOutput
-                  value={{
-                    galaxyJobErrors: props.value.galaxyJobErrors,
-                    currIndex: index
-                  }}
+                  galaxyJobErrors={galaxyJobErrors}
+                  currIndex={index}
                 />
               </TabPane>
             );
@@ -85,5 +83,5 @@ export function PassTabs(props) {
     );
   }
 
-  return <>{showPassTabs(props.value.tabName)}</>;
+  return <>{showPassTabs(tabName)}</>;
 }

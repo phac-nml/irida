@@ -6,10 +6,10 @@ import { formatDate } from "../../../utilities/date-utilities";
 
 const { Text } = Typography;
 
-export function GalaxyJobInfo(props) {
+export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
   // Returns the galaxy job details for the given index
   function galaxyJobDetails(index) {
-    let jobError = props.value.galaxyJobErrors[index];
+    let jobError = galaxyJobErrors[index];
     return [
       {
         title: getI18N("AnalysisError.createdDate"),
@@ -61,7 +61,7 @@ export function GalaxyJobInfo(props) {
           <Button
             type="link"
             style={{ paddingLeft: 0 }}
-            href={`${props.value.galaxyUrl}/histories/view?id=${jobError.historyId}`}
+            href={`${galaxyUrl}/histories/view?id=${jobError.historyId}`}
             target="_blank"
           >
             <Monospace>{jobError.historyId}</Monospace>
@@ -99,5 +99,5 @@ export function GalaxyJobInfo(props) {
     );
   }
 
-  return <>{getGalaxyJobInfo(props.value.currIndex)}</>;
+  return <>{getGalaxyJobInfo(currIndex)}</>;
 }
