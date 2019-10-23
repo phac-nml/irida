@@ -17,6 +17,7 @@ Changes
 * [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2` as bower dependencies.
 * [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` as bower dependencies.
 
 19.05 to 19.09
 ---------------
