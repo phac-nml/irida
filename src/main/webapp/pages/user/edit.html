@@ -10,7 +10,7 @@
 <main layout:fragment="page">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <form role="form" action="/users/1/edit"
+            <form role="form" autocomplete="off" action="/users/1/edit"
                   th:action="@{/users/{id}/edit(id=${user.getId()})}" method="post">
                 <section class="panel panel-default">
                     <div class="panel-heading">
@@ -49,6 +49,7 @@
                                 _Email Error_
                             </div>
                             <input id="email" name="email" type="email"
+                                   autocomplete=""
                                    class="form-control input-full"
                                    th:placeholder="${user.email}" placeholder="Email"
                                    data:msg-remote="#{user.edit.email.taken}"/>
