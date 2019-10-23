@@ -55,12 +55,14 @@ export default function AnalysisError(props) {
               tab={getI18N("AnalysisError.galaxyJobInfo")}
               key="job-error-info"
             >
-              <GalaxyJobInfoTab
-                currActiveKey={currActiveKey}
-                updateActiveKey={updateActiveKey}
-                galaxyJobErrors={jobErrors.galaxyJobErrors}
-                galaxyUrl={jobErrors.galaxyUrl}
-              />
+              <Suspense fallback={<Spin />}>
+                <GalaxyJobInfoTab
+                  currActiveKey={currActiveKey}
+                  updateActiveKey={updateActiveKey}
+                  galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  galaxyUrl={jobErrors.galaxyUrl}
+                />
+              </Suspense>
             </TabPane>
 
             {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
@@ -69,11 +71,13 @@ export default function AnalysisError(props) {
                 tab={getI18N("AnalysisError.galaxyParameters")}
                 key="galaxy-parameters"
               >
-                <GalaxyParametersTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                />
+                <Suspense fallback={<Spin />}>
+                  <GalaxyParametersTab
+                    currActiveKey={currActiveKey}
+                    updateActiveKey={updateActiveKey}
+                    galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  />
+                </Suspense>
               </TabPane>
             ) : null}
 
@@ -83,11 +87,13 @@ export default function AnalysisError(props) {
                 tab={getI18N("AnalysisError.standardError")}
                 key="standard-error"
               >
-                <StandardErrorTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                />
+                <Suspense fallback={<Spin />}>
+                  <StandardErrorTab
+                    currActiveKey={currActiveKey}
+                    updateActiveKey={updateActiveKey}
+                    galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  />
+                </Suspense>
               </TabPane>
             ) : null}
 

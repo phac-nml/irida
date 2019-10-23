@@ -1,4 +1,5 @@
 import angular from "angular";
+import "angular-ui-bootstrap";
 import "./modules/cart/irida.cart";
 import "./pages/search/irida.search";
 // Import css
