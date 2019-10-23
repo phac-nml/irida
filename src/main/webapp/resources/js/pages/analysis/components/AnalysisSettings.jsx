@@ -15,7 +15,7 @@ import { Col, Spin, Tabs } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import styled from "styled-components";
+import { SideTabs } from "../../../components/tabs/SideTabs";
 
 const AnalysisDetails = React.lazy(() => import("./AnalysisDetails"));
 const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
@@ -27,14 +27,6 @@ export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const StyledTabs = styled(Tabs)`
-    .ant-tabs-tab {
-      @media only screen and (min-width: 800px) {
-        width: 200px;
-      }
-    }
-  `;
-
   /*
    * The following renders the analysis details, and tabs
    * for Samples, Share Results, and Delete Analysis which
@@ -42,15 +34,13 @@ export default function AnalysisSettings(props) {
    * tab is clicked
    */
   return (
-    <StyledTabs
-      type="card"
+    <SideTabs
       activeKey={
         props.defaultTabKey === "" || props.defaultTabKey === "settings"
           ? "details"
           : props.defaultTabKey
       }
       onChange={props.updateNav}
-      tabPosition="left"
     >
       <TabPane
         tab={getI18N("AnalysisDetails.details")}
@@ -104,6 +94,6 @@ export default function AnalysisSettings(props) {
             </TabPane>
           ]
         : null}
-    </StyledTabs>
+    </SideTabs>
   );
 }

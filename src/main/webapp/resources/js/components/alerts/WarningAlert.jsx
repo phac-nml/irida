@@ -2,14 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Alert } from "antd";
 
-/**
- * Component to render an [antd Alert]{@link https://ant.design/components/alert/}
- * specifically for displaying information with a consistent icon.
- */
-export function InfoAlert(props) {
+export function WarningAlert(props) {
   return (
     <Alert
-      type="info"
+      type="warning"
       showIcon
       message={props.message}
       description={props.description}
@@ -17,7 +13,7 @@ export function InfoAlert(props) {
   );
 }
 
-InfoAlert.propTypes = {
+WarningAlert.propTypes = {
   message: PropTypes.string.isRequired,
   description: PropTypes.string
 };
