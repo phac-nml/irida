@@ -371,8 +371,7 @@
     <div th:replace="templates/_file.utils :: upload-error"></div>
     <th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
               th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
-    <script th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
-    <script th:src="@{/resources/js/pages/pipelines/pipeline.launch.js}"></script>
+    <script th:src="@{/dist/js/pipeline-launch.bundle.js}"></script>
 </th:block>
 </body>
 </html>
