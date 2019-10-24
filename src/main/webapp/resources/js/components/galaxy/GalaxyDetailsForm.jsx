@@ -10,13 +10,15 @@ import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
  * @returns {*}
  */
 export function GalaxyDetailsForm() {
-  const [{ email, validEmail, makepairedcollection }, dispatch] = useStateValue();
+  const [
+    { email, validEmail, makepairedcollection },
+    dispatch
+  ] = useStateValue();
 
   const emailModified = e => dispatch(actions.setEmail(e.target.value));
 
   const makePairedCollectionModified = e =>
     dispatch(actions.setMakePairedCollection(e.target.checked));
-
 
 
   const galaxyUrl = window
