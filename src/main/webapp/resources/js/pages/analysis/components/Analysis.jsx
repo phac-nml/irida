@@ -10,7 +10,7 @@
  */
 
 import React, { Suspense, useContext, useState } from "react";
-import { Icon, Spin, Tabs, Typography } from "antd";
+import { Icon, Spin, Tabs } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
@@ -18,8 +18,7 @@ import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContex
 import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { SPACE_MD, SPACE_SM } from "../../../styles/spacing";
-import styled from "styled-components";
+import { SPACE_SM } from "../../../styles/spacing";
 import { navigate } from "@reach/router";
 import { green6, grey6, red6 } from "../../../styles/colors";
 
@@ -34,7 +33,6 @@ const AnalysisSettings = React.lazy(() => import("./AnalysisSettings"));
 const AnalysisSistr = React.lazy(() => import("./AnalysisSistr"));
 
 const TabPane = Tabs.TabPane;
-const { Title } = Typography;
 
 // Built in Analysis Types
 const analysisTypesWithAdditionalPage = [
@@ -45,17 +43,15 @@ const analysisTypesWithAdditionalPage = [
 ];
 
 const analysisSettingsTabKeys = ["details", "samples", "share", "delete"];
-
-const Wrapper = styled.div`
-  margin-left: ${SPACE_MD};
-  margin-right: ${SPACE_MD};
-  margin-top: ${SPACE_MD};
-`;
+const analysisErrorTabKeys = [
+  "job-error-info",
+  "galaxy-parameters",
+  "standard-error",
+  "standard-out"
+];
 
 export default function Analysis() {
-  const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
-    AnalysisContext
-  );
+  const { analysisContext } = useContext(AnalysisContext);
 
   const [defaultTabKey, setDefaultTabKey] = useState(
     window.location.pathname.split("/").pop()
@@ -105,6 +101,8 @@ export default function Analysis() {
     } else {
       if (analysisSettingsTabKeys.indexOf(defaultTabKey) > -1) {
         return "settings";
+      } else if (analysisErrorTabKeys.indexOf(defaultTabKey) > -1) {
+        return "job-error";
       } else {
         return defaultTabKey;
       }
@@ -209,7 +207,10 @@ export default function Analysis() {
             className="t-analysis-tab-job-error"
           >
             <Suspense fallback={<Spin />}>
-              <AnalysisError />
+              <AnalysisError
+                updateNav={updateNav}
+                defaultTabKey={defaultTabKey}
+              />
             </Suspense>
           </TabPane>
         ) : null}

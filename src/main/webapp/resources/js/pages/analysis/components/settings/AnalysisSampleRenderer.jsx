@@ -4,10 +4,10 @@
  */
 
 import React, { useContext, useState, useLayoutEffect } from "react";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
+import { getI18N } from "../../../../utilities/i18n-utilties";
+import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { Alert, Avatar, Icon, Input, List, Spin } from "antd";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD } from "../../../../styles/spacing";
 
 const { Search } = Input;
 
@@ -20,7 +20,6 @@ export function AnalysisSampleRenderer() {
   const {
     analysisSamplesContext,
     sampleDisplayHeight,
-    loading,
     getAnalysisInputSamples
   } = useContext(AnalysisSamplesContext);
 

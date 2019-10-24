@@ -17,10 +17,10 @@ import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext
 import { getI18N } from "../../../utilities/i18n-utilties";
 import styled from "styled-components";
 
-const AnalysisDetails = React.lazy(() => import("./AnalysisDetails"));
-const AnalysisSamples = React.lazy(() => import("./AnalysisSamples"));
-const AnalysisShare = React.lazy(() => import("./AnalysisShare"));
-const AnalysisDelete = React.lazy(() => import("./AnalysisDelete"));
+const AnalysisDetails = React.lazy(() => import("./settings/AnalysisDetails"));
+const AnalysisSamples = React.lazy(() => import("./settings/AnalysisSamples"));
+const AnalysisShare = React.lazy(() => import("./settings/AnalysisShare"));
+const AnalysisDelete = React.lazy(() => import("./settings/AnalysisDelete"));
 const TabPane = Tabs.TabPane;
 
 export default function AnalysisSettings(props) {

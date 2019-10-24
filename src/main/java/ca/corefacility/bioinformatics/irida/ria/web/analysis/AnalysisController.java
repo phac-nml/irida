@@ -21,7 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -105,6 +106,7 @@ public class AnalysisController {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+	private ExecutionManagerConfig configFile;
 	private EmailController emailController;
 
 	@Autowired
@@ -114,7 +116,8 @@ public class AnalysisController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysesListingService analysesListingService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, EmailController emailController) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, EmailController emailController, ExecutionManagerConfig configFile) {
+
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
@@ -127,6 +130,7 @@ public class AnalysisController {
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.configFile = configFile;
 		this.emailController = emailController;
 	}
 
@@ -643,22 +647,33 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `jobErrors`
+	 * Get a dto with list of {@link JobError} for an {@link AnalysisSubmission} under key `galaxyJobErrors`
+	 * and the `galaxyUrl` for the galaxy instance
+	 *
 	 * @param submissionId {@link AnalysisSubmission} id
-	 * @return map with list of {@link JobError} under key `jobErrors`
+	 * @return dto with galaxyJobErrors and galaxyUrl
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/job-errors", method = RequestMethod.GET)
 	@ResponseBody
-	public ImmutableMap<String, Object> getJobErrors(@PathVariable Long submissionId) {
+	public AnalysisJobError ajaxGetJobErrors(@PathVariable Long submissionId) {
 		try {
-			List<JobError> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
-			if (jobErrors != null && !jobErrors.isEmpty()) {
-				return ImmutableMap.of("jobErrors", jobErrors);
+			List<JobError> galaxyJobErrors = analysisSubmissionService.getJobErrors(submissionId);
+			String galaxyUrl = "";
+			try {
+				galaxyUrl = configFile.galaxyInstance()
+						.getGalaxyUrl();
+			} catch (ExecutionManagerConfigurationException e) {
+				logger.error("Error " + e);
+			}
+			if (galaxyJobErrors != null && !galaxyJobErrors.isEmpty()) {
+				// Return a dto with both galaxyJobErrors and galaxyUrl
+				return new AnalysisJobError(galaxyJobErrors, galaxyUrl);
 			}
 		} catch (ExecutionManagerException e) {
 			logger.error("Error " + e);
 		}
-		return ImmutableMap.of("error", "No JobErrors for AnalysisSubmission [id=" + submissionId + "]");
+		// Return a dto with both galaxyJobErrors and galaxyUrl set to null
+		return new AnalysisJobError();
 	}
 
 	/**

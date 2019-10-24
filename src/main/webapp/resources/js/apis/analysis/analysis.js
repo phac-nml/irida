@@ -5,9 +5,8 @@ import axios from "axios";
 
 // Ajax URL for Analysis
 const URL = `${window.TL.BASE_URL}analysis/ajax/`;
-
-// Ajax URL for Analyses
 const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
+
 /*
  * Get all the data required for the analysis -> details page.
  * @param {number} submissionId Submission ID
@@ -120,6 +119,13 @@ export async function saveToRelatedSamples(submissionId) {
   } catch (error) {
     return { text: error.response.data.message, type: "error" };
   }
+}
+
+export async function getJobErrors(submissionId) {
+  const res = await axios.get(
+    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/job-errors`
+  );
+  return res.data;
 }
 
 /**

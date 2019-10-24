@@ -8,17 +8,17 @@
  */
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, Button, Checkbox, List, Typography } from "antd";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { AnalysisShareContext } from "../../../contexts/AnalysisShareContext";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import { showNotification } from "../../../modules/notifications";
-import { SPACE_MD } from "../../../styles/spacing";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
+import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
+import { AnalysisShareContext } from "../../../../contexts/AnalysisShareContext";
+import { getI18N } from "../../../../utilities/i18n-utilties";
+import { showNotification } from "../../../../modules/notifications";
+import { SPACE_MD } from "../../../../styles/spacing";
 
 import {
   getSharedProjects,
   updateSharedProject
-} from "../../../apis/analysis/analysis";
+} from "../../../../apis/analysis/analysis";
 
 const { Title } = Typography;
 
