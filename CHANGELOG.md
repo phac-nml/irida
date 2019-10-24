@@ -15,11 +15,10 @@ Changes
 * [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
 * [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
 * [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
-* [UI/Developer]: Removed `marked`, `angular-marked`, `select2` as bower dependencies.
 * [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
-* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` as bower dependencies.
 * [UI]: Fixed issue where user role would reset if server validation failed on user create page.
 * [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 
 19.05 to 19.09

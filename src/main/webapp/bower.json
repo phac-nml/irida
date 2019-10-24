@@ -8,8 +8,7 @@
   ],
   "dependencies": {
     "bower": "*",
-    "angular-ui-router": "0.2.13",
-    "ng-file-upload": "5.0.8"
+    "angular-ui-router": "0.2.13"
   },
   "devDependencies": {},
   "resolutions": {
