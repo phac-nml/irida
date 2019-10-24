@@ -19,6 +19,7 @@ Changes
 * [UI]: Fixed issue where user role would reset if server validation failed on user create page.
 * [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
+* [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 
 19.05 to 19.09
 ---------------
