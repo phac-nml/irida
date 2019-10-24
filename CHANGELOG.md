@@ -3,6 +3,7 @@ Changes
 
 19.09 to 20.01
 --------------
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
 * [Developer]: Upgraded development Java version to Java 11 (LTS).
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
 * [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
@@ -20,6 +21,7 @@ Changes
 * [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
+* [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
 
 19.05 to 19.09
 ---------------
