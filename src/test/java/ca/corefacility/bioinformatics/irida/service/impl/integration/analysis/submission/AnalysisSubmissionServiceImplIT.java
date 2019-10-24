@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -520,21 +521,19 @@ public class AnalysisSubmissionServiceImplIT {
 		analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expected = InvalidDataAccessApiUsageException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithUnsavedNamedParameters() {
 		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
 		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
-		try{
-			analysisSubmissionService.create(submission);
-		}catch(Exception e){
-			System.out.println("Caught exception");
-			e.printStackTrace();
-			throw e;
-		}
+				.inputFiles(Sets.newHashSet(sequencingObject))
+				.withNamedParameters(params)
+				.build();
+
+		analysisSubmissionService.create(submission);
+
 	}
 
 	@Test
