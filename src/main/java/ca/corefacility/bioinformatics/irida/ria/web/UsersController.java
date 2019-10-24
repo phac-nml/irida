@@ -441,6 +441,7 @@ public class UsersController {
 			model.addAttribute("given_lastName", user.getLastName());
 			model.addAttribute("given_email", user.getEmail());
 			model.addAttribute("given_phoneNumber", user.getPhoneNumber());
+			model.addAttribute("given_role", user.getSystemRole());
 			model.addAttribute("given_requireActivation", generateActivation);
 
 			returnView = createUserPage(model);

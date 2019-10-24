@@ -4,11 +4,10 @@
  */
 
 import React, { useContext } from "react";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
-import { SPACE_LG } from "../../../styles/spacing";
-import { FONT_WEIGHT_DEFAULT } from "../../../styles/fonts";
-import { Row, Col, Icon, Button, Typography } from "antd";
+import { getI18N } from "../../../../utilities/i18n-utilties";
+import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
+import { SPACE_LG } from "../../../../styles/spacing";
+import { Row, Icon, Button, Typography } from "antd";
 
 const { Title } = Typography;
 

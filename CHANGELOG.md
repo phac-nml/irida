@@ -18,6 +18,8 @@ Changes
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2` as bower dependencies.
 * [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` as bower dependencies.
+* [UI]: Fixed issue where user role would reset if server validation failed on user create page.
+* [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
 
 19.05 to 19.09
 ---------------

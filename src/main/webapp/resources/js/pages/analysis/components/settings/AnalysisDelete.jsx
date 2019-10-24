@@ -7,12 +7,12 @@
  * all the elements required by the component
  */
 import React, { useContext } from "react";
-import { Button, Checkbox, Alert, Popconfirm, Typography } from "antd";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { showNotification } from "../../../modules/notifications";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import { deleteAnalysis } from "../../../apis/analysis/analysis";
-import { WarningAlert } from "../../../components/alerts/WarningAlert";
+import { Button, Popconfirm, Typography } from "antd";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
+import { showNotification } from "../../../../modules/notifications";
+import { getI18N } from "../../../../utilities/i18n-utilties";
+import { deleteAnalysis } from "../../../../apis/analysis/analysis";
+import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 
 const { Title } = Typography;
 

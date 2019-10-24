@@ -15,10 +15,18 @@ import { getI18N } from "../../../utilities/i18n-utilties";
 import { SideTabs } from "../../../components/tabs/SideTabs";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 
-const GalaxyJobInfoTab = React.lazy(() => import("./GalaxyJobInfoTab"));
-const GalaxyParametersTab = React.lazy(() => import("./GalaxyParametersTab"));
-const StandardErrorTab = React.lazy(() => import("./StandardErrorTab"));
-const StandardOutputTab = React.lazy(() => import("./StandardOutputTab"));
+const GalaxyJobInfoTab = React.lazy(() =>
+  import("./jobErrors/GalaxyJobInfoTab")
+);
+const GalaxyParametersTab = React.lazy(() =>
+  import("./jobErrors/GalaxyParametersTab")
+);
+const StandardErrorTab = React.lazy(() =>
+  import("./jobErrors/StandardErrorTab")
+);
+const StandardOutputTab = React.lazy(() =>
+  import("./jobErrors/StandardOutputTab")
+);
 
 const TabPane = Tabs.TabPane;
 
@@ -34,95 +42,89 @@ export default function AnalysisError(props) {
     });
   }, []);
 
-  // Sets the current activekey for the 'Pass' tabs
+  // Sets the current active key for the 'Pass' tabs
   function updateActiveKey(key) {
     setCurrActiveKey(key.charAt(key.length - 1));
   }
 
-  return (
-    <>
-      {jobErrors !== null ? (
-        jobErrors.galaxyJobErrors !== null ? (
-          <SideTabs
-            activeKey={
-              props.defaultTabKey === "" || props.defaultTabKey === "job-error"
-                ? "job-error-info"
-                : props.defaultTabKey
-            }
-            onChange={props.updateNav}
-          >
-            <TabPane
-              tab={getI18N("AnalysisError.galaxyJobInfo")}
-              key="job-error-info"
-            >
-              <Suspense fallback={<Spin />}>
-                <GalaxyJobInfoTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  galaxyUrl={jobErrors.galaxyUrl}
-                />
-              </Suspense>
-            </TabPane>
-
-            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
-              .parameters ? (
-              <TabPane
-                tab={getI18N("AnalysisError.galaxyParameters")}
-                key="galaxy-parameters"
-              >
-                <Suspense fallback={<Spin />}>
-                  <GalaxyParametersTab
-                    currActiveKey={currActiveKey}
-                    updateActiveKey={updateActiveKey}
-                    galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  />
-                </Suspense>
-              </TabPane>
-            ) : null}
-
-            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
-              .standardError ? (
-              <TabPane
-                tab={getI18N("AnalysisError.standardError")}
-                key="standard-error"
-              >
-                <Suspense fallback={<Spin />}>
-                  <StandardErrorTab
-                    currActiveKey={currActiveKey}
-                    updateActiveKey={updateActiveKey}
-                    galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  />
-                </Suspense>
-              </TabPane>
-            ) : null}
-
-            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
-              .standardOutput ? (
-              <TabPane
-                tab={getI18N("AnalysisError.standardOutput")}
-                key="standard-out"
-              >
-                <Suspense fallback={<Spin />}>
-                  <StandardOutputTab
-                    currActiveKey={currActiveKey}
-                    updateActiveKey={updateActiveKey}
-                    galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  />
-                </Suspense>
-              </TabPane>
-            ) : null}
-          </SideTabs>
-        ) : (
-          <div style={{ display: "flex" }}>
-            <WarningAlert
-              message={getI18N("AnalysisError.noJobInfoAvailable")}
+  return jobErrors !== null ? (
+    jobErrors.galaxyJobErrors !== null ? (
+      <SideTabs
+        activeKey={
+          props.defaultTabKey === "" || props.defaultTabKey === "job-error"
+            ? "job-error-info"
+            : props.defaultTabKey
+        }
+        onChange={props.updateNav}
+      >
+        <TabPane
+          tab={getI18N("AnalysisError.galaxyJobInfo")}
+          key="job-error-info"
+        >
+          <Suspense fallback={<Spin />}>
+            <GalaxyJobInfoTab
+              currActiveKey={currActiveKey}
+              updateActiveKey={updateActiveKey}
+              galaxyJobErrors={jobErrors.galaxyJobErrors}
+              galaxyUrl={jobErrors.galaxyUrl}
             />
-          </div>
-        )
-      ) : (
-        <Spin />
-      )}
-    </>
+          </Suspense>
+        </TabPane>
+
+        {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
+          .parameters ? (
+          <TabPane
+            tab={getI18N("AnalysisError.galaxyParameters")}
+            key="galaxy-parameters"
+          >
+            <Suspense fallback={<Spin />}>
+              <GalaxyParametersTab
+                currActiveKey={currActiveKey}
+                updateActiveKey={updateActiveKey}
+                galaxyJobErrors={jobErrors.galaxyJobErrors}
+              />
+            </Suspense>
+          </TabPane>
+        ) : null}
+
+        {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
+          .standardError ? (
+          <TabPane
+            tab={getI18N("AnalysisError.standardError")}
+            key="standard-error"
+          >
+            <Suspense fallback={<Spin />}>
+              <StandardErrorTab
+                currActiveKey={currActiveKey}
+                updateActiveKey={updateActiveKey}
+                galaxyJobErrors={jobErrors.galaxyJobErrors}
+              />
+            </Suspense>
+          </TabPane>
+        ) : null}
+
+        {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
+          .standardOutput ? (
+          <TabPane
+            tab={getI18N("AnalysisError.standardOutput")}
+            key="standard-out"
+          >
+            <Suspense fallback={<Spin />}>
+              <StandardOutputTab
+                currActiveKey={currActiveKey}
+                updateActiveKey={updateActiveKey}
+                galaxyJobErrors={jobErrors.galaxyJobErrors}
+              />
+            </Suspense>
+          </TabPane>
+        ) : null}
+      </SideTabs>
+    ) : (
+      <div style={{ display: "flex" }}>
+        <WarningAlert message={getI18N("AnalysisError.noJobInfoAvailable")} />
+      </div>
+    )
+  ) : (
+    <Spin />
   );
 }
