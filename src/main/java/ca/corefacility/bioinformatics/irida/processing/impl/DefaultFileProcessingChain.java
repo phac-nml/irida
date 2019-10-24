@@ -64,7 +64,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// initially saved to the database, but not necessarily before the
 		// transaction has completed and closed, so we need to block until the
 		// file has been persisted in the database.
-		while (!sequencingObjectRepository.exists(sequencingObjectId)) {
+		while (!sequencingObjectRepository.existsById(sequencingObjectId)) {
 			if (waiting > timeout) {
 				throw new FileProcessorTimeoutException(
 						"Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
@@ -86,7 +86,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					fileProcessor.process(settledSequencingObject);
 				}
 			} catch (FileProcessorException e) {
-				SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+				SequencingObject sequencingObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
 
 				qcRepository.save(new FileProcessorErrorQCEntry(sequencingObject));
 
@@ -108,7 +108,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			}
 		}
 
-		SequencingObject statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
+		SequencingObject statusObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
 
 		statusObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
 		sequencingObjectRepository.save(statusObject);
@@ -174,7 +174,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			} catch (InterruptedException e) {
 			}
 
-			sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+			sequencingObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
 
 			if(sequencingObject != null) {
 				Set<SequenceFile> files = sequencingObject.getFiles();

@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public final class UserGroupJoin implements Join<User, UserGroup> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

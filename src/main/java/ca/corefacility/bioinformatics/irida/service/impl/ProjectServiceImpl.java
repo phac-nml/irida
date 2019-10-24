@@ -731,7 +731,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Project created = create(project);
 
 		sampleIds.forEach(sid -> {
-			Sample s = sampleRepository.findOne(sid);
+			Sample s = sampleRepository.findById(sid).orElse(null);
 			addSampleToProject(project, s, owner);
 		});
 

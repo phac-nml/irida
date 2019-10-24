@@ -46,7 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Audited
 public class NcbiExportSubmission implements MutableIridaThing {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne

@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 public class SequenceConcatenation implements IridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@CreatedDate

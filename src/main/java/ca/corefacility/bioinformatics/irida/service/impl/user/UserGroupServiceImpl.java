@@ -240,7 +240,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
 			throws UserGroupWithoutOwnerException {
-		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
+		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup)).orElse(null);
 
 		if (!allowRoleChange(userGroup, join.getRole())) {
 			throw new UserGroupWithoutOwnerException(
@@ -257,7 +257,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException {
-		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
+		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup)).orElse(null);
 
 		if (!allowRoleChange(userGroup, join.getRole())) {
 			throw new UserGroupWithoutOwnerException(

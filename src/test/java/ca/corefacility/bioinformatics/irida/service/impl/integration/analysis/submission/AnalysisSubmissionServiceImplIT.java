@@ -416,7 +416,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(Sets.newHashSet(sequencingObject)).build();
@@ -431,7 +431,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(Sets.newHashSet(sequencingObject)).build();
@@ -446,7 +446,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForUserAsRegularUser() {
-		User user = userRepository.findOne(1L);
+		User user = userRepository.findById(1L).orElse(null);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 9, submissions.size());
@@ -458,7 +458,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForUserAsRegularUserDenied() {
-		User user = userRepository.findOne(1L);
+		User user = userRepository.findById(1L).orElse(null);
 		analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 	}
 
@@ -468,7 +468,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "ADMIN")
 	public void testGetAnalysisSubmissionsForUserAsAdminUser() {
-		User user = userRepository.findOne(1L);
+		User user = userRepository.findById(1L).orElse(null);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 9, submissions.size());
@@ -523,7 +523,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = UnsupportedOperationException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithUnsavedNamedParameters() {
-		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
 		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
@@ -540,8 +540,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithNamedParameters() {
-		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
-		final IridaWorkflowNamedParameters params = parametersRepository.findOne(1L);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
+		final IridaWorkflowNamedParameters params = parametersRepository.findById(1L).orElse(null);
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
 				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);

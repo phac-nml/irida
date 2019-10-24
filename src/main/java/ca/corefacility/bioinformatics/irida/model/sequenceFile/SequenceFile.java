@@ -65,7 +65,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull(message = "{sequencefile.file.notnull}")

@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -40,11 +42,13 @@ public class NcbiBioSampleFiles {
 	private String bioSample;
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany()
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<SingleEndSequenceFile> files;
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany()
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)

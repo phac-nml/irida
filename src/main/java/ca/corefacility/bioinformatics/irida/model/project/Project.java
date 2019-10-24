@@ -41,7 +41,7 @@ public class Project extends IridaResourceSupport
 		implements MutableIridaThing, IridaProject, Comparable<Project>, RemoteSynchronizable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String name;

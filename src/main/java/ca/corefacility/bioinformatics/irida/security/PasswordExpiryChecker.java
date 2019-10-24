@@ -4,12 +4,15 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -50,6 +53,8 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 
 		cal.add(Calendar.DAY_OF_MONTH, -passwordExpiryInDays);
 		Date expiryDate = cal.getTime();
+		LocalDateTime localExpiryDate = LocalDateTime.ofInstant(expiryDate.toInstant(),
+                                             ZoneId.systemDefault());
 
 		User oldUser = null;
 
@@ -57,8 +62,9 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 
 			logger.trace("Checking old user with date of " + rev.getRevisionDate());
 
+			LocalDateTime revDate = rev.getRevisionDate().orElse(null);
 			// if revision date is older than the expiry date we can stop looking
-			if (rev.getRevisionDate().toDate().before(expiryDate)) {
+			if (revDate.isBefore(localExpiryDate)) {
 				oldUser = rev.getEntity();
 				break;
 			}

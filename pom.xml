@@ -221,7 +221,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
+			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
@@ -583,6 +583,11 @@
 			<version>${pf4j.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.23.1-GA</version>
+		</dependency>
 
 		<!-- Validation API -->
 		<dependency>
@@ -1066,13 +1071,13 @@
 		<guava.version>28.0-jre</guava.version>
 		<spring.version>5.1.10.RELEASE</spring.version>
 		<spring.security.version>5.1.6.RELEASE</spring.security.version>
-		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
+		<spring.data.jpa.version>2.0.14.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
-		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
+		<spring.data.envers.version>2.0.14.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
 		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
-		<hibernate.version>4.3.11.Final</hibernate.version>
+		<hibernate.version>5.2.17.Final</hibernate.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>

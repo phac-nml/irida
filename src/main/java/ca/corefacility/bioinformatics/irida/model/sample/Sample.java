@@ -44,7 +44,7 @@ public class Sample extends IridaResourceSupport
 		implements MutableIridaThing, IridaSample, Comparable<Sample>, RemoteSynchronizable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@CreatedDate

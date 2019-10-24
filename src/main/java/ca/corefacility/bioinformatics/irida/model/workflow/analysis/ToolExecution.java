@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
 public class ToolExecution implements IridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@NotNull

@@ -82,7 +82,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public ValueType read(KeyType id) throws EntityNotFoundException {
-		ValueType value = repository.findOne(id);
+		ValueType value = repository.findById(id).orElse(null);
 		if (value == null) {
 			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id);
 		}
@@ -99,7 +99,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id);
 		}
 
-		repository.delete(id);
+		repository.deleteById(id);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public Boolean exists(KeyType id) {
-		return repository.exists(id);
+		return repository.existsById(id);
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public Iterable<ValueType> readMultiple(Iterable<KeyType> idents) {
-		return repository.findAll(idents);
+		return repository.findAllById(idents);
 	}
 
 	/**

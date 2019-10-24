@@ -44,7 +44,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

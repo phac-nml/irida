@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class UserGroup implements MutableIridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@NotNull(message = "{group.name.notnull}")

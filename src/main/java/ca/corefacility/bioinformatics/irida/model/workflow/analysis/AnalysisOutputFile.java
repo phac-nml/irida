@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@Column(name = "file_path", unique = true)

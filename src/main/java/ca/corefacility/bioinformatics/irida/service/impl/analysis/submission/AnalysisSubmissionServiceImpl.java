@@ -485,7 +485,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (referenceFileId != null && description.requiresReference()) {
 			// Note: This cannot be empty if through the UI if the
 			// pipeline required a reference file.
-			referenceFile = referenceFileRepository.findOne(referenceFileId);
+			referenceFile = referenceFileRepository.findById(referenceFileId).orElse(null);
 		}
 
 		AnalysisSubmissionTemplate template = null;
@@ -578,7 +578,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				if (ref != null && description.requiresReference()) {
 					// Note: This cannot be empty if through the UI if the
 					// pipeline required a reference file.
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -618,7 +618,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.emailPipelineResult(emailPipelineResult);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -669,7 +669,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Add reference file
 		if (ref != null && description.requiresReference()) {
-			ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+			ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 			builder.referenceFile(referenceFile);
 		}
 

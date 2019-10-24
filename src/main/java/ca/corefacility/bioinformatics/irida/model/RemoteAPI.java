@@ -42,7 +42,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, MutableIridaThing {
 	public static final String SERVICE_URI_CONSTRAINT_NAME = "UK_REMOTE_API_SERVICEURI";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

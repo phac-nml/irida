@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 public class RelatedProjectJoin implements Join<Project, Project> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
