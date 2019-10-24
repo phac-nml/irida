@@ -1,3 +1,10 @@
+/*
+ * This file renders the 'Standard Output' from
+ * the jobErrors object returned by the server. If there are
+ * multiple job errors then it displays the standard output
+ * in the related tab
+ */
+
 import React from "react";
 import { PassTabs } from "./PassTabs";
 import { StandardOutput } from "./StandardOutput";

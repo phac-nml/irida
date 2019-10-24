@@ -1,3 +1,10 @@
+/*
+ * This file returns a list of the `Galaxy Job Information` for
+ * a given index. If there is no index provided then just the
+ * information from the first index in the galaxyJobErrors object
+ * is returned.
+ */
+
 import React from "react";
 import { Button, List, Typography } from "antd";
 import { Monospace } from "../../../../components/typography";

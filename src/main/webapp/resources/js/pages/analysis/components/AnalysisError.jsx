@@ -49,7 +49,7 @@ export default function AnalysisError(props) {
     });
   }, []);
 
-  // Sets the current activekey for the 'Pass' tabs
+  // Sets the current active key for the 'Pass' tabs
   function updateActiveKey(key) {
     setCurrActiveKey(key.charAt(key.length - 1));
   }

@@ -1,3 +1,8 @@
+/*
+ * This file renders the `Pass` tabs if there are
+ * multiple job errors.
+ */
+
 import React from "react";
 import { Tabs } from "antd";
 import { GalaxyJobInfo } from "./GalaxyJobInfo";
