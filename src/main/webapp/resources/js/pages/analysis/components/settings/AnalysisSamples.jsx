@@ -9,8 +9,8 @@
  */
 import React, { useContext } from "react";
 import { Typography } from "antd";
-import { AnalysisSamplesContext } from "../../../contexts/AnalysisSamplesContext";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
+import { getI18N } from "../../../../utilities/i18n-utilties";
 import { AnalysisReferenceFileRenderer } from "./AnalysisReferenceFileRenderer";
 import { AnalysisSampleRenderer } from "./AnalysisSampleRenderer";
 

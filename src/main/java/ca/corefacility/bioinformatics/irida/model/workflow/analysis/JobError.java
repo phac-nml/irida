@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Tool;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Galaxy Job failure information when a tool in a IRIDA workflow produces an error
@@ -230,7 +232,7 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	 * @return Galaxy tool parameters
 	 */
 	public String getParameters() {
-		return parameters;
+		return convertToValidJson(parameters);
 	}
 
 	/**
@@ -293,22 +295,22 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 			return false;
 		JobError jobError = (JobError) o;
 		return getExitCode() == jobError.getExitCode() &&
-		       Objects.equals(getId(), jobError.getId()) &&
-		       Objects.equals(getToolId(), jobError.getToolId()) &&
-		       Objects.equals(getToolName(), jobError.getToolName()) &&
-		       Objects.equals(getToolVersion(), jobError.getToolVersion()) &&
-		       Objects.equals(getToolDescription(), jobError.getToolDescription()) &&
-		       Objects.equals(getCommandLine(), jobError.getCommandLine()) &&
-		       Objects.equals(getParameters(), jobError.getParameters()) &&
-		       Objects.equals(getStandardError(), jobError.getStandardError()) &&
-		       Objects.equals(getStandardOutput(), jobError.getStandardOutput()) &&
-		       Objects.equals(getProvenanceUUID(), jobError.getProvenanceUUID()) &&
-		       Objects.equals(getProvenanceId(), jobError.getProvenanceId()) &&
-		       Objects.equals(getJobId(), jobError.getJobId()) &&
-		       Objects.equals(getHistoryId(), jobError.getHistoryId()) &&
-		       Objects.equals(getCreatedDate(), jobError.getCreatedDate()) &&
-		       Objects.equals(getUpdatedDate(), jobError.getUpdatedDate()) &&
-		       Objects.equals(getAnalysisSubmission(), jobError.getAnalysisSubmission());
+				Objects.equals(getId(), jobError.getId()) &&
+				Objects.equals(getToolId(), jobError.getToolId()) &&
+				Objects.equals(getToolName(), jobError.getToolName()) &&
+				Objects.equals(getToolVersion(), jobError.getToolVersion()) &&
+				Objects.equals(getToolDescription(), jobError.getToolDescription()) &&
+				Objects.equals(getCommandLine(), jobError.getCommandLine()) &&
+				Objects.equals(getParameters(), jobError.getParameters()) &&
+				Objects.equals(getStandardError(), jobError.getStandardError()) &&
+				Objects.equals(getStandardOutput(), jobError.getStandardOutput()) &&
+				Objects.equals(getProvenanceUUID(), jobError.getProvenanceUUID()) &&
+				Objects.equals(getProvenanceId(), jobError.getProvenanceId()) &&
+				Objects.equals(getJobId(), jobError.getJobId()) &&
+				Objects.equals(getHistoryId(), jobError.getHistoryId()) &&
+				Objects.equals(getCreatedDate(), jobError.getCreatedDate()) &&
+				Objects.equals(getUpdatedDate(), jobError.getUpdatedDate()) &&
+				Objects.equals(getAnalysisSubmission(), jobError.getAnalysisSubmission());
 	}
 
 	@Override
@@ -357,5 +359,14 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	@Override
 	public int compareTo(JobError o) {
 		return updatedDate.compareTo(o.updatedDate);
+	}
+
+	/*
+	 * Converts a string to a valid JSON string
+	 */
+	private String convertToValidJson(String parameter) {
+		JsonObject validJsonObject = new JsonParser().parse(parameter)
+				.getAsJsonObject();
+		return validJsonObject.toString();
 	}
 }

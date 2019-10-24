@@ -57,6 +57,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "root")
 	private WebElement rootDiv;
 
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -82,44 +83,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 		tabProvenance.click();
 	}
 
-	public void displayShareTab() {
-		tabShare.click();
-
-		waitForElementVisible(By.className("share-project"));
-	}
-
-	public void displayInputTab() {
-		tabInputFiles.click();
-		waitForElementVisible(By.className("paired_end"));
-	}
-
-	public List<Long> getSharedProjectIds() {
-		return shareCheckboxes.stream()
-				.filter(s -> s.isSelected())
-				.map(s -> Long.valueOf(s.getAttribute("value")))
-				.collect(Collectors.toList());
-	}
-
-	public void clickShareBox(Long id) {
-		Optional<WebElement> checkbox = shareCheckboxes.stream()
-				.filter(s -> s.getAttribute("value")
-						.equals(id.toString()))
-				.findFirst();
-
-		if (!checkbox.isPresent()) {
-			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
-		}
-		checkbox.get()
-				.click();
-	}
-
-	/**
-	 * Click the edit button
-	 */
-	public void clickEditButton() {
-		editButton.click();
-		waitForTime(500);
-	}
 
 	public boolean priorityEditVisible() {
 		return !driver.findElements(By.className("t-priority-edit"))
@@ -196,16 +159,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return pairedEndElements.size();
 	}
 
-	public boolean hasJobErrorInfo() {
-		return divHasJobError.size() > 0;
-	}
-
-	public void clickSettingsTab() {
-		waitForElementVisible(By.id("t-analysis-tab-settings"));
-		settingsTab.click();
-		waitForTime(500);
-	}
-
 	public boolean comparePageTitle(String pageTitle) {
 		int titleFound = rootDiv.findElements(By.xpath("//h2[contains(text(),'" + pageTitle + "')]"))
 				.size();
@@ -224,6 +177,12 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public boolean emailPipelineResultVisible() {
 		return !driver.findElements(By.className("t-email-pipeline-result"))
+				.isEmpty();
+	}
+
+	public boolean jobErrorAlertVisible() {
+
+		return !driver.findElements(By.className("ant-alert-warning"))
 				.isEmpty();
 	}
 }
