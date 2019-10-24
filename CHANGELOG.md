@@ -17,7 +17,8 @@ Changes
 * [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
 * [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
 * [UI]: Fixed issue where user role would reset if server validation failed on user create page.
-* [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
+* [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 
 19.05 to 19.09
 ---------------
