@@ -11,7 +11,6 @@ module.exports = {
     "expose-loader?angular!angular",
     "./resources/js/vendors"
   ],
-  "angular-st": "expose-loader?angular!angular", // This is just here for pages that need their own angular.
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
@@ -37,7 +36,10 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
+  "project-metadata-edit":
+    "./resources/js/pages/projects/project-metadata-edit.js",
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
   "project-settings-remote":
@@ -57,10 +59,11 @@ module.exports = {
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
-  "project-analyses": "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
+  "project-analyses":
+    "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
-  "analyses": "./resources/js/pages/analyses/AnalysesPage.jsx",
+  analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
   "users-list": "./resources/js/pages/users/users-list.js",
   "users-password": "./resources/js/pages/users/users-password.js",
