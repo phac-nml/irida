@@ -388,6 +388,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
+	@Transactional
 	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
 			throws ConstraintViolationException, EntityExistsException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
