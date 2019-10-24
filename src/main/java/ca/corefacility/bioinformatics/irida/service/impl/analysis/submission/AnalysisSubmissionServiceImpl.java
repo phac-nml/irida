@@ -398,7 +398,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		try {
 			return super.create(analysisSubmission);
-		} catch (final InvalidDataAccessApiUsageException e) {
+		} catch (Exception e) {
 
 			//TODO: Remove after test
 			logger.debug("Caught exception", e);
