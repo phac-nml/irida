@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * Specific implementation of {@link Analysis} for storing properties created by FastQC.
  */
-@Entity
+@Entity(name = "analysis_fastqc")
 @Table(name = "analysis_fastqc")
 public class AnalysisFastQC extends Analysis {
 

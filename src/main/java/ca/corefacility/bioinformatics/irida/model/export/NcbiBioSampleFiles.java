@@ -3,14 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.export;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -31,7 +24,7 @@ import com.google.common.collect.Lists;
  * 
  * @see NcbiExportSubmission
  */
-@Entity
+@Entity(name = "ncbi_export_biosample")
 @Table(name = "ncbi_export_biosample")
 @Audited
 public class NcbiBioSampleFiles {

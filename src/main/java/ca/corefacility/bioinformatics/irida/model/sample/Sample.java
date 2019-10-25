@@ -36,7 +36,7 @@ import java.util.Map.Entry;
  * >BioSample Attributes: Package Pathogen</a> for more information.
  * 
  */
-@Entity
+@Entity(name = "sample")
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)

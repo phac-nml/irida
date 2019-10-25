@@ -22,7 +22,7 @@ public interface NcbiExportSubmissionRepository extends IridaJpaRepository<NcbiE
 	 *            {@link ExportUploadState} to search for
 	 * @return a List of {@link NcbiExportSubmission}
 	 */
-	@Query("FROM NcbiExportSubmission s WHERE s.uploadState IN ?1")
+	@Query("FROM ncbi_export_submission s WHERE s.uploadState IN ?1")
 	public List<NcbiExportSubmission> getSubmissionsWithState(Set<ExportUploadState> state);
 
 	/**
@@ -32,6 +32,6 @@ public interface NcbiExportSubmissionRepository extends IridaJpaRepository<NcbiE
 	 *            The {@link Project} for the submission
 	 * @return a List of {@link NcbiExportSubmission}
 	 */
-	@Query("FROM NcbiExportSubmission s WHERE s.project=?1")
+	@Query("FROM ncbi_export_submission s WHERE s.project=?1")
 	public List<NcbiExportSubmission> getSubmissionsForProject(Project project);
 }

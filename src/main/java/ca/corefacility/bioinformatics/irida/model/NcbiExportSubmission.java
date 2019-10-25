@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  *      "http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_">
  *      Ncbi SRA experiment guide</a>
  */
-@Entity
+@Entity(name = "ncbi_export_submission")
 @Table(name = "ncbi_export_submission")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
