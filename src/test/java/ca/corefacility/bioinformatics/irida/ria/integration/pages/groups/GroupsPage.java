@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
@@ -95,12 +96,12 @@ public class GroupsPage extends AbstractPage {
 	public void addGroupMember(String searchTerm, String role) {
 		waitForElementVisible(By.id("add-members-button"));
 		addGroupMemberButton.click();
-		waitForElementVisible(By.className("select2-selection"));
-		userElement.click();
-		waitForElementVisible(By.className("select2-search__field"));
-		userNameField.sendKeys(searchTerm);
-		waitForElementVisible(By.className("select2-results__option--highlighted"));
-		select2ResultsOptionHighlighted.click();
+		waitForElementVisible(By.id("addUserModal"));
+		Select2Utility select2Utility = new Select2Utility(driver);
+		select2Utility.openSelect2Input();
+		select2Utility.searchByText(searchTerm);
+		select2Utility.selectDefaultMatch();
+
 		Select roleSelect = new Select(addGroupMemberRole);
 		roleSelect.selectByValue(role);
 		submitAddMemberButton.click();

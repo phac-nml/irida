@@ -23,12 +23,12 @@ $input.select2({
     delay: 250,
     data(params) {
       return {
-        term: params.term,
+        term: params,
         page: params.page || 0,
         pageSize: 10
       };
     },
-    processResults(data) {
+    results(data) {
       return {
         results: data.projects
       };
@@ -43,7 +43,7 @@ $input
   .find(".select2-selection")
   .focus(() => $input.select2("open"));
 
-$input.on("select2:selecting", function(e) {
+$input.on("select2-selecting", function(e) {
   $submitBtn.prop("disabled", false);
 });
 

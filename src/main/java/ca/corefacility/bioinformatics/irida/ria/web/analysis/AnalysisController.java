@@ -140,6 +140,7 @@ public class AnalysisController {
 	@RequestMapping("/all")
 	public String getAdminAnalysisList(Model model) {
 		model.addAttribute("isAdmin", true);
+		model.addAttribute("all", true);
 		return PAGE_ANALYSIS_LIST;
 	}
 

@@ -35,7 +35,9 @@ const config = {
       {
         test: /\.(css|sass|scss)$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
           "css-loader",
           {
             loader: "postcss-loader",
@@ -54,8 +56,10 @@ const config = {
         }
       },
       {
-        test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-        use: "file-loader"
+        test: /\.(ttf|eot|svg|otf|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: {
+          loader: "file-loader"
+        }
       },
       {
         test: require.resolve("jquery"),
