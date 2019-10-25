@@ -70,9 +70,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 */
 	@ExceptionHandler(InvalidDefinitionException.class)
 	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-	public void handleInvalidDefinitionException() {
-		//
-	}
+	public void handleInvalidDefinitionException() { }
 
 	/**
 	 * create a miseq run
