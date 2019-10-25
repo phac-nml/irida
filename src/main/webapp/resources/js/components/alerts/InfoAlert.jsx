@@ -1,10 +1,18 @@
+/**
+ * Component to render an Info alert with an icon
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { Alert } from "antd";
 
 /**
- * Component to render an [antd Alert]{@link https://ant.design/components/alert/}
- * specifically for displaying information with a consistent icon.
+ * Stateless UI component for displaying an [antd info Alert]{@link https://ant.design/components/alert/}
+ *
+ * @param {string} message - Text to display in alert
+ * @param {string} description - Optional description
+ *
+ * @returns {antd Alert} - Returns an antd info 'Alert' component
  */
 export function InfoAlert({ message, description, ...props }) {
   return (
@@ -19,6 +27,8 @@ export function InfoAlert({ message, description, ...props }) {
 }
 
 InfoAlert.propTypes = {
+  /*Text to display in alert*/
   message: PropTypes.string.isRequired,
+  /*Optional description*/
   description: PropTypes.string
 };

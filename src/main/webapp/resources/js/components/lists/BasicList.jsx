@@ -9,6 +9,16 @@ import { List, Typography } from "antd";
 
 const { Text } = Typography;
 
+/**
+ * Stateless UI component for displaying a basic list with a title and
+ * desciption for each item
+ *
+ * @param {array} dataSource - data for the List component to display
+ * @param {string} itemLayout - layout of the list
+ *
+ * @returns {*} - Returns an antd 'List' component with passed data
+ */
+
 export function BasicList({
   itemLayout = "horizontal",
   dataSource = { dataSource },
@@ -31,6 +41,8 @@ export function BasicList({
 }
 
 BasicList.propTypes = {
+  /*layout of the list*/
   itemLayout: PropTypes.string,
+  /*data for the List component to display*/
   dataSource: PropTypes.array.isRequired
 };

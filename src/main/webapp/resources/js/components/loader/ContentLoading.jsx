@@ -5,7 +5,15 @@
 
 import React from "react";
 import { Spin } from "antd";
+import PropTypes from "prop-types";
 import { SPACE_SM } from "../../styles/spacing";
+
+/**
+ * Stateless UI component for displaying a loading symbol with optional text
+ * @param {string} message - Text to display next to loading symbol
+ *
+ * @returns {*} - Returns a 'Spin' component from antd with optional text
+ */
 
 export function ContentLoading({ message = "Loading", ...props }) {
   return (
@@ -15,3 +23,8 @@ export function ContentLoading({ message = "Loading", ...props }) {
     </span>
   );
 }
+
+ContentLoading.propTypes = {
+  /*Text to display next to loading symbol*/
+  message: PropTypes.string
+};

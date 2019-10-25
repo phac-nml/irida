@@ -17,6 +17,18 @@ const VerticalTabs = styled(Tabs)`
   }
 `;
 
+/**
+ * Stateless UI component for creating vertical tabs
+ * @param {string} type - layout type of tabs
+ * @param {string} tabPosition - location of tabs on page
+ * @param {string} activeKey - the key of the current tab that is displayed
+ * @param {function} onChange - function which updates the current active tab key
+ * @param {bool} animated - whether or not to add animation to when user selects another tab. This only works if tabPosition is set to 'top' or 'bottom'
+ * @param {array} children - the content to display in the tabs
+ *
+ * @returns {*} - Returns a 'VerticalTabs' component which displays the tabs vertically
+ */
+
 export function SideTabs({
   type = "card",
   tabPosition = "left",
@@ -41,10 +53,16 @@ export function SideTabs({
 }
 
 SideTabs.propTypes = {
+  /*layout type of tabs*/
   type: PropTypes.string,
+  /*the key of the current tab that is displayed*/
   activeKey: PropTypes.string.isRequired,
+  /*function which updates the current active tab key*/
   onChange: PropTypes.func.isRequired,
+  /*location of tabs on page*/
   tabPosition: PropTypes.string,
+  /*whether or not to add animation to tab*/
   animated: PropTypes.bool,
+  /*the content to display in the tabs*/
   children: PropTypes.array.isRequired
 };
