@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 /**
  * Stores a collection of {@link MetadataTemplateField}s that will often used together
  */
-@Entity(name = "metadata_template")
+@Entity
 @Table(name = "metadata_template")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
@@ -27,6 +27,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	private Long id;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinTable(joinColumns = @JoinColumn(name = "metadata_template_id"))
 	private List<MetadataTemplateField> fields;
 
 	@NotNull

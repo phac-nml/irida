@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * Specific implementation of {@link Analysis} for storing properties created by FastQC.
  */
-@Entity(name = "analysis_fastqc")
+@Entity
 @Table(name = "analysis_fastqc")
 public class AnalysisFastQC extends Analysis {
 
@@ -40,6 +40,7 @@ public class AnalysisFastQC extends Analysis {
 	private final Short gcContent;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(joinColumns = @JoinColumn(name = "analysis_fastqc_id"))
 	private final Set<OverrepresentedSequence> overrepresentedSequences;
 
 	/**

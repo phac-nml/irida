@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
  * 
  * @see NcbiExportSubmission
  */
-@Entity(name = "ncbi_export_biosample")
+@Entity
 @Table(name = "ncbi_export_biosample")
 @Audited
 public class NcbiBioSampleFiles {
@@ -36,11 +36,13 @@ public class NcbiBioSampleFiles {
 
 	@JsonIgnore
 	@ManyToMany()
+	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<SingleEndSequenceFile> files;
 
 	@JsonIgnore
 	@ManyToMany()
+	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<SequenceFilePair> pairs;
 

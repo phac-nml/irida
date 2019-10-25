@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  *      "http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_">
  *      Ncbi SRA experiment guide</a>
  */
-@Entity(name = "ncbi_export_submission")
+@Entity
 @Table(name = "ncbi_export_submission")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
@@ -63,7 +63,8 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	private String ncbiNamespace;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "ncbi_export_submission_biosample")
+	@JoinTable(name = "ncbi_export_submission_biosample",
+			joinColumns = @JoinColumn(name= "ncbi_export_submission_id"))
 	@Size(min = 1)
 	private List<NcbiBioSampleFiles> bioSampleFiles;
 

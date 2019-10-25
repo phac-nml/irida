@@ -36,7 +36,7 @@ import java.util.Map.Entry;
  * >BioSample Attributes: Package Pathogen</a> for more information.
  * 
  */
-@Entity(name = "sample")
+@Entity
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
@@ -127,6 +127,7 @@ public class Sample extends IridaResourceSupport
 	private RemoteStatus remoteStatus;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(joinColumns = @JoinColumn(name = "sample_id"))
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	
