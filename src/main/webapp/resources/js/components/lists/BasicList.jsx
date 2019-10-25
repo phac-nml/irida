@@ -21,12 +21,11 @@ const { Text } = Typography;
 
 export function BasicList({
   itemLayout = "horizontal",
-  dataSource = { dataSource },
-  ...props
+  dataSource = { dataSource }
 }) {
   return (
     <List
-      itemLayout="horizontal"
+      itemLayout={itemLayout}
       dataSource={dataSource}
       renderItem={item => (
         <List.Item>
@@ -44,5 +43,10 @@ BasicList.propTypes = {
   /*layout of the list*/
   itemLayout: PropTypes.string,
   /*data for the List component to display*/
-  dataSource: PropTypes.array.isRequired
+  dataSource: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      desc: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+    })
+  ).isRequired
 };
