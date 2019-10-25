@@ -3,11 +3,8 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -15,11 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -59,6 +58,12 @@ public class RESTRootController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTRootController.class);
 
 	/**
+	 * Grab IRIDA Version string from properties
+	 */
+	@Value("${irida.version}")
+	private String iridaVersion;
+
+	/**
 	 * Initialize a collection of all controllers in the system.
 	 */
 	@PostConstruct
@@ -94,6 +99,8 @@ public class RESTRootController {
 		// add a self-rel to the current page
 		resource.add(linkTo(methodOn(RESTRootController.class).getLinks(request)).withSelfRel());
 
+		// Add the version route to the links list
+		links.add(linkTo(methodOn(RESTRootController.class).version()).withRel("version"));
 		// add all of the links to the response
 		resource.add(links);
 
@@ -102,6 +109,19 @@ public class RESTRootController {
 
 		// respond to the client
 		return map;
+	}
+
+	/**
+	 * Creates a response with the current build version.
+	 *
+	 * @return a response to the client
+	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/api/version")
+	@ResponseBody
+	public ModelMap version(){
+		ModelMap mm = new ModelMap();
+		mm.put("version", iridaVersion);
+		return mm;
 	}
 
 	/**
