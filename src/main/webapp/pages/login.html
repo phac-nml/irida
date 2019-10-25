@@ -4,21 +4,6 @@
 	  data-layout-decorate="~{template/base}">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
-	<style>
-		.login__links a {
-			margin-top: 10px;
-			display: block;
-		}
-		.carousel-control {
-            opacity: 0;
-        }
-        .carousel-control:hover, .carousel-control:focus {
-            opacity: 0;
-        }
-        .carousel-indicators li {
-            visibility: hidden;
-        }
-	</style>
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -69,38 +54,6 @@
 			</div>
 		</section>
 	</main>
-
-	<script th:src="@{/dist/js/angular-st.bundle.js}"></script>
-	<script src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"
-	        th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-
-	<script th:inline="javascript">
-    /*<![CDATA[*/
-		var slideUrls = [
-			{'image': /*[[@{/resources/img/irida-logos-1.png}]]*/ "slide1"
-			},
-			{'image': /*[[@{/resources/img/irida-logos-2.png}]]*/ "slide1"
-			},
-			{'image': /*[[@{/resources/img/irida-logos-3.png}]]*/ "slide1"
-			},
-			{'image': /*[[@{/resources/img/irida-logos-4.png}]]*/ "slide1"
-			}
-		];
-
-		function ImageController($scope) {
-			"use strict";
-			var vm = this;
-			vm.slides = window.slideUrls;
-		}
-
-		angular.module('irida', ['ui.bootstrap'])
-			.controller('ImageController', ['$scope', ImageController])
-		;
-
-		// Clear any old session data
-		sessionStorage.clear();
-		/*]]>*/
-	</script>
 </th:block>
 </body>
 </html>

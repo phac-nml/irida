@@ -1,30 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
-import org.hibernate.TransientPropertyValueException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -57,10 +32,30 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -388,7 +383,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Transactional
 	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
 			throws ConstraintViolationException, EntityExistsException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
@@ -397,34 +391,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
 
-		try {
-			return super.create(analysisSubmission);
-		} catch (Exception e) {
+		return super.create(analysisSubmission);
 
-			//TODO: Remove after test
-			logger.debug("Caught exception", e);
-			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
-			//loop through the causes and see if we have a TransientPropertyValueException
-			Throwable t = e.getCause();
-			while (t != null) {
-				//TODO: Remove after test
-				logger.debug("Got cause", t);
-				if (t instanceof TransientPropertyValueException) {
-					final TransientPropertyValueException propertyException = (TransientPropertyValueException) t;
-					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
-						throw new UnsupportedOperationException(
-								"You must save the named properties *before* you use them in a submission.", e);
-					}
-				}
-
-				t = t.getCause();
-			}
-
-			//TODO: Remove after test
-			logger.debug("Didn't get anything, throwing again", e);
-			//if the TransientPropertyValueException wasn't in the causes, throw the original exception
-			throw e;
-		}
 	}
 
 	/**
