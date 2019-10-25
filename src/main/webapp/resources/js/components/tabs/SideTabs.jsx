@@ -1,3 +1,9 @@
+/**
+ * Component to render styled side tabs. Use
+ * this whenever vertical tabs within a page
+ * are required
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { Tabs } from "antd";
@@ -11,13 +17,10 @@ const VerticalTabs = styled(Tabs)`
   }
 `;
 
-/**
- * Component to render styled side tabs
- */
 export function SideTabs(props) {
   return (
     <VerticalTabs
-      type="card"
+      type={props.type || "card"}
       activeKey={props.activeKey}
       onChange={props.onChange}
       tabPosition={props.tabPosition || "left"}
@@ -29,6 +32,7 @@ export function SideTabs(props) {
 }
 
 SideTabs.propTypes = {
+  type: PropTypes.string,
   activeKey: PropTypes.string,
   onChange: PropTypes.func,
   tabPosition: PropTypes.string,

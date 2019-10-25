@@ -1,3 +1,7 @@
+/**
+ * Component to render an Error alert with an icon
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { Alert } from "antd";
