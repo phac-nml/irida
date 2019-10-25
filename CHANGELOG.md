@@ -19,6 +19,7 @@ Changes
 * [UI]: Fixed issue where user role would reset if server validation failed on user create page.
 * [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
+* [Developer]: `bower` completely removed.
 
 19.05 to 19.09
 ---------------
@@ -60,6 +61,7 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
+* [Developer]: Complete removal of `bower`.
 
 19.01 to 19.05
 ---------------
