@@ -11,4 +11,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 public interface SequenceFileRepository extends FilesystemSupplementedRepository<SequenceFile>,
 		IridaJpaRepository<SequenceFile, Long> {
+	//TODO: Look into a solution that places this in FilesystemSupplementedRepository
+	<S extends SequenceFile> S save(S entity);
 }

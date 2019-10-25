@@ -11,5 +11,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 public interface AnalysisOutputFileRepository extends IridaJpaRepository<AnalysisOutputFile, Long>,
 		FilesystemSupplementedRepository<AnalysisOutputFile> {
-
+	//TODO: Look into a solution that places this in FilesystemSupplementedRepository
+	<S extends AnalysisOutputFile> S save(S entity);
 }
