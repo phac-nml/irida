@@ -6,13 +6,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Alert } from "antd";
 
-export function ErrorAlert(props) {
+export function ErrorAlert({ message, description, ...props }) {
   return (
     <Alert
-      message={props.message}
-      description={props.description}
       type="error"
       showIcon
+      message={message}
+      description={description}
+      {...props}
     />
   );
 }

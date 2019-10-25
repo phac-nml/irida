@@ -6,13 +6,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Alert } from "antd";
 
-export function WarningAlert(props) {
+export function WarningAlert({ message, description, ...props }) {
   return (
     <Alert
       type="warning"
       showIcon
-      message={props.message}
-      description={props.description}
+      message={message}
+      description={description}
+      {...props}
     />
   );
 }

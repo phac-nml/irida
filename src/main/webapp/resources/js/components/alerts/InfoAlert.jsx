@@ -6,13 +6,14 @@ import { Alert } from "antd";
  * Component to render an [antd Alert]{@link https://ant.design/components/alert/}
  * specifically for displaying information with a consistent icon.
  */
-export function InfoAlert(props) {
+export function InfoAlert({ message, description, ...props }) {
   return (
     <Alert
       type="info"
       showIcon
-      message={props.message}
-      description={props.description}
+      message={message}
+      description={description}
+      {...props}
     />
   );
 }
