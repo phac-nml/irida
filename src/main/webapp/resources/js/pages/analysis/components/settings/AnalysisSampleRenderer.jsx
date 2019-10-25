@@ -6,9 +6,10 @@
 import React, { useContext, useState, useLayoutEffect } from "react";
 import { getI18N } from "../../../../utilities/i18n-utilties";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
-import { Avatar, Icon, Input, List, Spin } from "antd";
+import { Avatar, Icon, Input, List } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
+import { ContentLoading } from "../../../../components/loader/ContentLoading";
 
 const { Search } = Input;
 
@@ -115,7 +116,9 @@ export function AnalysisSampleRenderer() {
     <>
       {analysisSamplesContext.loading ? (
         <div>
-          <Spin /> {getI18N("AnalysisSamples.checkingForSamples")}
+          <ContentLoading
+            message={getI18N("AnalysisSamples.checkingForSamples")}
+          />
         </div>
       ) : analysisSamplesContext.samples.length > 0 ? (
         <div>

@@ -115,7 +115,7 @@ export async function updateSharedProject(params) {
 export async function saveToRelatedSamples(submissionId) {
   try {
     const res = await axios.post(`${URL}${submissionId}/save-results`);
-    return res.data.responseDetails.message;
+    return res.data.message;
   } catch (error) {
     return { text: error.response.data.message, type: "error" };
   }

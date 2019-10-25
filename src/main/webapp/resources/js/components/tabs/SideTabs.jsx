@@ -17,24 +17,34 @@ const VerticalTabs = styled(Tabs)`
   }
 `;
 
-export function SideTabs(props) {
+export function SideTabs({
+  type = "card",
+  tabPosition = "left",
+  animated = false,
+  activeKey,
+  onChange,
+  children,
+  ...props
+}) {
   return (
     <VerticalTabs
-      type={props.type || "card"}
-      activeKey={props.activeKey}
-      onChange={props.onChange}
-      tabPosition={props.tabPosition || "left"}
-      animated={props.animated || false}
+      type={type}
+      activeKey={activeKey}
+      onChange={onChange}
+      tabPosition={tabPosition}
+      animated={animated}
+      {...props}
     >
-      {props.children}
+      {children}
     </VerticalTabs>
   );
 }
 
 SideTabs.propTypes = {
   type: PropTypes.string,
-  activeKey: PropTypes.string,
-  onChange: PropTypes.func,
+  activeKey: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
   tabPosition: PropTypes.string,
-  animated: PropTypes.bool
+  animated: PropTypes.bool,
+  children: PropTypes.array.isRequired
 };

@@ -10,12 +10,13 @@
  */
 
 import React, { Suspense, useContext } from "react";
-import { Col, Spin, Tabs } from "antd";
+import { Col, Tabs } from "antd";
 
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SideTabs } from "../../../components/tabs/SideTabs";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const AnalysisDetails = React.lazy(() => import("./settings/AnalysisDetails"));
 const AnalysisSamples = React.lazy(() => import("./settings/AnalysisSamples"));
@@ -48,7 +49,7 @@ export default function AnalysisSettings(props) {
         className="t-analysis-settings-tab-details"
       >
         <Col span={12}>
-          <Suspense fallback={<Spin />}>
+          <Suspense fallback={<ContentLoading />}>
             <AnalysisDetails />
           </Suspense>
         </Col>
@@ -60,7 +61,7 @@ export default function AnalysisSettings(props) {
         className="t-analysis-settings-tab-samples"
       >
         <Col span={12}>
-          <Suspense fallback={<Spin />}>
+          <Suspense fallback={<ContentLoading />}>
             <AnalysisSamples />
           </Suspense>
         </Col>
@@ -75,7 +76,7 @@ export default function AnalysisSettings(props) {
                 className="t-analysis-settings-tab-share-results"
               >
                 <Col span={12}>
-                  <Suspense fallback={<Spin />}>
+                  <Suspense fallback={<ContentLoading />}>
                     <AnalysisShare />
                   </Suspense>
                 </Col>
@@ -87,7 +88,7 @@ export default function AnalysisSettings(props) {
               className="t-analysis-settings-tab-delete-analysis"
             >
               <Col span={12}>
-                <Suspense fallback={<Spin />}>
+                <Suspense fallback={<ContentLoading />}>
                   <AnalysisDelete />
                 </Suspense>
               </Col>

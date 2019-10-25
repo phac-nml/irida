@@ -10,7 +10,7 @@
  */
 
 import React, { Suspense, useContext, useState } from "react";
-import { Icon, Spin, Tabs } from "antd";
+import { Icon, Tabs } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
@@ -21,6 +21,7 @@ import { getI18N } from "../../../utilities/i18n-utilties";
 import { SPACE_SM } from "../../../styles/spacing";
 import { navigate } from "@reach/router";
 import { green6, grey6, red6 } from "../../../styles/colors";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisError = React.lazy(() => import("./AnalysisError"));
@@ -149,7 +150,7 @@ export default function Analysis() {
                 key="bio_hansel"
                 className="t-analysis-tab-bio-hansel"
               >
-                <Suspense fallback={<Spin />}>
+                <Suspense fallback={<ContentLoading />}>
                   <AnalysisBioHansel />
                 </Suspense>
               </TabPane>
@@ -161,7 +162,7 @@ export default function Analysis() {
                 key="sistr_typing"
                 className="t-analysis-tab-sistr-typing"
               >
-                <Suspense fallback={<Spin />}>
+                <Suspense fallback={<ContentLoading />}>
                   <AnalysisSistr />
                 </Suspense>
               </TabPane>
@@ -174,7 +175,7 @@ export default function Analysis() {
                 key="phylogenomics"
                 className="t-analysis-tab-phylogenetic"
               >
-                <Suspense fallback={<Spin />}>
+                <Suspense fallback={<ContentLoading />}>
                   <AnalysisPhylogeneticTree />
                 </Suspense>
               </TabPane>
@@ -185,7 +186,7 @@ export default function Analysis() {
               key="output-files"
               className="t-analysis-tab-output-files"
             >
-              <Suspense fallback={<Spin />}>
+              <Suspense fallback={<ContentLoading />}>
                 <AnalysisOutputFiles />
               </Suspense>
             </TabPane>,
@@ -195,7 +196,7 @@ export default function Analysis() {
               key="provenance"
               className="t-analysis-tab-provenance"
             >
-              <Suspense fallback={<Spin />}>
+              <Suspense fallback={<ContentLoading />}>
                 <AnalysisProvenance />
               </Suspense>
             </TabPane>
@@ -206,7 +207,7 @@ export default function Analysis() {
             key="job-error"
             className="t-analysis-tab-job-error"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <AnalysisError
                 updateNav={updateNav}
                 defaultTabKey={defaultTabKey}
@@ -219,7 +220,7 @@ export default function Analysis() {
           key="settings"
           id="t-analysis-tab-settings"
         >
-          <Suspense fallback={<Spin />}>
+          <Suspense fallback={<ContentLoading />}>
             <AnalysisDetailsProvider>
               <AnalysisSamplesProvider>
                 <AnalysisShareProvider>

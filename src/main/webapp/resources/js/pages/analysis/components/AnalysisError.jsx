@@ -9,11 +9,12 @@
 
 import React, { Suspense, useContext, useEffect, useState } from "react";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { Spin, Tabs } from "antd";
+import { Tabs } from "antd";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SideTabs } from "../../../components/tabs/SideTabs";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -61,7 +62,7 @@ export default function AnalysisError(props) {
           tab={getI18N("AnalysisError.galaxyJobInfo")}
           key="job-error-info"
         >
-          <Suspense fallback={<Spin />}>
+          <Suspense fallback={<ContentLoading />}>
             <GalaxyJobInfoTab
               currActiveKey={currActiveKey}
               updateActiveKey={updateActiveKey}
@@ -77,7 +78,7 @@ export default function AnalysisError(props) {
             tab={getI18N("AnalysisError.galaxyParameters")}
             key="galaxy-parameters"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <GalaxyParametersTab
                 currActiveKey={currActiveKey}
                 updateActiveKey={updateActiveKey}
@@ -93,7 +94,7 @@ export default function AnalysisError(props) {
             tab={getI18N("AnalysisError.standardError")}
             key="standard-error"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <StandardErrorTab
                 currActiveKey={currActiveKey}
                 updateActiveKey={updateActiveKey}
@@ -109,7 +110,7 @@ export default function AnalysisError(props) {
             tab={getI18N("AnalysisError.standardOutput")}
             key="standard-out"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <StandardOutputTab
                 currActiveKey={currActiveKey}
                 updateActiveKey={updateActiveKey}
@@ -125,6 +126,6 @@ export default function AnalysisError(props) {
       </div>
     )
   ) : (
-    <Spin />
+    <ContentLoading />
   );
 }

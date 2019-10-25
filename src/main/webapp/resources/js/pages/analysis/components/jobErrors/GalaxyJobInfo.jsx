@@ -6,10 +6,11 @@
  */
 
 import React from "react";
-import { Button, List, Typography } from "antd";
+import { Button, Typography } from "antd";
 import { Monospace } from "../../../../components/typography";
 import { getI18N } from "../../../../utilities/i18n-utilties";
 import { formatDate } from "../../../../utilities/date-utilities";
+import { BasicList } from "../../../../components/lists/BasicList";
 
 const { Text } = Typography;
 
@@ -90,20 +91,7 @@ export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
    * which is pulled from the galaxyJobDetails function above
    */
   function getGalaxyJobInfo(index = 0) {
-    return (
-      <List
-        itemLayout="horizontal"
-        dataSource={galaxyJobDetails(index)}
-        renderItem={item => (
-          <List.Item>
-            <List.Item.Meta
-              title={<Text strong>{item.title}</Text>}
-              description={item.desc}
-            />
-          </List.Item>
-        )}
-      />
-    );
+    return <BasicList dataSource={galaxyJobDetails(index)} />;
   }
 
   return <>{getGalaxyJobInfo(currIndex)}</>;
