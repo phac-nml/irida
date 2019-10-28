@@ -26,7 +26,7 @@ const VerticalTabs = styled(Tabs)`
  * @param {bool} animated - whether or not to add animation to when user selects another tab. This only works if tabPosition is set to 'top' or 'bottom'
  * @param {array} children - the content to display in the tabs
  *
- * @returns {*} - Returns a 'VerticalTabs' component which displays the tabs vertically
+ * @returns {Element} - Returns a 'VerticalTabs' component which displays the tabs vertically
  */
 
 export function SideTabs({

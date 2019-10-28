@@ -12,7 +12,7 @@ import { Alert } from "antd";
  * @param {string} message - Text to display in alert
  * @param {string} description - Optional description
  *
- * @returns {antd Alert} - Returns an antd warning 'Alert' component
+ * @returns {Element} - Returns an antd warning 'Alert' component
  */
 
 export function WarningAlert({ message, description, ...props }) {

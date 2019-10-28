@@ -16,7 +16,7 @@ const { Text } = Typography;
  * @param {array} dataSource - data for the List component to display
  * @param {string} itemLayout - layout of the list
  *
- * @returns {*} - Returns an antd 'List' component with passed data
+ * @returns {Element} - Returns an antd 'List' component with passed data
  */
 
 export function BasicList({
