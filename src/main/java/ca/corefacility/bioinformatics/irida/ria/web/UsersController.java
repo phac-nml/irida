@@ -1,5 +1,31 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+import java.security.SecureRandom;
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.mail.MailSendException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -22,33 +48,10 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
-import org.springframework.mail.MailSendException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.security.SecureRandom;
-import java.util.*;
 
 /**
  * Controller for all {@link User} related views
@@ -441,6 +444,7 @@ public class UsersController {
 			model.addAttribute("given_lastName", user.getLastName());
 			model.addAttribute("given_email", user.getEmail());
 			model.addAttribute("given_phoneNumber", user.getPhoneNumber());
+			model.addAttribute("given_role", user.getSystemRole());
 			model.addAttribute("given_requireActivation", generateActivation);
 
 			returnView = createUserPage(model);

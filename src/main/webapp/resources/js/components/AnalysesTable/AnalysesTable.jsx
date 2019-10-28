@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { Button, Icon, Popconfirm, Table } from "antd";
+import React, { useContext, useEffect, useState } from 'react';
+import { PagedTableContext } from '../../contexts/PagedTableContext';
+import { Button, Icon, Popconfirm, Table } from 'antd';
 import {
   dateColumnFormat,
   nameColumnFormat
-} from "../ant.design/table-renderers";
+} from '../ant.design/table-renderers';
 import {
   deleteAnalysisSubmissions,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes
-} from "../../apis/analysis/analysis";
-import { AnalysisState } from "./AnalysisState";
-import { getI18N } from "../../utilities/i18n-utilties";
-import { getHumanizedDuration } from "../../utilities/date-utilities.js";
-import { getTextSearchProps } from "../ant.design/table-search-props";
-import { blue6 } from "../../styles/colors";
-import { SPACE_MD } from "../../styles/spacing";
+} from '../../apis/analysis/analysis';
+import { AnalysisState } from './AnalysisState';
+import { getI18N } from '../../utilities/i18n-utilties';
+import { getHumanizedDuration } from '../../utilities/date-utilities.js';
+import { getTextSearchProps } from '../ant.design/table-search-props';
+import { blue6 } from '../../styles/colors';
+import { SPACE_MD } from '../../styles/spacing';
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -135,7 +135,7 @@ export function AnalysesTable() {
         return (
           <Button
             shape="circle-outline"
-            disabled={record.state.value !== "COMPLETED"  }
+            disabled={record.state.value !== "COMPLETED"}
             href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
             download
             icon="download"

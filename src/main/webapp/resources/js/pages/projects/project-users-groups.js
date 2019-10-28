@@ -2,18 +2,18 @@
  * @file This file is used by both project > users and project > user groups
  * for handling user / group project roles.
  */
-import $ from "jquery";
-import "./../../vendor/plugins/jquery/select2";
-import "./../../vendor/datatables/datatables";
+import $ from 'jquery';
+import './../../vendor/plugins/jquery/select2';
+import './../../vendor/datatables/datatables';
 import {
   createButtonCell,
   createDeleteBtn,
   createItemLink,
   generateColumnOrderInfo,
   tableConfig
-} from "../../utilities/datatables-utilities";
-import { formatDate } from "../../utilities/date-utilities";
-import { showNotification } from "../../modules/notifications";
+} from '../../utilities/datatables-utilities';
+import { formatDate } from '../../utilities/date-utilities';
+import { showNotification } from '../../modules/notifications';
 
 const $table = $("#usersTable");
 
@@ -216,11 +216,11 @@ $("#add-member-membername").select2({
     url: window.PAGE.urls.usersSelection,
     data(params) {
       return {
-        term: params.term,
+        term: params,
         page_limit: 10
       };
     },
-    processResults(data) {
+    results(data) {
       return {
         results: data.map(function(el) {
           return { id: el["identifier"], text: el["label"] };

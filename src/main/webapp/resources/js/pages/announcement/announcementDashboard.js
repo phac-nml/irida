@@ -1,5 +1,7 @@
-import angular from "angular";
-import "./../../../sass/modules/announcements.scss";
+import angular from 'angular';
+import 'marked';
+import hcMarked from 'angular-marked';
+import './../../../sass/modules/announcements.scss';
 
 /**
  * Service to get announcements DOM from server
@@ -69,7 +71,7 @@ function announcements(svc, $compile) {
 }
 
 export const DashboardAnnouncementsModule = angular
-  .module("irida.announcements", ["hc.marked"])
+  .module("irida.announcements", [hcMarked])
   .service("AnnouncementsService", ["$http", AnnouncementsService])
   .directive("announcements", [
     "AnnouncementsService",

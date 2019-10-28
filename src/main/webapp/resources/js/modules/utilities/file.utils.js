@@ -53,7 +53,7 @@ function FileService($rootScope, $q, upload) {
             // Progress handled here
             $rootScope.$broadcast(UPLOAD_PROGRESS, {
               file: file.name,
-              progress: parseInt(100.0 * evt.loaded / evt.total, 10)
+              progress: parseInt((100.0 * evt.loaded) / evt.total, 10)
             });
           }
         );

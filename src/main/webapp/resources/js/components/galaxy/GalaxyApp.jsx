@@ -1,16 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { GalaxyStateProvider } from "./GalaxyState";
-import { initialState, reducer } from "./reducer";
-import {
-  Card,
-  Col,
-  Row
-} from "antd";
-import { GalaxyDetailsForm } from "./GalaxyDetailsForm";
-import { GalaxySamples } from "./GalaxySamples";
-import { GalaxySubmitError } from "./GalaxySubmitError";
-import { GalaxySubmission } from "./GalaxySubmission";
+import React from 'react';
+import { GalaxyStateProvider } from './GalaxyState';
+import { initialState, reducer } from './reducer';
+import { Card, Col, Row } from 'antd';
+import { GalaxyDetailsForm } from './GalaxyDetailsForm';
+import { GalaxySamples } from './GalaxySamples';
+import { GalaxySubmitError } from './GalaxySubmitError';
+import { GalaxySubmission } from './GalaxySubmission';
 
 export default function GalaxyApp() {
   return (

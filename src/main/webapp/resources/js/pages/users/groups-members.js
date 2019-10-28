@@ -1,15 +1,15 @@
-import $ from "jquery";
-import "../../vendor/datatables/datatables";
-import "../../vendor/plugins/jquery/select2";
+import $ from 'jquery';
+import '../../vendor/datatables/datatables';
+import '../../vendor/plugins/jquery/select2';
 import {
   createButtonCell,
   createDeleteBtn,
   createItemLink,
   generateColumnOrderInfo,
   tableConfig
-} from "../../utilities/datatables-utilities";
-import { formatDate } from "../../utilities/date-utilities";
-import { showNotification } from "../../modules/notifications";
+} from '../../utilities/datatables-utilities';
+import { formatDate } from '../../utilities/date-utilities';
+import { showNotification } from '../../modules/notifications';
 
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#groupMembersTable");
@@ -198,11 +198,11 @@ $("#add-user-username").select2({
     url: window.PAGE.urls.usersSelection,
     data(params) {
       return {
-        term: params.term,
+        term: params,
         page_limit: 10
       };
     },
-    processResults(data) {
+    results(data) {
       return {
         results: data.map(function(el) {
           return { id: el["identifier"], text: el["label"] };

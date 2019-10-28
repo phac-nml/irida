@@ -2,10 +2,10 @@
  * This script if for copying and moving samples from projects.
  * Loaded when the modal for either copying or moving samples is displayed.
  */
-import $ from "jquery";
-import "../../../../vendor/plugins/jquery/select2";
-import { SAMPLE_EVENTS } from "../constants";
-import { showNotification } from "../../../../modules/notifications";
+import $ from 'jquery';
+import '../../../../vendor/plugins/jquery/select2';
+import { SAMPLE_EVENTS } from '../constants';
+import { showNotification } from '../../../../modules/notifications';
 
 /*
 Set up the projects Select2 input
@@ -23,12 +23,12 @@ $input.select2({
     delay: 250,
     data(params) {
       return {
-        term: params.term,
+        term: params,
         page: params.page || 0,
         pageSize: 10
       };
     },
-    processResults(data) {
+    results(data) {
       return {
         results: data.projects
       };
@@ -43,7 +43,7 @@ $input
   .find(".select2-selection")
   .focus(() => $input.select2("open"));
 
-$input.on("select2:selecting", function(e) {
+$input.on("select2-selecting", function(e) {
   $submitBtn.prop("disabled", false);
 });
 

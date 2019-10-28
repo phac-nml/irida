@@ -1,6 +1,8 @@
 const angular = require("angular");
-require("ng-file-upload");
+import "angular-ui-bootstrap";
 import { convertFileSize } from "../../utilities/file.utilities";
+
+require("ng-file-upload");
 require("../../../sass/pages/sample-files.scss");
 
 /**

@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Map;
 
 import org.junit.Before;
@@ -18,6 +14,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for the {@link RESTRootController}.
@@ -43,11 +42,12 @@ public class RootControllerTest {
         assertTrue(o instanceof RootResource);
         RootResource r = (RootResource) o;
         for (Link l : r.getLinks()) {
-            if (!l.getRel().equals("self")) {
+            if (!l.getRel().equals("self") && !l.getRel().equals("version")) {
                 assertTrue(controllers.containsKey(l.getRel()));
             }
         }
 
         assertNotNull(r.getLink("self"));
+        assertNotNull(r.getLink("version"));
     }
 }

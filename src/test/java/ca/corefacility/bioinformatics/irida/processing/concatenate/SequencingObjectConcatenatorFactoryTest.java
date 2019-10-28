@@ -1,12 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Set;
 
 import org.junit.Test;
-
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -14,21 +10,25 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SequenceFilePairConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SingleEndSequenceFileConcatenator;
 
+import com.google.common.collect.Sets;
+
+import static org.junit.Assert.assertTrue;
+
 /**
  * Unit test for {@link SequencingObjectConcatenatorFactory}
  */
 public class SequencingObjectConcatenatorFactoryTest {
 	@Test
 	public void testGetConcatenatorSingle() {
-		SequencingObjectConcatenator<SingleEndSequenceFile> concatenator = SequencingObjectConcatenatorFactory
-				.getConcatenator(SingleEndSequenceFile.class);
+		SequencingObjectConcatenator<SingleEndSequenceFile> concatenator = SequencingObjectConcatenatorFactory.getConcatenator(
+				SingleEndSequenceFile.class);
 		assertTrue(concatenator instanceof SingleEndSequenceFileConcatenator);
 	}
 
 	@Test
 	public void testGetConcatenatorPair() {
-		SequencingObjectConcatenator<SequenceFilePair> concatenator = SequencingObjectConcatenatorFactory
-				.getConcatenator(SequenceFilePair.class);
+		SequencingObjectConcatenator<SequenceFilePair> concatenator = SequencingObjectConcatenatorFactory.getConcatenator(
+				SequenceFilePair.class);
 		assertTrue(concatenator instanceof SequenceFilePairConcatenator);
 	}
 

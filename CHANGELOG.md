@@ -3,6 +3,7 @@ Changes
 
 19.09 to 20.01
 --------------
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
 * [Developer]: Upgraded development Java version to Java 11 (LTS).
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
 * [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
@@ -10,6 +11,17 @@ Changes
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 * [UI]: Updated sequencing runs table to use Ant Design tables.
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
+* [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
+* [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
+* [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
+* [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
+* [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
+* [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
+* [UI]: Fixed issue where user role would reset if server validation failed on user create page.
+* [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
+* [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
+* [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
 * [UI]: Added the ability to delete all the data in a column in the line list table.
 
 19.05 to 19.09
@@ -93,6 +105,7 @@ Changes
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
 * [UI]: Fixed bug causing issues with saving Line List templates.
 * [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
+* [Developer]: Updated to latest version of NodeJS LTS (12.13.0) and Yarn (v1.19.1).
 
 0.22.0 to 19.01
 ----------------
