@@ -7,11 +7,12 @@
  * all the elements required by the component
  */
 import React, { useContext } from "react";
-import { Button, Alert, Popconfirm, Typography } from "antd";
+import { Button, Popconfirm, Typography } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { showNotification } from "../../../../modules/notifications";
 import { getI18N } from "../../../../utilities/i18n-utilties";
 import { deleteAnalysis } from "../../../../apis/analysis/analysis";
+import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 
 const { Title } = Typography;
 
@@ -44,10 +45,8 @@ export default function AnalysisDelete() {
       <Title level={2} className="t-page-title">
         {getI18N("AnalysisDelete.deleteAnalysis")}
       </Title>
-      <Alert
+      <WarningAlert
         message={getI18N("AnalysisDelete.permanentActionWarning")}
-        showIcon
-        type="warning"
       />
 
       <section>

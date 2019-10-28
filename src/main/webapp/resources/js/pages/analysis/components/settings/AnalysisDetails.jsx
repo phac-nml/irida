@@ -7,11 +7,12 @@
  * all the elements required by the component
  */
 import React, { useContext } from "react";
-import { Checkbox, List, Select, Typography } from "antd";
+import { Checkbox, Select, Typography } from "antd";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../../utilities/i18n-utilties";
 import { AnalysisContext, isAdmin } from "../../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../../styles/spacing";
+import { BasicList } from "../../../../components/lists/BasicList";
 
 import {
   formatDate,
@@ -131,18 +132,7 @@ export default function AnalysisDetails() {
       </Title>
 
       <div>
-        <List
-          itemLayout="horizontal"
-          dataSource={analysisDetails}
-          renderItem={item => (
-            <List.Item>
-              <List.Item.Meta
-                title={<Text strong>{item.title}</Text>}
-                description={item.desc}
-              />
-            </List.Item>
-          )}
-        />
+        <BasicList dataSource={analysisDetails} />
       </div>
 
       {window.PAGE.mailConfigured &&

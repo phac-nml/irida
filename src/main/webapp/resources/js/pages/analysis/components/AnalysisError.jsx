@@ -9,10 +9,12 @@
 
 import React, { Suspense, useContext, useEffect, useState } from "react";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { Alert, Spin, Tabs } from "antd";
+import { Tabs } from "antd";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import styled from "styled-components";
+import { SideTabs } from "../../../components/tabs/SideTabs";
+import { WarningAlert } from "../../../components/alerts/WarningAlert";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -34,14 +36,6 @@ export default function AnalysisError(props) {
   const [jobErrors, setJobErrors] = useState(null);
   const [currActiveKey, setCurrActiveKey] = useState(1);
 
-  const StyledTabs = styled(Tabs)`
-    .ant-tabs-tab {
-      @media only screen and (min-width: 800px) {
-        width: 200px;
-      }
-    }
-  `;
-
   // Sets the job errors into a local state variable on page load
   useEffect(() => {
     getJobErrors(analysisContext.analysis.identifier).then(data => {
@@ -56,22 +50,19 @@ export default function AnalysisError(props) {
 
   return jobErrors !== null ? (
     jobErrors.galaxyJobErrors !== null ? (
-      <StyledTabs
-        type="card"
+      <SideTabs
         activeKey={
           props.defaultTabKey === "" || props.defaultTabKey === "job-error"
             ? "job-error-info"
             : props.defaultTabKey
         }
         onChange={props.updateNav}
-        tabPosition="left"
-        animated={false}
       >
         <TabPane
           tab={getI18N("AnalysisError.galaxyJobInfo")}
           key="job-error-info"
         >
-          <Suspense fallback={<Spin />}>
+          <Suspense fallback={<ContentLoading />}>
             <GalaxyJobInfoTab
               currActiveKey={currActiveKey}
               updateActiveKey={updateActiveKey}
@@ -87,7 +78,7 @@ export default function AnalysisError(props) {
             tab={getI18N("AnalysisError.galaxyParameters")}
             key="galaxy-parameters"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <GalaxyParametersTab
                 currActiveKey={currActiveKey}
                 updateActiveKey={updateActiveKey}
@@ -103,7 +94,7 @@ export default function AnalysisError(props) {
             tab={getI18N("AnalysisError.standardError")}
             key="standard-error"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <StandardErrorTab
                 currActiveKey={currActiveKey}
                 updateActiveKey={updateActiveKey}
@@ -119,7 +110,7 @@ export default function AnalysisError(props) {
             tab={getI18N("AnalysisError.standardOutput")}
             key="standard-out"
           >
-            <Suspense fallback={<Spin />}>
+            <Suspense fallback={<ContentLoading />}>
               <StandardOutputTab
                 currActiveKey={currActiveKey}
                 updateActiveKey={updateActiveKey}
@@ -128,17 +119,13 @@ export default function AnalysisError(props) {
             </Suspense>
           </TabPane>
         ) : null}
-      </StyledTabs>
+      </SideTabs>
     ) : (
       <div style={{ display: "flex" }}>
-        <Alert
-          type="warning"
-          showIcon
-          message={getI18N("AnalysisError.noJobInfoAvailable")}
-        />
+        <WarningAlert message={getI18N("AnalysisError.noJobInfoAvailable")} />
       </div>
     )
   ) : (
-    <Spin />
+    <ContentLoading />
   );
 }

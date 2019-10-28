@@ -1,5 +1,5 @@
 /**
- * Component to render an Error alert with an icon
+ * Component to render a Warning alert with an icon
  */
 
 import React from "react";
@@ -7,18 +7,18 @@ import PropTypes from "prop-types";
 import { Alert } from "antd";
 
 /**
- * Stateless UI component for displaying an [antd error Alert]{@link https://ant.design/components/alert/}
+ * Stateless UI component for displaying an [antd warning Alert]{@link https://ant.design/components/alert/}
  *
  * @param {string} message - Text to display in alert
  * @param {string} description - Optional description
  *
- * @returns {Element} - Returns an antd error 'Alert' component
+ * @returns {Element} - Returns an antd warning 'Alert' component
  */
 
-export function ErrorAlert({ message, description, ...props }) {
+export function WarningAlert({ message, description, ...props }) {
   return (
     <Alert
-      type="error"
+      type="warning"
       showIcon
       message={message}
       description={description}
@@ -27,7 +27,7 @@ export function ErrorAlert({ message, description, ...props }) {
   );
 }
 
-ErrorAlert.propTypes = {
+WarningAlert.propTypes = {
   /*Text to display in alert*/
   message: PropTypes.string.isRequired,
   /*Optional description*/

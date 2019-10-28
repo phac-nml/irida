@@ -7,13 +7,15 @@
  * required by the component
  */
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, Button, Checkbox, List, Typography } from "antd";
+import { Button, Checkbox, List, Typography } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 import { AnalysisShareContext } from "../../../../contexts/AnalysisShareContext";
 import { getI18N } from "../../../../utilities/i18n-utilties";
 import { showNotification } from "../../../../modules/notifications";
 import { SPACE_MD } from "../../../../styles/spacing";
+import { InfoAlert } from "../../../../components/alerts/InfoAlert";
+import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 
 import {
   getSharedProjects,
@@ -84,9 +86,7 @@ export default function AnalysisShare() {
     if (!analysisDetailsContext.updateSamples) {
       return (
         <div>
-          <Alert
-            type="warning"
-            showIcon
+          <WarningAlert
             message={getI18N("AnalysisShare.saveResultsPermanent")}
             style={{ marginBottom: SPACE_MD }}
           />
@@ -102,9 +102,7 @@ export default function AnalysisShare() {
       );
     } else {
       return (
-        <Alert
-          type="info"
-          showIcon
+        <InfoAlert
           message={getI18N("AnalysisShare.resultsSaved")}
           style={{ marginBottom: SPACE_MD }}
         />
@@ -156,9 +154,7 @@ export default function AnalysisShare() {
             {renderSharedProjectsList()}
           </section>
         ) : (
-          <Alert
-            type="info"
-            showIcon
+          <InfoAlert
             message={getI18N("AnalysisShare.noProjectsToShareResultsWith")}
           />
         )
