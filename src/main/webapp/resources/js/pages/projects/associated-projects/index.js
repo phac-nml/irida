@@ -12,8 +12,8 @@ function AssociatedProjects() {
   const [projects, setProjects] = useState();
 
   useEffect(() => {
-    getAssociatedProjects(window.project.id).then(r =>
-      setProjects(r.associatedProjectList)
+    getAssociatedProjects(window.project.id).then(data =>
+      setProjects(data.associatedProjectList)
     );
   }, [getAssociatedProjects]);
 
