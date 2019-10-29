@@ -4,7 +4,7 @@
 
 import React from "react";
 import { Icon } from "antd";
-import { red6 } from "../../styles/colors";
+import { green6 } from "../../styles/colors";
 import { SPACE_SM } from "../../styles/spacing";
 
 /**
@@ -16,6 +16,9 @@ import { SPACE_SM } from "../../styles/spacing";
 
 export function Success() {
   return (
-    <Icon type="close-circle" style={{ marginRight: SPACE_SM, color: red6 }} />
+    <Icon
+      type="check-circle"
+      style={{ marginRight: SPACE_SM, color: green6 }}
+    />
   );
 }

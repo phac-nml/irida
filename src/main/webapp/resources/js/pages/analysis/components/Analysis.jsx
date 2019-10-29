@@ -52,6 +52,13 @@ const analysisErrorTabKeys = [
   "standard-error",
   "standard-out"
 ];
+const analysisSistrTabKeys = [
+  "sistr_info",
+  "serovar_predictions",
+  "cgmlst_330",
+  "mash",
+  "citation"
+];
 
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
@@ -86,28 +93,25 @@ export default function Analysis() {
    * parameter for Tabs.
    */
   const setActiveTabKey = () => {
-    if (defaultTabKey === "") {
-      if (analysisContext.isError) {
-        return "job-error";
-      } else {
-        if (
-          analysisTypesWithAdditionalPage.indexOf(
-            analysisContext.analysisType.type
-          ) > -1 &&
-          analysisContext.isCompleted
-        ) {
-          return analysisContext.analysisType.type.toLowerCase();
+    if (analysisContext.isError) {
+      return "job-error";
+    } else {
+      if (defaultTabKey === "") {
+        if (analysisContext.sistr && analysisContext.isCompleted) {
+          return "sistr_typing";
         } else {
           return "settings";
         }
-      }
-    } else {
-      if (analysisSettingsTabKeys.indexOf(defaultTabKey) > -1) {
-        return "settings";
-      } else if (analysisErrorTabKeys.indexOf(defaultTabKey) > -1) {
-        return "job-error";
       } else {
-        return defaultTabKey;
+        if (analysisSettingsTabKeys.indexOf(defaultTabKey) > -1) {
+          return "settings";
+        } else if (analysisErrorTabKeys.indexOf(defaultTabKey) > -1) {
+          return "job-error";
+        } else if (analysisSistrTabKeys.indexOf(defaultTabKey) > -1) {
+          return "sistr_typing";
+        } else {
+          return defaultTabKey;
+        }
       }
     }
   };
@@ -140,7 +144,7 @@ export default function Analysis() {
       <Tabs activeKey={setActiveTabKey()} onChange={updateNav} animated={false}>
         {analysisContext.isCompleted ? (
           [
-            analysisContext.analysisType.type === "BIO_HANSEL" ? (
+            analysisContext.bio_hansel ? (
               <TabPane
                 tab="bio_hansel"
                 key="bio_hansel"
@@ -152,20 +156,22 @@ export default function Analysis() {
               </TabPane>
             ) : null,
 
-            analysisContext.analysisType.type === "SISTR_TYPING" ? (
+            analysisContext.sistr ? (
               <TabPane
-                tab="sistr"
+                tab="Sistr"
                 key="sistr_typing"
                 className="t-analysis-tab-sistr-typing"
               >
                 <Suspense fallback={<ContentLoading />}>
-                  <AnalysisSistr />
+                  <AnalysisSistr
+                    updateNav={updateNav}
+                    defaultTabKey={defaultTabKey}
+                  />
                 </Suspense>
               </TabPane>
             ) : null,
 
-            analysisContext.analysisType.type === "PHYLOGENOMICS" ||
-            analysisContext.analysisType.type === "MLST_MENTALIST" ? (
+            analysisContext.tree ? (
               <TabPane
                 tab={getI18N("Analysis.phylogeneticTree")}
                 key="phylogenomics"

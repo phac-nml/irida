@@ -274,6 +274,24 @@ public class AnalysisController {
 		model.addAttribute("analysisType", analysisType);
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
+		/*
+		 * Preview information
+		 */
+		try {
+			if (submission.getAnalysisState()
+					.equals(AnalysisState.COMPLETED)) {
+				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
+					tree(submission, model);
+				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
+					model.addAttribute("sistr", true);
+				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
+					model.addAttribute("bio_hansel", true);
+				}
+			}
+
+		} catch (IOException e) {
+			logger.error("Couldn't get preview for analysis", e);
+		}
 
 		return "analysis";
 	}
@@ -843,7 +861,7 @@ public class AnalysisController {
 				model.addAttribute("newick", tree);
 
 				// inform the view to display the tree preview
-				model.addAttribute("preview", "tree");
+				model.addAttribute("tree", true);
 			}
 		}
 	}
@@ -857,10 +875,9 @@ public class AnalysisController {
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/sistr/{id}")
 	@ResponseBody
-	public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
+	public AnalysisSistrResults getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
-		Map<String, Object> result = ImmutableMap.of("parse_results_error", true);
 
 		final String sistrFileKey = "sistr-predictions";
 
@@ -891,14 +908,10 @@ public class AnalysisController {
 
 				if (sistrResults.size() > 0) {
 					// should only ever be one sample for these results
-					if (samples.size() == 1) {
+					if (samples!=null && samples.size() == 1) {
 						Sample sample = samples.iterator()
 								.next();
-						result = sistrResults.get(0);
-
-						result.put("parse_results_error", false);
-
-						result.put("sample_name", sample.getSampleName());
+						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
 					} else {
 						logger.error("Invalid number of associated samples for submission " + submission);
 					}
@@ -913,7 +926,7 @@ public class AnalysisController {
 				logger.error("Error reading file [" + path + "]", e);
 			}
 		}
-		return result;
+		return new AnalysisSistrResults(null,true,null);
 	}
 
 	// ************************************************************************************************

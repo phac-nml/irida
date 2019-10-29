@@ -128,6 +128,15 @@ export async function getJobErrors(submissionId) {
   return res.data;
 }
 
+export async function getSistrResults(submissionId) {
+  try {
+    const res = await axios.get(`${URL}sistr/${submissionId}`);
+    return res.data;
+  } catch (error) {
+    return { error: error };
+  }
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.

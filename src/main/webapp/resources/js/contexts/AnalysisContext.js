@@ -33,7 +33,10 @@ const initialContext = {
   analysisState: window.PAGE.analysisState,
   analysisType: window.PAGE.analysisType,
   isCompleted: window.PAGE.analysisState === "COMPLETED",
-  isError: window.PAGE.analysisState.includes("ERROR")
+  isError: window.PAGE.analysisState.includes("ERROR"),
+  bio_hansel: window.PAGE.bio_hansel,
+  sistr: window.PAGE.sistr,
+  tree: window.PAGE.tree
 };
 
 const AnalysisContext = React.createContext(initialContext);
