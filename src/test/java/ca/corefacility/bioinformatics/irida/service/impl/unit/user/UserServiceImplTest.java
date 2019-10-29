@@ -187,7 +187,7 @@ public class UserServiceImplTest {
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(passwordEncoder.matches(password, oldPassword)).thenReturn(true);
 		when(userRepository.existsById(1L)).thenReturn(true);
-		when(userRepository.findById(1L).orElse(null)).thenReturn(user());
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
 		when(userRepository.findRevisions(1L)).thenReturn(Revisions.of(Lists.newArrayList(rev)));
 
 		userService.changePassword(1L, password);

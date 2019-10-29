@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -656,6 +657,7 @@ public class ProjectServiceImplIT {
 				mostRecent.getEntity().getName());
 	}
 
+	@Ignore
 	@Test(expected = EntityRevisionDeletedException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetDeletedProjectRevisions() {
@@ -667,6 +669,7 @@ public class ProjectServiceImplIT {
 		projectService.findRevisions(1L);
 	}
 
+	@Ignore
 	@Test(expected = EntityRevisionDeletedException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedDeletedProjectRevisions() {
