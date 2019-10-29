@@ -11,7 +11,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.

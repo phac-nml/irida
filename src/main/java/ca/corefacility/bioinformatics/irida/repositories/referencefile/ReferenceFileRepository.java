@@ -12,5 +12,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public interface ReferenceFileRepository extends IridaJpaRepository<ReferenceFile, Long>,
 		FilesystemSupplementedRepository<ReferenceFile> {
 	//TODO: Look into a solution that places this in FilesystemSupplementedRepository
+	/**
+	 * {@inheritDoc}
+	 */
 	<S extends ReferenceFile> S save(S entity);
 }
