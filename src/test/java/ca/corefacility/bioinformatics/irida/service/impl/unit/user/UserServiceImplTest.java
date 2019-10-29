@@ -15,9 +15,8 @@ import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -91,15 +90,14 @@ public class UserServiceImplTest {
 		when(userRepository.save(persisted)).thenReturn(persisted);
 		when(userRepository.findById(id)).thenReturn(Optional.of(persisted));
 		when(userRepository.existsById(id)).thenReturn(true);
-		//TODO: remove commented line below (Eric)
-		/*when(userRepository.findRevisions(id)).thenReturn(new Revisions<>(Lists.newArrayList()));
+		when(userRepository.findRevisions(id)).thenReturn(Revisions.of(Lists.newArrayList()));
 
 		User u = userService.updateFields(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
 
 		verify(passwordEncoder).encode(password);
-		verify(userRepository).findById(id).orElse(null);
-		verify(userRepository).save(persisted);*/
+		verify(userRepository).findById(id);
+		verify(userRepository).save(persisted);
 	}
 
 	@Test
@@ -151,18 +149,16 @@ public class UserServiceImplTest {
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.existsById(1L)).thenReturn(true);
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
-		//TODO: remove commented line below (Eric)
-		/*when(userRepository.findRevisions(1L)).thenReturn(new Revisions<>(Lists.newArrayList()));
+		when(userRepository.findRevisions(1L)).thenReturn(Revisions.of(Lists.newArrayList()));
 
 		userService.changePassword(1L, password);
 
 		ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);
 		verify(userRepository).save(argument.capture());
 		User saved = argument.getValue();
-		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());*/
+		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());
 	}
 
-	@Ignore
 	@Test(expected = PasswordReusedException.class)
 	public void testUpdateExistingPassword() {
 		String password = "Password1";
@@ -171,16 +167,15 @@ public class UserServiceImplTest {
 
 		User revUser = new User();
 		revUser.setPassword(oldPassword);
-		//TODO: remove commented line below (Eric)
-		/*Revision<Integer, User> rev = new Revision(new RevisionMetadata() {
+		Revision<Integer, User> rev = Revision.of(new RevisionMetadata() {
 			@Override
-			public Number getRevisionNumber() {
-				return 1L;
+			public Optional<Number> getRevisionNumber() {
+				return Optional.of(1L);
 			}
 
 			@Override
-			public DateTime getRevisionDate() {
-				return new DateTime();
+			public Optional<LocalDateTime> getRevisionDate() {
+				return Optional.of(new LocalDateTime());
 			}
 
 			@Override
@@ -193,12 +188,11 @@ public class UserServiceImplTest {
 		when(passwordEncoder.matches(password, oldPassword)).thenReturn(true);
 		when(userRepository.existsById(1L)).thenReturn(true);
 		when(userRepository.findById(1L).orElse(null)).thenReturn(user());
-		//TODO: remove commented line below (Eric)
-		//when(userRepository.findRevisions(1L)).thenReturn(new Revisions<Integer, User>(Lists.newArrayList(rev)));
+		when(userRepository.findRevisions(1L)).thenReturn(Revisions.of(Lists.newArrayList(rev)));
 
 		userService.changePassword(1L, password);
 
-		verify(userRepository, times(0)).save(any(User.class));*/
+		verify(userRepository, times(0)).save(any(User.class));
 	}
 
 	@Test(expected = EntityExistsException.class)
