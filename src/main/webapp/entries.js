@@ -57,6 +57,8 @@ module.exports = {
     "./resources/js/pages/projects/associated-projects/edit.module.js",
   "project-users-groups":
     "./resources/js/pages/projects/project-users-groups.js",
+  "associated-projects":
+    "./resources/js/pages/projects/associated-projects/index.js",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
