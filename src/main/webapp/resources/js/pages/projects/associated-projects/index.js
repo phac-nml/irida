@@ -43,7 +43,7 @@ function AssociatedProjects() {
             ]}
           >
             <List.Item.Meta
-              avatar={<Avatar icon="folder" />}
+              avatar={<Avatar icon="folder" size="large" />}
               title={
                 <a href={`${window.TL.BASE_URL}projects/${project.id}`}>
                   {project.label}
