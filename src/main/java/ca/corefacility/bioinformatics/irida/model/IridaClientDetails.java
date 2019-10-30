@@ -120,7 +120,7 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	/**
 	 * Default constructor with empty scopes, grant types, resource ids,

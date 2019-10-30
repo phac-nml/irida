@@ -51,7 +51,7 @@ public class SampleGenomeAssemblyJoin implements Join<Sample, GenomeAssembly> {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	/**
 	 * Default constructor for hibernate

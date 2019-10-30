@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * All Service interfaces should extend this interface to inherit common methods
@@ -233,7 +234,7 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *
 	 * @return a {@link Page} of {@code Type}
 	 */
-	public Page<Type> search(Specification<Type> specification, PageRequest pageRequest);
+	public Page<Type> search(Specification<Type> specification, Pageable pageRequest);
 
 	/**
 	 * Find all of the revisions for the specified identifier.

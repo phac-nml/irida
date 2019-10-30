@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -128,7 +129,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Transactional(readOnly = true)
 	public Page<ValueType> list(int page, int size, final Direction order, final String... sortProperties)
 			throws IllegalArgumentException {
-		return repository.findAll(new PageRequest(page, size, order, sortProperties));
+		return repository.findAll(PageRequest.of(page, size, order, sortProperties));
 	}
 
 	/**
@@ -138,7 +139,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	public Page<ValueType> list(int page, int size, Sort sort)
 			throws IllegalArgumentException {
-		return repository.findAll(new PageRequest(page, size, sort));
+		return repository.findAll(PageRequest.of(page, size, sort));
 	}
 
 	/**
@@ -232,7 +233,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public Page<ValueType> list(int page, int size, Direction order) {
-		return repository.findAll(new PageRequest(page, size, order, CREATED_DATE_SORT_PROPERTY));
+		return repository.findAll(PageRequest.of(page, size, order, CREATED_DATE_SORT_PROPERTY));
 	}
 
 	/**
@@ -259,15 +260,17 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 			sortProperties = DEFAULT_SORT_PROPERTIES;
 		}
 
-		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
+		return repository.findAll(specification, PageRequest.of(page, size, order, sortProperties));
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * @param specification
+	 * @param pageRequest
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<ValueType> search(Specification<ValueType> specification, PageRequest pageRequest) {
+	public Page<ValueType> search(Specification<ValueType> specification, Pageable pageRequest) {
 		return repository.findAll(specification, pageRequest);
 	}
 

@@ -116,7 +116,7 @@ public class DataTablesParams {
 			}
 		}
 
-		return new Sort(sortOrder);
+		return Sort.by(sortOrder);
 	}
 
 	/**

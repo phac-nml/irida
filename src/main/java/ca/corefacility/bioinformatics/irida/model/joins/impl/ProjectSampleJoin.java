@@ -51,7 +51,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@Column(name = "owner")
 	@NotNull

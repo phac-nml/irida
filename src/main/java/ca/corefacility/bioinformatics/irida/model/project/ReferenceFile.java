@@ -50,7 +50,7 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)

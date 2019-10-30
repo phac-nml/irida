@@ -498,7 +498,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		Page<ProjectUserJoin> searchProjectUsers = pujRepository.findAll(getProjectJoinsWithRole(user, projectRole),
-				new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.ASC, CREATED_DATE_SORT_PROPERTY));
+				PageRequest.of(0, Integer.MAX_VALUE, Sort.Direction.ASC, CREATED_DATE_SORT_PROPERTY));
 		return searchProjectUsers.getContent()
 				.contains(new ProjectUserJoin(project, user, projectRole));
 	}
@@ -620,7 +620,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.getAuthentication()
 				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		final PageRequest pr = PageRequest.of(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
 		if (loggedIn.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
@@ -639,7 +639,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.getAuthentication()
 				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, getOrDefaultSort(sort));
+		final PageRequest pr = PageRequest.of(page, count, getOrDefaultSort(sort));
 		return projectRepository.findAll(searchForProjects(search, null, null, loggedIn), pr);
 	}
 
@@ -649,7 +649,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<Project> findAllProjects(String searchValue, int currentPage, int length, Sort sort) {
-		final PageRequest pr = new PageRequest(currentPage, length, sort);
+		final PageRequest pr = PageRequest.of(currentPage, length, sort);
 		return projectRepository.findAll(searchForProjects(searchValue, null, null, null), pr);
 	}
 
@@ -778,7 +778,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	private static final Sort getOrDefaultSort(Sort sort) {
 		if (sort == null) {
-			sort = new Sort(Direction.ASC, CREATED_DATE_SORT_PROPERTY);
+			sort = Sort.by(Direction.ASC, CREATED_DATE_SORT_PROPERTY);
 		}
 		return sort;
 	}

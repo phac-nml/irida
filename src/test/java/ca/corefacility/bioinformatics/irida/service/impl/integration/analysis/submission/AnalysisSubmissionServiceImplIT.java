@@ -104,19 +104,19 @@ public class AnalysisSubmissionServiceImplIT {
 	public void searchAnalyses() {
 
 		Page<AnalysisSubmission> paged = analysisSubmissionService.listAllSubmissions(null, null, null, null,
-				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdDate")));
 		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
 		paged = analysisSubmissionService.listAllSubmissions(null, name, null, null,
-				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdDate")));
 		assertEquals(10, paged.getContent().size());
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
 		paged = analysisSubmissionService.listAllSubmissions(null, name, ImmutableSet.of(state), null,
-				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdDate")));
 		assertEquals(2, paged.getContent().size());
 	}
 
@@ -245,7 +245,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testFindRevisionsPageRegularUser() {
 		assertNotNull("should return revisions exist",
-				analysisSubmissionService.findRevisions(1L, new PageRequest(1, 1)));
+				analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1)));
 	}
 
 	/**
@@ -255,7 +255,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testFindRevisionsPageDeniedUser() {
-		analysisSubmissionService.findRevisions(1L, new PageRequest(1, 1));
+		analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1));
 	}
 
 	/**

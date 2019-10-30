@@ -62,7 +62,7 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)

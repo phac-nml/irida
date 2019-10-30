@@ -12,10 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
@@ -76,15 +73,15 @@ public class ClientsControllerTest {
 		client2.setId(2L);
 		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
 
-		when(clientDetailsService.search(any(Specification.class), any(PageRequest.class))).thenReturn(clientPage);
+		when(clientDetailsService.search(any(Specification.class), any(Pageable.class))).thenReturn(clientPage);
 
-		DataTablesParams params = new DataTablesParams(1, 10, 1, "", new Sort(Sort.Direction.ASC, "createdDate"), new HashMap<>());
+		DataTablesParams params = new DataTablesParams(1, 10, 1, "", Sort.by(Sort.Direction.ASC, "createdDate"), new HashMap<>());
 		DataTablesResponse response = controller.getAjaxClientsList(params);
 
 		List<DataTablesResponseModel> models = response.getData();
 		assertEquals(2, models.size());
 
-		verify(clientDetailsService).search(any(Specification.class), any(PageRequest.class));
+		verify(clientDetailsService).search(any(Specification.class), any(Pageable.class));
 	}
 
 	@Test

@@ -51,7 +51,7 @@ public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
-	private final Date createdDate;
+	private Date createdDate;
 
 	/**
 	 * Default constructor for hibernate

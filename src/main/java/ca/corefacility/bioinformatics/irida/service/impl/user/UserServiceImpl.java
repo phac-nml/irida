@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
@@ -170,7 +171,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<User> search(Specification<User> specification, PageRequest pageRequest) {
+	public Page<User> search(Specification<User> specification, Pageable pageRequest) {
 		return super.search(specification, pageRequest);
 	}
 
@@ -388,7 +389,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<Join<Project, User>> searchUsersForProject(final Project project, final String search, final int page,
 			final int size, final Sort sort) {
-		return pujRepository.getUsersForProject(project, search, new PageRequest(page, size, sort));
+		return pujRepository.getUsersForProject(project, search, PageRequest.of(page, size, sort));
 	}
 	
 	/**

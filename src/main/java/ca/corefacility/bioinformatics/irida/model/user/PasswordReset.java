@@ -24,7 +24,7 @@ public class PasswordReset implements Comparable<PasswordReset>, Timestamped<Str
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@OneToOne
 	@NotNull

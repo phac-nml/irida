@@ -461,7 +461,7 @@ public class UsersController {
 	DataTablesResponse getAjaxUserList(@DataTablesRequest DataTablesParams params, Locale locale) {
 
 		Page<User> userPage = userService.search(UserSpecification.searchUser(params.getSearchValue()),
-				new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+				PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
 
 		List<DataTablesResponseModel> usersData = new ArrayList<>();
 		for (User user : userPage) {

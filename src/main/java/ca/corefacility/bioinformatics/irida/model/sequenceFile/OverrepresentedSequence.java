@@ -40,7 +40,7 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	/**
 	 * for hibernate
