@@ -7,6 +7,11 @@
   <head>
     <title th:text="#{project.associated.heading(${project.label})}">ASSOCIATED PROJECTS</title>
     <link rel="stylesheet" href="/dist/css/associated-projects.bundle.css">
+    <script th:inline="javascript">
+      window.PAGE = {
+        permissions: /*[[${isAdmin or isOwner}]]*/ false
+      };
+    </script>
   </head>
   <body>
     <div id="root" layout:fragment="settings-content"></div>

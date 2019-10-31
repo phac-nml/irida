@@ -19,7 +19,7 @@ export const removeAssociatedProject = (id, associatedId) =>
     `${URL}/${id}/settings/associated/remove?associatedId=${associatedId}`
   );
 
-export const getAvailableAssociatedProjects = (id, query) =>
+export const addAssociatedProject = (id, associatedId) =>
   axios
-    .get(`${URL}/${id}/settings/associated/available?query=${query}`)
+    .post(`${URL}/${id}/settings/associated/add?associatedId=${associatedId}`)
     .then(response => response.data);

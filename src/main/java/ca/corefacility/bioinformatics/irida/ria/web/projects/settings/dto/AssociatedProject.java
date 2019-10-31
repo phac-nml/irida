@@ -9,12 +9,14 @@ public class AssociatedProject {
 	private Long id;
 	private String organism;
 	private Date createdDate;
+	private boolean isAssociated;
 
-	public AssociatedProject(Project project) {
+	public AssociatedProject(Project project, boolean isAssociated) {
 		this.label = project.getLabel();
 		this.id = project.getId();
 		this.organism = project.getOrganism();
 		this.createdDate = project.getCreatedDate();
+		this.isAssociated = isAssociated;
 	}
 
 	public String getLabel() {
@@ -31,5 +33,9 @@ public class AssociatedProject {
 
 	public Date getCreatedDate() {
 		return createdDate;
+	}
+
+	public boolean isAssociated() {
+		return isAssociated;
 	}
 }
