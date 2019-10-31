@@ -147,7 +147,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	}
 
 	@com.fasterxml.jackson.annotation.JsonIgnore
-	public final ToolExecution getCreatedByTool() {
+	public ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}
 

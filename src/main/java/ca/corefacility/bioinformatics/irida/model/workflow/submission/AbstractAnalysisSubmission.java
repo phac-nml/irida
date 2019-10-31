@@ -214,7 +214,7 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	 * @return The {@link IridaWorkflowNamedParameters} for this submission.
 	 */
 	@JsonIgnore
-	public final IridaWorkflowNamedParameters getNamedParameters() {
+	public IridaWorkflowNamedParameters getNamedParameters() {
 		return namedParameters;
 	}
 
