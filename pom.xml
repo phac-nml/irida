@@ -110,6 +110,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jcl</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -214,7 +220,7 @@
 			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.jboss.logging</groupId>
+<!--					<groupId>org.jboss.logging</groupId>-->
 					<artifactId>jboss-logging</artifactId>
 				</exclusion>
 			</exclusions>
@@ -235,6 +241,12 @@
 			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons.dbcp.version}</version>
 			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>commons-net</groupId>
@@ -435,6 +447,12 @@
 			<artifactId>spring-ws-test</artifactId>
 			<version>${spring.ws.test.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -453,6 +471,12 @@
 			<artifactId>rest-assured</artifactId>
 			<version>${rest.assured.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.github.springtestdbunit</groupId>
@@ -496,6 +520,12 @@
 			<artifactId>spring-test-mvc-htmlunit</artifactId>
 			<version>${spring-test-mvc-htmlunit.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
