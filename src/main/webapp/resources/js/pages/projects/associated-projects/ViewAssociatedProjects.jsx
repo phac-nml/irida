@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Input, Switch, Table, Typography } from "antd";
-import uniqBy from "lodash/uniqBy";
+import { Avatar, Button, Input, Switch, Table, Typography } from "antd";
 import { createProjectLink } from "../../../utilities/link-utilities";
 import {
   addAssociatedProject,
   getAssociatedProjects,
   removeAssociatedProject
 } from "../../../apis/projects/projects";
+import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
+import { grey3 } from "../../../styles/colors";
 
 const { Text } = Typography;
 
@@ -18,15 +19,12 @@ export function ViewAssociatedProjects() {
   useEffect(() => {
     getAssociatedProjects(window.project.id).then(data => {
       setProjects(data.associatedProjectList);
-      const organisms = uniqBy(
-        data.associatedProjectList.filter(p => p.organism),
-        "organism"
-      ).map(item => ({
-        text: item.organism,
-        value: item.organism
-      }));
-      organisms.push({ text: "Unknown", value: "unknown" });
-      setOrganismFilters(organisms);
+      setOrganismFilters(
+        createListFilterByUniqueAttribute({
+          list: data.associatedProjectList,
+          attr: "organism"
+        })
+      );
       setLoading(false);
     });
   }, [getAssociatedProjects]);
@@ -49,6 +47,7 @@ export function ViewAssociatedProjects() {
   const columns = [
     {
       width: 50,
+      key: "toggle",
       render: project =>
         window.PAGE.permissions ? (
           <Switch
@@ -61,6 +60,7 @@ export function ViewAssociatedProjects() {
         )
     },
     {
+      key: "project",
       render: project => createProjectLink(project),
       title: "Project",
       filterDropdown: ({
@@ -70,20 +70,40 @@ export function ViewAssociatedProjects() {
         clearFilters
       }) => {
         return (
-          <div style={{ padding: 8 }}>
-            <Input
-              style={{ width: 188, display: "block" }}
-              value={selectedKeys[0]}
-              onChange={e =>
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-              }
-              onPressEnter={confirm}
-            />
+          <div>
+            <div style={{ padding: 8, borderBottom: `1px solid ${grey3}` }}>
+              <Input
+                style={{ width: 188, display: "block" }}
+                value={selectedKeys[0]}
+                onChange={e =>
+                  setSelectedKeys(e.target.value ? [e.target.value] : [])
+                }
+                onPressEnter={confirm}
+              />
+            </div>
+            <div style={{ padding: 8 }}>
+              <Button
+                onClick={clearFilters}
+                size="small"
+                style={{ width: 90, marginRight: 8 }}
+              >
+                Reset
+              </Button>
+              <Button
+                type="primary"
+                onClick={confirm}
+                icon="search"
+                size="small"
+                style={{ width: 90 }}
+              >
+                Search
+              </Button>
+            </div>
           </div>
         );
       },
       onFilter: (value, project) => {
-        console.log("KDFSLJLSDJF");
+        console.log("KDFSLJLSDJF", value, project);
         return project.label
           .toString()
           .toLocaleLowerCase()
@@ -91,6 +111,7 @@ export function ViewAssociatedProjects() {
       }
     },
     {
+      key: "organism",
       dataIndex: "organism",
       align: "right",
       title: "Organism",
