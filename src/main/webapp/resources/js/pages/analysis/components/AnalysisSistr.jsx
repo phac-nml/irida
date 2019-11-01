@@ -5,7 +5,7 @@
  */
 
 import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Col, Tabs, Typography } from "antd";
+import { Tabs, Typography } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getSistrResults } from "../../../apis/analysis/analysis";
 import { SideTabs } from "../../../components/tabs/SideTabs";
@@ -19,6 +19,7 @@ const SerovarPredictions = React.lazy(() =>
 );
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
+const Citation = React.lazy(() => import("./sistr/Citation"));
 
 const { Title } = Typography;
 const TabPane = Tabs.TabPane;
@@ -77,21 +78,9 @@ export default function AnalysisSistr(props) {
           </Suspense>
         </TabPane>
         <TabPane tab="Citation" key="citation">
-          <Col span={12}>
-            <Title level={2} className="t-page-title">
-              Citation
-            </Title>
-            <a href="https://doi.org/10.1371/journal.pone.0147101">
-              The <i>Salmonella In Silico</i> Typing Resource (SISTR): an open
-              web-accessible tool for rapidly typing and subtyping draft
-              Salmonella genome assemblies. Catherine Yoshida, Peter
-              Kruczkiewicz, Chad R. Laing, Erika J. Lingohr, Victor P.J. Gannon,
-              John H.E. Nash, Eduardo N. Taboada.
-              <cite>
-                PLoS ONE 11(1): e0147101. doi: 10.1371/journal.pone.0147101
-              </cite>
-            </a>
-          </Col>
+          <Suspense fallback={<ContentLoading />}>
+            <Citation />
+          </Suspense>
         </TabPane>
       </SideTabs>
     ) : (

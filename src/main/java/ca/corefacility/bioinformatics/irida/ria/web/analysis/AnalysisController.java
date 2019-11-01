@@ -277,24 +277,12 @@ public class AnalysisController {
 		/*
 		 * Preview information
 		 */
-		try {
-			if (submission.getAnalysisState()
-					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
-					tree(submission, model);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
-					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
-					model.addAttribute("bio_hansel", true);
-				}
+		if (submission.getAnalysisState()
+				.equals(AnalysisState.COMPLETED)) {
+			if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
+				model.addAttribute("sistr", true);
 			}
-
-		} catch (IOException e) {
-			logger.error("Couldn't get preview for analysis", e);
 		}
-
-
-
 
 		return "analysis";
 	}
