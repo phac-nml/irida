@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
-import java.util.Map;
+/**
+ * Used as a response for encapsulating a SISTR result object as well
+ * as the sample name and if there was a parsing error
+ */
+
 
 public class AnalysisSistrResults {
 	private String sampleName;
