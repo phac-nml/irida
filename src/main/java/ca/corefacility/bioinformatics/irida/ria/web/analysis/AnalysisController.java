@@ -274,16 +274,6 @@ public class AnalysisController {
 		model.addAttribute("analysisType", analysisType);
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
-		/*
-		 * Preview information
-		 */
-		if (submission.getAnalysisState()
-				.equals(AnalysisState.COMPLETED)) {
-			if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
-				model.addAttribute("pipelineType", "sistr");
-			}
-		}
-
 		return "analysis";
 	}
 

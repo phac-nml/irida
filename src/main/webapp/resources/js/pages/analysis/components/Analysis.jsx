@@ -89,7 +89,10 @@ export default function Analysis() {
       return "job-error";
     } else {
       if (defaultTabKey === "") {
-        if (analysisContext.sistr && analysisContext.isCompleted) {
+        if (
+          analysisContext.analysisType === "SISTR_TYPING" &&
+          analysisContext.isCompleted
+        ) {
           return "sistr_typing";
         } else {
           return "settings";
@@ -136,7 +139,7 @@ export default function Analysis() {
       <Tabs activeKey={setActiveTabKey()} onChange={updateNav} animated={false}>
         {analysisContext.isCompleted ? (
           [
-            analysisContext.pipelineType === "bio_hansel" ? (
+            analysisContext.analysisType === "BIO_HANSEL" ? (
               <TabPane
                 tab="bio_hansel"
                 key="bio_hansel"
@@ -148,7 +151,7 @@ export default function Analysis() {
               </TabPane>
             ) : null,
 
-            analysisContext.pipelineType === "sistr" ? (
+            analysisContext.analysisType === "SISTR_TYPING" ? (
               <TabPane
                 tab="Sistr"
                 key="sistr_typing"
@@ -163,7 +166,8 @@ export default function Analysis() {
               </TabPane>
             ) : null,
 
-            analysisContext.pipelineType === "tree" ? (
+            analysisContext.analysisType === "PHYLOGENOMICS" ||
+            analysisContext.analysisType === "MLST_MENTALIST" ? (
               <TabPane
                 tab={getI18N("Analysis.phylogeneticTree")}
                 key="phylogenomics"
