@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, Input, Switch, Table, Typography } from "antd";
+import { Avatar, Switch, Table, Typography } from "antd";
 import { createProjectLink } from "../../../utilities/link-utilities";
 import {
   addAssociatedProject,
   getAssociatedProjects,
   removeAssociatedProject
 } from "../../../apis/projects/projects";
+import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
-import { grey3 } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const { Text } = Typography;
 
-export function ViewAssociatedProjects() {
+export default function ViewAssociatedProjects() {
   const [projects, setProjects] = useState([]);
   const [organismFilters, setOrganismFilters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,64 +47,26 @@ export function ViewAssociatedProjects() {
 
   const columns = [
     {
-      width: 50,
-      key: "toggle",
-      render: project =>
-        window.PAGE.permissions ? (
-          <Switch
-            checked={project.associated}
-            loading={project.updating}
-            onClick={checked => updateProject(checked, project)}
-          />
-        ) : (
-          <Avatar icon="folder" />
-        )
-    },
-    {
       key: "project",
-      render: project => createProjectLink(project),
-      title: "Project",
-      filterDropdown: ({
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters
-      }) => {
-        return (
-          <div>
-            <div style={{ padding: 8, borderBottom: `1px solid ${grey3}` }}>
-              <Input
-                style={{ width: 188, display: "block" }}
-                value={selectedKeys[0]}
-                onChange={e =>
-                  setSelectedKeys(e.target.value ? [e.target.value] : [])
-                }
-                onPressEnter={confirm}
+      render: project => (
+        <>
+          <span style={{ marginRight: SPACE_MD }}>
+            {window.PAGE.permissions ? (
+              <Switch
+                checked={project.associated}
+                loading={project.updating}
+                onClick={checked => updateProject(checked, project)}
               />
-            </div>
-            <div style={{ padding: 8 }}>
-              <Button
-                onClick={clearFilters}
-                size="small"
-                style={{ width: 90, marginRight: 8 }}
-              >
-                Reset
-              </Button>
-              <Button
-                type="primary"
-                onClick={confirm}
-                icon="search"
-                size="small"
-                style={{ width: 90 }}
-              >
-                Search
-              </Button>
-            </div>
-          </div>
-        );
-      },
+            ) : (
+              <Avatar icon="folder" />
+            )}
+          </span>{" "}
+          {createProjectLink(project)}
+        </>
+      ),
+      title: "Project",
+      filterDropdown: props => <TextFilter {...props} />,
       onFilter: (value, project) => {
-        console.log("KDFSLJLSDJF", value, project);
         return project.label
           .toString()
           .toLocaleLowerCase()
@@ -124,6 +87,7 @@ export function ViewAssociatedProjects() {
 
   return (
     <Table
+      bordered
       rowKey="id"
       loading={loading}
       columns={columns}
