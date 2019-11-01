@@ -10,7 +10,7 @@
  */
 
 import React, { Suspense, useContext, useState } from "react";
-import { Icon, Tabs } from "antd";
+import { Tabs } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
@@ -36,14 +36,6 @@ const AnalysisSettings = React.lazy(() => import("./AnalysisSettings"));
 const AnalysisSistr = React.lazy(() => import("./AnalysisSistr"));
 
 const TabPane = Tabs.TabPane;
-
-// Built in Analysis Types
-const analysisTypesWithAdditionalPage = [
-  "BIO_HANSEL",
-  "SISTR_TYPING",
-  "PHYLOGENOMICS",
-  "MLST_MENTALIST"
-];
 
 const analysisSettingsTabKeys = ["details", "samples", "share", "delete"];
 const analysisErrorTabKeys = [

@@ -5,12 +5,12 @@ import java.util.Map;
 public class AnalysisSistrResults {
 	private String sampleName;
 	private Boolean parse_results_error;
-	private Map<String, Object> result;
+	private SistrResult result;
 
 	public AnalysisSistrResults() {
 	}
 
-	public AnalysisSistrResults(String sampleName, Boolean parse_results_error, Map<String, Object> result) {
+	public AnalysisSistrResults(String sampleName, Boolean parse_results_error, SistrResult result) {
 		this.sampleName=sampleName;
 		this.parse_results_error=parse_results_error;
 		this.result=result;
@@ -32,11 +32,11 @@ public class AnalysisSistrResults {
 		this.parse_results_error = parse_results_error;
 	}
 
-	public Map<String, Object> getResult() {
+	public SistrResult getResult() {
 		return result;
 	}
 
-	public void setResult(Map<String, Object> result) {
+	public void setResult(SistrResult result) {
 		this.result = result;
 	}
 }

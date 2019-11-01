@@ -121,13 +121,27 @@ export async function saveToRelatedSamples(submissionId) {
   }
 }
 
+/**
+ * Get the job errors.
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response.
+ */
 export async function getJobErrors(submissionId) {
-  const res = await axios.get(
-    `${window.TL.BASE_URL}analysis/ajax/${submissionId}/job-errors`
-  );
-  return res.data;
+  try {
+    const res = await axios.get(
+      `${window.TL.BASE_URL}analysis/ajax/${submissionId}/job-errors`
+    );
+    return res.data;
+  } catch (error) {
+    return { error: error };
+  }
 }
 
+/**
+ * Get the sistr results.
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function getSistrResults(submissionId) {
   try {
     const res = await axios.get(`${URL}sistr/${submissionId}`);

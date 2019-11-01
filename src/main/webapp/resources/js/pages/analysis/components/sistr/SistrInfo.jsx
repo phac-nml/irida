@@ -14,7 +14,7 @@ const { Title } = Typography;
 
 export default function SistrInfo({ sistrResults, sampleName }) {
   function sistrInfo() {
-    let qc_status = sistrResults.qc_status;
+    const qc_status = sistrResults.qc_status;
 
     return [
       {
@@ -25,11 +25,11 @@ export default function SistrInfo({ sistrResults, sampleName }) {
         title: getI18N("AnalysisSistr.qualityControlStatus"),
         desc:
           qc_status === "PASS" ? (
-            <SuccessAlert message={sistrResults.qc_status} />
+            <SuccessAlert message={qc_status} />
           ) : qc_status === "FAIL" ? (
-            <ErrorAlert message={sistrResults.qc_status} />
+            <ErrorAlert message={qc_status} />
           ) : (
-            <WarningAlert message={sistrResults.qc_status} />
+            <WarningAlert message={qc_status} />
           )
       }
     ];

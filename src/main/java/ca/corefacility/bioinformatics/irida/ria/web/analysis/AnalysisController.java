@@ -293,6 +293,9 @@ public class AnalysisController {
 			logger.error("Couldn't get preview for analysis", e);
 		}
 
+
+
+
 		return "analysis";
 	}
 
@@ -870,7 +873,7 @@ public class AnalysisController {
 	 * Get the sistr analysis information to display
 	 *
 	 * @param id ID of the analysis submission
-	 * @return Json results for the SISTR analysis
+	 * @return dto with SISTR analysis results
 	 */
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/sistr/{id}")
@@ -900,15 +903,14 @@ public class AnalysisController {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
 						.next();
 
-				// verify file is proper json file
+				// verify file is proper json file and map to a SistrResult list
 				ObjectMapper mapper = new ObjectMapper();
-				List<Map<String, Object>> sistrResults = mapper.readValue(json,
-						new TypeReference<List<Map<String, Object>>>() {
-						});
+				List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
+				});
 
 				if (sistrResults.size() > 0) {
 					// should only ever be one sample for these results
-					if (samples!=null && samples.size() == 1) {
+					if (samples != null && samples.size() == 1) {
 						Sample sample = samples.iterator()
 								.next();
 						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
@@ -926,7 +928,7 @@ public class AnalysisController {
 				logger.error("Error reading file [" + path + "]", e);
 			}
 		}
-		return new AnalysisSistrResults(null,true,null);
+		return new AnalysisSistrResults(null, true, null);
 	}
 
 	// ************************************************************************************************
