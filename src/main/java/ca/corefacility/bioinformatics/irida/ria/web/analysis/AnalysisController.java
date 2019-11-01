@@ -280,7 +280,7 @@ public class AnalysisController {
 		if (submission.getAnalysisState()
 				.equals(AnalysisState.COMPLETED)) {
 			if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
-				model.addAttribute("sistr", true);
+				model.addAttribute("pipelineType", "sistr");
 			}
 		}
 

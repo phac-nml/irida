@@ -136,7 +136,7 @@ export default function Analysis() {
       <Tabs activeKey={setActiveTabKey()} onChange={updateNav} animated={false}>
         {analysisContext.isCompleted ? (
           [
-            analysisContext.bio_hansel ? (
+            analysisContext.pipelineType === "bio_hansel" ? (
               <TabPane
                 tab="bio_hansel"
                 key="bio_hansel"
@@ -148,7 +148,7 @@ export default function Analysis() {
               </TabPane>
             ) : null,
 
-            analysisContext.sistr ? (
+            analysisContext.pipelineType === "sistr" ? (
               <TabPane
                 tab="Sistr"
                 key="sistr_typing"
@@ -163,7 +163,7 @@ export default function Analysis() {
               </TabPane>
             ) : null,
 
-            analysisContext.tree ? (
+            analysisContext.pipelineType === "tree" ? (
               <TabPane
                 tab={getI18N("Analysis.phylogeneticTree")}
                 key="phylogenomics"

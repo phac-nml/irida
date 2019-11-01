@@ -34,7 +34,7 @@ const initialContext = {
   analysisType: window.PAGE.analysisType,
   isCompleted: window.PAGE.analysisState === "COMPLETED",
   isError: window.PAGE.analysisState.includes("ERROR"),
-  sistr: window.PAGE.sistr
+  pipelineType: window.PAGE.pipelineType
 };
 
 const AnalysisContext = React.createContext(initialContext);
