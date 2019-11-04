@@ -53,6 +53,7 @@ const analysisSistrTabKeys = [
 ];
 
 export default function Analysis() {
+  const BASE_URL = window.PAGE.base;
   const { analysisContext } = useContext(AnalysisContext);
 
   const title = (
@@ -147,29 +148,29 @@ export default function Analysis() {
             <Menu mode="horizontal" selectedKeys={[keyname[1] || "settings"]}>
               {analysisContext.isCompleted ? (
                 <Menu.Item key="sistr">
-                  <Link to="/analysis/1/sistr">SISTR</Link>
+                  <Link to={`${BASE_URL}/sistr`}>SISTR</Link>
                 </Menu.Item>
               ) : null}
               {analysisContext.isError ? (
                 <Menu.Item key="error">
-                  <Link to="/analysis/1/error">
+                  <Link to={`${BASE_URL}/error`}>
                     {getI18N("Analysis.jobError")}
                   </Link>
                 </Menu.Item>
               ) : (
                 <Menu.Item key="output">
-                  <Link to="/analysis/1/output">
+                  <Link to={`${BASE_URL}/output`}>
                     {getI18N("Analysis.outputFiles")}
                   </Link>
                 </Menu.Item>
               )}
               <Menu.Item key="provenance">
-                <Link to="/analysis/1/provenance">
+                <Link to={`${BASE_URL}/provenance`}>
                   {getI18N("Analysis.provenance")}
                 </Link>
               </Menu.Item>
               <Menu.Item key="settings">
-                <Link to="/analysis/1/settings/details">
+                <Link to={`${BASE_URL}/settings/details`}>
                   {getI18N("Analysis.settings")}
                 </Link>
               </Menu.Item>
@@ -179,10 +180,10 @@ export default function Analysis() {
       </Location>
       <Suspense fallback={<div>Loading ...</div>}>
         <Router style={{ paddingTop: SPACE_MD }}>
-          <AnalysisError path="/analysis/1/error" />
-          <AnalysisSettingsContainer path="/analysis/1/settings/*" />
-          <AnalysisProvenance path="/analysis/1/provenance" />
-          <AnalysisOutputFiles path="/analysis/1/output" />
+          <AnalysisError path={`${BASE_URL}/error`} />
+          <AnalysisSettingsContainer path={`${BASE_URL}/settings/details`} />
+          <AnalysisProvenance path={`${BASE_URL}/provenance`} />
+          <AnalysisOutputFiles path={`${BASE_URL}/output`} />
         </Router>
       </Suspense>
     </PageWrapper>

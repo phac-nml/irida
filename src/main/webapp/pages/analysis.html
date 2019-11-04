@@ -10,6 +10,7 @@
 
     <script th:inline="javascript">
       window.PAGE = {
+        base: [[@{/analysis/{id}(id=${analysisSubmission.getId()})}]],
         analysis: [[${analysisSubmission}]],
         analysisName: [[${analysisSubmission.getName()}]],
         analysisState: [[${analysisSubmission.getAnalysisState()}]],

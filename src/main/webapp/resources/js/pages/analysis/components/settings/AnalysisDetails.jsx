@@ -37,6 +37,7 @@ export default function AnalysisDetails() {
   const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
     AnalysisContext
   );
+  w;
 
   // List of analysis details
   const analysisDetails = [
