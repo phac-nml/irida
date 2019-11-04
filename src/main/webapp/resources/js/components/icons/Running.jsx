@@ -1,21 +1,25 @@
 /**
- * Component to render a Running icon
+ * Component to render a Running icon with
+ * an optional message
  */
 
 import React from "react";
 import { Icon } from "antd";
 import { grey6 } from "../../styles/colors";
-import { SPACE_SM } from "../../styles/spacing";
+import { SPACE_XS } from "../../styles/spacing";
 
 /**
  * Stateless UI component for displaying a 'Running' icon
  *
+ * @param {string} message - Message to display next to icon
  *
  * @returns {Element} - Returns a 'Running' icon component
  */
-
-export function Running() {
+export function Running({ message }) {
   return (
-    <Icon type="loading" style={{ marginRight: SPACE_SM, color: grey6 }} />
+    <span>
+      <Icon type="loading" style={{ marginRight: SPACE_XS, color: grey6 }} />
+      {message}
+    </span>
   );
 }

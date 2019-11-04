@@ -4,10 +4,8 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { Col, Typography } from "antd";
 import { getI18N } from "../../../../utilities/i18n-utilties";
-
-const { Title } = Typography;
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function SerovarPredictions({ sistrResults }) {
   function serovarPredictions() {
@@ -48,11 +46,8 @@ export default function SerovarPredictions({ sistrResults }) {
    * for the serovar predictions
    */
   return (
-    <Col span={12}>
-      <Title level={2} className="t-page-title">
-        {getI18N("AnalysisSistr.serovarPredictions")}
-      </Title>
+    <TabPaneContent title={getI18N("AnalysisSistr.serovarPredictions")}>
       <BasicList dataSource={serovarPredictions()} />
-    </Col>
+    </TabPaneContent>
   );
 }
