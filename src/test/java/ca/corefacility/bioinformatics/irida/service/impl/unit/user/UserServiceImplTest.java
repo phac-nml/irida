@@ -176,11 +176,6 @@ public class UserServiceImplTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.now());
-			}
-
-			@Override
 			public Optional<Instant> getRevisionInstant() {
 				return Optional.of(Instant.now());
 			}

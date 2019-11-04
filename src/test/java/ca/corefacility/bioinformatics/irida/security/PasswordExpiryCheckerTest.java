@@ -63,11 +63,6 @@ public class PasswordExpiryCheckerTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
-			}
-
-			@Override
 			public Optional<Instant> getRevisionInstant() {
 				return Optional.of(expiryDate.toInstant());
 			}
@@ -107,11 +102,6 @@ public class PasswordExpiryCheckerTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
-			}
-
-			@Override
 			public Optional<Instant> getRevisionInstant() {
 				return Optional.of(expiryDate.toInstant());
 			}
@@ -147,11 +137,6 @@ public class PasswordExpiryCheckerTest {
 			@Override
 			public Optional<Number> getRevisionNumber() {
 				return Optional.of(1L);
-			}
-
-			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
 			}
 
 			@Override
