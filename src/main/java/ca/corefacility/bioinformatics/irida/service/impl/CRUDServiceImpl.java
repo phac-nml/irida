@@ -1,21 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.NotWritablePropertyException;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +19,12 @@ import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.Timestamped;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend
@@ -83,10 +74,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public ValueType read(KeyType id) throws EntityNotFoundException {
-		ValueType value = repository.findById(id).orElse(null);
-		if (value == null) {
-			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id);
-		}
+		ValueType value = repository.findById(id).orElseThrow(() ->
+				new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id));
 		return value;
 	}
 
@@ -279,12 +268,9 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Revisions<Integer, ValueType> findRevisions(KeyType id) throws EntityRevisionDeletedException {
-		try {
-			return repository.findRevisions(id);
-		} catch (InvalidDataAccessApiUsageException e) {
-			throw new EntityRevisionDeletedException(String.format("Resource with id [%d] was deleted.", id), e);
-		}
+	public Revisions<Integer, ValueType> findRevisions(KeyType id) {
+
+		return repository.findRevisions(id);
 	}
 
 	/**
@@ -292,12 +278,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Revision<Integer, ValueType>> findRevisions(KeyType id, Pageable pageable)
-			throws EntityRevisionDeletedException {
-		try {
-			return repository.findRevisions(id, pageable);
-		} catch (InvalidDataAccessApiUsageException e) {
-			throw new EntityRevisionDeletedException(String.format("Resource with id [%d] was deleted.", id), e);
-		}
+	public Page<Revision<Integer, ValueType>> findRevisions(KeyType id, Pageable pageable) {
+
+		return repository.findRevisions(id, pageable);
 	}
 }

@@ -11,9 +11,11 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 public interface SequenceFileRepository extends FilesystemSupplementedRepository<SequenceFile>,
 		IridaJpaRepository<SequenceFile, Long> {
-	//TODO: Look into a solution that places this in FilesystemSupplementedRepository
 	/**
 	 * {@inheritDoc}
+	 *
+	 * Save is overridden here instead of in FilesystemSupplementedRepository as it would throw a
+	 * compilation error
 	 */
 	<S extends SequenceFile> S save(S entity);
 }

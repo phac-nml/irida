@@ -657,8 +657,7 @@ public class ProjectServiceImplIT {
 				mostRecent.getEntity().getName());
 	}
 
-	@Ignore
-	@Test(expected = EntityRevisionDeletedException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetDeletedProjectRevisions() {
 		Project p = projectService.read(1L);
@@ -666,11 +665,14 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 		projectService.delete(1L);
 
-		projectService.findRevisions(1L);
+		Revisions<Integer, Project> revisions = projectService.findRevisions(1L);
+
+		assertEquals("Deleted entity should match original", revisions.getLatestRevision()
+				.getEntity()
+				.getName(), p.getName());
 	}
 
-	@Ignore
-	@Test(expected = EntityRevisionDeletedException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedDeletedProjectRevisions() {
 		Project p = projectService.read(1L);
@@ -678,7 +680,9 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 		projectService.delete(1L);
 
-		projectService.findRevisions(1L, PageRequest.of(1, 1));
+		Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, new PageRequest(1, 1));
+
+		assertTrue("There should be at least 1 revision", revisions.getTotalElements() > 0);
 	}
 
 	@Test

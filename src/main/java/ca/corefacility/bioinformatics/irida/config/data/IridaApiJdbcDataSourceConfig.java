@@ -122,7 +122,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
 		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
 		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
-		
+
 		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
 
 		return basicDataSource;
@@ -141,9 +141,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	public Properties getJpaProperties() {
 		Properties properties = new Properties();
 		properties.setProperty(AvailableSettings.DIALECT, environment.getProperty(AvailableSettings.DIALECT));
-		properties.setProperty(AvailableSettings.STORAGE_ENGINE, environment.getProperty(AvailableSettings.STORAGE_ENGINE));
 		properties.setProperty(AvailableSettings.HBM2DDL_AUTO, environment.getProperty(AvailableSettings.HBM2DDL_AUTO));
-		properties.setProperty(AvailableSettings.HBM2DDL_CHARSET_NAME, "utf-8");
 
 		// if import_files is empty it tries to load any properties file it can
 		// find. Stopping this here.

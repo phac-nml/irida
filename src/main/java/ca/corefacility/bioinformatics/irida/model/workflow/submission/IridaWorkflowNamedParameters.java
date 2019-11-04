@@ -101,7 +101,7 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 		return this.id;
 	}
 
-	public final UUID getWorkflowId() {
+	public UUID getWorkflowId() {
 		return workflowId;
 	}
 
