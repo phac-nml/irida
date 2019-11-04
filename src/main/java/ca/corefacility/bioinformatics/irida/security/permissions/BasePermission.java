@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
