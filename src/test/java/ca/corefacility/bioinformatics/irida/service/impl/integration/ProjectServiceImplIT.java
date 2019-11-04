@@ -680,7 +680,7 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 		projectService.delete(1L);
 
-		Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, new PageRequest(1, 1));
+		Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, PageRequest.of(1, 1));
 
 		assertTrue("There should be at least 1 revision", revisions.getTotalElements() > 0);
 	}
