@@ -136,7 +136,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
         try {
             final AnnouncementUserJoin join = announcementUserJoinRepository.getAnnouncementUserJoin(announcement, user);
             Long id = join.getId();
-            announcementUserJoinRepository.delete(id);
+            announcementUserJoinRepository.deleteById(id);
         } catch (NullPointerException e) {
             throw new EntityNotFoundException("The user [" + user.getId() + "] has not yet read announcement ["
                     + announcement.getId() + "]: cannot mark as unread.");

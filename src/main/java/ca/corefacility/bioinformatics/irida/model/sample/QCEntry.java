@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class QCEntry {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)

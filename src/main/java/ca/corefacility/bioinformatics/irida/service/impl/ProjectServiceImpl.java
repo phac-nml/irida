@@ -127,7 +127,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
-	public Revisions<Integer, Project> findRevisions(Long id) throws EntityRevisionDeletedException {
+	public Revisions<Integer, Project> findRevisions(Long id) {
 		return super.findRevisions(id);
 	}
 
@@ -136,8 +136,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
-	public Page<Revision<Integer, Project>> findRevisions(Long id, Pageable pageable)
-			throws EntityRevisionDeletedException {
+	public Page<Revision<Integer, Project>> findRevisions(Long id, Pageable pageable) {
 		return super.findRevisions(id, pageable);
 	}
 
@@ -731,7 +730,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Project created = create(project);
 
 		sampleIds.forEach(sid -> {
-			Sample s = sampleRepository.findOne(sid);
+			Sample s = sampleRepository.findById(sid).orElse(null);
 			addSampleToProject(project, s, owner);
 		});
 

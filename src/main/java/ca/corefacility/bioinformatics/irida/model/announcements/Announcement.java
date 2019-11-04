@@ -38,7 +38,7 @@ import java.util.List;
 public class Announcement implements IridaThing, Comparable<Announcement> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 

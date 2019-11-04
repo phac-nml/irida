@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 public class IridaWorkflowNamedParameters implements IridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
@@ -101,7 +101,7 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 		return this.id;
 	}
 
-	public final UUID getWorkflowId() {
+	public UUID getWorkflowId() {
 		return workflowId;
 	}
 

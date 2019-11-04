@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@CreatedDate

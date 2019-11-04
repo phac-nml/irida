@@ -308,7 +308,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			// have to remove the sample to be deleted from its project:
 			ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, s);
 			psjRepository.delete(readSampleForProject);
-			sampleRepository.delete(s.getId());
+			sampleRepository.deleteById(s.getId());
 		}
 		return mergeInto;
 	}
@@ -539,7 +539,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				genomeAssemblyId);
 		if (join != null) {
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
-			sampleGenomeAssemblyJoinRepository.delete(join.getId());
+			sampleGenomeAssemblyJoinRepository.deleteById(join.getId());
 		} else {
 			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
 		}

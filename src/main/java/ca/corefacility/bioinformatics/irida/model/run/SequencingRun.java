@@ -48,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Lob

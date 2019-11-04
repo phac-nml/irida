@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "filePath", unique = true)

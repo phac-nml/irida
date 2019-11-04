@@ -61,7 +61,7 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 2592000;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

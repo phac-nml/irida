@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubmission> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

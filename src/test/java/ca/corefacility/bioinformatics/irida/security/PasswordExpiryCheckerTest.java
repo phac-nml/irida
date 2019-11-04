@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.security;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import com.google.common.collect.Lists;
-import org.joda.time.DateTime;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.history.Revision;
@@ -11,9 +11,12 @@ import org.springframework.data.history.RevisionMetadata;
 import org.springframework.data.history.Revisions;
 import org.springframework.security.authentication.CredentialsExpiredException;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -52,15 +55,15 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		Date expiryDate = cal.getTime();
 
-		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
+		Revision<Integer, User> revision = Revision.of(new RevisionMetadata() {
 			@Override
-			public Number getRevisionNumber() {
-				return 1L;
+			public Optional<Number> getRevisionNumber() {
+				return Optional.of(1L);
 			}
 
 			@Override
-			public DateTime getRevisionDate() {
-				return new DateTime(expiryDate.getTime());
+			public Optional<LocalDateTime> getRevisionDate() {
+				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
 			}
 
 			@Override
@@ -70,7 +73,7 @@ public class PasswordExpiryCheckerTest {
 		}, revUser);
 
 		when(userRepository.findRevisions(user.getId()))
-				.thenReturn(new Revisions<Integer, User>(Lists.newArrayList(revision)));
+				.thenReturn(Revisions.of(Lists.newArrayList(revision)));
 
 		checker.check(user);
 
@@ -80,6 +83,7 @@ public class PasswordExpiryCheckerTest {
 	@Test
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testChangedPassword() {
+
 		user.setPassword("password1");
 		revUser.setPassword("password2");
 
@@ -90,15 +94,15 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -10);
 		Date expiryDate = cal.getTime();
 
-		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
+		Revision<Integer, User> revision = Revision.of(new RevisionMetadata() {
 			@Override
-			public Number getRevisionNumber() {
-				return 1L;
+			public Optional<Number> getRevisionNumber() {
+				return Optional.of(1L);
 			}
 
 			@Override
-			public DateTime getRevisionDate() {
-				return new DateTime(expiryDate.getTime());
+			public Optional<LocalDateTime> getRevisionDate() {
+				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
 			}
 
 			@Override
@@ -107,8 +111,8 @@ public class PasswordExpiryCheckerTest {
 			}
 		}, revUser);
 
-		when(userRepository.findRevisions(user.getId()))
-				.thenReturn(new Revisions<Integer, User>(Lists.newArrayList(revision)));
+		when(userRepository.findRevisions(user.getId())).thenReturn(
+				Revisions.of(Lists.newArrayList(revision)));
 
 		checker.check(user);
 
@@ -128,15 +132,15 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -10);
 		Date expiryDate = cal.getTime();
 
-		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
+		Revision<Integer, User> revision = Revision.of(new RevisionMetadata() {
 			@Override
-			public Number getRevisionNumber() {
-				return 1L;
+			public Optional<Number> getRevisionNumber() {
+				return Optional.of(1L);
 			}
 
 			@Override
-			public DateTime getRevisionDate() {
-				return new DateTime(expiryDate.getTime());
+			public Optional<LocalDateTime> getRevisionDate() {
+				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
 			}
 
 			@Override
@@ -146,7 +150,7 @@ public class PasswordExpiryCheckerTest {
 		}, revUser);
 
 		when(userRepository.findRevisions(user.getId()))
-				.thenReturn(new Revisions<Integer, User>(Lists.newArrayList(revision)));
+				.thenReturn(Revisions.of(Lists.newArrayList(revision)));
 
 		checker.check(user);
 

@@ -30,7 +30,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 @EntityListeners(AuditingEntityListener.class)
 public class JobError extends IridaResourceSupport implements IridaThing, Comparable<JobError> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	/**

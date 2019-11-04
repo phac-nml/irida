@@ -10,6 +10,8 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -50,6 +52,8 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 
 		cal.add(Calendar.DAY_OF_MONTH, -passwordExpiryInDays);
 		Date expiryDate = cal.getTime();
+		LocalDateTime localExpiryDate = LocalDateTime.ofInstant(expiryDate.toInstant(),
+                                             ZoneId.systemDefault());
 
 		User oldUser = null;
 
@@ -57,8 +61,9 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 
 			logger.trace("Checking old user with date of " + rev.getRevisionDate());
 
+			LocalDateTime revDate = rev.getRevisionDate().orElse(null);
 			// if revision date is older than the expiry date we can stop looking
-			if (rev.getRevisionDate().toDate().before(expiryDate)) {
+			if (revDate.isBefore(localExpiryDate)) {
 				oldUser = rev.getEntity();
 				break;
 			}

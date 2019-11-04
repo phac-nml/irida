@@ -34,7 +34,7 @@ import java.util.Set;
 public abstract class SequencingObject extends IridaResourceSupport implements MutableIridaThing, RemoteSynchronizable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

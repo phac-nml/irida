@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sequencefile;
 import java.nio.file.Path;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,7 @@ public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepository
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public SequenceFile save(SequenceFile entity) {
 		return super.saveInternal(entity);
 	}

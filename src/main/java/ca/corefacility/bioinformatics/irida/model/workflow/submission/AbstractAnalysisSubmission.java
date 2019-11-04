@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractAnalysisSubmission extends IridaResourceSupport implements MutableIridaThing {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	protected Long id;
 
@@ -214,7 +214,7 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	 * @return The {@link IridaWorkflowNamedParameters} for this submission.
 	 */
 	@JsonIgnore
-	public final IridaWorkflowNamedParameters getNamedParameters() {
+	public IridaWorkflowNamedParameters getNamedParameters() {
 		return namedParameters;
 	}
 

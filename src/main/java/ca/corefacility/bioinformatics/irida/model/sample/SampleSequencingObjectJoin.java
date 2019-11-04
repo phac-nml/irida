@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

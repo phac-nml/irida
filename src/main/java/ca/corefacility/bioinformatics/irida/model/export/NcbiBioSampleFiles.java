@@ -3,15 +3,10 @@ package ca.corefacility.bioinformatics.irida.model.export;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -40,11 +35,15 @@ public class NcbiBioSampleFiles {
 	private String bioSample;
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany()
+	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<SingleEndSequenceFile> files;
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany()
+	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
