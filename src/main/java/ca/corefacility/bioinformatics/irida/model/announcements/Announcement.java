@@ -45,7 +45,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     @CreatedDate
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
+    @Column(name = "created_date", updatable = false)
     private Date createdDate;
 
     @Column(name = "message")

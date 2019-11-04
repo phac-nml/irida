@@ -64,7 +64,7 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 	
 	/**

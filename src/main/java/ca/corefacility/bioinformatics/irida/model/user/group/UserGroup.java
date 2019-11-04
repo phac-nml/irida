@@ -40,7 +40,7 @@ public class UserGroup implements MutableIridaThing {
 	private String name;
 
 	@CreatedDate
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;

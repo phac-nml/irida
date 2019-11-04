@@ -34,7 +34,7 @@ public abstract class QCEntry {
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@NotNull
 	private Date createdDate;
 

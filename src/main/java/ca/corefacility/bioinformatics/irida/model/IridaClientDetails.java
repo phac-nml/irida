@@ -120,6 +120,7 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
 	private Date createdDate;
 
 	/**

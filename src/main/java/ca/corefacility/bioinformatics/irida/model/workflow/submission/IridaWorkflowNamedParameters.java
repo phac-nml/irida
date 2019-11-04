@@ -64,7 +64,7 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date", nullable = false)
+	@Column(name = "created_date", nullable = false, updatable = false)
 	private Date createdDate;
 
 	/**

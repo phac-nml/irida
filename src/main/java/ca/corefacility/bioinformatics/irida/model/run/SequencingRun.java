@@ -57,6 +57,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
 	private Date createdDate;
 	
 	@LastModifiedDate
