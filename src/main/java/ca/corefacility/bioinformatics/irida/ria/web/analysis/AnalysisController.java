@@ -21,12 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -238,7 +235,7 @@ public class AnalysisController {
 	 * @return redirect
 	 */
 
-	@RequestMapping(value = "/{submissionId}*")
+	@RequestMapping(value = "/{submissionId}**")
 	public String getDetailsPageRedirect(@PathVariable Long submissionId) {
 		return "redirect:/analysis/" + submissionId + "/";
 	}
@@ -252,7 +249,7 @@ public class AnalysisController {
 	 * @return name of the details page view
 	 */
 
-	@RequestMapping(value = "/{submissionId}/*", produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = "/{submissionId}/**", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
