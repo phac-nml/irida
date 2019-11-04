@@ -4,7 +4,7 @@ import { AnalysisShareProvider } from "../../../../contexts/AnalysisShareContext
 import { AnalysisDetailsProvider } from "../../../../contexts/AnalysisDetailsContext";
 import AnalysisSettings from "../AnalysisSettings";
 
-export function AnalysisSettingsContainer() {
+export default function AnalysisSettingsContainer() {
   return (
     <AnalysisDetailsProvider>
       <AnalysisSamplesProvider>

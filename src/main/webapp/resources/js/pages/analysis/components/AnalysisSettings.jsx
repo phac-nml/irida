@@ -9,17 +9,17 @@
  *required by the components encompassed within
  */
 
-import React, { useContext } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import { Col, Menu, Row, Tabs } from "antd";
 import { Link, Location, Router } from "@reach/router";
 
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
-
-import AnalysisDetails from "./settings/AnalysisDetails";
 import { SPACE_MD } from "../../../styles/spacing";
-import AnalysisSamples from "./settings/AnalysisSamples";
+
+const AnalysisDetails = lazy(() => import("./settings/AnalysisDetails"));
+const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
 
 const AnalysisShare = React.lazy(() => import("./settings/AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./settings/AnalysisDelete"));
@@ -57,10 +57,12 @@ export default function AnalysisSettings(props) {
       </Col>
 
       <Col span={12} style={{ paddingLeft: SPACE_MD }}>
-        <Router>
-          <AnalysisDetails path={"details"} />
-          <AnalysisSamples path={"samples"} />
-        </Router>
+        <Suspense fallback={<div>Loading ...</div>}>
+          <Router>
+            <AnalysisDetails path={"details"} />
+            <AnalysisSamples path={"samples"} />
+          </Router>
+        </Suspense>
       </Col>
       {/*<SideTabs*/}
       {/*  activeKey={*/}

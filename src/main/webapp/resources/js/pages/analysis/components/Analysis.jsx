@@ -9,7 +9,7 @@
  *required by the components encompassed within
  */
 
-import React, { useContext } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import { Menu, Tabs } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
@@ -20,11 +20,8 @@ import { Link, Location, Router } from "@reach/router";
 import { Error } from "../../../components/icons/Error";
 import { Running } from "../../../components/icons/Running";
 import { Success } from "../../../components/icons/Success";
-import { AnalysisSettingsContainer } from "./settings/AnalysisSettingsContainer";
 import { SPACE_MD } from "../../../styles/spacing";
 import AnalysisError from "./AnalysisError";
-import AnalysisOutputFiles from "./AnalysisOutputFiles";
-import AnalysisProvenance from "./AnalysisProvenance";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
@@ -32,6 +29,11 @@ const AnalysisPhylogeneticTree = React.lazy(() =>
 );
 const AnalysisSettings = React.lazy(() => import("./AnalysisSettings"));
 const AnalysisSistr = React.lazy(() => import("./AnalysisSistr"));
+const AnalysisSettingsContainer = lazy(() =>
+  import("./settings/AnalysisSettingsContainer")
+);
+const AnalysisOutputFiles = lazy(() => import("./AnalysisOutputFiles"));
+const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 const TabPane = Tabs.TabPane;
 
@@ -167,12 +169,14 @@ export default function Analysis() {
           );
         }}
       </Location>
-      <Router style={{ paddingTop: SPACE_MD }}>
-        {analysisContext.isError ? <AnalysisError /> : null}
-        <AnalysisSettingsContainer path="/analysis/1/settings/*" />
-        <AnalysisProvenance path="/analysis/1/provenance" />
-        <AnalysisOutputFiles path="/analysis/1/output" />
-      </Router>
+      <Suspense fallback={<div>Loading ...</div>}>
+        <Router style={{ paddingTop: SPACE_MD }}>
+          {analysisContext.isError ? <AnalysisError /> : null}
+          <AnalysisSettingsContainer path="/analysis/1/settings/*" />
+          <AnalysisProvenance path="/analysis/1/provenance" />
+          <AnalysisOutputFiles path="/analysis/1/output" />
+        </Router>
+      </Suspense>
     </PageWrapper>
   );
 }
