@@ -10,7 +10,7 @@ import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 
 /**
- * 
+ * Envers Revision class storing the timestamp, user, and oauth client used to make a change.
  */
 @Entity
 @RevisionEntity(UserRevListener.class)
