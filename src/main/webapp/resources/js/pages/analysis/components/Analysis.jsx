@@ -181,7 +181,7 @@ export default function Analysis() {
       <Suspense fallback={<div>Loading ...</div>}>
         <Router style={{ paddingTop: SPACE_MD }}>
           <AnalysisError path={`${BASE_URL}/error`} />
-          <AnalysisSettingsContainer path={`${BASE_URL}/settings/details`} />
+          <AnalysisSettingsContainer path={`${BASE_URL}/settings/*`} />
           <AnalysisProvenance path={`${BASE_URL}/provenance`} />
           <AnalysisOutputFiles path={`${BASE_URL}/output`} />
         </Router>

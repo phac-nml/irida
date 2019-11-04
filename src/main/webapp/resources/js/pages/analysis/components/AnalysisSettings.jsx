@@ -10,7 +10,7 @@
  */
 
 import React, { lazy, Suspense, useContext } from "react";
-import { Col, Menu, Row, Tabs } from "antd";
+import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
 
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
@@ -23,7 +23,8 @@ const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
 
 const AnalysisShare = React.lazy(() => import("./settings/AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./settings/AnalysisDelete"));
-const TabPane = Tabs.TabPane;
+
+const { Content, Sider } = Layout;
 
 export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
@@ -37,11 +38,12 @@ export default function AnalysisSettings(props) {
    * tab is clicked
    */
   return (
-    <Row>
-      <Col span={4}>
+    <Layout>
+      <Sider width={200} style={{ background: "#fff" }}>
         <Location>
           {props => {
             const keyname = props.location.pathname.match(pathRegx);
+
             return (
               <Menu mode="vertical" selectedKeys={[keyname[1] || "details"]}>
                 <Menu.Item key="details">
@@ -70,48 +72,20 @@ export default function AnalysisSettings(props) {
             );
           }}
         </Location>
-      </Col>
+      </Sider>
 
-      <Col span={12} style={{ paddingLeft: SPACE_MD }}>
-        <Suspense fallback={<div>Loading ...</div>}>
-          <Router>
-            <AnalysisDetails path="details" />
-            <AnalysisSamples path="samples" />
-            <AnalysisShare key="share" path="share" />,
-            <AnalysisDelete key="delete" path="delete" />
-          </Router>
-        </Suspense>
-      </Col>
-
-      {/*  {analysisDetailsContext.updatePermission*/}
-      {/*    ? [*/}
-      {/*        !analysisContext.isError ? (*/}
-      {/*          <TabPane*/}
-      {/*            tab={getI18N("AnalysisShare.manageResults")}*/}
-      {/*            key="share"*/}
-      {/*            className="t-analysis-settings-tab-share-results"*/}
-      {/*          >*/}
-      {/*            <Col span={12}>*/}
-      {/*              <Suspense fallback={<ContentLoading />}>*/}
-      {/*                <AnalysisShare />*/}
-      {/*              </Suspense>*/}
-      {/*            </Col>*/}
-      {/*          </TabPane>*/}
-      {/*        ) : null,*/}
-      {/*        <TabPane*/}
-      {/*          tab={getI18N("AnalysisDelete.deleteAnalysis")}*/}
-      {/*          key="delete"*/}
-      {/*          className="t-analysis-settings-tab-delete-analysis"*/}
-      {/*        >*/}
-      {/*          <Col span={12}>*/}
-      {/*            <Suspense fallback={<ContentLoading />}>*/}
-      {/*              <AnalysisDelete />*/}
-      {/*            </Suspense>*/}
-      {/*          </Col>*/}
-      {/*        </TabPane>*/}
-      {/*      ]*/}
-      {/*    : null}*/}
-      {/*</SideTabs>*/}
-    </Row>
+      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+        <Content>
+          <Suspense fallback={<div>Loading ...</div>}>
+            <Router>
+              <AnalysisDetails path="details" />
+              <AnalysisSamples path="samples" />
+              <AnalysisShare path="share" />
+              <AnalysisDelete path="delete" />
+            </Router>
+          </Suspense>
+        </Content>
+      </Layout>
+    </Layout>
   );
 }
