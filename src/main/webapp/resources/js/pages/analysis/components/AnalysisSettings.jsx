@@ -50,6 +50,13 @@ export default function AnalysisSettings(props) {
                 <Menu.Item key="samples">
                   <Link to="samples">{getI18N("AnalysisSamples.samples")}</Link>
                 </Menu.Item>
+                {analysisDetailsContext.updatePermission ? (
+                  <Menu.Item key="share">
+                    <Link to="share">
+                      {getI18N("AnalysisShare.manageResults")}
+                    </Link>
+                  </Menu.Item>
+                ) : null}
               </Menu>
             );
           }}
@@ -61,6 +68,9 @@ export default function AnalysisSettings(props) {
           <Router>
             <AnalysisDetails path={"details"} />
             <AnalysisSamples path={"samples"} />
+            {analysisDetailsContext.updatePermission ? (
+              <AnalysisShare path="share" />
+            ) : null}
           </Router>
         </Suspense>
       </Col>
