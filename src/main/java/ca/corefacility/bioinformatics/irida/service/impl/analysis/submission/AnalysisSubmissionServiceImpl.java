@@ -234,7 +234,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException {
+	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) {
 		return super.findRevisions(id);
 	}
 
@@ -243,8 +243,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
-			throws EntityRevisionDeletedException {
+	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable) {
 		return super.findRevisions(id, pageable);
 	}
 
