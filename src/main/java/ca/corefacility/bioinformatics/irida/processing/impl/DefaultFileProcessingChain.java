@@ -1,10 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +156,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 		Integer waiting = 0;
 
-		SequencingObject sequencingObject;
+		Optional<SequencingObject> sequencingObject;
 
 		do {
 			if (waiting > timeout) {
@@ -174,16 +171,16 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			} catch (InterruptedException e) {
 			}
 
-			sequencingObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
+			sequencingObject = sequencingObjectRepository.findById(sequencingObjectId);
 
-			if(sequencingObject != null) {
-				Set<SequenceFile> files = sequencingObject.getFiles();
+			if(sequencingObject.isPresent()) {
+				Set<SequenceFile> files = sequencingObject.get().getFiles();
 				filesNotSettled = files.stream().anyMatch(f -> {
 					return !Files.exists(f.getFile());
 				});
 			}
 		} while (filesNotSettled);
 
-		return sequencingObject;
+		return sequencingObject.get();
 	}
 }

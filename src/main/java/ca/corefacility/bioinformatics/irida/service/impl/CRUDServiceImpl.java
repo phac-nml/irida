@@ -74,10 +74,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public ValueType read(KeyType id) throws EntityNotFoundException {
-		ValueType value = repository.findById(id).orElse(null);
-		if (value == null) {
-			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id);
-		}
+		ValueType value = repository.findById(id).orElseThrow(() ->
+				new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id));
 		return value;
 	}
 

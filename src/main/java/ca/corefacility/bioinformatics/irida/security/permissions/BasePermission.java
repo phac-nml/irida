@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,10 +97,8 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 
 		if (identifierType.isAssignableFrom(targetDomainObject.getClass())) {
 			logger.trace("Trying to find domain object by id [" + targetDomainObject + "]");
-			domainObject = repository.findById((IdentifierType) targetDomainObject).orElse(null);
-			if (domainObject == null) {
-				throw new EntityNotFoundException("Could not find entity with id [" + targetDomainObject + "]");
-			}
+			domainObject = repository.findById((IdentifierType) targetDomainObject).orElseThrow(() ->
+					new EntityNotFoundException("Could not find entity with id [" + targetDomainObject + "]"));
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
