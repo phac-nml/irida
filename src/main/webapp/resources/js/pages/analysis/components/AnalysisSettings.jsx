@@ -50,13 +50,22 @@ export default function AnalysisSettings(props) {
                 <Menu.Item key="samples">
                   <Link to="samples">{getI18N("AnalysisSamples.samples")}</Link>
                 </Menu.Item>
-                {analysisDetailsContext.updatePermission ? (
-                  <Menu.Item key="share">
-                    <Link to="share">
-                      {getI18N("AnalysisShare.manageResults")}
-                    </Link>
-                  </Menu.Item>
-                ) : null}
+                {analysisDetailsContext.updatePermission
+                  ? [
+                      analysisContext.isError ? null : (
+                        <Menu.Item key="share">
+                          <Link to="share">
+                            {getI18N("AnalysisShare.manageResults")}
+                          </Link>
+                        </Menu.Item>
+                      ),
+                      <Menu.Item key="delete">
+                        <Link to="delete">
+                          {getI18N("AnalysisDelete.deleteAnalysis")}
+                        </Link>
+                      </Menu.Item>
+                    ]
+                  : null}
               </Menu>
             );
           }}
@@ -66,45 +75,13 @@ export default function AnalysisSettings(props) {
       <Col span={12} style={{ paddingLeft: SPACE_MD }}>
         <Suspense fallback={<div>Loading ...</div>}>
           <Router>
-            <AnalysisDetails path={"details"} />
-            <AnalysisSamples path={"samples"} />
-            {analysisDetailsContext.updatePermission ? (
-              <AnalysisShare path="share" />
-            ) : null}
+            <AnalysisDetails path="details" />
+            <AnalysisSamples path="samples" />
+            <AnalysisShare key="share" path="share" />,
+            <AnalysisDelete key="delete" path="delete" />
           </Router>
         </Suspense>
       </Col>
-      {/*<SideTabs*/}
-      {/*  activeKey={*/}
-      {/*    props.defaultTabKey === "" || props.defaultTabKey === "settings"*/}
-      {/*      ? "details"*/}
-      {/*      : props.defaultTabKey*/}
-      {/*  }*/}
-      {/*  onChange={props.updateNav}*/}
-      {/*>*/}
-      {/*  <TabPane*/}
-      {/*    tab={getI18N("AnalysisDetails.details")}*/}
-      {/*    key="details"*/}
-      {/*    className="t-analysis-settings-tab-details"*/}
-      {/*  >*/}
-      {/*    <Col span={12}>*/}
-      {/*      <Suspense fallback={<ContentLoading />}>*/}
-      {/*        <AnalysisDetails />*/}
-      {/*      </Suspense>*/}
-      {/*    </Col>*/}
-      {/*  </TabPane>*/}
-
-      {/*  <TabPane*/}
-      {/*    tab={getI18N("AnalysisSamples.samples")}*/}
-      {/*    key="samples"*/}
-      {/*    className="t-analysis-settings-tab-samples"*/}
-      {/*  >*/}
-      {/*    <Col span={12}>*/}
-      {/*      <Suspense fallback={<ContentLoading />}>*/}
-      {/*        <AnalysisSamples />*/}
-      {/*      </Suspense>*/}
-      {/*    </Col>*/}
-      {/*  </TabPane>*/}
 
       {/*  {analysisDetailsContext.updatePermission*/}
       {/*    ? [*/}

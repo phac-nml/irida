@@ -150,11 +150,19 @@ export default function Analysis() {
                   <Link to="/analysis/1/sistr">SISTR</Link>
                 </Menu.Item>
               ) : null}
-              <Menu.Item key="output">
-                <Link to="/analysis/1/output">
-                  {getI18N("Analysis.outputFiles")}
-                </Link>
-              </Menu.Item>
+              {analysisContext.isError ? (
+                <Menu.Item key="error">
+                  <Link to="/analysis/1/error">
+                    {getI18N("Analysis.jobError")}
+                  </Link>
+                </Menu.Item>
+              ) : (
+                <Menu.Item key="output">
+                  <Link to="/analysis/1/output">
+                    {getI18N("Analysis.outputFiles")}
+                  </Link>
+                </Menu.Item>
+              )}
               <Menu.Item key="provenance">
                 <Link to="/analysis/1/provenance">
                   {getI18N("Analysis.provenance")}
@@ -171,7 +179,7 @@ export default function Analysis() {
       </Location>
       <Suspense fallback={<div>Loading ...</div>}>
         <Router style={{ paddingTop: SPACE_MD }}>
-          {analysisContext.isError ? <AnalysisError /> : null}
+          <AnalysisError path="/analysis/1/error" />
           <AnalysisSettingsContainer path="/analysis/1/settings/*" />
           <AnalysisProvenance path="/analysis/1/provenance" />
           <AnalysisOutputFiles path="/analysis/1/output" />
