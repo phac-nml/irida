@@ -48,22 +48,24 @@ export default function ViewAssociatedProjects() {
   const columns = [
     {
       key: "project",
-      render: project => (
-        <>
-          <span style={{ marginRight: SPACE_MD }}>
-            {window.PAGE.permissions ? (
-              <Switch
-                checked={project.associated}
-                loading={project.updating}
-                onClick={checked => updateProject(checked, project)}
-              />
-            ) : (
-              <Avatar icon="folder" />
-            )}
-          </span>{" "}
-          {createProjectLink(project)}
-        </>
-      ),
+      render(project) {
+        return (
+          <>
+            <span style={{ marginRight: SPACE_MD }}>
+              {window.PAGE.permissions ? (
+                <Switch
+                  checked={project.associated}
+                  loading={project.updating}
+                  onClick={checked => updateProject(checked, project)}
+                />
+              ) : (
+                <Avatar icon="folder" />
+              )}
+            </span>{" "}
+            {createProjectLink(project)}
+          </>
+        );
+      },
       title: "Project",
       filterDropdown: props => <TextFilter {...props} />,
       onFilter: (value, project) => {
@@ -79,7 +81,9 @@ export default function ViewAssociatedProjects() {
       dataIndex: "organism",
       align: "right",
       title: "Organism",
-      render: text => <Text type="secondary">{text}</Text>,
+      render(text) {
+        return <Text type="secondary">{text}</Text>;
+      },
       filters: organismFilters,
       onFilter: (value, record) =>
         record.organism === value || (!record.organism && value === "unknown"),
