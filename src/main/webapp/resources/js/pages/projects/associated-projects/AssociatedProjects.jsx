@@ -6,7 +6,6 @@ import { TabPaneContent } from "../../../components/tabs";
 export default function AssociatedProjects() {
   return (
     <TabPaneContent
-      colSpan={12}
       title={getI18N("AssociatedProjects.title")}
       subTitle={getI18N("AssociatedProjects.subTitle")}
     >
