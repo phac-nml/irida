@@ -22,6 +22,7 @@ Changes
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 * [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
+* [UI]: Updated and simplified associated project page.
 
 19.05 to 19.09
 ---------------
