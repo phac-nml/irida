@@ -69,9 +69,10 @@ export default function ViewAssociatedProjects() {
       onFilter: (value, project) => {
         return project.label
           .toString()
-          .toLocaleLowerCase()
+          .toLowerCase()
           .includes(value.toLowerCase());
-      }
+      },
+      sorter: (a, b) => ("" + a.label).localeCompare("" + b.label)
     },
     {
       key: "organism",
@@ -81,7 +82,8 @@ export default function ViewAssociatedProjects() {
       render: text => <Text type="secondary">{text}</Text>,
       filters: organismFilters,
       onFilter: (value, record) =>
-        record.organism === value || (!record.organism && value === "unknown")
+        record.organism === value || (!record.organism && value === "unknown"),
+      sorter: (a, b) => ("" + a.organism).localeCompare("" + b.organism)
     }
   ];
 
