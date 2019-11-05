@@ -9,6 +9,7 @@ import {
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
 const { Text } = Typography;
 
@@ -66,8 +67,10 @@ export default function ViewAssociatedProjects() {
           </>
         );
       },
-      title: "Project",
-      filterDropdown: props => <TextFilter {...props} />,
+      title: getI18N("ViewAssociatedProjects.ProjectHeader"),
+      filterDropdown(props) {
+        return <TextFilter {...props} />;
+      },
       onFilter: (value, project) => {
         return project.label
           .toString()

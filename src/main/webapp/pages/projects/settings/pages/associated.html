@@ -5,11 +5,23 @@
   data-layout-decorate="~{projects/settings/_base}"
 >
   <head>
-    <title th:text="#{project.associated.heading(${project.label})}">ASSOCIATED PROJECTS</title>
-    <link rel="stylesheet" href="/dist/css/associated-projects.bundle.css">
+    <title th:text="#{project.associated.heading(${project.label})}">
+      ASSOCIATED PROJECTS
+    </title>
+    <link rel="stylesheet" href="/dist/css/associated-projects.bundle.css" />
     <script th:inline="javascript">
       window.PAGE = {
-        permissions: /*[[${isAdmin or isOwner}]]*/ false
+        permissions: /*[[${isAdmin or isOwner}]]*/ false,
+        i18n: {
+          "AssociatedProjects.title":
+            /*[[#{AssociatedProjects.title}]]*/ "AssociatedProjects.title",
+          "AssociatedProjects.subTitle":
+            /*[[#{AssociatedProjects.subTitle}]]*/ "AssociatedProjects.subTitle",
+          "ViewAssociatedProjects.ProjectHeader":
+            /*[[#{ViewAssociatedProjects.ProjectHeader}]]*/ "ViewAssociatedProjects.ProjectHeader",
+          "ViewAssociatedProjects.OrganismHeader":
+            /*[[#{ViewAssociatedProjects.OrganismHeader}]]*/ "ViewAssociatedProjects.OrganismHeader"
+        }
       };
     </script>
   </head>
