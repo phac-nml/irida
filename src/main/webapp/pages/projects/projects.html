@@ -16,6 +16,7 @@
     ></div>
 
     <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/i18n/projects.__${#locale.language}__.js}"></script>
       <script th:src="@{/dist/js/projects.bundle.js}"></script>
     </th:block>
   </body>

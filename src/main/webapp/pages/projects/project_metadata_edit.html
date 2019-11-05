@@ -9,9 +9,6 @@
 			urls: {
 				taxonomy: 	/*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search'
 			},
-			i18n: {
-				organism: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism"
-			}
 		};
 	</script>
 </head>
@@ -71,6 +68,7 @@
 	</section>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/dist/i18n/project-metadata-edit.__${#locale.language}__.js}"></script>
 	<script th:src="@{/dist/js/project-metadata-edit.bundle.js}"></script>
 </th:block>
 </body>
