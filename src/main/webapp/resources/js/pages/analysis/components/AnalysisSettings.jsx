@@ -30,7 +30,7 @@ export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const pathRegx = new RegExp(/(\w+)$/);
+  const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   /*
    * The following renders the analysis details, and tabs
    * for Samples, Share Results, and Delete Analysis which
@@ -45,7 +45,10 @@ export default function AnalysisSettings(props) {
             const keyname = props.location.pathname.match(pathRegx);
 
             return (
-              <Menu mode="vertical" selectedKeys={[keyname[1] || "details"]}>
+              <Menu
+                mode="vertical"
+                selectedKeys={[keyname ? keyname[1] : "details"]}
+              >
                 <Menu.Item key="details">
                   <Link to="details">{getI18N("AnalysisDetails.details")}</Link>
                 </Menu.Item>
@@ -78,7 +81,7 @@ export default function AnalysisSettings(props) {
         <Content>
           <Suspense fallback={<div>Loading ...</div>}>
             <Router>
-              <AnalysisDetails path="details" />
+              <AnalysisDetails path="details" default />
               <AnalysisSamples path="samples" />
               <AnalysisShare path="share" />
               <AnalysisDelete path="delete" />

@@ -145,7 +145,10 @@ export default function Analysis() {
         {props => {
           const keyname = props.location.pathname.match(pathRegx);
           return (
-            <Menu mode="horizontal" selectedKeys={[keyname[1] || "settings"]}>
+            <Menu
+              mode="horizontal"
+              selectedKeys={[keyname ? keyname[1] : "settings"]}
+            >
               {analysisContext.isCompleted ? (
                 <Menu.Item key="sistr">
                   <Link to={`${BASE_URL}/sistr`}>SISTR</Link>
@@ -181,7 +184,7 @@ export default function Analysis() {
       <Suspense fallback={<div>Loading ...</div>}>
         <Router style={{ paddingTop: SPACE_MD }}>
           <AnalysisError path={`${BASE_URL}/error`} />
-          <AnalysisSettingsContainer path={`${BASE_URL}/settings/*`} />
+          <AnalysisSettingsContainer path={`${BASE_URL}/settings/*`} default />
           <AnalysisProvenance path={`${BASE_URL}/provenance`} />
           <AnalysisOutputFiles path={`${BASE_URL}/output`} />
         </Router>
