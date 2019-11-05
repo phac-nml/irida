@@ -55,6 +55,7 @@ export default function ViewAssociatedProjects() {
           render(project) {
             return (
               <Switch
+                className="t-selection"
                 checked={project.associated}
                 loading={project.updating}
                 onClick={checked => updateProject(checked, project)}
