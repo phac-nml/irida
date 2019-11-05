@@ -152,7 +152,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	@Override
 	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowException {
+			throws ExecutionManagerException, IridaWorkflowException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");

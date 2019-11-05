@@ -198,11 +198,11 @@ $("#add-user-username").select2({
     url: window.PAGE.urls.usersSelection,
     data(params) {
       return {
-        term: params.term,
+        term: params,
         page_limit: 10
       };
     },
-    processResults(data) {
+    results(data) {
       return {
         results: data.map(function(el) {
           return { id: el["identifier"], text: el["label"] };

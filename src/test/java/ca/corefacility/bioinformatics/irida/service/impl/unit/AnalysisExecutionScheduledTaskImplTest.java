@@ -191,9 +191,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test
-	public void testExecuteAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowException {
+	public void testExecuteAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARED);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.PREPARED)).thenReturn(
@@ -209,9 +210,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
+	 * @throws IOException 
 	 */
 	@Test
-	public void testExecuteAnalysesNoAnalyses() throws ExecutionManagerException, IridaWorkflowException {
+	public void testExecuteAnalysesNoAnalyses() throws ExecutionManagerException, IridaWorkflowException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARED);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.PREPARED)).thenReturn(

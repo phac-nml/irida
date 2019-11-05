@@ -36,15 +36,15 @@ const config = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude(path) {
-          return path.match(/node_modules/);
-        },
-        use: "babel-loader"
+        exclude: /(node_modules|bower_components)/,
+        use: "babel-loader?cacheDirectory"
       },
       {
         test: /\.(css|sass|scss)$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
           "css-loader",
           {
             loader: "postcss-loader",
@@ -63,8 +63,10 @@ const config = {
         }
       },
       {
-        test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-        use: "file-loader"
+        test: /\.(ttf|eot|svg|otf|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: {
+          loader: "file-loader"
+        }
       },
       {
         test: require.resolve("jquery"),

@@ -10,7 +10,7 @@
 <main layout:fragment="page">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <form role="form" action="/users/1/edit"
+            <form role="form" autocomplete="off" action="/users/1/edit"
                   th:action="@{/users/{id}/edit(id=${user.getId()})}" method="post">
                 <section class="panel panel-default">
                     <div class="panel-heading">
@@ -49,6 +49,7 @@
                                 _Email Error_
                             </div>
                             <input id="email" name="email" type="email"
+                                   autocomplete=""
                                    class="form-control input-full"
                                    th:placeholder="${user.email}" placeholder="Email"
                                    data:msg-remote="#{user.edit.email.taken}"/>
@@ -64,6 +65,15 @@
                                    class="form-control input-full"
                                    th:placeholder="${user.phoneNumber}" placeholder="Phone Number"
                                    data:msg-hasNumber="#{user.edit.phone.no-numbers}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="language" th:text="#{user.language}">_Language_</label>
+                            <div>
+                                    <small class="text-muted" th:utext="#{user.language.login}"></small>
+                                </div>
+                            <select id="language" name="locale" class="form-control input-full" >
+                                <option th:each="locale : ${locales}" th:text="${locale.getDisplayName()}" th:value="${locale.getLanguage()}" th:selected="${user.locale == locale.getLanguage()}"></option>
+                            </select>
                         </div>
                         <div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
                             <label for="systemRole" th:text="#{users.role}">_Role_</label>

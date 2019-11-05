@@ -1,6 +1,28 @@
 Changes
 =======
 
+19.09 to 20.01
+--------------
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
+* [Developer]: Upgraded development Java version to Java 11 (LTS).
+* [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
+* [UI/Developer]: Updated ant.design and ag-grid to fix issue with horizontal scrolling in firefox.
+* [UI]: Fixed issue where links to pipelines on the cart page displayed incorrectly.
+* [UI]: Updated project and global analyses listing pages to use Ant Design tables.
+* [UI]: Updated sequencing runs table to use Ant Design tables.
+* [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
+* [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
+* [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
+* [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
+* [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
+* [UI]: Fixed issue where hidden portions of client edit and creation form would not toggle correctly.
+* [UI]: Fixed issue with browser auto-filling password fields on the user edit page.
+* [UI]: Fixed issue where user role would reset if server validation failed on user create page.
+* [UI]: Fixed bug where the "Automatically  create collection" could not be unchecked when exporting to Galaxy.
+* [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
+* [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
+* [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
+
 19.05 to 19.09
 ---------------
 * [UI/Developer]: Removed `datatables-bootstrap3-plugin` to remove dependency on outdated `jquery`.
@@ -12,6 +34,7 @@ Changes
 * [UI/Developer]: Removed loading angularjs through `bower` and moved it into the webpack build.
 * [UI/Developer]: Fixed bug where importing an metadata excel worksheet with numbers as column headers would fail.
 * [UI/Developer]: Updated `axios` to fix vulnerability.
+* [Workflow]: Fixing bug so that fastq files uploaded to Galaxy will be "fastqsanger" when uncompressed and "fastqsanger.gz" when compressed.
 * [UI/Developer]: Updated `fstream` to fix vulnerability.
 * [Developer]: Update pom file to reflect active IRIDA developers.
 * [UI]: Fixed bug where a new metadata template could not be created. (19.05.1)
@@ -26,6 +49,20 @@ Changes
 * [UI/Developer]: Removed `datatables` as a bower dependency.
 * [UI/Developer]: Removed unused dependencies from `bower` (`angular-bootstrap-switch`, `animate.css`, `angular-datatables`, `angular-daterangepicker-enhanced`, `lodash`, `clipboard`, and `jszip`)
 * [UI]: Removed lighthouse modals from the sequence files page.  Loading full images.  Removed dependency `angular-bootstrap-lightbox` from `bower`.
+* [Documentation]: Fixed `shed-tools` command to include `install` subcommand for installing Galaxy tools.
+* [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
+* [Developer]: Updated UI testing to allow using an external selenium webdriver.
+* [Developer]: Update eslint config to use `babel-parser`.
+* [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/user/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
+* [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
+* [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
+* [Documentation]: Added link to Galaxy Export (Import) tool documentation.
+* [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
+* [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
+* [Developer]: Updates to front-end packages: `antd@3.19.8` -> `antd@3.21.4`, `@babel/polyfill` -> `core-js/stable` & `regenerator-runtime/runtime`, as well as some minor updates to webpack dependencies.
+* [Developer]: Updated to node `v12.8.1`.
+* [Developer]: Updated `eslint` to fix security vulnerability.
+* [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack.
 
 19.01 to 19.05
@@ -68,6 +105,7 @@ Changes
 * [Database]: Fixed issue where FastQC description was being stored with an invalidly formatted version in the database.
 * [UI]: Fixed bug causing issues with saving Line List templates.
 * [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
+* [Developer]: Updated to latest version of NodeJS LTS (12.13.0) and Yarn (v1.19.1).
 
 0.22.0 to 19.01
 ----------------

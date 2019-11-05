@@ -108,7 +108,8 @@ export default class CartTools extends Component {
           <Pipelines
             key="pipelines"
             path={`${window.TL.BASE_URL}cart/pipelines`}
-            displaySelect={this.props.count > 0}
+            displaySelect={this.props.count > 0 || window.PAGE.automatedProject != null}
+            automatedProject = {window.PAGE.automatedProject}
             default={!this.state.fromGalaxy}
           />
         )

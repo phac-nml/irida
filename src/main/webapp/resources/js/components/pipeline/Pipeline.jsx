@@ -57,7 +57,16 @@ export default class Pipeline extends React.Component {
     displaySelect: PropTypes.bool.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.url = `${window.TL.BASE_URL}pipelines/${this.props.id}`;
+  }
+
   render() {
+    let pipelineUrl = this.url;
+    if (this.props.automatedProject !== null) {
+      pipelineUrl = `${pipelineUrl}?automatedProject=${this.props.automatedProject}`;
+    }
     return (
       <PipelineCard
         cover={
@@ -65,13 +74,17 @@ export default class Pipeline extends React.Component {
             {this.props.name}
           </Heading>
         }
+        className={`t-pipeline-card`}
         actions={
           this.props.displaySelect
             ? [
                 <Button
-                  size="small"
-                  className={`t-${this.props.name.replace(/\s/g, "_")}_btn`}
-                  href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}
+                  type="link"
+                  className={`t-${this.props.name.replace(
+                    /\s/g,
+                    "_"
+                  )}_btn t-select-pipeline`}
+                  href={pipelineUrl}
                 >
                   {i18n("pipelines.cart.select")}
                 </Button>

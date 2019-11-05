@@ -9,34 +9,34 @@
     <analysis_submission id="1" name="my analysis" remote_analysis_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
                          workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="2" analysis_state="PREPARING" created_date="2013-09-06 10:01:02"
                          name="My Pretend Submission"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="3" analysis_state="COMPLETING" created_date="2013-10-06 10:01:02"
                          name="My Submitted Submission" analysis_id="1"
                          workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="4" analysis_state="NEW" created_date="2013-11-06 10:01:02" name="My Running Submission"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="5" analysis_state="PREPARED" created_date="2013-12-06 10:01:02"
                          name="My Finished Running Submission" analysis_id="1"
                          workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="6" analysis_state="RUNNING" created_date="2014-01-06 10:01:02"
                          name="My Completed Running Submission" analysis_id="1"
                          workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="7" analysis_state="FINISHED_RUNNING" created_date="2014-02-06 10:01:02"
                          name="My Really Bad Mistake!"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="8" analysis_state="COMPLETED" created_date="2013-08-06 10:01:02" name="My Fake Submission"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
     <analysis_submission id="9" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
 </dataset>

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.listeners;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.runner.Description;
@@ -8,12 +10,15 @@ import org.junit.runner.notification.RunListener;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.fail;
+
 /**
  * Global settings for UI integration tests.
- * 
+ *
  */
 public class IntegrationUITestListener extends RunListener {
 	private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
@@ -41,7 +46,7 @@ public class IntegrationUITestListener extends RunListener {
 
 	/**
 	 * Get a reference to the {@link WebDriver} used in the tests.
-	 * 
+	 *
 	 * @return the instance of {@link WebDriver} used in the tests.
 	 */
 	public static WebDriver driver() {
@@ -72,10 +77,22 @@ public class IntegrationUITestListener extends RunListener {
 		} else {
 			logger.info("Running Chome in no headless (normal) mode");
 		}
-		
+
 		options.addArguments("--window-size=1920,1080");
 
-		driver = new ChromeDriver(options);
+		// Run selenium tests through external selenium server
+		String seleniumUrl = System.getProperty("webdriver.selenium_url");
+		if (seleniumUrl != null) {
+			try {
+				driver = new RemoteWebDriver(new URL(seleniumUrl), options);
+			} catch (MalformedURLException e) {
+				logger.error("webdriver.selenium_url is malformed", e);
+				fail("Could not connect to the remote web driver at following url: " + seleniumUrl);
+			}
+		} else {
+			driver = new ChromeDriver(options);
+		}
+
 		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 	}
 

@@ -90,6 +90,9 @@ public class ExportUploadService {
 	
 	@Value("${ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds}")
 	private int controlKeepAliveReplyTimeout;
+	
+	@Value("${ncbi.upload.ftp.passive}")
+	private boolean passiveMode;
 
 	@Value("${irida.administrative.notifications.email}")
 	private String notificationAdminEmail;
@@ -521,6 +524,14 @@ public class ExportUploadService {
 		if (!client.login(ftpUser, ftpPassword)) {
 			throw new IOException("Couldn't log in as " + ftpUser + client.getReplyString());
 		}
+		
+		if (passiveMode) {
+			logger.trace("Entering FTP passive mode");
+			client.enterLocalPassiveMode();
+		} else {
+			logger.trace("Entering FTP active mode");
+			client.enterLocalActiveMode();
+		}
 
 		logger.trace(client.getStatus());
 
@@ -568,14 +579,18 @@ public class ExportUploadService {
 	private void uploadString(FTPClient client, String filename, String content) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
-		
+
 		client.setFileType(FTP.ASCII_FILE_TYPE);
 
 		do {
 			tries++;
 			try (ByteArrayInputStream stringStream = new ByteArrayInputStream(content.getBytes())) {
 
+				logger.trace("Uploading string to file [" + filename + "], data_connection_mode ["
+						+ client.getDataConnectionMode() + "]");
 				client.storeFile(filename, stringStream);
+				logger.trace("Finished uploading string to file [" + filename + "]" + ", response ["
+						+ client.getReplyString() + "]");
 
 				done = true;
 			} catch (Exception e) {
@@ -605,14 +620,18 @@ public class ExportUploadService {
 	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
-		
+
 		client.setFileType(FTP.BINARY_FILE_TYPE);
-		
+
 		do {
 			tries++;
 
 			try (InputStream stream = Files.newInputStream(path)) {
+				logger.trace("Uploading path [" + path + "], filename [" + filename + "], data_connection_mode ["
+						+ client.getDataConnectionMode() + "]");
 				client.storeFile(filename, stream);
+				logger.trace("Finished uploading path [" + path + "], filename [" + filename + "], response ["
+						+ client.getReplyString() + "]");
 
 				done = true;
 			} catch (Exception e) {

@@ -4,8 +4,13 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+19.09 to 20.01
+--------------
+* This upgrade changes the Java version to Java 11.  To upgrade, follow the install instructions for your system in <https://irida.corefacility.ca/documentation/administrator/web/#prerequisite-install-instructions>.
+
 19.05 to 19.09
 --------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 
 19.01 to 19.05
 --------------

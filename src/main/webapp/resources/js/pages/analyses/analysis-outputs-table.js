@@ -13,32 +13,8 @@ import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
-/**
- * Internationalized messages
- * @type {Object} map of messages key name to i18n text
- */
-let I18N = {
-  "sample.sampleName": "SAMPLE NAME",
-  "bc.file": "FILE",
-  "analysis.table.type": "ANALYSIS TYPE",
-  pipeline: "PIPELINE",
-  "analysis-submission": "ANALYSIS SUBMISSION",
-  "analysis.date-created": "CREATED",
-  "form.download": "DOWNLOAD",
-  "project.export.submitter": "SUBMITTER",
-  "error.request.status-code": "STATUS CODE",
-  "error.request.url": "REQUEST URL",
-  "error.request.status-text": "STATUS TEXT",
-  "analysis.batch-download.ajax.error": "REQUEST ERROR",
-  "analysis.batch-download.preparing": "PREPARING DOWNLOAD",
-  "analysis.automated-analyses": "AUTOMATED ANALYSES",
-  "analysis.shared-analyses": "SHARED ANALYSES",
-  "analysis.batch-download.help-info": "SEND HELP"
-};
-I18N = Object.assign(I18N, window.PAGE.i18n);
-
 const helpInfoIcon = `<i class="fa fa-2x fa-question-circle spaced-left__sm text-info" title="${escapeHtml(
-  I18N["analysis.batch-download.help-info"]
+  i18n("analysis.batch-download.help-info")
 )}"></i>`;
 
 /**
@@ -160,8 +136,8 @@ function setDownloadButtonHtml(
     : "";
   $dlButton.innerHTML = `<i class="fa fa-download spaced-right__sm"></i> ${
     isPreparing
-      ? I18N["analysis.batch-download.preparing"]
-      : I18N["form.download"]
+      ? i18n("analysis.batch-download.preparing")
+      : i18n("form.download")
   } ${badge}`;
 }
 
@@ -235,7 +211,7 @@ function getWorkflowInfo(singleSampleOutputs) {
     if (!error) {
       workflowIds[workflowId] = data;
       if (grid) {
-        grid.context.beans.gridApi.beanInstance.redrawRows();
+        grid.gridOptions.api.redrawRows();
       }
     }
   });
@@ -338,9 +314,7 @@ async function getTableData(isShared = true) {
       field: "analysisSubmissionName",
       headerName: I18N["analysis-submission"],
       cellRenderer: p =>
-        `<a href="${BASE_URL}analysis/${
-          p.data.analysisSubmissionId
-        }" target="_blank">${p.data.analysisSubmissionName}</a>`
+        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {

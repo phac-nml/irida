@@ -7,18 +7,11 @@
     "**/*.txt"
   ],
   "dependencies": {
-    "select2": "3.5.0",
     "bower": "*",
-    "angular-ui-router": "0.2.13",
-    "ng-file-upload": "5.0.8",
-    "marked": "0.3.3",
-    "angular-marked": "0.0.18",
-    "angular-bootstrap": "0.14.3",
-    "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6"
+    "angular-ui-router": "0.2.13"
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": ">=1.4.0",
-    "angular-bootstrap": "0.14.3"
+    "angular": ">=1.4.0"
   }
 }
