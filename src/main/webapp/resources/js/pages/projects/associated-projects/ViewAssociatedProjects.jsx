@@ -8,7 +8,6 @@ import {
 } from "../../../apis/projects/projects";
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
-import { SPACE_MD } from "../../../styles/spacing";
 import { getI18N } from "../../../utilities/i18n-utilties";
 
 const { Text } = Typography;
@@ -47,25 +46,33 @@ export default function ViewAssociatedProjects() {
   }
 
   const columns = [
+    window.PAGE.permissions
+      ? {
+          key: "switch",
+          width: 80,
+          defaultSortOrder: "descend",
+          sorter: (a, b) => (a.associated ? 1 : b.associated ? -1 : 1),
+          render(project) {
+            return (
+              <Switch
+                checked={project.associated}
+                loading={project.updating}
+                onClick={checked => updateProject(checked, project)}
+              />
+            );
+          }
+        }
+      : {
+          key: "icon",
+          width: 60,
+          render() {
+            return <Avatar icon="folder" />;
+          }
+        },
     {
       key: "project",
       render(project) {
-        return (
-          <>
-            <span style={{ marginRight: SPACE_MD }}>
-              {window.PAGE.permissions ? (
-                <Switch
-                  checked={project.associated}
-                  loading={project.updating}
-                  onClick={checked => updateProject(checked, project)}
-                />
-              ) : (
-                <Avatar icon="folder" />
-              )}
-            </span>{" "}
-            {createProjectLink(project)}
-          </>
-        );
+        return createProjectLink(project);
       },
       title: getI18N("ViewAssociatedProjects.ProjectHeader"),
       filterDropdown(props) {
