@@ -30,6 +30,7 @@ export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
+  const BASE_URL = window.PAGE.base;
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   /*
    * The following renders the analysis details, and tabs
@@ -50,22 +51,26 @@ export default function AnalysisSettings(props) {
                 selectedKeys={[keyname ? keyname[1] : "details"]}
               >
                 <Menu.Item key="details">
-                  <Link to="details">{getI18N("AnalysisDetails.details")}</Link>
+                  <Link to={`${BASE_URL}/details`}>
+                    {getI18N("AnalysisDetails.details")}
+                  </Link>
                 </Menu.Item>
                 <Menu.Item key="samples">
-                  <Link to="samples">{getI18N("AnalysisSamples.samples")}</Link>
+                  <Link to={`${BASE_URL}/samples`}>
+                    {getI18N("AnalysisSamples.samples")}
+                  </Link>
                 </Menu.Item>
                 {analysisDetailsContext.updatePermission
                   ? [
                       analysisContext.isError ? null : (
                         <Menu.Item key="share">
-                          <Link to="share">
+                          <Link to={`${BASE_URL}/share`}>
                             {getI18N("AnalysisShare.manageResults")}
                           </Link>
                         </Menu.Item>
                       ),
                       <Menu.Item key="delete">
-                        <Link to="delete">
+                        <Link to={`${BASE_URL}/delete`}>
                           {getI18N("AnalysisDelete.deleteAnalysis")}
                         </Link>
                       </Menu.Item>
@@ -81,10 +86,10 @@ export default function AnalysisSettings(props) {
         <Content>
           <Suspense fallback={<div>Loading ...</div>}>
             <Router>
-              <AnalysisDetails path="details" default />
-              <AnalysisSamples path="samples" />
-              <AnalysisShare path="share" />
-              <AnalysisDelete path="delete" />
+              <AnalysisDetails path={`${BASE_URL}/details`} default />
+              <AnalysisSamples path={`${BASE_URL}/samples`} />
+              <AnalysisShare path={`${BASE_URL}/share`} />
+              <AnalysisDelete path={`${BASE_URL}/delete`} />
             </Router>
           </Suspense>
         </Content>
