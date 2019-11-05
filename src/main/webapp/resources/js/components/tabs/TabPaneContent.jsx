@@ -12,16 +12,18 @@ import { SPACE_MD } from "../../styles/spacing";
 /**
  * Stateless UI component for creating vertical tabs
  * @param {string} title - title for tab
- * @param {number} colSpan - the number of columns for the layout
+ * @param {number} xs - width of container for screen <576px
+ * @param {number} xl - width of container for screen >=1200px
+ * @param {number} xxl - width of container for screen >=1600px
  * @param {object} children - content to display in tab
  * @param {object} props - any other attributes to add to PageHeader
  *
  * @returns {Element} - Returns a component which displays the tab title and content
  */
 
-export function TabPaneContent({ title, colSpan = 12, children, ...props }) {
+export function TabPaneContent({ title, xs = 24, xl = 18, xxl = 12, children, ...props }) {
   return (
-    <Col span={colSpan}>
+    <Col xs={xs} xl={xl} xxl={xxl}>
       <PageHeader
         style={{ padding: 0, paddingBottom: SPACE_MD }}
         title={title}
