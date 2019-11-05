@@ -5,13 +5,14 @@
  */
 
 import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Tabs, Typography } from "antd";
+import { Layout, Menu } from "antd";
+import { Link, Location, Router } from "@reach/router";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getSistrResults } from "../../../apis/analysis/analysis";
-import { SideTabs } from "../../../components/tabs/SideTabs";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilties";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const SerovarPredictions = React.lazy(() =>
@@ -20,13 +21,13 @@ const SerovarPredictions = React.lazy(() =>
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
 const Citation = React.lazy(() => import("./sistr/Citation"));
-
-const { Title } = Typography;
-const TabPane = Tabs.TabPane;
+const { Content, Sider } = Layout;
 
 export default function AnalysisSistr(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
+
+  const pathRegx = new RegExp(/([a-zA-Z_0-9]+)$/);
 
   // On load gets the SISTR results
   useEffect(() => {
@@ -36,53 +37,71 @@ export default function AnalysisSistr(props) {
   }, []);
 
   /*
-   * The following renders the components for the SISTR results side tabs
+   * The following renders the components for the SISTR results tabs
    */
   return sistrResults !== null ? (
     !sistrResults.parse_results_error ? (
-      <SideTabs
-        activeKey={
-          props.defaultTabKey === "" || props.defaultTabKey === "sistr_typing"
-            ? "sistr_info"
-            : props.defaultTabKey
-        }
-        onChange={props.updateNav}
-      >
-        <TabPane
-          tab={getI18N("AnalysisSistr.sistrInformation")}
-          key="sistr_info"
-        >
-          <Suspense fallback={<ContentLoading />}>
-            <SistrInfo
-              sistrResults={sistrResults.result}
-              sampleName={sistrResults.sampleName}
-            />
-          </Suspense>
-        </TabPane>
-        <TabPane
-          tab={getI18N("AnalysisSistr.serovarPredictions")}
-          key="serovar_predictions"
-        >
-          <Suspense fallback={<ContentLoading />}>
-            <SerovarPredictions sistrResults={sistrResults.result} />
-          </Suspense>
-        </TabPane>
-        <TabPane tab={getI18N("AnalysisSistr.cgmlst330")} key="cgmlst_330">
-          <Suspense fallback={<ContentLoading />}>
-            <CgMlst sistrResults={sistrResults.result} />
-          </Suspense>
-        </TabPane>
-        <TabPane tab={getI18N("AnalysisSistr.mash")} key="mash">
-          <Suspense fallback={<ContentLoading />}>
-            <Mash sistrResults={sistrResults.result} />
-          </Suspense>
-        </TabPane>
-        <TabPane tab="Citation" key="citation">
-          <Suspense fallback={<ContentLoading />}>
-            <Citation />
-          </Suspense>
-        </TabPane>
-      </SideTabs>
+      <Layout>
+        <Sider width={200} style={{ background: "#fff" }}>
+          <Location>
+            {props => {
+              const keyname = props.location.pathname.match(pathRegx);
+              return (
+                <Menu
+                  mode="vertical"
+                  selectedKeys={[keyname ? keyname[1] : "sistr_info"]}
+                >
+                  <Menu.Item key="sistr_info">
+                    <Link to="sistr_info">
+                      {getI18N("AnalysisSistr.sistrInformation")}
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="serovar_predictions">
+                    <Link to="serovar_predictions">
+                      {getI18N("AnalysisSistr.serovarPredictions")}
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="cgmlst_330">
+                    <Link to="cgmlst_330">
+                      {getI18N("AnalysisSistr.cgmlst330")}
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="mash">
+                    <Link to="mash">{getI18N("AnalysisSistr.mash")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="citation">
+                    <Link to="citation">
+                      {getI18N("AnalysisSistr.citation")}
+                    </Link>
+                  </Menu.Item>
+                </Menu>
+              );
+            }}
+          </Location>
+        </Sider>
+
+        <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+          <Content>
+            <Suspense fallback={<ContentLoading />}>
+              <Router>
+                <SistrInfo
+                  sistrResults={sistrResults.result}
+                  sampleName={sistrResults.sampleName}
+                  path="sistr_info"
+                  default
+                />
+                <SerovarPredictions
+                  sistrResults={sistrResults.result}
+                  path="serovar_predictions"
+                />
+                <CgMlst sistrResults={sistrResults.result} path="cgmlst_330" />
+                <Mash sistrResults={sistrResults.result} path="mash" />
+                <Citation sistrResults={sistrResults.result} path="citation" />
+              </Router>
+            </Suspense>
+          </Content>
+        </Layout>
+      </Layout>
     ) : (
       <WarningAlert message={getI18N("AnalysisSistr.resultsUnavailable")} />
     )

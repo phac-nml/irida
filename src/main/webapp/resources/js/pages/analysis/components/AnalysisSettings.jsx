@@ -30,7 +30,7 @@ export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const BASE_URL = window.PAGE.base;
+  const BASE_URL = `${window.PAGE.base}/settings`;
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   /*
    * The following renders the analysis details, and tabs
@@ -44,7 +44,6 @@ export default function AnalysisSettings(props) {
         <Location>
           {props => {
             const keyname = props.location.pathname.match(pathRegx);
-
             return (
               <Menu
                 mode="vertical"

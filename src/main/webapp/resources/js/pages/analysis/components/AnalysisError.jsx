@@ -8,13 +8,14 @@
  */
 
 import React, { Suspense, useContext, useEffect, useState } from "react";
+import { Layout, Menu } from "antd";
+import { Link, Location, Router } from "@reach/router";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { Tabs } from "antd";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { SideTabs } from "../../../components/tabs/SideTabs";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -29,12 +30,13 @@ const StandardOutputTab = React.lazy(() =>
   import("./jobErrors/StandardOutputTab")
 );
 
-const TabPane = Tabs.TabPane;
+const { Content, Sider } = Layout;
 
 export default function AnalysisError(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
-  const [currActiveKey, setCurrActiveKey] = useState(1);
+
+  const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
 
   // Sets the job errors into a local state variable on page load
   useEffect(() => {
@@ -43,83 +45,83 @@ export default function AnalysisError(props) {
     });
   }, []);
 
-  // Sets the current active key for the 'Pass' tabs
-  function updateActiveKey(key) {
-    setCurrActiveKey(key.charAt(key.length - 1));
-  }
-
   return jobErrors !== null ? (
     jobErrors.galaxyJobErrors !== null ? (
-      <SideTabs
-        activeKey={
-          props.defaultTabKey === "" || props.defaultTabKey === "job-error"
-            ? "job-error-info"
-            : props.defaultTabKey
-        }
-        onChange={props.updateNav}
-      >
-        <TabPane
-          tab={getI18N("AnalysisError.galaxyJobInfo")}
-          key="job-error-info"
-        >
-          <Suspense fallback={<ContentLoading />}>
-            <GalaxyJobInfoTab
-              currActiveKey={currActiveKey}
-              updateActiveKey={updateActiveKey}
-              galaxyJobErrors={jobErrors.galaxyJobErrors}
-              galaxyUrl={jobErrors.galaxyUrl}
-            />
-          </Suspense>
-        </TabPane>
+      <Layout>
+        <Sider width={200} style={{ background: "#fff" }}>
+          <Location>
+            {props => {
+              const keyname = props.location.pathname.match(pathRegx);
+              return (
+                <Menu
+                  mode="vertical"
+                  selectedKeys={[keyname ? keyname[1] : "job-error-info"]}
+                >
+                  <Menu.Item key="job-error-info">
+                    <Link to="job-error-info">
+                      {getI18N("AnalysisError.galaxyJobInfo")}
+                    </Link>
+                  </Menu.Item>
+                  {jobErrors.galaxyJobErrors[
+                    jobErrors.galaxyJobErrors.length - 1
+                  ].parameters ? (
+                    <Menu.Item key="galaxy-parameters">
+                      <Link to="galaxy-parameters">
+                        {getI18N("AnalysisError.galaxyParameters")}
+                      </Link>
+                    </Menu.Item>
+                  ) : null}
+                  {jobErrors.galaxyJobErrors[
+                    jobErrors.galaxyJobErrors.length - 1
+                  ].standardError ? (
+                    <Menu.Item key="standard-error">
+                      <Link to="standard-error">
+                        {getI18N("AnalysisError.standardError")}
+                      </Link>
+                    </Menu.Item>
+                  ) : null}
+                  {jobErrors.galaxyJobErrors[
+                    jobErrors.galaxyJobErrors.length - 1
+                  ].standardOutput ? (
+                    <Menu.Item key="standard-out">
+                      <Link to="standard-out">
+                        {getI18N("AnalysisError.standardOutput")}
+                      </Link>
+                    </Menu.Item>
+                  ) : null}
+                </Menu>
+              );
+            }}
+          </Location>
+        </Sider>
 
-        {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
-          .parameters ? (
-          <TabPane
-            tab={getI18N("AnalysisError.galaxyParameters")}
-            key="galaxy-parameters"
-          >
+        <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+          <Content>
             <Suspense fallback={<ContentLoading />}>
-              <GalaxyParametersTab
-                currActiveKey={currActiveKey}
-                updateActiveKey={updateActiveKey}
-                galaxyJobErrors={jobErrors.galaxyJobErrors}
-              />
+              <Router>
+                <GalaxyJobInfoTab
+                  galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  galaxyUrl={jobErrors.galaxyUrl}
+                  path="job-error-info"
+                  default
+                />
+                <GalaxyParametersTab
+                  galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  path="galaxy-parameters"
+                />
+                <StandardErrorTab
+                  galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  path="standard-error"
+                />
+                <StandardOutputTab
+                  galaxyJobErrors={jobErrors.galaxyJobErrors}
+                  path="standard-error"
+                />
+              </Router>
             </Suspense>
-          </TabPane>
-        ) : null}
-
-        {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
-          .standardError ? (
-          <TabPane
-            tab={getI18N("AnalysisError.standardError")}
-            key="standard-error"
-          >
-            <Suspense fallback={<ContentLoading />}>
-              <StandardErrorTab
-                currActiveKey={currActiveKey}
-                updateActiveKey={updateActiveKey}
-                galaxyJobErrors={jobErrors.galaxyJobErrors}
-              />
-            </Suspense>
-          </TabPane>
-        ) : null}
-
-        {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
-          .standardOutput ? (
-          <TabPane
-            tab={getI18N("AnalysisError.standardOutput")}
-            key="standard-out"
-          >
-            <Suspense fallback={<ContentLoading />}>
-              <StandardOutputTab
-                currActiveKey={currActiveKey}
-                updateActiveKey={updateActiveKey}
-                galaxyJobErrors={jobErrors.galaxyJobErrors}
-              />
-            </Suspense>
-          </TabPane>
-        ) : null}
-      </SideTabs>
+          </Content>
+        </Layout>
+      </Layout>
     ) : (
       <div style={{ display: "flex" }}>
         <WarningAlert message={getI18N("AnalysisError.noJobInfoAvailable")} />
