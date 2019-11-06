@@ -26,6 +26,9 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Controller to handle all asynchronous call from the project settings UI.
+ */
 @Controller
 @RequestMapping("/ajax/projects/{projectId}/settings")
 public class ProjectSettingsAjaxController {
@@ -41,6 +44,14 @@ public class ProjectSettingsAjaxController {
 		this.userService = userService;
 	}
 
+	/**
+	 * Get a list of all projects associated with the current project.  If the user is a manager or administrator, the
+	 * list will also contain all projects they have access to.
+	 *
+	 * @param projectId project identifier for the currently active project
+	 * @param principal currently logged in user
+	 * @return list of projects
+	 */
 	@RequestMapping("/associated")
 	public List<AssociatedProject> getProjectAssociatedProjects(@PathVariable long projectId, Principal principal) {
 		Project project = projectService.read(projectId);
@@ -63,16 +74,23 @@ public class ProjectSettingsAjaxController {
 		if (hasPermission) {
 			Page<Project> page = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
 					Sort.Direction.ASC, "name");
-			page.getContent().forEach(p -> {
-				if(!associatedIds.contains(p.getId())) {
-					unassociatedProjects.add(new AssociatedProject(p, false));
-				}
-			});
+			page.getContent()
+					.forEach(p -> {
+						if (!associatedIds.contains(p.getId())) {
+							unassociatedProjects.add(new AssociatedProject(p, false));
+						}
+					});
 		}
 		return Stream.concat(associatedProjects.stream(), unassociatedProjects.stream())
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Remove an associated project from the currently active project
+	 *
+	 * @param projectId    project identifier for the currently active project
+	 * @param associatedId project identifier for the associated project to remove
+	 */
 	@RequestMapping(value = "/associated/remove", method = RequestMethod.POST)
 	public void removeAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
 		Project project = projectService.read(projectId);
@@ -80,6 +98,12 @@ public class ProjectSettingsAjaxController {
 		projectService.removeRelatedProject(project, associatedProject);
 	}
 
+	/**
+	 * Create a new associated project within the currently active project
+	 *
+	 * @param projectId    project identifier for the currently active project
+	 * @param associatedId project identifier for the  project to add association
+	 */
 	@RequestMapping(value = "/associated/add", method = RequestMethod.POST)
 	public void addAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
 		Project project = projectService.read(projectId);
