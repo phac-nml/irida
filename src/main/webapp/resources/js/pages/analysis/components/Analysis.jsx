@@ -53,7 +53,21 @@ export default function Analysis() {
     </>
   );
 
+  const analysisType = analysisContext.analysisType;
+
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
+
+  const defaultKey = analysisContext.isCompleted
+    ? analysisType === "SISTR_TYPING"
+      ? "sistr"
+      : analysisType === "BIO_HANSEL"
+      ? "bio_hansel"
+      : analysisType === "PHYLOGENOMICS" || analysisType === "MENTALIST_MLST"
+      ? "tree"
+      : null
+    : analysisContext.isError
+    ? "error"
+    : "settings";
   /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
@@ -70,34 +84,51 @@ export default function Analysis() {
       <Location>
         {props => {
           const keyname = props.location.pathname.match(pathRegx);
+
           return (
             <Menu
               mode="horizontal"
-              selectedKeys={[keyname ? keyname[1] : "settings"]}
+              selectedKeys={[keyname ? keyname[1] : defaultKey]}
             >
-              {analysisContext.isCompleted ? (
-                <Menu.Item key="sistr">
-                  <Link to={`${BASE_URL}/sistr/sistr_info`}>SISTR</Link>
-                </Menu.Item>
-              ) : null}
               {analysisContext.isError ? (
                 <Menu.Item key="error">
                   <Link to={`${BASE_URL}/error/job-error-info`}>
                     {getI18N("Analysis.jobError")}
                   </Link>
                 </Menu.Item>
-              ) : (
-                <Menu.Item key="output">
-                  <Link to={`${BASE_URL}/output`}>
-                    {getI18N("Analysis.outputFiles")}
-                  </Link>
-                </Menu.Item>
-              )}
-              <Menu.Item key="provenance">
-                <Link to={`${BASE_URL}/provenance`}>
-                  {getI18N("Analysis.provenance")}
-                </Link>
-              </Menu.Item>
+              ) : analysisContext.isCompleted ? (
+                analysisContext.analysisType === "SISTR_TYPING" ? (
+                  <Menu.Item key="sistr">
+                    <Link to={`${BASE_URL}/sistr/sistr_info`}>SISTR</Link>
+                  </Menu.Item>
+                ) : analysisContext.analysisType === "BIO_HANSEL" ? (
+                  <Menu.Item key="bio_hansel">
+                    <Link to={`${BASE_URL}/biohansel/sistr_info`}>
+                      bio_hansel
+                    </Link>
+                  </Menu.Item>
+                ) : (
+                  <Menu.Item key="tree">
+                    <Link to={`${BASE_URL}/tree/sistr_info`}>
+                      Phylogenetic Tree
+                    </Link>
+                  </Menu.Item>
+                )
+              ) : null}
+              {analysisContext.isCompleted
+                ? [
+                    <Menu.Item key="output">
+                      <Link to={`${BASE_URL}/output`}>
+                        {getI18N("Analysis.outputFiles")}
+                      </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="provenance">
+                      <Link to={`${BASE_URL}/provenance`}>
+                        {getI18N("Analysis.provenance")}
+                      </Link>
+                    </Menu.Item>
+                  ]
+                : null}
               <Menu.Item key="settings">
                 <Link to={`${BASE_URL}/settings/details`}>
                   {getI18N("Analysis.settings")}
@@ -109,11 +140,36 @@ export default function Analysis() {
       </Location>
       <Suspense fallback={<ContentLoading />}>
         <Router style={{ paddingTop: SPACE_MD }}>
-          <AnalysisError path={`${BASE_URL}/error/*`} />
+          <AnalysisError
+            path={`${BASE_URL}/error/*`}
+            default={analysisContext.isError}
+          />
           <AnalysisProvenance path={`${BASE_URL}/provenance`} />
           <AnalysisOutputFiles path={`${BASE_URL}/output`} />
-          <AnalysisSistr path={`${BASE_URL}/sistr/*`} />
-          <AnalysisSettingsContainer path={`${BASE_URL}/settings/*`} default />
+          <AnalysisSistr
+            path={`${BASE_URL}/sistr/*`}
+            default={
+              analysisContext.isCompleted && analysisType === "SISTR_TYPING"
+            }
+          />
+          <AnalysisBioHansel
+            path={`${BASE_URL}/biohansel/*`}
+            default={
+              analysisContext.isCompleted && analysisType === "BIO_HANSEL"
+            }
+          />
+          <AnalysisPhylogeneticTree
+            path={`${BASE_URL}/tree/*`}
+            default={
+              analysisContext.isCompleted &&
+              (analysisType === "PHYLOGENOMICS" ||
+                analysisType === "MENTALIST_MLST")
+            }
+          />
+          <AnalysisSettingsContainer
+            path={`${BASE_URL}/settings/*`}
+            default={!analysisContext.isError && !analysisContext.isCompleted}
+          />
         </Router>
       </Suspense>
     </PageWrapper>

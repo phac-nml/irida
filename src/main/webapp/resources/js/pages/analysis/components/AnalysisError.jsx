@@ -36,6 +36,7 @@ export default function AnalysisError(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
 
+  const BASE_URL = `${window.PAGE.base}/error`;
   const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
 
   // Sets the job errors into a local state variable on page load
@@ -58,7 +59,7 @@ export default function AnalysisError(props) {
                   selectedKeys={[keyname ? keyname[1] : "job-error-info"]}
                 >
                   <Menu.Item key="job-error-info">
-                    <Link to="job-error-info">
+                    <Link to={`${BASE_URL}/job-error-info`}>
                       {getI18N("AnalysisError.galaxyJobInfo")}
                     </Link>
                   </Menu.Item>
@@ -66,7 +67,7 @@ export default function AnalysisError(props) {
                     jobErrors.galaxyJobErrors.length - 1
                   ].parameters ? (
                     <Menu.Item key="galaxy-parameters">
-                      <Link to="galaxy-parameters">
+                      <Link to={`${BASE_URL}/galaxy-parameters`}>
                         {getI18N("AnalysisError.galaxyParameters")}
                       </Link>
                     </Menu.Item>
@@ -75,7 +76,7 @@ export default function AnalysisError(props) {
                     jobErrors.galaxyJobErrors.length - 1
                   ].standardError ? (
                     <Menu.Item key="standard-error">
-                      <Link to="standard-error">
+                      <Link to={`${BASE_URL}/standard-error`}>
                         {getI18N("AnalysisError.standardError")}
                       </Link>
                     </Menu.Item>
@@ -84,7 +85,7 @@ export default function AnalysisError(props) {
                     jobErrors.galaxyJobErrors.length - 1
                   ].standardOutput ? (
                     <Menu.Item key="standard-out">
-                      <Link to="standard-out">
+                      <Link to={`${BASE_URL}/standard-out`}>
                         {getI18N("AnalysisError.standardOutput")}
                       </Link>
                     </Menu.Item>
@@ -102,20 +103,20 @@ export default function AnalysisError(props) {
                 <GalaxyJobInfoTab
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   galaxyUrl={jobErrors.galaxyUrl}
-                  path="job-error-info"
+                  path={`${BASE_URL}/job-error-info`}
                   default
                 />
                 <GalaxyParametersTab
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path="galaxy-parameters"
+                  path={`${BASE_URL}/galaxy-parameters`}
                 />
                 <StandardErrorTab
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path="standard-error"
+                  path={`${BASE_URL}/standard-error`}
                 />
                 <StandardOutputTab
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path="standard-error"
+                  path={`${BASE_URL}/standard-out`}
                 />
               </Router>
             </Suspense>

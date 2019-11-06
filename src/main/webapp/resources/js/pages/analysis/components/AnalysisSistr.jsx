@@ -27,6 +27,7 @@ export default function AnalysisSistr(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
 
+  const BASE_URL = `${window.PAGE.base}/sistr`;
   const pathRegx = new RegExp(/([a-zA-Z_0-9]+)$/);
 
   // On load gets the SISTR results
@@ -52,25 +53,27 @@ export default function AnalysisSistr(props) {
                   selectedKeys={[keyname ? keyname[1] : "sistr_info"]}
                 >
                   <Menu.Item key="sistr_info">
-                    <Link to="sistr_info">
+                    <Link to={`${BASE_URL}/sistr_info`}>
                       {getI18N("AnalysisSistr.sistrInformation")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="serovar_predictions">
-                    <Link to="serovar_predictions">
+                    <Link to={`${BASE_URL}/serovar_predictions`}>
                       {getI18N("AnalysisSistr.serovarPredictions")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="cgmlst_330">
-                    <Link to="cgmlst_330">
+                    <Link to={`${BASE_URL}/cgmlst_330`}>
                       {getI18N("AnalysisSistr.cgmlst330")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="mash">
-                    <Link to="mash">{getI18N("AnalysisSistr.mash")}</Link>
+                    <Link to={`${BASE_URL}/mash`}>
+                      {getI18N("AnalysisSistr.mash")}
+                    </Link>
                   </Menu.Item>
                   <Menu.Item key="citation">
-                    <Link to="citation">
+                    <Link to={`${BASE_URL}/citation`}>
                       {getI18N("AnalysisSistr.citation")}
                     </Link>
                   </Menu.Item>
@@ -87,16 +90,25 @@ export default function AnalysisSistr(props) {
                 <SistrInfo
                   sistrResults={sistrResults.result}
                   sampleName={sistrResults.sampleName}
-                  path="sistr_info"
+                  path={`${BASE_URL}/sistr_info`}
                   default
                 />
                 <SerovarPredictions
                   sistrResults={sistrResults.result}
-                  path="serovar_predictions"
+                  path={`${BASE_URL}/serovar_predictions`}
                 />
-                <CgMlst sistrResults={sistrResults.result} path="cgmlst_330" />
-                <Mash sistrResults={sistrResults.result} path="mash" />
-                <Citation sistrResults={sistrResults.result} path="citation" />
+                <CgMlst
+                  sistrResults={sistrResults.result}
+                  path={`${BASE_URL}/cgmlst_330`}
+                />
+                <Mash
+                  sistrResults={sistrResults.result}
+                  path={`${BASE_URL}/mash`}
+                />
+                <Citation
+                  sistrResults={sistrResults.result}
+                  path={`${BASE_URL}/citation`}
+                />
               </Router>
             </Suspense>
           </Content>

@@ -90,7 +90,7 @@ export default function AnalysisShare() {
             message={getI18N("AnalysisShare.saveResultsPermanent")}
             style={{ marginBottom: SPACE_MD }}
           />
-          <p>{getI18N(`AnalysisShare.${analysisContext.analysisType.type}`)}</p>
+          <p>{getI18N(`AnalysisShare.${analysisContext.analysisType}`)}</p>
           <Button
             type="primary"
             onClick={() => saveResultsToRelatedSamples()}
