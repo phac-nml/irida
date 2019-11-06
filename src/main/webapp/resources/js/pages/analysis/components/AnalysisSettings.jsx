@@ -17,6 +17,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { SPACE_MD } from "../../../styles/spacing";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const AnalysisDetails = lazy(() => import("./settings/AnalysisDetails"));
 const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
@@ -79,7 +80,7 @@ export default function AnalysisSettings(props) {
 
       <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
         <Content>
-          <Suspense fallback={<div>Loading ...</div>}>
+          <Suspense fallback={<ContentLoading />}>
             <Router>
               <AnalysisDetails path="details" default />
               <AnalysisSamples path="samples" />

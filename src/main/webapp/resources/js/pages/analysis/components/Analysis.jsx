@@ -62,7 +62,7 @@ export default function Analysis() {
       ? "sistr"
       : analysisType === "BIO_HANSEL"
       ? "bio_hansel"
-      : analysisType === "PHYLOGENOMICS" || analysisType === "MENTALIST_MLST"
+      : analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST"
       ? "tree"
       : null
     : analysisContext.isError
@@ -158,7 +158,7 @@ export default function Analysis() {
             default={
               analysisContext.isCompleted &&
               (analysisType === "PHYLOGENOMICS" ||
-                analysisType === "MENTALIST_MLST")
+                analysisType === "MLST_MENTALIST")
             }
           />
           <AnalysisSettingsContainer
