@@ -4,10 +4,8 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { Col, Typography } from "antd";
 import { getI18N } from "../../../../utilities/i18n-utilties";
-
-const { Title } = Typography;
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function CgMlst({ sistrResults }) {
   function cgMLST330() {
@@ -44,11 +42,8 @@ export default function CgMlst({ sistrResults }) {
    * for the cgMLST data
    */
   return (
-    <Col span={12}>
-      <Title level={2} className="t-page-title">
-        {getI18N("AnalysisSistr.cgmlst330")}
-      </Title>
+    <TabPaneContent title={getI18N("AnalysisSistr.cgmlst330")}>
       <BasicList dataSource={cgMLST330()} />
-    </Col>
+    </TabPaneContent>
   );
 }

@@ -126,11 +126,11 @@ public class SistrResult {
 		this.h2 = h2;
 	}
 
-	public String getoAntigen() {
+	public String getOAntigen() {
 		return oAntigen;
 	}
 
-	public void setoAntigen(String oAntigen) {
+	public void setOAntigen(String oAntigen) {
 		this.oAntigen = oAntigen;
 	}
 
