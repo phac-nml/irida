@@ -28,7 +28,7 @@ export default function AnalysisSistr(props) {
   const [sistrResults, setSistrResults] = useState(null);
 
   const BASE_URL = `${window.PAGE.base}/sistr`;
-  const pathRegx = new RegExp(/([a-zA-Z_0-9]+)$/);
+  const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the SISTR results
   useEffect(() => {
@@ -50,10 +50,10 @@ export default function AnalysisSistr(props) {
               return (
                 <Menu
                   mode="vertical"
-                  selectedKeys={[keyname ? keyname[1] : "sistr_info"]}
+                  selectedKeys={[keyname ? keyname[1] : "info"]}
                 >
-                  <Menu.Item key="sistr_info">
-                    <Link to={`${BASE_URL}/sistr_info`}>
+                  <Menu.Item key="info">
+                    <Link to={`${BASE_URL}/info`}>
                       {getI18N("AnalysisSistr.sistrInformation")}
                     </Link>
                   </Menu.Item>
@@ -62,8 +62,8 @@ export default function AnalysisSistr(props) {
                       {getI18N("AnalysisSistr.serovarPredictions")}
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="cgmlst_330">
-                    <Link to={`${BASE_URL}/cgmlst_330`}>
+                  <Menu.Item key="cgmlst">
+                    <Link to={`${BASE_URL}/cgmlst`}>
                       {getI18N("AnalysisSistr.cgmlst330")}
                     </Link>
                   </Menu.Item>
@@ -90,7 +90,7 @@ export default function AnalysisSistr(props) {
                 <SistrInfo
                   sistrResults={sistrResults.result}
                   sampleName={sistrResults.sampleName}
-                  path={`${BASE_URL}/sistr_info`}
+                  path={`${BASE_URL}/info`}
                   default
                 />
                 <SerovarPredictions
@@ -99,7 +99,7 @@ export default function AnalysisSistr(props) {
                 />
                 <CgMlst
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/cgmlst_330`}
+                  path={`${BASE_URL}/cgmlst`}
                 />
                 <Mash
                   sistrResults={sistrResults.result}

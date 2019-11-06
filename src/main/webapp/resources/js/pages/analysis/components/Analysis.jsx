@@ -97,38 +97,33 @@ export default function Analysis() {
                   </Link>
                 </Menu.Item>
               ) : analysisContext.isCompleted ? (
-                analysisContext.analysisType === "SISTR_TYPING" ? (
-                  <Menu.Item key="sistr">
-                    <Link to={`${BASE_URL}/sistr/sistr_info`}>SISTR</Link>
-                  </Menu.Item>
-                ) : analysisContext.analysisType === "BIO_HANSEL" ? (
-                  <Menu.Item key="bio_hansel">
-                    <Link to={`${BASE_URL}/biohansel/sistr_info`}>
-                      bio_hansel
-                    </Link>
-                  </Menu.Item>
-                ) : (
-                  <Menu.Item key="tree">
-                    <Link to={`${BASE_URL}/tree/sistr_info`}>
-                      Phylogenetic Tree
-                    </Link>
-                  </Menu.Item>
-                )
-              ) : null}
-              {analysisContext.isCompleted
-                ? [
-                    <Menu.Item key="output">
-                      <Link to={`${BASE_URL}/output`}>
-                        {getI18N("Analysis.outputFiles")}
-                      </Link>
-                    </Menu.Item>,
-                    <Menu.Item key="provenance">
-                      <Link to={`${BASE_URL}/provenance`}>
-                        {getI18N("Analysis.provenance")}
-                      </Link>
+                [
+                  analysisContext.analysisType === "SISTR_TYPING" ? (
+                    <Menu.Item key="sistr">
+                      <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
                     </Menu.Item>
-                  ]
-                : null}
+                  ) : analysisContext.analysisType === "BIO_HANSEL" ? (
+                    <Menu.Item key="bio_hansel">
+                      <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item key="tree">
+                      <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
+                    </Menu.Item>
+                  ),
+                  <Menu.Item key="output">
+                    <Link to={`${BASE_URL}/output`}>
+                      {getI18N("Analysis.outputFiles")}
+                    </Link>
+                  </Menu.Item>,
+                  <Menu.Item key="provenance">
+                    <Link to={`${BASE_URL}/provenance`}>
+                      {getI18N("Analysis.provenance")}
+                    </Link>
+                  </Menu.Item>
+                ]
+              ) : null}
+
               <Menu.Item key="settings">
                 <Link to={`${BASE_URL}/settings/details`}>
                   {getI18N("Analysis.settings")}
