@@ -31,7 +31,7 @@ const initialContext = {
   analysis: window.PAGE.analysis,
   analysisName: window.PAGE.analysisName,
   analysisState: window.PAGE.analysisState,
-  analysisType: window.PAGE.analysisType,
+  analysisType: window.PAGE.analysisType.type,
   isCompleted: window.PAGE.analysisState === "COMPLETED",
   isError: window.PAGE.analysisState.includes("ERROR")
 };

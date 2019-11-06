@@ -9,25 +9,29 @@
  *required by the components encompassed within
  */
 
-import React, { Suspense, useContext } from "react";
-import { Col, Tabs } from "antd";
+import React, { lazy, Suspense, useContext } from "react";
+import { Layout, Menu } from "antd";
+import { Link, Location, Router } from "@reach/router";
 
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { SideTabs } from "../../../components/tabs/SideTabs";
+import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 
-const AnalysisDetails = React.lazy(() => import("./settings/AnalysisDetails"));
-const AnalysisSamples = React.lazy(() => import("./settings/AnalysisSamples"));
+const AnalysisDetails = lazy(() => import("./settings/AnalysisDetails"));
+const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
+
 const AnalysisShare = React.lazy(() => import("./settings/AnalysisShare"));
 const AnalysisDelete = React.lazy(() => import("./settings/AnalysisDelete"));
-const TabPane = Tabs.TabPane;
+
+const { Content, Sider } = Layout;
 
 export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
+  const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   /*
    * The following renders the analysis details, and tabs
    * for Samples, Share Results, and Delete Analysis which
@@ -35,66 +39,58 @@ export default function AnalysisSettings(props) {
    * tab is clicked
    */
   return (
-    <SideTabs
-      activeKey={
-        props.defaultTabKey === "" || props.defaultTabKey === "settings"
-          ? "details"
-          : props.defaultTabKey
-      }
-      onChange={props.updateNav}
-    >
-      <TabPane
-        tab={getI18N("AnalysisDetails.details")}
-        key="details"
-        className="t-analysis-settings-tab-details"
-      >
-        <Col span={12}>
-          <Suspense fallback={<ContentLoading />}>
-            <AnalysisDetails />
-          </Suspense>
-        </Col>
-      </TabPane>
-
-      <TabPane
-        tab={getI18N("AnalysisSamples.samples")}
-        key="samples"
-        className="t-analysis-settings-tab-samples"
-      >
-        <Col span={12}>
-          <Suspense fallback={<ContentLoading />}>
-            <AnalysisSamples />
-          </Suspense>
-        </Col>
-      </TabPane>
-
-      {analysisDetailsContext.updatePermission
-        ? [
-            !analysisContext.isError ? (
-              <TabPane
-                tab={getI18N("AnalysisShare.manageResults")}
-                key="share"
-                className="t-analysis-settings-tab-share-results"
+    <Layout>
+      <Sider width={200} style={{ background: "#fff" }}>
+        <Location>
+          {props => {
+            const keyname = props.location.pathname.match(pathRegx);
+            return (
+              <Menu
+                mode="vertical"
+                selectedKeys={[keyname ? keyname[1] : "details"]}
               >
-                <Col span={12}>
-                  <Suspense fallback={<ContentLoading />}>
-                    <AnalysisShare />
-                  </Suspense>
-                </Col>
-              </TabPane>
-            ) : null,
-            <TabPane
-              tab={getI18N("AnalysisDelete.deleteAnalysis")}
-              key="delete"
-              className="t-analysis-settings-tab-delete-analysis"
-            >
-              <Col span={12}>
-                <Suspense fallback={<ContentLoading />}>
-                  <AnalysisDelete />
-                </Suspense>
-              </Col>
-            </TabPane>
-          ]
-        : null}
-    </SideTabs>
+                <Menu.Item key="details">
+                  <Link to="details">{getI18N("AnalysisDetails.details")}</Link>
+                </Menu.Item>
+                <Menu.Item key="samples">
+                  <Link to="samples">{getI18N("AnalysisSamples.samples")}</Link>
+                </Menu.Item>
+                {analysisDetailsContext.updatePermission
+                  ? [
+                      analysisContext.isError ? null : (
+                        <Menu.Item key="share">
+                          <Link to="share">
+                            {getI18N("AnalysisShare.manageResults")}
+                          </Link>
+                        </Menu.Item>
+                      ),
+                      <Menu.Item key="delete">
+                        <Link to="delete">
+                          {getI18N("AnalysisDelete.deleteAnalysis")}
+                        </Link>
+                      </Menu.Item>
+                    ]
+                  : null}
+              </Menu>
+            );
+          }}
+        </Location>
+      </Sider>
+
+      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+        <Content>
+          <Suspense fallback={<ContentLoading />}>
+            <Router>
+              <AnalysisDetails path="details" default />
+              <AnalysisSamples path="samples" />
+              {analysisContext.isCompleted ? (
+                <AnalysisShare path="share" />
+              ) : null}
+              <AnalysisDelete path="delete" />
+            </Router>
+          </Suspense>
+        </Content>
+      </Layout>
+    </Layout>
   );
 }

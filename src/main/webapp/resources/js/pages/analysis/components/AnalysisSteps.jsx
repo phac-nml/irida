@@ -54,7 +54,7 @@ export function AnalysisSteps() {
       <Step
         title={getI18N("AnalysisSteps.completed")}
         icon={
-          analysisContext.analysisState === "COMPLETED" ? <Running /> : null
+          analysisContext.analysisState === "COMPLETED" ? <Success /> : null
         }
       />
     </Steps>

@@ -8,10 +8,8 @@
 import React from "react";
 import { PassTabs } from "./PassTabs";
 import { GalaxyJobInfo } from "./GalaxyJobInfo";
-import { Col, Typography } from "antd";
 import { getI18N } from "../../../../utilities/i18n-utilties";
-
-const { Title } = Typography;
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function GalaxyJobInfoTab({
   currActiveKey,
@@ -20,8 +18,7 @@ export default function GalaxyJobInfoTab({
   galaxyUrl
 }) {
   return (
-    <Col span={12}>
-      <Title level={3}>{getI18N("AnalysisError.galaxyJobInfo")}</Title>
+    <TabPaneContent title={getI18N("AnalysisError.galaxyJobInfo")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="job-error-info"
@@ -36,6 +33,6 @@ export default function GalaxyJobInfoTab({
           galaxyUrl={galaxyUrl}
         />
       )}
-    </Col>
+    </TabPaneContent>
   );
 }

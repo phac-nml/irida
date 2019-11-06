@@ -52,15 +52,15 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testEditPriorityVisibility() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "details");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
 		// As this analysis is not in NEW state the
 		// edit priority dropdown should not be visible
 		assertFalse("priority edit should be visible", page.priorityEditVisible());
 
-		page = AnalysisDetailsPage.initPage(driver(), 8L, "details");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is in NEW state the
 		// edit priority dropdown should be visible
 		assertTrue("priority edit should be visible", page.priorityEditVisible());
@@ -69,15 +69,15 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "details");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
 		// should not be visible
 		assertFalse("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
 
-		page = AnalysisDetailsPage.initPage(driver(), 8L, "details");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is not in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
 		// should be visible
@@ -89,26 +89,26 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	public void testTabRoutingAnalysisCompleted() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 6L, "output-files");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 6L, "output");
 		assertTrue("Page title should equal", page.comparePageTitle("Output Files"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "provenance");
 		assertTrue("Page title should equal", page.comparePageTitle("Provenance"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "details");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "samples");
-		assertTrue("Page title should equal", page.comparePageTitle("Samples"));
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/samples");
+		assertTrue("Page title should equal", page.compareTabTitle("Samples"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "share");
-		assertTrue("Page title should equal", page.comparePageTitle("Manage Results"));
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/share");
+		assertTrue("Page title should equal", page.compareTabTitle("Manage Results"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "delete");
-		assertTrue("Page title should equal", page.comparePageTitle("Delete Analysis"));
+		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/delete");
+		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "job-error");
 		assertFalse("No job error information available alert hidden", page.jobErrorAlertVisible());
@@ -122,26 +122,26 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("No job error information available alert visible", page.jobErrorAlertVisible());
 
-		page = AnalysisDetailsPage.initPage(driver(), 7L, "output-files");
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "output");
 		assertFalse("Page title should not equal", page.comparePageTitle("Output Files"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "provenance");
 		assertFalse("Page title should not equal", page.comparePageTitle("Provenance"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 7L, "details");
-		assertTrue("Page title should equal", page.comparePageTitle("Details"));
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 7L, "samples");
-		assertTrue("Page title should equal", page.comparePageTitle("Samples"));
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/samples");
+		assertTrue("Page title should equal", page.compareTabTitle("Samples"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 7L, "share");
-		assertFalse("Page title should not equal", page.comparePageTitle("Manage Results"));
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/share");
+		assertFalse("Page title should not equal", page.compareTabTitle("Manage Results"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 7L, "delete");
-		assertTrue("Page title should equal", page.comparePageTitle("Delete Analysis"));
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/delete");
+		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
 	}
 
 }

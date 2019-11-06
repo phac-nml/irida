@@ -10,6 +10,7 @@
 
     <script th:inline="javascript">
       window.PAGE = {
+        base: [[@{/analysis/{id}(id=${analysisSubmission.getId()})}]],
         analysis: [[${analysisSubmission}]],
         analysisName: [[${analysisSubmission.getName()}]],
         analysisState: [[${analysisSubmission.getAnalysisState()}]],
@@ -83,7 +84,31 @@
             "AnalysisError.standardOutput": /*[[#{AnalysisError.standardOutput}]]*/ "",
             "AnalysisSamples.checkingForSamples": /*[[#{AnalysisSamples.checkingForSamples}]]*/ "",
             "AnalysisSamples.checkingForSamples": /*[[#{AnalysisSamples.checkingForSamples}]]*/ "",
-            "AnalysisSamples.samplesDeleted": /*[[#{AnalysisSamples.samplesDeleted}]]*/ ""
+            "AnalysisSamples.samplesDeleted": /*[[#{AnalysisSamples.samplesDeleted}]]*/ "",
+            "AnalysisSistr.resultsUnavailable": /*[[#{AnalysisSistr.resultsUnavailable}]]*/ "",
+            "AnalysisSistr.sistrInformation": /*[[#{AnalysisSistr.sistrInformation}]]*/ "",
+            "AnalysisSistr.serovarPredictions": /*[[#{AnalysisSistr.serovarPredictions}]]*/ "",
+            "AnalysisSistr.cgmlst330": /*[[#{AnalysisSistr.cgmlst330}]]*/ "",
+            "AnalysisSistr.mash": /*[[#{AnalysisSistr.mash}]]*/ "",
+            "AnalysisSistr.sampleName": /*[[#{AnalysisSistr.sampleName}]]*/ "",
+            "AnalysisSistr.qualityControlStatus": /*[[#{AnalysisSistr.qualityControlStatus}]]*/ "",
+            "AnalysisSistr.overallSerovar": /*[[#{AnalysisSistr.overallSerovar}]]*/ "",
+            "AnalysisSistr.antigenSerovar": /*[[#{AnalysisSistr.antigenSerovar}]]*/ "",
+            "AnalysisSistr.cgmlstSerovar": /*[[#{AnalysisSistr.cgmlstSerovar}]]*/ "",
+            "AnalysisSistr.serogroup": /*[[#{AnalysisSistr.serogroup}]]*/ "",
+            "AnalysisSistr.h1": /*[[#{AnalysisSistr.h1}]]*/ "",
+            "AnalysisSistr.h2": /*[[#{AnalysisSistr.h2}]]*/ "",
+            "AnalysisSistr.oAntigen": /*[[#{AnalysisSistr.oAntigen}]]*/ "",
+            "AnalysisSistr.subspecies": /*[[#{AnalysisSistr.subspecies}]]*/ "",
+            "AnalysisSistr.serovar": /*[[#{AnalysisSistr.serovar}]]*/ "",
+            "AnalysisSistr.matchingGenomeName": /*[[#{AnalysisSistr.matchingGenomeName}]]*/ "",
+            "AnalysisSistr.mashDistance": /*[[#{AnalysisSistr.mashDistance}]]*/ "",
+            "AnalysisSistr.allelesMatchingGenome": /*[[#{AnalysisSistr.allelesMatchingGenome}]]*/ "",
+            "AnalysisSistr.percentMatching": /*[[#{AnalysisSistr.percentMatching}]]*/ "",
+            "AnalysisSistr.cgmlstSequenceType": /*[[#{AnalysisSistr.cgmlstSequenceType}]]*/ "",
+            "AnalysisSistr.citation": /*[[#{AnalysisSistr.citation}]]*/ "",
+            "AnalysisSistr.plosOne": /*[[#{AnalysisSistr.plosOne}]]*/ "",
+            "AnalysisSistr.citationLinkText": /*[[#{AnalysisSistr.citationLinkText}]]*/ ""
         }
       };
     </script>

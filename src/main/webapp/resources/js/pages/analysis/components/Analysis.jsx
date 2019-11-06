@@ -9,108 +9,36 @@
  *required by the components encompassed within
  */
 
-import React, { Suspense, useContext, useState } from "react";
-import { Icon, Tabs } from "antd";
+import React, { lazy, Suspense, useContext } from "react";
+import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
-import { AnalysisSamplesProvider } from "../../../contexts/AnalysisSamplesContext";
-import { AnalysisDetailsProvider } from "../../../contexts/AnalysisDetailsContext";
-import { AnalysisShareProvider } from "../../../contexts/AnalysisShareContext";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { navigate } from "@reach/router";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { Link, Location, Router } from "@reach/router";
 
 import { Error } from "../../../components/icons/Error";
 import { Running } from "../../../components/icons/Running";
 import { Success } from "../../../components/icons/Success";
+import { SPACE_MD } from "../../../styles/spacing";
+import AnalysisError from "./AnalysisError";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
-const AnalysisError = React.lazy(() => import("./AnalysisError"));
-const AnalysisOutputFiles = React.lazy(() => import("./AnalysisOutputFiles"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
   import("./AnalysisPhylogeneticTree")
 );
-const AnalysisProvenance = React.lazy(() => import("./AnalysisProvenance"));
-const AnalysisSettings = React.lazy(() => import("./AnalysisSettings"));
+
 const AnalysisSistr = React.lazy(() => import("./AnalysisSistr"));
-
-const TabPane = Tabs.TabPane;
-
-// Built in Analysis Types
-const analysisTypesWithAdditionalPage = [
-  "BIO_HANSEL",
-  "SISTR_TYPING",
-  "PHYLOGENOMICS",
-  "MLST_MENTALIST"
-];
-
-const analysisSettingsTabKeys = ["details", "samples", "share", "delete"];
-const analysisErrorTabKeys = [
-  "job-error-info",
-  "galaxy-parameters",
-  "standard-error",
-  "standard-out"
-];
+const AnalysisSettingsContainer = lazy(() =>
+  import("./settings/AnalysisSettingsContainer")
+);
+const AnalysisOutputFiles = lazy(() => import("./AnalysisOutputFiles"));
+const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
+  const BASE_URL = window.PAGE.base;
   const { analysisContext } = useContext(AnalysisContext);
-
-  const [defaultTabKey, setDefaultTabKey] = useState(
-    window.location.pathname.split("/").pop()
-  );
-
-  /*
-   * Update the defaultTabKey variable with tab key that was clicked,
-   * update the browser history to include the url and then switch over
-   * to tab with key. Used here and for the sub-nav in the AnalysisSettings
-   * component.
-   */
-  const updateNav = key => {
-    setDefaultTabKey(key);
-    window.history.pushState({ page: key }, window.location.href);
-    navigate(key);
-  };
-
-  /*
-   * Sets the defaultTabKey variable with tab key (either on forward
-   * or back button click) and switches to the tab with key.
-   */
-  window.onpopstate = function(event) {
-    setDefaultTabKey(document.location.href.split("/").pop());
-    navigate(document.location.href.split("/").pop());
-  };
-
-  /*
-   * Returns tab key string for the activeKey
-   * parameter for Tabs.
-   */
-  const setActiveTabKey = () => {
-    if (defaultTabKey === "") {
-      if (analysisContext.isError) {
-        return "job-error";
-      } else {
-        if (
-          analysisTypesWithAdditionalPage.indexOf(
-            analysisContext.analysisType.type
-          ) > -1 &&
-          analysisContext.isCompleted
-        ) {
-          return analysisContext.analysisType.type.toLowerCase();
-        } else {
-          return "settings";
-        }
-      }
-    } else {
-      if (analysisSettingsTabKeys.indexOf(defaultTabKey) > -1) {
-        return "settings";
-      } else if (analysisErrorTabKeys.indexOf(defaultTabKey) > -1) {
-        return "job-error";
-      } else {
-        return defaultTabKey;
-      }
-    }
-  };
 
   const title = (
     <>
@@ -125,6 +53,21 @@ export default function Analysis() {
     </>
   );
 
+  const analysisType = analysisContext.analysisType;
+
+  const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
+
+  const defaultKey = analysisContext.isCompleted
+    ? analysisType === "SISTR_TYPING"
+      ? "sistr"
+      : analysisType === "BIO_HANSEL"
+      ? "bio_hansel"
+      : analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST"
+      ? "tree"
+      : null
+    : analysisContext.isError
+    ? "error"
+    : "settings";
   /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
@@ -137,99 +80,97 @@ export default function Analysis() {
   return (
     <PageWrapper title={title}>
       {analysisContext.analysisState !== "COMPLETED" ? <AnalysisSteps /> : null}
-      <Tabs activeKey={setActiveTabKey()} onChange={updateNav} animated={false}>
-        {analysisContext.isCompleted ? (
-          [
-            analysisContext.analysisType.type === "BIO_HANSEL" ? (
-              <TabPane
-                tab="bio_hansel"
-                key="bio_hansel"
-                className="t-analysis-tab-bio-hansel"
-              >
-                <Suspense fallback={<ContentLoading />}>
-                  <AnalysisBioHansel />
-                </Suspense>
-              </TabPane>
-            ) : null,
 
-            analysisContext.analysisType.type === "SISTR_TYPING" ? (
-              <TabPane
-                tab="sistr"
-                key="sistr_typing"
-                className="t-analysis-tab-sistr-typing"
-              >
-                <Suspense fallback={<ContentLoading />}>
-                  <AnalysisSistr />
-                </Suspense>
-              </TabPane>
-            ) : null,
+      <Location>
+        {props => {
+          const keyname = props.location.pathname.match(pathRegx);
 
-            analysisContext.analysisType.type === "PHYLOGENOMICS" ||
-            analysisContext.analysisType.type === "MLST_MENTALIST" ? (
-              <TabPane
-                tab={getI18N("Analysis.phylogeneticTree")}
-                key="phylogenomics"
-                className="t-analysis-tab-phylogenetic"
-              >
-                <Suspense fallback={<ContentLoading />}>
-                  <AnalysisPhylogeneticTree />
-                </Suspense>
-              </TabPane>
-            ) : null,
-
-            <TabPane
-              tab={getI18N("Analysis.outputFiles")}
-              key="output-files"
-              className="t-analysis-tab-output-files"
+          return (
+            <Menu
+              mode="horizontal"
+              selectedKeys={[keyname ? keyname[1] : defaultKey]}
             >
-              <Suspense fallback={<ContentLoading />}>
-                <AnalysisOutputFiles />
-              </Suspense>
-            </TabPane>,
+              {analysisContext.isError ? (
+                <Menu.Item key="error">
+                  <Link to={`${BASE_URL}/error/job-error-info`}>
+                    {getI18N("Analysis.jobError")}
+                  </Link>
+                </Menu.Item>
+              ) : analysisContext.isCompleted ? (
+                [
+                  analysisContext.analysisType === "SISTR_TYPING" ? (
+                    <Menu.Item key="sistr">
+                      <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
+                    </Menu.Item>
+                  ) : analysisContext.analysisType === "BIO_HANSEL" ? (
+                    <Menu.Item key="bio_hansel">
+                      <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item key="tree">
+                      <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
+                    </Menu.Item>
+                  ),
+                  <Menu.Item key="output">
+                    <Link to={`${BASE_URL}/output`}>
+                      {getI18N("Analysis.outputFiles")}
+                    </Link>
+                  </Menu.Item>,
+                  <Menu.Item key="provenance">
+                    <Link to={`${BASE_URL}/provenance`}>
+                      {getI18N("Analysis.provenance")}
+                    </Link>
+                  </Menu.Item>
+                ]
+              ) : null}
 
-            <TabPane
-              tab={getI18N("Analysis.provenance")}
-              key="provenance"
-              className="t-analysis-tab-provenance"
-            >
-              <Suspense fallback={<ContentLoading />}>
-                <AnalysisProvenance />
-              </Suspense>
-            </TabPane>
-          ]
-        ) : analysisContext.isError ? (
-          <TabPane
-            tab={getI18N("Analysis.jobError")}
-            key="job-error"
-            className="t-analysis-tab-job-error"
-          >
-            <Suspense fallback={<ContentLoading />}>
-              <AnalysisError
-                updateNav={updateNav}
-                defaultTabKey={defaultTabKey}
-              />
-            </Suspense>
-          </TabPane>
-        ) : null}
-        <TabPane
-          tab={getI18N("Analysis.settings")}
-          key="settings"
-          id="t-analysis-tab-settings"
-        >
-          <Suspense fallback={<ContentLoading />}>
-            <AnalysisDetailsProvider>
-              <AnalysisSamplesProvider>
-                <AnalysisShareProvider>
-                  <AnalysisSettings
-                    updateNav={updateNav}
-                    defaultTabKey={defaultTabKey}
-                  />
-                </AnalysisShareProvider>
-              </AnalysisSamplesProvider>
-            </AnalysisDetailsProvider>
-          </Suspense>
-        </TabPane>
-      </Tabs>
+              <Menu.Item key="settings">
+                <Link to={`${BASE_URL}/settings/details`}>
+                  {getI18N("Analysis.settings")}
+                </Link>
+              </Menu.Item>
+            </Menu>
+          );
+        }}
+      </Location>
+      <Suspense fallback={<ContentLoading />}>
+        <Router style={{ paddingTop: SPACE_MD }}>
+          <AnalysisError
+            path={`${BASE_URL}/error/*`}
+            default={analysisContext.isError}
+          />
+          {analysisContext.isCompleted
+            ? [
+                <AnalysisProvenance path={`${BASE_URL}/provenance`} />,
+                <AnalysisOutputFiles path={`${BASE_URL}/output`} />
+              ]
+            : null}
+          <AnalysisSistr
+            path={`${BASE_URL}/sistr/*`}
+            default={
+              analysisContext.isCompleted && analysisType === "SISTR_TYPING"
+            }
+          />
+          <AnalysisBioHansel
+            path={`${BASE_URL}/biohansel/*`}
+            default={
+              analysisContext.isCompleted && analysisType === "BIO_HANSEL"
+            }
+          />
+          <AnalysisPhylogeneticTree
+            path={`${BASE_URL}/tree/*`}
+            default={
+              analysisContext.isCompleted &&
+              (analysisType === "PHYLOGENOMICS" ||
+                analysisType === "MLST_MENTALIST")
+            }
+          />
+          <AnalysisSettingsContainer
+            path={`${BASE_URL}/settings/*`}
+            default={!analysisContext.isError && !analysisContext.isCompleted}
+          />
+        </Router>
+      </Suspense>
     </PageWrapper>
   );
 }

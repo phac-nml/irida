@@ -13,13 +13,14 @@ import { getI18N } from "../../../../utilities/i18n-utilties";
 import { AnalysisContext, isAdmin } from "../../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { BasicList } from "../../../../components/lists/BasicList";
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 import {
   formatDate,
   getHumanizedDuration
 } from "../../../../utilities/date-utilities";
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 export default function AnalysisDetails() {
   /*
@@ -126,14 +127,8 @@ export default function AnalysisDetails() {
 
   // The following renders the Analysis Details component view
   return (
-    <>
-      <Title level={2} className="t-page-title">
-        {getI18N("AnalysisDetails.details")}
-      </Title>
-
-      <div>
-        <BasicList dataSource={analysisDetails} />
-      </div>
+    <TabPaneContent title={getI18N("AnalysisDetails.details")}>
+      <BasicList dataSource={analysisDetails} />
 
       {window.PAGE.mailConfigured &&
       !analysisContext.isCompleted &&
@@ -151,6 +146,6 @@ export default function AnalysisDetails() {
           </Checkbox>
         </section>
       ) : null}
-    </>
+    </TabPaneContent>
   );
 }

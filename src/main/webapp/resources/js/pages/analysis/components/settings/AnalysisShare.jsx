@@ -21,6 +21,7 @@ import {
   getSharedProjects,
   updateSharedProject
 } from "../../../../apis/analysis/analysis";
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 const { Title } = Typography;
 
@@ -90,7 +91,7 @@ export default function AnalysisShare() {
             message={getI18N("AnalysisShare.saveResultsPermanent")}
             style={{ marginBottom: SPACE_MD }}
           />
-          <p>{getI18N(`AnalysisShare.${analysisContext.analysisType.type}`)}</p>
+          <p>{getI18N(`AnalysisShare.${analysisContext.analysisType}`)}</p>
           <Button
             type="primary"
             onClick={() => saveResultsToRelatedSamples()}
@@ -140,15 +141,11 @@ export default function AnalysisShare() {
    * and a save results to related samples if applicable
    */
   return (
-    <>
-      <Title level={2} className="t-page-title">
-        {getI18N("AnalysisShare.manageResults")}
-      </Title>
-
+    <TabPaneContent title={getI18N("AnalysisShare.manageResults")}>
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
           <section style={{ marginTop: SPACE_MD }}>
-            <Title level={3}>
+            <Title level={2}>
               {getI18N("AnalysisShare.shareResultsWithProjects")}
             </Title>
             {renderSharedProjectsList()}
@@ -162,10 +159,10 @@ export default function AnalysisShare() {
 
       {analysisDetailsContext.canShareToSamples ? (
         <section style={{ marginTop: SPACE_MD }}>
-          <Title level={3}>{getI18N("AnalysisShare.saveResults")}</Title>
+          <Title level={2}>{getI18N("AnalysisShare.saveResults")}</Title>
           {renderSaveToRelatedSamples()}
         </section>
       ) : null}
-    </>
+    </TabPaneContent>
   );
 }

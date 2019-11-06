@@ -59,7 +59,7 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: `${window.TL.BASE_URL}analysis/`,
+        url: `${window.TL.BASE_URL}analysis`,
         width: 300
       }),
       title: getI18N("analyses.analysis-name"),
