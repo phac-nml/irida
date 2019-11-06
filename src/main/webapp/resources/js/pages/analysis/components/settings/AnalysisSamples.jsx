@@ -8,13 +8,11 @@
  * required by the component
  */
 import React, { useContext } from "react";
-import { Typography } from "antd";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { getI18N } from "../../../../utilities/i18n-utilties";
 import { AnalysisReferenceFileRenderer } from "./AnalysisReferenceFileRenderer";
 import { AnalysisSampleRenderer } from "./AnalysisSampleRenderer";
-
-const { Title } = Typography;
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function AnalysisSamples() {
   /*
@@ -31,15 +29,12 @@ export default function AnalysisSamples() {
    * rendered
    */
   return (
-    <>
-      <Title level={2} className="t-page-title">
-        {getI18N("AnalysisSamples.samples")}
-      </Title>
+    <TabPaneContent title={getI18N("AnalysisSamples.samples")}>
       {analysisSamplesContext.referenceFile ? (
         <AnalysisReferenceFileRenderer />
       ) : null}
 
       <AnalysisSampleRenderer />
-    </>
+    </TabPaneContent>
   );
 }
