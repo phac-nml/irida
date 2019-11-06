@@ -170,6 +170,18 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return false;
 	}
 
+	public boolean compareTabTitle(String pageTitle) {
+		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
+				.size();
+
+		if (titleFound > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+
 	public String getLabelForSample(int index) {
 		return sampleLabels.get(index)
 				.getText();

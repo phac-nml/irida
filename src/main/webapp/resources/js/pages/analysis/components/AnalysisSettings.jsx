@@ -31,7 +31,6 @@ export default function AnalysisSettings(props) {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const BASE_URL = `${window.PAGE.base}/settings`;
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   /*
    * The following renders the analysis details, and tabs
@@ -84,7 +83,9 @@ export default function AnalysisSettings(props) {
             <Router>
               <AnalysisDetails path="details" default />
               <AnalysisSamples path="samples" />
-              <AnalysisShare path="share" />
+              {analysisContext.isCompleted ? (
+                <AnalysisShare path="share" />
+              ) : null}
               <AnalysisDelete path="delete" />
             </Router>
           </Suspense>

@@ -139,8 +139,12 @@ export default function Analysis() {
             path={`${BASE_URL}/error/*`}
             default={analysisContext.isError}
           />
-          <AnalysisProvenance path={`${BASE_URL}/provenance`} />
-          <AnalysisOutputFiles path={`${BASE_URL}/output`} />
+          {analysisContext.isCompleted
+            ? [
+                <AnalysisProvenance path={`${BASE_URL}/provenance`} />,
+                <AnalysisOutputFiles path={`${BASE_URL}/output`} />
+              ]
+            : null}
           <AnalysisSistr
             path={`${BASE_URL}/sistr/*`}
             default={
