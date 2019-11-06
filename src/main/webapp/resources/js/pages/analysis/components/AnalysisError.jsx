@@ -35,6 +35,7 @@ const { Content, Sider } = Layout;
 export default function AnalysisError(props) {
   const { analysisContext } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
+  const [currActiveKey, setCurrActiveKey] = useState(1);
 
   const BASE_URL = `${window.PAGE.base}/error`;
   const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
@@ -45,6 +46,11 @@ export default function AnalysisError(props) {
       setJobErrors(data);
     });
   }, []);
+
+  // Sets the current active key for the 'Pass' tabs
+  function updateActiveKey(key) {
+    setCurrActiveKey(key.charAt(key.length - 1));
+  }
 
   return jobErrors !== null ? (
     jobErrors.galaxyJobErrors !== null ? (
@@ -101,20 +107,28 @@ export default function AnalysisError(props) {
             <Suspense fallback={<ContentLoading />}>
               <Router>
                 <GalaxyJobInfoTab
+                  currActiveKey={currActiveKey}
+                  updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   galaxyUrl={jobErrors.galaxyUrl}
                   path={`${BASE_URL}/job-error-info`}
                   default
                 />
                 <GalaxyParametersTab
+                  currActiveKey={currActiveKey}
+                  updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   path={`${BASE_URL}/galaxy-parameters`}
                 />
                 <StandardErrorTab
+                  currActiveKey={currActiveKey}
+                  updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   path={`${BASE_URL}/standard-error`}
                 />
                 <StandardOutputTab
+                  currActiveKey={currActiveKey}
+                  updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   path={`${BASE_URL}/standard-out`}
                 />

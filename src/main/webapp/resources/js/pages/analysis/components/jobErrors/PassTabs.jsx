@@ -12,7 +12,13 @@ import { StandardOutput } from "./StandardOutput";
 
 const TabPane = Tabs.TabPane;
 
-export function PassTabs({ tabName, galaxyJobErrors, galaxyUrl }) {
+export function PassTabs({
+  tabName,
+  currActiveKey,
+  updateActiveKey,
+  galaxyJobErrors,
+  galaxyUrl
+}) {
   /* This function will display 'Pass' tabs within the tabpanes if there is
    * more than one error is returned for an analysis.
    */
@@ -20,7 +26,11 @@ export function PassTabs({ tabName, galaxyJobErrors, galaxyUrl }) {
     // Since we only need the jobError indexes to generate the tabs we iterate '
     // over the keys instead of the whole galaxyJobErrors object
     return (
-      <Tabs animated={false}>
+      <Tabs
+        animated={false}
+        onChange={key => updateActiveKey(key)}
+        activeKey={`${tabName}-pass-${currActiveKey}`}
+      >
         {Object.keys(galaxyJobErrors).map(key => {
           const index = parseInt(key);
           if (tabName === "galaxy-parameters") {
