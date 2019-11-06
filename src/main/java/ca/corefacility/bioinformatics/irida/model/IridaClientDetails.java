@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.google.common.collect.Sets;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -76,6 +77,9 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 
 	@NotNull
 	private String clientSecret;
+
+	@Column(name="redirect_uri")
+	private String registeredRedirectUri;
 
 	@Size(min = 1, message = "{client.details.scope.notempty}")
 	@NotNull
@@ -223,12 +227,13 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 		return authorizedGrantTypes;
 	}
 
-	/**
-	 * No allowed predefined redirect URIs
-	 */
 	@Override
 	public Set<String> getRegisteredRedirectUri() {
-		return Collections.emptySet();
+		return Sets.newHashSet(registeredRedirectUri);
+	}
+
+	public void setRegisteredRedirectUri(String registeredRedirectUri) {
+		this.registeredRedirectUri = registeredRedirectUri;
 	}
 
 	/**
