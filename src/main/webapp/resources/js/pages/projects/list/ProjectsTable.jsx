@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import { Button, Dropdown, Icon, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import {
   dateColumnFormat,
   idColumnFormat,

@@ -1,7 +1,7 @@
 import React from "react";
 import { useStateValue } from "./GalaxyState";
 import { Checkbox, Form, Input } from "antd";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 import { actions } from "./reducer";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 
@@ -19,7 +19,6 @@ export function GalaxyDetailsForm() {
 
   const makePairedCollectionModified = e =>
     dispatch(actions.setMakePairedCollection(e.target.checked));
-
 
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)

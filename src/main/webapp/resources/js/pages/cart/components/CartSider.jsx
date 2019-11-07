@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Layout } from "antd";
 import CartSamples from "./CartSamples";
 import { grey2 } from "../../../styles/colors";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import CartNotification from "./CartNotification";
 const { Sider } = Layout;
 
