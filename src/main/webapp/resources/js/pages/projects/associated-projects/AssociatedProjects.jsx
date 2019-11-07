@@ -1,3 +1,6 @@
+/**
+ * @File component responsible for the layout of the associated projects page.
+ */
 import React from "react";
 import ViewAssociatedProjects from "./ViewAssociatedProjects";
 import { getI18N } from "../../../utilities/i18n-utilties";
