@@ -5,7 +5,7 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
- * Representation of an Associated Project for the project > associated projects page.
+ * Representation of an Associated Project for the project associated projects page.
  */
 public class AssociatedProject {
 	private String label;
