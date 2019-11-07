@@ -3,8 +3,13 @@ package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 import java.security.SecureRandom;
 import java.util.*;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,6 +222,7 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
 			@RequestParam(required = false, defaultValue = "") String refresh,
+			@RequestParam(required = false, defaultValue = "") String registeredRedirectUri,
 			@RequestParam(required = false, defaultValue = "0") Integer refreshTokenValidity,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
@@ -245,6 +251,7 @@ public class ClientsController extends BaseController {
 
 		readClient.setScope(scopes);
 		readClient.setAutoApprovableScopes(autoScopes);
+		readClient.setRegisteredRedirectUri(registeredRedirectUri);
 
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();
@@ -254,20 +261,32 @@ public class ClientsController extends BaseController {
 		if (refresh.equals("refresh")) {
 			readClient.getAuthorizedGrantTypes().add("refresh_token");
 		} else {
-			readClient.getAuthorizedGrantTypes().remove("refresh_token");
+			readClient.getAuthorizedGrantTypes()
+					.remove("refresh_token");
 		}
 
-		if(refreshTokenValidity != 0){
+		if (refreshTokenValidity != 0) {
 			readClient.setRefreshTokenValiditySeconds(refreshTokenValidity);
 		}
 
 		String response;
 		try {
-			clientDetailsService.update(readClient);
-			response = "redirect:/clients/" + clientId;
+			if (readClient.getAuthorizedGrantTypes()
+					.contains("authorization_code") && registeredRedirectUri.isEmpty()) {
+				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
+						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
+								Maps.newHashMap(), Maps.newHashMap(),
+								messageSource.getMessage("client.redirect.required", null, locale),
+								IridaClientDetails.class, readClient, null, null,
+								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null, null)));
+			} else {
+
+				clientDetailsService.update(readClient);
+				response = "redirect:/clients/" + clientId;
+			}
 		} catch (RuntimeException e) {
-			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read, readClient.getClientId(),
-					accessTokenValiditySeconds);
+			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read,
+					readClient.getClientId(), accessTokenValiditySeconds, authorizedGrantTypes, registeredRedirectUri);
 			response = getEditPage(clientId, model);
 		}
 
@@ -343,22 +362,36 @@ public class ClientsController extends BaseController {
 			}
 		}
 
-		if(refresh.equals("refresh")){
-			client.getAuthorizedGrantTypes().add("refresh_token");
+		if (refresh.equals("refresh")) {
+			client.getAuthorizedGrantTypes()
+					.add("refresh_token");
 		}
 
 		client.setScope(scopes);
 		client.setAutoApprovableScopes(autoScopes);
 
-
-
 		String responsePage;
 		try {
-			IridaClientDetails create = clientDetailsService.create(client);
-			responsePage = "redirect:/clients/" + create.getId();
+			// Ensure if we have an auth_code grant we have a redirect
+			if (client.getAuthorizedGrantTypes()
+					.contains("authorization_code") && client.getRedirectUri()
+					.isEmpty()) {
+				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
+						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
+								Maps.newHashMap(), Maps.newHashMap(),
+								messageSource.getMessage("client.redirect.required", null, locale),
+								IridaClientDetails.class, client, null, null,
+								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null, null)));
+			} else {
+
+				IridaClientDetails create = clientDetailsService.create(client);
+				responsePage = "redirect:/clients/" + create.getId();
+			}
 		} catch (RuntimeException ex) {
-			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write, client.getClientId(),
-					client.getAccessTokenValiditySeconds());
+			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write,
+					client.getClientId(), client.getAccessTokenValiditySeconds(), client.getAuthorizedGrantTypes().iterator().next(), client.getRegisteredRedirectUri()
+							.iterator()
+							.next());
 			responsePage = getAddClientPage(model);
 		}
 
@@ -477,7 +510,8 @@ public class ClientsController extends BaseController {
 	 * @return The number of errors that were found
 	 */
 	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
-			String scope_write, String scope_read, String scope_auto_write, String scope_auto_read, String clientId, Integer accesstokenValidity) {
+			String scope_write, String scope_read, String scope_auto_write, String scope_auto_read, String clientId,
+			Integer accesstokenValidity, String grant, String registeredRedirectUri) {
 		Map<String, Object> errors = new HashMap<>();
 
 		try {
@@ -497,6 +531,9 @@ public class ClientsController extends BaseController {
 
 			model.addAttribute("given_clientId", clientId);
 			model.addAttribute("given_tokenValidity", accesstokenValidity);
+			model.addAttribute("given_registeredRedirectUri", registeredRedirectUri);
+
+			model.addAttribute("given_grant", grant);
 			if (scope_write.equals("write")) {
 				model.addAttribute("given_scope_write", scope_write);
 			}

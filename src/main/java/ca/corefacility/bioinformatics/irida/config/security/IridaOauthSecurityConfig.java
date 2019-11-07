@@ -152,7 +152,7 @@ public class IridaOauthSecurityConfig {
 			endpoints.tokenServices((DefaultTokenServices)tokenServices);
 			endpoints.exceptionTranslator(exceptionTranslator);
 			// TODO: 10/9/19 Remove the line below when registered redirect URIs are added to clients
-			endpoints.redirectResolver(new OauthRedirectResolver());
+			//endpoints.redirectResolver(new OauthRedirectResolver());
 		}
 
 		@Override

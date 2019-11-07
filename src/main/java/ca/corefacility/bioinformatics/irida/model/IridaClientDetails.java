@@ -236,6 +236,10 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 		this.registeredRedirectUri = registeredRedirectUri;
 	}
 
+	public String getRedirectUri(){
+		return registeredRedirectUri;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

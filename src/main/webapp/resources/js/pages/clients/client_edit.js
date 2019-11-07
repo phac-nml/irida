@@ -11,6 +11,16 @@
       handleChecked(this, "#refresh-token-container");
     });
 
+    $("#authorizedGrantTypes").change(function() {
+      var value = $(this).children("option:selected").val();
+      if(value==='authorization_code'){
+        $("#redirect-container").show();
+      }
+      else{
+        $("#redirect-container").hide();
+      }
+    });
+
     var handleChecked = function(item, itemToShow) {
       if (item.checked) {
         $(itemToShow).show();
