@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.*;
-import java.nio.file.Files;
 import java.security.Principal;
 import java.util.*;
 
@@ -50,9 +48,6 @@ public class AnalysisController {
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
 	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
 	public static final String ANALYSIS_PAGE = "analysis";
-
-	private static final String TREE_EXT = "newick";
-	private static final String EMPTY_TREE = "();";
 
 	/*
 	 * SERVICES
@@ -111,11 +106,10 @@ public class AnalysisController {
 	/**
 	 * Get the user {@link Analysis} list page
 	 *
-	 * @param model Model for view variables
 	 * @return Name of the analysis page view
 	 */
 	@RequestMapping("/user/analysis-outputs")
-	public String getUserAnalysisOutputsPage(Model model) {
+	public String getUserAnalysisOutputsPage() {
 		return PAGE_USER_ANALYSIS_OUPUTS;
 	}
 
@@ -167,8 +161,6 @@ public class AnalysisController {
 		return "analysis";
 	}
 
-
-
 	/**
 	 * Get the page for viewing advanced phylogenetic visualization
 	 *
@@ -185,44 +177,4 @@ public class AnalysisController {
 		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
-
-	// ************************************************************************************************
-	// Analysis view setup
-	// ************************************************************************************************
-
-	/**
-	 * Construct the model parameters for PHYLOGENOMICS or MLST_MENTALIST
-	 * {@link Analysis}
-	 *
-	 * @param submission The analysis submission
-	 * @param model      The model to add parameters
-	 * @throws IOException If the tree file couldn't be read
-	 */
-	private void tree(AnalysisSubmission submission, Model model) throws IOException {
-		final String treeFileKey = "tree";
-
-		Analysis analysis = submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
-		if (file == null) {
-			throw new IOException("No tree file for analysis: " + submission);
-		}
-		List<String> lines = Files.readAllLines(file.getFile());
-		model.addAttribute("analysis", analysis);
-
-		if (lines.size() > 1) {
-			logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
-		} else {
-			String tree = lines.get(0);
-			if (EMPTY_TREE.equals(tree)) {
-				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
-			} else {
-				model.addAttribute("newick", tree);
-
-				// inform the view to display the tree preview
-				model.addAttribute("tree", true);
-			}
-		}
-	}
-
-
 }
