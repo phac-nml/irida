@@ -5,7 +5,7 @@ import {
   addAssociatedProject,
   getAssociatedProjects,
   removeAssociatedProject
-} from "../../../apis/projects/projects";
+} from "../../../apis/projects/associated-projects";
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
 import { getI18N } from "../../../utilities/i18n-utilties";
