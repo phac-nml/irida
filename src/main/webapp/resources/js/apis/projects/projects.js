@@ -2,24 +2,59 @@ import axios from "axios";
 
 const URL = `${window.TL.BASE_URL}ajax/projects`;
 
-export const getPagedProjectsForUser = params =>
-  axios
-    .post(
+/**
+ * Returns the projects on the current page of the projects table.
+ * @param {Object} params
+ * @returns {Promise<{}|T>}
+ */
+export async function getPagedProjectsForUser(params) {
+  try {
+    const { data } = await axios.post(
       `${URL}?admin=${window.location.href.includes("all")}
-`,
+  `,
       params
-    )
-    .then(response => response.data);
+    );
+    return data;
+  } catch (e) {
+    return {};
+  }
+}
 
-export const getAssociatedProjects = id =>
-  axios.get(`${URL}/${id}/settings/associated`).then(response => response.data);
+/**
+ * Returns a list of associated projects for the current project.  If the user
+ * is the project manager or admin, the list will include available projects.
+ * @param {number} id
+ * @returns {Promise<{associatedProjectList: []}>}
+ */
+export async function getAssociatedProjects(id) {
+  try {
+    const { data } = await axios.get(`${URL}/${id}/settings/associated`);
+    return data;
+  } catch (e) {
+    return { associatedProjectList: [] };
+  }
+}
 
-export const removeAssociatedProject = (id, associatedId) =>
-  axios.post(
+/**
+ * Removes the project with the assoicatedId from the current project.
+ * @param {number} id
+ * @param {number} associatedId
+ * @returns {Promise<void>}
+ */
+export async function removeAssociatedProject(id, associatedId) {
+  await axios.post(
     `${URL}/${id}/settings/associated/remove?associatedId=${associatedId}`
   );
+}
 
-export const addAssociatedProject = (id, associatedId) =>
-  axios
-    .post(`${URL}/${id}/settings/associated/add?associatedId=${associatedId}`)
-    .then(response => response.data);
+/**
+ * Adds the project with the assoicatedId from the current project.
+ * @param {number} id
+ * @param {number} associatedId
+ * @returns {Promise<void>}
+ */
+export async function addAssociatedProject(id, associatedId) {
+  await axios.post(
+    `${URL}/${id}/settings/associated/add?associatedId=${associatedId}`
+  );
+}
