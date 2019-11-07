@@ -211,7 +211,7 @@ function initAgGrid(
  * in the Grid.
  *
  * @param {jQuery|HTMLElement} $container Container element
- * @param {string} baseUrl Base analysis AJAX url (e.g. /analysis/ajax/)
+ * @param {string} baseUrl Base analysis AJAX url (e.g. /ajax/analysis)
  * @param {number} height Grid container height
  * @param {number} page_size Number of lines to fetch from server at a time
  * @param {Object} aof AnalysisOutputFile info

@@ -111,7 +111,7 @@ async function downloadSelected($dlButton, api) {
       sampleId,
       filePath
     } = selectedNodes[0].data;
-    let url = `${BASE_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
+    let url = `${BASE_URL}ajax/analysis/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
     const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
       filePath
     )}`;
@@ -126,7 +126,7 @@ async function downloadSelected($dlButton, api) {
     }
     const { selectionSize } = data;
     const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
-    const downloadUrl = `${BASE_URL}analysis/ajax/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
+    const downloadUrl = `${BASE_URL}ajax/analysis/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
     download(downloadUrl);
   }
   setDownloadButtonHtml(

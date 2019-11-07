@@ -17,7 +17,7 @@ const statusText = (byte, fileSizeBytes) =>
 /**
  * Render a preview of a plain-text AnalysisOutputFile
  * @param {jQuery|HTMLElement} $container Container element to render preview in
- * @param {string} baseUrl Base AJAX URL (e.g. /analysis/ajax/)
+ * @param {string} baseUrl Base AJAX URL (e.g. /ajax/analysis/)
  * @param {Object} aof AnalysisOutputFile info
  * @param {number} height Preview container height
  * @param {number} chunk_size Number of bytes to read from AnalysisOutputFile at a time
