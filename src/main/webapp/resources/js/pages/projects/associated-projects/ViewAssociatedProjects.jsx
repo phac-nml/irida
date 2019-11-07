@@ -12,6 +12,13 @@ import { getI18N } from "../../../utilities/i18n-utilties";
 
 const { Text } = Typography;
 
+/**
+ * Component to display a Table of associated projects.  If the user is a project
+ * manager or admin, they will be shown all their available projects, with the
+ * ability to add or remove them as associated projects.
+ * @returns {*}
+ * @constructor
+ */
 export default function ViewAssociatedProjects() {
   const [projects, setProjects] = useState([]);
   const [organismFilters, setOrganismFilters] = useState([]);
