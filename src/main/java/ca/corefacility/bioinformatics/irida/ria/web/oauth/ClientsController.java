@@ -388,8 +388,16 @@ public class ClientsController extends BaseController {
 				responsePage = "redirect:/clients/" + create.getId();
 			}
 		} catch (RuntimeException ex) {
+			String grant = null;
+			if (client.getAuthorizedGrantTypes() != null && !client.getAuthorizedGrantTypes()
+					.isEmpty()) {
+				grant = client.getAuthorizedGrantTypes()
+						.iterator()
+						.next();
+			}
 			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write,
-					client.getClientId(), client.getAccessTokenValiditySeconds(), client.getAuthorizedGrantTypes().iterator().next(), client.getRegisteredRedirectUri()
+					client.getClientId(), client.getAccessTokenValiditySeconds(), grant,
+					client.getRegisteredRedirectUri()
 							.iterator()
 							.next());
 			responsePage = getAddClientPage(model);
