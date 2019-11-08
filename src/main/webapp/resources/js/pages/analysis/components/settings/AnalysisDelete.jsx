@@ -10,7 +10,7 @@ import React, { useContext } from "react";
 import { Button, Popconfirm } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { showNotification } from "../../../../modules/notifications";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { deleteAnalysis } from "../../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";

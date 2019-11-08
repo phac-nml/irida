@@ -11,7 +11,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getSistrResults } from "../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));

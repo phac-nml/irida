@@ -8,7 +8,7 @@
 import React from "react";
 import { Button, Typography } from "antd";
 import { Monospace } from "../../../../components/typography";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { formatDate } from "../../../../utilities/date-utilities";
 import { BasicList } from "../../../../components/lists/BasicList";
 

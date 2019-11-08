@@ -11,7 +11,7 @@ import { Button, Checkbox, List, Typography } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 import { AnalysisShareContext } from "../../../../contexts/AnalysisShareContext";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { showNotification } from "../../../../modules/notifications";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";

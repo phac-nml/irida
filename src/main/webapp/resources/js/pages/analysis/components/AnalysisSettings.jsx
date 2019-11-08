@@ -15,7 +15,7 @@ import { Link, Location, Router } from "@reach/router";
 
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 

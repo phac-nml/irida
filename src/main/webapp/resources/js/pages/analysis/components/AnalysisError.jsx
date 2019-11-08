@@ -12,7 +12,7 @@ import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getJobErrors } from "../../../apis/analysis/analysis";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";

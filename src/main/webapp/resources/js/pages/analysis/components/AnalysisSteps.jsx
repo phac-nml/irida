@@ -11,7 +11,7 @@
 import React, { useContext } from "react";
 import { Icon, Steps } from "antd";
 import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Running } from "../../../components/icons/Running";
 

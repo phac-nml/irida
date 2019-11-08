@@ -4,7 +4,7 @@
  */
 
 import React, { useContext } from "react";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { SPACE_LG } from "../../../../styles/spacing";
 import { Row, Icon, Button, Typography } from "antd";
