@@ -4,7 +4,7 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function SerovarPredictions({ sistrResults }) {

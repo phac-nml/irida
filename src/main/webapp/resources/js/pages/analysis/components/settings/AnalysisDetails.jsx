@@ -9,7 +9,7 @@
 import React, { useContext } from "react";
 import { Checkbox, Select, Typography } from "antd";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { AnalysisContext, isAdmin } from "../../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { BasicList } from "../../../../components/lists/BasicList";

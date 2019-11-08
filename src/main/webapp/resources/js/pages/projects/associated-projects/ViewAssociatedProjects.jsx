@@ -13,7 +13,7 @@ import {
 } from "../../../apis/projects/associated-projects";
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 
 const { Text } = Typography;
 

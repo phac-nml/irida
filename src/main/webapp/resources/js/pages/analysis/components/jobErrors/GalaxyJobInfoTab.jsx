@@ -8,7 +8,7 @@
 import React from "react";
 import { PassTabs } from "./PassTabs";
 import { GalaxyJobInfo } from "./GalaxyJobInfo";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function GalaxyJobInfoTab({

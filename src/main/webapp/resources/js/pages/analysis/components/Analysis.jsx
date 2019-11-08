@@ -14,7 +14,7 @@ import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { PageWrapper } from "../../../components/page/PageWrapper";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { Link, Location, Router } from "@reach/router";
 
 import { Error } from "../../../components/icons/Error";

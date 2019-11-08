@@ -4,7 +4,7 @@
  */
 
 import React, { useContext, useState, useLayoutEffect } from "react";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { Avatar, Icon, Input, List } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";

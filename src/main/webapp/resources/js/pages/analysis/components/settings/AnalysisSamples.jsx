@@ -9,7 +9,7 @@
  */
 import React, { useContext } from "react";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
-import { getI18N } from "../../../../utilities/i18n-utilties";
+import { getI18N } from "../../../../utilities/i18n-utilities";
 import { AnalysisReferenceFileRenderer } from "./AnalysisReferenceFileRenderer";
 import { AnalysisSampleRenderer } from "./AnalysisSampleRenderer";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
