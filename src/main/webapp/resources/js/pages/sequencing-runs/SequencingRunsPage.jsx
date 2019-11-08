@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../contexts/PagedTableContext";
 import { SequencingRunsList } from "./SequencingRunsList";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 
 render(
   <PageWrapper title={getI18N("sequencingruns.title")}>
