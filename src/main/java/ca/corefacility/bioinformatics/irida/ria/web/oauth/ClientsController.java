@@ -1,13 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.security.SecureRandom;
-import java.util.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import com.google.common.collect.ImmutableMap;
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTClient;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
@@ -23,27 +29,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTClient;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+import javax.validation.ConstraintViolationException;
+import java.security.SecureRandom;
+import java.util.*;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
@@ -207,11 +197,11 @@ public class ClientsController extends BaseController {
 	 * @param scope_auto_write           whether to allow automatic authorization for the write scope
 	 * @param new_secret                 whether to generate a new client secret
 	 * @param refresh                    Whether the client shoudl allow refresh tokens
+	 * @param registeredRedirectUri      The URI of the authorization code client to return tokens to
 	 * @param refreshTokenValidity       How long the refresh token will be valid
 	 * @param model                      Model for the view
 	 * @param locale                     Locale of the logged in user
-	 * @return Redirect to the client details page if successful, the edit page
-	 * if there are errors
+	 * @return Redirect to the client details page if successful, the edit page if there are errors
 	 */
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
 	public String postEditClient(@PathVariable Long clientId,
