@@ -7,6 +7,7 @@ upgrading IRIDA that cannot be automated.
 19.09 to 20.01
 --------------
 * This upgrade changes the Java version to Java 11.  To upgrade, follow the install instructions for your system in <https://irida.corefacility.ca/documentation/administrator/web/#prerequisite-install-instructions>.
+* This upgrade adds a required field to OAuth2 clients using the `authorization_code` grant (that is external applications connecting to IRIDA via the web application).  This includes other IRIDA installations synchronizing data via the Remote API system.  In order for these systems to continue working properly, administrators must register a redirect URI for all `authorization_code` clients.  For more on this process, see <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
 
 19.05 to 19.09
 --------------
