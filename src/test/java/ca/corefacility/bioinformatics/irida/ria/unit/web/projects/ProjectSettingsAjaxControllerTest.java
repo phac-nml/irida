@@ -88,7 +88,7 @@ public class ProjectSettingsAjaxControllerTest {
 	}
 
 	@Test
-	public void testAssociateProject() {
+	public void testAddAssociatedProject() {
 		Project project = new Project();
 		project.setId(1L);
 		Project associatedProject = new Project();
