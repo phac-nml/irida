@@ -1,3 +1,6 @@
+/**
+ * @File Filter utilities for the ant.design table filters.
+ */
 import uniqBy from "lodash/uniqBy";
 
 /**
