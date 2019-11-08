@@ -11,7 +11,7 @@ export function trim(s) {
 
 /**
  * Build AnalysisOutputFile download URL
- * @param {string} baseUrl Base analysis AJAX URL (e.g. /analysis/ajax/)
+ * @param {string} baseUrl Base analysis AJAX URL (e.g. /ajax/analysis/)
  * @param {number} analysisSubmissionId AnalysisSubmission id for AnalysisOutputFile
  * @param {number} id AnalysisOutputFile id
  * @returns {string} AnalysisOutputFile download URL

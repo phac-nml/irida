@@ -138,11 +138,18 @@ export default function Analysis() {
           <AnalysisError
             path={`${BASE_URL}/error/*`}
             default={analysisContext.isError}
+            key="analysis-error"
           />
           {analysisContext.isCompleted
             ? [
-                <AnalysisProvenance path={`${BASE_URL}/provenance`} />,
-                <AnalysisOutputFiles path={`${BASE_URL}/output`} />
+                <AnalysisProvenance
+                  path={`${BASE_URL}/provenance`}
+                  key="analysis-provenance"
+                />,
+                <AnalysisOutputFiles
+                  path={`${BASE_URL}/output`}
+                  key="analysis-output"
+                />
               ]
             : null}
           <AnalysisSistr
@@ -150,12 +157,14 @@ export default function Analysis() {
             default={
               analysisContext.isCompleted && analysisType === "SISTR_TYPING"
             }
+            key="analysis-sistr"
           />
           <AnalysisBioHansel
             path={`${BASE_URL}/biohansel/*`}
             default={
               analysisContext.isCompleted && analysisType === "BIO_HANSEL"
             }
+            key="analysis-biohansel"
           />
           <AnalysisPhylogeneticTree
             path={`${BASE_URL}/tree/*`}
@@ -164,10 +173,12 @@ export default function Analysis() {
               (analysisType === "PHYLOGENOMICS" ||
                 analysisType === "MLST_MENTALIST")
             }
+            key="analysis-tree"
           />
           <AnalysisSettingsContainer
             path={`${BASE_URL}/settings/*`}
             default={!analysisContext.isError && !analysisContext.isCompleted}
+            key="analysis-settings"
           />
         </Router>
       </Suspense>
