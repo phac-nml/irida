@@ -50,6 +50,7 @@ public class Sample extends IridaResourceSupport
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
 	private Date createdDate;
 
 	@LastModifiedDate

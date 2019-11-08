@@ -38,7 +38,7 @@ public abstract class ProjectEvent implements IridaThing {
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_date")
+	@Column(name="created_date", updatable = false)
 	private Date createdDate;
 
 	@NotNull

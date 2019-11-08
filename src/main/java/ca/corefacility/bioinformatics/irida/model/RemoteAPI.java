@@ -71,6 +71,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, MutableIridaThing {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
 	private Date createdDate;
 
 	@LastModifiedDate

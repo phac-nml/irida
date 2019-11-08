@@ -34,7 +34,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	private String name;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@CreatedDate
 	private Date createdDate;
 

@@ -11,6 +11,7 @@ import org.springframework.data.history.RevisionMetadata;
 import org.springframework.data.history.Revisions;
 import org.springframework.security.authentication.CredentialsExpiredException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -62,8 +63,8 @@ public class PasswordExpiryCheckerTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
+			public Optional<Instant> getRevisionInstant() {
+				return Optional.of(expiryDate.toInstant());
 			}
 
 			@Override
@@ -101,8 +102,8 @@ public class PasswordExpiryCheckerTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
+			public Optional<Instant> getRevisionInstant() {
+				return Optional.of(expiryDate.toInstant());
 			}
 
 			@Override
@@ -139,8 +140,8 @@ public class PasswordExpiryCheckerTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
+			public Optional<Instant> getRevisionInstant() {
+				return Optional.of(expiryDate.toInstant());
 			}
 
 			@Override

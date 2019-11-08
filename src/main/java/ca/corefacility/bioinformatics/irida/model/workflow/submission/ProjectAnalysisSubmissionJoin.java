@@ -42,7 +42,7 @@ public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubm
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

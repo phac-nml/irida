@@ -75,8 +75,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false, name = "created_date")
-	private final Date createdDate;
+	@Column(nullable = false, name = "created_date", updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)

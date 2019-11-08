@@ -394,7 +394,7 @@ public class ClientsController extends BaseController {
 				.searchClient(params.getSearchValue());
 
 		Page<IridaClientDetails> page = clientDetailsService
-				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+				.search(specification, PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
 		List<DataTablesResponseModel> models = new ArrayList<>();
 		for (IridaClientDetails client : page.getContent()) {
 			models.add(new DTClient(client, clientDetailsService.countActiveTokensForClient(client)));

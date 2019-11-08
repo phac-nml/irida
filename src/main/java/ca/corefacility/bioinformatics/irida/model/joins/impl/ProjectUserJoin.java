@@ -59,6 +59,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
 	private Date createdDate;
 
 	@Column(name = "email_subscription")

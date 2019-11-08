@@ -299,7 +299,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
 			int size, Sort sort) {
 		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
-				new PageRequest(page, size, sort));
+				PageRequest.of(page, size, sort));
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project,
 			final int page, final int size, final Sort sort) {
 		return userGroupProjectJoinRepository.findAll(filterUserGroupProjectJoinByProject(searchName, project),
-				new PageRequest(page, size, sort));
+				PageRequest.of(page, size, sort));
 	}
 
 	/**
@@ -333,10 +333,12 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 
 	/**
 	 * {@inheritDoc}
+	 * @param specification
+	 * @param pageRequest
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<UserGroup> search(Specification<UserGroup> specification, PageRequest pageRequest) {
+	public Page<UserGroup> search(Specification<UserGroup> specification, Pageable pageRequest) {
 		return super.search(specification, pageRequest);
 	}
 

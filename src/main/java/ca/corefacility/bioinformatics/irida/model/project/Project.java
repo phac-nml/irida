@@ -49,7 +49,8 @@ public class Project extends IridaResourceSupport
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)

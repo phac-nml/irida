@@ -5,6 +5,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,7 +17,6 @@ import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,6 +24,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.RevisionMetadata;
@@ -174,8 +176,8 @@ public class UserServiceImplTest {
 			}
 
 			@Override
-			public Optional<LocalDateTime> getRevisionDate() {
-				return Optional.of(new LocalDateTime());
+			public Optional<Instant> getRevisionInstant() {
+				return Optional.of(Instant.now());
 			}
 
 			@Override
@@ -292,12 +294,12 @@ public class UserServiceImplTest {
 		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom",
 				"Matthews", "1234"), new User(2L, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
 		
-		when(userRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(userPage);
+		when(userRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(userPage);
 		
 		Page<User> searchUser = userService.search(UserSpecification.searchUser(searchString), page, size, order, sortProperties);
 		assertEquals(userPage, searchUser);
 		
-		verify(userRepository).findAll(any(Specification.class), any(PageRequest.class));
+		verify(userRepository).findAll(any(Specification.class), any(Pageable.class));
 	}
 
 	private User user() {

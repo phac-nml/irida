@@ -26,7 +26,7 @@ public class SequenceConcatenation implements IridaThing {
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
 	@ManyToMany

@@ -156,7 +156,7 @@ public class AnnouncementServiceImplIT {
     public void testSearchReturnsExistingAnnouncement() {
         String searchString = "Downtime";
         Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
-				new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "id")));
+				PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")));
 		assertEquals("Unexpected number of announcements returned", 2, searchAnnouncement.getContent().size());
         for(Announcement a : searchAnnouncement) {
             assertTrue(a.getMessage().contains(searchString));
@@ -168,7 +168,7 @@ public class AnnouncementServiceImplIT {
     public void testSearchReturnsNoResults() {
         String searchString = "ThisShouldn'tMatchAnything!!";
         Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
-				new PageRequest(1, 10, new Sort(Sort.Direction.ASC, "id")));
+				PageRequest.of(1, 10, Sort.by(Sort.Direction.ASC, "id")));
 		assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
     }
 
@@ -177,7 +177,7 @@ public class AnnouncementServiceImplIT {
     public void testSearchNullSearchString() {
 		Page<Announcement> searchAnnouncement = announcementService
 				.search(AnnouncementSpecification.searchAnnouncement(null),
-						new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "id")));
+						PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")));
 		assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
     }
 

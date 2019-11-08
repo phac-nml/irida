@@ -58,11 +58,11 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	@NotNull
 	private final UserGroup group;
 
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)

@@ -230,7 +230,7 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *
 	 * @return a {@link Page} of {@code Type}
 	 */
-	public Page<Type> search(Specification<Type> specification, PageRequest pageRequest);
+	public Page<Type> search(Specification<Type> specification, Pageable pageRequest);
 
 	/**
 	 * Find all of the revisions for the specified identifier.

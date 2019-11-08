@@ -50,7 +50,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genomeAssembly")

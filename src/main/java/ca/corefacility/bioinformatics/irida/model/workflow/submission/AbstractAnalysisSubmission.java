@@ -60,7 +60,7 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date", nullable = false)
+	@Column(name = "created_date", nullable = false, updatable = false)
 	protected Date createdDate;
 
 	@LastModifiedDate
