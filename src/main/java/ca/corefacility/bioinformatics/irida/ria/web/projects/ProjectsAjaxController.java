@@ -22,12 +22,12 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  */
 @RestController
 @RequestMapping("/ajax/projects")
-public class ProjectsRestController {
+public class ProjectsAjaxController {
 	private ProjectService projectService;
 	private SampleService sampleService;
 
 	@Autowired
-	public ProjectsRestController(ProjectService projectService, SampleService sampleService) {
+	public ProjectsAjaxController(ProjectService projectService, SampleService sampleService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 	}

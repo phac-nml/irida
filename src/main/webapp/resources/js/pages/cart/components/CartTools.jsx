@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
 import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 
 /*
@@ -108,8 +108,10 @@ export default class CartTools extends Component {
           <Pipelines
             key="pipelines"
             path={`${window.TL.BASE_URL}cart/pipelines`}
-            displaySelect={this.props.count > 0 || window.PAGE.automatedProject != null}
-            automatedProject = {window.PAGE.automatedProject}
+            displaySelect={
+              this.props.count > 0 || window.PAGE.automatedProject != null
+            }
+            automatedProject={window.PAGE.automatedProject}
             default={!this.state.fromGalaxy}
           />
         )

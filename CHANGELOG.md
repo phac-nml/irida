@@ -23,6 +23,7 @@ Changes
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 * [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
 * [Developer]: `bower` completely removed.
+* [UI]: Updated and simplified associated project page.
 
 19.05 to 19.09
 ---------------

@@ -3,7 +3,7 @@ import "../../vendor/datatables/datatables";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { Button, Table } from "antd";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 
 export function SequencingRunsList() {
   const {

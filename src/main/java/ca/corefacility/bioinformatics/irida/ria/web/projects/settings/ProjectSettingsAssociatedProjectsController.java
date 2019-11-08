@@ -4,9 +4,6 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectSettingsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -28,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -73,7 +72,7 @@ public class ProjectSettingsAssociatedProjectsController {
 	 * @param principal
 	 * 		a reference to the logged in user.
 	 *
-	 * @return The view name of the assocated projects view
+	 * @return The view name of the associated projects view
 	 */
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getAssociatedProjectsPage(@PathVariable Long projectId, Model model, Principal principal) {

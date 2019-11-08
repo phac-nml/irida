@@ -106,8 +106,8 @@ public class AnalysesAjaxController {
 	 */
 	@RequestMapping("/list")
 	public TableResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
-			@RequestParam(required = false, defaultValue = "false") Boolean admin, @RequestParam(required = false) Long projectId, Locale locale)
-			throws IridaWorkflowNotFoundException {
+			@RequestParam(required = false, defaultValue = "false") Boolean admin,
+			@RequestParam(required = false) Long projectId, Locale locale) throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -151,7 +151,7 @@ public class AnalysesAjaxController {
 			Project project = projectService.read(projectId);
 			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
 					stateFilters, workflowIds, project, pageRequest);
-		}else if (admin && user.getSystemRole()
+		} else if (admin && user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			// User is an admin and requesting the listing of all pages.
 			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
