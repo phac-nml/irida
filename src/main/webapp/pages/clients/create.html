@@ -92,8 +92,7 @@
                             </div>
                             <input type="text" id="registeredRedirectUri" name="registeredRedirectUri" class="form-control input-full"
                                    th:placeholder="#{client.registeredRedirectUri}" th:value="${given_registeredRedirectUri}"/>
-                            <p class="help-block" th:text="#{client.redirect.help}">_Activate User Help_</p>
-
+                            <small th:text="#{client.redirect.help}">_Redirect Help_</small>
                         </div>
 
                         <div class="form-group">
