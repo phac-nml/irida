@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.security.OauthRedirectResolver;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 import org.slf4j.Logger;
