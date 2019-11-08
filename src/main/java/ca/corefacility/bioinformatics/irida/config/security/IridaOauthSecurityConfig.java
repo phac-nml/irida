@@ -100,7 +100,6 @@ public class IridaOauthSecurityConfig {
 			httpSecurity.antMatcher("/api/**").csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
 					.disable();
 			httpSecurity.antMatcher("/api/**").csrf().disable();
-			httpSecurity.antMatcher("/api/**").exceptionHandling().accessDeniedPage("/login?error");
 
 			// SecurityContextPersistenceFilter appears pretty high up (well
 			// before any OAuth related filters), so we'll put our anonymous
