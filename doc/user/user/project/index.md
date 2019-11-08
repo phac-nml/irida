@@ -250,11 +250,13 @@ To confirm, click the "Ok" button.
 
 ### Associated Projects
 
-Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.
+Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.  
 
 To view associated projects click the **Associated Projects** tab in the project settings page.
 
 ![Associated projects tab](images/associated-tab.png)
+*This is how the table will look for a Collaborator on the project*
+
 
 #### Viewing associated projects
 
@@ -264,11 +266,11 @@ The "Associated Projects" list will display the projects associated with this pr
 
 #### Adding or removing associated projects
 
-Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
+Project Managers can add or remove associated projects for a project.  When going to the associated projects tab, managers will see the currently associated projects selected, as well as all projects they have access to.  Using the toggle 
 
 **Note:** To add or remove a project to the list of associated projects, the manager must *at least* be able to read the data in the project to be added in the associated projects list.
 
-You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
+Adding or removing an associated project can be accomplished by clicking on the toggle box in the first column of the table.  If the toggle is "On" (blue) then the project is associated.
 
 ![Edit local associated projects](images/associated-local.png)
 
