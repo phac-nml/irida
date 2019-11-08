@@ -1,3 +1,7 @@
+/**
+ * @file ConfirmButton is a button wrapped in a Popconfirm.  Use when
+ *       the user should be asked for confirmation of an action.
+ */
 import React from "react";
 import { Button, Popconfirm } from "antd";
 
