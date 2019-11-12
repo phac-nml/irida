@@ -12,7 +12,7 @@ module.exports = {
     "./resources/js/vendors"
   ],
   "angular-st": "expose-loader?angular!angular", // This is just here for pages that need their own angular.
-  "login": "./resources/js/pages/LoginPage.jsx",
+  login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",

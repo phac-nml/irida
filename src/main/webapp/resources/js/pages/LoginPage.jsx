@@ -24,9 +24,7 @@ function LoginPage({ form }) {
         width: 400
       }}
     >
-      <div
-        dangerouslySetInnerHTML={{ __html: window.PAGE.logo }}
-      />
+      <div dangerouslySetInnerHTML={{ __html: window.PAGE.logo }} />
       {window.PAGE.hasErrors ? (
         <Alert
           style={{ margin: `18px 0 28px 0` }}

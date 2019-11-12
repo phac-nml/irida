@@ -131,22 +131,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		} catch (FileNotFoundException e) {
 			logger.debug("CANNOT FIND LOGO FILES");
 		}
-
-		/*
-		Check to see if there is any custom text to load on the Login Page.
-		 */
-		File customHTML = new File("/etc/irida/login/custom.html");
-		String customText = null;
-		if (customHTML.exists()) {
-			try {
-				BufferedReader br = new BufferedReader(new FileReader(customHTML));
-				customText = br.lines()
-						.collect(Collectors.joining());
-			} catch (FileNotFoundException e) {
-				logger.trace("No custom HTML file found for the login page.");
-			}
-		}
-		return new LoginHandlerInterceptor(darkLogo, lightLogo, customText);
+		return new LoginHandlerInterceptor(darkLogo, lightLogo);
 	}
 
 	@Bean

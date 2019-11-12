@@ -41,10 +41,6 @@
         align-items: center;
         flex-direction: column;
       }
-      iframe {
-        border: none;
-        width: 90%;
-      }
     </style>
   </head>
   <body>
@@ -53,7 +49,6 @@
         <!-- Contents rendered from LoginPage.jsx -->
       </div>
     </div>
-    <iframe height="600" th:srcdoc="${custom}">HELLO</iframe>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>
