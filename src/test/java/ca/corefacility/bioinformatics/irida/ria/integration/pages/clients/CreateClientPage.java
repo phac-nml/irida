@@ -14,6 +14,9 @@ public class CreateClientPage extends AbstractPage {
 
 	public CreateClientPage(WebDriver driver) {
 		super(driver);
+	}
+
+	public void goTo() {
 		get(driver, CREATE_PAGE);
 	}
 
@@ -30,7 +33,7 @@ public class CreateClientPage extends AbstractPage {
 		//if we have a redirect uri, enter it
 		if (redirectUri != null && !redirectUri.isEmpty()) {
 			WebElement redirectField = driver.findElement(By.id("registeredRedirectUri"));
-			grantField.sendKeys(grant);
+			redirectField.sendKeys(redirectUri);
 		}
 
 		WebElement submit = driver.findElement(By.id("create-client-submit"));
