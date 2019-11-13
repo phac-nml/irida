@@ -21,6 +21,7 @@ public class CreateClientPageIT extends AbstractIridaUIITChromeDriver {
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new CreateClientPage(driver());
+		page.goTo();
 	}
 
 	@Test

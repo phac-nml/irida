@@ -13,6 +13,7 @@
 
     <client_role name="ROLE_CLIENT" description="A client"/>
 
+	<!--
 	<client_details id="1" clientId="testClient"
 		clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
 	<client_details_authorities
@@ -22,5 +23,5 @@
 	<client_details_resource_ids
 		client_details_id="1" resource_id="NmlIrida" />
 	<client_details_scope client_details_id="1" scope="read" />
-
+-->
 </dataset>

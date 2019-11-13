@@ -2,9 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,17 +21,33 @@ import static org.junit.Assert.*;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/RemoteApisIT.xml")
 public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateRemoteAPIPage page;
+	private CreateClientPage createClientPage;
+	private ClientDetailsPage clientDetailsPage;
+
+	private String clientId = "testClient";
+	private String clientSecret;
 
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new CreateRemoteAPIPage(driver());
+		createClientPage = new CreateClientPage(driver());
+
+		String redirectUrl = RemoteApiUtilities.getRedirectLocation();
+
+		createClientPage.goTo();
+		createClientPage.createClientWithDetails(clientId, "authorization_code", redirectUrl, true, false);
+		clientDetailsPage = new ClientDetailsPage(driver());
+
+		clientSecret = clientDetailsPage.getClientSecret();
+
+		page.goTo();
 	}
 
 	@Test
-	public void testCreateGoodClient() {
+	public void testCreateRemoteApi() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret");
-		assertTrue("client should be created", page.checkSuccess());
+		assertTrue("remote api should be created", page.checkSuccess());
 	}
 
 	@Test
@@ -60,7 +79,7 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 		String baseUrl = page.getBaseUrl();
 		String url = baseUrl + "api";
 
-		page.createRemoteAPIWithDetails("new name", url, "testClient", "testClientSecret");
+		page.createRemoteAPIWithDetails("new name", url, clientId, clientSecret);
 		assertTrue("client should have been created", page.checkSuccess());
 
 		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver());
