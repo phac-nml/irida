@@ -1,8 +1,12 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
-import java.io.IOException;
-import java.net.URI;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -11,13 +15,9 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
 
 /**
  * Rest Template used to communicate with OAuth2 enabled REST APIs. Uses a
@@ -45,9 +45,12 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 		super();
 
 		//enable Path deserialization
+		com.fasterxml.jackson.databind.module.SimpleModule module = new SimpleModule();
+		module.addSerializer(Path.class, new PathJson.PathSerializer());
+
 		for(HttpMessageConverter<?> conv : getMessageConverters()){
 			if(conv instanceof MappingJackson2HttpMessageConverter){
-				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(new Jdk8Module());
+				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(module);
 			}
 		}
 
