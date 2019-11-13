@@ -4,9 +4,10 @@ import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import { AgGridReact } from "@ag-grid-community/react";
+import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 // Excel export support
 import XLSX from "xlsx";
 
@@ -416,26 +417,27 @@ export class TableComponent extends React.Component {
       >
         <AgGridReact
           id="linelist-grid"
-          rowSelection="multiple"
-          onFilterChanged={this.setFilterCount}
-          localeText={i18n.linelist.agGrid}
+          // rowSelection="multiple"
+          modules={[AllCommunityModules]}
+          // onFilterChanged={this.setFilterCount}
+          // localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields}
           rowData={this.props.entries}
-          frameworkComponents={this.frameworkComponents}
-          loadingOverlayComponent="LoadingOverlay"
-          onGridReady={this.onGridReady}
-          onDragStopped={this.onColumnDropped}
-          rowDeselection={true}
-          suppressRowClickSelection={true}
-          onSelectionChanged={this.onSelectionChange}
-          defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true,
-            sortable: true,
-            filter: true
-          }}
-          enableCellChangeFlash={true}
-          onCellEditingStarted={this.onCellEditingStarted}
-          onCellEditingStopped={this.onCellEditingStopped}
+          // frameworkComponents={this.frameworkComponents}
+          // loadingOverlayComponent="LoadingOverlay"
+          // onGridReady={this.onGridReady}
+          // onDragStopped={this.onColumnDropped}
+          // rowDeselection={true}
+          // suppressRowClickSelection={true}
+          // onSelectionChanged={this.onSelectionChange}
+          // defaultColDef={{
+          //   headerCheckboxSelectionFilteredOnly: true,
+          //   sortable: true,
+          //   filter: true
+          // }}
+          // enableCellChangeFlash={true}
+          // onCellEditingStarted={this.onCellEditingStarted}
+          // onCellEditingStopped={this.onCellEditingStopped}
         />
       </div>
     );
