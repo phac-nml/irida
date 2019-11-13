@@ -24,8 +24,8 @@ public class ClientDetailsPage extends AbstractPage {
 	}
 
 	public void goToPage(Long id){
-		get(driver, RELATIVE_URL + "/" + clientId);
 		this.clientId = id;
+		get(driver, RELATIVE_URL + "/" + clientId);
 	}
 
 	public boolean verifyClient(Long id, String clientId) {

@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.Create
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +33,7 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 		page = new CreateRemoteAPIPage(driver());
 		createClientPage = new CreateClientPage(driver());
 
-		String redirectUrl = page.getBaseUrl();
-		redirectUrl += "api/oauth/authorization/token";
+		String redirectUrl = RemoteApiUtilities.getRedirectLocation();
 
 		createClientPage.goTo();
 		createClientPage.createClientWithDetails(clientId, "authorization_code", redirectUrl, true, false);
