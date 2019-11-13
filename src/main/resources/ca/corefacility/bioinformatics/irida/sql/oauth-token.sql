@@ -13,7 +13,7 @@ insert into client_details (id, clientId, clientSecret, token_validity, createdD
 insert into client_details (id, clientId, clientSecret, token_validity, createdDate) values (2, "linker", "ZG5K1AFVSycE25ooxgcBRGCWFzSTfDnJ1DxSkdEmEho", 43200,now());
 insert into client_details (id, clientId, clientSecret, token_validity, createdDate) values (3, "pythonLinker", "bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk", 43200,now());
 insert into client_details (id, clientId, clientSecret, token_validity, createdDate) values (4, "testClient", "testClientSecret", 43200,now());
-insert into client_details (id, clientId, clientSecret, token_validity, createdDate) values (5, "webClient", "webClientSecret", 43200,now());
+insert into client_details (id, clientId, clientSecret, redirect_uri, token_validity, createdDate) values (5, "webClient", "webClientSecret", "http://localhost:8080/api/oauth/authorization/token", 43200,now());
 
 insert into client_role (name, description) values ("ROLE_CLIENT","A basic OAuth2 client");
 
