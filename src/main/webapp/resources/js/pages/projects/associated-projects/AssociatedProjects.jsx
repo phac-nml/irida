@@ -3,7 +3,7 @@
  */
 import React from "react";
 import ViewAssociatedProjects from "./ViewAssociatedProjects";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../components/tabs";
 
 export default function AssociatedProjects() {
