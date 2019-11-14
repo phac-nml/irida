@@ -28,17 +28,26 @@ After clicking on an authorization code client, you can verify it needs updated 
 
 ![Client details empty redirect](images/client-update-details-empty.png)
 
-To update the redirect URI, click the "Edit" button.  On this edit page you can fill in the appropriate redirect URI for the client.  For IRIDA servers this will typically be the server URL + `/api/oauth/authorization/token`. Ex: `http://irida.ca/api/oauth/authorization/token`.  Note that this is **not the address of your IRIDA server**.  This will be the address of the IRIDA server using this client to synchronized data from your server.
+To update the redirect URI, click the "Edit" button.  On this edit page you can fill in the appropriate redirect URI for the client.  For IRIDA servers this will typically be the server URL + `/api/oauth/authorization/token`. Ex: `http://irida.ca/irida/api/oauth/authorization/token`.  Note that this is **not the address of your IRIDA server**.  This will be the address of the IRIDA server using this client to synchronized data from your server.
 
 For non-IRIDA applications, you must refer to the application's API documentation for what to use for a redirect URI.  After entering the URI, click the "Update Client" button.
 
 ![Client edit page](images/client-update-edit-page.png)
 
-After completing this process, you should see the redirect URI listed in the client details page.  To test that this process was completed successfully, you can follow the insructions on the [Remote API](http://localhost:4000/user/administrator/#adding-a-remote-irida-installation) page to test a remote connection.
+After completing this process, you should see the redirect URI listed in the client details page.  To test that this process was completed successfully, you can follow the instructions on the [Remote API](http://localhost:4000/user/administrator/#adding-a-remote-irida-installation) page to test a remote connection.
 
 Note that if this process is not completed correctly for a Remote API, data will no longer synchronize and will result in an error.
 
 See the section under "authorization code" in our documentation for more details about entering the redirect URI at <https://irida.corefacility.ca/documentation/user/administrator/#grant-types>.
+
+## Updating Galaxy importer clients
+
+Clients for the [Galaxy IRIDA importer](https://github.com/phac-nml/irida-galaxy-importer) must undergo a similar process, but with slightly different values.  The Galaxy importer targets your local IRIDA installation so the redirect URL points at your own IRIDA.  Redirect URLs for Galaxy will be the following:
+
+Your IRIDA server URL + `/galaxy/auth_code`.  Ex: `http://irida.ca/irida/galaxy/auth_code`.
+
+To test this change, try importing some data from Galaxy.  If it works, you've updated everything correctly!
+
 
 # 19.05
 ## FastQC translation to filesystem
