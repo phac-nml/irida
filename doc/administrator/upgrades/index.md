@@ -48,7 +48,6 @@ Your IRIDA server URL + `/galaxy/auth_code`.  Ex: `http://irida.ca/irida/galaxy/
 
 To test this change, try importing some data from Galaxy.  If it works, you've updated everything correctly!
 
-
 # 19.05
 ## FastQC translation to filesystem
 
