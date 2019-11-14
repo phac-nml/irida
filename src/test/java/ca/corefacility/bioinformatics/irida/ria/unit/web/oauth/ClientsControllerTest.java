@@ -165,7 +165,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", 0, "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", "", 0, "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);
@@ -191,7 +191,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.update(any(IridaClientDetails.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", 0, "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", "", 0, "", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
@@ -206,7 +206,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", 0, "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", "", 0, "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);

@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.security.OauthRedirectResolver;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 import org.slf4j.Logger;
@@ -151,8 +150,6 @@ public class IridaOauthSecurityConfig {
 			endpoints.pathMapping("/oauth/authorize", "/api/oauth/authorize");
 			endpoints.tokenServices((DefaultTokenServices)tokenServices);
 			endpoints.exceptionTranslator(exceptionTranslator);
-			// TODO: 10/9/19 Remove the line below when registered redirect URIs are added to clients
-			endpoints.redirectResolver(new OauthRedirectResolver());
 		}
 
 		@Override
