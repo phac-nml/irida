@@ -29,7 +29,10 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
 
 const IconText = ({ type, text }) => (
   <span>
-    <Icon type={type} style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }} />
+    <Icon
+      type={type}
+      style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }}
+    />
     {text}
   </span>
 );

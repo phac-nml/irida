@@ -20,7 +20,6 @@ export function GalaxyDetailsForm() {
   const makePairedCollectionModified = e =>
     dispatch(actions.setMakePairedCollection(e.target.checked));
 
-
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)
     .split("/tool_runner")[0];
