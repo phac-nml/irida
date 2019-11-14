@@ -626,7 +626,7 @@
 		<dependency>
 			<groupId>com.sun.activation</groupId>
 			<artifactId>javax.activation</artifactId>
-			<version>1.2.0</version>
+			<version>${javax.activation.version}</version>
 		</dependency>
 
 		<!-- Validation API -->
@@ -1165,6 +1165,7 @@
 		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 		<pf4j.version>2.4.0</pf4j.version>
 		<hamcrest.version>1.3</hamcrest.version>
+		<javax.activation.version>1.2.0</javax.activation.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
