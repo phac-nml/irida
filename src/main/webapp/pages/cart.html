@@ -11,7 +11,7 @@
     <style th:text="${pipeline_plugin_style}"></style>
     <script th:inline="javascript">
       window.PAGE = {
-        user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org"
+        user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org",
         automatedProject: /*[[${automatedProject}]]*/ "0",
       };
     </script>
@@ -30,6 +30,7 @@
           <input id="js-query" name="json_params" type="hidden">
         </form>
       </div>
+      <script th:src="@{/dist/i18n/cart.__${#locale.language}__.js}"></script>
       <script th:src="@{/dist/js/cart.bundle.js}"></script>
     </th:block>
   </body>
