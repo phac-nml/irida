@@ -263,6 +263,7 @@ public class ClientsController extends BaseController {
 		try {
 			if (readClient.getAuthorizedGrantTypes()
 					.contains("authorization_code") && registeredRedirectUri.isEmpty()) {
+				//noinspection unchecked
 				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
 						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
 								Maps.newHashMap(), Maps.newHashMap(),
@@ -366,6 +367,7 @@ public class ClientsController extends BaseController {
 			if (client.getAuthorizedGrantTypes()
 					.contains("authorization_code") && client.getRedirectUri()
 					.isEmpty()) {
+				//noinspection unchecked
 				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
 						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
 								Maps.newHashMap(), Maps.newHashMap(),
