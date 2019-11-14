@@ -13,6 +13,9 @@ import java.nio.file.Path;
  * handle it instead.
  */
 public class PathJson {
+	/**
+	 * Serializer for Java Path objects.
+	 */
 	public static class PathSerializer extends StdSerializer<Path> {
 
 		public PathSerializer() {
