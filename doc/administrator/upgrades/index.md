@@ -18,7 +18,7 @@ The 20.01 version of IRIDA includes some significant upgrades to some of the key
 
 ### Performing the changes
 
-The downside of this change is that it will require IRIDA system administrators to register a redirect URI for all `authorization_code` clients.  This is a manual change and must be performed through the IRIDA user interface.  In order to update these clients, an admin must go into the clients list under the ⚙ icon, and click `Clients`.  This will list all the system clients for your IRIDA system.
+The downside of this change is that it will require IRIDA system administrators to register a redirect URI for all `authorization_code` clients.  This is a manual change and must be performed through the IRIDA user interface.  In order to update these clients, an admin must go into the clients list under the ⚙ icon, and click `Clients`.  This will list all the system clients for your IRIDA installation.
 
 The clients which must be edited in this list will have `authorization_code` listed in the "Grant Types" column.
 
