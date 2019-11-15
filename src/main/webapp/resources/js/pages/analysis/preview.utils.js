@@ -1,5 +1,8 @@
 import { convertFileSize } from "../../utilities/file.utilities";
+import React from "react";
+import { Typography } from "antd";
 
+const { Title } = Typography;
 /**
  * Trim whitespace from a string
  * @param {string} s String to trim
@@ -43,12 +46,12 @@ export const panelHeading = (
     fileSizeBytes
   }
 ) =>
-  `<div class="panel-heading">
-     <h5 class="panel-title">
+  `<div style="margin-bottom: 20px">
+     <h5>
        ${toolName} (${toolVersion}) - ${outputName} - ${filename}
-       <a class="btn btn-default btn-xs pull-right" 
+       <a class="btn btn-default btn-xs pull-right"
           href="${downloadUrl(baseUrl, analysisSubmissionId, id)}">
-         <i class="fa fa-download spaced-right__sm"></i> 
+         <i class="fa fa-download spaced-right__sm"></i>
          ${filename} (${convertFileSize(fileSizeBytes)})
        </a>
      </h5>

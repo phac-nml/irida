@@ -150,7 +150,7 @@ export async function getSistrResults(submissionId) {
 }
 
 /**
- * Get the bio hansel results.
+ * Get the bio hansel output file info
  * @param {number} submissionID Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
@@ -163,6 +163,11 @@ export async function getOutputInfo(submissionId) {
   }
 }
 
+/**
+ * Get the bio hansel results.
+ * @param {object} contains the output file data
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function getBioHanselResults(outputFileInfoObject) {
   try {
     const res = await axios.get(
@@ -179,6 +184,25 @@ export async function getBioHanselResults(outputFileInfoObject) {
     return { error: error };
   }
 }
+
+export async function getFileData(outputFileInfoObject) {
+  try {
+    const res = await axios.get(
+      `${URL}/${outputFileInfoObject.submissionId}/outputs/${
+        outputFileInfoObject.fileId
+      }
+            ?${$.param({
+              start: outputFileInfoObject.start,
+              end: outputFileInfoObject.end
+            })}`
+    );
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    return { error: error };
+  }
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.

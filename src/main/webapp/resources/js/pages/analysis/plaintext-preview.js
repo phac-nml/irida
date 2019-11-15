@@ -30,7 +30,7 @@ export function renderPlainTextPreview(
   chunk_size = 8192
 ) {
   const { id, fileSizeBytes } = aof;
-  const $panel = $(`<div id="js-panel-${id}" class="panel panel-default"/>`);
+  const $panel = $(`<div id="js-panel-${id}" />`);
   const $panelHeading = $(panelHeading(baseUrl, aof));
   $panel.append($panelHeading);
   const $panelBody = $(`<div class="panel-body"></div>`);
