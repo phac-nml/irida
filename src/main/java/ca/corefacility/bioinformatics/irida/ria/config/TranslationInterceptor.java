@@ -16,16 +16,9 @@ public class TranslationInterceptor extends HandlerInterceptorAdapter {
 		super.postHandle(request, response, handler, modelAndView);
 
 		if (InterceptorUtilities.hasGoodModelAndView(modelAndView)) {
-			// The actual html file should be the same name as them entry point.
-			String view = modelAndView.getViewName()
-					.trim();
-			/*
-			If the file is nested in a directory, we need to make sure we get the actual view
-			avoiding the directories.
-			 */
-			if (view.contains("/")) {
-				view = StringUtils.substringAfterLast(modelAndView.getViewName(), "/");
-			}
+			// The actual html file should be the same name as the entry point.
+			String view = modelAndView.getViewName().trim().split(".html")[0];
+
 			/*
 			Check to see if the file exists, if it does add the name to the model so it can be loaded onto the page.
 			 */

@@ -6,7 +6,7 @@
 >
   <head>
     <title th:text="#{sequencingruns.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/sequencing-runs.bundle.css}" />
+    <link rel="stylesheet" th:href="@{/dist/css/sequencingRuns/list.bundle.css}" />
   </head>
   <body>
     <div
@@ -18,8 +18,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/i18n/sequencing-runs.__${#locale.language}__.js}"></script>
-      <script th:src="@{/dist/js/sequencing-runs.bundle.js}"></script>
+      <script th:src="@{/dist/js/sequencingRuns/list.bundle.js}"></script>
     </th:block>
   </body>
 </html>

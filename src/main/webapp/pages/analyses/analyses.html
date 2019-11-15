@@ -6,7 +6,7 @@
 >
   <head>
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/analyses.bundle.css}" />
+    <link rel="stylesheet" th:href="@{/dist/css/analyses/analyses.bundle.css}" />
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin}]]*/ true,
@@ -21,8 +21,7 @@
             layout:fragment="page"
     ></div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/i18n/analyses.__${#locale.language}__.js}"></script>
-      <script th:src="@{/dist/js/analyses.bundle.js}"></script>
+      <script th:src="@{/dist/js/analyses/analyses.bundle.js}"></script>
     </th:block>
   </body>
 </html>

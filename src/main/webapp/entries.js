@@ -15,17 +15,17 @@ module.exports = {
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
-  activities: "./resources/js/pages/activities/activities.js",
-  announcements: "./resources/js/pages/announcement/announcements.js",
+  "events/admin": "./resources/js/pages/activities/activities.js",
+  "announcements/read": "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
-  "project-events": "./resources/js/pages/projects/project-events.js",
-  projects: "./resources/js/pages/projects/list/index.js",
-  "samples-metadata-import":
+  "projects/project_details": "./resources/js/pages/projects/project-events.js",
+  "projects/projects": "./resources/js/pages/projects/list/index.js",
+  "projects/projects_samples_metadata_upload":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
-  "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
+  "projects/project_samples": "./resources/js/pages/projects/samples/project-samples.js",
   "project-samples-merge":
     "./resources/js/pages/projects/samples/modals/samples-merge.js",
   "project-samples-copy":
@@ -36,50 +36,52 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-filter.js",
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
-  "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
-  "project-linelist": "./resources/js/pages/projects/linelist/index.js",
-  "project-metadata-edit":
+  "projects/project_add_sample": "./resources/js/pages/projects/project-add-samples.js",
+  "projects/project-linelist": "./resources/js/pages/projects/linelist/index.js",
+  "projects/project_metadata_edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
-  "project-new": "./resources/js/pages/projects/projects-new.js",
-  "project-settings-basic":
+  "projects/export/ncbi": "./resources/js/pages/projects/export/ncbi-export.js",
+  "projects/project_new": "./resources/js/pages/projects/projects-new.js",
+  "projects/settings/pages/basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
-  "project-settings-remote":
+  "projects/settings/pages/remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
-  "project-sync": "./resources/js/pages/projects/project-sync.js",
-  "remote-api-details":
+  "projects/project_sync": "./resources/js/pages/projects/project-sync.js",
+  "remote_apis/remote_api_details":
     "./resources/js/pages/remote-apis/remote-api-details.js",
-  "remote-apis": "./resources/js/pages/remote-apis/remote-apis-list.js",
-  "create-metadata-template":
+  "remote_apis/list": "./resources/js/pages/remote-apis/remote-apis-list.js",
+  "projects/project_samples_metadata_template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
-  "visualizations-phylogenetics":
+  "analysis/visualizations/phylocanvas-metadata":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
-  "project-users-groups":
+  "projects/settings/pages/groups":
     "./resources/js/pages/projects/project-users-groups.js",
-  "associated-projects":
+  "projects/settings/pages/members":
+    "./resources/js/pages/projects/project-users-groups.js",
+  "projects/settings/pages/associated":
     "./resources/js/pages/projects/associated-projects/index.js",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-reference-files":
+  "projects/settings/pages/references":
     "./resources/js/pages/projects/project-reference-files.js",
-  "project-analyses":
+  "projects/analyses/pages/analyses_table":
     "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
-  "analysis-outputs-table":
+  "analyses/analyses-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
-  analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
-  "clients-list": "./resources/js/pages/clients/clients-list.js",
-  "users-list": "./resources/js/pages/users/users-list.js",
+  "analyses/analyses": "./resources/js/pages/analyses/AnalysesPage.jsx",
+  "clients/list": "./resources/js/pages/clients/clients-list.js",
+  "users/list": "./resources/js/pages/users/users-list.js",
   "users-password": "./resources/js/pages/users/users-password.js",
-  "announcement-users":
+  "announcements/details":
     "./resources/js/pages/announcement/announcement-users.js",
-  "announcement-admin":
+  "announcements/control":
     "./resources/js/pages/announcement/announcement-admin.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
-  "sequencing-runs":
+  "sequencingRuns/list":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
-  "groups-list": "./resources/js/pages/users/groups-list.js",
-  "group-members": "./resources/js/pages/users/groups-members.js",
+  "groups/list": "./resources/js/pages/users/groups-list.js",
+  "groups/details": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
-  search: "./resources/js/pages/search/search.js",
-  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
-  "run-files": "./resources/js/pages/sequence-files/run-files.js"
+  "search/search": "./resources/js/pages/search/search.js",
+  "sequenceFiles/file_overrepresented": "./resources/js/pages/sequence-files/overrepresented.js",
+  "sequencingRuns/run_files": "./resources/js/pages/sequence-files/run-files.js"
 };
