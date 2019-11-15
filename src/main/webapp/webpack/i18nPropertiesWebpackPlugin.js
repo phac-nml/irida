@@ -1,12 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const glob = require("glob");
-const properties = require("properties");
-
-const parse_messages = source => {
-  const messages_source = fs.readFileSync(source, { encoding: "utf-8" });
-  return properties.parse(messages_source, { namespaces: false });
-};
+const handlebars = require("handlebars");
 
 // resolve entry for given module, we try to exit early with rawRequest in case of multiple modules issuing request
 function resolveEntry(module, reverseEntryPoints) {
@@ -26,18 +20,8 @@ function resolveEntry(module, reverseEntryPoints) {
 class i18nPropertiesWebpackPlugin {
   constructor(options) {
     this.options = options || {};
-
-    const message_files = glob.sync("../resources/i18n/messages_*.properties");
-    this.locales = [];
-    this.translations = message_files.reduce((hash, file) => {
-      const locale = file.match(/messages_(.*)\.properties/).pop();
-      this.locales.push(locale);
-      hash[locale] = parse_messages(file);
-      return hash;
-    }, {});
-
     this.functionName = this.options.functionName || "i18n";
-    this.entryTranslations = {};
+    this.entries = {};
   }
 
   apply(compiler) {
@@ -85,20 +69,13 @@ class i18nPropertiesWebpackPlugin {
                  */
                 if (expr.arguments.length) {
                   const key = expr.arguments[0].value;
+                  // console.log(key);
                   const entry =
                     reverseEntryPoints[
                       resolveEntry(parser.state.module, reverseEntryPoints)
                     ];
-                  this.entryTranslations[entry] =
-                    this.entryTranslations[entry] || {};
-                  // this.entryTranslations[entry][value] = this.translations.en[value];
-                  this.locales.forEach(locale => {
-                    this.entryTranslations[entry][locale] =
-                      this.entryTranslations[entry][locale] || {};
-                    this.entryTranslations[entry][locale][
-                      key
-                    ] = this.translations[locale][key];
-                  });
+                  this.entries[entry] = this.entries[entry] || {};
+                  this.entries[entry][key] = true;
                 }
               });
           });
@@ -114,19 +91,16 @@ class i18nPropertiesWebpackPlugin {
         fs.mkdirSync(dir, { recursive: true });
       }
 
-      Object.keys(this.entryTranslations).forEach(entry => {
-        // Loop evey each language
-        Object.keys(this.entryTranslations[entry]).forEach(lang => {
-          fs.writeFileSync(
-            path.join(dir, `${entry}.${lang}.js`),
-            `window.translations = ` +
-              JSON.stringify(this.entryTranslations[entry][lang], null, 2) +
-              ";"
-          );
+      fs.readFile(__dirname + "/i18n.html", "utf-8", (error, source) => {
+        handlebars.registerHelper('tl', key => `/*[[#{${key}}]]*/ ""`);
+        const template = handlebars.compile(source);
+
+        Object.keys(this.entries).forEach(entry => {
+          const keys = Object.keys(this.entries[entry]);
+          const html = template({ keys });
+          fs.writeFileSync(path.join(dir, `${entry}.html`), html);
         });
       });
-
-      console.log("Done translations");
     });
   }
 }

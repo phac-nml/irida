@@ -48,7 +48,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 
 		String servletPath = request.getServletPath();
 
-		if (hasGoodPath(servletPath) && hasGoodModelAndView(modelAndView)) {
+		if (hasGoodPath(servletPath) && InterceptorUtilities.hasGoodModelAndView(modelAndView)) {
 			List<String> parts = Arrays.stream(servletPath.split("/"))
 					.filter(part -> !Strings.isNullOrEmpty(part))
 					.collect(Collectors.toList());
@@ -110,17 +110,5 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			goodPath = goodPath || path.startsWith(crumb);
 		}
 		return goodPath;
-	}
-
-	/**
-	 * Check to ensure that the {@link ModelAndView} exists and is not in a redirect
-	 *
-	 * @param modelAndView
-	 * 		{@link ModelAndView}
-	 *
-	 * @return true if the {@link ModelAndView} is good for breadcrumbs
-	 */
-	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
-		return modelAndView != null && !modelAndView.getViewName().contains("redirect:");
 	}
 }

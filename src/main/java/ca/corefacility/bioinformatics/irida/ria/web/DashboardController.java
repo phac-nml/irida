@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class DashboardController {
-	private static final String DASHBOARD_PAGE = "index";
+	private static final String DASHBOARD_PAGE = "dashboard";
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
 	/**

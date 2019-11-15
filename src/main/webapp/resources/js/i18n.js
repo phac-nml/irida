@@ -1,11 +1,16 @@
 /**
+ * On load, get all the internationalization strings and combine them into one object
+ */
+const translations = Object.assign({}, ...window.translations);
+window.translations = null;
+
+/**
  * Get the translation for the key from the global window.translations
  * @param {string} key
  * @returns {*}
  */
 const getTranslation = key => {
-  if (window.translations && window.translations[key])
-    return window.translations[key];
+  if (translations && translations[key]) return translations[key];
   throw new Error(`No internationalization string for key: ${key}`);
 };
 

@@ -72,7 +72,7 @@ public class ProjectLineListController {
 			model.addAttribute("currentTemplate", templateId);
 		}
 
-		return "projects/project_linelist";
+		return "projects/project-linelist";
 	}
 
 	/**
