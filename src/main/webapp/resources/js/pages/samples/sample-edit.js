@@ -5,13 +5,13 @@ import "../../../sass/pages/sample-edit.scss";
  * Serialize metadata to json for submission
  */
 $("#edit-form").submit(function() {
-  var metadata = {};
+  const metadata = {};
   $("#other-metadata")
     .find(".metadata-entry")
     .each(function() {
-      var entry = $(this);
-      var key = entry.find(".metadata-key").val();
-      var value = entry.find(".metadata-value").val();
+      const entry = $(this);
+      const key = entry.find(".metadata-key").val();
+      const value = entry.find(".metadata-value").val();
       metadata[key] = { value: value, type: "text" };
     });
 
@@ -25,7 +25,7 @@ $("#edit-form").submit(function() {
  * Add a metadata term from the template
  */
 $("#add-metadata").on("click", function() {
-  var newMetadata = $("#metadata-template").clone(true);
+  const newMetadata = $("#metadata-template").clone(true);
   newMetadata.removeAttr("id");
   $("#metadata-fields").append(newMetadata);
 });
