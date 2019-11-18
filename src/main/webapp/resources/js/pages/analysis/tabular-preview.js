@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 /**
  * Parse CSV line into cell values array.
  *

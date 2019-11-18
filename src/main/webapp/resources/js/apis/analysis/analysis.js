@@ -185,6 +185,11 @@ export async function getBioHanselResults(outputFileInfoObject) {
   }
 }
 
+/**
+ * Get the file output from line x upto line y.
+ * @param {object} contains the output file data
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
 export async function getFileData(outputFileInfoObject) {
   try {
     const res = await axios.get(
@@ -196,7 +201,6 @@ export async function getFileData(outputFileInfoObject) {
               end: outputFileInfoObject.end
             })}`
     );
-    console.log(res.data);
     return res.data;
   } catch (error) {
     return { error: error };
