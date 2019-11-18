@@ -19,6 +19,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,9 @@ import java.util.*;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ClientsController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(ClientsController.class);
+
+	@Value("${server.base.url}")
+	private String serverBaseUrl;
 
 	public static final String CLIENTS_PAGE = "clients/list";
 	public static final String CLIENT_DETAILS_PAGE = "clients/client_details";
@@ -157,7 +161,11 @@ public class ClientsController extends BaseController {
 	public String getEditPage(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
+
 		model.addAttribute("client", client);
+
+		model.addAttribute("serverBaseUrl", serverBaseUrl);
+
 		// in practise our clients only have 1 grant type, adding it to model to
 		// make it easier
 		if (client.getAuthorizedGrantTypes().contains("password")) {
@@ -296,6 +304,8 @@ public class ClientsController extends BaseController {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
+
+		model.addAttribute("serverBaseUrl", serverBaseUrl);
 
 		model.addAttribute("available_grants", AVAILABLE_GRANTS);
 

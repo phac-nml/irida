@@ -105,7 +105,8 @@ You should choose the password grant type for applications that **are not** web-
 
 You should choose the authorization code grant type for applications that **are** web-based applications. In the authorization code grant type the user's web browser is redirected to IRIDA to allow the user to authorize the client's interaction with IRIDA. In the authorization code grant type, the user's username and password are *never* provided to the client.
 
-If you choose a authorization code grant, you must register a redirect URI for the service you expect to use this client.  This is the location which the token should be sent in the web application's API to set up an OAuth2 connection.  In the case of IRIDA, this is generally the IRIDA installation's base URL + `/api/oauth/authorization/token` (ex: `https://irida.ca/api/oauth/authorization/token`).
+If you choose a authorization code grant, you must register a redirect URI for the service you expect to use this client.  This is the location which the token should be sent in the web application's API to set up an OAuth2 connection.  In the case of IRIDA, this is generally the IRIDA installation's base URL + `/api/oauth/authorization/token` (ex: `https://irida.ca/irida/api/oauth/authorization/token`).  In the case of the [IRIDA Galaxy Importer](https://github.com/phac-nml/irida-galaxy-importer), this will be your local server's base URL + `/galaxy/auth_code`.  Ex: `http://irida.ca/irida/galaxy/auth_code`.
+
 
 ### Refresh Tokens
 {:.no_toc}

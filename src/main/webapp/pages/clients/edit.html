@@ -93,7 +93,7 @@
                             </div>
                             <input type="text" id="registeredRedirectUri" name="registeredRedirectUri" class="form-control input-full"
 								   th:placeholder="#{client.registeredRedirectUri}" th:value="${client.redirectUri}"/>
-							<small th:text="#{client.redirect.help}">_Redirect Help_</small>
+							<small th:text="#{client.redirect.help(${serverBaseUrl})}">_Redirect Help_</small>
                         </div>
 
 						<div class="form-group">
