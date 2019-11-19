@@ -25,7 +25,11 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.dialect.IPostProcessorDialect;
+import org.thymeleaf.dialect.IPreProcessorDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
+import org.thymeleaf.postprocessor.IPostProcessor;
+import org.thymeleaf.preprocessor.IPreProcessor;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -35,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
+import ca.corefacility.bioinformatics.irida.ria.web.template.preprocessors.I18nPreProcessor;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
@@ -78,11 +83,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Bean
 	public GalaxySessionInterceptor galaxySessionInterceptor() {
 		return new GalaxySessionInterceptor();
-	}
-
-	@Bean
-	public TranslationInterceptor translationInterceptor() {
-		return new TranslationInterceptor();
 	}
 
 	@Bean
@@ -195,7 +195,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
-		registry.addInterceptor(translationInterceptor());
 	}
 
 	/**
@@ -212,9 +211,29 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
+		dialects.add(preProcessorDialect());
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
 		return dialects;
+	}
+
+	public IPreProcessorDialect preProcessorDialect() {
+		return new IPreProcessorDialect() {
+			@Override
+			public int getDialectPreProcessorPrecedence() {
+				return 0;
+			}
+
+			@Override
+			public Set<IPreProcessor> getPreProcessors() {
+				return Set.of(new I18nPreProcessor());
+			}
+
+			@Override
+			public String getName() {
+				return "I18N Pre Processor Dialect";
+			}
+		};
 	}
 }
