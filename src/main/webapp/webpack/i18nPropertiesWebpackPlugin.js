@@ -99,6 +99,11 @@ class i18nPropertiesWebpackPlugin {
           const keys = Object.keys(this.entries[entry]);
           const html = template({ keys });
           fs.writeFileSync(path.join(dir, `${entry}.html`), html);
+          const entryPath = path.join(dir, `${entry}.html`);
+          if (!fs.existsSync(path.dirname(entryPath))) {
+            fs.mkdirSync(path.dirname(entryPath), { recursive: true });
+          }
+          fs.writeFileSync(entryPath, html);
         });
       });
     });
