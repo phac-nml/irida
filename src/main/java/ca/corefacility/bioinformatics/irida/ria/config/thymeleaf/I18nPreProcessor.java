@@ -1,11 +1,12 @@
-package ca.corefacility.bioinformatics.irida.ria.web.template.preprocessors;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf;
 
 import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.preprocessor.IPreProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import ca.corefacility.bioinformatics.irida.ria.web.template.handlers.I18nHandler;
-
+/**
+ * I18nPreProcessor which uses I18nHandler to dynamically add in translations required by JS bundles
+ */
 public class I18nPreProcessor implements IPreProcessor {
 	@Override
 	public TemplateMode getTemplateMode() {
