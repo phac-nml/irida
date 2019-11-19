@@ -98,11 +98,7 @@ class i18nPropertiesWebpackPlugin {
         Object.keys(this.entries).forEach(entry => {
           const keys = Object.keys(this.entries[entry]);
           const html = template({ keys });
-          const entryPath = path.join(dir, `${entry}.html`);
-          if (!fs.existsSync(path.dirname(entryPath))) {
-            fs.mkdirSync(path.dirname(entryPath), { recursive: true });
-          }
-          fs.writeFileSync(entryPath, html);
+          fs.writeFileSync(path.join(dir, `${entry}.html`), html);
         });
       });
     });

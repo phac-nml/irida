@@ -5,7 +5,7 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/projects/project_samples.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/dist/css/project-samples.bundle.css}"/>
     <link rel="stylesheet" th:href="@{/dist/css/project-samples-copy.bundle.css}">
     <link rel="stylesheet" th:href="@{/dist/css/project-samples-filter.bundle.css}">
     <script th:inline="javascript">
@@ -319,7 +319,8 @@
           });
         </script>
     </div>
-    <script th:src="@{/dist/js/projects/project_samples.bundle.js}"></script>
+    <script th:src="@{/dist/i18n/project-samples.__${#locale.language}__.js}"></script>
+    <script th:src="@{/dist/js/project-samples.bundle.js}"></script>
 </th:block>
 </body>
 </html>

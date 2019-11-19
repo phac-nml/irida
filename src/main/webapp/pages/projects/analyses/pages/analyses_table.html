@@ -5,7 +5,7 @@
   data-layout-decorate="~{projects/analyses/_base}"
 >
   <head>
-    <link rel="stylesheet" th:href="@{/dist/css/projects/analyses/pages/analyses_table.bundle.css}" />
+    <link rel="stylesheet" th:href="@{/dist/css/project-analyses.bundle.css}" />
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin or isOwner}]]*/ true,
@@ -18,7 +18,8 @@
       <div id="root"></div>
     </th:block>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/projects/analyses/pages/analyses_table.bundle.js}"></script>
+      <script th:src="@{/dist/i18n/project-analyses.__${#locale.language}__.js}"></script>
+      <script th:src="@{/dist/js/project-analyses.bundle.js}"></script>
     </th:block>
   </body>
 </html>

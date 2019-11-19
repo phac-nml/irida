@@ -4,7 +4,7 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/dist/css/projects/project_new.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-new.bundle.css}">
     <script th:inline="javascript">
         window.PAGE = {
           urls: {
@@ -126,7 +126,7 @@
     </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/dist/js/projects/project_new.bundle.js}"></script>
+    <script th:src="@{/dist/js/project-new.bundle.js}"></script>
 </th:block>
 </body>
 </html>

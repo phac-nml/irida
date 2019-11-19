@@ -3,7 +3,7 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{projects/_base}">
 <head>
-	<link rel="stylesheet" th:href="@{/dist/css/projects/project_metadata_edit.bundle.css}">
+	<link rel="stylesheet" th:href="@{/dist/css/project-metadata-edit.bundle.css}">
 	<script th:inline="javascript">
 		window.PAGE = {
 			urls: {
@@ -68,7 +68,8 @@
 	</section>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:src="@{/dist/js/projects/project_metadata_edit.bundle.js}"></script>
+	<script th:src="@{/dist/i18n/project-metadata-edit.__${#locale.language}__.js}"></script>
+	<script th:src="@{/dist/js/project-metadata-edit.bundle.js}"></script>
 </th:block>
 </body>
 </html>
