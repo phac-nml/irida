@@ -2,7 +2,6 @@
  * On load, get all the internationalization strings and combine them into one object
  */
 const translations = Object.assign({}, ...window.translations);
-window.translations = null;
 
 /**
  * Get the translation for the key from the global window.translations
