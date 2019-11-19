@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.template.handlers;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf;
 
 import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
@@ -11,6 +11,9 @@ import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.model.*;
 
+/**
+ * I18nHandler is a TemplateHandler that adds in translations dynamically which are required by JS Bundles
+ */
 public class I18nHandler extends AbstractTemplateHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(I18nHandler.class);
