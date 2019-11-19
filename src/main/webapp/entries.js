@@ -9,7 +9,6 @@ module.exports = {
     "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
     "expose-loader?angular!angular",
-    "expose-loader?i18n!./resources/js/i18n.js",
     "./resources/js/vendors"
   ],
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",

@@ -17,7 +17,7 @@ After translating the messages file, your language must be enabled in IRIDA's we
 
  Because we use [Webpack](../webpack) to compile and minify JavaScript assets, Thymeleaf cannot be used to internationalize (or any other templating) since the syntax in not proper JavaScript.
  
- Instead, we have created a webpack plugin called `i18nPropertiesWebpackPlugin` to handle client side internationalization.  This works by going through all the webpack entries and looking for all function calls `i18n("term.to.translate")`, the argument to this method is the the string key in the messages file.
+ Instead, we have created a webpack plugin called `i18nThymeleafWebpackPlugin` to handle client side internationalization.  This works by going through all the webpack entries and looking for all function calls `i18n("term.to.translate")`, the argument to this method is the the string key in the messages file.
  
  ***NOTE:** Do not import the `i18n` method into the JavaScript file, webpack handles this dynamically*.
  

@@ -17,7 +17,7 @@ function resolveEntry(module, reverseEntryPoints) {
   return issuer.rawRequest;
 }
 
-class i18nPropertiesWebpackPlugin {
+class i18nThymeleafWebpackPlugin {
   constructor(options) {
     this.options = options || {};
     this.functionName = this.options.functionName || "i18n";
@@ -110,4 +110,4 @@ class i18nPropertiesWebpackPlugin {
   }
 }
 
-module.exports = i18nPropertiesWebpackPlugin;
+module.exports = i18nThymeleafWebpackPlugin;

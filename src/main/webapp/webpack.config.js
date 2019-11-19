@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const i18nPropertiesPlugin = require("./webpack/i18nPropertiesWebpackPlugin");
+const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 
 const dev = require("./webpack.config.dev");
 const prod = require("./webpack.config.prod");
@@ -96,7 +96,7 @@ const config = {
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
     }),
-    new i18nPropertiesPlugin({
+    new i18nThymeleafWebpackPlugin({
       functionName: "i18n"
     }),
     new webpack.ProvidePlugin({
