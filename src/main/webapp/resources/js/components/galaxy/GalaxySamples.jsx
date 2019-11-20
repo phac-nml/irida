@@ -1,7 +1,7 @@
 import React from "react";
 import { useStateValue } from "./GalaxyState";
 import { Alert, Icon } from "antd";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 import { SPACE_SM } from "../../styles/spacing";
 
 /**

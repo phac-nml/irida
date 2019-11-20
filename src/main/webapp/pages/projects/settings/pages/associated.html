@@ -1,51 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/settings/_base}">
-<head>
-    <title th:text="#{project.associated.heading(${project.label})}"></title>
-</head>
-<body>
-<th:block layout:fragment="settings-content">
-    <div th:object="${project}">
-        <div class="row">
-            <div class="col-md-10">
-                <h2 style="margin-top: 0" th:text="#{project.associated.title}">_Projects_</h2>
-            </div>
-            <div class="col-md-2">
-                <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
-                   th:text="#{form.btn.edit}"
-                   th:href="@{/projects/{id}/settings/associated/edit(id=${project.getId()})}"
-                   href="projects/4/settings/associated/edit">_Edit_</a>
-            </div>
-        </div>
-        <span th:if="${noAssociated}" th:text="#{project.associated.empty}">_No associated projects_</span>
-        <div th:unless="${#lists.isEmpty(associatedProjects)}"
-             id="associated-projects">
-            <table class="table table-striped table-hover">
-                <tr>
-                    <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
-                    <th th:text="#{project.associated.project.location}">_Location_</th>
-                    <th th:text="#{project.associated.access}">_Access_</th>
-                </tr>
-                <tr th:each="project : ${associatedProjects}" class="associated-project local-project-row">
-                    <td>
-                        <a class="project-name authorized" th:if="${project.auth} == 'authorized'"
-                           th:text="${project.name}"
-                           th:href="@{'/projects/' + ${project.id}}">_Project Name_</a>
-                        <span class="project-name unauthorized" th:if="${project.auth} != 'authorized'"
-                              th:text="${project.name}">_Project Access_</span>
-                    </td>
-                    <td th:text="#{project.associated.project.location.local}">_Local_</td>
-                    <td>
-                    <span th:if="${project.auth} == 'authorized'" th:text="#{project.associated.authorized}"
-                          class="label label-success">_Authorized_</span>
-                        <span th:if="${project.auth} != 'authorized'" th:text="#{project.associated.unauthorized}"
-                              class="label label-danger">_Unauthorized_</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</th:block>
-</body>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/settings/_base}"
+>
+  <head>
+    <title th:text="#{project.associated.heading(${project.label})}">
+      ASSOCIATED PROJECTS
+    </title>
+    <link rel="stylesheet" href="/dist/css/associated-projects.bundle.css" />
+    <script th:inline="javascript">
+      window.PAGE = {
+        permissions: /*[[${isAdmin or isOwner}]]*/ false,
+        i18n: {
+          "AssociatedProjects.title":
+            /*[[#{AssociatedProjects.title}]]*/ "AssociatedProjects.title",
+          "AssociatedProjects.subTitle":
+            /*[[#{AssociatedProjects.subTitle}]]*/ "AssociatedProjects.subTitle",
+          "ViewAssociatedProjects.ProjectHeader":
+            /*[[#{ViewAssociatedProjects.ProjectHeader}]]*/ "ViewAssociatedProjects.ProjectHeader",
+          "ViewAssociatedProjects.OrganismHeader":
+            /*[[#{ViewAssociatedProjects.OrganismHeader}]]*/ "ViewAssociatedProjects.OrganismHeader"
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" layout:fragment="settings-content"></div>
+    <th:block layout:fragment="scripts">
+      <script src="/dist/js/associated-projects.bundle.js"></script>
+    </th:block>
+  </body>
 </html>

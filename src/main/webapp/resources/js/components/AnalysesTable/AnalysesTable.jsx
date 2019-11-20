@@ -11,7 +11,7 @@ import {
   fetchAllPipelinesTypes
 } from "../../apis/analysis/analysis";
 import { AnalysisState } from "./AnalysisState";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6 } from "../../styles/colors";

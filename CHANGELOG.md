@@ -22,6 +22,8 @@ Changes
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 * [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
+* [UI]: Updated and simplified associated project page.
+* [UI/Developer]: Removed old bootstrap customization files that are not used.
 * [UI/REST]: Added configurable redirect location to client details.  This must be added to all `authorization_code` clients.  This includes clients set up for synchronizing IRIDA data and Galaxy importer clients.  See upgrade instructions at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
 
 19.05 to 19.09
