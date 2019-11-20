@@ -23,15 +23,11 @@ import com.google.common.collect.ImmutableMap;
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
 	private final MessageSource messageSource;
-	private List<String> BASE_CRUMBS = ImmutableList.of(
-			"/projects",
-			"/samples",
-			"/export",
-			"/settings"
-	);
+	private List<String> BASE_CRUMBS = ImmutableList.of("/projects", "/samples", "/export", "/settings");
 
 	/**
 	 * Constructor
+	 *
 	 * @param messageSource {@link MessageSource} for internationalization of breadcrumb
 	 */
 	public BreadCrumbInterceptor(MessageSource messageSource) {
@@ -48,7 +44,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 
 		String servletPath = request.getServletPath();
 
-		if (hasGoodPath(servletPath) && InterceptorUtilities.hasGoodModelAndView(modelAndView)) {
+		if (hasGoodPath(servletPath) && hasGoodModelAndView(modelAndView)) {
 			List<String> parts = Arrays.stream(servletPath.split("/"))
 					.filter(part -> !Strings.isNullOrEmpty(part))
 					.collect(Collectors.toList());
@@ -95,9 +91,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	/**
 	 * Check to ensure that the servlet path is valid for breadcrumbs
 	 *
-	 * @param path
-	 * 		Servlet Path
-	 *
+	 * @param path Servlet Path
 	 * @return true if the path is valid to get breadcrumbs added.
 	 */
 	private boolean hasGoodPath(String path) {
@@ -110,5 +104,16 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			goodPath = goodPath || path.startsWith(crumb);
 		}
 		return goodPath;
+	}
+
+	/**
+	 * Check to ensure that the {@link ModelAndView} exists and is not in a redirect
+	 *
+	 * @param modelAndView {@link ModelAndView}
+	 * @return true if the {@link ModelAndView} is good for breadcrumbs
+	 */
+	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
+		return modelAndView != null && !modelAndView.getViewName()
+				.contains("redirect:");
 	}
 }
