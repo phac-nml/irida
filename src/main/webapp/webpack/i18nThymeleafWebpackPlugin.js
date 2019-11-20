@@ -93,11 +93,12 @@ class i18nThymeleafWebpackPlugin {
 
       fs.readFile(__dirname + "/i18n.html", "utf-8", (error, source) => {
         handlebars.registerHelper('tl', key => `/*[[#{${key}}]]*/ ""`);
+        handlebars.registerHelper("id", bundle => `id="${bundle.replace("/", "-")}-translations"`);
         const template = handlebars.compile(source);
 
         Object.keys(this.entries).forEach(entry => {
           const keys = Object.keys(this.entries[entry]);
-          const html = template({ keys });
+          const html = template({ keys, entry });
           fs.writeFileSync(path.join(dir, `${entry}.html`), html);
           const entryPath = path.join(dir, `${entry}.html`);
           if (!fs.existsSync(path.dirname(entryPath))) {

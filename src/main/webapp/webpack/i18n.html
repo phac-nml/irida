@@ -4,7 +4,7 @@
     <!--
      This is a handlebar template for creating internationalized translation string for javascript components.
      -->
-    <script th:inline="javascript" th:fragment="i18n">
+    <script {{{id entry}}} th:inline="javascript" th:fragment="i18n">
       window.translations = window.translations || [];
       window.translations.push({
         {{#each keys}}
