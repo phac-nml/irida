@@ -33,10 +33,3 @@ feature_name_title=Interesting Modal
  ```
  
  For each entry, webpack will gather the key from the JavaScript file, along with the translation from the messages file and create a new JavaScript file `[entry_name].[locale].js`.  This should be added to the HTML template above the script tag for the webpack bundle for that entry.  This file exposed a JSON object called `translations` to the `window` object which is consumed by the `i18n.js` loaded through the application.
- 
- **Example**
- ```js
-<script th:src="@{/dist/i18n/app.__${#locale.language}__.js}"></script>
-```
-
-Here, Thymeleaf will replace `__${#locale.language}__` with the required locale for the user (currently set in the `configuration.properties` file).
