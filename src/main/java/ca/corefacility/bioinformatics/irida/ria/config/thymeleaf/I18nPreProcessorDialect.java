@@ -5,8 +5,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.dialect.IPreProcessorDialect;
@@ -39,7 +37,7 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 	/**
 	 * I18nPreProcessor which uses I18nHandler to dynamically add in translations required by JS bundles
 	 */
-	public class I18nPreProcessor implements IPreProcessor {
+	protected static class I18nPreProcessor implements IPreProcessor {
 		@Override
 		public TemplateMode getTemplateMode() {
 			return TemplateMode.HTML;
@@ -56,7 +54,10 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 		}
 	}
 
-	public class I18nHandler extends AbstractTemplateHandler {
+	/**
+	 * I18nHandler dynamically adds in translations required by JS bundles
+	 */
+	protected static class I18nHandler extends AbstractTemplateHandler {
 
 		private IModelFactory modelFactory;
 		private final String BUNDLE_PATTERN = "dist/js/(.*).bundle.js";
@@ -72,15 +73,24 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 			this.modelFactory = context.getModelFactory();
 		}
 
+		/**
+		 * Processes each openElementTag and adds a translation block for script tags that load JS bundles,
+		 * which have a translations file
+		 *
+		 * @param openElementTag
+		 */
 		@Override
 		public void handleOpenElement(final IOpenElementTag openElementTag) {
+			// only process script tags
 			if (openElementTag.getElementCompleteName().equals("script")) {
 				if (openElementTag.hasAttribute("th:src")) {
 					Matcher matcher = pattern.matcher(openElementTag.getAttributeValue("th:src"));
 					if (matcher.find()) {
 						String bundle = matcher.group(1);
-						if (doesTranslationFileExist(bundle)) {
+						if (doesTranslationsFileExist(bundle)) {
 							String path = "../dist/i18n/" + bundle + " :: i18n";
+
+							// Add in translations block for js bundle
 							super.handleOpenElement(modelFactory.createOpenElementTag("th:block", "th:replace", path, false));
 							super.handleCloseElement(modelFactory.createCloseElementTag("th:block"));
 						}
@@ -90,9 +100,15 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 			super.handleOpenElement(openElementTag);
 		}
 
-		private boolean doesTranslationFileExist(String filename) {
+		/**
+		 * Check if a translation file exists for a given JS bundle
+		 *
+		 * @param bundleName Name of the JS bundle
+		 * @return true if the {@param bundleName} has a translation file
+		 */
+		private boolean doesTranslationsFileExist(String bundleName) {
 			try {
-				return ResourceUtils.getFile("file:src/main/webapp/dist/i18n/" + filename + ".html").exists();
+				return ResourceUtils.getFile("file:src/main/webapp/dist/i18n/" + bundleName + ".html").exists();
 			} catch (FileNotFoundException e) {
 				return false;
 			}
