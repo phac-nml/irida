@@ -21,7 +21,7 @@ After translating the messages file, your language must be enabled in IRIDA's we
  
  ***NOTE:** Do not import the `i18n` method into the JavaScript file, webpack handles this dynamically*.
  
- **In `messages_en.properties`**:
+ **In `messages.properties`**:
  
  ```
 feature_name_title=Interesting Modal
@@ -32,4 +32,4 @@ feature_name_title=Interesting Modal
  i18n("feature_name_title");
  ```
  
- For each entry, webpack will gather the key from the JavaScript file, along with the translation from the messages file and create a new JavaScript file `[entry_name].[locale].js`.  This should be added to the HTML template above the script tag for the webpack bundle for that entry.  This file exposed a JSON object called `translations` to the `window` object which is consumed by the `i18n.js` loaded through the application.
+ For each entry, webpack will gather the key from the JavaScript file, along with the translation from the messages file and create a new Thymeleaf file `dist/i18n/[entry_name].html`.  This is dynamically added to the page abobe the script tag for the corresponding webpack bundle.  This file exposes a JSON object called `translations` to the `window` object which is consumed by the `i18n.js` loaded through the application.
