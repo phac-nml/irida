@@ -8,7 +8,7 @@ import { Link, Location, Router } from "@reach/router";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import {
-  getBioHanselResults,
+  getDataViaChunks,
   getOutputInfo
 } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
@@ -34,7 +34,7 @@ export default function AnalysisBioHansel() {
       });
 
       if (outputInfo !== undefined) {
-        getBioHanselResults({
+        getDataViaChunks({
           submissionId: analysisContext.analysis.identifier,
           fileId: outputInfo.id,
           seek: 0,

@@ -11,7 +11,6 @@ import { Success } from "../../../../components/icons/Success";
 import { Warning } from "../../../../components/icons/Warning";
 
 export function BioHanselInfo({ bioHanselResults }) {
-  console.log(bioHanselResults);
   const biohanselResults = [
     {
       title: getI18N("AnalysisBioHansel.sampleName"),

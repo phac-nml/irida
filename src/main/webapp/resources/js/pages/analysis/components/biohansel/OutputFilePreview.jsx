@@ -7,11 +7,9 @@ import { Tabs } from "antd";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
 import { getI18N } from "../../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
-import { renderJsonPreview } from "../../json-preview";
-import { renderPlainTextPreview } from "../../plaintext-preview";
-import $ from "jquery";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
+import { AnalysisJsonPreview } from "../AnalysisJsonPreview";
 
 const { TabPane } = Tabs;
 
@@ -25,10 +23,7 @@ export function OutputFilePreview() {
   }, []);
 
   function jsonOutputPreview() {
-    const $tablesContainer = $("#js-file-preview-container");
-
     const jsonExtSet = new Set(["json"]);
-    const baseAjaxUrl = `${window.TL.BASE_URL}ajax/analysis/`;
     let jsonOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
@@ -37,8 +32,8 @@ export function OutputFilePreview() {
       }
 
       if (jsonExtSet.has(output.fileExt)) {
-        jsonOutput.push(
-          renderJsonPreview($tablesContainer, baseAjaxUrl, output)
+        jsonOutput.unshift(
+          <AnalysisJsonPreview output={output} key={output.filename} />
         );
       }
     }
@@ -55,7 +50,7 @@ export function OutputFilePreview() {
         continue;
       }
       if (tabExtSet.has(output.fileExt)) {
-        tabularOutput.push(
+        tabularOutput.unshift(
           <AnalysisTabularPreview output={output} key={output.filename} />
         );
       }
@@ -63,38 +58,20 @@ export function OutputFilePreview() {
     return tabularOutput;
   }
 
-  function textOutputPreview() {
-    const $tablesContainer = $("#js-file-preview-container");
-    const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
-    const jsonExtSet = new Set(["json"]);
-    const baseAjaxUrl = `${window.TL.BASE_URL}ajax/analysis/`;
-    let textOutput = [];
-
-    for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
-        continue;
-      }
-
-      if (!jsonExtSet.has(output.fileExt) && !tabExtSet.has(output.fileExt)) {
-        textOutput.push(
-          renderPlainTextPreview($tablesContainer, baseAjaxUrl, output)
-        );
-      }
-    }
-    return textOutput;
-  }
-
   return analysisOutputsContext.outputs.length > 0 ? (
     <TabPaneContent title={getI18N("AnalysisBioHansel.outputFilePreview")}>
       <Tabs defaultActiveKey="1" animated={false}>
-        <TabPane tab="JSON Output" key="json-output">
-          {jsonOutputPreview()}
-        </TabPane>
-        <TabPane tab="Tabular Output" key="tab-output">
+        <TabPane
+          tab={getI18N("AnalysisBioHansel.tabularOutput")}
+          key="tab-output"
+        >
           {tabularOutputPreview()}
         </TabPane>
-        <TabPane tab="Text Output" key="text-output">
-          {textOutputPreview()}
+        <TabPane
+          tab={getI18N("AnalysisBioHansel.jsonOutput")}
+          key="json-output"
+        >
+          {jsonOutputPreview()}
         </TabPane>
       </Tabs>
     </TabPaneContent>

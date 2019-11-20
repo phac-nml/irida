@@ -1,6 +1,5 @@
-import $ from "jquery";
-import { analysisOutputFileApiUrl, panelHeading } from "./preview.utils";
 import { convertFileSize } from "../../utilities/file.utilities";
+import { getI18N } from "../../utilities/i18n-utilities";
 
 /**
  * Given some malformed JSON string, return a list of tokens missing their pairs.
@@ -143,7 +142,7 @@ function appendMissingTokens(malformedJson, missingTokens) {
   );
 }
 
-function repairMalformedJSON(malformedJSON) {
+export function repairMalformedJSON(malformedJSON) {
   const missingTokens = missingTokensStack(malformedJSON);
   return JSON.parse(appendMissingTokens(malformedJSON, missingTokens));
 }
@@ -154,176 +153,15 @@ function repairMalformedJSON(malformedJSON) {
  * @param {number} fileSizeBytes File size in bytes
  * @returns {string}
  */
-const statusText = (byte, fileSizeBytes) =>
-  `${convertFileSize(byte)} / ${convertFileSize(fileSizeBytes)} (${(
+export function statusText(byte, fileSizeBytes) {
+  return `${getI18N("AnalysisOutputs.previewing")} ${convertFileSize(
+    byte
+  )} / ${convertFileSize(fileSizeBytes)} (${(
     (byte / fileSizeBytes) *
     100
   ).toFixed(1)}%)`;
-
-/**
- * Convert some JS Object, Array or scalar value to basic HTML recursively.
- * @param {Object|Array|number|string} x JS Object, Array or scalar
- * @param {string} acc Accumulator for recursion.
- * @returns {string} HTML string representation of `x`
- */
-function jsToHtml(x, acc = "") {
-  const DIV_MARGIN = `<div class="border-1-gray" style="margin-left: 10px">`;
-  const DIV = `<div class="pad5 border-1-gray">`;
-  if ($.isArray(x)) {
-    if (x.length === 1) {
-      acc += jsToHtml(x[0], "");
-    } else {
-      acc += DIV_MARGIN;
-      for (const item of x) {
-        acc += `<div>${jsToHtml(item, "")}</div>`;
-      }
-      acc += "</div>";
-    }
-  } else if ($.isPlainObject(x)) {
-    acc += DIV_MARGIN;
-    for (const [k, v] of Object.entries(x)) {
-      acc += `${DIV}<b>${k}:</b> ${jsToHtml(v, "")}</div>`;
-    }
-    acc += `</div>`;
-  } else {
-    acc += `${x}`;
-  }
-
-  return acc;
 }
 
-/**
- * Render a preview of a JSON AnalysisOutputFile
- * @param {jQuery|HTMLElement} $container Container element to render preview in
- * @param {string} baseUrl Base AJAX URL (e.g. /ajax/analysis/)
- * @param {Object} aof AnalysisOutputFile info
- * @param {number} height Preview container height
- * @param {number} chunk_size Number of bytes to read from AnalysisOutputFile at a time
- */
-export function renderJsonPreview(
-  $container,
-  baseUrl,
-  aof,
-  height = 300,
-  chunk_size = 8192
-) {
-  const { id, fileSizeBytes } = aof;
-  const $panel = $(`<div id="js-panel-${id}" />`);
-  const $panelHeading = $(panelHeading(baseUrl, aof));
-  $panel.append($panelHeading);
-  const $panelBody = $(`<div></div>`);
-  const elId = `js-text-${id}`;
-  const $textEl = $(`<pre/>`, {
-    id: elId
-  });
-  $textEl.css({
-    "white-space": "pre-wrap",
-    resize: "both",
-    height: `${height}px`,
-    width: "100%"
-  });
-  const apiUrl = analysisOutputFileApiUrl(baseUrl, aof);
-  /**
-   * AnalysisOutputFile text content GET request parameters.
-   * - `seek` is the byte to seek to and begin reading at
-   * - `chunk` is the number of bytes to read from the file. If `chunk` is
-   * @type {{seek: number, chunk: number}}
-   */
-  const params = {
-    seek: 0,
-    chunk: Math.min(fileSizeBytes, chunk_size)
-  };
-  let $showMore = $(
-    `<p class="small pull-right">${statusText(0, fileSizeBytes)}</p>`
-  );
-  let showMoreUrl = `${apiUrl}?${$.param(params)}`;
-
-  const getNewChunkSize = (filePosition, fileSizeBytes, chunkSize) =>
-    Math.min(fileSizeBytes - filePosition, chunkSize);
-
-  let savedText = "";
-
-  function onTextScroll() {
-    if (this.fetching) {
-      return;
-    }
-    if (params.chunk === 0) {
-      return;
-    }
-    this.fetching = false;
-    if (
-      $(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight &&
-      getNewChunkSize(params.seek, fileSizeBytes, chunk_size) >= 0
-    ) {
-      let that = this;
-      showMoreUrl = `${apiUrl}?${$.param(params)}`;
-      that.fetching = true;
-      $.ajax({
-        url: showMoreUrl,
-        success: function({ text, filePointer }) {
-          that.fetching = false;
-          savedText += text;
-          const moreText = savedText;
-          try {
-            $textEl.html(jsToHtml(JSON.parse(moreText)));
-            that.fetching = true;
-          } catch (e) {
-            try {
-              $textEl.html(jsToHtml(repairMalformedJSON(moreText)));
-            } catch (eep) {
-              console.warn(moreText.substr(moreText.length - 100));
-              console.error(eep);
-              $textEl.text(moreText);
-            }
-            that.fetching = false;
-          }
-          params.seek = filePointer;
-          params.chunk = getNewChunkSize(
-            params.seek,
-            fileSizeBytes,
-            chunk_size
-          );
-          showMoreUrl =
-            params.chunk === 0 ? "" : `${apiUrl}?${$.param(params)}`;
-          if (showMoreUrl === "") {
-            that.fetching = true;
-          }
-          $showMore.text(statusText(params.seek, fileSizeBytes));
-        }
-      });
-    }
-  }
-
-  $.ajax({
-    url: showMoreUrl,
-    success: ({ text, filePointer }) => {
-      savedText = text;
-      try {
-        $textEl.html(jsToHtml(JSON.parse(savedText)));
-      } catch (e) {
-        try {
-          $textEl.html(jsToHtml(repairMalformedJSON(savedText)));
-        } catch (eep) {
-          console.warn(savedText.substr(savedText.length - 100));
-          console.error(eep);
-          $textEl.text(savedText);
-        }
-      }
-      params.seek = filePointer;
-      params.chunk = getNewChunkSize(params.seek, fileSizeBytes, chunk_size);
-      $showMore.text(statusText(params.seek, fileSizeBytes));
-      // if next chunk to fetch is 0, then no need to setup fetching of more
-      // file text on text scroll
-      if (params.chunk === 0) {
-        return;
-      }
-      // fetch more text data on scroll event
-      $textEl.on("scroll", onTextScroll);
-    }
-  });
-
-  $panelBody.append($textEl);
-  $panelBody.append($showMore);
-  $panel.append($panelBody);
-  $container.append($panel);
+export function getNewChunkSize(filePosition, fileSizeBytes, chunkSize) {
+  return Math.min(fileSizeBytes - filePosition, chunkSize);
 }

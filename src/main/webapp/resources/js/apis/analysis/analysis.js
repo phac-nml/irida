@@ -164,11 +164,11 @@ export async function getOutputInfo(submissionId) {
 }
 
 /**
- * Get the bio hansel results.
+ * Get the data from the output file for with the supplied chunk size
  * @param {object} contains the output file data
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getBioHanselResults(outputFileInfoObject) {
+export async function getDataViaChunks(outputFileInfoObject) {
   try {
     const res = await axios.get(
       `${URL}/${outputFileInfoObject.submissionId}/outputs/${
@@ -190,7 +190,7 @@ export async function getBioHanselResults(outputFileInfoObject) {
  * @param {object} contains the output file data
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getFileData(outputFileInfoObject) {
+export async function getDataViaLines(outputFileInfoObject) {
   try {
     const res = await axios.get(
       `${URL}/${outputFileInfoObject.submissionId}/outputs/${
@@ -205,6 +205,10 @@ export async function getFileData(outputFileInfoObject) {
   } catch (error) {
     return { error: error };
   }
+}
+
+export function downloadOutputFiles(submissionId, fileId) {
+  window.open(`${URL}/download/${submissionId}/file/${fileId}`, "_blank");
 }
 
 /**
