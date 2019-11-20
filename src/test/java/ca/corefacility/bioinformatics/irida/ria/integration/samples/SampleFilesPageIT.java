@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
@@ -8,14 +14,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p> Integration test to ensure that the Sample Details Page. </p>
@@ -51,6 +51,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPageSetup() {
 		page.gotoPage(SAMPLE_ID);
+		checkTranslations(page, ImmutableList.of("sample-files"), null);
+
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
 		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
 		assertEquals("Displays the correct number of assemblies", 2, page.getAssemblyFileCount());
