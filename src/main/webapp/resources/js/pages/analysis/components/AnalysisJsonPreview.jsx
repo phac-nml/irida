@@ -1,5 +1,5 @@
 /**
- * @File component renders a preview of bio hansel output files.
+ * @File component renders a JSON preview of output files.
  */
 
 import React, { useEffect, useState } from "react";
@@ -10,11 +10,6 @@ import {
 } from "../../../apis/analysis/analysis";
 import { convertFileSize } from "../../../utilities/file.utilities";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import {
-  getNewChunkSize,
-  repairMalformedJSON,
-  statusText
-} from "../../analysis/json-preview";
 import { BasicList } from "../../../components/lists/BasicList";
 import { SPACE_XS, SPACE_MD } from "../../../styles/spacing";
 import { FONT_SIZE_DEFAULT } from "../../../styles/fonts";
@@ -32,55 +27,54 @@ const JsonOutputWrapper = styled.div`
 `;
 
 export function AnalysisJsonPreview({ output }) {
-  const [fileRows, setFileRows] = useState([]);
-  const chunkSize = 3096;
   let savedText = "";
-  let filePointer = 0;
-
+  const [jsonData, setJsonData] = useState(null);
+  const [numRows, setNumRows] = useState(10);
   /*
-   * Get json file output data and set the fileRows local state to this data.
+   * Get json file output data and set the jsonData local state to this data.
    */
   useEffect(() => {
     getDataViaChunks({
       submissionId: output.analysisSubmissionId,
       fileId: output.id,
       seek: 0,
-      chunk: getNewChunkSize(0, output.fileSizeBytes, chunkSize)
+      chunk: output.fileSizeBytes
     }).then(data => {
       savedText = data.text;
-      filePointer = data.filePointer;
-      try {
-        setFileRows(JSON.parse(savedText));
-        document.getElementById(
-          `${output.filename}-preview-status`
-        ).innerText = statusText(data.filePointer, output.fileSizeBytes);
-      } catch (e) {
-        try {
-          console.log("Repairing malformed json");
-          setFileRows(repairMalformedJSON(savedText));
-          document.getElementById(
-            `${output.filename}-preview-status`
-          ).innerText = statusText(data.filePointer, output.fileSizeBytes);
-        } catch (ee) {
-          console.warn(savedText.substr(savedText.length - 100));
-          console.error(ee);
-        }
-      }
-    });
-  }, []);
+      let parsedJson = JSON.parse(savedText);
+      let jsonListData = [];
 
-  function displayJson() {
-    if (fileRows.length > 0) {
-      let jsonData = [];
-
-      Object.keys(fileRows).map((key, val) => {
-        Object.entries(fileRows[val]).map(fileRowData => {
-          jsonData.push({
+      Object.keys(parsedJson).map((key, val) => {
+        Object.entries(parsedJson[val]).map(fileRowData => {
+          jsonListData.push({
             title: fileRowData[0],
             desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
           });
         });
       });
+
+      setJsonData(jsonListData);
+    });
+  }, []);
+
+  /*
+   * Sets numRows to current numRows + 10 on scroll.
+   * Used to load n + 10 amount of rows from
+   * data at a time.
+   */
+
+  function showMoreRows() {
+    let element = document.getElementById(
+      `json-${output.filename.split(".")[0]}`
+    );
+
+    if (element.scrollTop + 300 >= element.scrollHeight) {
+      setNumRows(numRows + 10);
+    }
+  }
+
+  function displayJson() {
+    if (jsonData !== null) {
       return (
         <div>
           <Row>
@@ -121,10 +115,11 @@ export function AnalysisJsonPreview({ output }) {
           {isAdmin ? (
             <Row>
               <JsonOutputWrapper
-                id={`json-${output.filename.split(".")[0].replace(/_/g, "-")}`}
+                id={`json-${output.filename.split(".")[0]}`}
                 style={{ padding: SPACE_XS }}
+                onScroll={() => showMoreRows()}
               >
-                <BasicList dataSource={jsonData} />
+                <BasicList dataSource={jsonData.slice(0, numRows)} />
               </JsonOutputWrapper>
               <div
                 style={{ fontWeight: "bold" }}
@@ -138,5 +133,5 @@ export function AnalysisJsonPreview({ output }) {
     }
   }
 
-  return <>{fileRows !== null ? displayJson() : <ContentLoading />}</>;
+  return <>{jsonData !== null ? displayJson() : <ContentLoading />}</>;
 }

@@ -80,7 +80,9 @@ export default function AnalysisBioHansel() {
       <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
         <Content>
           {bioHanselResults === undefined ? (
-            <WarningAlert message="Bio Hansel results are unavailable" />
+            <WarningAlert
+              message={getI18N("AnalysisBioHansel.resultsUnavailable")}
+            />
           ) : bioHanselResults !== null ? (
             <Suspense fallback={<ContentLoading />}>
               <Router>

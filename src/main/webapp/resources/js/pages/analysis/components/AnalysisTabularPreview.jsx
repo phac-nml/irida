@@ -1,5 +1,5 @@
 /**
- * @File component renders a preview of bio hansel output files.
+ * @File component renders a tabular preview of output files.
  */
 
 import React, { useEffect, useState } from "react";
