@@ -2,19 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
 
-// resolve entry for given module, we try to exit early with rawRequest in case of multiple modules issuing request
-function resolveEntry(module, reverseEntryPoints) {
-  let issuer = module;
-  if (reverseEntryPoints[issuer.rawRequest]) {
-    return issuer.rawRequest;
-  }
-  while (issuer.issuer) {
-    issuer = issuer.issuer;
-    if (reverseEntryPoints[issuer.rawRequest]) {
-      return issuer.rawRequest;
-    }
-  }
-  return issuer.rawRequest;
+function localRequest(request) {
+  return request.match(/src\/main\/webapp\/resources\/js/);
 }
 
 class i18nThymeleafWebpackPlugin {
@@ -22,36 +11,23 @@ class i18nThymeleafWebpackPlugin {
     this.options = options || {};
     this.functionName = this.options.functionName || "i18n";
     this.entries = {};
+    this.i18nsByRequests = {};
   }
 
   apply(compiler) {
-    let entryPoints = {};
-    let reverseEntryPoints = {};
-
-    compiler.hooks.compilation.tap(
+    compiler.hooks.emit.tap(
       "i18nPropertiesWebpackPlugin",
       compilation => {
-        entryPoints = compilation.options.entry;
-
-        if (typeof entryPoints === "string" || Array.isArray(entryPoints)) {
-          entryPoints = { main: entryPoints };
-        }
-
-        // prepare reverseEntryPoints object for entry resolution of given module
-        reverseEntryPoints = Object.keys(entryPoints).reduce(
-          (reverseEntryPointsAcc, name) => {
-            let entryPoint = entryPoints[name];
-            if (!Array.isArray(entryPoint)) {
-              entryPoint = [entryPoint];
+        for ( const [ entrypointName, entrypoint ] of compilation.entrypoints.entries() ) {
+          this.entries[entrypointName] = [];
+          for ( const chunk of entrypoint.chunks ) {
+            for ( const { userRequest } of chunk.modulesIterable ) {
+              if ( userRequest != null && localRequest(userRequest) ) {
+                this.entries[entrypointName].push(userRequest);
+              }
             }
-            entryPoint.reduce((acc, curr) => {
-              acc[curr] = name;
-              return acc;
-            }, reverseEntryPointsAcc);
-            return reverseEntryPointsAcc;
-          },
-          {}
-        );
+          }
+        }
       }
     );
 
@@ -69,13 +45,8 @@ class i18nThymeleafWebpackPlugin {
                  */
                 if (expr.arguments.length) {
                   const key = expr.arguments[0].value;
-                  // console.log(key);
-                  const entry =
-                    reverseEntryPoints[
-                      resolveEntry(parser.state.module, reverseEntryPoints)
-                    ];
-                  this.entries[entry] = this.entries[entry] || {};
-                  this.entries[entry][key] = true;
+                  this.i18nsByRequests[parser.state.module.userRequest] = this.i18nsByRequests[parser.state.module.userRequest] || {};
+                  this.i18nsByRequests[parser.state.module.userRequest][key] = true;
                 }
               });
           });
@@ -97,14 +68,23 @@ class i18nThymeleafWebpackPlugin {
         const template = handlebars.compile(source);
 
         Object.keys(this.entries).forEach(entry => {
-          const keys = Object.keys(this.entries[entry]);
-          const html = template({ keys, entry });
-          fs.writeFileSync(path.join(dir, `${entry}.html`), html);
-          const entryPath = path.join(dir, `${entry}.html`);
-          if (!fs.existsSync(path.dirname(entryPath))) {
-            fs.mkdirSync(path.dirname(entryPath), { recursive: true });
+          let keys = {};
+
+          this.entries[entry].forEach(request => {
+            if (request in this.i18nsByRequests) {
+              Object.assign(keys, Object.keys(this.i18nsByRequests[request]));
+            }
+          });
+
+          if (Object.keys(keys).length > 0) {
+              const html = template({ keys, entry });
+              fs.writeFileSync(path.join(dir, `${entry}.html`), html);
+              const entryPath = path.join(dir, `${entry}.html`);
+              if (!fs.existsSync(path.dirname(entryPath))) {
+                fs.mkdirSync(path.dirname(entryPath), { recursive: true });
+              }
+              fs.writeFileSync(entryPath, html);
           }
-          fs.writeFileSync(entryPath, html);
         });
       });
     });
