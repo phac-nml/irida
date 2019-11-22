@@ -1,24 +1,17 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.persistence.*;
-
-import com.google.common.collect.Sets;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.envers.Audited;
-
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.hibernate.envers.Audited;
+
+import javax.persistence.*;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * {@link SequenceFile}s and {@link SequenceFilePair}s associated with a
@@ -37,15 +30,13 @@ public class NcbiBioSampleFiles {
 	private String bioSample;
 
 	@JsonIgnore
-	@ManyToMany()
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
-	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<SingleEndSequenceFile> files;
 
 	@JsonIgnore
-	@ManyToMany()
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
-	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
