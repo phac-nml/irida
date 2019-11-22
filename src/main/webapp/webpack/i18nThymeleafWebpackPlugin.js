@@ -19,11 +19,24 @@ class i18nThymeleafWebpackPlugin {
       "i18nPropertiesWebpackPlugin",
       compilation => {
         for ( const [ entrypointName, entrypoint ] of compilation.entrypoints.entries() ) {
-          this.entries[entrypointName] = [];
+          this.entries[entrypointName] = {};
+
+          // get requests from lazy chunks
+          entrypoint.getChildren().forEach( child => {
+            for ( const chunk of child.chunks ) {
+              for ( let issuer of chunk.modulesIterable ) {
+                if ( issuer.userRequest != null && localRequest(issuer.userRequest) ) {
+                  this.entries[entrypointName][issuer.userRequest] = true;
+                }
+              }
+            }
+          });
+
+          // get requests from static chunks
           for ( const chunk of entrypoint.chunks ) {
-            for ( const { userRequest } of chunk.modulesIterable ) {
-              if ( userRequest != null && localRequest(userRequest) ) {
-                this.entries[entrypointName].push(userRequest);
+            for ( let issuer of chunk.modulesIterable ) {
+              if ( issuer.userRequest != null && localRequest(issuer.userRequest) ) {
+                this.entries[entrypointName][issuer.userRequest] = true;
               }
             }
           }
@@ -68,15 +81,16 @@ class i18nThymeleafWebpackPlugin {
         const template = handlebars.compile(source);
 
         Object.keys(this.entries).forEach(entry => {
-          let keys = {};
+          let keys = [];
 
-          this.entries[entry].forEach(request => {
+          // gather the keys from all the dependencies of an entrypoint
+          Object.keys(this.entries[entry]).forEach(request => {
             if (request in this.i18nsByRequests) {
-              Object.assign(keys, Object.keys(this.i18nsByRequests[request]));
+              keys = [...keys, ...Object.keys(this.i18nsByRequests[request])]
             }
           });
 
-          if (Object.keys(keys).length > 0) {
+          if (keys.length > 0) {
               const html = template({ keys, entry });
               fs.writeFileSync(path.join(dir, `${entry}.html`), html);
               const entryPath = path.join(dir, `${entry}.html`);
