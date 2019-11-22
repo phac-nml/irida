@@ -15,34 +15,40 @@ class i18nThymeleafWebpackPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.emit.tap(
-      "i18nThymeleafWebpackPlugin",
-      compilation => {
-        for ( const [ entrypointName, entrypoint ] of compilation.entrypoints.entries() ) {
-          this.entries[entrypointName] = {};
+    compiler.hooks.emit.tap("i18nThymeleafWebpackPlugin", compilation => {
+      for (const [
+        entrypointName,
+        entrypoint
+      ] of compilation.entrypoints.entries()) {
+        this.entries[entrypointName] = {};
 
-          // get requests from lazy chunks
-          entrypoint.getChildren().forEach( child => {
-            for ( const chunk of child.chunks ) {
-              for ( let issuer of chunk.modulesIterable ) {
-                if ( issuer.userRequest != null && localRequest(issuer.userRequest) ) {
-                  this.entries[entrypointName][issuer.userRequest] = true;
-                }
-              }
-            }
-          });
-
-          // get requests from static chunks
-          for ( const chunk of entrypoint.chunks ) {
-            for ( let issuer of chunk.modulesIterable ) {
-              if ( issuer.userRequest != null && localRequest(issuer.userRequest) ) {
+        // get requests from lazy chunks
+        entrypoint.getChildren().forEach(child => {
+          for (const chunk of child.chunks) {
+            for (let issuer of chunk.modulesIterable) {
+              if (
+                issuer.userRequest != null &&
+                localRequest(issuer.userRequest)
+              ) {
                 this.entries[entrypointName][issuer.userRequest] = true;
               }
             }
           }
+        });
+
+        // get requests from static chunks
+        for (const chunk of entrypoint.chunks) {
+          for (let issuer of chunk.modulesIterable) {
+            if (
+              issuer.userRequest != null &&
+              localRequest(issuer.userRequest)
+            ) {
+              this.entries[entrypointName][issuer.userRequest] = true;
+            }
+          }
         }
       }
-    );
+    });
 
     compiler.hooks.normalModuleFactory.tap(
       "i18nThymeleafWebpackPlugin",
@@ -58,8 +64,11 @@ class i18nThymeleafWebpackPlugin {
                  */
                 if (expr.arguments.length) {
                   const key = expr.arguments[0].value;
-                  this.i18nsByRequests[parser.state.module.userRequest] = this.i18nsByRequests[parser.state.module.userRequest] || {};
-                  this.i18nsByRequests[parser.state.module.userRequest][key] = true;
+                  this.i18nsByRequests[parser.state.module.userRequest] =
+                    this.i18nsByRequests[parser.state.module.userRequest] || {};
+                  this.i18nsByRequests[parser.state.module.userRequest][
+                    key
+                  ] = true;
                 }
               });
           });
@@ -76,8 +85,11 @@ class i18nThymeleafWebpackPlugin {
       }
 
       fs.readFile(__dirname + "/i18n.html", "utf-8", (error, source) => {
-        handlebars.registerHelper('tl', key => `/*[[#{${key}}]]*/ ""`);
-        handlebars.registerHelper("id", bundle => `id="${bundle.replace("/", "-")}-translations"`);
+        handlebars.registerHelper("tl", key => `/*[[#{${key}}]]*/ ""`);
+        handlebars.registerHelper(
+          "id",
+          bundle => `id="${bundle.replace("/", "-")}-translations"`
+        );
         const template = handlebars.compile(source);
 
         Object.keys(this.entries).forEach(entry => {
@@ -86,18 +98,18 @@ class i18nThymeleafWebpackPlugin {
           // gather the keys from all the dependencies of an entrypoint
           Object.keys(this.entries[entry]).forEach(request => {
             if (request in this.i18nsByRequests) {
-              keys = [...keys, ...Object.keys(this.i18nsByRequests[request])]
+              keys = [...keys, ...Object.keys(this.i18nsByRequests[request])];
             }
           });
 
           if (keys.length > 0) {
-              const html = template({ keys, entry });
-              fs.writeFileSync(path.join(dir, `${entry}.html`), html);
-              const entryPath = path.join(dir, `${entry}.html`);
-              if (!fs.existsSync(path.dirname(entryPath))) {
-                fs.mkdirSync(path.dirname(entryPath), { recursive: true });
-              }
-              fs.writeFileSync(entryPath, html);
+            const html = template({ keys, entry });
+            fs.writeFileSync(path.join(dir, `${entry}.html`), html);
+            const entryPath = path.join(dir, `${entry}.html`);
+            if (!fs.existsSync(path.dirname(entryPath))) {
+              fs.mkdirSync(path.dirname(entryPath), { recursive: true });
+            }
+            fs.writeFileSync(entryPath, html);
           }
         });
       });
