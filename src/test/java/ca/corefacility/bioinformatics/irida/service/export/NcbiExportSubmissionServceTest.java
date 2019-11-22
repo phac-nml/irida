@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.validation.Validator;
 
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,8 +42,8 @@ public class NcbiExportSubmissionServceTest {
 	public void testCreate() {
 		SingleEndSequenceFile sequenceFile = new SingleEndSequenceFile(new SequenceFile());
 
-		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Lists.newArrayList(sequenceFile),
-				Lists.newArrayList(), null, "library_name", null, null, null, "library_construction_protocol",
+		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(sequenceFile),
+				Sets.newHashSet(), null, "library_name", null, null, null, "library_construction_protocol",
 				"namespace");
 		NcbiExportSubmission submission = new NcbiExportSubmission(null, null, "bioProjectId", "organization",
 				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));
@@ -56,8 +57,8 @@ public class NcbiExportSubmissionServceTest {
 	public void testCreatePairs() {
 		SequenceFile sequenceFile = new SequenceFile();
 
-		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Lists.newArrayList(),
-				Lists.newArrayList(new SequenceFilePair(sequenceFile, sequenceFile)), null, "library_name", null, null,
+		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(),
+				Sets.newHashSet(new SequenceFilePair(sequenceFile, sequenceFile)), null, "library_name", null, null,
 				null, "library_construction_protocol", "namespace");
 		NcbiExportSubmission submission = new NcbiExportSubmission(null, null, "bioProjectId", "organization",
 				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));
@@ -70,8 +71,8 @@ public class NcbiExportSubmissionServceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateNoFiles() {
 
-		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Lists.newArrayList(),
-				Lists.newArrayList(), null, "library_name", null, null, null, "library_construction_protocol",
+		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(),
+				Sets.newHashSet(), null, "library_name", null, null, null, "library_construction_protocol",
 				"namespace");
 		NcbiExportSubmission submission = new NcbiExportSubmission(null, null, "bioProjectId", "organization",
 				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));

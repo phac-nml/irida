@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.*;
 
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.envers.Audited;
@@ -38,13 +40,13 @@ public class NcbiBioSampleFiles {
 	@ManyToMany()
 	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<SingleEndSequenceFile> files;
+	private Set<SingleEndSequenceFile> files;
 
 	@JsonIgnore
 	@ManyToMany()
 	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<SequenceFilePair> pairs;
+	private Set<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "instrument_model")
@@ -76,8 +78,8 @@ public class NcbiBioSampleFiles {
 	private String accession;
 
 	public NcbiBioSampleFiles() {
-		files = Lists.newArrayList();
-		pairs = Lists.newArrayList();
+		files = Sets.newHashSet();
+		pairs = Sets.newHashSet();
 		submissionStatus = ExportUploadState.NEW;
 	}
 
@@ -90,7 +92,7 @@ public class NcbiBioSampleFiles {
 
 	}
 
-	public NcbiBioSampleFiles(String bioSample, List<SingleEndSequenceFile> files, List<SequenceFilePair> pairs,
+	public NcbiBioSampleFiles(String bioSample, Set<SingleEndSequenceFile> files, Set<SequenceFilePair> pairs,
 			NcbiInstrumentModel instrument_model, String library_name, NcbiLibrarySelection library_selection,
 			NcbiLibrarySource library_source, NcbiLibraryStrategy library_strategy,
 			String library_construction_protocol, String namespace) {
@@ -112,8 +114,8 @@ public class NcbiBioSampleFiles {
 	public static class Builder {
 		private String bioSample;
 
-		private List<SingleEndSequenceFile> files;
-		private List<SequenceFilePair> pairs;
+		private Set<SingleEndSequenceFile> files;
+		private Set<SequenceFilePair> pairs;
 		private NcbiInstrumentModel instrumentModel;
 		private String libraryName;
 		private NcbiLibrarySelection librarySelection;
@@ -128,7 +130,7 @@ public class NcbiBioSampleFiles {
 		 * @param files the single end files
 		 * @return the builder
 		 */
-		public Builder files(List<SingleEndSequenceFile> files) {
+		public Builder files(Set<SingleEndSequenceFile> files) {
 			this.files = files;
 			return this;
 		}
@@ -138,7 +140,7 @@ public class NcbiBioSampleFiles {
 		 * @param pairs the file pairs
 		 * @return the builder
 		 */
-		public Builder pairs(List<SequenceFilePair> pairs) {
+		public Builder pairs(Set<SequenceFilePair> pairs) {
 			this.pairs = pairs;
 			return this;
 		}
@@ -253,7 +255,7 @@ public class NcbiBioSampleFiles {
 		return bioSample;
 	}
 
-	public List<SingleEndSequenceFile> getFiles() {
+	public Set<SingleEndSequenceFile> getFiles() {
 		return files;
 	}
 
@@ -265,15 +267,15 @@ public class NcbiBioSampleFiles {
 		this.id = id;
 	}
 
-	public List<SequenceFilePair> getPairs() {
+	public Set<SequenceFilePair> getPairs() {
 		return pairs;
 	}
 
-	public void setFiles(List<SingleEndSequenceFile> files) {
+	public void setFiles(Set<SingleEndSequenceFile> files) {
 		this.files = files;
 	}
 
-	public void setPairs(List<SequenceFilePair> pairs) {
+	public void setPairs(Set<SequenceFilePair> pairs) {
 		this.pairs = pairs;
 	}
 
