@@ -1350,15 +1350,10 @@ angular-ui-router@1.0.0-alpha.4:
   resolved "https://registry.yarnpkg.com/angular-ui-router/-/angular-ui-router-1.0.0-alpha.4.tgz#2ef99e114d6af1cc680c9b2dcf2273ba4c5bbb5a"
   integrity sha1-LvmeEU1q8cxoDJstzyJzukxbu1o=
 
-angular@1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.2.tgz#d0b677242ac4bf9ae81424297c6320973af4bb5a"
-  integrity sha1-0LZ3JCrEv5roFCQpfGMglzr0u1o=
-
-angular@>=1.4.0:
-  version "1.7.8"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.8.tgz#b77ede272ce1b261e3be30c1451a0b346905a3c9"
-  integrity sha512-wtef/y4COxM7ZVhddd7JtAAhyYObq9YXKar9tsW7558BImeVYteJiTxCKeJOL45lJ/+7B4wrAC49j8gTFYEthg==
+angular@1.7.9, angular@>=1.4.0:
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.9.tgz#e52616e8701c17724c3c238cfe4f9446fd570bc4"
+  integrity sha512-5se7ZpcOtu0MBFlzGv5dsM1quQDoDeUTwZrWjGtTNA7O88cD8TEk5IEKCTDa3uECV9XnvKREVUr7du1ACiWGFQ==
 
 ansi-colors@^3.0.0:
   version "3.2.4"
