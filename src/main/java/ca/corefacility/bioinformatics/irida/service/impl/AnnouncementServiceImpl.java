@@ -100,8 +100,6 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
 
     /**
      * {@inheritDoc}
-	 * @param specification
-	 * @param request
 	 */
     @Override
     @Transactional
