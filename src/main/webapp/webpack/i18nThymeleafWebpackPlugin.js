@@ -1,55 +1,62 @@
-const fs = require("fs");
-const path = require("path");
-const handlebars = require("handlebars");
+const template = ({keys, entry}) => `
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <body>
+    <!--
+     This is a handlebar template for creating internationalized translation string for javascript components.
+     -->
+    <script id="${entry.replace("/", "-")}-translations" th:inline="javascript" th:fragment="i18n">
+      window.translations = window.translations || [];
+      window.translations.push({
+        ${keys.map(key => `"${key}": /*[[#{${key}}]]*/ ""`)}
+      });
+    </script>
+  </body>
+</html>
+`;
 
-function localRequest(request) {
-  return request.match(/src\/main\/webapp\/resources\/js/);
+function isValidLocalRequest(request) {
+  return (
+    typeof request !== "undefined" &&
+    request.match(/src\/main\/webapp\/resources\/js/)
+  );
 }
 
 class i18nThymeleafWebpackPlugin {
   constructor(options) {
     this.options = options || {};
     this.functionName = this.options.functionName || "i18n";
-    this.entries = {};
-    this.i18nsByRequests = {};
   }
 
   apply(compiler) {
-    compiler.hooks.emit.tap("i18nThymeleafWebpackPlugin", compilation => {
-      for (const [
-        entrypointName,
-        entrypoint
-      ] of compilation.entrypoints.entries()) {
-        this.entries[entrypointName] = {};
+    let i18nsByRequests = {};
 
-        // get requests from lazy chunks
-        entrypoint.getChildren().forEach(child => {
-          for (const chunk of child.chunks) {
-            for (let issuer of chunk.modulesIterable) {
-              if (
-                issuer.userRequest != null &&
-                localRequest(issuer.userRequest)
-              ) {
-                this.entries[entrypointName][issuer.userRequest] = true;
-              }
-            }
-          }
-        });
+    function getKeysByChunkGroup(chunkGroup) {
+      let keys = new Set();
+      if (
+        typeof chunkGroup === "undefined" ||
+        typeof chunkGroup.chunks === "undefined"
+      )
+        return keys;
 
-        // get requests from static chunks
-        for (const chunk of entrypoint.chunks) {
-          for (let issuer of chunk.modulesIterable) {
-            if (
-              issuer.userRequest != null &&
-              localRequest(issuer.userRequest)
-            ) {
-              this.entries[entrypointName][issuer.userRequest] = true;
-            }
+      for (const chunk of chunkGroup.chunks) {
+        for (const issuer of chunk.modulesIterable) {
+          if (isValidLocalRequest(issuer.userRequest) && i18nsByRequests[issuer.userRequest]) {
+            keys = new Set([...keys, ...i18nsByRequests[issuer.userRequest]]);
           }
         }
       }
-    });
 
+      const childKeys = chunkGroup
+        .getChildren()
+        .map(child => [...getKeysByChunkGroup(child)]);
+
+      return new Set([...keys, ...childKeys.flat()]);
+    }
+
+    /*
+    This gathers all the translation keys for each file in a entry.
+     */
     compiler.hooks.normalModuleFactory.tap(
       "i18nThymeleafWebpackPlugin",
       factory => {
@@ -64,55 +71,34 @@ class i18nThymeleafWebpackPlugin {
                  */
                 if (expr.arguments.length) {
                   const key = expr.arguments[0].value;
-                  this.i18nsByRequests[parser.state.module.userRequest] =
-                    this.i18nsByRequests[parser.state.module.userRequest] || {};
-                  this.i18nsByRequests[parser.state.module.userRequest][
-                    key
-                  ] = true;
+                  i18nsByRequests[parser.state.module.userRequest] =
+                    i18nsByRequests[parser.state.module.userRequest] ||
+                    new Set();
+                  i18nsByRequests[parser.state.module.userRequest].add(key);
                 }
               });
           });
       }
     );
 
-    /*
-    Write the language files for each entry.
-     */
-    compiler.hooks.done.tap("i18nThymeleafWebpackPlugin", () => {
-      const dir = path.join(compiler.options.output.path, "i18n");
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+    compiler.hooks.emit.tap("i18nThymeleafWebpackPlugin", compilation => {
+      for (const [
+        entrypointName,
+        entrypoint
+      ] of compilation.entrypoints.entries()) {
+        const keys = [...getKeysByChunkGroup(entrypoint)];
+
+        if (keys.length) {
+          /*
+          This adds a file for translations for webpack to write to the file system.
+           */
+          const html = template({keys, entry: entrypointName});
+          compilation.assets[`i18n/${entrypointName}.html`] = {
+            source: () => html,
+            size: () => html.length
+          };
+        }
       }
-
-      fs.readFile(__dirname + "/i18n.html", "utf-8", (error, source) => {
-        handlebars.registerHelper("tl", key => `/*[[#{${key}}]]*/ ""`);
-        handlebars.registerHelper(
-          "id",
-          bundle => `id="${bundle.replace("/", "-")}-translations"`
-        );
-        const template = handlebars.compile(source);
-
-        Object.keys(this.entries).forEach(entry => {
-          let keys = [];
-
-          // gather the keys from all the dependencies of an entrypoint
-          Object.keys(this.entries[entry]).forEach(request => {
-            if (request in this.i18nsByRequests) {
-              keys = [...keys, ...Object.keys(this.i18nsByRequests[request])];
-            }
-          });
-
-          if (keys.length > 0) {
-            const html = template({ keys, entry });
-            fs.writeFileSync(path.join(dir, `${entry}.html`), html);
-            const entryPath = path.join(dir, `${entry}.html`);
-            if (!fs.existsSync(path.dirname(entryPath))) {
-              fs.mkdirSync(path.dirname(entryPath), { recursive: true });
-            }
-            fs.writeFileSync(entryPath, html);
-          }
-        });
-      });
     });
   }
 }
