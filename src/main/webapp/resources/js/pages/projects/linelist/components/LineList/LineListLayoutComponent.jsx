@@ -99,7 +99,7 @@ export class LineListLayoutComponent extends React.Component {
           selectedCount={this.props.selectedCount}
           scrollTableToTop={this.scrollTableToTop}
         />
-        <Layout className="ag-theme-balham">
+        <Layout className="ag-theme-material">
           <Content>
             <Table
               ref={tableReference => (this.tableRef = tableReference)}

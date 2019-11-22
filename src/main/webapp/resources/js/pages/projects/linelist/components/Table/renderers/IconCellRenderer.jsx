@@ -17,12 +17,12 @@ export class IconCellRenderer extends React.Component {
     data: PropTypes.object.isRequired
   };
 
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     const { owner } = this.props.data;
-    return (
-      <React.Fragment>
-        {!JSON.parse(owner) ? <LockedIcon /> : null}
-      </React.Fragment>
-    );
+    return !JSON.parse(owner) ? <LockedIcon /> : null;
   }
 }

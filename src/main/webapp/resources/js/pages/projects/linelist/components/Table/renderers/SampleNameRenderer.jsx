@@ -21,7 +21,3 @@ export class SampleNameRenderer extends React.Component {
     );
   }
 }
-
-SampleNameRenderer.propTypes = {
-  data: PropTypes.object.isRequired
-};
