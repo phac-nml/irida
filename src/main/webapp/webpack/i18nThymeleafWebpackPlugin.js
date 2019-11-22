@@ -1,10 +1,14 @@
-const template = ({keys, entry}) => `
+"use strict";
+
+/**
+ * @param {string[]} keys the translation keys required for the entry
+ * @param {string} entry the name of the entry
+ * @returns {string} the generated html
+ */
+const template = (keys, entry) => `
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
   <body>
-    <!--
-     This is a handlebar template for creating internationalized translation string for javascript components.
-     -->
     <script id="${entry.replace("/", "-")}-translations" th:inline="javascript" th:fragment="i18n">
       window.translations = window.translations || [];
       window.translations.push({
@@ -15,7 +19,11 @@ const template = ({keys, entry}) => `
 </html>
 `;
 
-function isValidLocalRequest(request) {
+/**
+ * @param {string} request the path to the js file being requested
+ * @returns {boolean} request is valid and is local
+ */
+const isValidLocalRequest = (request) => {
   return (
     typeof request !== "undefined" &&
     request.match(/src\/main\/webapp\/resources\/js/)
@@ -28,16 +36,19 @@ class i18nThymeleafWebpackPlugin {
     this.functionName = this.options.functionName || "i18n";
   }
 
+  /**
+   * @param {compiler} compiler the compiler instance
+   * @returns {void}
+   */
   apply(compiler) {
     let i18nsByRequests = {};
 
-    function getKeysByChunkGroup(chunkGroup) {
+    /**
+     * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
+     * @return {Set<string>} a set of the translations keys required by the chunkGroup
+     */
+    const getKeysByChunkGroup = (chunkGroup) => {
       let keys = new Set();
-      if (
-        typeof chunkGroup === "undefined" ||
-        typeof chunkGroup.chunks === "undefined"
-      )
-        return keys;
 
       for (const chunk of chunkGroup.chunks) {
         for (const issuer of chunk.modulesIterable) {
@@ -81,25 +92,29 @@ class i18nThymeleafWebpackPlugin {
       }
     );
 
-    compiler.hooks.emit.tap("i18nThymeleafWebpackPlugin", compilation => {
-      for (const [
-        entrypointName,
-        entrypoint
-      ] of compilation.entrypoints.entries()) {
-        const keys = [...getKeysByChunkGroup(entrypoint)];
+    compiler.hooks.emit.tapAsync(
+      "i18nThymeleafWebpackPlugin",
+      (compilation, callback) => {
+        for (const [
+          entrypointName,
+          entrypoint
+        ] of compilation.entrypoints.entries()) {
+          const keys = [...getKeysByChunkGroup(entrypoint)];
 
-        if (keys.length) {
-          /*
-          This adds a file for translations for webpack to write to the file system.
-           */
-          const html = template({keys, entry: entrypointName});
-          compilation.assets[`i18n/${entrypointName}.html`] = {
-            source: () => html,
-            size: () => html.length
-          };
+          if (keys.length) {
+            /*
+            This adds a file for translations for webpack to write to the file system.
+             */
+            const html = template(keys, entrypointName);
+            compilation.assets[`i18n/${entrypointName}.html`] = {
+              source: () => html,
+              size: () => html.length
+            };
+          }
         }
+        callback();
       }
-    });
+    );
   }
 }
 
