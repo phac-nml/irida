@@ -66,6 +66,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			authFailureHandler.setDefaultFailureUrl("/login?error=true");
 			// @formatter:off
 			http.requestMatcher(request -> {
+				// Don't handle requests under the /api path except for paths that start with /api/oauth
 				return !request.getRequestURI().matches("^.*/api(?!/oauth)(/.*)?$");
 			}).authorizeRequests().and()
 
