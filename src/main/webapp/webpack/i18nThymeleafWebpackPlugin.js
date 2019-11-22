@@ -16,7 +16,7 @@ class i18nThymeleafWebpackPlugin {
 
   apply(compiler) {
     compiler.hooks.emit.tap(
-      "i18nPropertiesWebpackPlugin",
+      "i18nThymeleafWebpackPlugin",
       compilation => {
         for ( const [ entrypointName, entrypoint ] of compilation.entrypoints.entries() ) {
           this.entries[entrypointName] = {};
@@ -45,14 +45,14 @@ class i18nThymeleafWebpackPlugin {
     );
 
     compiler.hooks.normalModuleFactory.tap(
-      "i18nPropertiesWebpackPlugin",
+      "i18nThymeleafWebpackPlugin",
       factory => {
         factory.hooks.parser
           .for("javascript/auto")
-          .tap("i18nPropertiesWebpackPlugin", parser => {
+          .tap("i18nThymeleafWebpackPlugin", parser => {
             parser.hooks.call
               .for(this.functionName)
-              .tap("i18nPropertiesWebpackPlugin", expr => {
+              .tap("i18nThymeleafWebpackPlugin", expr => {
                 /*
                 Make sure an argument was passed to the function.
                  */
@@ -69,7 +69,7 @@ class i18nThymeleafWebpackPlugin {
     /*
     Write the language files for each entry.
      */
-    compiler.hooks.done.tap("i18nPropertiesWebpackPlugin", () => {
+    compiler.hooks.done.tap("i18nThymeleafWebpackPlugin", () => {
       const dir = path.join(compiler.options.output.path, "i18n");
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
