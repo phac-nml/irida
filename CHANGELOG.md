@@ -25,6 +25,7 @@ Changes
 * [UI]: Updated and simplified associated project page.
 * [UI/Developer]: Removed old bootstrap customization files that are not used.
 * [Developer]: Updated chromedriver in packages.json to 78.0.1 to work better with chrome 78 on travis-ci.
+* [UI/Developer]: Standardized JavaScript internationalization through webpack.
 
 19.05 to 19.09
 ---------------
@@ -66,7 +67,6 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
-* [UI/Developer]: Standardized JavaScript internationalization through webpack.
 
 19.01 to 19.05
 ---------------
