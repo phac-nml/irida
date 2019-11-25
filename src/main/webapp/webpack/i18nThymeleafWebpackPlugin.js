@@ -65,8 +65,8 @@ class i18nThymeleafWebpackPlugin {
       return new Set([...keys, ...childKeys.flat()]);
     }
 
-    /*
-    This gathers all the translation keys for each file in a entry.
+    /**
+     * Gather all the translation keys required by each js file.
      */
     compiler.hooks.normalModuleFactory.tap(
       "i18nThymeleafWebpackPlugin",
@@ -92,6 +92,26 @@ class i18nThymeleafWebpackPlugin {
       }
     );
 
+    /**
+     * Delete entries from i18nByRequests object when a js file is updated.
+     * This is done so that once a i18n call is removed from a file it will delete it from the object.
+     */
+    compiler.hooks.watchRun.tap(
+      "i18nThymeleafWebpackPlugin",
+      (compiler, err) => {
+        const { watchFileSystem } = compiler;
+        const watcher = watchFileSystem.watcher || watchFileSystem.wfs.watcher;
+
+        for (const file of Object.keys(watcher.mtimes)) {
+            delete i18nsByRequests[file];
+        }
+      }
+    );
+
+    /**
+     * Emit a thymeleaf templated translations file for each entry that has calls to i18n or has dependencies
+     * that have calls to i18n.
+     */
     compiler.hooks.emit.tapAsync(
       "i18nThymeleafWebpackPlugin",
       (compilation, callback) => {
