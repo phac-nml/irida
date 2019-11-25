@@ -433,7 +433,7 @@ export class TableComponent extends React.Component {
           // suppressRowClickSelection={true}
           onSelectionChanged={this.onSelectionChange}
           defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true,
+            // headerCheckboxSelectionFilteredOnly: true,
             sortable: true,
             filter: true
           }}
@@ -448,9 +448,9 @@ export class TableComponent extends React.Component {
             columnMoveMove: '<i class="fa fa-link"/>',
             columnMoveLeft: '<i class="fa fa-arrow-left"/>',
             columnMoveRight: '<i class="fa fa-arrow-right"/>',
-            checkboxChecked: '<i aria-label="icon: check-square" class="anticon anticon-check-square"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="check-square" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M433.1 657.7a31.8 31.8 0 0 0 51.7 0l210.6-292c3.8-5.3 0-12.7-6.5-12.7H642c-10.2 0-19.9 4.9-25.9 13.3L459 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H315c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8z"></path><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg></i>',
-            checkboxUnchecked: '<i aria-label="icon: border" class="anticon anticon-border"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="border" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg></i>',
-            checkboxIndeterminate: '<i class="far fa-circle"/>'
+            // checkboxChecked: '<i aria-label="icon: check-square" class="anticon anticon-check-square"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="check-square" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M433.1 657.7a31.8 31.8 0 0 0 51.7 0l210.6-292c3.8-5.3 0-12.7-6.5-12.7H642c-10.2 0-19.9 4.9-25.9 13.3L459 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H315c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8z"></path><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg></i>',
+            // checkboxUnchecked: '<i aria-label="icon: border" class="anticon anticon-border"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="border" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg></i>',
+            // checkboxIndeterminate: '<i aria-label="icon: line" class="anticon anticon-line"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="line" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M904 476H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg></i>'
           }}
           // enableCellChangeFlash={true}
           // onCellEditingStarted={this.onCellEditingStarted}
