@@ -32,7 +32,7 @@ cache:
     - $HOME/.m2
 
 before_install:
-  - chromium-browser --version
+  - google-chrome --version
   - sudo apt-get install libgconf-2-4
 
 install:
