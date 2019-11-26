@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WebpackAssetsManifest = require("webpack-assets-manifest");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 
 const dev = require("./webpack.config.dev");
@@ -101,7 +102,8 @@ const config = {
     }),
     new webpack.ProvidePlugin({
       i18n: path.resolve(path.join(__dirname, "resources/js/i18n"))
-    })
+    }),
+    new WebpackAssetsManifest({})
   ]
 };
 
