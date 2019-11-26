@@ -38,8 +38,4 @@ function i18n(key, ...args) {
   }
 }
 
-/*
-This is a special case for scripts that are not compiled by webpack.
- */
-window.__i18n = i18n;
 module.exports = i18n;
