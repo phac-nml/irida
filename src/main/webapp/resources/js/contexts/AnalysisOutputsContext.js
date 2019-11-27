@@ -10,10 +10,13 @@ import { AnalysisContext } from "../contexts/AnalysisContext";
 import { getOutputInfo } from "../apis/analysis/analysis";
 
 const initialContext = {
-  outputs: []
+  outputs: [],
+  fileTypes: [{ hasJsonFile: false, hasTabularFile: false, hasTextFile: false }]
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
+const jsonExtSet = new Set(["json"]);
+const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 
 function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
@@ -22,9 +25,47 @@ function AnalysisOutputsProvider(props) {
   const { analysisContext } = useContext(AnalysisContext);
 
   function getAnalysisOutputs() {
+    let jsonExists = false;
+    let textExists = false;
+    let tabularExists = false;
+
     getOutputInfo(analysisContext.analysis.identifier).then(data => {
+      // Check if json, tab, and/or text files exist
+      // Used by output file preview to only display
+      // tabs that are required
+      data.find(function(el) {
+        if (jsonExtSet.has(el.fileExt)) {
+          jsonExists = true;
+          return;
+        }
+      });
+
+      data.find(function(el) {
+        if (tabExtSet.has(el.fileExt)) {
+          tabularExists = true;
+          return;
+        }
+      });
+
+      data.find(function(el) {
+        if (!tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt)) {
+          textExists = true;
+          return;
+        }
+      });
+
       setAnalysisOutputsContext(analysisOutputsContext => {
-        return { ...analysisOutputsContext, outputs: data };
+        return {
+          ...analysisOutputsContext,
+          outputs: data,
+          fileTypes: [
+            {
+              hasJsonFile: jsonExists,
+              hasTabularFile: tabularExists,
+              hasTextFile: textExists
+            }
+          ]
+        };
       });
     });
   }
@@ -33,7 +74,9 @@ function AnalysisOutputsProvider(props) {
     <AnalysisOutputsContext.Provider
       value={{
         analysisOutputsContext,
-        getAnalysisOutputs
+        getAnalysisOutputs,
+        tabExtSet,
+        jsonExtSet
       }}
     >
       {props.children}
