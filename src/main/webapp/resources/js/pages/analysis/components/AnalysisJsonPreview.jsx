@@ -39,15 +39,16 @@ export default function AnalysisJsonPreview({ output }) {
       let jsonListData = [];
 
       Object.keys(parsedJson).map((key, val) => {
-        Object.entries(parsedJson[val]).map(fileRowData => {
-          jsonListData.push({
-            title: fileRowData[0],
-            desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
+        if (parsedJson[val] !== undefined) {
+          Object.entries(parsedJson[val]).map(fileRowData => {
+            jsonListData.push({
+              title: fileRowData[0],
+              desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
+            });
           });
-        });
+          setJsonData(jsonListData);
+        }
       });
-
-      setJsonData(jsonListData);
     });
   }, []);
 
@@ -81,12 +82,11 @@ export default function AnalysisJsonPreview({ output }) {
                 style={{ padding: SPACE_XS }}
                 onScroll={() => showMoreRows()}
               >
-                <BasicList dataSource={jsonData.slice(0, numRows)} />
+                <BasicList
+                  dataSource={jsonData.slice(0, numRows)}
+                  loading={true}
+                />
               </JsonOutputWrapper>
-              <div
-                style={{ fontWeight: "bold" }}
-                id={`${output.filename}-preview-status`}
-              ></div>
               <Divider />
             </Row>
           ) : null}

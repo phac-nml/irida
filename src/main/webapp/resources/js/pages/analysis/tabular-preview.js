@@ -66,7 +66,7 @@ function parseTabDelimitedLine(line) {
  * @returns {Array<Object<string>>} Basic table column definitions
  */
 export function parseHeader(firstLine, isCSV = false) {
-  let headers = [];
+  let headers = [{ title: "#", dataIndex: "index" }];
   const firstRow = isCSV
     ? parseCsvLine(firstLine)
     : parseTabDelimitedLine(firstLine);
@@ -95,7 +95,8 @@ export function parseRows(lines, offset = 0, isCSV = false) {
     const line = lines[i];
     const cells = isCSV ? parseCsvLine(line) : parseTabDelimitedLine(line);
     const row = { index: offset + i + 1 };
-    row["key"] = i;
+    row["key"] = i + 1;
+    row["index"] = i + 1;
     for (let j = 0; j < cells.length; j++) {
       row[j + ""] = cells[j];
     }

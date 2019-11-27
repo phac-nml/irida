@@ -15,7 +15,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { BioHanselInfo } from "./biohansel/BioHanselInfo";
-import { OutputFilePreviewContainer } from "./biohansel/OutputFilePreviewContainer";
+import { OutputFilePreviewContainer } from "./OutputFilePreviewContainer";
 
 const { Content, Sider } = Layout;
 
@@ -68,7 +68,7 @@ export default function AnalysisBioHansel() {
                 </Menu.Item>
                 <Menu.Item key="file_preview">
                   <Link to={`${BASE_URL}/file_preview`}>
-                    {getI18N("AnalysisBioHansel.outputFilePreview")}
+                    {getI18N("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
               </Menu>
@@ -91,10 +91,7 @@ export default function AnalysisBioHansel() {
                   path={`${BASE_URL}/info`}
                   default
                 />
-                <OutputFilePreviewContainer
-                  bioHanselResults={bioHanselResults}
-                  path={`${BASE_URL}/file_preview`}
-                />
+                <OutputFilePreviewContainer path={`${BASE_URL}/file_preview`} />
               </Router>
             </Suspense>
           ) : (

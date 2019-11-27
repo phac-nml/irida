@@ -3,13 +3,12 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Typography } from "antd";
+import { Divider, Row } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getNewChunkSize, statusText } from "../../analysis/shared-preview";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
-import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles";
 
 const scrollableDivHeight = 300;
@@ -23,7 +22,7 @@ const TextOutputWrapper = styled.div`
   overflow-wrap: break-word;
 `;
 
-export function AnalysisTextPreview({ output }) {
+export default function AnalysisTextPreview({ output }) {
   const [fileRows, setFileRows] = useState([]);
   const [filePointer, setFilePointer] = useState(0);
   const [savedText, setSavedText] = useState("");

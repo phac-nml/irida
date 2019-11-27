@@ -13,6 +13,7 @@ import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
+import { OutputFilePreviewContainer } from "./OutputFilePreviewContainer";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const SerovarPredictions = React.lazy(() =>
@@ -72,6 +73,11 @@ export default function AnalysisSistr(props) {
                       {getI18N("AnalysisSistr.mash")}
                     </Link>
                   </Menu.Item>
+                  <Menu.Item key="file_preview">
+                    <Link to={`${BASE_URL}/file_preview`}>
+                      {getI18N("AnalysisOutputs.outputFilePreview")}
+                    </Link>
+                  </Menu.Item>
                   <Menu.Item key="citation">
                     <Link to={`${BASE_URL}/citation`}>
                       {getI18N("AnalysisSistr.citation")}
@@ -105,6 +111,7 @@ export default function AnalysisSistr(props) {
                   sistrResults={sistrResults.result}
                   path={`${BASE_URL}/mash`}
                 />
+                <OutputFilePreviewContainer path={`${BASE_URL}/file_preview`} />
                 <Citation
                   sistrResults={sistrResults.result}
                   path={`${BASE_URL}/citation`}

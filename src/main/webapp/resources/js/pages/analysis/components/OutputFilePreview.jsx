@@ -4,13 +4,14 @@
 
 import React, { Suspense, useContext, useEffect } from "react";
 import { Tabs } from "antd";
-import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
-import { getI18N } from "../../../../utilities/i18n-utilities";
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
-import { ContentLoading } from "../../../../components/loader/ContentLoading";
-import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
+import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
+import { getI18N } from "../../../utilities/i18n-utilities";
+import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { AnalysisTabularPreview } from "./AnalysisTabularPreview";
 
-const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
+const AnalysisTextPreview = React.lazy(() => import("./AnalysisTextPreview"));
+const AnalysisJsonPreview = React.lazy(() => import("./AnalysisJsonPreview"));
 
 const { TabPane } = Tabs;
 
@@ -59,19 +60,39 @@ export function OutputFilePreview() {
     return tabularOutput;
   }
 
+  function textOutputPreview() {
+    const invalidExtSet = new Set(["tab", "tsv", "tabular", "csv", "json"]);
+
+    let textOutput = [];
+
+    for (const output of analysisOutputsContext.outputs) {
+      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+        continue;
+      }
+      if (!invalidExtSet.has(output.fileExt)) {
+        textOutput.unshift(
+          <AnalysisTextPreview output={output} key={output.filename} />
+        );
+      }
+    }
+    return textOutput;
+  }
+
   return analysisOutputsContext.outputs.length > 0 ? (
-    <TabPaneContent title={getI18N("AnalysisBioHansel.outputFilePreview")}>
+    <TabPaneContent title={getI18N("AnalysisOutputs.outputFilePreview")}>
       <Tabs defaultActiveKey="1" animated={false}>
         <TabPane
-          tab={getI18N("AnalysisBioHansel.tabularOutput")}
+          tab={getI18N("AnalysisOutputs.tabularOutput")}
           key="tab-output"
         >
           {tabularOutputPreview()}
         </TabPane>
-        <TabPane
-          tab={getI18N("AnalysisBioHansel.jsonOutput")}
-          key="json-output"
-        >
+        <TabPane tab={getI18N("AnalysisOutputs.textOutput")} key="text-output">
+          <Suspense fallback={<ContentLoading />}>
+            {textOutputPreview()}
+          </Suspense>
+        </TabPane>
+        <TabPane tab={getI18N("AnalysisOutputs.jsonOutput")} key="json-output">
           <Suspense fallback={<ContentLoading />}>
             {jsonOutputPreview()}
           </Suspense>
