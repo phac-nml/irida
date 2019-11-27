@@ -3,7 +3,7 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{template/base}">
 <head>
-	<link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
+	<webpacker:css entry="app" />
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -58,7 +58,7 @@
 			DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
 		};
 	</script>
-	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
+	<webpacker:js entry="vendor"/>
 	<webpacker:js entry="app"/>
 
 	<th:block layout:fragment="scripts">

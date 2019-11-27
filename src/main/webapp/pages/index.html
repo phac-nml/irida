@@ -5,7 +5,7 @@
       data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <link rel="stylesheet" th:href="@{/dist/css/dashboard.bundle.css}">
+  <webpacker:css entry="dashboard" />
   <script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -54,7 +54,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-  <script th:src="@{/dist/js/dashboard.bundle.js}"></script>
+  <webpacker:js entry="dashboard" />
 </th:block>
 </body>
 

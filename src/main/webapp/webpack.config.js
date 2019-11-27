@@ -93,6 +93,11 @@ const config = {
       }
     ]
   },
+  optimization: {
+    splitChunks: {
+      chunks: "initial",
+    },
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
@@ -103,7 +108,11 @@ const config = {
     new webpack.ProvidePlugin({
       i18n: path.resolve(path.join(__dirname, "resources/js/i18n"))
     }),
-    new WebpackAssetsManifest({})
+    new WebpackAssetsManifest({
+      integrity: false,
+      entrypoints: true,
+      writeToDisk: true
+    })
   ]
 };
 
