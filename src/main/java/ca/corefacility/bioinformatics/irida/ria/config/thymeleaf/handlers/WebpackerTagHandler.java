@@ -65,7 +65,6 @@ public class WebpackerTagHandler extends AbstractTemplateHandler {
 							super.handleOpenElement(openElementTag);
 							super.handleCloseElement(closeElementTag);
 							addedChunks.add(chunk);
-							request.setAttribute("added-chunks", addedChunks);
 						}
 
 					});
@@ -77,6 +76,12 @@ public class WebpackerTagHandler extends AbstractTemplateHandler {
 		} else {
 			super.handleStandaloneElement(standaloneElementTag);
 		}
+	}
+
+	@Override
+	public void handleTemplateEnd(ITemplateEnd templateEnd) {
+		request.setAttribute("added-chunks", addedChunks);
+		super.handleTemplateEnd(templateEnd);
 	}
 
 	@Override
