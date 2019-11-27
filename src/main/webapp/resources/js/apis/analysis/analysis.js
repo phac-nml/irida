@@ -150,7 +150,7 @@ export async function getSistrResults(submissionId) {
 }
 
 /**
- * Get the bio hansel output file info
+ * Get the output file info
  * @param {number} submissionID Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
@@ -207,7 +207,13 @@ export async function getDataViaLines(outputFileInfoObject) {
   }
 }
 
-export function downloadOutputFiles(submissionId, fileId) {
+/**
+ * Download output file using an analysis submission id and file id.
+ * @param {submissionId} submission for which to download output file for.
+ * @param {fileId} file id of file to download.
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export function downloadOutputFile(submissionId, fileId) {
   window.open(`${URL}/download/${submissionId}/file/${fileId}`, "_blank");
 }
 

@@ -7,7 +7,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Icon, Col, Typography } from "antd";
 import { convertFileSize } from "../../utilities/file.utilities";
-import { downloadOutputFiles } from "../../apis/analysis/analysis";
+import { downloadOutputFile } from "../../apis/analysis/analysis";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { FONT_SIZE_DEFAULT } from "../../styles/fonts";
 
@@ -45,7 +45,7 @@ export function OutputFileHeader({ output }) {
             marginLeft: SPACE_XS
           }}
           onClick={() =>
-            downloadOutputFiles(output.analysisSubmissionId, output.id)
+            downloadOutputFile(output.analysisSubmissionId, output.id)
           }
         >
           <Icon type="download" />
