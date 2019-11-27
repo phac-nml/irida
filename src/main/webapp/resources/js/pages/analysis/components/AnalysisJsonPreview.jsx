@@ -60,7 +60,7 @@ export default function AnalysisJsonPreview({ output }) {
 
   function showMoreRows() {
     let element = document.getElementById(
-      `json-${output.filename.split(".")[0]}`
+      `json-${output.filename.replace(".", "-")}`
     );
 
     if (element.scrollTop + 300 >= element.scrollHeight) {
@@ -78,7 +78,7 @@ export default function AnalysisJsonPreview({ output }) {
           {isAdmin ? (
             <Row>
               <JsonOutputWrapper
-                id={`json-${output.filename.split(".")[0]}`}
+                id={`json-${output.filename.replace(".", "-")}`}
                 style={{ padding: SPACE_XS }}
                 onScroll={() => showMoreRows()}
               >

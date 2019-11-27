@@ -54,7 +54,7 @@ export default function AnalysisTextPreview({ output }) {
    */
   function loadMoreData() {
     const scollElement = document.getElementById(
-      `text-${output.filename.split(".")[0]}`
+      `text-${output.filename.replace(".", "-")}`
     );
 
     if (
@@ -95,7 +95,7 @@ export default function AnalysisTextPreview({ output }) {
 
           <Row>
             <TextOutputWrapper
-              id={`text-${output.filename.split(".")[0]}`}
+              id={`text-${output.filename.replace(".", "-")}`}
               style={{ padding: SPACE_XS }}
               onScroll={() => loadMoreData()}
             >
