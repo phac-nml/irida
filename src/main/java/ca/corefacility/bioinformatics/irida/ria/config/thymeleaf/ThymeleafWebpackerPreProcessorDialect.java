@@ -5,47 +5,32 @@ import java.util.Set;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.dialect.IPreProcessorDialect;
 import org.thymeleaf.engine.AbstractTemplateHandler;
-import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IOpenElementTag;
 import org.thymeleaf.model.IStandaloneElementTag;
 import org.thymeleaf.preprocessor.IPreProcessor;
+import org.thymeleaf.preprocessor.PreProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import com.google.common.collect.ImmutableSet;
 
 public class ThymeleafWebpackerPreProcessorDialect implements IPreProcessorDialect {
+	static final int PRECEDENCE = 100;
+
 	@Override
 	public int getDialectPreProcessorPrecedence() {
-		return 1;
+		return PRECEDENCE;
 	}
 
 	@Override
 	public Set<IPreProcessor> getPreProcessors() {
-		return ImmutableSet.of(new WebpackerPreProcessor());
+		return ImmutableSet.of(new PreProcessor(TemplateMode.HTML, WebpackerHandler.class, PRECEDENCE));
 	}
 
 	@Override
 	public String getName() {
 		return "Thymeleaf Webpack Processor Dialect";
-	}
-
-	protected static class WebpackerPreProcessor implements IPreProcessor {
-		@Override
-		public TemplateMode getTemplateMode() {
-			return TemplateMode.HTML;
-		}
-
-		@Override
-		public int getPrecedence() {
-			return 0;
-		}
-
-		@Override
-		public Class<? extends ITemplateHandler> getHandlerClass() {
-			return ThymeleafWebpackerPreProcessorDialect.WebpackerHandler.class;
-		}
 	}
 
 	protected static class WebpackerHandler extends AbstractTemplateHandler {
@@ -56,7 +41,7 @@ public class ThymeleafWebpackerPreProcessorDialect implements IPreProcessorDiale
 		@Override
 		public void handleStandaloneElement(IStandaloneElementTag standaloneElementTag) {
 			if (standaloneElementTag.getElementCompleteName()
-					.equals("webapcker:js")) {
+					.equals("webpacker:js")) {
 				if (standaloneElementTag.hasAttribute("entry")) {
 					String entry = standaloneElementTag.getAttributeValue("entry");
 					IOpenElementTag openElementTag = modelFactory.createOpenElementTag("script", "th:src",

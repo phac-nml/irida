@@ -19,7 +19,7 @@ import org.thymeleaf.templatemode.TemplateMode;
  * I18nPreProcessorDialect adds in a I18nPreProcessor to dynamically add in translations for JS Bundles
  */
 public class I18nPreProcessorDialect implements IPreProcessorDialect {
-	static final int PRECEDENCE = 0;
+	static final int PRECEDENCE = 200;
 
 	@Override
 	public int getDialectPreProcessorPrecedence() {
