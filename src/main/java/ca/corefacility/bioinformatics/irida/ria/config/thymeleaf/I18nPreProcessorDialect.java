@@ -9,49 +9,31 @@ import org.springframework.util.ResourceUtils;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.dialect.IPreProcessorDialect;
 import org.thymeleaf.engine.AbstractTemplateHandler;
-import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IOpenElementTag;
 import org.thymeleaf.preprocessor.IPreProcessor;
+import org.thymeleaf.preprocessor.PreProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 
 /**
  * I18nPreProcessorDialect adds in a I18nPreProcessor to dynamically add in translations for JS Bundles
  */
 public class I18nPreProcessorDialect implements IPreProcessorDialect {
+	static final int PRECEDENCE = 0;
+
 	@Override
 	public int getDialectPreProcessorPrecedence() {
-		return 0;
+		return PRECEDENCE;
 	}
 
 	@Override
 	public Set<IPreProcessor> getPreProcessors() {
-		return Set.of(new I18nPreProcessor());
+		return Set.of(new PreProcessor(TemplateMode.HTML, I18nHandler.class, PRECEDENCE));
 	}
 
 	@Override
 	public String getName() {
 		return "I18n Pre Processor Dialect";
-	}
-
-	/**
-	 * I18nPreProcessor which uses I18nHandler to dynamically add in translations required by JS bundles
-	 */
-	protected static class I18nPreProcessor implements IPreProcessor {
-		@Override
-		public TemplateMode getTemplateMode() {
-			return TemplateMode.HTML;
-		}
-
-		@Override
-		public int getPrecedence() {
-			return 0;
-		}
-
-		@Override
-		public Class<? extends ITemplateHandler> getHandlerClass() {
-			return I18nHandler.class;
-		}
 	}
 
 	/**
