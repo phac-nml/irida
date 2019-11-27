@@ -3,24 +3,25 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Button, Col, Divider, Icon, Row, Typography } from "antd";
-import { AgGridReact } from "@ag-grid-community/react";
-import { AllCommunityModules } from "@ag-grid-community/all-modules";
-import { convertFileSize } from "../../../utilities/file.utilities";
+import { Divider, Row, Table, Typography } from "antd";
 import { getDataViaLines } from "../../../apis/analysis/analysis";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { parseHeader, parseRows, autoSizeAll } from "../tabular-preview";
+import { parseHeader, parseRows } from "../tabular-preview";
 import { SPACE_XS } from "../../../styles/spacing";
-import { FONT_SIZE_DEFAULT } from "../../../styles/fonts";
-
-const { Text } = Typography;
+import styled from "styled-components";
+import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
+const TabularOutputWrapper = styled.div`
+  height: 300px;
+  width: 100%;
+  margin-bottom: ${SPACE_XS};
+`;
 
 export function AnalysisTabularPreview({ output }) {
   const { firstLine, fileExt } = output;
   const fileExtCSV = fileExt === "csv";
 
   const [fileRows, setFileRows] = useState([]);
+  const [fileCols, setFileCols] = useState([]);
+  const MAX_TABLE_ROWS_PER_PAGE = 5;
 
   /*
    * Get tabular file output data from the start of a file to the end
@@ -36,55 +37,25 @@ export function AnalysisTabularPreview({ output }) {
       fileId: output.id
     }).then(data => {
       setFileRows(parseRows(data.lines, data.start, fileExtCSV));
+      setFileCols(parseHeader(firstLine, fileExtCSV));
     });
   }, []);
 
   return (
     <div>
       <Row>
-        <div
-          style={{
-            marginBottom: SPACE_XS,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <Col>
-            <Text
-              style={{
-                fontSize: FONT_SIZE_DEFAULT
-              }}
-            >
-              {`${output.toolName} ${output.toolVersion} - ${output.outputName} - ${output.filename}`}
-            </Text>
-          </Col>
-          <Col>
-            <Button
-              style={{
-                marginLeft: SPACE_XS
-              }}
-            >
-              <Icon type="download" />
-              {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
-            </Button>
-          </Col>
-        </div>
+        <OutputFileHeader output={output} />
       </Row>
       <Row>
-        <div
-          className="ag-theme-balham"
-          style={{ height: "300px", width: "100%", marginBottom: SPACE_XS }}
-        >
-          <AgGridReact
-            columnDefs={parseHeader(firstLine, fileExtCSV)}
-            rowData={fileRows}
-            modules={AllCommunityModules}
-            enableColResize={true}
-            maxConcurrentDatasourceRequests={2}
-            onGridReady={params => autoSizeAll(params)}
+        <TabularOutputWrapper>
+          <Table
+            layout="auto"
+            columns={fileCols}
+            dataSource={fileRows}
+            scroll={{ x: true }}
+            pagination={{ pageSize: MAX_TABLE_ROWS_PER_PAGE }}
           />
-        </div>
+        </TabularOutputWrapper>
         <Divider />
       </Row>
     </div>

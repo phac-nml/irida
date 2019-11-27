@@ -1,22 +1,17 @@
 /**
- * @File component renders a text preview output files.
+ * @File component renders a text preview of output files.
  */
 
 import React, { useEffect, useState } from "react";
-import { Button, Col, Divider, Icon, Row, Typography } from "antd";
-import {
-  getDataViaChunks,
-  downloadOutputFiles
-} from "../../../apis/analysis/analysis";
-import { convertFileSize } from "../../../utilities/file.utilities";
+import { Divider, Row, Typography } from "antd";
+import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getNewChunkSize, statusText } from "../../analysis/shared-preview";
-import { SPACE_XS, SPACE_MD } from "../../../styles/spacing";
-import { FONT_SIZE_DEFAULT } from "../../../styles/fonts";
+import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { isAdmin } from "../../../contexts/AnalysisContext";
+import { OutputFileHeader } from "../../../components/OutputFiles";
 
-const { Text } = Typography;
 const scrollableDivHeight = 300;
 
 const TextOutputWrapper = styled.div`
@@ -96,39 +91,7 @@ export function AnalysisTextPreview({ output }) {
       return (
         <div>
           <Row>
-            <div
-              style={{
-                marginBottom: SPACE_MD,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}
-            >
-              <Col>
-                <Text
-                  style={{
-                    fontSize: FONT_SIZE_DEFAULT
-                  }}
-                >
-                  {`${output.toolName} ${output.toolVersion} - ${output.outputName} - ${output.filename}`}
-                </Text>
-              </Col>
-              <Col>
-                <Button
-                  style={{
-                    marginLeft: SPACE_XS
-                  }}
-                  onClick={() =>
-                    downloadOutputFiles(output.analysisSubmissionId, output.id)
-                  }
-                >
-                  <Icon type="download" />
-                  {`${output.filename} (${convertFileSize(
-                    output.fileSizeBytes
-                  )})`}
-                </Button>
-              </Col>
-            </div>
+            <OutputFileHeader output={output} />
           </Row>
           {isAdmin ? (
             <Row>

@@ -1,3 +1,7 @@
+/*
+ * This file is used to parse a file into tabular format
+ */
+
 /**
  * Parse CSV line into cell values array.
  *
@@ -56,21 +60,23 @@ function parseTabDelimitedLine(line) {
 }
 
 /**
- * Get basic ag-grid column definitions from a tab-delimited string
+ * Get basic table column definitions from a tab-delimited string
  * @param {string} firstLine Tab-delimited first line of an AnalysisOutputFile
  * @param {boolean} isCSV Is CSV format? Assume tab-delimited if false.
- * @returns {Array<Object<string>>} Basic ag-grid column definitions
+ * @returns {Array<Object<string>>} Basic table column definitions
  */
 export function parseHeader(firstLine, isCSV = false) {
-  let headers = [{ headerName: "#", field: "index" }];
+  let headers = [];
   const firstRow = isCSV
     ? parseCsvLine(firstLine)
     : parseTabDelimitedLine(firstLine);
   for (let i = 0; i < firstRow.length; i++) {
-    const row = firstRow[i];
+    const col = firstRow[i];
     headers.push({
-      headerName: row,
-      field: i + ""
+      title: col,
+      dataIndex: i,
+      key: col,
+      scrollX: true
     });
   }
   return headers;
@@ -89,11 +95,13 @@ export function parseRows(lines, offset = 0, isCSV = false) {
     const line = lines[i];
     const cells = isCSV ? parseCsvLine(line) : parseTabDelimitedLine(line);
     const row = { index: offset + i + 1 };
+    row["key"] = i;
     for (let j = 0; j < cells.length; j++) {
       row[j + ""] = cells[j];
     }
     rows.push(row);
   }
+
   return rows;
 }
 
