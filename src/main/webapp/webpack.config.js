@@ -31,7 +31,8 @@ const config = {
   output: {
     path: BUILD_PATH,
     publicPath: `/dist/`,
-    filename: "js/[name].bundle.js"
+    filename: "js/[name]-[contenthash].js",
+    chunkFilename: "js/[name]-[contenthash].chunk.js"
   },
   module: {
     rules: [
@@ -94,13 +95,15 @@ const config = {
     ]
   },
   optimization: {
+    runtimeChunk: "single",
     splitChunks: {
-      chunks: "initial",
-    },
+      chunks: "all",
+      name: false
+    }
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "css/[name].bundle.css"
+      filename: "css/[name]-[contenthash].css"
     }),
     new i18nThymeleafWebpackPlugin({
       functionName: "i18n"

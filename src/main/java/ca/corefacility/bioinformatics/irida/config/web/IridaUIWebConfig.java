@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.ThymeleafWebpackerPreProcessorDialect;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities.WebpackerUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -159,6 +160,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
 			templateResolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+			WebpackerUtilities.setAutoUpdatable(false);
 		} else {
 			templateResolver.setCacheable(false);
 		}
