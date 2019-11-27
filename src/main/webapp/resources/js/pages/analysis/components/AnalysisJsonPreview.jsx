@@ -20,7 +20,7 @@ const JsonOutputWrapper = styled.div`
   border: solid 1px #bdc3c7;
 `;
 
-export function AnalysisJsonPreview({ output }) {
+export default function AnalysisJsonPreview({ output }) {
   let savedText = "";
   const [jsonData, setJsonData] = useState(null);
   const [numRows, setNumRows] = useState(10);
@@ -95,5 +95,5 @@ export function AnalysisJsonPreview({ output }) {
     }
   }
 
-  return <>{jsonData !== null ? displayJson() : <ContentLoading />}</>;
+  return <>{jsonData !== null ? displayJson() : null}</>;
 }

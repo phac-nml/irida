@@ -93,22 +93,21 @@ export function AnalysisTextPreview({ output }) {
           <Row>
             <OutputFileHeader output={output} />
           </Row>
-          {isAdmin ? (
-            <Row>
-              <TextOutputWrapper
-                id={`text-${output.filename.split(".")[0]}`}
-                style={{ padding: SPACE_XS }}
-                onScroll={() => loadMoreData()}
-              >
-                {fileRows}
-              </TextOutputWrapper>
-              <div
-                style={{ fontWeight: "bold" }}
-                id={`${output.filename}-preview-status`}
-              ></div>
-              <Divider />
-            </Row>
-          ) : null}
+
+          <Row>
+            <TextOutputWrapper
+              id={`text-${output.filename.split(".")[0]}`}
+              style={{ padding: SPACE_XS }}
+              onScroll={() => loadMoreData()}
+            >
+              {fileRows}
+            </TextOutputWrapper>
+            <div
+              style={{ fontWeight: "bold" }}
+              id={`${output.filename}-preview-status`}
+            ></div>
+            <Divider />
+          </Row>
         </div>
       );
     }

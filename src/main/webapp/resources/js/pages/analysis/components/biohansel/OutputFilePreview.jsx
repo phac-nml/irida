@@ -2,14 +2,15 @@
  * This file renders the Info component for Bio Hansel
  */
 
-import React, { useContext, useEffect } from "react";
+import React, { Suspense, useContext, useEffect } from "react";
 import { Tabs } from "antd";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
 import { getI18N } from "../../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
-import { AnalysisJsonPreview } from "../AnalysisJsonPreview";
+
+const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
 
 const { TabPane } = Tabs;
 
@@ -71,7 +72,9 @@ export function OutputFilePreview() {
           tab={getI18N("AnalysisBioHansel.jsonOutput")}
           key="json-output"
         >
-          {jsonOutputPreview()}
+          <Suspense fallback={<ContentLoading />}>
+            {jsonOutputPreview()}
+          </Suspense>
         </TabPane>
       </Tabs>
     </TabPaneContent>

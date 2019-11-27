@@ -213,8 +213,11 @@ export async function getDataViaLines(outputFileInfoObject) {
  * @param {fileId} file id of file to download.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export function downloadOutputFile(submissionId, fileId) {
-  window.open(`${URL}/download/${submissionId}/file/${fileId}`, "_blank");
+export function downloadOutputFile(outputFileObject) {
+  window.open(
+    `${URL}/download/${outputFileObject.submissionId}/file/${outputFileObject.fileId}`,
+    "_blank"
+  );
 }
 
 /**

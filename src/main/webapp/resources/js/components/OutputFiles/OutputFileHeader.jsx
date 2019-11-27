@@ -1,5 +1,5 @@
 /**
- * Component to render a file header with download button
+ * Component to render a file header (filename and download button)
  * for each file on preview page
  */
 
@@ -45,7 +45,10 @@ export function OutputFileHeader({ output }) {
             marginLeft: SPACE_XS
           }}
           onClick={() =>
-            downloadOutputFile(output.analysisSubmissionId, output.id)
+            downloadOutputFile({
+              submissionId: output.analysisSubmissionId,
+              fileId: output.id
+            })
           }
         >
           <Icon type="download" />
@@ -57,6 +60,6 @@ export function OutputFileHeader({ output }) {
 }
 
 OutputFileHeader.propTypes = {
-  /*any extra attributes to add to PageHeader*/
+  /*Output file object*/
   output: PropTypes.object.isRequired
 };
