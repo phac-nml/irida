@@ -34,23 +34,19 @@ function AnalysisOutputsProvider(props) {
       // Used by output file preview to only display
       // tabs that are required
       data.find(function(el) {
-        if (jsonExtSet.has(el.fileExt)) {
+        if (!jsonExists && jsonExtSet.has(el.fileExt)) {
           jsonExists = true;
-          return;
         }
-      });
 
-      data.find(function(el) {
-        if (tabExtSet.has(el.fileExt)) {
+        if (!tabularExists && tabExtSet.has(el.fileExt)) {
           tabularExists = true;
-          return;
         }
-      });
 
-      data.find(function(el) {
-        if (!tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt)) {
+        if (
+          !textExists &&
+          (!tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt))
+        ) {
           textExists = true;
-          return;
         }
       });
 
