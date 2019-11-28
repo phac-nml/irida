@@ -5,9 +5,9 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-samples.bundle.css}"/>
-    <link rel="stylesheet" th:href="@{/dist/css/project-samples-copy.bundle.css}">
-    <link rel="stylesheet" th:href="@{/dist/css/project-samples-filter.bundle.css}">
+    <webpacker:css entry="project-samples"/>
+    <webpacker:css entry="project-samples-copy"/>
+    <webpacker:css entry="project-samples-filter"/>
     <script th:inline="javascript">
       var PAGE = {
         isRemoteProject: /*[[${project.isRemote()}]]*/ false,
