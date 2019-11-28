@@ -15,16 +15,16 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.
 public class WebpackerScriptAttributeTagProcessor extends AbstractAttributeTagProcessor {
 	private static final String ATTR_NAME = "script";
 	private static final int PRECEDENCE = 10000;
-	private Map<String, Map<String, List<String>>> entryMap;
 
 	public WebpackerScriptAttributeTagProcessor(final String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, null, false, ATTR_NAME, true, PRECEDENCE, true);
-		entryMap = WebpackerUtilities.getEntryMap();
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName,
 			String attributeValue, IElementTagStructureHandler structureHandler) {
+		Map<String, Map<String, List<String>>> entryMap = WebpackerUtilities.getEntryMap();
+
 		if (entryMap.containsKey(attributeValue)) {
 			// Since this is specifically for un-chunked, we only need the second item in the array
 			// First item is always the runtime scripts which should already be on the page.

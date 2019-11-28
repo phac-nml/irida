@@ -27,16 +27,16 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 	private static final String REQUEST_ATTR_NAME = "chunks";
 	private static final String INTERNATIONALIZATION = "i18n";
 	private static final String INTERNATIONALIZATION_ELEMENT = "th:block";
-	private Map<String, Map<String, List<String>>> entryMap;
 
 	public WebpackerJavascriptElementTagProcessor(final String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
-		entryMap = WebpackerUtilities.getEntryMap();
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
 			IElementTagStructureHandler structureHandler) {
+		Map<String, Map<String, List<String>>> entryMap = WebpackerUtilities.getEntryMap();
+
 		WebEngineContext webEngineContext = (WebEngineContext) context;
 		HttpServletRequest request = webEngineContext.getRequest();
 

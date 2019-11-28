@@ -21,16 +21,15 @@ public class WebpackerCSSElementTagProcessor extends AbstractElementTagProcessor
 	private static final String TAG_NAME = "css";
 	private static final String ELEMENT_NAME = "link";
 	private static final int PRECEDENCE = 1000;
-	private Map<String, Map<String, List<String>>> entryMap;
 
 	public WebpackerCSSElementTagProcessor(final String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
-		entryMap = WebpackerUtilities.getEntryMap();
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
 			IElementTagStructureHandler structureHandler) {
+		Map<String, Map<String, List<String>>> entryMap = WebpackerUtilities.getEntryMap();
 
 		final String entry = tag.getAttributeValue("entry");
 		if (!Strings.isNullOrEmpty(entry) && entryMap.containsKey(entry)) {
