@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row } from "antd";
+import { Divider, Row, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getNewChunkSize, statusText } from "../../analysis/shared-preview";
@@ -11,6 +11,7 @@ import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles";
 
+const { Text } = Typography;
 const scrollableDivHeight = 300;
 
 const TextOutputWrapper = styled.pre`
@@ -18,7 +19,8 @@ const TextOutputWrapper = styled.pre`
   width: 100%;
   overflow: auto;
   margin-bottom: ${SPACE_XS};
-  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  background-color: #ffffff;
 `;
 
 export default function AnalysisTextPreview({ output }) {
@@ -98,7 +100,7 @@ export default function AnalysisTextPreview({ output }) {
               style={{ padding: SPACE_XS }}
               onScroll={() => loadMoreData()}
             >
-              {fileRows}
+              <Text>{fileRows}</Text>
             </TextOutputWrapper>
             <div id={`${output.filename}-preview-status`}></div>
             <Divider />
