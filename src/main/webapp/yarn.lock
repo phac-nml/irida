@@ -4882,6 +4882,10 @@ lodash.keys@^3.1.2:
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
 
+lodash.keys@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.keys/-/lodash.keys-4.2.0.tgz#a08602ac12e4fb83f91fc1fb7a360a4d9ba35205"
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -5942,9 +5946,9 @@ phylocanvas-plugin-metadata@^2.0.1:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/phylocanvas-plugin-metadata/-/phylocanvas-plugin-metadata-2.2.0.tgz#ece28b0888ea1a42e95b631dcbf0f665da9c18b6"
 
-phylocanvas@^2.8.1:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/phylocanvas/-/phylocanvas-2.8.1.tgz#8314d6b9b6a1b0cbd6c593a96f069354f80ec56d"
+"phylocanvas@git+https://github.com/phylocanvas/phylocanvas.git#v2.2.0":
+  version "2.2.0"
+  resolved "git+https://github.com/phylocanvas/phylocanvas.git#35d5aa09c9eaa76318e7a7a9218073ba84a03c06"
 
 picomatch@^2.0.5:
   version "2.0.7"
@@ -6983,6 +6987,14 @@ react-lazy-load@^3.0.13:
 react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+
+react-phylocanvas@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/react-phylocanvas/-/react-phylocanvas-0.0.4.tgz#ef0f029a35c318146bac3875fcbf2dad924521b6"
+  dependencies:
+    lodash.keys "^4.2.0"
+    phylocanvas "git+https://github.com/phylocanvas/phylocanvas.git#v2.2.0"
+    prop-types "^15.5.10"
 
 react-redux@^7.1.0:
   version "7.1.1"

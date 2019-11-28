@@ -979,6 +979,35 @@ public class AnalysisAjaxController {
 		return ImmutableMap.of("fields", fields);
 	}
 
+	/**
+	 * Construct the model parameters for PHYLOGENOMICS or MLST_MENTALIST
+	 * {@link Analysis}
+	 *
+	 * @param submissionId The analysis submission id
+	 * @return newick string
+	 * @throws IOException If the tree file couldn't be read
+	 */
+	@RequestMapping("/{submissionId}/tree")
+	private String getNewickTree(@PathVariable Long submissionId) throws IOException {
+		final String treeFileKey = "tree";
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
+		if (file == null) {
+			throw new IOException("No tree file for analysis: " + submission);
+		}
+		List<String> lines = Files.readAllLines(file.getFile());
+		String tree = "";
+		if (lines.size() > 1) {
+			logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+		} else {
+			tree = lines.get(0);
+			if (EMPTY_TREE.equals(tree)) {
+				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+			}
+		}
+		return tree;
+	}
 
 	/**
 	 * Response object storing a project and whether or not it's shared with a
