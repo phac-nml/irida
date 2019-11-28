@@ -50,7 +50,7 @@
                                    data:remote-msg="#{project.samples.tooltip.merge.remote-project}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
-                                   data:script="@{/dist/js/project-samples-merge.bundle.js}">
+                                   webpacker:script="project-samples-merge">
                                     <i class="fa fa-compress fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.merge}"/>
                                 </a>
@@ -62,7 +62,7 @@
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data-params="{&quot;move&quot;: false}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
-                                   data:script="@{/dist/js/project-samples-copy.bundle.js}">
+                                   webpacker:script="project-samples-copy">
                                     <i class="fa fa-share-alt fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.share}"/>
                                 </a>
@@ -75,7 +75,7 @@
                                    data:remote-msg="#{project.samples.tooltip.move.remote-project}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
-                                   data:script="@{/dist/js/project-samples-copy.bundle.js}">
+                                   webpacker:script="project-samples-copy">
                                     <i class="fa fa-truck fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.move}"/>
                                 </a>
