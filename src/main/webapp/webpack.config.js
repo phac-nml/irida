@@ -97,8 +97,11 @@ const config = {
   optimization: {
     runtimeChunk: "single",
     splitChunks: {
-      chunks: "all",
-      name: false
+      name: false,
+      chunks (chunk) {
+        // exclude modals in projects-samples-*
+        return typeof chunk.name === "string" && !chunk.name.includes('project-samples-');
+      }
     }
   },
   plugins: [
