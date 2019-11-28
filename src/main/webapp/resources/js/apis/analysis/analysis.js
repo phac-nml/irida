@@ -159,7 +159,7 @@ export async function getOutputInfo(submissionId) {
     const res = await axios.get(`${URL}/${submissionId}/outputs`);
     return res.data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -181,7 +181,7 @@ export async function getDataViaChunks(outputFileInfoObject) {
     );
     return res.data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -203,7 +203,7 @@ export async function getDataViaLines(outputFileInfoObject) {
     );
     return res.data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
