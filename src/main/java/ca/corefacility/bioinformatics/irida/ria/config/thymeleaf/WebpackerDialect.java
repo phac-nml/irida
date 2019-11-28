@@ -6,6 +6,10 @@ import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors.WebpackerCSSElementTagProcessor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors.WebpackerJavascriptElementTagProcessor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors.WebpackerScriptAttributeTagProcessor;
+
 import com.google.common.collect.ImmutableSet;
 
 public class WebpackerDialect extends AbstractProcessorDialect {
@@ -18,6 +22,8 @@ public class WebpackerDialect extends AbstractProcessorDialect {
 
 	@Override
 	public Set<IProcessor> getProcessors(String dialectPrefix) {
-		return ImmutableSet.of(new WebpackerAttributeTagProcessor(dialectPrefix));
+		return ImmutableSet.of(new WebpackerScriptAttributeTagProcessor(dialectPrefix),
+				new WebpackerCSSElementTagProcessor(dialectPrefix),
+				new WebpackerJavascriptElementTagProcessor(dialectPrefix));
 	}
 }

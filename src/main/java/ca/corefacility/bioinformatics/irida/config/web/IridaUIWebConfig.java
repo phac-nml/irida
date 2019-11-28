@@ -37,9 +37,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.WebpackerDialect;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.WebpackerPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities.WebpackerUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
@@ -214,9 +212,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
-		dialects.add(new WebpackerPreProcessorDialect());
 		dialects.add(new WebpackerDialect());
-		dialects.add(new I18nPreProcessorDialect());
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());

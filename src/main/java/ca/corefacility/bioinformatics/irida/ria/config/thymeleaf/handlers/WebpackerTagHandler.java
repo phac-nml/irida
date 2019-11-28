@@ -64,13 +64,15 @@ public class WebpackerTagHandler extends AbstractTemplateHandler {
 					chunks.forEach(chunk -> {
 
 						if (!addedChunks.contains(chunk)) {
-							IOpenElementTag openElementTag = modelFactory
-									.createOpenElementTag(typeToElementMap.get(type), getAttributesForType(type, chunk),
-											AttributeValueQuotes.DOUBLE, false);
-							ICloseElementTag closeElementTag = modelFactory.createCloseElementTag("script");
-							super.handleOpenElement(openElementTag);
-							super.handleCloseElement(closeElementTag);
-							addedChunks.add(chunk);
+							if (type.equals("css")) {
+								IOpenElementTag openElementTag = modelFactory
+										.createOpenElementTag(typeToElementMap.get(type), getAttributesForType(type, chunk),
+												AttributeValueQuotes.DOUBLE, false);
+								ICloseElementTag closeElementTag = modelFactory.createCloseElementTag("script");
+								super.handleOpenElement(openElementTag);
+								super.handleCloseElement(closeElementTag);
+								addedChunks.add(chunk);
+							}
 						}
 
 					});

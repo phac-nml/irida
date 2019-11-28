@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors;
 
 import java.util.List;
 import java.util.Map;
@@ -12,12 +12,12 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities.WebpackerUtilities;
 
-public class WebpackerAttributeTagProcessor extends AbstractAttributeTagProcessor {
+public class WebpackerScriptAttributeTagProcessor extends AbstractAttributeTagProcessor {
 	private static final String ATTR_NAME = "script";
 	private static final int PRECEDENCE = 10000;
 	private Map<String, Map<String, List<String>>> entryMap;
 
-	public WebpackerAttributeTagProcessor(final String dialectPrefix) {
+	public WebpackerScriptAttributeTagProcessor(final String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, null, false, ATTR_NAME, true, PRECEDENCE, true);
 		entryMap = WebpackerUtilities.getEntryMap();
 	}
