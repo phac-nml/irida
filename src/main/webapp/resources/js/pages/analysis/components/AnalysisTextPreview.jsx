@@ -12,7 +12,6 @@ import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles";
 
 const { Text } = Typography;
-
 const scrollableDivHeight = 300;
 
 const TextOutputWrapper = styled.pre`
@@ -20,7 +19,8 @@ const TextOutputWrapper = styled.pre`
   width: 100%;
   overflow: auto;
   margin-bottom: ${SPACE_XS};
-  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  background-color: #ffffff;
 `;
 
 export default function AnalysisTextPreview({ output }) {
