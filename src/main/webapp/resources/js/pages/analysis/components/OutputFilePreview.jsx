@@ -76,7 +76,7 @@ export function OutputFilePreview() {
     return textOutput;
   }
 
-  return analysisOutputsContext.outputs.length > 0 ? (
+  return analysisOutputsContext.outputs !== null ? (
     <TabPaneContent title={getI18N("AnalysisOutputs.outputFilePreview")}>
       <Tabs defaultActiveKey="1" animated={false}>
         {analysisOutputsContext.fileTypes[0].hasTabularFile ? (

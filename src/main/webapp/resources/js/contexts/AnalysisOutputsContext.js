@@ -10,7 +10,7 @@ import { AnalysisContext } from "../contexts/AnalysisContext";
 import { getOutputInfo } from "../apis/analysis/analysis";
 
 const initialContext = {
-  outputs: [],
+  outputs: null,
   fileTypes: [{ hasJsonFile: false, hasTabularFile: false, hasTextFile: false }]
 };
 

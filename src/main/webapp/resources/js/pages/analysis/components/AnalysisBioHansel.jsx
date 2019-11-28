@@ -14,8 +14,11 @@ import {
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
-import { BioHanselInfo } from "./biohansel/BioHanselInfo";
-import { OutputFilePreviewContainer } from "./OutputFilePreviewContainer";
+
+const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
+const OutputFilePreviewContainer = React.lazy(() =>
+  import("./OutputFilePreviewContainer")
+);
 
 const { Content, Sider } = Layout;
 

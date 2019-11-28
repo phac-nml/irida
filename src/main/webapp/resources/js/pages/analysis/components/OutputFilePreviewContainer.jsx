@@ -2,7 +2,7 @@ import React from "react";
 import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
 import { OutputFilePreview } from "./OutputFilePreview";
 
-export function OutputFilePreviewContainer() {
+export default function OutputFilePreviewContainer() {
   return (
     <AnalysisOutputsProvider>
       <OutputFilePreview />

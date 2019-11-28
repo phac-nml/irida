@@ -10,7 +10,7 @@ import { Error } from "../../../../components/icons/Error";
 import { Success } from "../../../../components/icons/Success";
 import { Warning } from "../../../../components/icons/Warning";
 
-export function BioHanselInfo({ bioHanselResults }) {
+export default function BioHanselInfo({ bioHanselResults }) {
   const biohanselResults = [
     {
       title: getI18N("AnalysisBioHansel.sampleName"),
