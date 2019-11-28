@@ -4,7 +4,7 @@
 	  data-layout-decorate="~{template/page}">
 <head>
 <title th:text="${group.label}">_IRIDA Group_</title>
-	<link rel="stylesheet" th:href="@{/dist/css/group-members.bundle.css}">
+	<webpacker:css entry="group-members"/>
 <script th:inline="javascript">
 	var PAGE = {
 		urls : {
@@ -116,7 +116,7 @@
 	</main>
 
 <th:block layout:fragment="scripts">
-	<script th:src="@{/dist/js/group-members.bundle.js}"></script>
+	<webpacker:js entry="group-members"/>
 </th:block>
 </body>
 </html>

@@ -4,7 +4,7 @@
       data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{metadata-template.title}">Title</title>
-    <link rel="stylesheet" th:href="@{/dist/css/create-metadata-template.bundle.css}"/>
+    <webpacker:css entry="create-metadata-template"/>
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -118,7 +118,7 @@
 
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/create-metadata-template.bundle.js}"></script>
+    <webpacker:js entry="create-metadata-template"/>
 </th:block>
 </body>
 </html>

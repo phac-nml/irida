@@ -8,7 +8,7 @@
     <title th:text="#{project.associated.heading(${project.label})}">
       ASSOCIATED PROJECTS
     </title>
-    <link rel="stylesheet" href="/dist/css/associated-projects.bundle.css" />
+    <webpacker:css entry="associated-projects"/>
     <script th:inline="javascript">
       window.PAGE = {
         permissions: /*[[${isAdmin or isOwner}]]*/ false,
@@ -18,7 +18,7 @@
   <body>
     <div id="root" layout:fragment="settings-content"></div>
     <th:block layout:fragment="scripts">
-      <script src="/dist/js/associated-projects.bundle.js"></script>
+      <webpacker:js entry="associated-projects"/>
     </th:block>
   </body>
 </html>

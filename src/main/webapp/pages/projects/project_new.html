@@ -4,7 +4,7 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-new.bundle.css}">
+    <webpacker:css entry="project-new"/>
     <script th:inline="javascript">
         window.PAGE = {
           urls: {

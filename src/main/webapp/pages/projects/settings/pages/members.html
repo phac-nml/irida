@@ -3,7 +3,7 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.members}">Title</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
+    <webpacker:css entry="project-users-groups"/>
     <script th:inline="javascript">
       var PAGE = {
         urls: {

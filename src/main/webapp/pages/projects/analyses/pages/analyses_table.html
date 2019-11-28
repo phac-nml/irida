@@ -5,7 +5,7 @@
   data-layout-decorate="~{projects/analyses/_base}"
 >
   <head>
-    <link rel="stylesheet" th:href="@{/dist/css/project-analyses.bundle.css}" />
+    <webpacker:css entry="project-analyses"/>
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin or isOwner}]]*/ true,
@@ -18,7 +18,7 @@
       <div id="root"></div>
     </th:block>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/project-analyses.bundle.js}"></script>
+      <webpacker:js entry="project-analyses"/>
     </th:block>
   </body>
 </html>

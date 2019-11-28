@@ -4,7 +4,7 @@
 
 <head>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
+	<webpacker:css entry="sample-files"/>
 	<script th:inline="javascript">
 		var PAGE = {
 			sample: {
@@ -88,7 +88,7 @@
 
 	</div>
 	<th:block layout:fragment="scripts" th:inline="javascript">
-		<script th:src="@{/resources/js/pages/samples/sample-files-concatenate.js}"></script>
+		<webpacker:js entry="sample-files-concatenate"/></script>
 	</th:block>
 </body>
 

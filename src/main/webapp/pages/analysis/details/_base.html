@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       data-layout-decorate="~{template/page}">
 <head>
-  <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}">
-  <link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
+  <webpacker:css entry="analysis"/>
+  <webpacker:css entry="sample-files"/>
   <style>
     .analysis-details .sidebar__heading {
       transition: all 0.5s ease;

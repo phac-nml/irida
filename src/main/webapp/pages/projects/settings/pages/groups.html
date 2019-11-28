@@ -3,7 +3,7 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.groups}">Title</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
+    <webpacker:css entry="project-users-groups" />
     <script th:inline="javascript">
       window.PAGE = {
         urls: {
@@ -92,7 +92,7 @@
     </div>
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-users-groups.bundle.js}"></script>
+    <webpacker:js entry="project-users-groups" />
 </th:block>
 </body>
 </html>

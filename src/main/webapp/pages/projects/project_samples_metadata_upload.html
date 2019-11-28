@@ -5,7 +5,7 @@
       data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{metadata.page-title}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/samples-metadata-import.bundle.css}"/>
+    <webpacker:css entry="samples-metadata-import"/>
 </head>
 <body>
 <div layout:fragment="main">
@@ -126,7 +126,7 @@
         </div>
         <table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
     </script>
-    <script th:src="@{/dist/js/samples-metadata-import.bundle.js}"></script>
+    <webpacker:js entry="samples-metadata-import"/>
 </th:block>
 </body>
 </html>

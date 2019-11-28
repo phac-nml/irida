@@ -4,7 +4,7 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/remote-apis.bundle.css}">
+    <webpacker:css entry="remote-apis"/>
     <script th:inline="javascript">
       var PAGE = {
         lang: {
@@ -43,7 +43,7 @@
 </main>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/remote-apis.bundle.js}"></script>
+    <webpacker:js entry="remote-apis"/>
 </th:block>
 </body>
 </html>

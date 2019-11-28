@@ -6,7 +6,7 @@
 >
   <head>
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/analyses.bundle.css}" />
+    <webpacker:css entry="analyses"/>
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin}]]*/ true,
@@ -21,7 +21,7 @@
             layout:fragment="page"
     ></div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/analyses.bundle.js}"></script>
+      <webpacker:js entry="analyses"/>
     </th:block>
   </body>
 </html>

@@ -3,7 +3,7 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.associated.heading(${project.label})}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/projects-associated-edit.bundle.css}">
+    <webpacker:css entry="projects-associated-edit"/>
 </head>
 <body>
 

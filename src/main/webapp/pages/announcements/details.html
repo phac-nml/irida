@@ -5,7 +5,7 @@
 
 <head>
     <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/dist/css/announcement-users.bundle.css}">
+    <webpacker:css entry="announcement-users"/>
     <script th:inline="javascript">
         var PAGE = {
           urls: {
@@ -74,7 +74,7 @@
 
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/announcement-users.bundle.js}"></script>
+    <webpacker:js entry="announcement-users"/>
 </th:block>
 </body>
 </html>

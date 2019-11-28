@@ -5,7 +5,7 @@
         data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
-  <link rel="stylesheet" th:href="@{/dist/css/project-add-sample.bundle.css}">
+  <webpacker:css entry="project-add-sample" />
   <script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -57,7 +57,7 @@
   </div>
 
 <th:block layout:fragment="scripts">
-  <script th:src="@{/dist/js/project-add-sample.bundle.js}"></script>
+  <webpacker:js entry="project-add-sample" />
 </th:block>
 </body>
 
