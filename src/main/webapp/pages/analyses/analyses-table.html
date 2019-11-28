@@ -132,7 +132,7 @@
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
       });
     </script>
-    <script th:src="@{/dist/js/analyses-table.bundle.js}"></script>
+    <webpacker:js entry="analyses-table"/>
 </th:block>
 
 
@@ -149,7 +149,7 @@
         page: /*[[${ page }]]*/ 'shared',
       });
     </script>
-    <script th:src="@{/dist/js/analysis-outputs-table.bundle.js}"></script>
+    <webpacker:js entry="analysis-outputs-table"/>
 </th:block>
 
 </body>

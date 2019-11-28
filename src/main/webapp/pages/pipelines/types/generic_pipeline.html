@@ -3,7 +3,7 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="${title}">Pipelines - Launch</title>
-    <link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
+    <webpacker:css entry="sample-files"/>
     <script th:inline="javascript">
       /*<![CDATA[*/
       window.PAGE = {
@@ -366,7 +366,7 @@
     <div th:replace="templates/_file.utils :: upload-error"></div>
     <th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
               th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
-    <script th:src="@{/dist/js/pipeline-launch.bundle.js}"></script>
+    <webpacker:js entry="pipeline-launch"/>
 </th:block>
 </body>
 </html>
