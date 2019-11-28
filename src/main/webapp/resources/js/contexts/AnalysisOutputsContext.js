@@ -25,25 +25,25 @@ function AnalysisOutputsProvider(props) {
   const { analysisContext } = useContext(AnalysisContext);
 
   function getAnalysisOutputs() {
-    let jsonExists = false;
-    let textExists = false;
-    let tabularExists = false;
+    let hasJsonFile = false;
+    let hasTabularFile = false;
+    let hasTextFile = false;
 
     getOutputInfo(analysisContext.analysis.identifier).then(data => {
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required
       data.find(function(el) {
-        if (!jsonExists) {
-          jsonExists = jsonExtSet.has(el.fileExt);
+        if (!hasJsonFile) {
+          hasJsonFile = jsonExtSet.has(el.fileExt);
         }
 
-        if (!tabularExists) {
-          tabularExists = tabExtSet.has(el.fileExt);
+        if (!hasTabularFile) {
+          hasTabularFile = tabExtSet.has(el.fileExt);
         }
 
-        if (!textExists) {
-          textExists =
+        if (!hasTextFile) {
+          hasTextFile =
             !tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt);
         }
       });
@@ -54,9 +54,9 @@ function AnalysisOutputsProvider(props) {
           outputs: data,
           fileTypes: [
             {
-              hasJsonFile: jsonExists,
-              hasTabularFile: tabularExists,
-              hasTextFile: textExists
+              hasJsonFile: hasJsonFile,
+              hasTabularFile: hasTabularFile,
+              hasTextFile: hasTextFile
             }
           ]
         };

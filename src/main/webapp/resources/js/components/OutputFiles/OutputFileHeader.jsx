@@ -10,8 +10,16 @@ import { convertFileSize } from "../../utilities/file.utilities";
 import { downloadOutputFile } from "../../apis/analysis/analysis";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { FONT_SIZE_DEFAULT } from "../../styles/fonts";
+import styled from "styled-components";
 
 const { Text } = Typography;
+
+const OutputFileHeaderWrapper = styled.div`
+  margin-bottom: ${SPACE_MD};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 /**
  * Stateless UI component for creating the file header with download button
@@ -22,14 +30,7 @@ const { Text } = Typography;
 
 export function OutputFileHeader({ output }) {
   return (
-    <div
-      style={{
-        marginBottom: SPACE_MD,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
-      }}
-    >
+    <OutputFileHeaderWrapper>
       <Col>
         <Text
           style={{
@@ -55,7 +56,7 @@ export function OutputFileHeader({ output }) {
           {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
         </Button>
       </Col>
-    </div>
+    </OutputFileHeaderWrapper>
   );
 }
 
