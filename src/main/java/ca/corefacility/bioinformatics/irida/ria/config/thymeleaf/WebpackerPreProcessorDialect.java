@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.handlers.Webpac
 
 import com.google.common.collect.ImmutableSet;
 
-public class ThymeleafWebpackerPreProcessorDialect implements IPreProcessorDialect {
+public class WebpackerPreProcessorDialect implements IPreProcessorDialect {
 	static final int PRECEDENCE = 100;
 
 	@Override

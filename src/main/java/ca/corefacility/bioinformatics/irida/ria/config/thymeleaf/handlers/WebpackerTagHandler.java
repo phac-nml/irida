@@ -45,12 +45,17 @@ public class WebpackerTagHandler extends AbstractTemplateHandler {
 					/*
 					If this is a javascript entry, check to see if there are translations available.
 					 */
-					if (type.equals("js") && WebpackerUtilities.doesTranslationsFileExist(entry)) {
-						String path = "../dist/i18n/" + entry + " :: i18n";
+					if (type.equals("js") && entryMap.get(entry).containsKey("html")) {
+						List<String> htmlFiles = entryMap.get(entry).get("html");
+						htmlFiles.forEach(file -> {
+							if (file.startsWith("i18n")) {
+								// Add in translations block for js bundle
+								super.handleOpenElement(modelFactory
+										.createOpenElementTag("th:block", "th:replace", "../dist/" + file, false));
+								super.handleCloseElement(modelFactory.createCloseElementTag("th:block"));
 
-						// Add in translations block for js bundle
-						super.handleOpenElement(modelFactory.createOpenElementTag("th:block", "th:replace", path, false));
-						super.handleCloseElement(modelFactory.createCloseElementTag("th:block"));
+							}
+						});
 					}
 
 					/*
@@ -60,7 +65,8 @@ public class WebpackerTagHandler extends AbstractTemplateHandler {
 
 						if (!addedChunks.contains(chunk)) {
 							IOpenElementTag openElementTag = modelFactory
-									.createOpenElementTag(typeToElementMap.get(type), getAttributesForType(type, chunk), AttributeValueQuotes.DOUBLE, false);
+									.createOpenElementTag(typeToElementMap.get(type), getAttributesForType(type, chunk),
+											AttributeValueQuotes.DOUBLE, false);
 							ICloseElementTag closeElementTag = modelFactory.createCloseElementTag("script");
 							super.handleOpenElement(openElementTag);
 							super.handleCloseElement(closeElementTag);
