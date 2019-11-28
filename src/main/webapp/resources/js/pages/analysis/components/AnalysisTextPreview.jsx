@@ -13,12 +13,11 @@ import { OutputFileHeader } from "../../../components/OutputFiles";
 
 const scrollableDivHeight = 300;
 
-const TextOutputWrapper = styled.div`
+const TextOutputWrapper = styled.pre`
   height: ${scrollableDivHeight}px;
   width: 100%;
   overflow: auto;
   margin-bottom: ${SPACE_XS};
-  border: solid 1px #bdc3c7;
   overflow-wrap: break-word;
 `;
 
@@ -101,10 +100,7 @@ export default function AnalysisTextPreview({ output }) {
             >
               {fileRows}
             </TextOutputWrapper>
-            <div
-              style={{ fontWeight: "bold" }}
-              id={`${output.filename}-preview-status`}
-            ></div>
+            <div id={`${output.filename}-preview-status`}></div>
             <Divider />
           </Row>
         </div>

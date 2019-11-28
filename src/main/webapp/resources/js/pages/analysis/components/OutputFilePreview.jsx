@@ -99,7 +99,7 @@ export function OutputFilePreview() {
           </TabPane>
         ) : null}
 
-        {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
+        {analysisOutputsContext.fileTypes[0].hasJsonFile ? (
           <TabPane
             tab={getI18N("AnalysisOutputs.jsonOutput")}
             key="json-output"
