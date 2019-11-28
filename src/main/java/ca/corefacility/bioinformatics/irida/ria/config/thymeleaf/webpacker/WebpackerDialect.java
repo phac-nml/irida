@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker;
 
 import java.util.Set;
 
@@ -6,9 +6,9 @@ import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors.WebpackerCSSElementTagProcessor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors.WebpackerJavascriptElementTagProcessor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors.WebpackerScriptAttributeTagProcessor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor.WebpackerCSSElementTagProcessor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor.WebpackerJavascriptElementTagProcessor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor.WebpackerScriptAttributeTagProcessor;
 
 import com.google.common.collect.ImmutableSet;
 

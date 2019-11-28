@@ -37,8 +37,8 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.WebpackerDialect;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities.WebpackerUtilities;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;

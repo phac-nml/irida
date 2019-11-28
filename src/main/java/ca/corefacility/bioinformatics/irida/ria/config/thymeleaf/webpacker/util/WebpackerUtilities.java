@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;

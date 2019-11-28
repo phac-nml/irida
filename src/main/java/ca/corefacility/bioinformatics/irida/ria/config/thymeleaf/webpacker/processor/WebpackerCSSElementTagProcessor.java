@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.thymeleaf.processor.element.AbstractElementTagProcessor;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities.WebpackerUtilities;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerUtilities;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;

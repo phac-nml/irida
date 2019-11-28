@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.Processors;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.utilities.WebpackerUtilities;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerUtilities;
 
 public class WebpackerScriptAttributeTagProcessor extends AbstractAttributeTagProcessor {
 	private static final String ATTR_NAME = "script";
