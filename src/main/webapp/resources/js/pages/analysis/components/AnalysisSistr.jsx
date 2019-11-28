@@ -13,7 +13,6 @@ import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
-import { OutputFilePreviewContainer } from "./OutputFilePreviewContainer";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const SerovarPredictions = React.lazy(() =>
@@ -21,6 +20,9 @@ const SerovarPredictions = React.lazy(() =>
 );
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
+const OutputFilePreviewContainer = React.lazy(() =>
+  import("./OutputFilePreviewContainer")
+);
 const Citation = React.lazy(() => import("./sistr/Citation"));
 const { Content, Sider } = Layout;
 
