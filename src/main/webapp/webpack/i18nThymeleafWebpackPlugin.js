@@ -1,5 +1,7 @@
 "use strict";
 
+const Chunk = require("webpack/lib/Chunk.js")
+
 /**
  * @param {string[]} keys the translation keys required for the entry
  * @param {string} entry the name of the entry
@@ -125,8 +127,14 @@ class i18nThymeleafWebpackPlugin {
             /*
             This adds a file for translations for webpack to write to the file system.
              */
+            const filename = `i18n/${entrypointName}.html`;
+            const newChunk = new Chunk(filename);
+            newChunk.files = [filename];
+            newChunk.ids = [];
+            entrypoint.pushChunk(newChunk);
+
             const html = template(keys, entrypointName);
-            compilation.assets[`i18n/${entrypointName}.html`] = {
+            compilation.assets[filename] = {
               source: () => html,
               size: () => html.length
             };
