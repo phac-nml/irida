@@ -10,8 +10,22 @@ import { Button } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { getNewickTree } from "../../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
+import { WarningAlert } from "../../../../components/alerts/WarningAlert";
+import styled from "styled-components";
 
 const ButtonGroup = Button.Group;
+const CANVAS_HEIGHT = 600;
+
+const VisualizationWrapper = styled.div`
+  height: ${CANVAS_HEIGHT}px;
+  border: solid 1px #bdc3c7;
+`;
+
+const ButtonGroupWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 export default function Tree() {
   const [newickString, setNewickString] = useState(null);
@@ -21,12 +35,23 @@ export default function Tree() {
   // On load gets the newick string for the analysis
   useEffect(() => {
     getNewickTree(analysisContext.analysis.identifier).then(data => {
-      setNewickString(data);
+      if (data === "") {
+        //Empty tree
+        setNewickString("");
+      } else {
+        setNewickString(data);
+      }
     });
   }, []);
 
   function getTree() {
-    return <Phylocanvas data={newickString} treeType={currTreeShape} />;
+    return (
+      <Phylocanvas
+        data={newickString}
+        treeType={currTreeShape}
+        style={{ height: CANVAS_HEIGHT - 60 }}
+      />
+    );
   }
 
   function handleClick(e) {
@@ -40,26 +65,41 @@ export default function Tree() {
   return (
     <TabPaneContent title={getI18N("AnalysisPhylogeneticTree.tree")}>
       {newickString !== null ? (
-        <div>
-          <ButtonGroup>
-            <Button value="rectangular" onClick={e => handleClick(e)}>
-              Rectangular
-            </Button>
-            <Button value="circular" onClick={e => handleClick(e)}>
-              Circular
-            </Button>
-            <Button value="radial" onClick={e => handleClick(e)}>
-              Radial
-            </Button>
-            <Button value="diagonal" onClick={e => handleClick(e)}>
-              Diagonal
-            </Button>
-            <Button value="hierarchical" onClick={e => handleClick(e)}>
-              Hierarchical
-            </Button>
-          </ButtonGroup>
-          {getTree()}
-        </div>
+        newickString === "" ? (
+          <WarningAlert
+            message={getI18N("AnalysisPhylogeneticTree.noPreviewAvailable")}
+          />
+        ) : (
+          <VisualizationWrapper>
+            <ButtonGroupWrapper>
+              <ButtonGroup>
+                <Button value="rectangular" onClick={e => handleClick(e)}>
+                  {getI18N("AnalysisPhylogeneticTree.rectangular")}
+                </Button>
+                <Button value="circular" onClick={e => handleClick(e)}>
+                  {getI18N("AnalysisPhylogeneticTree.circular")}
+                </Button>
+                <Button value="radial" onClick={e => handleClick(e)}>
+                  {getI18N("AnalysisPhylogeneticTree.radial")}
+                </Button>
+                <Button value="diagonal" onClick={e => handleClick(e)}>
+                  {getI18N("AnalysisPhylogeneticTree.diagonal")}
+                </Button>
+                <Button value="hierarchical" onClick={e => handleClick(e)}>
+                  {getI18N("AnalysisPhylogeneticTree.hierarchical")}
+                </Button>
+              </ButtonGroup>
+              <Button
+                type="primary"
+                href={`${window.TL.BASE_URL}analysis/${analysisContext.analysis.identifier}/advanced-phylo`}
+                target="_blank"
+              >
+                {getI18N("AnalysisPhylogeneticTree.viewAdvVisualization")}
+              </Button>
+            </ButtonGroupWrapper>
+            {getTree()}
+          </VisualizationWrapper>
+        )
       ) : (
         <ContentLoading />
       )}

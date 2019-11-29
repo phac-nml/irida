@@ -991,17 +991,21 @@ public class AnalysisAjaxController {
 	private String getNewickTree(@PathVariable Long submissionId) throws IOException {
 		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Analysis analysis = submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
+		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
 		if (file == null) {
 			throw new IOException("No tree file for analysis: " + submission);
 		}
 		List<String> lines = Files.readAllLines(file.getFile());
-		String tree = "";
-		if (lines.size() > 1) {
-			logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
-		} else {
+		String tree = null;
+
+		if(lines.size() > 0)
+		{
 			tree = lines.get(0);
+
+			if (lines.size() > 1) {
+				logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+			}
+
 			if (EMPTY_TREE.equals(tree)) {
 				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
 			}
