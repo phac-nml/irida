@@ -35,7 +35,6 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 	private static final String INTERNATIONALIZATION_ATTR = "th:replace";
 	private static final String INTERNATIONALIZATION_TAG = "th:block";
 	private static final String JAVASCRIPT_ATTR = "th:src";
-	private static final String RESOURCE_PATH = "../dist/%s";
 
 	public WebpackerJavascriptElementTagProcessor(final String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_TYPE.toString(), true, null, false, PRECEDENCE);
@@ -73,7 +72,7 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 				htmlResources.forEach(file -> {
 					if (file.startsWith(INTERNATIONALIZATION_PREFIX)) {
 						model.add(modelFactory.createOpenElementTag(INTERNATIONALIZATION_TAG, INTERNATIONALIZATION_ATTR,
-								String.format(RESOURCE_PATH, file), false));
+								String.format("../dist/i18n/%s :: i18n", entry), false));
 						model.add(modelFactory.createCloseElementTag(INTERNATIONALIZATION_TAG));
 					}
 				});
@@ -88,7 +87,7 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 					if (!existingChunks.contains(chunk)) {
 						existingChunks.add(chunk);
 						model.add(modelFactory
-								.createOpenElementTag(JAVASCRIPT_TAG, JAVASCRIPT_ATTR, String.format(RESOURCE_PATH, chunk)));
+								.createOpenElementTag(JAVASCRIPT_TAG, JAVASCRIPT_ATTR, String.format("@{/dist/%s}", chunk)));
 						model.add(modelFactory.createCloseElementTag(JAVASCRIPT_TAG));
 					}
 				});
