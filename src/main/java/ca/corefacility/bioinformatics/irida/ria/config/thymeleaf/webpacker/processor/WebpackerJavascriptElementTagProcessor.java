@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.proc
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,74 +15,118 @@ import org.thymeleaf.processor.element.AbstractElementTagProcessor;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerUtilities;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerManifestParser;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerTagType;
 
-import com.google.common.base.Strings;
-
+/**
+ * Thymeleaf Tag Processor for elements of the form: <code><webpack:js entry="entry_name" /></code>
+ * <p>
+ * This processor will:
+ * - determine which js chunks need to be loaded from the webpack manifest file.
+ * - create new script element with the correct path to the files and add them to the template.
+ */
 public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagProcessor {
-	private static final String TAG_NAME = "js";
+	private static final WebpackerTagType TAG_TYPE = WebpackerTagType.JS;
 	private static final int PRECEDENCE = 1000;
-	private static final String ELEMENT_NAME = "script";
-	private static final String REQUEST_ATTR_NAME = "chunks";
-	private static final String INTERNATIONALIZATION = "i18n";
-	private static final String INTERNATIONALIZATION_ELEMENT = "th:block";
+	private static final String JAVASCRIPT_TAG = "script";
+	private static final String REQUEST_CHUNKS = "runtime_chunk";
+	private static final String INTERNATIONALIZATION_PREFIX = "i18n";
+	private static final String INTERNATIONALIZATION_ATTR = "th:replace";
+	private static final String INTERNATIONALIZATION_TAG = "th:block";
+	private static final String JAVASCRIPT_ATTR = "th:src";
+	private static final String RESOURCE_PATH = "../dist/%s";
 
 	public WebpackerJavascriptElementTagProcessor(final String dialectPrefix) {
-		super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
+		super(TemplateMode.HTML, dialectPrefix, TAG_TYPE.toString(), true, null, false, PRECEDENCE);
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
 			IElementTagStructureHandler structureHandler) {
-		Map<String, Map<String, List<String>>> entryMap = WebpackerUtilities.getEntryMap();
-
-		WebEngineContext webEngineContext = (WebEngineContext) context;
-		HttpServletRequest request = webEngineContext.getRequest();
 
 		/*
-		 * See if the Runtime Chunk is already on the page.
-		 * Since all pages points can have more than one entry point,
-		 * we only need to add the Runtime Chunk once.
+		 * Since multiple entry points can be added to a single page (e.g. base template > page template > samples template),
+		 * we need to ensure that the same link is not added more than once.  Keeping a set of the existing chunks
+		 * allows us to ensure that a chunk is only added once to the page.
 		 */
-		Object requestChunks = request.getAttribute(REQUEST_ATTR_NAME);
-		Set<String> chunks = requestChunks != null ? (Set<String>) requestChunks : new HashSet<>();
-
-		/*
-		 * Check for internationalization.
-		 */
+		Set<String> existingChunks = getExistingChunksFromRequest(context);
 
 		/*
 		 * Read the 'entry' attribute from the tag.
 		 */
-		final String entry = tag.getAttributeValue("entry");
-		if (!Strings.isNullOrEmpty(entry) && entryMap.containsKey(entry)) {
+		final String entry = tag.getAttributeValue(WebpackerDialect.ENTRY_ATTR);
+
+		if (entry != null) {
 			final IModelFactory modelFactory = context.getModelFactory();
 			final IModel model = modelFactory.createModel();
 
-			// i18n
-			final List<String> htmlResources = entryMap.get(entry).get("html");
+			/*
+			 * Each javascript entry may require its own internationalization messages.  There is a custom webpack
+			 * plugin (i18nThymeleafWebpackPlugin) which creates Thymeleaf fragments for these messages, and adds
+			 * the path to the webpack manifest.  We will get Thymeleaf to insert the fragments above the entry
+			 * script.
+			 */
+			final List<String> htmlResources = WebpackerManifestParser
+					.getChunksForEntryType(entry, WebpackerTagType.HTML);
 			if (htmlResources != null) {
 				htmlResources.forEach(file -> {
-					if (file.startsWith(INTERNATIONALIZATION)) {
-						model.add(
-								modelFactory.createOpenElementTag(INTERNATIONALIZATION_ELEMENT, "th:replace", String.format("../dist/%s", file), false));
-						model.add(modelFactory.createCloseElementTag(INTERNATIONALIZATION_ELEMENT));
+					if (file.startsWith(INTERNATIONALIZATION_PREFIX)) {
+						model.add(modelFactory.createOpenElementTag(INTERNATIONALIZATION_TAG, INTERNATIONALIZATION_ATTR,
+								String.format(RESOURCE_PATH, file), false));
+						model.add(modelFactory.createCloseElementTag(INTERNATIONALIZATION_TAG));
 					}
 				});
 			}
 
-			List<String> resources = entryMap.get(entry).get("js");
-			resources.forEach(chunk -> {
-				if (!chunks.contains(chunk)) {
-					chunks.add(chunk);
-					model.add(modelFactory
-							.createOpenElementTag(ELEMENT_NAME, "th:src", String.format("@{/dist/%s}", chunk)));
-					model.add(modelFactory.createCloseElementTag(ELEMENT_NAME));
-				}
-			});
+			/*
+			 * Add all javascript chunks for this entry to the page.
+			 */
+			final List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(entry, WebpackerTagType.JS);
+			if (jsResources != null) {
+				jsResources.forEach(chunk -> {
+					if (!existingChunks.contains(chunk)) {
+						existingChunks.add(chunk);
+						model.add(modelFactory
+								.createOpenElementTag(JAVASCRIPT_TAG, JAVASCRIPT_ATTR, String.format(RESOURCE_PATH, chunk)));
+						model.add(modelFactory.createCloseElementTag(JAVASCRIPT_TAG));
+					}
+				});
+			}
 			structureHandler.replaceWith(model, true);
 		}
 
-		request.setAttribute(REQUEST_ATTR_NAME, chunks);
+		setExistingChunksInRequest(context, existingChunks);
+	}
+
+	/**
+	 * Get a {@link Set} of javascript chunks currently on the page.  This is done
+	 * to prevent any given chunk to be added multiple times if entry points on the page
+	 * have common chunks.
+	 * <p>
+	 * This has a suppressed warning for unchecked because anything stored into a request is
+	 * an Object and we KNOW we set it as a Set.
+	 *
+	 * @param context - {@link ITemplateContext} for the current template.
+	 * @return {@link Set} of all javascript chunks currently added to the template.
+	 */
+	@SuppressWarnings("unchecked")
+	private Set<String> getExistingChunksFromRequest(ITemplateContext context) {
+		WebEngineContext webEngineContext = (WebEngineContext) context;
+		HttpServletRequest request = webEngineContext.getRequest();
+		Object chunksObject = request.getAttribute(REQUEST_CHUNKS);
+		return chunksObject != null ? (Set<String>) chunksObject : new HashSet<>();
+	}
+
+	/**
+	 * Update the request with the all javascript chunks which are now loaded into the template.
+	 *
+	 * @param context - {@link ITemplateContext} for the current template.
+	 * @param chunks  - {@link Set} of all javascript chunks currently added to the template.
+	 */
+	private void setExistingChunksInRequest(ITemplateContext context, Set<String> chunks) {
+		WebEngineContext webEngineContext = (WebEngineContext) context;
+		HttpServletRequest request = webEngineContext.getRequest();
+		request.setAttribute(REQUEST_CHUNKS, chunks);
 	}
 }

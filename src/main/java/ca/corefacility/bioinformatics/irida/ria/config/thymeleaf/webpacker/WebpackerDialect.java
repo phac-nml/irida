@@ -12,9 +12,14 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.proce
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * Webpacker Dialect.This is the class containing the implementation of the Webpacker Dialect,
+ * including all  {@code webpacker:*} processors, expression objects, etc.
+ */
 public class WebpackerDialect extends AbstractProcessorDialect {
 	private static final String DIALECT_NAME = "Webpacker Dialect";
 	private static final String DIALECT_PREFIX = "webpacker";
+	public static final String ENTRY_ATTR = "entry";
 
 	public WebpackerDialect() {
 		super(DIALECT_NAME, DIALECT_PREFIX, StandardDialect.PROCESSOR_PRECEDENCE);
