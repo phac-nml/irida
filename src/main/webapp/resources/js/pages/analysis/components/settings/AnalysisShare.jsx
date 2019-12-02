@@ -157,7 +157,8 @@ export default function AnalysisShare() {
         )
       ) : null}
 
-      {analysisDetailsContext.canShareToSamples ? (
+      {analysisDetailsContext.canShareToSamples &&
+      analysisContext.isCompleted ? (
         <section style={{ marginTop: SPACE_MD }}>
           <Title level={2}>{getI18N("AnalysisShare.saveResults")}</Title>
           {renderSaveToRelatedSamples()}

@@ -1008,6 +1008,7 @@ public class AnalysisAjaxController {
 
 			if (EMPTY_TREE.equals(tree)) {
 				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+				tree=null;
 			}
 		}
 		return tree;

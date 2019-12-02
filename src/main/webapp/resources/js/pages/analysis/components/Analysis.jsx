@@ -64,7 +64,7 @@ export default function Analysis() {
       ? "bio_hansel"
       : analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST"
       ? "tree"
-      : null
+      : "output"
     : analysisContext.isError
     ? "error"
     : "settings";
@@ -106,16 +106,18 @@ export default function Analysis() {
                     <Menu.Item key="bio_hansel">
                       <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
                     </Menu.Item>
-                  ) : (
+                  ) : analysisContext.analysisType === "PHYLOGENOMICS" ||
+                    analysisContext.analysisType === "MLST_MENTALIST" ? (
                     <Menu.Item key="tree">
                       <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
                     </Menu.Item>
+                  ) : (
+                    <Menu.Item key="output">
+                      <Link to={`${BASE_URL}/output`}>
+                        {getI18N("Analysis.outputFiles")}
+                      </Link>
+                    </Menu.Item>
                   ),
-                  <Menu.Item key="output">
-                    <Link to={`${BASE_URL}/output`}>
-                      {getI18N("Analysis.outputFiles")}
-                    </Link>
-                  </Menu.Item>,
                   <Menu.Item key="provenance">
                     <Link to={`${BASE_URL}/provenance`}>
                       {getI18N("Analysis.provenance")}
@@ -138,47 +140,48 @@ export default function Analysis() {
           <AnalysisError
             path={`${BASE_URL}/error/*`}
             default={analysisContext.isError}
-            key="analysis-error"
+            key="error"
           />
           {analysisContext.isCompleted
             ? [
+                <AnalysisSistr
+                  path={`${BASE_URL}/sistr/*`}
+                  default={analysisType === "SISTR_TYPING"}
+                  key="sistr"
+                />,
+                <AnalysisBioHansel
+                  path={`${BASE_URL}/biohansel/*`}
+                  default={analysisType === "BIO_HANSEL"}
+                  key="biohansel"
+                />,
+                <AnalysisPhylogeneticTree
+                  path={`${BASE_URL}/tree/*`}
+                  default={
+                    analysisType === "PHYLOGENOMICS" ||
+                    analysisType === "MLST_MENTALIST"
+                  }
+                  key="tree"
+                />,
                 <AnalysisProvenance
                   path={`${BASE_URL}/provenance`}
-                  key="analysis-provenance"
+                  key="provenance"
                 />,
                 <AnalysisOutputFiles
                   path={`${BASE_URL}/output`}
-                  key="analysis-output"
+                  default={
+                    analysisType !== "SISTR_TYPING" &&
+                    analysisType !== "BIO_HANSEL" &&
+                    analysisType !== "PHYLOGENOMICS" &&
+                    analysisType !== "MLST_MENTALIST"
+                  }
+                  key="output"
                 />
               ]
             : null}
-          <AnalysisSistr
-            path={`${BASE_URL}/sistr/*`}
-            default={
-              analysisContext.isCompleted && analysisType === "SISTR_TYPING"
-            }
-            key="analysis-sistr"
-          />
-          <AnalysisBioHansel
-            path={`${BASE_URL}/biohansel/*`}
-            default={
-              analysisContext.isCompleted && analysisType === "BIO_HANSEL"
-            }
-            key="analysis-biohansel"
-          />
-          <AnalysisPhylogeneticTree
-            path={`${BASE_URL}/tree/*`}
-            default={
-              analysisContext.isCompleted &&
-              (analysisType === "PHYLOGENOMICS" ||
-                analysisType === "MLST_MENTALIST")
-            }
-            key="analysis-tree"
-          />
           <AnalysisSettingsContainer
             path={`${BASE_URL}/settings/*`}
             default={!analysisContext.isError && !analysisContext.isCompleted}
-            key="analysis-settings"
+            key="settings"
           />
         </Router>
       </Suspense>

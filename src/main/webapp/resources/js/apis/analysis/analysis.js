@@ -171,13 +171,13 @@ export async function getOutputInfo(submissionId) {
 export async function getDataViaChunks(outputFileInfoObject) {
   try {
     const res = await axios.get(
-      `${URL}/${outputFileInfoObject.submissionId}/outputs/${
-        outputFileInfoObject.fileId
+      `${URL}/${outputFileInfoObject.submissionId}/outputs/${outputFileInfoObject.fileId}`,
+      {
+        params: {
+          seek: outputFileInfoObject.seek,
+          chunk: outputFileInfoObject.chunk
+        }
       }
-            ?${$.param({
-              seek: outputFileInfoObject.seek,
-              chunk: outputFileInfoObject.chunk
-            })}`
     );
     return res.data;
   } catch (error) {
@@ -193,13 +193,13 @@ export async function getDataViaChunks(outputFileInfoObject) {
 export async function getDataViaLines(outputFileInfoObject) {
   try {
     const res = await axios.get(
-      `${URL}/${outputFileInfoObject.submissionId}/outputs/${
-        outputFileInfoObject.fileId
+      `${URL}/${outputFileInfoObject.submissionId}/outputs/${outputFileInfoObject.fileId}`,
+      {
+        params: {
+          start: outputFileInfoObject.start,
+          end: outputFileInfoObject.end
+        }
       }
-            ?${$.param({
-              start: outputFileInfoObject.start,
-              end: outputFileInfoObject.end
-            })}`
     );
     return res.data;
   } catch (error) {

@@ -4,12 +4,12 @@ import { AnalysisShareProvider } from "../../../../contexts/AnalysisShareContext
 import { AnalysisDetailsProvider } from "../../../../contexts/AnalysisDetailsContext";
 import AnalysisSettings from "../AnalysisSettings";
 
-export default function AnalysisSettingsContainer() {
+export default function AnalysisSettingsContainer(props) {
   return (
     <AnalysisDetailsProvider>
       <AnalysisSamplesProvider>
         <AnalysisShareProvider>
-          <AnalysisSettings />
+          <AnalysisSettings props={props} />
         </AnalysisShareProvider>
       </AnalysisSamplesProvider>
     </AnalysisDetailsProvider>

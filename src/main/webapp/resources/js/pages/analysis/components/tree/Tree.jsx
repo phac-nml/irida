@@ -12,6 +12,7 @@ import { getNewickTree } from "../../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import styled from "styled-components";
+import { SPACE_MD } from "../../../../styles/spacing";
 
 const ButtonGroup = Button.Group;
 const CANVAS_HEIGHT = 600;
@@ -25,6 +26,7 @@ const ButtonGroupWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: ${SPACE_MD};
 `;
 
 export default function Tree() {
@@ -49,7 +51,7 @@ export default function Tree() {
       <Phylocanvas
         data={newickString}
         treeType={currTreeShape}
-        style={{ height: CANVAS_HEIGHT - 60 }}
+        style={{ height: CANVAS_HEIGHT - 5 }}
       />
     );
   }
@@ -70,7 +72,7 @@ export default function Tree() {
             message={getI18N("AnalysisPhylogeneticTree.noPreviewAvailable")}
           />
         ) : (
-          <VisualizationWrapper>
+          [
             <ButtonGroupWrapper>
               <ButtonGroup>
                 <Button value="rectangular" onClick={e => handleClick(e)}>
@@ -96,9 +98,9 @@ export default function Tree() {
               >
                 {getI18N("AnalysisPhylogeneticTree.viewAdvVisualization")}
               </Button>
-            </ButtonGroupWrapper>
-            {getTree()}
-          </VisualizationWrapper>
+            </ButtonGroupWrapper>,
+            <VisualizationWrapper>{getTree()}</VisualizationWrapper>
+          ]
         )
       ) : (
         <ContentLoading />
