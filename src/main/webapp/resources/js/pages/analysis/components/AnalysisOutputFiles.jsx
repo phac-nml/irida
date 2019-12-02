@@ -1,12 +1,16 @@
 import React from "react";
-import { Typography } from "antd";
+import { Layout } from "antd";
+import { SPACE_MD } from "../../../styles/spacing";
 
-const { Title } = Typography;
+const { Content } = Layout;
 
 export default function AnalysisOutputFiles() {
+  const BASE_URL = `${window.PAGE.base}`;
   return (
-    <Title level={2} className="t-page-title">
-      Output Files
-    </Title>
+    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+      <Content>
+        <OutputFilePreviewContainer path={`${BASE_URL}/file_preview`} />
+      </Content>
+    </Layout>
   );
 }

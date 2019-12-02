@@ -3,12 +3,14 @@
  */
 
 import React, { Suspense, useContext, useEffect } from "react";
-import { Tabs } from "antd";
+import { Button, Icon, Tabs } from "antd";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "./AnalysisTabularPreview";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const AnalysisTextPreview = React.lazy(() => import("./AnalysisTextPreview"));
 const AnalysisJsonPreview = React.lazy(() => import("./AnalysisJsonPreview"));
@@ -22,6 +24,8 @@ export function OutputFilePreview() {
     jsonExtSet,
     tabExtSet
   } = useContext(AnalysisOutputsContext);
+
+  const { analysisContext } = useContext(AnalysisContext);
 
   useEffect(() => {
     getAnalysisOutputs();
@@ -78,6 +82,17 @@ export function OutputFilePreview() {
 
   return analysisOutputsContext.outputs !== null ? (
     <TabPaneContent title={getI18N("AnalysisOutputs.outputFilePreview")}>
+      <div>
+        <Button
+          type="primary"
+          style={{ marginBottom: SPACE_MD }}
+          href={`/ajax/analyses/download/${analysisContext.analysis.identifier}`}
+          download
+        >
+          <Icon type="download"></Icon>{" "}
+          {getI18N("AnalysisOutputs.downloadAllFiles")}
+        </Button>
+      </div>
       <Tabs defaultActiveKey="1" animated={false}>
         {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
           <TabPane
