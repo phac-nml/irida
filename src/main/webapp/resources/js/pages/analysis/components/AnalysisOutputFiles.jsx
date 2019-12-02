@@ -4,6 +4,10 @@ import { SPACE_MD } from "../../../styles/spacing";
 
 const { Content } = Layout;
 
+const OutputFilePreviewContainer = React.lazy(() =>
+  import("./OutputFilePreviewContainer")
+);
+
 export default function AnalysisOutputFiles() {
   const BASE_URL = `${window.PAGE.base}`;
   return (
