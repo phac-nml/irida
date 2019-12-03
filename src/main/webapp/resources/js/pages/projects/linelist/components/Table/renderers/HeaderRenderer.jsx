@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Icon } from "antd";
 import { MetadataFieldMenu } from "../../MetadataFieldMenu";
+import { blue6, grey4 } from "../../../../../../styles/colors";
 
 /**
  * Renderer for the line list table headers.
@@ -13,12 +14,14 @@ const Header = styled.div`
   justify-content: space-between;
 
   .utility-icon {
+    color: ${blue6};
     opacity: 0;
     display: inline-block;
     transition: opacity 0.25s ease-in-out;
-    padding: 0 0.3rem;
+    padding: 0.6rem;
     &:hover {
-      background-color: #e4e6e6;
+      background-color: ${grey4};
+      border-radius: 3px;
     }
   }
 
@@ -28,7 +31,13 @@ const Header = styled.div`
 `;
 
 const SortIcon = styled(Icon)`
+  color: ${blue6};
   margin: 0.3rem;
+  padding: 0.6rem;
+  &:hover {
+    background-color: ${grey4};
+    border-radius: 3px;
+  }
 `;
 
 const AscSortIcon = () => (
@@ -67,7 +76,7 @@ export function HeaderRenderer({
     // we need to hook into their sort system.
     column.addEventListener("sortChanged", onSortChanged);
     onSortChanged();
-    // This reoves the listener when the header is removed from the page.
+    // This removes the listener when the header is removed from the page.
     return () => column.removeEventListener("sortChanged", onSortChanged);
   }, []);
 
