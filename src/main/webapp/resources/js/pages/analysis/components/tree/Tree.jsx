@@ -72,22 +72,42 @@ export default function Tree() {
             message={getI18N("AnalysisPhylogeneticTree.noPreviewAvailable")}
           />
         ) : (
-          [
+          <div>
             <ButtonGroupWrapper>
               <ButtonGroup>
-                <Button value="rectangular" onClick={e => handleClick(e)}>
+                <Button
+                  value="rectangular"
+                  onClick={e => handleClick(e)}
+                  key="rectangular"
+                >
                   {getI18N("AnalysisPhylogeneticTree.rectangular")}
                 </Button>
-                <Button value="circular" onClick={e => handleClick(e)}>
+                <Button
+                  value="circular"
+                  onClick={e => handleClick(e)}
+                  key="circular"
+                >
                   {getI18N("AnalysisPhylogeneticTree.circular")}
                 </Button>
-                <Button value="radial" onClick={e => handleClick(e)}>
+                <Button
+                  value="radial"
+                  onClick={e => handleClick(e)}
+                  key="radial"
+                >
                   {getI18N("AnalysisPhylogeneticTree.radial")}
                 </Button>
-                <Button value="diagonal" onClick={e => handleClick(e)}>
+                <Button
+                  value="diagonal"
+                  onClick={e => handleClick(e)}
+                  key="diagonal"
+                >
                   {getI18N("AnalysisPhylogeneticTree.diagonal")}
                 </Button>
-                <Button value="hierarchical" onClick={e => handleClick(e)}>
+                <Button
+                  value="hierarchical"
+                  onClick={e => handleClick(e)}
+                  key="hierarchical"
+                >
                   {getI18N("AnalysisPhylogeneticTree.hierarchical")}
                 </Button>
               </ButtonGroup>
@@ -95,12 +115,13 @@ export default function Tree() {
                 type="primary"
                 href={`${window.TL.BASE_URL}analysis/${analysisContext.analysis.identifier}/advanced-phylo`}
                 target="_blank"
+                key="advphylo"
               >
                 {getI18N("AnalysisPhylogeneticTree.viewAdvVisualization")}
               </Button>
-            </ButtonGroupWrapper>,
+            </ButtonGroupWrapper>
             <VisualizationWrapper>{getTree()}</VisualizationWrapper>
-          ]
+          </div>
         )
       ) : (
         <ContentLoading />
