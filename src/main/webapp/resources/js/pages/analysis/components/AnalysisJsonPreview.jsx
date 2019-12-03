@@ -3,22 +3,13 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Typography } from "antd";
+import { Divider, Row } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { BasicList } from "../../../components/lists/BasicList";
 import { SPACE_XS } from "../../../styles/spacing";
-import styled from "styled-components";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
-
-const JsonOutputWrapper = styled.div`
-  height: 300px;
-  width: 100%;
-  overflow: auto;
-  margin-bottom: ${SPACE_XS};
-  border: solid 1px #bdc3c7;
-`;
+import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
 
 export default function AnalysisJsonPreview({ output }) {
   let savedText = "";
@@ -68,32 +59,23 @@ export default function AnalysisJsonPreview({ output }) {
     }
   }
 
-  function displayJson() {
-    if (jsonData !== null) {
-      return (
-        <div>
-          <Row>
-            <OutputFileHeader output={output} />
-          </Row>
-          {isAdmin ? (
-            <Row>
-              <JsonOutputWrapper
-                id={`json-${output.filename.replace(".", "-")}`}
-                style={{ padding: SPACE_XS }}
-                onScroll={() => showMoreRows()}
-              >
-                <BasicList
-                  dataSource={jsonData.slice(0, numRows)}
-                  loading={true}
-                />
-              </JsonOutputWrapper>
-              <Divider />
-            </Row>
-          ) : null}
-        </div>
-      );
-    }
-  }
-
-  return <>{jsonData !== null ? displayJson() : null}</>;
+  return jsonData !== null ? (
+    <div>
+      <Row>
+        <OutputFileHeader output={output} />
+      </Row>
+      {isAdmin ? (
+        <Row>
+          <JsonOutputWrapper
+            id={`json-${output.filename.replace(".", "-")}`}
+            style={{ padding: SPACE_XS }}
+            onScroll={() => showMoreRows()}
+          >
+            <BasicList dataSource={jsonData.slice(0, numRows)} loading={true} />
+          </JsonOutputWrapper>
+          <Divider />
+        </Row>
+      ) : null}
+    </div>
+  ) : null;
 }

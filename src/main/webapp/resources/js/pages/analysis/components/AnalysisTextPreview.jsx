@@ -8,20 +8,11 @@ import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getNewChunkSize, statusText } from "../../analysis/shared-preview";
 import { SPACE_XS } from "../../../styles/spacing";
-import styled from "styled-components";
-import { OutputFileHeader } from "../../../components/OutputFiles";
+import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
+import { TextOutputWrapper } from "../../../components/OutputFiles/TextOutputWrapper";
 
 const { Text } = Typography;
 const scrollableDivHeight = 300;
-
-const TextOutputWrapper = styled.pre`
-  height: ${scrollableDivHeight}px;
-  width: 100%;
-  overflow: auto;
-  margin-bottom: ${SPACE_XS};
-  white-space: pre-wrap;
-  background-color: #ffffff;
-`;
 
 export default function AnalysisTextPreview({ output }) {
   const [fileRows, setFileRows] = useState([]);
@@ -99,6 +90,7 @@ export default function AnalysisTextPreview({ output }) {
               id={`text-${output.filename.replace(".", "-")}`}
               style={{ padding: SPACE_XS }}
               onScroll={() => loadMoreData()}
+              height={scrollableDivHeight}
             >
               <Text>{fileRows}</Text>
             </TextOutputWrapper>
