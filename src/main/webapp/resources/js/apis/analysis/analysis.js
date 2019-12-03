@@ -147,7 +147,7 @@ export async function getJobErrors(submissionId) {
     );
     return data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -161,7 +161,7 @@ export async function getSistrResults(submissionId) {
     const { data } = await axios.get(`${ANALYSIS_URL}/sistr/${submissionId}`);
     return data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -190,8 +190,8 @@ export async function getDataViaChunks({ submissionId, fileId, seek, chunk }) {
       `${ANALYSIS_URL}/${submissionId}/outputs/${fileId}`,
       {
         params: {
-          seek: seek,
-          chunk: chunk
+          seek,
+          chunk
         }
       }
     );
@@ -212,8 +212,8 @@ export async function getDataViaLines({ submissionId, fileId, start, end }) {
       `${ANALYSIS_URL}/${submissionId}/outputs/${fileId}`,
       {
         params: {
-          start: start,
-          end: end
+          start,
+          end
         }
       }
     );
@@ -245,7 +245,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
     const { data } = await axios.get(`${ANALYSES_URL}user/analysis-outputs`);
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -261,7 +261,7 @@ export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
     );
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -279,7 +279,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
     );
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -297,7 +297,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
     });
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 

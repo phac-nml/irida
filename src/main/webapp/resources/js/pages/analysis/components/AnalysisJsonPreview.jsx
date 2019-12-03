@@ -7,9 +7,18 @@ import { Divider, Row } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { BasicList } from "../../../components/lists/BasicList";
 import { SPACE_XS } from "../../../styles/spacing";
+import styled from "styled-components";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
-import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
+import { grey4 } from "../../../styles/colors";
+
+const JsonOutputWrapper = styled.div`
+  height: 300px;
+  width: 100%;
+  overflow: auto;
+  margin-bottom: ${SPACE_XS};
+  border: solid 1px ${grey4};
+`;
 
 export default function AnalysisJsonPreview({ output }) {
   let savedText = "";

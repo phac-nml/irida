@@ -6,8 +6,14 @@ import React, { useEffect, useState } from "react";
 import { Divider, Row, Table } from "antd";
 import { getDataViaLines } from "../../../apis/analysis/analysis";
 import { parseHeader, parseRows } from "../tabular-preview";
+import { SPACE_XS } from "../../../styles/spacing";
+import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
-import { TabularOutputWrapper } from "../../../components/OutputFiles/TabularOutputWrapper";
+const TabularOutputWrapper = styled.div`
+  height: 300px;
+  width: 100%;
+  margin-bottom: ${SPACE_XS};
+`;
 
 export function AnalysisTabularPreview({ output }) {
   const { firstLine, fileExt } = output;
