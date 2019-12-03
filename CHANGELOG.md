@@ -24,7 +24,6 @@ Changes
 * [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
 * [UI]: Updated and simplified associated project page.
 * [UI/Developer]: Removed old bootstrap customization files that are not used.
-* [Developer]: Updated chromedriver in packages.json to 78.0.1 to work better with chrome 78 on travis-ci.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack.
 
 19.05 to 19.09
