@@ -3,16 +3,18 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, List, Row } from "antd";
+import { Divider, List, Row, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
 import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
+import { JsonObjectOutputWrapper } from "../../../components/OutputFiles/JsonObjectOutputWrapper";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 
+const { Text } = Typography;
 const SCROLLABLE_DIV_HEIGHT = 300;
 
 export default function AnalysisJsonPreview({ output }) {
@@ -32,17 +34,21 @@ export default function AnalysisJsonPreview({ output }) {
       let parsedJson = JSON.parse(savedText);
       let jsonListData = [];
 
-      Object.keys(parsedJson).map((key, val) => {
-        if (parsedJson[val] !== undefined) {
-          Object.entries(parsedJson[val]).map(fileRowData => {
-            jsonListData.push({
-              title: fileRowData[0],
-              desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
+      if (Array.isArray(parsedJson)) {
+        Object.keys(parsedJson).map((key, val) => {
+          if (parsedJson[val] !== undefined) {
+            Object.entries(parsedJson[val]).map(fileRowData => {
+              jsonListData.push({
+                title: fileRowData[0],
+                desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
+              });
             });
-          });
-        }
-      });
-      setJsonData(jsonListData);
+          }
+        });
+        setJsonData(jsonListData);
+      } else {
+        setJsonData(parsedJson);
+      }
     });
   }, []);
 
@@ -61,6 +67,10 @@ export default function AnalysisJsonPreview({ output }) {
     );
   }
 
+  function getString() {
+    return JSON.stringify(jsonData, null, 2);
+  }
+
   return jsonData !== null ? (
     <div>
       <Row>
@@ -68,20 +78,27 @@ export default function AnalysisJsonPreview({ output }) {
       </Row>
       {isAdmin ? (
         <Row>
-          <JsonOutputWrapper>
-            <AutoSizer>
-              {({ height = SCROLLABLE_DIV_HEIGHT, width = "100%" }) => (
-                <VList
-                  itemCount={jsonData.length}
-                  itemSize={70}
-                  height={height}
-                  width={width}
-                >
-                  {renderListItem}
-                </VList>
-              )}
-            </AutoSizer>
-          </JsonOutputWrapper>
+          {Array.isArray(jsonData) ? (
+            <JsonOutputWrapper>
+              <AutoSizer>
+                {({ height = SCROLLABLE_DIV_HEIGHT, width = "100%" }) => (
+                  <VList
+                    itemCount={jsonData.length}
+                    itemSize={70}
+                    height={height}
+                    width={width}
+                  >
+                    {renderListItem}
+                  </VList>
+                )}
+              </AutoSizer>
+            </JsonOutputWrapper>
+          ) : (
+            <JsonObjectOutputWrapper>
+              <Text>{getString()}</Text>
+            </JsonObjectOutputWrapper>
+          )}
+
           <Divider />
         </Row>
       ) : null}
