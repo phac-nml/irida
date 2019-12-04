@@ -25,7 +25,7 @@ Changes
 * [UI]: Updated and simplified associated project page.
 * [UI/Developer]: Removed old bootstrap customization files that are not used.
 * [Developer]: Added back minification config to production webpack config.
-* [Developer]: Fixed url for downloading multiple analysis outputs.
+* [Developer]: Fixed url for downloading multiple analysis outputs as well as for viewing the user analysis outputs page.
 
 19.05 to 19.09
 ---------------
