@@ -27,6 +27,7 @@ Changes
 * [Developer]: Upgraded Spring to 5.2.1.RELEASE, Spring Security Oauth2 to 2.3.6.RELEASE, Hibernate to 5.4.7.Final, and Spring Data JPA to 2.2.0.RELEASE.
 * [UI/REST]: Removed API login controller, instead web login controller is used.
 * [UI/REST]: Added configurable redirect location to client details.  This must be added to all `authorization_code` clients.  This includes clients set up for synchronizing IRIDA data and Galaxy importer clients.  See upgrade instructions at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
+* [Developer]: Added back minification config to production webpack config.
 
 19.05 to 19.09
 ---------------
