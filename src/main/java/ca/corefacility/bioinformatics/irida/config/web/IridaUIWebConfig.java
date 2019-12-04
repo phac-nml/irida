@@ -1,15 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -34,12 +29,15 @@ import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  */
@@ -54,7 +52,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	private static final String LOCALE_CHANGE_PARAMETER = "lang";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
-	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Value("${locales.default}")
 	private String defaultLocaleValue;
@@ -79,26 +76,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Bean
 	public GalaxySessionInterceptor galaxySessionInterceptor() {
 		return new GalaxySessionInterceptor();
-	}
-
-	@Bean
-	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
-		Path analyticsPath = Paths.get(ANALYTICS_DIR);
-		StringBuilder analytics = new StringBuilder();
-		if (Files.exists(analyticsPath)) {
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
-				for (Path entry : stream) {
-					List<String> lines = Files.readAllLines(entry);
-					analytics.append(Joiner.on("\n").join(lines));
-					analytics.append("\n");
-				}
-			} catch (DirectoryIteratorException ex) {
-				logger.error("Error reading analytics directory: ", ex);
-			} catch (IOException e) {
-				logger.error("Error reading analytics file: ", e);
-			}
-		}
-		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
 
 	@Bean
@@ -187,7 +164,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(galaxySessionInterceptor());
-		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
 	}

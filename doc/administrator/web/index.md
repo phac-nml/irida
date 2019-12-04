@@ -111,28 +111,6 @@ To add new internationalization to your IRIDA server, see the [internationalizat
 
 The `mail.server.*` configuration parameters will need to correspond to a configured mail server, such as [Postfix][].  This will be used by IRIDA to send email notifications to users on the creation of an account or on password resets.
 
-Analytics
----------
-The IRIDA platform supports web analytics.  Include the analytic snippet inside a file in `/etc/irida/analytics/`.  The snippet will be injected into the page.
-
-E.g. In `/etc/irida/analytics/google-analytics.html`.
-
-{% highlight javascript %}
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-{% endhighlight %}
-
 Deploy the `WAR` File
 ---------------------
 Once you have adjusted the configuration files to your environment, you can deploy the `WAR` file to your servlet container.

@@ -12,7 +12,6 @@ yum -y install epel-release
 yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb tomcat-native
 
 mkdir -p /home/irida/data/{sequencing,reference,analysis,snapshot}
-mkdir -p /etc/irida/analytics
 
 chown -R tomcat:tomcat /home/irida/
 
