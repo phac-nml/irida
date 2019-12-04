@@ -3,27 +3,21 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row } from "antd";
+import { Divider, List, Row } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { BasicList } from "../../../components/lists/BasicList";
-import { SPACE_XS } from "../../../styles/spacing";
-import styled from "styled-components";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
+import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
 
-const JsonOutputWrapper = styled.div`
-  height: 300px;
-  width: 100%;
-  overflow: auto;
-  margin-bottom: ${SPACE_XS};
-  border: solid 1px ${grey4};
-`;
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as VList } from "react-window";
+
+const SCROLLABLE_DIV_HEIGHT = 300;
 
 export default function AnalysisJsonPreview({ output }) {
   let savedText = "";
   const [jsonData, setJsonData] = useState(null);
-  const [numRows, setNumRows] = useState(10);
   /*
    * Get json file output data and set the jsonData local state to this data.
    */
@@ -46,26 +40,25 @@ export default function AnalysisJsonPreview({ output }) {
               desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
             });
           });
-          setJsonData(jsonListData);
         }
       });
+      setJsonData(jsonListData);
     });
   }, []);
 
-  /*
-   * Sets numRows to current numRows + 10 on scroll.
-   * Used to load n + 10 amount of rows from
-   * data at a time.
-   */
-
-  function showMoreRows() {
-    let element = document.getElementById(
-      `json-${output.filename.replace(".", "-")}`
+  function renderListItem({ index, style }) {
+    const item = jsonData[index];
+    return (
+      <List.Item
+        key={index}
+        style={{ ...style, borderBottom: `solid 1px ${grey4}` }}
+      >
+        <List.Item.Meta
+          title={item.title}
+          description={item.desc}
+        ></List.Item.Meta>
+      </List.Item>
     );
-
-    if (element.scrollTop + 300 >= element.scrollHeight) {
-      setNumRows(numRows + 10);
-    }
   }
 
   return jsonData !== null ? (
@@ -75,12 +68,19 @@ export default function AnalysisJsonPreview({ output }) {
       </Row>
       {isAdmin ? (
         <Row>
-          <JsonOutputWrapper
-            id={`json-${output.filename.replace(".", "-")}`}
-            style={{ padding: SPACE_XS }}
-            onScroll={() => showMoreRows()}
-          >
-            <BasicList dataSource={jsonData.slice(0, numRows)} loading={true} />
+          <JsonOutputWrapper>
+            <AutoSizer>
+              {({ height = SCROLLABLE_DIV_HEIGHT, width = "100%" }) => (
+                <VList
+                  itemCount={jsonData.length}
+                  itemSize={70}
+                  height={height}
+                  width={width}
+                >
+                  {renderListItem}
+                </VList>
+              )}
+            </AutoSizer>
           </JsonOutputWrapper>
           <Divider />
         </Row>
