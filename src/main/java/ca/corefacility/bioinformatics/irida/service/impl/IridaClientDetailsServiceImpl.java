@@ -48,8 +48,6 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 
 	/**
 	 * {@inheritDoc}
-	 * @param specification
-	 * @param pageRequest
 	 */
 	@Override
 	@PreAuthorize("permitAll()")

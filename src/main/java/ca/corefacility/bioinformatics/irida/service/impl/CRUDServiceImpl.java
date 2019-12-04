@@ -254,8 +254,6 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 
 	/**
 	 * {@inheritDoc}
-	 * @param specification
-	 * @param pageRequest
 	 */
 	@Override
 	@Transactional(readOnly = true)

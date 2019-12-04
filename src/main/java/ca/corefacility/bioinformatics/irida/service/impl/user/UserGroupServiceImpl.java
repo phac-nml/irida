@@ -333,8 +333,6 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 
 	/**
 	 * {@inheritDoc}
-	 * @param specification
-	 * @param pageRequest
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
