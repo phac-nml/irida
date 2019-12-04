@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Table, Typography } from "antd";
+import { Divider, Row, Table } from "antd";
 import { getDataViaLines } from "../../../apis/analysis/analysis";
 import { parseHeader, parseRows } from "../tabular-preview";
 import { SPACE_XS } from "../../../styles/spacing";

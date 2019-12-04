@@ -5942,9 +5942,10 @@ phylocanvas-plugin-export-svg@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/phylocanvas-plugin-export-svg/-/phylocanvas-plugin-export-svg-1.0.0.tgz#bf9477624e57835ef0586cb70d5f328a5eb331d0"
 
-phylocanvas-plugin-metadata@^2.0.1:
+phylocanvas-plugin-metadata@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/phylocanvas-plugin-metadata/-/phylocanvas-plugin-metadata-2.2.0.tgz#ece28b0888ea1a42e95b631dcbf0f665da9c18b6"
+  integrity sha1-7OKLCIjqGkLpW2Mdy/D2ZdqcGLY=
 
 "phylocanvas@git+https://github.com/phylocanvas/phylocanvas.git#v2.2.0":
   version "2.2.0"

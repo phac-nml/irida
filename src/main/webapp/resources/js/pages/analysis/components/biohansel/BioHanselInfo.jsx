@@ -67,7 +67,7 @@ export default function BioHanselInfo({ bioHanselResults }) {
   ];
 
   function formatQcMessage(qc_status, qc_message) {
-    const msgs = [];
+    let msgs = [];
     if (qc_message) {
       msgs = qc_message.trim().split("|");
     }
@@ -76,7 +76,7 @@ export default function BioHanselInfo({ bioHanselResults }) {
       <>
         <span>{qc_status}</span>
         <br />
-        {msgs.length > 1 ? (
+        {msgs.length > 0 ? (
           <ul>
             {msgs.map(msg => {
               return <li key={msg}>{msg}</li>;
