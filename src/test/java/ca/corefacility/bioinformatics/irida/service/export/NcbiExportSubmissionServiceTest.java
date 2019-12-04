@@ -1,18 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.util.Date;
-
-import javax.validation.Validator;
-
-import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -20,11 +7,21 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.export.NcbiExportSubmissionServiceImpl;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.validation.Validator;
+import java.util.Date;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Test for {@link NcbiExportSubmissionService}
  */
-public class NcbiExportSubmissionServceTest {
+public class NcbiExportSubmissionServiceTest {
 
 	NcbiExportSubmissionService service;
 	NcbiExportSubmissionRepository repository;
@@ -71,9 +68,8 @@ public class NcbiExportSubmissionServceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateNoFiles() {
 
-		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(),
-				Sets.newHashSet(), null, "library_name", null, null, null, "library_construction_protocol",
-				"namespace");
+		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(), Sets.newHashSet(),
+				null, "library_name", null, null, null, "library_construction_protocol", "namespace");
 		NcbiExportSubmission submission = new NcbiExportSubmission(null, null, "bioProjectId", "organization",
 				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));
 
