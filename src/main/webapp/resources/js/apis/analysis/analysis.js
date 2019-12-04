@@ -242,7 +242,7 @@ export function downloadOutputFile({ submissionId, fileId }) {
  */
 export async function getNewickTree(submissionId) {
   try {
-    const res = await axios.get(`${URL}/${submissionId}/tree`);
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/tree`);
     return res.data;
   } catch (error) {
     return { error: error };
