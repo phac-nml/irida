@@ -25,6 +25,7 @@ Changes
 * [UI]: Updated and simplified associated project page.
 * [UI/Developer]: Removed old bootstrap customization files that are not used.
 * [Developer]: Added back minification config to production webpack config.
+* [UI/Developer]: Updated to latest (3.26.0) release of `ant.design`.
 
 19.05 to 19.09
 ---------------
