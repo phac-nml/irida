@@ -5,6 +5,8 @@ import axios from "axios";
 
 const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
 
+const ANALYSIS_URL = `${window.TL.BASE_URL}analysis/ajax`;
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
@@ -61,7 +63,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${BASE_URL}/download/prepare`,
+      url: `${ANALYSIS_URL}/download/prepare`,
       data: outputs
     });
     return { data };
