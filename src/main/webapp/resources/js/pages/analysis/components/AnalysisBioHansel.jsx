@@ -16,8 +16,8 @@ import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 
 const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
-const OutputFilePreviewContainer = React.lazy(() =>
-  import("./OutputFilePreviewContainer")
+const OutputFilePreview = React.lazy(() =>
+  import("./outputs/OutputFilePreview")
 );
 
 const { Content, Sider } = Layout;
@@ -94,7 +94,7 @@ export default function AnalysisBioHansel() {
                   path={`${BASE_URL}/info`}
                   default
                 />
-                <OutputFilePreviewContainer path={`${BASE_URL}/file_preview`} />
+                <OutputFilePreview path={`${BASE_URL}/file_preview`} />
               </Router>
             </Suspense>
           ) : (

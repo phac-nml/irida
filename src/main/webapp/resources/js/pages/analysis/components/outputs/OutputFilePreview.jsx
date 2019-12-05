@@ -4,18 +4,18 @@
 
 import React, { Suspense, useContext, useEffect } from "react";
 import { Tabs } from "antd";
-import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
-import { getI18N } from "../../../utilities/i18n-utilities";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { AnalysisTabularPreview } from "./AnalysisTabularPreview";
+import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
+import { getI18N } from "../../../../utilities/i18n-utilities";
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { ContentLoading } from "../../../../components/loader/ContentLoading";
+import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 
-const AnalysisTextPreview = React.lazy(() => import("./AnalysisTextPreview"));
-const AnalysisJsonPreview = React.lazy(() => import("./AnalysisJsonPreview"));
+const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
+const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
 
 const { TabPane } = Tabs;
 
-export function OutputFilePreview() {
+export default function OutputFilePreview() {
   const {
     analysisOutputsContext,
     getAnalysisOutputs,
@@ -24,7 +24,9 @@ export function OutputFilePreview() {
   } = useContext(AnalysisOutputsContext);
 
   useEffect(() => {
-    getAnalysisOutputs();
+    if (analysisOutputsContext.outputs === null) {
+      getAnalysisOutputs();
+    }
   }, []);
 
   function jsonOutputPreview() {

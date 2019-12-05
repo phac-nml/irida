@@ -12,6 +12,7 @@
 import React, { lazy, Suspense, useContext } from "react";
 import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilities";
@@ -136,54 +137,55 @@ export default function Analysis() {
         }}
       </Location>
       <Suspense fallback={<ContentLoading />}>
-        <Router style={{ paddingTop: SPACE_MD }}>
-          <AnalysisError
-            path={`${BASE_URL}/error/*`}
-            default={analysisContext.isError}
-            key="error"
-          />
-          {analysisContext.isCompleted
-            ? [
-                <AnalysisSistr
-                  path={`${BASE_URL}/sistr/*`}
-                  default={analysisType === "SISTR_TYPING"}
-                  key="sistr"
-                />,
-                <AnalysisBioHansel
-                  path={`${BASE_URL}/biohansel/*`}
-                  default={analysisType === "BIO_HANSEL"}
-                  key="biohansel"
-                />,
-                <AnalysisPhylogeneticTree
-                  path={`${BASE_URL}/tree/*`}
-                  default={
-                    analysisType === "PHYLOGENOMICS" ||
-                    analysisType === "MLST_MENTALIST"
-                  }
-                  key="tree"
-                />,
-                <AnalysisProvenance
-                  path={`${BASE_URL}/provenance`}
-                  key="provenance"
-                />,
-                <AnalysisOutputFiles
-                  path={`${BASE_URL}/output`}
-                  default={
-                    analysisType !== "SISTR_TYPING" &&
-                    analysisType !== "BIO_HANSEL" &&
-                    analysisType !== "PHYLOGENOMICS" &&
-                    analysisType !== "MLST_MENTALIST"
-                  }
-                  key="output"
-                />
-              ]
-            : null}
-          <AnalysisSettingsContainer
-            path={`${BASE_URL}/settings/*`}
-            default={!analysisContext.isError && !analysisContext.isCompleted}
-            key="settings"
-          />
-        </Router>
+        <AnalysisOutputsProvider>
+          <Router style={{ paddingTop: SPACE_MD }}>
+            <AnalysisError
+              path={`${BASE_URL}/error/*`}
+              default={analysisContext.isError}
+              key="analysis-error"
+            />
+            {analysisContext.isCompleted
+              ? [
+                  <AnalysisProvenance
+                    path={`${BASE_URL}/provenance`}
+                    key="analysis-provenance"
+                  />,
+                  <AnalysisOutputFiles
+                    path={`${BASE_URL}/output`}
+                    key="analysis-output"
+                  />
+                ]
+              : null}
+            <AnalysisSistr
+              path={`${BASE_URL}/sistr/*`}
+              default={
+                analysisContext.isCompleted && analysisType === "SISTR_TYPING"
+              }
+              key="analysis-sistr"
+            />
+            <AnalysisBioHansel
+              path={`${BASE_URL}/biohansel/*`}
+              default={
+                analysisContext.isCompleted && analysisType === "BIO_HANSEL"
+              }
+              key="analysis-biohansel"
+            />
+            <AnalysisPhylogeneticTree
+              path={`${BASE_URL}/tree/*`}
+              default={
+                analysisContext.isCompleted &&
+                (analysisType === "PHYLOGENOMICS" ||
+                  analysisType === "MLST_MENTALIST")
+              }
+              key="analysis-tree"
+            />
+            <AnalysisSettingsContainer
+              path={`${BASE_URL}/settings/*`}
+              default={!analysisContext.isError && !analysisContext.isCompleted}
+              key="analysis-settings"
+            />
+          </Router>
+        </AnalysisOutputsProvider>
       </Suspense>
     </PageWrapper>
   );
