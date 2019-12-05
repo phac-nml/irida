@@ -227,7 +227,7 @@ export class TableComponent extends React.Component {
      * Lazy load xlsx utilities since exporting is not a function used on every page.
      */
     import(
-      /* webpackChunkName: "xlsxExport" */ "./../../../../../utilities/xlsx-utility"
+      /* webpackChunkName: "exportUtilities" */ "../../../../../utilities/export-utilities"
     ).then(module => {
       const createXLSX = module.default;
 
