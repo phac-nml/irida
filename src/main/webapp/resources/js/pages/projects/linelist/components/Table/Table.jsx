@@ -7,8 +7,6 @@ import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-// Excel export support
-import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import {
@@ -225,90 +223,32 @@ export class TableComponent extends React.Component {
   };
 
   createFile = ext => {
-    const colOrder = this.columnApi.getColumnState().filter(c => !c.hide);
+    import(
+      /* webpackChunkName: "xlsxExport" */ "./../../../../../utilities/xlsx-utility"
+    ).then(module => {
+      const createXLSX = module.default;
 
-    /*
-    Set up the excel file
-     */
-    const fileName = this.generateFileName(ext);
-    const workbook = {};
-    workbook.Sheets = {};
-    workbook.Props = {};
-    workbook.SSF = {};
-    workbook.SheetNames = [];
-    /* create worksheet: */
-    const ws = {};
+      const availableNames = {};
+      this.props.fields.forEach(f => (availableNames[f.field] = f.headerName));
+      const colOrder = this.columnApi
+        .getColumnState()
+        .filter(c => !c.hide && c.colId !== "icons");
 
-    /* the range object is used to keep track of the range of the sheet */
-    const range = { s: { c: 0, r: 0 }, e: { c: 0, r: 0 } };
+      const data = [];
+      this.api.forEachNodeAfterFilter((node, index) => {
+        const item = colOrder.map(col => node.data[col.colId] || "");
+        data.push(item);
+      });
 
-    /*
-    Add the headers
-     */
-    const cell = { v: "Sample Id", t: "s" };
-    const cell_ref = XLSX.utils.encode_cell({ c: 0, r: 0 });
-    ws[cell_ref] = cell;
-    colOrder.forEach((col, i) => {
-      const index = i + 1;
-      const column = this.columnApi.getColumn(col.colId);
-      const name = this.columnApi.getDisplayNameForColumn(column);
-      if (range.e.c < index) range.e.c = index;
-      const cell = { v: name, t: "s" };
-      const cell_ref = XLSX.utils.encode_cell({ c: index, r: 0 });
-      ws[cell_ref] = cell;
-    });
-
-    /*
-    Add all the entries
-     */
-    this.api.forEachNodeAfterFilterAndSort((node, r) => {
-      const entry = node.data;
       /*
-      Offset to allow for the header row.
+       * Headers need to be the first item in the array.
        */
-      const row = r + 1;
-      if (range.e.r < row) range.e.r = row;
+      const cols = colOrder.map(c => availableNames[c.colId]);
+      data.unshift(cols);
 
-      // Need to add the sample identifier
-      const idCell = { v: entry[FIELDS.sampleId], t: "n", z: "0" };
-      const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
-      ws[idRef] = idCell;
-
-      for (let c = 0; c < colOrder.length; c++) {
-        const column = colOrder[c];
-        /*
-        Offset to allow for the sample id column
-         */
-        const col = c + 1;
-        /* create cell object: .v is the actual data */
-        const cell = { v: entry[column.colId] };
-        if (cell.v !== null) {
-          /* create the correct cell reference */
-          const cell_ref = XLSX.utils.encode_cell({ c: col, r: row });
-
-          /* determine the cell type */
-          if (typeof cell.v === "number") cell.t = "n";
-          else if (typeof cell.v === "boolean") cell.t = "b";
-          else cell.t = "s";
-
-          /* add to structure */
-          ws[cell_ref] = cell;
-        }
-      }
+      const filename = this.generateFileName(ext);
+      createXLSX({ filename, data });
     });
-
-    ws["!ref"] = XLSX.utils.encode_range(range);
-
-    /* add worksheet to workbook using the template name */
-    const template = this.props.templates[this.props.current].name.replace(
-      this.nameRegex,
-      "_"
-    );
-    workbook.SheetNames.push(template);
-    workbook.Sheets[template] = ws;
-
-    /* write file */
-    XLSX.writeFile(workbook, fileName);
   };
 
   addSamplesToCart = () => {
