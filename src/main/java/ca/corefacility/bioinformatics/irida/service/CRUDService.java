@@ -1,12 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +14,11 @@ import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * All Service interfaces should extend this interface to inherit common methods
@@ -233,7 +230,7 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *
 	 * @return a {@link Page} of {@code Type}
 	 */
-	public Page<Type> search(Specification<Type> specification, PageRequest pageRequest);
+	public Page<Type> search(Specification<Type> specification, Pageable pageRequest);
 
 	/**
 	 * Find all of the revisions for the specified identifier.
@@ -241,11 +238,8 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @param id
 	 *            the identifier to find revisions for.
 	 * @return the collection of revisions for the identifier.
-	 * @throws EntityRevisionDeletedException
-	 *             if the resource corresponding to the identifier was
-	 *             previously deleted.
 	 */
-	public Revisions<Integer, Type> findRevisions(IdentifierType id) throws EntityRevisionDeletedException;
+	public Revisions<Integer, Type> findRevisions(IdentifierType id);
 
 	/**
 	 * Returns a {@link Page} of revisions for the entity with the given id.
@@ -255,10 +249,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @param pageable
 	 *            the page specification.
 	 * @return the page of revisions for the specified resource.
-	 * @throws EntityRevisionDeletedException
-	 *             if the resource corresponding to the identifier was
-	 *             previously deleted.
 	 */
-	public Page<Revision<Integer, Type>> findRevisions(IdentifierType id, Pageable pageable)
-			throws EntityRevisionDeletedException;
+	public Page<Revision<Integer, Type>> findRevisions(IdentifierType id, Pageable pageable);
 }

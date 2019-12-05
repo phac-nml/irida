@@ -92,7 +92,7 @@ public class ProjectEventsController {
 		Project project = projectService.read(projectId);
 
 		Page<ProjectEvent> events = eventService.getEventsForProject(project,
-				new PageRequest(0, size, Direction.DESC, "createdDate"));
+				PageRequest.of(0, size, Direction.DESC, "createdDate"));
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);
@@ -121,7 +121,7 @@ public class ProjectEventsController {
 		User user = userService.getUserByUsername(userName);
 
 		Page<ProjectEvent> events = eventService.getEventsForUser(user,
-				new PageRequest(0, size, Direction.DESC, "createdDate"));
+				PageRequest.of(0, size, Direction.DESC, "createdDate"));
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);

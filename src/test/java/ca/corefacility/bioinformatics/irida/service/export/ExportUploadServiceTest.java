@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -236,7 +237,7 @@ public class ExportUploadServiceTest {
 		Sample iridaSample = new Sample("sample1");
 		NcbiBioSampleFiles sample2 = new NcbiBioSampleFiles();
 		sample2.setId("NMLTEST2");
-		sample2.setFiles(Lists.newArrayList(seqObject));
+		sample2.setFiles(Sets.newHashSet(seqObject));
 		NcbiExportSubmission submission = new NcbiExportSubmission();
 		submission.setBioSampleFiles(Lists.newArrayList(sample2));
 		submission.setDirectoryPath("submit/Test/example");
@@ -321,7 +322,7 @@ public class ExportUploadServiceTest {
 		sequenceFile.setId(1L);
 		SingleEndSequenceFile singleFile = new SingleEndSequenceFile(sequenceFile);
 		singleFile.setId(1L);
-		ncbiBioSampleFiles.setFiles(Lists.newArrayList(singleFile));
+		ncbiBioSampleFiles.setFiles(Sets.newHashSet(singleFile));
 
 		submission.setBioSampleFiles(Lists.newArrayList(ncbiBioSampleFiles));
 

@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -230,6 +232,11 @@ public class TestDataFactory {
 
 			@Override public long getTotalElements() {
 				return 1;
+			}
+
+			@Override
+			public <U> Page<U> map(Function<? super ProjectSampleJoin, ? extends U> function) {
+				return null;
 			}
 
 			@Override public int getNumber() {

@@ -514,7 +514,7 @@ public class ProjectSamplesController {
 		List<Project> projects = new ArrayList<>(
 				(Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
 
-		Sort sort = new Sort(Direction.ASC, "id");
+		Sort sort = Sort.by(Direction.ASC, "id");
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames,
 				filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
 				filter.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());

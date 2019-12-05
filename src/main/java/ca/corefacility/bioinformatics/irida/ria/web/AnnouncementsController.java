@@ -262,7 +262,7 @@ public class AnnouncementsController extends BaseController{
     public @ResponseBody DataTablesResponse getAnnouncementsAdmin(@DataTablesRequest DataTablesParams params) {
         final Page<Announcement> page = announcementService
                 .search(AnnouncementSpecification.searchAnnouncement(params.getSearchValue()),
-                        new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+                        PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
 
         final List<DataTablesResponseModel> announcements = page.getContent().stream().map(DTAnnouncementAdmin::new)
                 .collect(Collectors.toList());
@@ -283,7 +283,7 @@ public class AnnouncementsController extends BaseController{
 
         final Announcement currentAnnouncement = announcementService.read(announcementID);
 
-        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()), new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()), PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
         final List<DataTablesResponseModel> announcementUsers = page.getContent().stream()
                 .map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
