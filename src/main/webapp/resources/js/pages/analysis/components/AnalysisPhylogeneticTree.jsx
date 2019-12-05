@@ -11,8 +11,8 @@ import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 const Tree = React.lazy(() => import("./tree/Tree"));
-const OutputFilePreviewContainer = React.lazy(() =>
-  import("./OutputFilePreviewContainer")
+const OutputFilePreview = React.lazy(() =>
+  import("./outputs/OutputFilePreview")
 );
 
 const { Content, Sider } = Layout;
@@ -56,7 +56,7 @@ export default function AnalysisPhylogeneticTree(props) {
           <Suspense fallback={<ContentLoading />}>
             <Router>
               <Tree path={`${BASE_URL}/preview`} default />
-              <OutputFilePreviewContainer path={`${BASE_URL}/file_preview`} />
+              <OutputFilePreview path={`${BASE_URL}/file_preview`} />
             </Router>
           </Suspense>
         </Content>
