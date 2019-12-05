@@ -223,6 +223,9 @@ export class TableComponent extends React.Component {
   };
 
   createFile = ext => {
+    /*
+     * Lazy load xlsx utilities since exporting is not a function used on every page.
+     */
     import(
       /* webpackChunkName: "xlsxExport" */ "./../../../../../utilities/xlsx-utility"
     ).then(module => {
@@ -230,12 +233,18 @@ export class TableComponent extends React.Component {
 
       const availableNames = {};
       this.props.fields.forEach(f => (availableNames[f.field] = f.headerName));
+
+      /*
+       * Get the visible columns.  Need to ignore the icon columns since
+       * it does not contain any data that we want.
+       */
       const colOrder = this.columnApi
         .getColumnState()
         .filter(c => !c.hide && c.colId !== "icons");
 
       const data = [];
-      this.api.forEachNodeAfterFilter((node, index) => {
+      this.api.forEachNodeAfterFilter(node => {
+        // We only need the value of the cell.
         const item = colOrder.map(col => node.data[col.colId] || "");
         data.push(item);
       });
