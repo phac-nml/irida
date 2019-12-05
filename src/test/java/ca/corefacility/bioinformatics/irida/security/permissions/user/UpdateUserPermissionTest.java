@@ -8,6 +8,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,14 +46,14 @@ public class UpdateUserPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1L)).thenReturn(u);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(u));
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", updateUserPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(userRepository).findOne(1L);
+		verify(userRepository).findById(1L);
 	}
 
 	@Test
@@ -60,14 +63,14 @@ public class UpdateUserPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1L)).thenReturn(new User());
+		when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertFalse("permission was granted.", updateUserPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(userRepository).findOne(1L);
+		verify(userRepository).findById(1L);
 	}
 
 	@Test
@@ -76,7 +79,7 @@ public class UpdateUserPermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
-		when(userRepository.findOne(1L)).thenReturn(new User());
+		when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
 
 		assertTrue("permission was not granted to admin.", updateUserPermission.isAllowed(auth, 1L));
 	}
@@ -88,7 +91,7 @@ public class UpdateUserPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		when(userRepository.findOne(1L)).thenReturn(new User());
+		when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
 		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(auth, 1L));
 	}
 }

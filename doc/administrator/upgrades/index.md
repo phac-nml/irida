@@ -9,7 +9,44 @@ description: "Upgrade Notes"
 * This comment becomes a toc.
 {:toc}
 
-The majority of IRIDA's upgrade notes can be seen at <https://github.com/phac-nml/irida/blob/master/UPGRADING.md>.  When there are more major upgrades to the IRIDA system, database, deployment, etc. this page will go further in depth about how to properly back up your system, perform the upgrade, and recover from problems.
+The majority of IRIDA's upgrade notes can be seen at <https://github.com/phac-nml/irida/blob/master/UPGRADING.md>.  When there are more significant upgrades to the IRIDA system, database, deployment, etc. this page will go further in depth about how to properly back up your system, perform the upgrade, and recover from problems.
+
+# 20.01
+## Configured redirect token in REST API client details
+
+The 20.01 version of IRIDA includes some significant upgrades to some of the key software libraries used to build the application including [Spring](https://spring.io/) & [Spring Security](https://spring.io/projects/spring-security).  Part of the REST API security changes included enforcing a good practice in setting up a configured redirect URI for OAuth2 `authorization_code` clients.  This means that for any web application that will be connecting to IRIDA via the REST API, IRIDA must know the address of the website that is going to be requesting data.  This is a good security practice to ensure that client credentials are only being used for the appropriate web applications.
+
+### Performing the changes
+
+The downside of this change is that it will require IRIDA system administrators to register a redirect URI for all `authorization_code` clients.  This is a manual change and must be performed through the IRIDA user interface.  In order to update these clients, an admin must go into the clients list under the ⚙ icon, and click `Clients`.  This will list all the system clients for your IRIDA installation.
+
+The clients which must be edited in this list will have `authorization_code` listed in the "Grant Types" column.
+
+![Client list page authorization_code](images/client-update-authcode.png)
+
+After clicking on an authorization code client, you can verify it needs updated by viewing the details panel.  The client should have `authorization_code` listed under "Grant Types", and should have no entry in the "Redirect URI".
+
+![Client details empty redirect](images/client-update-details-empty.png)
+
+To update the redirect URI, click the "Edit" button.  On this edit page you can fill in the appropriate redirect URI for the client.  For IRIDA servers this will typically be the server URL + `/api/oauth/authorization/token`. Ex: `http://irida.ca/irida/api/oauth/authorization/token`.  Note that this is **not the address of your IRIDA server**.  This will be the address of the IRIDA server using this client to synchronized data from your server.
+
+For non-IRIDA applications, you must refer to the application's API documentation for what to use for a redirect URI.  After entering the URI, click the "Update Client" button.
+
+![Client edit page](images/client-update-edit-page.png)
+
+After completing this process, you should see the redirect URI listed in the client details page.  To test that this process was completed successfully, you can follow the instructions on the [Remote API](http://localhost:4000/user/administrator/#adding-a-remote-irida-installation) page to test a remote connection.
+
+Note that if this process is not completed correctly for a Remote API, data will no longer synchronize and will result in an error.
+
+See the section under "authorization code" in our documentation for more details about entering the redirect URI at <https://irida.corefacility.ca/documentation/user/administrator/#grant-types>.
+
+## Updating Galaxy importer clients
+
+Clients for the [Galaxy IRIDA importer](https://github.com/phac-nml/irida-galaxy-importer) must undergo a similar process, but with slightly different values.  The Galaxy importer targets your local IRIDA installation so the redirect URL points at your own IRIDA.  Redirect URLs for Galaxy will be the following:
+
+Your IRIDA server URL + `/galaxy/auth_code`.  Ex: `http://irida.ca/irida/galaxy/auth_code`.
+
+To test this change, try importing some data from Galaxy.  If it works, you've updated everything correctly!
 
 # 19.05
 ## FastQC translation to filesystem

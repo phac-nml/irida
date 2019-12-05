@@ -173,9 +173,8 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response containing the location of the newly persisted
 	 *         resource.
 	 */
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {		
+	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 
 		// ask the subclass to map the de-serialized request to a concrete

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class ReadSequencingObjectPermissionTest {
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, sf);
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sequencingObjectRepository.findOne(1L)).thenReturn(sf);
+		when(sequencingObjectRepository.findById(1L)).thenReturn(Optional.of(sf));
 		when(ssoRepository.getSampleForSequencingObject(sf)).thenReturn(join);
 		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(true);
 
@@ -81,7 +82,7 @@ public class ReadSequencingObjectPermissionTest {
 
 		assertTrue("permission was not granted.", permission.isAllowed(auth, 1L));
 
-		verify(sequencingObjectRepository).findOne(1L);
+		verify(sequencingObjectRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(ssoRepository).getSampleForSequencingObject(sf);
 		verify(readProjectPermission).isAllowed(any(), eq(p));
@@ -98,7 +99,7 @@ public class ReadSequencingObjectPermissionTest {
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, sf);
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sequencingObjectRepository.findOne(1L)).thenReturn(sf);
+		when(sequencingObjectRepository.findById(1L)).thenReturn(Optional.of(sf));
 		when(ssoRepository.getSampleForSequencingObject(sf)).thenReturn(join);
 		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(false);
 
@@ -106,7 +107,7 @@ public class ReadSequencingObjectPermissionTest {
 
 		assertFalse("permission was granted.", permission.isAllowed(auth, 1L));
 
-		verify(sequencingObjectRepository).findOne(1L);
+		verify(sequencingObjectRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(ssoRepository).getSampleForSequencingObject(sf);
 		verify(readProjectPermission).isAllowed(any(), eq(p));
@@ -118,7 +119,7 @@ public class ReadSequencingObjectPermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
-		when(sequencingObjectRepository.findOne(1L)).thenReturn(new SingleEndSequenceFile(null));
+		when(sequencingObjectRepository.findById(1L)).thenReturn(Optional.of(new SingleEndSequenceFile(null)));
 
 		assertTrue("permission was not granted to admin.", permission.isAllowed(auth, 1L));
 

@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class UserGroup implements MutableIridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@NotNull(message = "{group.name.notnull}")
@@ -40,10 +40,10 @@ public class UserGroup implements MutableIridaThing {
 	private String name;
 
 	@CreatedDate
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@Column(name = "modified_date")
 	@LastModifiedDate
