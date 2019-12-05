@@ -4,8 +4,8 @@ import { SPACE_MD } from "../../../styles/spacing";
 
 const { Content } = Layout;
 
-const OutputFilePreviewContainer = React.lazy(() =>
-  import("./OutputFilePreviewContainer")
+const OutputFilePreview = React.lazy(() =>
+  import("./outputs/OutputFilePreview")
 );
 
 export default function AnalysisOutputFiles() {
@@ -13,7 +13,7 @@ export default function AnalysisOutputFiles() {
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
       <Content>
-        <OutputFilePreviewContainer path={`${BASE_URL}/file_preview`} />
+        <OutputFilePreview path={`${BASE_URL}/file_preview`} />
       </Content>
     </Layout>
   );

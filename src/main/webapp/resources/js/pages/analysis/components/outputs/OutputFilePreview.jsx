@@ -4,20 +4,20 @@
 
 import React, { Suspense, useContext, useEffect } from "react";
 import { Button, Icon, Tabs } from "antd";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
-import { getI18N } from "../../../utilities/i18n-utilities";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { AnalysisTabularPreview } from "./AnalysisTabularPreview";
-import { SPACE_MD } from "../../../styles/spacing";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
+import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
+import { getI18N } from "../../../../utilities/i18n-utilities";
+import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { ContentLoading } from "../../../../components/loader/ContentLoading";
+import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
+import { SPACE_MD } from "../../../../styles/spacing";
 
-const AnalysisTextPreview = React.lazy(() => import("./AnalysisTextPreview"));
-const AnalysisJsonPreview = React.lazy(() => import("./AnalysisJsonPreview"));
+const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
+const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
 
 const { TabPane } = Tabs;
 
-export function OutputFilePreview() {
+export default function OutputFilePreview() {
   const {
     analysisOutputsContext,
     getAnalysisOutputs,
@@ -28,7 +28,9 @@ export function OutputFilePreview() {
   const { analysisContext } = useContext(AnalysisContext);
 
   useEffect(() => {
-    getAnalysisOutputs();
+    if (analysisOutputsContext.outputs === null) {
+      getAnalysisOutputs();
+    }
   }, []);
 
   function jsonOutputPreview() {
