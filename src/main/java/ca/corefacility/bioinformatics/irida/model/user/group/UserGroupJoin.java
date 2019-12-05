@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public final class UserGroupJoin implements Join<User, UserGroup> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -58,11 +58,11 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	@NotNull
 	private final UserGroup group;
 
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)

@@ -41,7 +41,7 @@ export function GalaxySubmission() {
                 email,
                 makepairedcollection,
                 oauthCode: result,
-                oauthRedirect: `${window.TL.BASE_URL}galaxy/auth_code`,
+                oauthRedirect: `${window.PAGE.galaxyRedirect}`,
                 samples
               });
             });

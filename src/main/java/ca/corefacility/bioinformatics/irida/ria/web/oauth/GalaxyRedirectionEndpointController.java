@@ -48,4 +48,14 @@ public class GalaxyRedirectionEndpointController {
 		
 		return "templates/galaxy_auth_code.tmpl";
 	}
+
+	/**
+	 * Get the URL for the galaxy redirection location.  This will be needed for the oauth flow to get its token.
+	 *
+	 * @param baseURL The server's base URL
+	 * @return the URL of the galaxy oauth redirect location.
+	 */
+	public static String getGalaxyRedirect(String baseURL) {
+		return baseURL + "/galaxy/auth_code";
+	}
 }
