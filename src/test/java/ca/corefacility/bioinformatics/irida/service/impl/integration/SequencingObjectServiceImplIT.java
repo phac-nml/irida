@@ -495,7 +495,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
 
-		sampleRepository.delete(1L);
+		sampleRepository.deleteById(1L);
 
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 	}

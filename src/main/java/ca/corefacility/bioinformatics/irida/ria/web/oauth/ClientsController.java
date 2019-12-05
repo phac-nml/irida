@@ -1,13 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.security.SecureRandom;
-import java.util.*;
-
-import javax.validation.ConstraintViolationException;
-
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTClient;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -18,27 +30,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTClient;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+import javax.validation.ConstraintViolationException;
+import java.security.SecureRandom;
+import java.util.*;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
@@ -49,6 +45,9 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ClientsController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(ClientsController.class);
+
+	@Value("${server.base.url}")
+	private String serverBaseUrl;
 
 	public static final String CLIENTS_PAGE = "clients/list";
 	public static final String CLIENT_DETAILS_PAGE = "clients/client_details";
@@ -162,7 +161,11 @@ public class ClientsController extends BaseController {
 	public String getEditPage(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
+
 		model.addAttribute("client", client);
+
+		model.addAttribute("serverBaseUrl", serverBaseUrl);
+
 		// in practise our clients only have 1 grant type, adding it to model to
 		// make it easier
 		if (client.getAuthorizedGrantTypes().contains("password")) {
@@ -202,11 +205,11 @@ public class ClientsController extends BaseController {
 	 * @param scope_auto_write           whether to allow automatic authorization for the write scope
 	 * @param new_secret                 whether to generate a new client secret
 	 * @param refresh                    Whether the client shoudl allow refresh tokens
+	 * @param registeredRedirectUri      The URI of the authorization code client to return tokens to
 	 * @param refreshTokenValidity       How long the refresh token will be valid
 	 * @param model                      Model for the view
 	 * @param locale                     Locale of the logged in user
-	 * @return Redirect to the client details page if successful, the edit page
-	 * if there are errors
+	 * @return Redirect to the client details page if successful, the edit page if there are errors
 	 */
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
 	public String postEditClient(@PathVariable Long clientId,
@@ -217,6 +220,7 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
 			@RequestParam(required = false, defaultValue = "") String refresh,
+			@RequestParam(required = false, defaultValue = "") String registeredRedirectUri,
 			@RequestParam(required = false, defaultValue = "0") Integer refreshTokenValidity,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
@@ -245,6 +249,7 @@ public class ClientsController extends BaseController {
 
 		readClient.setScope(scopes);
 		readClient.setAutoApprovableScopes(autoScopes);
+		readClient.setRegisteredRedirectUri(registeredRedirectUri);
 
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();
@@ -254,20 +259,33 @@ public class ClientsController extends BaseController {
 		if (refresh.equals("refresh")) {
 			readClient.getAuthorizedGrantTypes().add("refresh_token");
 		} else {
-			readClient.getAuthorizedGrantTypes().remove("refresh_token");
+			readClient.getAuthorizedGrantTypes()
+					.remove("refresh_token");
 		}
 
-		if(refreshTokenValidity != 0){
+		if (refreshTokenValidity != 0) {
 			readClient.setRefreshTokenValiditySeconds(refreshTokenValidity);
 		}
 
 		String response;
 		try {
-			clientDetailsService.update(readClient);
-			response = "redirect:/clients/" + clientId;
+			if (readClient.getAuthorizedGrantTypes()
+					.contains("authorization_code") && registeredRedirectUri.isEmpty()) {
+				//noinspection unchecked
+				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
+						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
+								Maps.newHashMap(), Maps.newHashMap(),
+								messageSource.getMessage("client.redirect.required", null, locale),
+								IridaClientDetails.class, readClient, null, null,
+								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null, null)));
+			} else {
+
+				clientDetailsService.update(readClient);
+				response = "redirect:/clients/" + clientId;
+			}
 		} catch (RuntimeException e) {
-			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read, readClient.getClientId(),
-					accessTokenValiditySeconds);
+			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read,
+					readClient.getClientId(), accessTokenValiditySeconds, authorizedGrantTypes, registeredRedirectUri);
 			response = getEditPage(clientId, model);
 		}
 
@@ -286,6 +304,8 @@ public class ClientsController extends BaseController {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
+
+		model.addAttribute("serverBaseUrl", serverBaseUrl);
 
 		model.addAttribute("available_grants", AVAILABLE_GRANTS);
 
@@ -343,22 +363,45 @@ public class ClientsController extends BaseController {
 			}
 		}
 
-		if(refresh.equals("refresh")){
-			client.getAuthorizedGrantTypes().add("refresh_token");
+		if (refresh.equals("refresh")) {
+			client.getAuthorizedGrantTypes()
+					.add("refresh_token");
 		}
 
 		client.setScope(scopes);
 		client.setAutoApprovableScopes(autoScopes);
 
-
-
 		String responsePage;
 		try {
-			IridaClientDetails create = clientDetailsService.create(client);
-			responsePage = "redirect:/clients/" + create.getId();
+			// Ensure if we have an auth_code grant we have a redirect
+			if (client.getAuthorizedGrantTypes()
+					.contains("authorization_code") && client.getRedirectUri()
+					.isEmpty()) {
+				//noinspection unchecked
+				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
+						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
+								Maps.newHashMap(), Maps.newHashMap(),
+								messageSource.getMessage("client.redirect.required", null, locale),
+								IridaClientDetails.class, client, null, null,
+								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null, null)));
+			} else {
+
+				IridaClientDetails create = clientDetailsService.create(client);
+				responsePage = "redirect:/clients/" + create.getId();
+			}
 		} catch (RuntimeException ex) {
-			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write, client.getClientId(),
-					client.getAccessTokenValiditySeconds());
+			String grant = null;
+			if (client.getAuthorizedGrantTypes() != null && !client.getAuthorizedGrantTypes()
+					.isEmpty()) {
+				grant = client.getAuthorizedGrantTypes()
+						.iterator()
+						.next();
+			}
+			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write,
+					client.getClientId(), client.getAccessTokenValiditySeconds(), grant,
+					client.getRegisteredRedirectUri()
+							.iterator()
+							.next());
 			responsePage = getAddClientPage(model);
 		}
 
@@ -394,7 +437,7 @@ public class ClientsController extends BaseController {
 				.searchClient(params.getSearchValue());
 
 		Page<IridaClientDetails> page = clientDetailsService
-				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+				.search(specification, PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
 		List<DataTablesResponseModel> models = new ArrayList<>();
 		for (IridaClientDetails client : page.getContent()) {
 			models.add(new DTClient(client, clientDetailsService.countActiveTokensForClient(client)));
@@ -477,7 +520,8 @@ public class ClientsController extends BaseController {
 	 * @return The number of errors that were found
 	 */
 	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
-			String scope_write, String scope_read, String scope_auto_write, String scope_auto_read, String clientId, Integer accesstokenValidity) {
+			String scope_write, String scope_read, String scope_auto_write, String scope_auto_read, String clientId,
+			Integer accesstokenValidity, String grant, String registeredRedirectUri) {
 		Map<String, Object> errors = new HashMap<>();
 
 		try {
@@ -497,6 +541,9 @@ public class ClientsController extends BaseController {
 
 			model.addAttribute("given_clientId", clientId);
 			model.addAttribute("given_tokenValidity", accesstokenValidity);
+			model.addAttribute("given_registeredRedirectUri", registeredRedirectUri);
+
+			model.addAttribute("given_grant", grant);
 			if (scope_write.equals("write")) {
 				model.addAttribute("given_scope_write", scope_write);
 			}

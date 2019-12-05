@@ -29,9 +29,9 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ import java.util.Set;
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
-public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
+public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
@@ -61,7 +61,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private MessageSource messageSource;
 
@@ -201,7 +201,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 
 	/**
 	 * This is to add additional Thymeleaf dialects.
-	 * 
+	 *
 	 * @return A Set of Thymeleaf dialects.
 	 */
 	private Set<IDialect> additionalDialects() {

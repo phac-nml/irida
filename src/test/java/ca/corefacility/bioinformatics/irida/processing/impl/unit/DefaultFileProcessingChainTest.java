@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Before;
@@ -47,7 +48,7 @@ public class DefaultFileProcessingChainTest {
 		this.qcRepository = mock(QCEntryRepository.class);
 
 		seqObject = new NoFileSequencingObject();
-		when(objectRepository.findOne(objectId)).thenReturn(seqObject);
+		when(objectRepository.findById(objectId)).thenReturn(Optional.of(seqObject));
 	}
 
 	@Test(expected = FileProcessorTimeoutException.class)
@@ -62,7 +63,7 @@ public class DefaultFileProcessingChainTest {
 	@Test
 	public void testProcessEmptyChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository);
-		when(objectRepository.exists(objectId)).thenReturn(true);
+		when(objectRepository.existsById(objectId)).thenReturn(true);
 
 		fileProcessingChain.launchChain(objectId);
 	}
@@ -71,7 +72,7 @@ public class DefaultFileProcessingChainTest {
 	public void testFailWithContinueChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessor());
-		when(objectRepository.exists(objectId)).thenReturn(true);
+		when(objectRepository.existsById(objectId)).thenReturn(true);
 
 		List<Exception> exceptions = fileProcessingChain.launchChain(1L);
 		// exceptions should be ignored in this test
@@ -85,7 +86,7 @@ public class DefaultFileProcessingChainTest {
 	public void testFastFailProcessorChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessor());
-		when(objectRepository.exists(objectId)).thenReturn(true);
+		when(objectRepository.existsById(objectId)).thenReturn(true);
 
 		fileProcessingChain.setFastFail(true);
 
@@ -98,7 +99,7 @@ public class DefaultFileProcessingChainTest {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessorNoContinue());
 
-		when(objectRepository.exists(objectId)).thenReturn(true);
+		when(objectRepository.existsById(objectId)).thenReturn(true);
 
 		fileProcessingChain.launchChain(1L);
 	}
@@ -107,7 +108,7 @@ public class DefaultFileProcessingChainTest {
 	public void testFailWriteQCEntry() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessorNoContinue());
-		when(objectRepository.exists(objectId)).thenReturn(true);
+		when(objectRepository.existsById(objectId)).thenReturn(true);
 
 		boolean exceptionCaught = false;
 		try {

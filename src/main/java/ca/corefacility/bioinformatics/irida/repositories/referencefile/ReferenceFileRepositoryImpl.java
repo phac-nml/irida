@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.referencefile;
 import java.nio.file.Path;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +26,7 @@ public class ReferenceFileRepositoryImpl extends FilesystemSupplementedRepositor
 
 	@Autowired
 	public ReferenceFileRepositoryImpl(final EntityManager entityManager, 
-			final SequenceFileUtilities sequenceFileUtilities, 
+			final SequenceFileUtilities sequenceFileUtilities,
 			final @Qualifier("referenceFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
 		this.sequenceFileUtilities = sequenceFileUtilities;
@@ -35,10 +36,11 @@ public class ReferenceFileRepositoryImpl extends FilesystemSupplementedRepositor
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ReferenceFile save(final ReferenceFile referenceFile) {
-		final Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(referenceFile.getFile());
-		referenceFile.setFileLength(referenceFileLength);
-		return super.saveInternal(referenceFile);
+	@Transactional
+	public ReferenceFile save(ReferenceFile entity) {
+		final Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(entity.getFile());
+		entity.setFileLength(referenceFileLength);
+		return super.saveInternal(entity);
 	}
 
 }

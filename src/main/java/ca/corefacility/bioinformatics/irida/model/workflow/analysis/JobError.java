@@ -32,7 +32,7 @@ import com.google.gson.JsonParser;
 @EntityListeners(AuditingEntityListener.class)
 public class JobError extends IridaResourceSupport implements IridaThing, Comparable<JobError> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	/**
