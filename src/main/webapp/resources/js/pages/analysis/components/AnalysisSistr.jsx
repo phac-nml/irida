@@ -20,9 +20,11 @@ const SerovarPredictions = React.lazy(() =>
 );
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
+
 const OutputFilePreviewContainer = React.lazy(() =>
   import("./OutputFilePreviewContainer")
 );
+
 const Citation = React.lazy(() => import("./sistr/Citation"));
 const { Content, Sider } = Layout;
 

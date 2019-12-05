@@ -255,7 +255,7 @@ export async function getNewickTree(submissionId) {
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(`${ANALYSES_URL}user/analysis-outputs`);
+    const { data } = await axios.get(`${ANALYSIS_URL}user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error };
