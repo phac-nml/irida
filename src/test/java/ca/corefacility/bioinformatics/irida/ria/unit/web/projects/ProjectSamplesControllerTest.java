@@ -311,7 +311,7 @@ public class ProjectSamplesControllerTest {
 								Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
 		DataTablesParams params = mock(DataTablesParams.class);
-		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
+		when(params.getSort()).thenReturn(Sort.by(Direction.ASC, "sample.sampleName"));
 		DataTablesResponse response = controller
 				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), new UISampleFilter(), Locale.US);
 		List<DataTablesResponseModel> data = response.getData();

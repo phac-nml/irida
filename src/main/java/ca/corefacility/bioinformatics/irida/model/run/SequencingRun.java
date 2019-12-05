@@ -48,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Lob
@@ -57,7 +57,8 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 	
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)

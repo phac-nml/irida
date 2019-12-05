@@ -3,9 +3,8 @@
  */
 import axios from "axios";
 
-// Ajax URL for Analysis
-const URL = `${window.TL.BASE_URL}ajax/analysis`;
-const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
+const ANALYSES_URL = `${window.TL.BASE_URL}ajax/analyses`;
+const ANALYSIS_URL = `${window.TL.BASE_URL}analysis/ajax`;
 
 /*
  * Get all the data required for the analysis -> details page.
@@ -14,7 +13,7 @@ const BASE_URL = `${window.TL.BASE_URL}ajax/analyses`;
  *                      `error` contains error information if an error occurred.
  */
 export async function getVariablesForDetails(submissionId) {
-  const { data } = await axios.get(`${URL}/details/${submissionId}`);
+  const { data } = await axios.get(`${ANALYSIS_URL}/details/${submissionId}`);
   return data;
 }
 
@@ -26,7 +25,7 @@ export async function getVariablesForDetails(submissionId) {
  */
 export async function getAnalysisInputFiles(submissionId) {
   try {
-    const { data } = await axios.get(`${URL}/inputs/${submissionId}`);
+    const { data } = await axios.get(`${ANALYSIS_URL}/inputs/${submissionId}`);
     return data;
   } catch (error) {
     return { samples: [], referenceFile: null };
@@ -42,10 +41,13 @@ export async function getAnalysisInputFiles(submissionId) {
  */
 export async function updateAnalysisEmailPipelineResult(params) {
   try {
-    const { data } = await axios.patch(`${URL}/update-email-pipeline-result`, {
-      analysisSubmissionId: params.submissionId,
-      emailPipelineResult: params.emailPipelineResult
-    });
+    const { data } = await axios.patch(
+      `${ANALYSIS_URL}/update-email-pipeline-result`,
+      {
+        analysisSubmissionId: params.submissionId,
+        emailPipelineResult: params.emailPipelineResult
+      }
+    );
     return data.message;
   } catch (error) {
     return { text: error.response.data.message, type: "error" };
@@ -61,7 +63,7 @@ export async function updateAnalysisEmailPipelineResult(params) {
  */
 export async function updateAnalysis(params) {
   try {
-    const { data } = await axios.patch(`${URL}/update-analysis/`, {
+    const { data } = await axios.patch(`${ANALYSIS_URL}/update-analysis/`, {
       analysisSubmissionId: params.submissionId,
       analysisName: params.analysisName,
       priority: params.priority
@@ -78,7 +80,7 @@ export async function updateAnalysis(params) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function deleteAnalysis(submissionId) {
-  const { data } = await axios.delete(`${URL}/delete/${submissionId}`);
+  const { data } = await axios.delete(`${ANALYSIS_URL}/delete/${submissionId}`);
   return data;
 }
 
@@ -88,7 +90,7 @@ export async function deleteAnalysis(submissionId) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getSharedProjects(submissionId) {
-  const { data } = await axios.get(`${URL}/${submissionId}/share`);
+  const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/share`);
   return data;
 }
 
@@ -100,10 +102,13 @@ export async function getSharedProjects(submissionId) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function updateSharedProject(params) {
-  const { data } = await axios.post(`${URL}/${params.submissionId}/share`, {
-    projectId: params.projectId,
-    shareStatus: params.shareStatus
-  });
+  const { data } = await axios.post(
+    `${ANALYSIS_URL}/${params.submissionId}/share`,
+    {
+      projectId: params.projectId,
+      shareStatus: params.shareStatus
+    }
+  );
   return data;
 }
 
@@ -114,7 +119,9 @@ export async function updateSharedProject(params) {
  */
 export async function saveToRelatedSamples(submissionId) {
   try {
-    const { data } = await axios.post(`${URL}/${submissionId}/save-results`);
+    const { data } = await axios.post(
+      `${ANALYSIS_URL}/${submissionId}/save-results`
+    );
     return data.message;
   } catch (error) {
     return { text: error.response.data.message, type: "error" };
@@ -128,7 +135,9 @@ export async function saveToRelatedSamples(submissionId) {
  */
 export async function getJobErrors(submissionId) {
   try {
-    const { data } = await axios.get(`${URL}/${submissionId}/job-errors`);
+    const { data } = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/job-errors`
+    );
     return data;
   } catch (error) {
     return { error: error };
@@ -142,7 +151,7 @@ export async function getJobErrors(submissionId) {
  */
 export async function getSistrResults(submissionId) {
   try {
-    const { data } = await axios.get(`${URL}/sistr/${submissionId}`);
+    const { data } = await axios.get(`${ANALYSIS_URL}/sistr/${submissionId}`);
     return data;
   } catch (error) {
     return { error: error };
@@ -155,7 +164,7 @@ export async function getSistrResults(submissionId) {
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(`${BASE_URL}user/analysis-outputs`);
+    const { data } = await axios.get(`${ANALYSIS_URL}/user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error: error };
@@ -170,7 +179,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${URL}/project/${projectId}/shared-analysis-outputs`
+      `${ANALYSIS_URL}/project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -188,7 +197,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${URL}/project/${projectId}/automated-analysis-outputs`
+      `${ANALYSIS_URL}/project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -205,7 +214,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${URL}/download/prepare`,
+      url: `${ANALYSIS_URL}/download/prepare`,
       data: outputs
     });
     return { data };
@@ -215,13 +224,13 @@ export async function prepareAnalysisOutputsDownload(outputs) {
 }
 
 export async function fetchAllPipelinesStates() {
-  return axios.get(`${BASE_URL}/states`).then(response => response.data);
+  return axios.get(`${ANALYSES_URL}/states`).then(response => response.data);
 }
 
 export async function fetchAllPipelinesTypes() {
-  return axios.get(`${BASE_URL}/types`).then(response => response.data);
+  return axios.get(`${ANALYSES_URL}/types`).then(response => response.data);
 }
 
 export async function deleteAnalysisSubmissions({ ids }) {
-  return axios.delete(`${BASE_URL}/delete?ids=${ids.join(",")}`);
+  return axios.delete(`${ANALYSES_URL}/delete?ids=${ids.join(",")}`);
 }

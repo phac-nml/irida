@@ -7,7 +7,7 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -51,7 +51,7 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 */
 	@Override
 	@PreAuthorize("permitAll()")
-	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, PageRequest pageRequest) {
+	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, Pageable pageRequest) {
 		return super.search(specification, pageRequest);
 	}
 
