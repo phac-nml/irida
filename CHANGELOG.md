@@ -30,6 +30,7 @@ Changes
 * [Developer]: Added back minification config to production webpack config.
 * [UI/Developer]: Updated to latest (3.26.0) release of `ant.design`.
 * [Developer]: Fixed url for downloading multiple analysis outputs as well as for viewing the user analysis outputs page.
+* [UI/Developer]: Lazy load line list export utilities.
 
 19.05 to 19.09
 ---------------
