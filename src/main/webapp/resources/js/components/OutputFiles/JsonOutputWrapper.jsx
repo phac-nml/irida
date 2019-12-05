@@ -5,8 +5,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { SPACE_XS } from "../../styles/spacing";
-import { grey4 } from "../../styles/colors";
 import styled from "styled-components";
+import { border1 } from "../../styles/borders";
 
 /**
  * Stateless UI component for displaying a div for json output
@@ -23,7 +23,7 @@ export function JsonOutputWrapper({ height = 300, children, ...props }) {
   const Wrapper = styled.div`
     height: ${height}px;
     margin-bottom: ${SPACE_XS};
-    border: solid 1px ${grey4};
+    border: ${border1};
     padding: 0 0 2px ${SPACE_XS};
   `;
 

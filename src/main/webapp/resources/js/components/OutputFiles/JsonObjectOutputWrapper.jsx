@@ -3,10 +3,14 @@
  */
 
 import React from "react";
+import { Typography } from "antd";
 import PropTypes from "prop-types";
 import { SPACE_XS } from "../../styles/spacing";
-import { grey4 } from "../../styles/colors";
+import { grey1 } from "../../styles/colors";
 import styled from "styled-components";
+import { border1 } from "../../styles/borders";
+
+const { Text } = Typography;
 
 /**
  * Stateless UI component for displaying a div for json object output
@@ -23,14 +27,14 @@ export function JsonObjectOutputWrapper({ height = 300, children, ...props }) {
   const Wrapper = styled.pre`
     height: ${height}px;
     margin-bottom: ${SPACE_XS};
-    border: solid 1px ${grey4};
-    background-color: #ffffff;
+    border: ${border1};
+    background-color: ${grey1};
     border-radius: 0;
   `;
 
   return (
     <Wrapper style={{ height: height }} {...props}>
-      {children}
+      <Text>{children}</Text>
     </Wrapper>
   );
 }

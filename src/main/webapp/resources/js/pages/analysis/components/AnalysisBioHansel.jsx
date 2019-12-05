@@ -14,6 +14,7 @@ import {
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
+import { grey1 } from "../../../styles/colors";
 
 const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
 const OutputFilePreview = React.lazy(() =>
@@ -42,8 +43,7 @@ export default function AnalysisBioHansel() {
           fileId: outputInfo.id,
           seek: 0,
           chunk: outputInfo.fileSizeBytes
-        }).then(data => {
-          const { text } = data;
+        }).then(({ text }) => {
           const parsedResults = JSON.parse(text);
           setBioHanselResults(parsedResults[0]);
         });
@@ -55,7 +55,7 @@ export default function AnalysisBioHansel() {
 
   return (
     <Layout>
-      <Sider width={200} style={{ background: "#fff" }}>
+      <Sider width={200} style={{ background: grey1 }}>
         <Location>
           {props => {
             const keyname = props.location.pathname.match(pathRegx);
@@ -80,9 +80,9 @@ export default function AnalysisBioHansel() {
         </Location>
       </Sider>
 
-      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
         <Content>
-          {bioHanselResults === undefined ? (
+          {typeof bioHanselResults === "undefined" ? (
             <WarningAlert
               message={getI18N("AnalysisBioHansel.resultsUnavailable")}
             />
