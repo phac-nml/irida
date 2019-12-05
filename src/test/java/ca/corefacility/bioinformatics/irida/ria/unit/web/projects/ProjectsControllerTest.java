@@ -3,10 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -42,9 +44,9 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link }
- *
  */
 public class ProjectsControllerTest {
+
 	public static final String PROJECT_ORGANISM = "E. coli";
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
@@ -186,8 +188,6 @@ public class ProjectsControllerTest {
 
 	}
 
-
-
 	/**
 	 * Mocks the information found within the project sidebar.
 	 */
@@ -236,7 +236,6 @@ public class ProjectsControllerTest {
 		return project;
 	}
 
-
 	private List<Join<Project, User>> getUsersForProjectByRole() {
 		List<Join<Project, User>> list = new ArrayList<>();
 		list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
@@ -245,63 +244,83 @@ public class ProjectsControllerTest {
 
 	private Page<Project> getProjectUserJoinPage(User user) {
 		return new Page<Project>() {
-			@Override public int getTotalPages() {
+			@Override
+			public int getTotalPages() {
 				return 10;
 			}
 
-			@Override public long getTotalElements() {
+			@Override
+			public long getTotalElements() {
 				return 100;
 			}
 
-			@Override public int getNumber() {
+			@Override
+			public <U> Page<U> map(Function<? super Project, ? extends U> function) {
+				return null;
+			}
+
+			@Override
+			public int getNumber() {
 				return 10;
 			}
 
-			@Override public int getSize() {
+			@Override
+			public int getSize() {
 				return 10;
 			}
 
-			@Override public int getNumberOfElements() {
+			@Override
+			public int getNumberOfElements() {
 				return 10;
 			}
 
-			@Override public List<Project> getContent() {
+			@Override
+			public List<Project> getContent() {
 				return TestDataFactory.constructListJoinProjectUser(user);
 			}
 
-			@Override public boolean hasContent() {
+			@Override
+			public boolean hasContent() {
 				return true;
 			}
 
-			@Override public Sort getSort() {
+			@Override
+			public Sort getSort() {
 				return null;
 			}
 
-			@Override public boolean isFirst() {
+			@Override
+			public boolean isFirst() {
 				return true;
 			}
 
-			@Override public boolean isLast() {
+			@Override
+			public boolean isLast() {
 				return false;
 			}
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return true;
 			}
 
-			@Override public boolean hasPrevious() {
+			@Override
+			public boolean hasPrevious() {
 				return false;
 			}
 
-			@Override public Pageable nextPageable() {
+			@Override
+			public Pageable nextPageable() {
 				return null;
 			}
 
-			@Override public Pageable previousPageable() {
+			@Override
+			public Pageable previousPageable() {
 				return null;
 			}
 
-			@Override public Iterator<Project> iterator() {
+			@Override
+			public Iterator<Project> iterator() {
 				return null;
 			}
 		};
@@ -309,67 +328,87 @@ public class ProjectsControllerTest {
 
 	public Page<Project> getProjectPage() {
 		return new Page<Project>() {
-			@Override public int getTotalPages() {
+			@Override
+			public int getTotalPages() {
 				return 10;
 			}
 
-			@Override public long getTotalElements() {
+			@Override
+			public long getTotalElements() {
 				return 100;
 			}
 
-			@Override public int getNumber() {
+			@Override
+			public <U> Page<U> map(Function<? super Project, ? extends U> function) {
+				return null;
+			}
+
+			@Override
+			public int getNumber() {
 				return 10;
 			}
 
-			@Override public int getSize() {
+			@Override
+			public int getSize() {
 				return 10;
 			}
 
-			@Override public int getNumberOfElements() {
+			@Override
+			public int getNumberOfElements() {
 				return 100;
 			}
 
-			@Override public List<Project> getContent() {
+			@Override
+			public List<Project> getContent() {
 				List<Project> list = new ArrayList<>();
-				for(int i = 0; i<10; i++) {
+				for (int i = 0; i < 10; i++) {
 					list.add(new Project("project-" + i));
 				}
 				return list;
 			}
 
-			@Override public boolean hasContent() {
+			@Override
+			public boolean hasContent() {
 				return true;
 			}
 
-			@Override public Sort getSort() {
+			@Override
+			public Sort getSort() {
 				return null;
 			}
 
-			@Override public boolean isFirst() {
+			@Override
+			public boolean isFirst() {
 				return false;
 			}
 
-			@Override public boolean isLast() {
+			@Override
+			public boolean isLast() {
 				return false;
 			}
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return false;
 			}
 
-			@Override public boolean hasPrevious() {
+			@Override
+			public boolean hasPrevious() {
 				return false;
 			}
 
-			@Override public Pageable nextPageable() {
+			@Override
+			public Pageable nextPageable() {
 				return null;
 			}
 
-			@Override public Pageable previousPageable() {
+			@Override
+			public Pageable previousPageable() {
 				return null;
 			}
 
-			@Override public Iterator<Project> iterator() {
+			@Override
+			public Iterator<Project> iterator() {
 				return null;
 			}
 		};

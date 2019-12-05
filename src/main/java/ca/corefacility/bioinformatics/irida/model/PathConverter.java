@@ -12,7 +12,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.HibernateException;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.StringType;
 import org.hibernate.usertype.UserType;
 
@@ -69,7 +69,7 @@ public class PathConverter implements UserType {
 	}
 
 	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
+	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		String s = StringType.INSTANCE.nullSafeGet(rs, names[0], session);
 		if(s == null){
@@ -79,7 +79,7 @@ public class PathConverter implements UserType {
 	}
 
 	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
 			throws HibernateException, SQLException {
 		String path = value == null ? null : value.toString();
 		StringType.INSTANCE.nullSafeSet(st, path, index, session);

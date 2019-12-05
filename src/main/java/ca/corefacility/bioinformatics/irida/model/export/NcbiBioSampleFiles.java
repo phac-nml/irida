@@ -1,27 +1,17 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import org.hibernate.envers.Audited;
-
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.hibernate.envers.Audited;
+
+import javax.persistence.*;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * {@link SequenceFile}s and {@link SequenceFilePair}s associated with a
@@ -41,11 +31,13 @@ public class NcbiBioSampleFiles {
 
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<SingleEndSequenceFile> files;
+	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
+	private Set<SingleEndSequenceFile> files;
 
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<SequenceFilePair> pairs;
+	@JoinTable(joinColumns = @JoinColumn(name = "ncbi_export_biosample_id"))
+	private Set<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "instrument_model")
@@ -77,8 +69,8 @@ public class NcbiBioSampleFiles {
 	private String accession;
 
 	public NcbiBioSampleFiles() {
-		files = Lists.newArrayList();
-		pairs = Lists.newArrayList();
+		files = Sets.newHashSet();
+		pairs = Sets.newHashSet();
 		submissionStatus = ExportUploadState.NEW;
 	}
 
@@ -91,7 +83,7 @@ public class NcbiBioSampleFiles {
 
 	}
 
-	public NcbiBioSampleFiles(String bioSample, List<SingleEndSequenceFile> files, List<SequenceFilePair> pairs,
+	public NcbiBioSampleFiles(String bioSample, Set<SingleEndSequenceFile> files, Set<SequenceFilePair> pairs,
 			NcbiInstrumentModel instrument_model, String library_name, NcbiLibrarySelection library_selection,
 			NcbiLibrarySource library_source, NcbiLibraryStrategy library_strategy,
 			String library_construction_protocol, String namespace) {
@@ -113,8 +105,8 @@ public class NcbiBioSampleFiles {
 	public static class Builder {
 		private String bioSample;
 
-		private List<SingleEndSequenceFile> files;
-		private List<SequenceFilePair> pairs;
+		private Set<SingleEndSequenceFile> files;
+		private Set<SequenceFilePair> pairs;
 		private NcbiInstrumentModel instrumentModel;
 		private String libraryName;
 		private NcbiLibrarySelection librarySelection;
@@ -129,7 +121,7 @@ public class NcbiBioSampleFiles {
 		 * @param files the single end files
 		 * @return the builder
 		 */
-		public Builder files(List<SingleEndSequenceFile> files) {
+		public Builder files(Set<SingleEndSequenceFile> files) {
 			this.files = files;
 			return this;
 		}
@@ -139,7 +131,7 @@ public class NcbiBioSampleFiles {
 		 * @param pairs the file pairs
 		 * @return the builder
 		 */
-		public Builder pairs(List<SequenceFilePair> pairs) {
+		public Builder pairs(Set<SequenceFilePair> pairs) {
 			this.pairs = pairs;
 			return this;
 		}
@@ -254,7 +246,7 @@ public class NcbiBioSampleFiles {
 		return bioSample;
 	}
 
-	public List<SingleEndSequenceFile> getFiles() {
+	public Set<SingleEndSequenceFile> getFiles() {
 		return files;
 	}
 
@@ -266,15 +258,15 @@ public class NcbiBioSampleFiles {
 		this.id = id;
 	}
 
-	public List<SequenceFilePair> getPairs() {
+	public Set<SequenceFilePair> getPairs() {
 		return pairs;
 	}
 
-	public void setFiles(List<SingleEndSequenceFile> files) {
+	public void setFiles(Set<SingleEndSequenceFile> files) {
 		this.files = files;
 	}
 
-	public void setPairs(List<SequenceFilePair> pairs) {
+	public void setPairs(Set<SequenceFilePair> pairs) {
 		this.pairs = pairs;
 	}
 

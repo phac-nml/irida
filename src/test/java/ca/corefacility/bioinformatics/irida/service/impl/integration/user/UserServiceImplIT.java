@@ -359,14 +359,14 @@ public class UserServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSearchUser(){
 		String search = "Mr";
-		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), new PageRequest(0, 10, new Sort(Direction.ASC, "id")));
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
 		assertEquals(3,searchUser.getContent().size());
 		for(User u : searchUser){
 			assertTrue(u.getFirstName().contains("Mr"));
 		}
 		
 		search = "User";
-		searchUser = userService.search(UserSpecification.searchUser(search), new PageRequest(0, 10, new Sort(Direction.ASC, "id")));
+		searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
 		assertEquals(2,searchUser.getContent().size());
 	}
 

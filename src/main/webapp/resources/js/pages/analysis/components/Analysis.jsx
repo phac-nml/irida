@@ -62,7 +62,7 @@ export default function Analysis() {
     ? analysisType === "SISTR_TYPING"
       ? "sistr"
       : analysisType === "BIO_HANSEL"
-      ? "bio_hansel"
+      ? "biohansel"
       : analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST"
       ? "tree"
       : "output"
@@ -104,7 +104,7 @@ export default function Analysis() {
                       <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
                     </Menu.Item>
                   ) : analysisContext.analysisType === "BIO_HANSEL" ? (
-                    <Menu.Item key="bio_hansel">
+                    <Menu.Item key="biohansel">
                       <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
                     </Menu.Item>
                   ) : analysisContext.analysisType === "PHYLOGENOMICS" ||

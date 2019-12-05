@@ -5,16 +5,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +24,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.RevisionMetadata;
@@ -87,15 +90,15 @@ public class UserServiceImplTest {
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.save(persisted)).thenReturn(persisted);
-		when(userRepository.findOne(id)).thenReturn(persisted);
-		when(userRepository.exists(id)).thenReturn(true);
-		when(userRepository.findRevisions(id)).thenReturn(new Revisions<>(Lists.newArrayList()));
+		when(userRepository.findById(id)).thenReturn(Optional.of(persisted));
+		when(userRepository.existsById(id)).thenReturn(true);
+		when(userRepository.findRevisions(id)).thenReturn(Revisions.of(Lists.newArrayList()));
 
 		User u = userService.updateFields(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
 
 		verify(passwordEncoder).encode(password);
-		verify(userRepository).findOne(id);
+		verify(userRepository).findById(id);
 		verify(userRepository).save(persisted);
 	}
 
@@ -103,8 +106,8 @@ public class UserServiceImplTest {
 	public void updateNoPassword() {
 		Map<String, Object> properties = ImmutableMap.of("username", (Object) "updated");
 
-		when(userRepository.exists(1L)).thenReturn(true);
-		when(userRepository.findOne(1L)).thenReturn(user());
+		when(userRepository.existsById(1L)).thenReturn(true);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
 		userService.updateFields(1L, properties);
 		verifyZeroInteractions(passwordEncoder);
 	}
@@ -146,9 +149,9 @@ public class UserServiceImplTest {
 		String encodedPassword = password + "_ENCODED";
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-		when(userRepository.exists(1L)).thenReturn(true);
-		when(userRepository.findOne(1L)).thenReturn(user());
-		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<>(Lists.newArrayList()));
+		when(userRepository.existsById(1L)).thenReturn(true);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
+		when(userRepository.findRevisions(1L)).thenReturn(Revisions.of(Lists.newArrayList()));
 
 		userService.changePassword(1L, password);
 
@@ -166,15 +169,15 @@ public class UserServiceImplTest {
 
 		User revUser = new User();
 		revUser.setPassword(oldPassword);
-		Revision<Integer, User> rev = new Revision(new RevisionMetadata() {
+		Revision<Integer, User> rev = Revision.of(new RevisionMetadata() {
 			@Override
-			public Number getRevisionNumber() {
-				return 1L;
+			public Optional<Number> getRevisionNumber() {
+				return Optional.of(1L);
 			}
 
 			@Override
-			public DateTime getRevisionDate() {
-				return new DateTime();
+			public Optional<Instant> getRevisionInstant() {
+				return Optional.of(Instant.now());
 			}
 
 			@Override
@@ -185,9 +188,9 @@ public class UserServiceImplTest {
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(passwordEncoder.matches(password, oldPassword)).thenReturn(true);
-		when(userRepository.exists(1L)).thenReturn(true);
-		when(userRepository.findOne(1L)).thenReturn(user());
-		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<Integer, User>(Lists.newArrayList(rev)));
+		when(userRepository.existsById(1L)).thenReturn(true);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
+		when(userRepository.findRevisions(1L)).thenReturn(Revisions.of(Lists.newArrayList(rev)));
 
 		userService.changePassword(1L, password);
 
@@ -291,12 +294,12 @@ public class UserServiceImplTest {
 		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom",
 				"Matthews", "1234"), new User(2L, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
 		
-		when(userRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(userPage);
+		when(userRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(userPage);
 		
 		Page<User> searchUser = userService.search(UserSpecification.searchUser(searchString), page, size, order, sortProperties);
 		assertEquals(userPage, searchUser);
 		
-		verify(userRepository).findAll(any(Specification.class), any(PageRequest.class));
+		verify(userRepository).findAll(any(Specification.class), any(Pageable.class));
 	}
 
 	private User user() {

@@ -97,7 +97,7 @@ public class SequencingObjectProcessingService {
 
 		//set their state to PROCESSING and update
 		toProcess.stream().forEach(s -> s.setProcessingState(SequencingObject.ProcessingState.PROCESSING));
-		sequencingObjectRepository.save(toProcess);
+		sequencingObjectRepository.saveAll(toProcess);
 
 		//launch the file processing chain
 		for (SequencingObject sequencingObject : toProcess) {
