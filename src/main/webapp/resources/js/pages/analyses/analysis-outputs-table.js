@@ -1,7 +1,7 @@
 import { Grid } from "ag-grid-community/main";
 import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
-import { download } from "../../utilities/file.utilities";
+import { download } from "../../utilities/file-utilities";
 import {
   getPrincipalUserSingleSampleAnalysisOutputs,
   getProjectAutomatedSingleSampleAnalysisOutputs,

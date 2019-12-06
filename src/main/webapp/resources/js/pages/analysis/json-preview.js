@@ -1,6 +1,3 @@
-import { convertFileSize } from "../../utilities/file.utilities";
-import { getI18N } from "../../utilities/i18n-utilities";
-
 /**
  * Given some malformed JSON string, return a list of tokens missing their pairs.
  *
@@ -145,23 +142,4 @@ function appendMissingTokens(malformedJson, missingTokens) {
 export function repairMalformedJSON(malformedJSON) {
   const missingTokens = missingTokensStack(malformedJSON);
   return JSON.parse(appendMissingTokens(malformedJSON, missingTokens));
-}
-
-/**
- * Status text for showing how many bytes of a file have been loaded.
- * @param {number} byte Number of bytes of file currently fetched from server
- * @param {number} fileSizeBytes File size in bytes
- * @returns {string}
- */
-export function statusText(byte, fileSizeBytes) {
-  return `${getI18N("AnalysisOutputs.previewing")} ${convertFileSize(
-    byte
-  )} / ${convertFileSize(fileSizeBytes)} (${(
-    (byte / fileSizeBytes) *
-    100
-  ).toFixed(1)}%)`;
-}
-
-export function getNewChunkSize(filePosition, fileSizeBytes, chunkSize) {
-  return Math.min(fileSizeBytes - filePosition, chunkSize);
 }

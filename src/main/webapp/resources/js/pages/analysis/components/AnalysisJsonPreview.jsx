@@ -9,7 +9,6 @@ import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
 import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
-import { JsonObjectOutputWrapper } from "../../../components/OutputFiles/JsonObjectOutputWrapper";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
@@ -70,8 +69,8 @@ export default function AnalysisJsonPreview({ output }) {
       </Row>
       {isAdmin ? (
         <Row>
-          {Array.isArray(jsonData) ? (
-            <JsonOutputWrapper>
+          <JsonOutputWrapper overflowRequired={!Array.isArray(jsonData)}>
+            {Array.isArray(jsonData) ? (
               <AutoSizer>
                 {({ height = SCROLLABLE_DIV_HEIGHT, width = "100%" }) => (
                   <VList
@@ -84,12 +83,10 @@ export default function AnalysisJsonPreview({ output }) {
                   </VList>
                 )}
               </AutoSizer>
-            </JsonOutputWrapper>
-          ) : (
-            <JsonObjectOutputWrapper>
-              {JSON.stringify(jsonData, null, 2)}
-            </JsonObjectOutputWrapper>
-          )}
+            ) : (
+              JSON.stringify(jsonData, null, 2)
+            )}
+          </JsonOutputWrapper>
 
           <Divider />
         </Row>
