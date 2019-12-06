@@ -1,2 +1,2 @@
-export { JsonOutputWrapper } from "./JsonOutputWrapper";
+export { OutputWrapper } from "./OutputWrapper";
 export { OutputFileHeader } from "./OutputFileHeader";
