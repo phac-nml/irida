@@ -6,7 +6,10 @@ import React, { useEffect, useState } from "react";
 import { Divider, Row, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { getNewChunkSize, statusText } from "../../analysis/shared-preview";
+import {
+  getNewChunkSize,
+  fileSizeLoaded
+} from "../../../utilities/file-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles";
@@ -45,7 +48,7 @@ export default function AnalysisTextPreview({ output }) {
       setFileRows(data.text);
       document.getElementById(
         `${output.filename}-preview-status`
-      ).innerText = statusText(data.filePointer, output.fileSizeBytes);
+      ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
     });
   }, []);
 
@@ -75,7 +78,7 @@ export default function AnalysisTextPreview({ output }) {
           setFileRows(savedText + data.text);
           document.getElementById(
             `${output.filename}-preview-status`
-          ).innerText = statusText(data.filePointer, output.fileSizeBytes);
+          ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
         }
       });
     }

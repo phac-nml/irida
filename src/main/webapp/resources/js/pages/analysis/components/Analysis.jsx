@@ -69,6 +69,70 @@ export default function Analysis() {
     : analysisContext.isError
     ? "error"
     : "settings";
+
+  function getTabLinks() {
+    let tabLinks = [];
+
+    if (analysisContext.isError) {
+      tabLinks.push(
+        <Menu.Item key="error">
+          <Link to={`${BASE_URL}/error/job-error-info`}>
+            {getI18N("Analysis.jobError")}
+          </Link>
+        </Menu.Item>
+      );
+    } else {
+      if (analysisContext.isCompleted) {
+        if (analysisContext.analysisType === "SISTR_TYPING") {
+          tabLinks.push(
+            <Menu.Item key="sistr">
+              <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
+            </Menu.Item>
+          );
+        } else if (analysisContext.analysisType === "BIO_HANSEL") {
+          tabLinks.push(
+            <Menu.Item key="biohansel">
+              <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
+            </Menu.Item>
+          );
+        } else if (
+          analysisContext.analysisType === "PHYLOGENOMICS" ||
+          analysisContext.analysisType === "MLST_MENTALIST"
+        ) {
+          tabLinks.push(
+            <Menu.Item key="tree">
+              <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
+            </Menu.Item>
+          );
+        } else {
+          tabLinks.push(
+            <Menu.Item key="output">
+              <Link to={`${BASE_URL}/output`}>
+                {getI18N("Analysis.outputFiles")}
+              </Link>
+            </Menu.Item>
+          );
+        }
+        tabLinks.push(
+          <Menu.Item key="provenance">
+            <Link to={`${BASE_URL}/provenance`}>
+              {getI18N("Analysis.provenance")}
+            </Link>
+          </Menu.Item>
+        );
+      }
+    }
+    tabLinks.push(
+      <Menu.Item key="settings">
+        <Link to={`${BASE_URL}/settings/details`}>
+          {getI18N("Analysis.settings")}
+        </Link>
+      </Menu.Item>
+    );
+
+    return tabLinks;
+  }
+
   /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
@@ -91,47 +155,7 @@ export default function Analysis() {
               mode="horizontal"
               selectedKeys={[keyname ? keyname[1] : defaultKey]}
             >
-              {analysisContext.isError ? (
-                <Menu.Item key="error">
-                  <Link to={`${BASE_URL}/error/job-error-info`}>
-                    {getI18N("Analysis.jobError")}
-                  </Link>
-                </Menu.Item>
-              ) : analysisContext.isCompleted ? (
-                [
-                  analysisContext.analysisType === "SISTR_TYPING" ? (
-                    <Menu.Item key="sistr">
-                      <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
-                    </Menu.Item>
-                  ) : analysisContext.analysisType === "BIO_HANSEL" ? (
-                    <Menu.Item key="biohansel">
-                      <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
-                    </Menu.Item>
-                  ) : analysisContext.analysisType === "PHYLOGENOMICS" ||
-                    analysisContext.analysisType === "MLST_MENTALIST" ? (
-                    <Menu.Item key="tree">
-                      <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
-                    </Menu.Item>
-                  ) : (
-                    <Menu.Item key="output">
-                      <Link to={`${BASE_URL}/output`}>
-                        {getI18N("Analysis.outputFiles")}
-                      </Link>
-                    </Menu.Item>
-                  ),
-                  <Menu.Item key="provenance">
-                    <Link to={`${BASE_URL}/provenance`}>
-                      {getI18N("Analysis.provenance")}
-                    </Link>
-                  </Menu.Item>
-                ]
-              ) : null}
-
-              <Menu.Item key="settings">
-                <Link to={`${BASE_URL}/settings/details`}>
-                  {getI18N("Analysis.settings")}
-                </Link>
-              </Menu.Item>
+              {getTabLinks()}
             </Menu>
           );
         }}

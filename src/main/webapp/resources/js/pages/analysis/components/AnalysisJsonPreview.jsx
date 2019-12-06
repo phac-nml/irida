@@ -3,18 +3,16 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, List, Row, Typography } from "antd";
+import { Divider, List, Row } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
 import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
-import { JsonObjectOutputWrapper } from "../../../components/OutputFiles/JsonObjectOutputWrapper";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 
-const { Text } = Typography;
 const SCROLLABLE_DIV_HEIGHT = 300;
 
 export default function AnalysisJsonPreview({ output }) {
@@ -36,7 +34,7 @@ export default function AnalysisJsonPreview({ output }) {
 
       if (Array.isArray(parsedJson)) {
         Object.keys(parsedJson).map((key, val) => {
-          if (parsedJson[val] !== undefined) {
+          if (typeof parsedJson[val] !== "undefined") {
             Object.entries(parsedJson[val]).map(fileRowData => {
               jsonListData.push({
                 title: fileRowData[0],
@@ -59,16 +57,9 @@ export default function AnalysisJsonPreview({ output }) {
         key={index}
         style={{ ...style, borderBottom: `solid 1px ${grey4}` }}
       >
-        <List.Item.Meta
-          title={item.title}
-          description={item.desc}
-        ></List.Item.Meta>
+        <List.Item.Meta title={item.title} description={item.desc} />
       </List.Item>
     );
-  }
-
-  function getString() {
-    return JSON.stringify(jsonData, null, 2);
   }
 
   return jsonData !== null ? (
@@ -78,8 +69,8 @@ export default function AnalysisJsonPreview({ output }) {
       </Row>
       {isAdmin ? (
         <Row>
-          {Array.isArray(jsonData) ? (
-            <JsonOutputWrapper>
+          <JsonOutputWrapper overflowRequired={!Array.isArray(jsonData)}>
+            {Array.isArray(jsonData) ? (
               <AutoSizer>
                 {({ height = SCROLLABLE_DIV_HEIGHT, width = "100%" }) => (
                   <VList
@@ -92,12 +83,10 @@ export default function AnalysisJsonPreview({ output }) {
                   </VList>
                 )}
               </AutoSizer>
-            </JsonOutputWrapper>
-          ) : (
-            <JsonObjectOutputWrapper>
-              <Text>{getString()}</Text>
-            </JsonObjectOutputWrapper>
-          )}
+            ) : (
+              JSON.stringify(jsonData, null, 2)
+            )}
+          </JsonOutputWrapper>
 
           <Divider />
         </Row>

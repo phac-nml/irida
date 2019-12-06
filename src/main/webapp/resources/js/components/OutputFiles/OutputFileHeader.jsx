@@ -6,7 +6,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, Icon, Col, Typography } from "antd";
-import { convertFileSize } from "../../utilities/file.utilities";
+import { convertFileSize } from "../../utilities/file-utilities";
 import { downloadOutputFile } from "../../apis/analysis/analysis";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { FONT_SIZE_DEFAULT } from "../../styles/fonts";
