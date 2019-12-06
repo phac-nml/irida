@@ -4,7 +4,9 @@
 
 import React from "react";
 
+import { Error } from "../../../../components/icons/Error";
 import { Success } from "../../../../components/icons/Success";
+import { Warning } from "../../../../components/icons/Warning";
 import { BasicList } from "../../../../components/lists/BasicList";
 import { getI18N } from "../../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";

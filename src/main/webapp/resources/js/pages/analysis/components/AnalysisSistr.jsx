@@ -20,6 +20,11 @@ const SerovarPredictions = React.lazy(() =>
 );
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
+
+const OutputFilePreview = React.lazy(() =>
+  import("./outputs/OutputFilePreview")
+);
+
 const Citation = React.lazy(() => import("./sistr/Citation"));
 const { Content, Sider } = Layout;
 
@@ -72,6 +77,11 @@ export default function AnalysisSistr(props) {
                       {getI18N("AnalysisSistr.mash")}
                     </Link>
                   </Menu.Item>
+                  <Menu.Item key="file_preview">
+                    <Link to={`${BASE_URL}/file_preview`}>
+                      {getI18N("AnalysisOutputs.outputFilePreview")}
+                    </Link>
+                  </Menu.Item>
                   <Menu.Item key="citation">
                     <Link to={`${BASE_URL}/citation`}>
                       {getI18N("AnalysisSistr.citation")}
@@ -105,6 +115,7 @@ export default function AnalysisSistr(props) {
                   sistrResults={sistrResults.result}
                   path={`${BASE_URL}/mash`}
                 />
+                <OutputFilePreview path={`${BASE_URL}/file_preview`} />
                 <Citation
                   sistrResults={sistrResults.result}
                   path={`${BASE_URL}/citation`}

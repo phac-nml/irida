@@ -60,7 +60,10 @@ function AnalysisProvider(props) {
 
   return (
     <AnalysisContext.Provider
-      value={{ analysisContext, analysisContextUpdateSubmissionName }}
+      value={{
+        analysisContext,
+        analysisContextUpdateSubmissionName
+      }}
     >
       {props.children}
     </AnalysisContext.Provider>

@@ -46,7 +46,11 @@ BasicList.propTypes = {
   dataSource: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      desc: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+      desc: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.object
+      ])
     })
   ).isRequired
 };

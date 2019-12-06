@@ -12,6 +12,7 @@
 import React, { lazy, Suspense, useContext } from "react";
 import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { getI18N } from "../../../utilities/i18n-utilities";
@@ -61,13 +62,77 @@ export default function Analysis() {
     ? analysisType === "SISTR_TYPING"
       ? "sistr"
       : analysisType === "BIO_HANSEL"
-      ? "bio_hansel"
+      ? "biohansel"
       : analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST"
       ? "tree"
-      : null
+      : "output"
     : analysisContext.isError
     ? "error"
     : "settings";
+
+  function getTabLinks() {
+    let tabLinks = [];
+
+    if (analysisContext.isError) {
+      tabLinks.push(
+        <Menu.Item key="error">
+          <Link to={`${BASE_URL}/error/job-error-info`}>
+            {getI18N("Analysis.jobError")}
+          </Link>
+        </Menu.Item>
+      );
+    } else {
+      if (analysisContext.isCompleted) {
+        if (analysisContext.analysisType === "SISTR_TYPING") {
+          tabLinks.push(
+            <Menu.Item key="sistr">
+              <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
+            </Menu.Item>
+          );
+        } else if (analysisContext.analysisType === "BIO_HANSEL") {
+          tabLinks.push(
+            <Menu.Item key="biohansel">
+              <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
+            </Menu.Item>
+          );
+        } else if (
+          analysisContext.analysisType === "PHYLOGENOMICS" ||
+          analysisContext.analysisType === "MLST_MENTALIST"
+        ) {
+          tabLinks.push(
+            <Menu.Item key="tree">
+              <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
+            </Menu.Item>
+          );
+        } else {
+          tabLinks.push(
+            <Menu.Item key="output">
+              <Link to={`${BASE_URL}/output`}>
+                {getI18N("Analysis.outputFiles")}
+              </Link>
+            </Menu.Item>
+          );
+        }
+        tabLinks.push(
+          <Menu.Item key="provenance">
+            <Link to={`${BASE_URL}/provenance`}>
+              {getI18N("Analysis.provenance")}
+            </Link>
+          </Menu.Item>
+        );
+      }
+    }
+    tabLinks.push(
+      <Menu.Item key="settings">
+        <Link to={`${BASE_URL}/settings/details`}>
+          {getI18N("Analysis.settings")}
+        </Link>
+      </Menu.Item>
+    );
+
+    return tabLinks;
+  }
+
   /*
    * The following renders the tabs, and selects the
    * tab depending on the state and type of analysis.
@@ -90,97 +155,62 @@ export default function Analysis() {
               mode="horizontal"
               selectedKeys={[keyname ? keyname[1] : defaultKey]}
             >
-              {analysisContext.isError ? (
-                <Menu.Item key="error">
-                  <Link to={`${BASE_URL}/error/job-error-info`}>
-                    {getI18N("Analysis.jobError")}
-                  </Link>
-                </Menu.Item>
-              ) : analysisContext.isCompleted ? (
-                [
-                  analysisContext.analysisType === "SISTR_TYPING" ? (
-                    <Menu.Item key="sistr">
-                      <Link to={`${BASE_URL}/sistr/info`}>SISTR</Link>
-                    </Menu.Item>
-                  ) : analysisContext.analysisType === "BIO_HANSEL" ? (
-                    <Menu.Item key="bio_hansel">
-                      <Link to={`${BASE_URL}/biohansel/`}>bio_hansel</Link>
-                    </Menu.Item>
-                  ) : (
-                    <Menu.Item key="tree">
-                      <Link to={`${BASE_URL}/tree/`}>Phylogenetic Tree</Link>
-                    </Menu.Item>
-                  ),
-                  <Menu.Item key="output">
-                    <Link to={`${BASE_URL}/output`}>
-                      {getI18N("Analysis.outputFiles")}
-                    </Link>
-                  </Menu.Item>,
-                  <Menu.Item key="provenance">
-                    <Link to={`${BASE_URL}/provenance`}>
-                      {getI18N("Analysis.provenance")}
-                    </Link>
-                  </Menu.Item>
-                ]
-              ) : null}
-
-              <Menu.Item key="settings">
-                <Link to={`${BASE_URL}/settings/details`}>
-                  {getI18N("Analysis.settings")}
-                </Link>
-              </Menu.Item>
+              {getTabLinks()}
             </Menu>
           );
         }}
       </Location>
       <Suspense fallback={<ContentLoading />}>
-        <Router style={{ paddingTop: SPACE_MD }}>
-          <AnalysisError
-            path={`${BASE_URL}/error/*`}
-            default={analysisContext.isError}
-            key="analysis-error"
-          />
-          {analysisContext.isCompleted
-            ? [
-                <AnalysisProvenance
-                  path={`${BASE_URL}/provenance`}
-                  key="analysis-provenance"
-                />,
-                <AnalysisOutputFiles
-                  path={`${BASE_URL}/output`}
-                  key="analysis-output"
-                />
-              ]
-            : null}
-          <AnalysisSistr
-            path={`${BASE_URL}/sistr/*`}
-            default={
-              analysisContext.isCompleted && analysisType === "SISTR_TYPING"
-            }
-            key="analysis-sistr"
-          />
-          <AnalysisBioHansel
-            path={`${BASE_URL}/biohansel/*`}
-            default={
-              analysisContext.isCompleted && analysisType === "BIO_HANSEL"
-            }
-            key="analysis-biohansel"
-          />
-          <AnalysisPhylogeneticTree
-            path={`${BASE_URL}/tree/*`}
-            default={
-              analysisContext.isCompleted &&
-              (analysisType === "PHYLOGENOMICS" ||
-                analysisType === "MLST_MENTALIST")
-            }
-            key="analysis-tree"
-          />
-          <AnalysisSettingsContainer
-            path={`${BASE_URL}/settings/*`}
-            default={!analysisContext.isError && !analysisContext.isCompleted}
-            key="analysis-settings"
-          />
-        </Router>
+        <AnalysisOutputsProvider>
+          <Router style={{ paddingTop: SPACE_MD }}>
+            <AnalysisError
+              path={`${BASE_URL}/error/*`}
+              default={analysisContext.isError}
+              key="error"
+            />
+            {analysisContext.isCompleted
+              ? [
+                  <AnalysisSistr
+                    path={`${BASE_URL}/sistr/*`}
+                    default={analysisType === "SISTR_TYPING"}
+                    key="sistr"
+                  />,
+                  <AnalysisBioHansel
+                    path={`${BASE_URL}/biohansel/*`}
+                    default={analysisType === "BIO_HANSEL"}
+                    key="biohansel"
+                  />,
+                  <AnalysisPhylogeneticTree
+                    path={`${BASE_URL}/tree/*`}
+                    default={
+                      analysisType === "PHYLOGENOMICS" ||
+                      analysisType === "MLST_MENTALIST"
+                    }
+                    key="tree"
+                  />,
+                  <AnalysisProvenance
+                    path={`${BASE_URL}/provenance`}
+                    key="provenance"
+                  />,
+                  <AnalysisOutputFiles
+                    path={`${BASE_URL}/output`}
+                    default={
+                      analysisType !== "SISTR_TYPING" &&
+                      analysisType !== "BIO_HANSEL" &&
+                      analysisType !== "PHYLOGENOMICS" &&
+                      analysisType !== "MLST_MENTALIST"
+                    }
+                    key="output"
+                  />
+                ]
+              : null}
+            <AnalysisSettingsContainer
+              path={`${BASE_URL}/settings/*`}
+              default={!analysisContext.isError && !analysisContext.isCompleted}
+              key="settings"
+            />
+          </Router>
+        </AnalysisOutputsProvider>
       </Suspense>
     </PageWrapper>
   );

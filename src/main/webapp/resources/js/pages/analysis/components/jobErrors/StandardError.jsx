@@ -6,12 +6,16 @@
  */
 
 import React from "react";
-import { CodeBlock } from "../../../../components/typography";
+import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
 
 export function StandardError({ galaxyJobErrors, currIndex }) {
   // Returns the standard error for the given index from the jobErrors object
   function getStandardError(index = 0) {
-    return <CodeBlock>{galaxyJobErrors[index].standardError.trim()}</CodeBlock>;
+    return (
+      <OutputWrapper overflowRequired={true}>
+        {galaxyJobErrors[index].standardError.trim()}
+      </OutputWrapper>
+    );
   }
 
   return <>{getStandardError(currIndex)}</>;

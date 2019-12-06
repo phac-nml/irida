@@ -3,8 +3,11 @@
  */
 import axios from "axios";
 
+// Ajax URL for Analysis
+const ANALYSIS_URL = `${window.TL.BASE_URL}ajax/analysis`;
+
+// Ajax URL for Analyses
 const ANALYSES_URL = `${window.TL.BASE_URL}ajax/analyses`;
-const ANALYSIS_URL = `${window.TL.BASE_URL}analysis/ajax`;
 
 /*
  * Get all the data required for the analysis -> details page.
@@ -39,13 +42,16 @@ export async function getAnalysisInputFiles(submissionId) {
  * @param {boolean} emailPipelineResult True or False
  * @return {Promise<*>} `data` contains the OK response; error` contains error information if an error occurred.
  */
-export async function updateAnalysisEmailPipelineResult(params) {
+export async function updateAnalysisEmailPipelineResult({
+  submissionId,
+  emailPipelineResult
+}) {
   try {
     const { data } = await axios.patch(
       `${ANALYSIS_URL}/update-email-pipeline-result`,
       {
-        analysisSubmissionId: params.submissionId,
-        emailPipelineResult: params.emailPipelineResult
+        analysisSubmissionId: submissionId,
+        emailPipelineResult: emailPipelineResult
       }
     );
     return data.message;
@@ -61,12 +67,12 @@ export async function updateAnalysisEmailPipelineResult(params) {
  * @param {string} priority [LOW, MEDIUM, HIGH]
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateAnalysis(params) {
+export async function updateAnalysis({ submissionId, analysisName, priority }) {
   try {
     const { data } = await axios.patch(`${ANALYSIS_URL}/update-analysis/`, {
-      analysisSubmissionId: params.submissionId,
-      analysisName: params.analysisName,
-      priority: params.priority
+      analysisSubmissionId: submissionId,
+      analysisName: analysisName,
+      priority: priority
     });
     return data.message;
   } catch (error) {
@@ -101,14 +107,15 @@ export async function getSharedProjects(submissionId) {
  * @param {boolean} shareStatus True of False
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateSharedProject(params) {
-  const { data } = await axios.post(
-    `${ANALYSIS_URL}/${params.submissionId}/share`,
-    {
-      projectId: params.projectId,
-      shareStatus: params.shareStatus
-    }
-  );
+export async function updateSharedProject({
+  submissionId,
+  projectId,
+  shareStatus
+}) {
+  const { data } = await axios.post(`${ANALYSIS_URL}/${submissionId}/share`, {
+    projectId: projectId,
+    shareStatus: shareStatus
+  });
   return data;
 }
 
@@ -140,7 +147,7 @@ export async function getJobErrors(submissionId) {
     );
     return data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -154,8 +161,79 @@ export async function getSistrResults(submissionId) {
     const { data } = await axios.get(`${ANALYSIS_URL}/sistr/${submissionId}`);
     return data;
   } catch (error) {
-    return { error: error };
+    return { error };
   }
+}
+
+/**
+ * Get the output file info
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getOutputInfo(submissionId) {
+  try {
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/outputs`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
+ * Get the data from the output file for with the supplied chunk size
+ * @param {object} contains the output file data
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getDataViaChunks({ submissionId, fileId, seek, chunk }) {
+  try {
+    const res = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/outputs/${fileId}`,
+      {
+        params: {
+          seek,
+          chunk
+        }
+      }
+    );
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
+ * Get the file output from line x upto line y.
+ * @param {object} contains the output file data
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getDataViaLines({ submissionId, fileId, start, end }) {
+  try {
+    const res = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/outputs/${fileId}`,
+      {
+        params: {
+          start,
+          end
+        }
+      }
+    );
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
+ * Download output file using an analysis submission id and file id.
+ * @param {submissionId} submission for which to download output file for.
+ * @param {fileId} file id of file to download.
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export function downloadOutputFile({ submissionId, fileId }) {
+  window.open(
+    `${ANALYSIS_URL}/download/${submissionId}/file/${fileId}`,
+    "_blank"
+  );
 }
 
 /**
@@ -164,10 +242,10 @@ export async function getSistrResults(submissionId) {
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(`${ANALYSIS_URL}/user/analysis-outputs`);
+    const { data } = await axios.get(`${ANALYSIS_URL}user/analysis-outputs`);
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -183,7 +261,7 @@ export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
     );
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -201,7 +279,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
     );
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
@@ -219,7 +297,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
     });
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
