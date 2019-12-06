@@ -5,7 +5,7 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Icon, Col, Typography } from "antd";
+import { Button, Col, Typography } from "antd";
 import { convertFileSize } from "../../utilities/file-utilities";
 import { downloadOutputFile } from "../../apis/analysis/analysis";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
@@ -51,8 +51,8 @@ export function OutputFileHeader({ output }) {
               fileId: output.id
             })
           }
+          icon="download"
         >
-          <Icon type="download" />
           {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
         </Button>
       </Col>

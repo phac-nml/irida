@@ -12,7 +12,7 @@ export function GalaxyParameters({ galaxyJobErrors, currIndex }) {
   // Returns the galaxy parameters for the given index from the jobErrors object
   function getGalaxyParameters(index = 0) {
     return (
-      <OutputWrapper overflowRequired={true} style={{ whiteSpace: "pre-wrap" }}>
+      <OutputWrapper overflowRequired={true}>
         {JSON.stringify(
           JSON.parse(galaxyJobErrors[index].parameters.trim()),
           null,
