@@ -6,7 +6,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { SPACE_XS } from "../../styles/spacing";
 import styled from "styled-components";
-import { DIV_BORDER } from "../../styles/borders";
+import { BORDER_LIGHT } from "../../styles/borders";
 
 /**
  * Stateless UI component for displaying a div for output
@@ -30,7 +30,7 @@ export function OutputWrapper({
   const Wrapper = styled.div`
     height: ${height}px;
     margin-bottom: ${SPACE_XS};
-    border: ${DIV_BORDER};
+    border: ${BORDER_LIGHT};
     padding: 0 0 2px ${SPACE_XS};
     white-space: pre-wrap;
     overflow: ${overflow};
