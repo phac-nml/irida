@@ -1,5 +1,5 @@
-import React, { lazy, Suspense, useState } from 'react';
-import { Dropdown, Icon, Menu } from 'antd';
+import React, { lazy, Suspense, useState } from "react";
+import { Dropdown, Icon, Menu } from "antd";
 
 /*
 Lazy load the modal since this does not need to be used all the time.
@@ -29,7 +29,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
     setRemoveEntriesModalVisibility(false);
 
   return (
-    <div>
+    <span>
       <Dropdown
         trigger={["click"]}
         overlay={
@@ -43,7 +43,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
           </Menu>
         }
       >
-        <Icon type="more" style={{ display: "inline-block" }} />
+        <Icon type="menu" style={{ display: "inline-block" }} />
       </Dropdown>
       {isRemoveEntriesModalVisible ? (
         <Suspense fallback={<span />}>
@@ -55,6 +55,6 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
           />
         </Suspense>
       ) : null}
-    </div>
+    </span>
   );
 }

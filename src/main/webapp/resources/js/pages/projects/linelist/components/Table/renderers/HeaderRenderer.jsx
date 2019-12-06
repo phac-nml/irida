@@ -15,7 +15,6 @@ const Header = styled.div`
 
   .utility-icon {
     color: ${blue6};
-    opacity: 0;
     display: inline-block;
     transition: opacity 0.25s ease-in-out;
     padding: 0.6rem;
@@ -23,10 +22,6 @@ const Header = styled.div`
       background-color: ${grey4};
       border-radius: 3px;
     }
-  }
-
-  &:hover .utility-icon {
-    opacity: 1;
   }
 `;
 
