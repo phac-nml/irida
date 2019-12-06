@@ -8,7 +8,7 @@ import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
-import { JsonOutputWrapper } from "../../../components/OutputFiles/JsonOutputWrapper";
+import { OutputWrapper } from "../../../components/OutputFiles/OutputWrapper";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
@@ -69,7 +69,7 @@ export default function AnalysisJsonPreview({ output }) {
       </Row>
       {isAdmin ? (
         <Row>
-          <JsonOutputWrapper overflowRequired={!Array.isArray(jsonData)}>
+          <OutputWrapper overflowRequired={!Array.isArray(jsonData)}>
             {Array.isArray(jsonData) ? (
               <AutoSizer>
                 {({ height = SCROLLABLE_DIV_HEIGHT, width = "100%" }) => (
@@ -86,7 +86,7 @@ export default function AnalysisJsonPreview({ output }) {
             ) : (
               JSON.stringify(jsonData, null, 2)
             )}
-          </JsonOutputWrapper>
+          </OutputWrapper>
 
           <Divider />
         </Row>

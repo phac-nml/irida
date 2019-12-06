@@ -6,13 +6,15 @@
  */
 
 import React from "react";
-import { CodeBlock } from "../../../../components/typography";
+import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
 
 export function StandardOutput({ galaxyJobErrors, currIndex }) {
   // Returns the standard output for the given index from the jobErrors object
   function getStandardOutput(index = 0) {
     return (
-      <CodeBlock>{galaxyJobErrors[index].standardOutput.trim()}</CodeBlock>
+      <OutputWrapper overflowRequired={true} style={{ whiteSpace: "pre-wrap" }}>
+        {galaxyJobErrors[index].standardOutput.trim()}
+      </OutputWrapper>
     );
   }
 
