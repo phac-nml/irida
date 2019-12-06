@@ -19,14 +19,13 @@ public class ClientDetailsPage extends AbstractPage {
 
 	private Long clientId;
 
-	public ClientDetailsPage(WebDriver driver, Long clientId) {
+	public ClientDetailsPage(WebDriver driver) {
 		super(driver);
-		get(driver, RELATIVE_URL + "/" + clientId);
-		this.clientId = clientId;
 	}
-	
-	public ClientDetailsPage(WebDriver driver){
-		super(driver);
+
+	public void goToPage(Long id){
+		this.clientId = id;
+		get(driver, RELATIVE_URL + "/" + clientId);
 	}
 
 	public boolean verifyClient(Long id, String clientId) {

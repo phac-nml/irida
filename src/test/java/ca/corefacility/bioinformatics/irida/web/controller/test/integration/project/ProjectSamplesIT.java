@@ -57,7 +57,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util
 
 /**
  * Integration tests for project samples.
- * 
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -99,7 +99,7 @@ public class ProjectSamplesIT {
 		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
 				.expect().response().statusCode(HttpStatus.CONFLICT.value()).when().post(samplesUri);
 	}
-	
+
 	@Test
 	public void testAddMultithreadedSamplesToProject() throws InterruptedException {
 		final int numberOfThreads = 40;
@@ -110,11 +110,11 @@ public class ProjectSamplesIT {
 		// get the uri for creating samples associated with the project.
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
-		
+
 		final Callable<List<Integer>> task = () -> {
 			final List<Integer> responses = new CopyOnWriteArrayList<>();
 			final Random rand = new Random(Thread.currentThread().getId());
-			
+
 			for (int i = 0; i < numberOfSamples; i++) {
 				final String sampleName = Thread.currentThread().getName() + "-" + rand.nextInt();
 				final HttpClient client = HttpClientBuilder.create().build();
@@ -130,12 +130,12 @@ public class ProjectSamplesIT {
 			}
 			return responses;
 		};
-		
+
 		final List<Future<List<Integer>>> futures = new CopyOnWriteArrayList<>();
 		for (int i = 0 ; i < numberOfThreads; i++) {
 			futures.add(executorService.submit(task));
 		}
-		
+
 		for (final Future<List<Integer>> f : futures) {
 			try {
 				final List<Integer> responses = f.get();
@@ -145,7 +145,7 @@ public class ProjectSamplesIT {
 				fail("Failed to submit multiple samples simultaneously.");
 			}
 		}
-		
+
 		executorService.shutdown();
 		executorService.awaitTermination(10, TimeUnit.SECONDS);
 	}
@@ -226,32 +226,32 @@ public class ProjectSamplesIT {
 		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
 				.when().get(projectSampleUri);
 	}
-	
+
 	@Test
 	public void testReadSampleCollectionDate() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
-		
+
 		asAdmin().expect().body("resource.collectionDate", is("2019-01-24"))
 				.when().get(projectSampleUri);
 	}
-	
+
 	@Test
 	public void testReadSampleCollectionDate2() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/3";
-		
+
 		asAdmin().expect().body("resource.collectionDate", is("1999-12-05"))
 				.when().get(projectSampleUri);
 	}
-	
+
 	@Test
 	public void testReadSampleAsAdminWithDoubledUpSlashes() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api//projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		final Response r = asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when().get(projectSampleUri);
+				.when().given().urlEncodingEnabled(false).get(projectSampleUri);
 		final String responseBody = r.getBody().asString();
 		final String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'sample/project'}.href");
 		// now verify that we can actually get this (so doubled slash should not have affected the link)

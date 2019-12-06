@@ -29,6 +29,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -198,8 +199,8 @@ public class ProjectServiceImplTest {
 		Sample s = new Sample();
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
-		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Sample.class, null, null, null, null,
-				null, null));
+		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null,
+				null, null, null, null, null));
 
 		when(validator.validate(s)).thenReturn(violations);
 
@@ -247,7 +248,7 @@ public class ProjectServiceImplTest {
 		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
 		Page<ProjectUserJoin> page = new PageImpl<>(joins);
 
-		when(pujRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
+		when(pujRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
 
 		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
 	}

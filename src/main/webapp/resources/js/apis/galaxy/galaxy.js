@@ -9,7 +9,7 @@ const GALAXY_AJAX_URL = `${window.TL.BASE_URL}ajax/galaxy-export`;
  * @returns {Promise<any>}
  */
 export function validateOauthClient() {
-  const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
+  const redirect = `${window.PAGE.galaxyRedirect}`;
   return authenticateOauthClient(window.GALAXY.CLIENT_ID, redirect)
     .then(code => code)
     .catch(response => response);

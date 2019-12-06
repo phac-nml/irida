@@ -312,7 +312,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			// have to remove the sample to be deleted from its project:
 			ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, s);
 			psjRepository.delete(readSampleForProject);
-			sampleRepository.delete(s.getId());
+			sampleRepository.deleteById(s.getId());
 		}
 		return mergeInto;
 	}
@@ -359,7 +359,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		sortProperties = verifySortProperties(sortProperties);
 
 		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
-				new PageRequest(page, size, order, sortProperties));
+				PageRequest.of(page, size, order, sortProperties));
 	}
 
 	/**
@@ -448,7 +448,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			String organism, Date minDate, Date maxDate, int currentPage, int pageSize, Sort sort) {
 		return psjRepository
 				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, organism, minDate, maxDate),
-						new PageRequest(currentPage, pageSize, sort));
+						PageRequest.of(currentPage, pageSize, sort));
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 
-		final PageRequest pr = new PageRequest(page, count, sort);
+		final PageRequest pr = PageRequest.of(page, count, sort);
 
 		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query), pr);
 	}
@@ -508,7 +508,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
 			final Sort sort) {
-		final PageRequest pr = new PageRequest(page, count, sort);
+		final PageRequest pr = PageRequest.of(page, count, sort);
 
 		return psjRepository.findAll(sampleForUserSpecification(null, query), pr);
 	}
@@ -543,7 +543,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				genomeAssemblyId);
 		if (join != null) {
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
-			sampleGenomeAssemblyJoinRepository.delete(join.getId());
+			sampleGenomeAssemblyJoinRepository.deleteById(join.getId());
 		} else {
 			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
 		}

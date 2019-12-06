@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
 public class ToolExecution implements IridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@NotNull
@@ -197,23 +197,23 @@ public class ToolExecution implements IridaThing {
 		return false;
 	}
 
-	public final Set<ToolExecution> getPreviousSteps() {
+	public Set<ToolExecution> getPreviousSteps() {
 		return ImmutableSet.copyOf(previousSteps);
 	}
 
-	public final String getToolName() {
+	public String getToolName() {
 		return toolName;
 	}
 
-	public final String getToolVersion() {
+	public String getToolVersion() {
 		return toolVersion;
 	}
 
-	public final String getCommandLine() {
+	public String getCommandLine() {
 		return commandLine;
 	}
 
-	public final String getExecutionManagerIdentifier() {
+	public String getExecutionManagerIdentifier() {
 		return executionManagerIdentifier;
 	}
 
@@ -222,7 +222,7 @@ public class ToolExecution implements IridaThing {
 	 *
 	 * @return The unescaped execution time parameters
 	 */
-	public final Map<String, String> getExecutionTimeParameters() {
+	public Map<String, String> getExecutionTimeParameters() {
 		final Map<String, String> unescapedKeys = new HashMap<>();
 		for (final Entry<String, String> param : executionTimeParameters.entrySet()) {
 			final String unescapedKey = param.getKey().replaceAll("\\\\([A-Z])", "$1");

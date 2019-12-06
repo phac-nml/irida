@@ -62,7 +62,7 @@
                             </div>
                             <select id="authorizedGrantTypes" name="authorizedGrantTypes"
                                     class="form-control input-full" required="required">
-                                <option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}"/>
+                                <option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}" th:selected="${given_grant} == ${grant}"/>
                             </select>
                             <div class="checkbox col-md-12">
                                 <label class="control-label" for="refresh">
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         
-                        <div class="form-group" id="refresh-token-container" style="display:none">
+                        <div class="form-group" id="refresh-token-container" th:style="${given_grant == 'authorization_code' ? 'display:block' : 'display:none'}">
                             <label class="control-label" th:text="#{client.details.refreshTokenValidity}" for="refreshTokenValidity">_Token
                                 Validity_</label>
 
@@ -82,6 +82,17 @@
                                         th:value="${time}" th:text="${time}" th:selected="${refresh_validity} == ${time}"/>
                             </select>
 
+                        </div>
+
+                        <div class="form-group" id="redirect-container" th:style="${given_grant == 'authorization_code' ? 'display:block' : 'display:none'}">
+                            <label class="control-label" th:text="#{client.registeredRedirectUri}" for="registeredRedirectUri">_Redirect_</label>
+
+                            <div th:if="${#maps.containsKey(errors, 'registeredRedirectUri')}" th:text="${errors.registeredRedirectUri}"
+                                 class="alert alert-warning">_Client ID Error_
+                            </div>
+                            <input type="text" id="registeredRedirectUri" name="registeredRedirectUri" class="form-control input-full"
+                                   th:placeholder="#{client.registeredRedirectUri}" th:value="${given_registeredRedirectUri}"/>
+                            <small th:text="#{client.redirect.help(${serverBaseUrl})}">_Redirect Help_</small>
                         </div>
 
                         <div class="form-group">
@@ -135,8 +146,5 @@
         </div>
     </div>
 </main>
-<th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/js/pages/clients/client_create.js}"></script>
-</th:block>
 </body>
 </html>
