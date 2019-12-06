@@ -32,7 +32,7 @@ export function OutputWrapper({
     margin-bottom: ${SPACE_XS};
     border: ${DIV_BORDER};
     padding: 0 0 2px ${SPACE_XS};
-    white-space: pre;
+    white-space: pre-wrap;
     overflow: ${overflow};
   `;
 

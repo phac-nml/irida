@@ -12,7 +12,7 @@ export function StandardError({ galaxyJobErrors, currIndex }) {
   // Returns the standard error for the given index from the jobErrors object
   function getStandardError(index = 0) {
     return (
-      <OutputWrapper overflowRequired={true} style={{ whiteSpace: "pre-wrap" }}>
+      <OutputWrapper overflowRequired={true}>
         {galaxyJobErrors[index].standardError.trim()}
       </OutputWrapper>
     );
