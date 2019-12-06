@@ -7,4 +7,4 @@ import { grey4 } from "./colors";
  * LEAD ON INTERFACE DESIGN.
  */
 
-export const DIV_BORDER = `solid 1px ${grey4}`;
+export const BORDER_LIGHT = `solid 1px ${grey4}`;
