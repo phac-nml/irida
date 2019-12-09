@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -11,48 +8,34 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.Analy
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import static org.junit.Assert.assertEquals;
+
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
- *
+ * Test for the Analysis Listing page when logged in as an administrator.
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 
-	@Before
-	public void setUpTest() {
-		LoginPage.loginAsManager(driver());
-	}
-
 	@Test
 	public void testPageSetup() {
-		AnalysesUserPage userPage = AnalysesUserPage.initializePage(driver());
-		assertEquals("Admin has not personal analysis", 8, userPage.getNumberOfAnalyses());
-
-		AnalysesUserPage adminPage = AnalysesUserPage.initializeAdminPage(driver());
-		assertEquals("Should be 8 analyses displayed on the page", 9, adminPage.getNumberOfAnalyses());
-	}
-
-	@Test
-	public void testAdvancedFilters() {
+		LoginPage.loginAsAdmin(driver());
 		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver());
-		assertEquals("Should be 9 analyses displayed on the page", 9, page.getNumberOfAnalyses());
+		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
 
-		page.filterByState("Queued");
-		assertEquals("Should be 1 analysis in the state of 'NEW/Queued'", 1, page.getNumberOfAnalyses());
+		// Test the name filter
+		page.searchForAnalysisByName("My Fake Submission");
+		assertEquals("Should have 1 Analysis displayed after filtering", 1, page.getNumberOfAnalysesDisplayed());
+		page.clearNameFilter();
+		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
 
-		page.filterByState("Completed");
-		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
+		/*
+		Test deleting a analysis
+		Need to to start at an offset of 9
+		 - elements 0 - 8 are not displayed on the screen.  This table uses ant.design table with an always visible column for the buttons.
+		 9 - 17 are the actual element displayed within the overlay of the fixed column.
+		 */
+		page.deleteAnalysis(9);
+		assertEquals("Should have 8 analyses displayed after deleting one", 8, page.getNumberOfAnalysesDisplayed());
 
-		page.filterByState("Prepared");
-		assertEquals("Should be 0 analysis in the state of 'PREPARED'", 0, page.getNumberOfAnalyses());
-
-		// Clear
-		page.clearFilter();
-		assertEquals("Should be 9 analyses displayed on the page", 9, page.getNumberOfAnalyses());
-
-		// Clear
-		page.clearFilter();
 	}
 }

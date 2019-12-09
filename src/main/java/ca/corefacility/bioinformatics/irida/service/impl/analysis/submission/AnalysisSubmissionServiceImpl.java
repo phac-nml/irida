@@ -35,11 +35,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import org.hibernate.TransientPropertyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -149,11 +147,11 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
 
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, project, null);
+				.filterAnalyses(search, name, states, null, workflowIds, project, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -162,10 +160,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, null, null);
+				.filterAnalyses(search, name, states, null, workflowIds, null, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -174,10 +172,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states,
 			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, user, workflowIds, null, false);
+				.filterAnalyses(search, name, states, user, workflowIds, null, false);
 		return super.search(specification, pageRequest);
 	}
 
@@ -236,7 +234,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException {
+	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) {
 		return super.findRevisions(id);
 	}
 
@@ -245,8 +243,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
-			throws EntityRevisionDeletedException {
+	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable) {
 		return super.findRevisions(id, pageable);
 	}
 
@@ -304,6 +301,18 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		}
 
 		super.delete(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#ids, 'canUpdateAnalysisSubmission')")
+	@Transactional
+	public void deleteMultiple(Collection<Long> ids) {
+		for (Long id : ids) {
+			delete(id);
+		}
 	}
 
 	/**
@@ -373,31 +382,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public AnalysisSubmission create(AnalysisSubmission analysisSubmission) throws ConstraintViolationException,
-			EntityExistsException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
+			throws ConstraintViolationException, EntityExistsException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
 
-		try {
-			return super.create(analysisSubmission);
-		} catch (final InvalidDataAccessApiUsageException e) {
-			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
-			if (e.getCause() != null) {
-				final Throwable primaryCause = e.getCause();
-				if (primaryCause.getCause() != null
-						&& primaryCause.getCause() instanceof TransientPropertyValueException) {
-					final TransientPropertyValueException propertyException = (TransientPropertyValueException) primaryCause
-							.getCause();
-					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
-						throw new UnsupportedOperationException(
-								"You must save the named properties *before* you use them in a submission.", e);
-					}
-				}
-			}
+		return super.create(analysisSubmission);
 
-			throw e;
-		}
 	}
 
 	/**
@@ -458,7 +452,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (referenceFileId != null && description.requiresReference()) {
 			// Note: This cannot be empty if through the UI if the
 			// pipeline required a reference file.
-			referenceFile = referenceFileRepository.findOne(referenceFileId);
+			referenceFile = referenceFileRepository.findById(referenceFileId).orElse(null);
 		}
 
 		AnalysisSubmissionTemplate template = null;
@@ -551,7 +545,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				if (ref != null && description.requiresReference()) {
 					// Note: This cannot be empty if through the UI if the
 					// pipeline required a reference file.
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -591,7 +585,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.emailPipelineResult(emailPipelineResult);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -642,7 +636,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Add reference file
 		if (ref != null && description.requiresReference()) {
-			ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+			ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 			builder.referenceFile(referenceFile);
 		}
 

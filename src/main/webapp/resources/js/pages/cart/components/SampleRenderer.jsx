@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, Dropdown, Icon, Menu } from "antd";
-import { getI18N } from "../../../utilities/i18n-utilties";
+import { getI18N } from "../../../utilities/i18n-utilities";
 import { grey1, grey4, grey5 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 
@@ -29,7 +29,10 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
 
 const IconText = ({ type, text }) => (
   <span>
-    <Icon type={type} style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }} />
+    <Icon
+      type={type}
+      style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }}
+    />
     {text}
   </span>
 );

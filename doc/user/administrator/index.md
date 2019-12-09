@@ -105,6 +105,9 @@ You should choose the password grant type for applications that **are not** web-
 
 You should choose the authorization code grant type for applications that **are** web-based applications. In the authorization code grant type the user's web browser is redirected to IRIDA to allow the user to authorize the client's interaction with IRIDA. In the authorization code grant type, the user's username and password are *never* provided to the client.
 
+If you choose a authorization code grant, you must register a redirect URI for the service you expect to use this client.  This is the location which the token should be sent in the web application's API to set up an OAuth2 connection.  In the case of IRIDA, this is generally the IRIDA installation's base URL + `/api/oauth/authorization/token` (ex: `https://irida.ca/irida/api/oauth/authorization/token`).  In the case of the [IRIDA Galaxy Importer](https://github.com/phac-nml/irida-galaxy-importer), this will be your local server's base URL + `/galaxy/auth_code`.  Ex: `http://irida.ca/irida/galaxy/auth_code`.
+
+
 ### Refresh Tokens
 {:.no_toc}
 Refresh tokens allow client applications to generate a new authorization token without input from the user.  Because refresh tokens are valid for much longer than authorization tokens, refresh tokens can be used to ensure a connection can be made to an IRIDA API for longer running jobs.  Refresh tokens should be used for instances that a client application will require a long term connection to the IRIDA API where users may not be able to validate their connection.
@@ -133,9 +136,7 @@ From the client details page you can modify the client ID, the length of time th
 
 ![Edit client details panel.](images/edit-client-details.png)
 
-After you have made the modifications that you want to the existing client, click on the "Update Client" button:
-
-![Edit client details update button.](images/edit-client-details-update-button.png)
+After you have made the modifications that you want to the existing client, click on the "Update Client" button.
 
 ### Generating a New Client Secret
 
@@ -180,6 +181,7 @@ A Remote Connection is granted with the same process as remote clients.  To allo
 
 * Token Validity: 12 hours recommended.  A short token validity will require users to reauthorize the API more often.
 * Grant Type: `authorization_code`
+* Remote URI: The URI of the OAuth2 token endpoint (typically the server URL + "/api/oauth/authorization/token". Ex: "http://irida.ca/api/oauth/authorization/token") for the IRIDA installation connecting to yours.
 * Scopes: `read`
 
 **Note:** In order for a remote client to communicate with the REST API, the client must be able to access the REST API via HTTP.  This may involve opening access in a firewall or setting up a VPN connection between sites.

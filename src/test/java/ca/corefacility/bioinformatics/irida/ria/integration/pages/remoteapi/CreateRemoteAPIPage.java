@@ -1,12 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class CreateRemoteAPIPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(CreateRemoteAPIPage.class);
@@ -16,6 +15,10 @@ public class CreateRemoteAPIPage extends AbstractPage {
 
 	public CreateRemoteAPIPage(WebDriver driver) {
 		super(driver);
+		get(driver, CREATE_PAGE);
+	}
+
+	public void goTo() {
 		get(driver, CREATE_PAGE);
 	}
 

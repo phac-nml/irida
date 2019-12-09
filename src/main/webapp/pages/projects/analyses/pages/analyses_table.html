@@ -1,15 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/analyses/_base}">
-
-<body>
-
-<th:block layout:fragment="analyses-content">
-    <th:block th:replace="analyses/analyses-table :: table"/>
-</th:block>
-<th:block layout:fragment="scripts">
-    <th:block th:replace="analyses/analyses-table :: scripts"/>
-</th:block>
-</body>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/analyses/_base}"
+>
+  <head>
+    <link rel="stylesheet" th:href="@{/dist/css/project-analyses.bundle.css}" />
+    <script th:inline="javascript">
+      window.PAGE = {
+        canManage: /*[[${isAdmin or isOwner}]]*/ true,
+        url: /*[[@{/ajax/analyses/list?projectId={id}(id=${project.getId()})}]]*/ "",
+        i18n: {
+          "analyses.header": /*[[#{analyses.header}]]*/ "_ANALYSES_",
+          "analyses.id": /*[[#{analyses.id}]]*/ "_ID_",
+          "analyses.state": /*[[#{analyses.state}]]*/ "_STATE_",
+          "analyses.analysis-name": /*[[#{analyses.analysis-name}]]*/ "_NAME_",
+          "analyses.type": /*[[#{analyses.type}]]*/ "_TYPE_",
+          "analyses.submitter": /*[[#{analyses.submitter}]]*/ "_SUBMITTER_",
+          "analysis.date-created": /*[[#{analysis.date-created}]]*/ "_CREATED_",
+          "analysis.duration": /*[[#{analysis.duration}]]*/ "_DURATION_",
+          "analyses.delete": /*[[#{analyses.delete}]]*/ "_DELETE_",
+          "analyses.delete-confirm": /*[[#{analyses.delete-confirm}]]*/ "_DELETE_"
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <th:block layout:fragment="analyses-content">
+      <div id="root"></div>
+    </th:block>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/project-analyses.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

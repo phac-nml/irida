@@ -61,6 +61,14 @@
                                 <div class="sidebar__value" id="client-grants" th:text="${grants}">_Grants_</div>
                             </div>
 
+                            <div class="sidebar__item" th:if="${client.getAuthorizedGrantTypes().contains('authorization_code')}">
+                                <div class="sidebar__icon">
+                                    <i class="fa fa-globe" aria-hidden="true"></i>
+                                </div>
+                                <div th:text="#{client.registeredRedirectUri}">_Redirect_</div>
+                                <div class="sidebar__value" id="client-grants" th:text="${client.getRedirectUri()}">_Redirect_</div>
+                            </div>
+
                             <div class="sidebar__item">
                                 <div class="sidebar__icon">
                                     <i class="fas fa-pencil-alt"></i>

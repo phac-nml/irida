@@ -46,7 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Audited
 public class NcbiExportSubmission implements MutableIridaThing {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
@@ -63,7 +63,8 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	private String ncbiNamespace;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "ncbi_export_submission_biosample")
+	@JoinTable(name = "ncbi_export_submission_biosample",
+			joinColumns = @JoinColumn(name= "ncbi_export_submission_id"))
 	@Size(min = 1)
 	private List<NcbiBioSampleFiles> bioSampleFiles;
 

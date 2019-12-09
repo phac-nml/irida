@@ -11,12 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -25,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 
 /**
  *
@@ -57,10 +62,21 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	}
 
 	/**
-	 * Create a MiSeq run
+	 * Exception Handler for {InvalidDefinitionException} this basically
+	 * prevents create endpoint for SequencingRun from existing. Since
+	 * SequencingRun is an Abstract class it does not have a valid deserializer
+	 * so jackson throws a InvalidDefinitionException. We handle that exception
+	 * and return a status code of 405 (Method not allowed).
+	 */
+	@ExceptionHandler(InvalidDefinitionException.class)
+	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+	public void handleInvalidDefinitionException() { }
+
+	/**
+	 * create a miseq run
 	 *
 	 * @param representation the run info to create
-	 * @param response       HTTP response to add info to
+	 * @param response       http response to add info to
 	 * @return the created run
 	 */
 	@RequestMapping(value = "/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,

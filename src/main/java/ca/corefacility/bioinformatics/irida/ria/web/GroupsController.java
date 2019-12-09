@@ -145,7 +145,7 @@ public class GroupsController {
 	public DataTablesResponse getGroups(final @DataTablesRequest DataTablesParams params, final Principal principal) {
 		Page<UserGroup> groups = userGroupService.search(
 				UserGroupSpecification.searchUserGroup(params.getSearchValue()),
-				new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+				PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
 		User currentUser = userService.getUserByUsername(principal.getName());
 		List<DataTablesResponseModel> groupsWithOwnership = groups.getContent()
 				.stream()

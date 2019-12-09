@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { FONT_SIZE_DEFAULT, FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_SM } from "../../styles/spacing";
 import { BREAK_MD_MAX, BREAK_XL_MAX } from "../../styles/break-points";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 
 const PipelineCard = styled(Card)`
   .ant-card-body {
@@ -63,11 +63,9 @@ export default class Pipeline extends React.Component {
   }
 
   render() {
-    var pipelineUrl = this.url;
+    let pipelineUrl = this.url;
     if (this.props.automatedProject !== null) {
-      pipelineUrl = `${pipelineUrl}?automatedProject=${
-        this.props.automatedProject
-      }`;
+      pipelineUrl = `${pipelineUrl}?automatedProject=${this.props.automatedProject}`;
     }
     return (
       <PipelineCard
@@ -81,8 +79,11 @@ export default class Pipeline extends React.Component {
           this.props.displaySelect
             ? [
                 <Button
-                  size="small"
-                  className={`t-${this.props.name.replace(/\s/g, "_")}_btn t-select-pipeline`}
+                  type="link"
+                  className={`t-${this.props.name.replace(
+                    /\s/g,
+                    "_"
+                  )}_btn t-select-pipeline`}
                   href={pipelineUrl}
                 >
                   {getI18N("pipelines.cart.select")}

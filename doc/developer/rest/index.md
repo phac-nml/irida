@@ -199,6 +199,7 @@ The root endpoint has links to the top-level resource collections in IRIDA.
 | `users`      | the collection of user resources  |
 | `sequencingRuns` | the collection of sequencing runs (only administrative users can access this collection) |
 | `analysisSubmissions` | the collection of analysis submissions created by the current user account |
+| `version` | the builds IRIDA version string |
 
 Resources
 =========

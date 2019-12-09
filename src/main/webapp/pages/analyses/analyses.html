@@ -1,18 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
-<head>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/analyses-table.bundle.css}">
-</head>
-<body>
-<div class="col-md-12" layout:fragment="page">
-    <h1 th:text="#{${userList} ? 'analyses.user.page-title' : 'analyses.admin.page-title'}">_Analyses_</h1>
-    <th:block th:replace="analyses/analyses-table :: table"/>
-</div>
-<th:block layout:fragment="scripts">
-    <th:block th:replace="analyses/analyses-table :: scripts"/>
-</th:block>
-</body>
+    <link rel="stylesheet" th:href="@{/dist/css/analyses.bundle.css}" />
+    <script th:inline="javascript">
+      window.PAGE = {
+        canManage: /*[[${isAdmin}]]*/ true,
+        url: /*[[@{/ajax/analyses/list?admin={isAdmin}(isAdmin=${all})}]]*/ "",
+        i18n: {
+          "analyses.header": /*[[#{analyses.header}]]*/ "_ANALYSES_",
+          "analyses.id": /*[[#{analyses.id}]]*/ "_ID_",
+          "analyses.state": /*[[#{analyses.state}]]*/ "_STATE_",
+          "analyses.analysis-name": /*[[#{analyses.analysis-name}]]*/ "_NAME_",
+          "analyses.type": /*[[#{analyses.type}]]*/ "_TYPE_",
+          "analyses.submitter": /*[[#{analyses.submitter}]]*/ "_SUBMITTER_",
+          "analysis.date-created": /*[[#{analysis.date-created}]]*/ "_CREATED_",
+          "analysis.duration": /*[[#{analysis.duration}]]*/ "_DURATION_",
+          "analyses.delete": /*[[#{analyses.delete}]]*/ "_DELETE_",
+          "analyses.delete-confirm": /*[[#{analyses.delete-confirm}]]*/ "_DELETE_"
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div
+            id="root"
+            style="height: 100%; min-height: 100%"
+            layout:fragment="page"
+    ></div>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/analyses.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

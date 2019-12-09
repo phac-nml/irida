@@ -192,11 +192,11 @@ public class ProjectExportController {
 		List<NcbiBioSampleFiles> bioSampleFiles = new ArrayList<>();
 
 		for (BioSampleBody sample : submission.getSamples()) {
-			List<SingleEndSequenceFile> singleFiles = new ArrayList<>();
+			Set<SingleEndSequenceFile> singleFiles = new HashSet<>();
 			sequencingObjectService.readMultiple(sample.getSingle()).forEach(
 					f -> singleFiles.add((SingleEndSequenceFile) f));
 
-			List<SequenceFilePair> paired = new ArrayList<>();
+			HashSet<SequenceFilePair> paired = new HashSet<>();
 			sequencingObjectService.readMultiple(sample.getPaired()).forEach(f -> paired.add((SequenceFilePair) f));
 
 			Builder sampleBuilder = new NcbiBioSampleFiles.Builder();

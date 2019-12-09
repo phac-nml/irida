@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,29 +114,29 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithGlobalSearch() {
-		final Page<Project> projects = projectService.findAllProjects("proj", 0, 10, new Sort(Direction.ASC, "id"));
+		final Page<Project> projects = projectService.findAllProjects("proj", 0, 10, Sort.by(Direction.ASC, "id"));
 		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
 
 		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", 0, 10,
-				new Sort(Direction.ASC, "id"));
+				Sort.by(Direction.ASC, "id"));
 		assertEquals("Admin should have 9 projects for filter.", 9, listeriaProjects.getNumberOfElements());
 	}
 
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUserWithGlobalSearch() {
-		final Page<Project> projects = projectService.findProjectsForUser("proj", 0, 10, new Sort(Direction.ASC, "id"));
+		final Page<Project> projects = projectService.findProjectsForUser("proj", 0, 10, Sort.by(Direction.ASC, "id"));
 		assertEquals("User should have 3 projects for filter", 3, projects.getNumberOfElements());
 
 		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister", 0, 10,
-				new Sort(Direction.ASC, "id"));
+				Sort.by(Direction.ASC, "id"));
 		assertEquals("User should have 3 projects for filter.", 3, listeriaProjects.getNumberOfElements());
 	}
 
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUser() {
-		final Page<Project> projects = projectService.findProjectsForUser("", 0, 10, new Sort(Direction.ASC, "id"));
+		final Page<Project> projects = projectService.findProjectsForUser("", 0, 10, Sort.by(Direction.ASC, "id"));
 
 		assertEquals("User should have 4 projects, two user two group.", 4, projects.getNumberOfElements());
 	}
@@ -419,18 +420,18 @@ public class ProjectServiceImplIT {
 	public void testSearchProjectsForUser() {
 		// test searches
 		Page<Project> searchPagedProjectsForUser = projectService.findProjectsForUser("2", 0, 10,
-				new Sort(Direction.ASC, "name"));
+				Sort.by(Direction.ASC, "name"));
 		assertEquals(1, searchPagedProjectsForUser.getTotalElements());
 
 		searchPagedProjectsForUser = projectService.findProjectsForUser("project", 0, 10,
-				new Sort(Direction.ASC, "name"));
+				Sort.by(Direction.ASC, "name"));
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		// test sorting
 		searchPagedProjectsForUser = projectService.findProjectsForUser("project", 0, 10,
-				new Sort(Direction.ASC, "name"));
+				Sort.by(Direction.ASC, "name"));
 		final Page<Project> searchDesc = projectService.findProjectsForUser("project", 0, 10,
-				new Sort(Direction.DESC, "name"));
+				Sort.by(Direction.DESC, "name"));
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
@@ -449,13 +450,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
 	public void testSearchProjects() {
 		// search for a number
-		final Page<Project> searchFor2 = projectService.findAllProjects("2", 0, 10, new Sort(Direction.ASC, "name"));
+		final Page<Project> searchFor2 = projectService.findAllProjects("2", 0, 10, Sort.by(Direction.ASC, "name"));
 		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
 		// search descending
-		final Page<Project> searchDesc = projectService.findAllProjects("2", 0, 10, new Sort(Direction.DESC, "name"));
+		final Page<Project> searchDesc = projectService.findAllProjects("2", 0, 10, Sort.by(Direction.DESC, "name"));
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
 		assertEquals(reversed.size(), forward.size());
@@ -646,7 +647,7 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 
 		// reverse the order so that the latest revision is first in the list.
-		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, new PageRequest(1, 1));
+		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, PageRequest.of(1, 1));
 		assertEquals("Should have 2 revisions.", 1, revisions.getContent().size());
 
 		final Revision<Integer, Project> mostRecent = revisions.iterator().next();
@@ -656,7 +657,7 @@ public class ProjectServiceImplIT {
 				mostRecent.getEntity().getName());
 	}
 
-	@Test(expected = EntityRevisionDeletedException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetDeletedProjectRevisions() {
 		Project p = projectService.read(1L);
@@ -664,10 +665,14 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 		projectService.delete(1L);
 
-		projectService.findRevisions(1L);
+		Revisions<Integer, Project> revisions = projectService.findRevisions(1L);
+
+		assertEquals("Deleted entity should match original", revisions.getLatestRevision()
+				.getEntity()
+				.getName(), p.getName());
 	}
 
-	@Test(expected = EntityRevisionDeletedException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedDeletedProjectRevisions() {
 		Project p = projectService.read(1L);
@@ -675,7 +680,9 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 		projectService.delete(1L);
 
-		projectService.findRevisions(1L, new PageRequest(1, 1));
+		Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, PageRequest.of(1, 1));
+
+		assertTrue("There should be at least 1 revision", revisions.getTotalElements() > 0);
 	}
 
 	@Test

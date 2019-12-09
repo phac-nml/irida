@@ -5,7 +5,7 @@ import { Drawer, Form } from "antd";
 import styled from "styled-components";
 import { sampleDetailsActions } from "./reducer";
 import { formatDate } from "../../utilities/date-utilities";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 import {
   FONT_COLOR_PRIMARY,
   FONT_SIZE_DEFAULT,

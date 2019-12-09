@@ -1,16 +1,12 @@
 import React from "react";
 import { useStateValue } from "./GalaxyState";
 import { Checkbox, Form, Input } from "antd";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { getI18N } from "../../utilities/i18n-utilities";
 import { actions } from "./reducer";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 
 /**
  * Component to display a form containing all required and user modifiable fields.
- * @param {string} email - email for galaxy
- * @param  {boolean} makepairedcollection - whether to organize data into a library
- * @param {function} updateEmail - handles updates to the email address
- * @param {function} updateMakePairedCollection - handles update to makepairedcollection
  * @returns {*}
  */
 export function GalaxyDetailsForm() {
@@ -22,7 +18,7 @@ export function GalaxyDetailsForm() {
   const emailModified = e => dispatch(actions.setEmail(e.target.value));
 
   const makePairedCollectionModified = e =>
-    updateMakePairedCollection(e.target.checked);
+    dispatch(actions.setMakePairedCollection(e.target.checked));
 
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)

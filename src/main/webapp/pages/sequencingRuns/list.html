@@ -1,40 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{sequencingRuns/_base}">
-<head>
-<title th:text="#{sequencingruns.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/sequencing-runs.bundle.css}">
-	<script th:inline="javascript">
-    var PAGE = {
-      urls: {
-        link: /*[[@{/sequencingRuns/}]]*/ "/sequencingRuns/",
-        users: /*[[@{/users/}]]*/ "/users/"
-      }
-    };
-	</script>
-</head>
-<body>
-    <main layout:fragment="main">
-        <div class="col-md-12">
-            <h1 th:text="#{sequencingruns.title}">_Sequencing runs_</h1>
-            
-            <table id="sequencingRuns" data:url="@{/sequencingRuns/ajax/list}" class="table table-striped"
-                   cellspacing="0" width="100%">
-                <thead>
-                <tr>
-                    <th data-data="id" th:text="#{iridaThing.id}"></th>
-                    <th data-data="sequencerType" data-orderable="false" th:text="#{sequencingruns.type}"></th>
-                    <th data-data="uploadStatus" th:text="#{sequencingruns.uploadStatus}"></th>
-                    <th data-data="user" th:text="#{sequencingruns.details.uploader}"></th>
-                    <th class="dt-date" data-data="createdDate" th:text="#{iridaThing.timestamp}"></th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </main>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{sequencingruns.title}">_Clients_</title>
+    <link rel="stylesheet" th:href="@{/dist/css/sequencing-runs.bundle.css}" />
+    <script th:inline="javascript">
+      window.PAGE = {
+        i18n: {
+          "sequencingruns.title": /*[[#{sequencingruns.title}]]*/ "sequencingruns.title",
+          "sequencingruns.id": /*[[#{sequencingruns.id}]]*/ "sequencingruns.id",
+          "sequencingruns.type": /*[[#{sequencingruns.type}]]*/ "sequencingruns.type",
+          "sequencingruns.uploadStatus": /*[[#{sequencingruns.uploadStatus}]]*/ "sequencingruns.uploadStatus",
+          "sequencingruns.uploadUser": /*[[#{sequencingruns.uploadUser}]]*/ "sequencingruns.uploadUser",
+          "sequencingruns.createdDate": /*[[#{sequencingruns.createdDate}]]*/ "sequencingruns.createdDate"
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div
+      id="root"
+      style="height: 100%; min-height: 100%"
+      layout:fragment="page"
+    >
+        <!-- Sequencing runs should be displayed here.  Root JS file: SequenceRunsPage.jsx -->
+    </div>
 
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/sequencing-runs.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/sequencing-runs.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>
