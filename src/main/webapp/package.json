@@ -57,6 +57,7 @@
     "marked": "^0.7.0",
     "moment": "^2.24.0",
     "ng-file-upload": "^12.2.12",
+    "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
     "phylocanvas-plugin-metadata": "^2.2.0",
     "prop-types": "^15.7.2",
