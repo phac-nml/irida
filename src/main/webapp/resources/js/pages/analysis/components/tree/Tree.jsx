@@ -12,7 +12,7 @@ import { getNewickTree } from "../../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import styled from "styled-components";
-import { SPACE_MD } from "../../../../styles/spacing";
+import { SPACE_XS, SPACE_MD } from "../../../../styles/spacing";
 import { BORDER_LIGHT } from "../../../../styles/borders";
 
 const CANVAS_HEIGHT = 600;
@@ -51,7 +51,7 @@ export default function Tree() {
       <Phylocanvas
         data={newickString}
         treeType={currTreeShape}
-        style={{ height: CANVAS_HEIGHT - 5 }}
+        style={{ height: CANVAS_HEIGHT - SPACE_XS }}
       />
     );
   }
