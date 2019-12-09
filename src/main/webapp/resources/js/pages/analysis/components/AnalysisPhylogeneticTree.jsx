@@ -18,7 +18,7 @@ const OutputFilePreview = React.lazy(() =>
 
 const { Content, Sider } = Layout;
 
-export default function AnalysisPhylogeneticTree(props) {
+export default function AnalysisPhylogeneticTree() {
   const BASE_URL = `${window.PAGE.base}/tree`;
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 

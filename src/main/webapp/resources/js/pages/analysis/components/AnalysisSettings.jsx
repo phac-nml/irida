@@ -27,7 +27,7 @@ const AnalysisDelete = React.lazy(() => import("./settings/AnalysisDelete"));
 
 const { Content, Sider } = Layout;
 
-export default function AnalysisSettings(props) {
+export default function AnalysisSettings() {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 

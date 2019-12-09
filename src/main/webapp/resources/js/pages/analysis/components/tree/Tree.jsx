@@ -12,7 +12,7 @@ import { getNewickTree } from "../../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import styled from "styled-components";
-import { SPACE_MD } from "../../../../styles/spacing";
+import { SPACE_MD, SPACE_XS } from "../../../../styles/spacing";
 import { BORDER_LIGHT } from "../../../../styles/borders";
 
 const CANVAS_HEIGHT = 600;
@@ -31,17 +31,22 @@ const ButtonGroupWrapper = styled.div`
 
 export default function Tree() {
   const [newickString, setNewickString] = useState(null);
+  const [serverMsg, setserverMsg] = useState(null);
   const [currTreeShape, setCurrTreeShape] = useState("circular");
   const { analysisContext } = useContext(AnalysisContext);
 
   // On load gets the newick string for the analysis
   useEffect(() => {
     getNewickTree(analysisContext.analysis.identifier).then(data => {
-      if (data === "") {
+      if (data.newick === null) {
         //Empty tree
         setNewickString("");
       } else {
-        setNewickString(data);
+        setNewickString(data.newick);
+      }
+
+      if (data.message !== null) {
+        setserverMsg(data.message);
       }
     });
   }, []);
@@ -66,6 +71,9 @@ export default function Tree() {
    */
   return (
     <TabPaneContent title={getI18N("AnalysisPhylogeneticTree.tree")}>
+      {serverMsg !== null ? (
+        <WarningAlert message={serverMsg} style={{ marginBottom: SPACE_XS }} />
+      ) : null}
       {newickString !== null ? (
         newickString === "" ? (
           <WarningAlert

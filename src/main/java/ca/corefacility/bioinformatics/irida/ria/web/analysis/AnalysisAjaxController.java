@@ -984,19 +984,21 @@ public class AnalysisAjaxController {
 	 * {@link Analysis}
 	 *
 	 * @param submissionId The analysis submission id
-	 * @return newick string
+	 * @return dto which contains the newick string and an optional message
 	 * @throws IOException If the tree file couldn't be read
 	 */
 	@RequestMapping("/{submissionId}/tree")
-	private String getNewickTree(@PathVariable Long submissionId) throws IOException {
+	private AnalysisTree getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
 		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
+
 		if (file == null) {
 			throw new IOException("No tree file for analysis: " + submission);
 		}
 		List<String> lines = Files.readAllLines(file.getFile());
 		String tree = null;
+		String message = null;
 
 		if(lines.size() > 0)
 		{
@@ -1004,14 +1006,18 @@ public class AnalysisAjaxController {
 
 			if (lines.size() > 1) {
 				logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+				message= messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees",
+						new Object[] {}, locale);
 			}
 
 			if (EMPTY_TREE.equals(tree)) {
 				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
 				tree=null;
+				message= messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree",
+						new Object[] {}, locale);
 			}
 		}
-		return tree;
+		return new AnalysisTree(tree, message);
 	}
 
 	/**
