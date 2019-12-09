@@ -44,12 +44,13 @@ public class Sample extends IridaResourceSupport
 		implements MutableIridaThing, IridaSample, Comparable<Sample>, RemoteSynchronizable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
 	private Date createdDate;
 
 	@LastModifiedDate
@@ -127,6 +128,7 @@ public class Sample extends IridaResourceSupport
 	private RemoteStatus remoteStatus;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(joinColumns = @JoinColumn(name = "sample_id"))
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	

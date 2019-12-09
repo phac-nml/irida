@@ -253,7 +253,7 @@ public class SNVPhylAnalysisIT {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
 
-		AnalysisSubmission submission = analysisSubmissionRepository.findOne(submissionId);
+		AnalysisSubmission submission = analysisSubmissionRepository.findById(submissionId).orElse(null);
 
 		databaseSetupGalaxyITService.waitUntilSubmissionComplete(submission);
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
@@ -299,7 +299,7 @@ public class SNVPhylAnalysisIT {
 		
 		completeSubmittedAnalyses(submission.getId());
 
-		submission = analysisSubmissionRepository.findOne(submission.getId());
+		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
@@ -441,7 +441,7 @@ public class SNVPhylAnalysisIT {
 
 		completeSubmittedAnalyses(submission.getId());
 
-		submission = analysisSubmissionRepository.findOne(submission.getId());
+		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
@@ -591,7 +591,7 @@ public class SNVPhylAnalysisIT {
 
 		completeSubmittedAnalyses(submission.getId());
 
-		submission = analysisSubmissionRepository.findOne(submission.getId());
+		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();

@@ -1151,7 +1151,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample, false);
 
-		sampleRepository.delete(1L);
+		sampleRepository.deleteById(1L);
 		assertTrue(!sampleService.exists(1L));
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());

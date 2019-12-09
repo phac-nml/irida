@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class RemoteStatus {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
 	@NotNull

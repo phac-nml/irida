@@ -1,30 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
-import org.hibernate.TransientPropertyValueException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -57,10 +32,30 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -239,7 +234,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException {
+	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) {
 		return super.findRevisions(id);
 	}
 
@@ -248,8 +243,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
-			throws EntityRevisionDeletedException {
+	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable) {
 		return super.findRevisions(id, pageable);
 	}
 
@@ -388,31 +382,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public AnalysisSubmission create(AnalysisSubmission analysisSubmission) throws ConstraintViolationException,
-			EntityExistsException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
+			throws ConstraintViolationException, EntityExistsException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
 
-		try {
-			return super.create(analysisSubmission);
-		} catch (final InvalidDataAccessApiUsageException e) {
-			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
-			if (e.getCause() != null) {
-				final Throwable primaryCause = e.getCause();
-				if (primaryCause.getCause() != null
-						&& primaryCause.getCause() instanceof TransientPropertyValueException) {
-					final TransientPropertyValueException propertyException = (TransientPropertyValueException) primaryCause
-							.getCause();
-					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
-						throw new UnsupportedOperationException(
-								"You must save the named properties *before* you use them in a submission.", e);
-					}
-				}
-			}
+		return super.create(analysisSubmission);
 
-			throw e;
-		}
 	}
 
 	/**
@@ -473,7 +452,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (referenceFileId != null && description.requiresReference()) {
 			// Note: This cannot be empty if through the UI if the
 			// pipeline required a reference file.
-			referenceFile = referenceFileRepository.findOne(referenceFileId);
+			referenceFile = referenceFileRepository.findById(referenceFileId).orElse(null);
 		}
 
 		AnalysisSubmissionTemplate template = null;
@@ -566,7 +545,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				if (ref != null && description.requiresReference()) {
 					// Note: This cannot be empty if through the UI if the
 					// pipeline required a reference file.
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -606,7 +585,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.emailPipelineResult(emailPipelineResult);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -657,7 +636,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Add reference file
 		if (ref != null && description.requiresReference()) {
-			ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+			ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 			builder.referenceFile(referenceFile);
 		}
 

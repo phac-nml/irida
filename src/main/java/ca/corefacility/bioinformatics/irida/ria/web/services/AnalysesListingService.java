@@ -87,7 +87,7 @@ public class AnalysesListingService {
 		}
 
 		Page<AnalysisSubmission> page;
-		PageRequest pageRequest = new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort());
+		PageRequest pageRequest = PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort());
 
 		Set<AnalysisState> states = state == null ? null : ImmutableSet.of(state);
 		if (user != null) {

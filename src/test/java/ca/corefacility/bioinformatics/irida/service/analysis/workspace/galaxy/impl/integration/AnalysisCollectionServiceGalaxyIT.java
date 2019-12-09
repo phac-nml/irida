@@ -204,7 +204,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequencingObject> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
 
-		Sample sample = sampleRepository.findOne(1L);
+		Sample sample = sampleRepository.findById(1L).orElse(null);
 
 		SequencingObject sequenceFile = sequenceFiles.iterator().next();
 
@@ -239,7 +239,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	public void testGetSequenceFilePairSamplesSuccess() throws DuplicateSampleException {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1A, pairSequenceFiles2A));
-		Sample sample = sampleRepository.findOne(1L);
+		Sample sample = sampleRepository.findById(1L).orElse(null);
 		SequenceFilePair sequenceFilePair = sequenceFiles.iterator().next();
 
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequencingObjectService
@@ -290,7 +290,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
-		Sample sample1 = sampleRepository.findOne(1L);
+		Sample sample1 = sampleRepository.findById(1L).orElse(null);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
 				.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory, createdLibrary);
@@ -402,7 +402,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
-		Sample sample1 = sampleRepository.findOne(1L);
+		Sample sample1 = sampleRepository.findById(1L).orElse(null);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
 				.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory, createdLibrary);

@@ -4,14 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -29,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 public class OverrepresentedSequence implements IridaThing, Comparable<OverrepresentedSequence> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@NotNull(message = "{overrepresented.sequence.sequence.notnull}")
@@ -47,7 +40,8 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	/**
 	 * for hibernate

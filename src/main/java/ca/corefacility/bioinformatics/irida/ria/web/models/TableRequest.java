@@ -54,6 +54,6 @@ public class TableRequest {
 	 */
 	public Sort getSort() {
 		Sort.Direction direction = this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		return new Sort(new Sort.Order(direction, this.sortColumn));
+		return Sort.by(new Sort.Order(direction, this.sortColumn));
 	}
 }

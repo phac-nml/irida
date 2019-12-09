@@ -52,7 +52,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateSamplesSuccess() throws PostProcessingException {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(1L).orElse(null);
 		assertEquals("Should be no join between sample and assembly", 0, sampleGenomeAssemblyJoinRepository.count());
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
@@ -63,7 +63,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateFailPermissionNonSampleOwner() throws PostProcessingException {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(2L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(2L).orElse(null);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}
@@ -71,7 +71,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testUpdateFailPermissionNonProjectOwner() throws PostProcessingException {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(2L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(2L).orElse(null);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}
@@ -86,7 +86,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateSamplesFailAnalysisSubmittedNonProjectOwner() throws PostProcessingException {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(3L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(3L).orElse(null);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}

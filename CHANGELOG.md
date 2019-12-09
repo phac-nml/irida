@@ -23,6 +23,14 @@ Changes
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 * [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
 * [UI]: Updated and simplified associated project page.
+* [UI/Developer]: Removed old bootstrap customization files that are not used.
+* [Developer]: Upgraded Spring to 5.2.2.RELEASE, Spring Security to 5.2.1.RELEASE, Spring Security Oauth2 to 2.3.6.RELEASE, Hibernate to 5.4.7.Final, and Spring Data JPA to 2.2.0.RELEASE.
+* [UI/REST]: Removed API login controller, instead web login controller is used.
+* [UI/REST]: Added configurable redirect location to client details.  This must be added to all `authorization_code` clients.  This includes clients set up for synchronizing IRIDA data and Galaxy importer clients.  See upgrade instructions at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
+* [Developer]: Added back minification config to production webpack config.
+* [UI/Developer]: Updated to latest (3.26.0) release of `ant.design`.
+* [Developer]: Fixed url for downloading multiple analysis outputs as well as for viewing the user analysis outputs page.
+* [UI/Developer]: Lazy load line list export utilities.
 
 19.05 to 19.09
 ---------------

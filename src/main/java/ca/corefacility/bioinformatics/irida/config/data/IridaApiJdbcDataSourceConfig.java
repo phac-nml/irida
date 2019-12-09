@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config.data;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.hibernate.cfg.AvailableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiJdbcDataSourceConfig.class);
 
-	private static final String HIBERNATE_IMPORT_FILES = "hibernate.hbm2ddl.import_files";
-	private static final String HIBERNATE_HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
-	
 	/**
 	 * Custom implementation of the SpringLiquibase bean (for doing liquibase on spring startup) that
 	 * exposes the application context so that we can have access to the application context in custom
@@ -83,8 +81,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
 
-		final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
-		final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
+		final String importFiles = environment.getProperty(AvailableSettings.HBM2DDL_IMPORT_FILES);
+		final String hbm2ddlAuto = environment.getProperty(AvailableSettings.HBM2DDL_AUTO);
 		Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
 
 		if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
@@ -93,10 +91,10 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				// log that we're disabling liquibase regardless of what was
 				// requested in irida.conf
 				logger.warn("**** DISABLING LIQUIBASE ****: You have configured liquibase to execute a schema update, but Hibernate is also configured to create the schema.");
-				logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_HBM2DDL_AUTO
+				logger.warn("**** DISABLING LIQUIBASE ****: " + AvailableSettings.HBM2DDL_AUTO
 						+ "should be set to an empty string (or not set), but is currently set to: [" + hbm2ddlAuto
 						+ "]");
-				logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_IMPORT_FILES
+				logger.warn("**** DISABLING LIQUIBASE ****: " + AvailableSettings.HBM2DDL_IMPORT_FILES
 						+ " should be set to an empty string (or not set), but is currently set to: [" + importFiles
 						+ "]");
 			}
@@ -124,7 +122,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
 		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
 		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
-		
+
 		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
 
 		return basicDataSource;
@@ -142,15 +140,15 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	@Bean
 	public Properties getJpaProperties() {
 		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
-		properties.setProperty(HIBERNATE_HBM2DDL_AUTO, environment.getProperty(HIBERNATE_HBM2DDL_AUTO));
+		properties.setProperty(AvailableSettings.DIALECT, environment.getProperty(AvailableSettings.DIALECT));
+		properties.setProperty(AvailableSettings.HBM2DDL_AUTO, environment.getProperty(AvailableSettings.HBM2DDL_AUTO));
 
 		// if import_files is empty it tries to load any properties file it can
 		// find. Stopping this here.
-		String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
+		String importFiles = environment.getProperty(AvailableSettings.HBM2DDL_IMPORT_FILES);
 
 		if (!StringUtils.isEmpty(importFiles)) {
-			properties.setProperty(HIBERNATE_IMPORT_FILES, importFiles);
+			properties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, importFiles);
 		}
 
 		properties.setProperty("org.hibernate.envers.store_data_at_delete",

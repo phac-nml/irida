@@ -57,8 +57,8 @@ public class AssemblySampleUpdaterIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateSuccess() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
-		Sample s = sampleRepository.findOne(2L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(1L).orElse(null);
+		Sample s = sampleRepository.findById(2L).orElse(null);
 		assertEquals("Should be no join between sample and assembly", 0, sampleGenomeAssemblyJoinRepository.count());
 
 		assemblySampleUpdater.update(Sets.newHashSet(s), a);
@@ -73,9 +73,9 @@ public class AssemblySampleUpdaterIT {
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateFailMultipleSamples() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
-		Sample s1 = sampleRepository.findOne(1L);
-		Sample s2 = sampleRepository.findOne(2L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(1L).orElse(null);
+		Sample s1 = sampleRepository.findById(1L).orElse(null);
+		Sample s2 = sampleRepository.findById(2L).orElse(null);
 
 		assemblySampleUpdater.update(Sets.newHashSet(s1, s2), a);
 	}

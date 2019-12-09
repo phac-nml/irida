@@ -34,13 +34,13 @@ import java.util.Set;
 public abstract class SequencingObject extends IridaResourceSupport implements MutableIridaThing, RemoteSynchronizable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
