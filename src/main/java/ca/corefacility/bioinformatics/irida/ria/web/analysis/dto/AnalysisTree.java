@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
+/**
+ * Used as a response for encapsulating a newick string
+ * and an optional server message.
+ */
+
 public class AnalysisTree {
 	private String newick;
 	private String message;
