@@ -89,7 +89,7 @@ public class SequencingRunIT {
 	@Test
 	public void testPostSequencingRunFail() {
 		Map<String, String> run = createRun();
-		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_BAD_REQUEST).when()
+		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED).when()
 				.post("/api/sequencingrun");
 	}
 

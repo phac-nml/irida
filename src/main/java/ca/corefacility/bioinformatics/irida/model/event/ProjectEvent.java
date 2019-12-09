@@ -32,13 +32,13 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class ProjectEvent implements IridaThing {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_date")
+	@Column(name="created_date", updatable = false)
 	private Date createdDate;
 
 	@NotNull

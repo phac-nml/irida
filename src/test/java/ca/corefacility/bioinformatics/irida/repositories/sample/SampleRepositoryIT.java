@@ -47,7 +47,7 @@ public class SampleRepositoryIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindSamplesForAnalysisSubmissionSingleSample() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(10L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(10L).orElse(null);
 		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
 		assertEquals("Sample ids are equal", Sets.newHashSet(11L),
@@ -57,7 +57,7 @@ public class SampleRepositoryIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindSamplesForAnalysisSubmissionMultipleSample() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(21L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(21L).orElse(null);
 		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
 		assertEquals("Sample ids are equal", Sets.newHashSet(22L, 33L),

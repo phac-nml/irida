@@ -1,10 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +61,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// initially saved to the database, but not necessarily before the
 		// transaction has completed and closed, so we need to block until the
 		// file has been persisted in the database.
-		while (!sequencingObjectRepository.exists(sequencingObjectId)) {
+		while (!sequencingObjectRepository.existsById(sequencingObjectId)) {
 			if (waiting > timeout) {
 				throw new FileProcessorTimeoutException(
 						"Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
@@ -86,7 +83,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					fileProcessor.process(settledSequencingObject);
 				}
 			} catch (FileProcessorException e) {
-				SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+				SequencingObject sequencingObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
 
 				qcRepository.save(new FileProcessorErrorQCEntry(sequencingObject));
 
@@ -108,7 +105,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			}
 		}
 
-		SequencingObject statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
+		SequencingObject statusObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
 
 		statusObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
 		sequencingObjectRepository.save(statusObject);
@@ -159,7 +156,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 		Integer waiting = 0;
 
-		SequencingObject sequencingObject;
+		Optional<SequencingObject> sequencingObject;
 
 		do {
 			if (waiting > timeout) {
@@ -174,16 +171,16 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			} catch (InterruptedException e) {
 			}
 
-			sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+			sequencingObject = sequencingObjectRepository.findById(sequencingObjectId);
 
-			if(sequencingObject != null) {
-				Set<SequenceFile> files = sequencingObject.getFiles();
+			if(sequencingObject.isPresent()) {
+				Set<SequenceFile> files = sequencingObject.get().getFiles();
 				filesNotSettled = files.stream().anyMatch(f -> {
 					return !Files.exists(f.getFile());
 				});
 			}
 		} while (filesNotSettled);
 
-		return sequencingObject;
+		return sequencingObject.get();
 	}
 }

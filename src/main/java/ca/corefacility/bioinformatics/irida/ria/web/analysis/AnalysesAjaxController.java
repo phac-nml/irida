@@ -144,7 +144,7 @@ public class AnalysesAjaxController {
 		}
 
 		Page<AnalysisSubmission> page;
-		PageRequest pageRequest = new PageRequest(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
+		PageRequest pageRequest = PageRequest.of(analysesListRequest.getCurrent(), analysesListRequest.getPageSize(),
 				analysesListRequest.getSort());
 
 		if (projectId != null) {

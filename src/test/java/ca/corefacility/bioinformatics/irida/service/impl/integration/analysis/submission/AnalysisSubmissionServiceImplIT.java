@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -103,19 +104,19 @@ public class AnalysisSubmissionServiceImplIT {
 	public void searchAnalyses() {
 
 		Page<AnalysisSubmission> paged = analysisSubmissionService.listAllSubmissions(null, null, null, null,
-				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdDate")));
 		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
 		paged = analysisSubmissionService.listAllSubmissions(null, name, null, null,
-				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdDate")));
 		assertEquals(10, paged.getContent().size());
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
 		paged = analysisSubmissionService.listAllSubmissions(null, name, ImmutableSet.of(state), null,
-				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdDate")));
 		assertEquals(2, paged.getContent().size());
 	}
 
@@ -244,7 +245,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testFindRevisionsPageRegularUser() {
 		assertNotNull("should return revisions exist",
-				analysisSubmissionService.findRevisions(1L, new PageRequest(1, 1)));
+				analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1)));
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testFindRevisionsPageDeniedUser() {
-		analysisSubmissionService.findRevisions(1L, new PageRequest(1, 1));
+		analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1));
 	}
 
 	/**
@@ -416,7 +417,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(Sets.newHashSet(sequencingObject)).build();
@@ -431,7 +432,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(Sets.newHashSet(sequencingObject)).build();
@@ -446,7 +447,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForUserAsRegularUser() {
-		User user = userRepository.findOne(1L);
+		User user = userRepository.findById(1L).orElse(null);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 9, submissions.size());
@@ -458,7 +459,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForUserAsRegularUserDenied() {
-		User user = userRepository.findOne(1L);
+		User user = userRepository.findById(1L).orElse(null);
 		analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 	}
 
@@ -468,7 +469,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "ADMIN")
 	public void testGetAnalysisSubmissionsForUserAsAdminUser() {
-		User user = userRepository.findOne(1L);
+		User user = userRepository.findById(1L).orElse(null);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 9, submissions.size());
@@ -520,22 +521,26 @@ public class AnalysisSubmissionServiceImplIT {
 		analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expected = InvalidDataAccessApiUsageException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithUnsavedNamedParameters() {
-		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
 		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
+				.inputFiles(Sets.newHashSet(sequencingObject))
+				.withNamedParameters(params)
+				.build();
+
 		analysisSubmissionService.create(submission);
+
 	}
 
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithNamedParameters() {
-		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
-		final IridaWorkflowNamedParameters params = parametersRepository.findOne(1L);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
+		final IridaWorkflowNamedParameters params = parametersRepository.findById(1L).orElse(null);
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
 				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);
