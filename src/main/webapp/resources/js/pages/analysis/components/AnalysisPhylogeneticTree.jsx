@@ -9,6 +9,7 @@ import { Link, Location, Router } from "@reach/router";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { grey1 } from "../../../styles/colors";
 
 const Tree = React.lazy(() => import("./tree/Tree"));
 const OutputFilePreview = React.lazy(() =>
@@ -26,7 +27,7 @@ export default function AnalysisPhylogeneticTree(props) {
    */
   return (
     <Layout>
-      <Sider width={200} style={{ background: "#fff" }}>
+      <Sider width={200} style={{ backgroundColor: grey1 }}>
         <Location>
           {props => {
             const keyname = props.location.pathname.match(pathRegx);
@@ -51,7 +52,7 @@ export default function AnalysisPhylogeneticTree(props) {
         </Location>
       </Sider>
 
-      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Router>
