@@ -15,9 +15,7 @@ After translating the messages file, your language must be enabled in IRIDA's we
 
 ## Within JavaScript External Files
 
- Because we use [Webpack](../webpack) to compile and minify JavaScript assets, Thymeleaf cannot be used to internationalize (or any other templating) since the syntax is not proper JavaScript.
- 
- Instead, we have created a webpack plugin called `i18nThymeleafWebpackPlugin` to handle client side internationalization.  This works by going through all the webpack entries and looking for all function calls to `i18n("term.to.translate")`, the argument to this method is the the string key in the messages file.
+[Webpack](../webpack) is used to compile and minify JavaScript assets.  Webpack's output cannot be parsed by the Thymeleaf JavaScript parser.  To handle internationalized strings within these files, we have created a webpack plugin called `i18nThymeleafWebpackPlugin`.  This works by going through all the webpack entries and looking for all function calls to `i18n("term.to.translate")`, the argument to this method is the the string key in the messages file.
  
  ***NOTE:** Do not import the `i18n` method into the JavaScript file, webpack handles this dynamically*.
  
@@ -32,4 +30,24 @@ feature_name_title=Interesting Modal
  i18n("feature_name_title");
  ```
  
- For each entry, webpack will gather the key from the JavaScript file, along with the translation from the messages file and create a new Thymeleaf file `dist/i18n/[entry_name].html`.  This is dynamically added to the page above the script tag for the corresponding webpack bundle.  This file exposes a JSON object called `translations` to the `window` object which is consumed by the `i18n.js` loaded through the application.
+ For each entry, webpack will gather all the internationalization keys in the related files and create a new html file (`dist/i18n/[entry_name].html`) that contains a Thymeleaf `fragment` which contains a script tag with the strings to be internationalized. 
+ 
+###Example output for the analyses listing page:
+
+ ```html
+<script id="analyses-translations" th:inline="javascript" th:fragment="i18n">
+      window.translations = window.translations || [];
+      window.translations.push({
+        "analyses.analysis-name": /*[[#{analyses.analysis-name}]]*/ "",
+        "analyses.state": /*[[#{analyses.state}]]*/ "",
+        "analyses.type": /*[[#{analyses.type}]]*/ "",
+        "analyses.submitter": /*[[#{analyses.submitter}]]*/ "",
+        "analysis.duration": /*[[#{analysis.duration}]]*/ "",
+        "analyses.delete-confirm": /*[[#{analyses.delete-confirm}]]*/ "",
+        "analyses.delete": /*[[#{analyses.delete}]]*/ "",
+        "analyses.header": /*[[#{analyses.header}]]*/ ""
+      });
+    </script>
+```
+  
+ At runtime, Thymeleaf will processes the html template and look for JavaScript entry points, if one is found that contains an entry, Thymeleaf will look to see if there is a translations file available.  If one is found, Thymeleaf will inject the translations into the page immediately before the entry tag.  This will exposes a JSON object called `translations` to the `window` object which is consumed by the `i18n.js` loaded through the application.
