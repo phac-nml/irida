@@ -16,7 +16,24 @@ import org.thymeleaf.preprocessor.PreProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 
 /**
- * I18nPreProcessorDialect adds in a I18nPreProcessor to dynamically add in translations for JS Bundles
+ * I18nPreProcessorDialect is used to dynamically inject translation scripts generated during the
+ * webpack build process.
+ *
+ * During the build process webpack will, if required, generate an html file with a Thymeleaf fragment containing a
+ * script tag which contains an JavaScript object called `translations` that contain all the strings found within
+ * the entry JavaScript files that need to be translated.  These string are denoted as the
+ * argument to the function call `i18n("term.to.be.translated")`.  Example fragment:
+ *
+ * <pre>
+ *     <script id="analyses-translations" th:inline="javascript" th:fragment="i18n">
+ *        window.translations = window.translations || [];
+ *        window.translations.push({ "term.to.be.translated": #{"term.to.be.translated"} });
+ *		</script>
+ * </pre>
+ *
+ * When Thymeleaf processes the requested template, it looks at the script tags to determine if it is loading
+ * a webpack bundle.  If it is, it will check to see if there is a corresponding translations fragment, then
+ * it will process the fragment, inject it into the template, and process the translations.
  */
 public class I18nPreProcessorDialect implements IPreProcessorDialect {
 	static final int PRECEDENCE = 0;
