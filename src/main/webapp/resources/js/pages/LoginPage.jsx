@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
 import { Alert, Button, Form, Icon, Input } from "antd";
-import { getI18N } from "../utilities/i18n-utilties";
+import { getI18N } from "../utilities/i18n-utilities";
 
 function LoginPage({ form }) {
   const [loading, setLoading] = useState(false);
