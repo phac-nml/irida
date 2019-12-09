@@ -6,20 +6,20 @@ import React, { useContext, useEffect, useState } from "react";
 import { getI18N } from "../../../../utilities/i18n-utilities";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import Phylocanvas from "react-phylocanvas";
-import { Button } from "antd";
+import { Button, Radio } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { getNewickTree } from "../../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import styled from "styled-components";
 import { SPACE_MD } from "../../../../styles/spacing";
+import { BORDER_LIGHT } from "../../../../styles/borders";
 
-const ButtonGroup = Button.Group;
 const CANVAS_HEIGHT = 600;
 
 const VisualizationWrapper = styled.div`
   height: ${CANVAS_HEIGHT}px;
-  border: solid 1px #bdc3c7;
+  border: ${BORDER_LIGHT};
 `;
 
 const ButtonGroupWrapper = styled.div`
@@ -31,7 +31,7 @@ const ButtonGroupWrapper = styled.div`
 
 export default function Tree() {
   const [newickString, setNewickString] = useState(null);
-  const [currTreeShape, setCurrTreeShape] = useState("rectangular");
+  const [currTreeShape, setCurrTreeShape] = useState("circular");
   const { analysisContext } = useContext(AnalysisContext);
 
   // On load gets the newick string for the analysis
@@ -51,7 +51,7 @@ export default function Tree() {
       <Phylocanvas
         data={newickString}
         treeType={currTreeShape}
-        style={{ height: CANVAS_HEIGHT - 5 }}
+        style={{ height: "100%" }}
       />
     );
   }
@@ -74,43 +74,23 @@ export default function Tree() {
         ) : (
           <div>
             <ButtonGroupWrapper>
-              <ButtonGroup>
-                <Button
-                  value="rectangular"
-                  onClick={e => handleClick(e)}
-                  key="rectangular"
-                >
+              <Radio.Group value={currTreeShape} onChange={e => handleClick(e)}>
+                <Radio.Button value="rectangular">
                   {getI18N("AnalysisPhylogeneticTree.rectangular")}
-                </Button>
-                <Button
-                  value="circular"
-                  onClick={e => handleClick(e)}
-                  key="circular"
-                >
+                </Radio.Button>
+                <Radio.Button value="circular">
                   {getI18N("AnalysisPhylogeneticTree.circular")}
-                </Button>
-                <Button
-                  value="radial"
-                  onClick={e => handleClick(e)}
-                  key="radial"
-                >
+                </Radio.Button>
+                <Radio.Button value="radial">
                   {getI18N("AnalysisPhylogeneticTree.radial")}
-                </Button>
-                <Button
-                  value="diagonal"
-                  onClick={e => handleClick(e)}
-                  key="diagonal"
-                >
+                </Radio.Button>
+                <Radio.Button value="diagonal">
                   {getI18N("AnalysisPhylogeneticTree.diagonal")}
-                </Button>
-                <Button
-                  value="hierarchical"
-                  onClick={e => handleClick(e)}
-                  key="hierarchical"
-                >
+                </Radio.Button>
+                <Radio.Button value="hierarchical">
                   {getI18N("AnalysisPhylogeneticTree.hierarchical")}
-                </Button>
-              </ButtonGroup>
+                </Radio.Button>
+              </Radio.Group>
               <Button
                 type="primary"
                 href={`${window.TL.BASE_URL}analysis/${analysisContext.analysis.identifier}/advanced-phylo`}
