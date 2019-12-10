@@ -3,14 +3,11 @@ import { connect } from "react-redux";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
-import { Icon } from "antd";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "@ag-grid-community/react";
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
-// Excel export support
-import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import {
