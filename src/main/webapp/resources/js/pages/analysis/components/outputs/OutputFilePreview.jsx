@@ -3,7 +3,7 @@
  */
 
 import React, { Suspense, useContext, useEffect } from "react";
-import { Button, Icon, Tabs } from "antd";
+import { Button, Tabs } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
 import { getI18N } from "../../../../utilities/i18n-utilities";
@@ -11,6 +11,8 @@ import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
+import { SPACE_XS } from "../../../../styles/spacing";
+import { downloadFilesAsZip } from "../../../../apis/analysis/analysis";
 
 const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
 const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
@@ -85,38 +87,49 @@ export default function OutputFilePreview() {
   return analysisOutputsContext.outputs !== null ? (
     <TabPaneContent title={getI18N("AnalysisOutputs.outputFilePreview")}>
       {analysisOutputsContext.outputs.length > 0 ? (
-        <Tabs defaultActiveKey="1" animated={false}>
-          {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
-            <TabPane
-              tab={getI18N("AnalysisOutputs.tabularOutput")}
-              key="tab-output"
-            >
-              {tabularOutputPreview()}
-            </TabPane>
-          ) : null}
+        <div>
+          <Button
+            style={{ marginBottom: SPACE_XS }}
+            icon="download"
+            onClick={() =>
+              downloadFilesAsZip(analysisContext.analysis.identifier)
+            }
+          >
+            {getI18N("AnalysisOutputs.downloadAllFiles")}
+          </Button>
+          <Tabs defaultActiveKey="1" animated={false}>
+            {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
+              <TabPane
+                tab={getI18N("AnalysisOutputs.tabularOutput")}
+                key="tab-output"
+              >
+                {tabularOutputPreview()}
+              </TabPane>
+            ) : null}
 
-          {analysisOutputsContext.fileTypes[0].hasTextFile ? (
-            <TabPane
-              tab={getI18N("AnalysisOutputs.textOutput")}
-              key="text-output"
-            >
-              <Suspense fallback={<ContentLoading />}>
-                {textOutputPreview()}
-              </Suspense>
-            </TabPane>
-          ) : null}
+            {analysisOutputsContext.fileTypes[0].hasTextFile ? (
+              <TabPane
+                tab={getI18N("AnalysisOutputs.textOutput")}
+                key="text-output"
+              >
+                <Suspense fallback={<ContentLoading />}>
+                  {textOutputPreview()}
+                </Suspense>
+              </TabPane>
+            ) : null}
 
-          {analysisOutputsContext.fileTypes[0].hasJsonFile ? (
-            <TabPane
-              tab={getI18N("AnalysisOutputs.jsonOutput")}
-              key="json-output"
-            >
-              <Suspense fallback={<ContentLoading />}>
-                {jsonOutputPreview()}
-              </Suspense>
-            </TabPane>
-          ) : null}
-        </Tabs>
+            {analysisOutputsContext.fileTypes[0].hasJsonFile ? (
+              <TabPane
+                tab={getI18N("AnalysisOutputs.jsonOutput")}
+                key="json-output"
+              >
+                <Suspense fallback={<ContentLoading />}>
+                  {jsonOutputPreview()}
+                </Suspense>
+              </TabPane>
+            ) : null}
+          </Tabs>
+        </div>
       ) : (
         <WarningAlert message={getI18N("AnalysisOutputs.noOutputsAvailable")} />
       )}

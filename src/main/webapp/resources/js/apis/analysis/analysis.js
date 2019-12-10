@@ -251,6 +251,15 @@ export async function getNewickTree(submissionId) {
 }
 
 /**
+ * Download output files as a zip file using an analysis submission id.
+ * @param {number} submissionId submission for which to download output file for.
+ * @return zip file of analysis outputs
+ */
+export function downloadFilesAsZip(submissionId) {
+  window.open(`${ANALYSIS_URL}/download/${submissionId}`, "_blank");
+}
+
+/**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
