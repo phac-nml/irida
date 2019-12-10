@@ -988,7 +988,7 @@ public class AnalysisAjaxController {
 	 * @throws IOException If the tree file couldn't be read
 	 */
 	@RequestMapping("/{submissionId}/tree")
-	private AnalysisTree getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
+	private AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
 		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
@@ -1017,7 +1017,7 @@ public class AnalysisAjaxController {
 						new Object[] {}, locale);
 			}
 		}
-		return new AnalysisTree(tree, message);
+		return new AnalysisTreeResponse(tree, message);
 	}
 
 	/**

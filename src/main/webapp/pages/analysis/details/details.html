@@ -10,31 +10,6 @@
     <main layout:fragment="main">
       <div class="row">
         <div class="col-md-12 ng-cloak">
-          <script type="text/ng-template" id="preview.html">
-            <div th:if="${isCompleted}" ng-controller="PreviewController as previewController">
-            	<div th:if="${preview == 'tree'}">
-            		<phylocanvas
-            				shape="circular" config="{}" newick="{{previewController.newick}}">
-            			<phylocanvas-controls>
-            				<phylocanvas-control shape="rectangular"
-            									 data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
-            				<phylocanvas-control shape="circular"
-            									 data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
-            				<phylocanvas-control shape="radial"
-            									 data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
-            				<phylocanvas-control shape="diagonal"
-            									 data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
-            				<phylocanvas-control shape="hierarchy"
-            									 data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
-            			</phylocanvas-controls>
-            			<div id="phylocanvas"></div>
-            		</phylocanvas>
-            	</div>
-            	<div th:if="${isCompleted}" id="js-file-preview-container"></div>
-            	<div th:if="${isCompleted}" id="js-messages" class="hidden"></div>
-            </div>
-            <div th:unless="${isCompleted}"></div>
-          </script>
 
           <script type="text/ng-template" id="provenance.html">
             <div th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
