@@ -1,6 +1,8 @@
 const path = require("path");
 const merge = require("webpack-merge");
+const cssnano = require("cssnano");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 const entries = require("./entries.js");
 
@@ -88,6 +90,21 @@ const config = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
+    }),
+    new OptimizeCSSAssetsPlugin({
+      cssProcessor: cssnano,
+      cssProcessorOptions: {
+        discardComments: {
+          removeAll: true
+        },
+        normalizeCharset: {
+          add: true
+        },
+        // Run cssnano in safe mode to avoid
+        // potentially unsafe transformations.
+        safe: true,
+        canPrint: false
+      }
     })
   ]
 };
