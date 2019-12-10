@@ -18,6 +18,8 @@ import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { grey1 } from "../../../styles/colors";
+import { ANALYSIS, SETTINGS } from "../routes";
 
 const AnalysisDetails = lazy(() => import("./settings/AnalysisDetails"));
 const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
@@ -27,11 +29,15 @@ const AnalysisDelete = React.lazy(() => import("./settings/AnalysisDelete"));
 
 const { Content, Sider } = Layout;
 
-export default function AnalysisSettings(props) {
+export default function AnalysisSettings() {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.SETTINGS}`;
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
+  const analysisRunning =
+    !analysisContext.isError && !analysisContext.isCompleted;
+
   /*
    * The following renders the analysis details, and tabs
    * for Samples, Share Results, and Delete Analysis which
@@ -40,32 +46,36 @@ export default function AnalysisSettings(props) {
    */
   return (
     <Layout>
-      <Sider width={200} style={{ background: "#fff" }}>
+      <Sider width={200} style={{ backgroundColor: grey1 }}>
         <Location>
           {props => {
             const keyname = props.location.pathname.match(pathRegx);
             return (
               <Menu
                 mode="vertical"
-                selectedKeys={[keyname ? keyname[1] : "details"]}
+                selectedKeys={[keyname ? keyname[1] : SETTINGS.DETAILS]}
               >
                 <Menu.Item key="details">
-                  <Link to="details">{getI18N("AnalysisDetails.details")}</Link>
+                  <Link to={`${BASE_URL}/${SETTINGS.DETAILS}`}>
+                    {getI18N("AnalysisDetails.details")}
+                  </Link>
                 </Menu.Item>
                 <Menu.Item key="samples">
-                  <Link to="samples">{getI18N("AnalysisSamples.samples")}</Link>
+                  <Link to={`${BASE_URL}/${SETTINGS.SAMPLES}`}>
+                    {getI18N("AnalysisSamples.samples")}
+                  </Link>
                 </Menu.Item>
                 {analysisDetailsContext.updatePermission
                   ? [
                       analysisContext.isError ? null : (
                         <Menu.Item key="share">
-                          <Link to="share">
+                          <Link to={`${BASE_URL}/${SETTINGS.SHARE}`}>
                             {getI18N("AnalysisShare.manageResults")}
                           </Link>
                         </Menu.Item>
                       ),
                       <Menu.Item key="delete">
-                        <Link to="delete">
+                        <Link to={`${BASE_URL}/${SETTINGS.DELETE}`}>
                           {getI18N("AnalysisDelete.deleteAnalysis")}
                         </Link>
                       </Menu.Item>
@@ -77,16 +87,42 @@ export default function AnalysisSettings(props) {
         </Location>
       </Sider>
 
-      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Router>
-              <AnalysisDetails path="details" default />
-              <AnalysisSamples path="samples" />
-              {analysisContext.isCompleted ? (
-                <AnalysisShare path="share" />
+              <AnalysisDetails
+                path={
+                  analysisRunning
+                    ? `${BASE_URL}/${SETTINGS.DETAILS}`
+                    : SETTINGS.DETAILS
+                }
+                default
+              />
+              <AnalysisSamples
+                path={
+                  analysisRunning
+                    ? `${BASE_URL}/${SETTINGS.SAMPLES}`
+                    : SETTINGS.SAMPLES
+                }
+              />
+              {!analysisContext.isError ? (
+                <AnalysisShare
+                  path={
+                    analysisRunning
+                      ? `${BASE_URL}/${SETTINGS.SHARE}`
+                      : SETTINGS.SHARE
+                  }
+                />
               ) : null}
-              <AnalysisDelete path="delete" />
+
+              <AnalysisDelete
+                path={
+                  analysisRunning
+                    ? `${BASE_URL}/${SETTINGS.DELETE}`
+                    : SETTINGS.DELETE
+                }
+              />
             </Router>
           </Suspense>
         </Content>

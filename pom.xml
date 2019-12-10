@@ -1167,7 +1167,7 @@
 		<maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
 		<maven.war.plugin.version>3.2.2</maven.war.plugin.version>
-		<maven.jetty.plugin.version>9.4.17.v20190418</maven.jetty.plugin.version>
+		<maven.jetty.plugin.version>9.4.24.v20191120</maven.jetty.plugin.version>
 		<maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
 		<maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
 		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>

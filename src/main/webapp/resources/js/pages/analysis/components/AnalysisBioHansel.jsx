@@ -15,6 +15,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { grey1 } from "../../../styles/colors";
+import { ANALYSIS, BIOHANSEL } from "../routes";
 
 const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
 const OutputFilePreview = React.lazy(() =>
@@ -27,7 +28,7 @@ export default function AnalysisBioHansel() {
   const { analysisContext } = useContext(AnalysisContext);
   const [bioHanselResults, setBioHanselResults] = useState(null);
 
-  const BASE_URL = `${window.PAGE.base}/biohansel`;
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.BIOHANSEL}`;
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
@@ -62,15 +63,15 @@ export default function AnalysisBioHansel() {
             return (
               <Menu
                 mode="vertical"
-                selectedKeys={[keyname ? keyname[1] : "info"]}
+                selectedKeys={[keyname ? keyname[1] : BIOHANSEL.INFO]}
               >
                 <Menu.Item key="info">
-                  <Link to={`${BASE_URL}/info`}>
+                  <Link to={`${BASE_URL}/${BIOHANSEL.INFO}`}>
                     {getI18N("AnalysisBioHansel.bioHanselInformation")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="file_preview">
-                  <Link to={`${BASE_URL}/file_preview`}>
+                  <Link to={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
                     {getI18N("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
@@ -91,10 +92,12 @@ export default function AnalysisBioHansel() {
               <Router>
                 <BioHanselInfo
                   bioHanselResults={bioHanselResults}
-                  path={`${BASE_URL}/info`}
+                  path={`${BASE_URL}/${BIOHANSEL.INFO}`}
                   default
                 />
-                <OutputFilePreview path={`${BASE_URL}/file_preview`} />
+                <OutputFilePreview
+                  path={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}
+                />
               </Router>
             </Suspense>
           ) : (

@@ -237,6 +237,20 @@ export function downloadOutputFile({ submissionId, fileId }) {
 }
 
 /**
+ * Get the newick string for the submission.
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getNewickTree(submissionId) {
+  try {
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/tree`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */

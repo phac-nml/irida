@@ -100,7 +100,6 @@ export default function AnalysisTextPreview({ output }) {
           <Row>
             <TextOutputWrapper
               id={`text-${output.filename.replace(".", "-")}`}
-              style={{ padding: SPACE_XS }}
               onScroll={() => loadMoreData()}
             >
               <Text>{fileRows}</Text>
