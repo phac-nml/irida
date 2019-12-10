@@ -31,7 +31,7 @@ const ButtonGroupWrapper = styled.div`
 
 export default function Tree() {
   const [newickString, setNewickString] = useState(null);
-  const [serverMsg, setserverMsg] = useState(null);
+  const [serverMsg, setServerMsg] = useState(null);
   const [currTreeShape, setCurrTreeShape] = useState("circular");
   const { analysisContext } = useContext(AnalysisContext);
 
@@ -46,7 +46,7 @@ export default function Tree() {
       }
 
       if (data.message !== null) {
-        setserverMsg(data.message);
+        setServerMsg(data.message);
       }
     });
   }, []);

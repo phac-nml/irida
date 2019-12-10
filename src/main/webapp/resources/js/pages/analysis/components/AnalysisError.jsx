@@ -16,6 +16,8 @@ import { getI18N } from "../../../utilities/i18n-utilities";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";
+import { ANALYSIS, ERROR } from "../routes";
+import { grey1 } from "../../../styles/colors";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -32,12 +34,12 @@ const StandardOutputTab = React.lazy(() =>
 
 const { Content, Sider } = Layout;
 
-export default function AnalysisError(props) {
+export default function AnalysisError() {
   const { analysisContext } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
   const [currActiveKey, setCurrActiveKey] = useState(1);
 
-  const BASE_URL = `${window.PAGE.base}/error`;
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.ERROR}`;
   const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
 
   // Sets the job errors into a local state variable on page load
@@ -55,17 +57,17 @@ export default function AnalysisError(props) {
   return jobErrors !== null ? (
     jobErrors.galaxyJobErrors !== null ? (
       <Layout>
-        <Sider width={200} style={{ background: "#fff" }}>
+        <Sider width={200} style={{ backgroundColor: grey1 }}>
           <Location>
             {props => {
               const keyname = props.location.pathname.match(pathRegx);
               return (
                 <Menu
                   mode="vertical"
-                  selectedKeys={[keyname ? keyname[1] : "job-error-info"]}
+                  selectedKeys={[keyname ? keyname[1] : ERROR.JOB_ERROR_INFO]}
                 >
                   <Menu.Item key="job-error-info">
-                    <Link to={`${BASE_URL}/job-error-info`}>
+                    <Link to={`${BASE_URL}/${ERROR.JOB_ERROR_INFO}`}>
                       {getI18N("AnalysisError.galaxyJobInfo")}
                     </Link>
                   </Menu.Item>
@@ -73,7 +75,7 @@ export default function AnalysisError(props) {
                     jobErrors.galaxyJobErrors.length - 1
                   ].parameters ? (
                     <Menu.Item key="galaxy-parameters">
-                      <Link to={`${BASE_URL}/galaxy-parameters`}>
+                      <Link to={`${BASE_URL}/${ERROR.GALAXY_PARAMETERS}`}>
                         {getI18N("AnalysisError.galaxyParameters")}
                       </Link>
                     </Menu.Item>
@@ -82,7 +84,7 @@ export default function AnalysisError(props) {
                     jobErrors.galaxyJobErrors.length - 1
                   ].standardError ? (
                     <Menu.Item key="standard-error">
-                      <Link to={`${BASE_URL}/standard-error`}>
+                      <Link to={`${BASE_URL}/${ERROR.STANDARD_ERROR}`}>
                         {getI18N("AnalysisError.standardError")}
                       </Link>
                     </Menu.Item>
@@ -91,7 +93,7 @@ export default function AnalysisError(props) {
                     jobErrors.galaxyJobErrors.length - 1
                   ].standardOutput ? (
                     <Menu.Item key="standard-out">
-                      <Link to={`${BASE_URL}/standard-out`}>
+                      <Link to={`${BASE_URL}/${ERROR.STANDARD_OUT}`}>
                         {getI18N("AnalysisError.standardOutput")}
                       </Link>
                     </Menu.Item>
@@ -102,7 +104,7 @@ export default function AnalysisError(props) {
           </Location>
         </Sider>
 
-        <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+        <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
           <Content>
             <Suspense fallback={<ContentLoading />}>
               <Router>
@@ -111,26 +113,26 @@ export default function AnalysisError(props) {
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   galaxyUrl={jobErrors.galaxyUrl}
-                  path={`${BASE_URL}/job-error-info`}
+                  path={`${BASE_URL}/${ERROR.JOB_ERROR_INFO}`}
                   default
                 />
                 <GalaxyParametersTab
                   currActiveKey={currActiveKey}
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${BASE_URL}/galaxy-parameters`}
+                  path={`${BASE_URL}/${ERROR.GALAXY_PARAMETERS}`}
                 />
                 <StandardErrorTab
                   currActiveKey={currActiveKey}
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${BASE_URL}/standard-error`}
+                  path={`${BASE_URL}/${ERROR.STANDARD_ERROR}`}
                 />
                 <StandardOutputTab
                   currActiveKey={currActiveKey}
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${BASE_URL}/standard-out`}
+                  path={`${BASE_URL}/${ERROR.STANDARD_OUT}`}
                 />
               </Router>
             </Suspense>
