@@ -18,6 +18,8 @@ import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { grey1 } from "../../../styles/colors";
+import { ANALYSIS, SETTINGS } from "../routes";
 
 const AnalysisDetails = lazy(() => import("./settings/AnalysisDetails"));
 const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
@@ -31,7 +33,7 @@ export default function AnalysisSettings() {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const BASE_URL = `${window.PAGE.base}/settings`;
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.SETTINGS}`;
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   const analysisRunning =
     !analysisContext.isError && !analysisContext.isCompleted;
@@ -44,22 +46,22 @@ export default function AnalysisSettings() {
    */
   return (
     <Layout>
-      <Sider width={200} style={{ background: "#fff" }}>
+      <Sider width={200} style={{ backgroundColor: grey1 }}>
         <Location>
           {props => {
             const keyname = props.location.pathname.match(pathRegx);
             return (
               <Menu
                 mode="vertical"
-                selectedKeys={[keyname ? keyname[1] : "details"]}
+                selectedKeys={[keyname ? keyname[1] : SETTINGS.DETAILS]}
               >
                 <Menu.Item key="details">
-                  <Link to={`${BASE_URL}/details`}>
+                  <Link to={`${BASE_URL}/${SETTINGS.DETAILS}`}>
                     {getI18N("AnalysisDetails.details")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="samples">
-                  <Link to={`${BASE_URL}/samples`}>
+                  <Link to={`${BASE_URL}/${SETTINGS.SAMPLES}`}>
                     {getI18N("AnalysisSamples.samples")}
                   </Link>
                 </Menu.Item>
@@ -67,13 +69,13 @@ export default function AnalysisSettings() {
                   ? [
                       analysisContext.isError ? null : (
                         <Menu.Item key="share">
-                          <Link to={`${BASE_URL}/share`}>
+                          <Link to={`${BASE_URL}/${SETTINGS.SHARE}`}>
                             {getI18N("AnalysisShare.manageResults")}
                           </Link>
                         </Menu.Item>
                       ),
                       <Menu.Item key="delete">
-                        <Link to={`${BASE_URL}/delete`}>
+                        <Link to={`${BASE_URL}/${SETTINGS.DELETE}`}>
                           {getI18N("AnalysisDelete.deleteAnalysis")}
                         </Link>
                       </Menu.Item>
@@ -85,25 +87,41 @@ export default function AnalysisSettings() {
         </Location>
       </Sider>
 
-      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Router>
               <AnalysisDetails
-                path={analysisRunning ? `${BASE_URL}/details` : "details"}
+                path={
+                  analysisRunning
+                    ? `${BASE_URL}/${SETTINGS.DETAILS}`
+                    : SETTINGS.DETAILS
+                }
                 default
               />
               <AnalysisSamples
-                path={analysisRunning ? `${BASE_URL}/samples` : "samples"}
+                path={
+                  analysisRunning
+                    ? `${BASE_URL}/${SETTINGS.SAMPLES}`
+                    : SETTINGS.SAMPLES
+                }
               />
               {!analysisContext.isError ? (
                 <AnalysisShare
-                  path={analysisRunning ? `${BASE_URL}/share` : "share"}
+                  path={
+                    analysisRunning
+                      ? `${BASE_URL}/${SETTINGS.SHARE}`
+                      : SETTINGS.SHARE
+                  }
                 />
               ) : null}
 
               <AnalysisDelete
-                path={analysisRunning ? `${BASE_URL}/delete` : "delete"}
+                path={
+                  analysisRunning
+                    ? `${BASE_URL}/${SETTINGS.DELETE}`
+                    : SETTINGS.DELETE
+                }
               />
             </Router>
           </Suspense>

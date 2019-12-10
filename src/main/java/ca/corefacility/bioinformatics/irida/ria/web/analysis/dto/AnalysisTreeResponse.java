@@ -5,14 +5,16 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
  * and an optional server message.
  */
 
-public class AnalysisTree {
+public class AnalysisTreeResponse {
+	//Tree
 	private String newick;
+	//Server message
 	private String message;
 
-	public AnalysisTree() {
+	public AnalysisTreeResponse() {
 	}
 
-	public AnalysisTree(String newick, String message) {
+	public AnalysisTreeResponse(String newick, String message) {
 		this.newick=newick;
 		this.message=message;
 	}

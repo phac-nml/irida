@@ -13,6 +13,8 @@ import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { getI18N } from "../../../utilities/i18n-utilities";
 import { SPACE_MD } from "../../../styles/spacing";
+import { ANALYSIS, SISTR } from "../routes";
+import { grey1 } from "../../../styles/colors";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const SerovarPredictions = React.lazy(() =>
@@ -28,11 +30,11 @@ const OutputFilePreview = React.lazy(() =>
 const Citation = React.lazy(() => import("./sistr/Citation"));
 const { Content, Sider } = Layout;
 
-export default function AnalysisSistr(props) {
+export default function AnalysisSistr() {
   const { analysisContext } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
 
-  const BASE_URL = `${window.PAGE.base}/sistr`;
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.SISTR}`;
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the SISTR results
@@ -48,42 +50,42 @@ export default function AnalysisSistr(props) {
   return sistrResults !== null ? (
     !sistrResults.parse_results_error ? (
       <Layout>
-        <Sider width={200} style={{ background: "#fff" }}>
+        <Sider width={200} style={{ backgroundColor: grey1 }}>
           <Location>
             {props => {
               const keyname = props.location.pathname.match(pathRegx);
               return (
                 <Menu
                   mode="vertical"
-                  selectedKeys={[keyname ? keyname[1] : "info"]}
+                  selectedKeys={[keyname ? keyname[1] : SISTR.INFO]}
                 >
                   <Menu.Item key="info">
-                    <Link to={`${BASE_URL}/info`}>
+                    <Link to={`${BASE_URL}/${SISTR.INFO}`}>
                       {getI18N("AnalysisSistr.sistrInformation")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="serovar_predictions">
-                    <Link to={`${BASE_URL}/serovar_predictions`}>
+                    <Link to={`${BASE_URL}/${SISTR.SEROVAR_PREDICTIONS}`}>
                       {getI18N("AnalysisSistr.serovarPredictions")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="cgmlst">
-                    <Link to={`${BASE_URL}/cgmlst`}>
+                    <Link to={`${BASE_URL}/${SISTR.CGMLST}`}>
                       {getI18N("AnalysisSistr.cgmlst330")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="mash">
-                    <Link to={`${BASE_URL}/mash`}>
+                    <Link to={`${BASE_URL}/${SISTR.MASH}`}>
                       {getI18N("AnalysisSistr.mash")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="file_preview">
-                    <Link to={`${BASE_URL}/file_preview`}>
+                    <Link to={`${BASE_URL}/${SISTR.FILE_PREVIEW}`}>
                       {getI18N("AnalysisOutputs.outputFilePreview")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="citation">
-                    <Link to={`${BASE_URL}/citation`}>
+                    <Link to={`${BASE_URL}/${SISTR.CITATION}`}>
                       {getI18N("AnalysisSistr.citation")}
                     </Link>
                   </Menu.Item>
@@ -93,32 +95,32 @@ export default function AnalysisSistr(props) {
           </Location>
         </Sider>
 
-        <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: "white" }}>
+        <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
           <Content>
             <Suspense fallback={<ContentLoading />}>
               <Router>
                 <SistrInfo
                   sistrResults={sistrResults.result}
                   sampleName={sistrResults.sampleName}
-                  path={`${BASE_URL}/info`}
+                  path={`${BASE_URL}/${SISTR.INFO}`}
                   default
                 />
                 <SerovarPredictions
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/serovar_predictions`}
+                  path={`${BASE_URL}/${SISTR.SEROVAR_PREDICTIONS}`}
                 />
                 <CgMlst
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/cgmlst`}
+                  path={`${BASE_URL}/${SISTR.CGMLST}`}
                 />
                 <Mash
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/mash`}
+                  path={`${BASE_URL}/${SISTR.MASH}`}
                 />
-                <OutputFilePreview path={`${BASE_URL}/file_preview`} />
+                <OutputFilePreview path={`${BASE_URL}/${SISTR.FILE_PREVIEW}`} />
                 <Citation
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/citation`}
+                  path={`${BASE_URL}/${SISTR.CITATION}`}
                 />
               </Router>
             </Suspense>
