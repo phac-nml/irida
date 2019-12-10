@@ -51,9 +51,6 @@ export default function Tree() {
     });
   }, []);
 
-  // Redraws the tree on shape change
-  useEffect(() => {}, [currTreeShape]);
-
   function getTree() {
     return (
       <Phylocanvas
