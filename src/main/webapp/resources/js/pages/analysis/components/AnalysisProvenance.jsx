@@ -1,12 +1,16 @@
-import React from "react";
-import { Typography } from "antd";
+import React, { useEffect } from "react";
+import { Layout } from "antd";
+import { SPACE_MD } from "../../../styles/spacing";
+import { grey1 } from "../../../styles/colors";
+import {} from "../../../apis/analysis/analysis";
 
-const { Title } = Typography;
+const { Content } = Layout;
 
 export default function AnalysisProvenance() {
+  useEffect(() => {}, []);
   return (
-    <Title level={2} className="t-page-title">
-      Provenance
-    </Title>
+    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
+      <Content></Content>
+    </Layout>
   );
 }
