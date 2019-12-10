@@ -24,12 +24,14 @@ import org.thymeleaf.templatemode.TemplateMode;
  * the entry JavaScript files that need to be translated.  These string are denoted as the
  * argument to the function call `i18n("term.to.be.translated")`.  Example fragment:
  *
+ *  {@code
  * <pre>
  *     <script id="analyses-translations" th:inline="javascript" th:fragment="i18n">
  *        window.translations = window.translations || [];
  *        window.translations.push({ "term.to.be.translated": #{"term.to.be.translated"} });
  *		</script>
  * </pre>
+ * }
  *
  * When Thymeleaf processes the requested template, it looks at the script tags to determine if it is loading
  * a webpack bundle.  If it is, it will check to see if there is a corresponding translations fragment, then
@@ -76,7 +78,7 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 		 * Processes each openElementTag and adds a translation block for script tags that load JS bundles,
 		 * which have a translations file
 		 *
-		 * @param openElementTag
+		 * @param openElementTag current html tag being processed.
 		 */
 		@Override
 		public void handleOpenElement(final IOpenElementTag openElementTag) {
