@@ -2,6 +2,22 @@ import React from "react";
 import PropTypes from "prop-types";
 import { List, Switch } from "antd";
 import { FIELDS } from "../../../constants";
+import styled from "styled-components";
+
+const { Item } = List;
+const ColumnItem = styled(Item)`
+  width: 100%;
+  .ant-list-item-action {
+    margin-left: 10px;
+  }
+`;
+
+const ColumnItemText = styled.span`
+  margin-left: 10px;
+  word-break: break-all;
+  hyphens: auto;
+  width: 100%;
+`;
 
 /**
  * Component to display a list of switches which control the column
@@ -64,8 +80,7 @@ export default class ColumnVisibility extends React.Component {
                 f => f.field !== FIELDS.sampleName && f.field !== FIELDS.icons
               )}
               renderItem={item => (
-                <List.Item
-                  className="column-list-item"
+                <ColumnItem
                   actions={[
                     <Switch
                       size="small"
@@ -77,10 +92,8 @@ export default class ColumnVisibility extends React.Component {
                     />
                   ]}
                 >
-                  <span className="column-list-item--text">
-                    {item.headerName}
-                  </span>
-                </List.Item>
+                  <ColumnItemText>{item.headerName}</ColumnItemText>
+                </ColumnItem>
               )}
             />
           </div>
