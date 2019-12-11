@@ -175,12 +175,14 @@ function setDownloadButtonHtml(
  */
 function initAgGrid($grid, headers, rows, $dlButton) {
   const gridOptions = {
-    enableColResize: true,
+    defaultColDef: {
+      resizable: true,
+      sorting: true,
+      filter: true
+    },
     columnDefs: headers,
     rowData: rows,
     rowDeselection: true,
-    sorting: true,
-    filter: true,
     rowSelection: "multiple",
     onSelectionChanged: e => {
       const selectedNodes = e.api.getSelectedNodes();

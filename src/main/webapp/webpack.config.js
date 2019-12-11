@@ -92,13 +92,20 @@ const config = {
     new OptimizeCSSAssetsPlugin({
       cssProcessor: cssnano,
       cssProcessorPluginOptions: {
-        preset: ['default', { discardComments: { removeAll: true }, normalizeCharset: { add: true } }]
+        preset: [
+          "default",
+          {
+            discardComments: { removeAll: true },
+            normalizeCharset: { add: true }
+          }
+        ]
       },
       cssProcessorOptions: {
         // Run cssnano in safe mode to avoid
         // potentially unsafe transformations.
         safe: true,
-        canPrint: false
+        canPrint: false,
+        map: this.mode === "development" ? { inline: false } : null
       }
     })
   ]

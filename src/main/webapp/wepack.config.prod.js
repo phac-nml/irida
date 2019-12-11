@@ -16,15 +16,15 @@ exports.config = {
         terserOptions: {
           output: {
             ascii_only: true
-          },
-        },
-      }),
+          }
+        }
+      })
     ]
   },
   plugins: [
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production")
     }),
-    new CleanWebpackPlugin([BUILD_PATH]),
+    new CleanWebpackPlugin([BUILD_PATH])
   ]
 };
