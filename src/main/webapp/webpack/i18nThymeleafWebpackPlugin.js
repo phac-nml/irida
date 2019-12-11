@@ -1,3 +1,13 @@
+/**
+ * @file Part of the IRIDA internationalization system.
+ *
+ * This webpack plugin is responsible for looking through all entries and
+ * finding calls to the function `i18n`.  The arguments for these calls are
+ * gathered and a Thymeleaf templates are generated for each entry containing
+ * a JavaScript object where the keys are the arguments and the values
+ * are formatted for Thymeleaf to internationalize.
+ */
+
 "use strict";
 
 /**
