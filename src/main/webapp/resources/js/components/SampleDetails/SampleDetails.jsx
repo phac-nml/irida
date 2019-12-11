@@ -103,9 +103,7 @@ class SampleDetailsComponent extends React.Component {
           <hr />
           {metadataKeys.length === 0 ? null : (
             <div>
-              <DetailsHeading>
-                {i18n("SampleDetails.metadata")}
-              </DetailsHeading>
+              <DetailsHeading>{i18n("SampleDetails.metadata")}</DetailsHeading>
               {metadataKeys.map(key => {
                 const item = metadata[key];
                 return (

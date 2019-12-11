@@ -95,7 +95,7 @@ export default function ViewAssociatedProjects() {
       key: "organism",
       dataIndex: "organism",
       align: "right",
-      title: "Organism",
+      title: i18n("ViewAssociatedProjects.OrganismHeader"),
       render(text) {
         return <Text type="secondary">{text}</Text>;
       },

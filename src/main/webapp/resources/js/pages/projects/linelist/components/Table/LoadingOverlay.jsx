@@ -8,9 +8,9 @@ export class LoadingOverlay extends Component {
       <div className="ag-overlay-loading-center irida-ag-overlay">
         <div>
           <Spin style={{ marginRight: "1rem" }} />
-          <span className="irida-ag-overlay-loading-text">{`${
-            i18n("linelist.agGrid.loading")
-          }`}</span>
+          <span className="irida-ag-overlay-loading-text">{`${i18n(
+            "linelist.agGrid.loading"
+          )}`}</span>
         </div>
       </div>
     );

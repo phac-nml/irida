@@ -9,7 +9,10 @@ const template = (keys, entry) => `
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
   <body>
-    <script id="${entry.replace("/", "-")}-translations" th:inline="javascript" th:fragment="i18n">
+    <script id="${entry.replace(
+      "/",
+      "-"
+    )}-translations" th:inline="javascript" th:fragment="i18n">
       window.translations = window.translations || [];
       window.translations.push({
         ${keys.map(key => `"${key}": /*[[#{${key}}]]*/ ""`)}
@@ -23,12 +26,12 @@ const template = (keys, entry) => `
  * @param {string} request the path to the js file being requested
  * @returns {boolean} request is valid and is local
  */
-const isValidLocalRequest = (request) => {
+const isValidLocalRequest = request => {
   return (
     typeof request !== "undefined" &&
     request.match(/src\/main\/webapp\/resources\/js/)
   );
-}
+};
 
 class i18nThymeleafWebpackPlugin {
   constructor(options) {
@@ -47,12 +50,15 @@ class i18nThymeleafWebpackPlugin {
      * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
      * @return {Set<string>} a set of the translations keys required by the chunkGroup
      */
-    const getKeysByChunkGroup = (chunkGroup) => {
+    const getKeysByChunkGroup = chunkGroup => {
       let keys = new Set();
 
       for (const chunk of chunkGroup.chunks) {
         for (const issuer of chunk.modulesIterable) {
-          if (isValidLocalRequest(issuer.userRequest) && i18nsByRequests[issuer.userRequest]) {
+          if (
+            isValidLocalRequest(issuer.userRequest) &&
+            i18nsByRequests[issuer.userRequest]
+          ) {
             keys = new Set([...keys, ...i18nsByRequests[issuer.userRequest]]);
           }
         }
@@ -63,7 +69,7 @@ class i18nThymeleafWebpackPlugin {
         .map(child => [...getKeysByChunkGroup(child)]);
 
       return new Set([...keys, ...childKeys.flat()]);
-    }
+    };
 
     /**
      * Gather all the translation keys required by each js file.
@@ -103,7 +109,7 @@ class i18nThymeleafWebpackPlugin {
         const watcher = watchFileSystem.watcher || watchFileSystem.wfs.watcher;
 
         for (const file of Object.keys(watcher.mtimes)) {
-            delete i18nsByRequests[file];
+          delete i18nsByRequests[file];
         }
       }
     );
