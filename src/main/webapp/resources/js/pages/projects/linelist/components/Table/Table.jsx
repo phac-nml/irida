@@ -4,10 +4,9 @@ import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
-import { AgGridReact } from "@ag-grid-community/react";
-import { AllCommunityModules } from "@ag-grid-community/all-modules";
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { LoadingOverlay } from "./LoadingOverlay";
 import {
   DateCellRenderer,
@@ -355,7 +354,6 @@ export class TableComponent extends React.Component {
       <AgGridReact
         id="linelist-grid"
         rowSelection="multiple"
-        modules={AllCommunityModules}
         // onFilterChanged={this.setFilterCount}
         // localeText={i18n.linelist.agGrid}
         columnDefs={this.props.fields}
