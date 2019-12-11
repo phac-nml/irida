@@ -206,7 +206,7 @@ export class SaveTemplateModal extends React.Component {
     return (
       <Modal
         closable={false}
-        title="Modal"
+        title={i18n("linelist.templates.saveModal.title")}
         visible={this.props.visible}
         footer={
           <Footer
