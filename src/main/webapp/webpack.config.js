@@ -37,9 +37,7 @@ const config = {
       {
         test: /\.(css|sass|scss)$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader
-          },
+          MiniCssExtractPlugin.loader,
           "css-loader",
           {
             loader: "postcss-loader",
@@ -93,13 +91,10 @@ const config = {
     }),
     new OptimizeCSSAssetsPlugin({
       cssProcessor: cssnano,
+      cssProcessorPluginOptions: {
+        preset: ['default', { discardComments: { removeAll: true }, normalizeCharset: { add: true } }]
+      },
       cssProcessorOptions: {
-        discardComments: {
-          removeAll: true
-        },
-        normalizeCharset: {
-          add: true
-        },
         // Run cssnano in safe mode to avoid
         // potentially unsafe transformations.
         safe: true,
