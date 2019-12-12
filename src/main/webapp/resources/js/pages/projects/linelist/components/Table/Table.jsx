@@ -322,7 +322,7 @@ export class TableComponent extends React.Component {
           )
         : i18n(
             "linelist.editing.undo.empty",
-          `${headerName}`,
+            `${headerName}`,
             `${data[FIELDS.sampleName]}`
           );
       showUndoNotification(

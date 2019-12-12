@@ -18,8 +18,8 @@ exports.config = {
         terserOptions: {
           output: {
             ascii_only: true
-          },
-        },
+          }
+        }
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessor: cssnano,

@@ -41,9 +41,7 @@ export function GalaxyDetailsForm() {
         >
           <Input onChange={emailModified} value={email} />
         </Form.Item>
-        <Form.Item
-          help={i18n("ExportToGalaxyForm.makepairedcollection.help")}
-        >
+        <Form.Item help={i18n("ExportToGalaxyForm.makepairedcollection.help")}>
           <Checkbox
             onChange={makePairedCollectionModified}
             checked={makepairedcollection}

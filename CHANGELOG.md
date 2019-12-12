@@ -31,6 +31,7 @@ Changes
 * [UI/Developer]: Updated to latest (3.26.0) release of `ant.design`.
 * [Developer]: Fixed url for downloading multiple analysis outputs as well as for viewing the user analysis outputs page.
 * [UI/Developer]: Lazy load line list export utilities.
+* [Developer]: Update to Chromedriver 79.0.0 for Travis CI.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack.
 
 19.05 to 19.09
