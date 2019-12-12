@@ -20,8 +20,8 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerTagType;
 
 /**
- * Thymeleaf Tag Processor for elements of the form: <code><webpack:js entry="entry_name" /></code>
- * <p>
+ * Thymeleaf Tag Processor for webpacker elements.
+ *
  * This processor will:
  * - determine which js chunks need to be loaded from the webpack manifest file.
  * - create new script element with the correct path to the files and add them to the template.
