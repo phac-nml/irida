@@ -2,7 +2,6 @@ import React from "react";
 import { useStateValue } from "./GalaxyState";
 import { Alert } from "antd";
 import { SPACE_SM } from "../../styles/spacing";
-import { getI18N } from "../../utilities/i18n-utilities";
 
 export function GalaxySubmitError() {
   const [{ errored }] = useStateValue();
@@ -13,8 +12,8 @@ export function GalaxySubmitError() {
           style={{ marginBottom: SPACE_SM }}
           type="error"
           showIcon
-          message={getI18N("GalaxySubmissionError.message")}
-          description={getI18N("GalaxySubmissionError.description")}
+          message={i18n("GalaxySubmissionError.message")}
+          description={i18n("GalaxySubmissionError.description")}
         />
       ) : null}
     </div>

@@ -30,11 +30,11 @@ function PipelineController(
   vm.paramsWithChoices = ParametersWithChoicesService.getParameters();
   vm.choiceParams = ParametersWithChoicesService.getDefaultSelectedParameters();
 
-  $scope.$on("PARAMETERS_SAVED", function () {
+  $scope.$on("PARAMETERS_SAVED", function() {
     vm.selectedParameters = ParameterService.getSelectedParameters();
   });
 
-  $scope.$on("REFERENCE_FILE_UPLOADED", function (event, uploaded) {
+  $scope.$on("REFERENCE_FILE_UPLOADED", function(event, uploaded) {
     vm.uploadedReferenceFile = uploaded.id;
   });
 
@@ -53,7 +53,7 @@ function PipelineController(
    * for the modal dialog whenever we select a new set of parameters
    * from the drop-down.
    */
-  vm.parameterSelected = function () {
+  vm.parameterSelected = function() {
     ParameterService.setSelectedParameters(vm.selectedParameters);
   };
 
@@ -62,7 +62,7 @@ function PipelineController(
    * for the modal dialog whenever we select a new tool data table field
    * from the drop-down.
    */
-  vm.dynamicSourceValueSelected = function (dynamicSourceValue) {
+  vm.dynamicSourceValueSelected = function(dynamicSourceValue) {
     DynamicSourceService.setSelectedDynamicSourceValue(
       dynamicSourceValue,
       vm.selectedDynamicSource
@@ -77,7 +77,7 @@ function PipelineController(
    *
    * @param name {string} Name of choice parameter corresponding to XML name attribute for <parameter> tag
    */
-  vm.choiceParamChanged = function (name) {
+  vm.choiceParamChanged = function(name) {
     const selectValueObj = vm.selectedChoiceParam[name];
     if (
       typeof selectValueObj === "undefined" ||
@@ -114,7 +114,7 @@ function PipelineController(
    * Disable the launch button if there are any choice parameters with no
    * values set or if a Galaxy dynamic source is required, but not set.
    */
-  vm.shouldDisableLaunch = function () {
+  vm.shouldDisableLaunch = function() {
     return (
       (!$.isEmptyObject(vm.choiceParams) && anyNull(vm.choiceParams)) ||
       !(
@@ -127,18 +127,18 @@ function PipelineController(
   /**
    * Provide a title for the launch button, depending on this.shouldDisableLaunch().
    */
-  vm.launchButtonTitle = function () {
+  vm.launchButtonTitle = function() {
     if (this.shouldDisableLaunch()) {
-      return window.PAGE.i18n.launchButtonTitleDisarmed;
+      return i18n("workflow.launch.btn.title-disarmed");
     } else {
-      return window.PAGE.i18n.launchButtonTitleArmed;
+      return i18n("workflow.launch.btn.title");
     }
   };
 
   /**
    * Launch the pipeline
    */
-  vm.launch = function () {
+  vm.launch = function() {
     var // reference file id (use the most recently uploaded or the selected one)
       ref =
         typeof vm.uploadedReferenceFile !== "undefined"
@@ -162,13 +162,13 @@ function PipelineController(
       shared = [];
 
     if (name === null || name.length === 0) {
-      vm.error = window.PAGE.i18n.required;
+      vm.error = window.__i18n("workflow.no-name-provided");
     } else {
       // Hide the launch buttons and display a message that it has been sent.
       vm.loading = true;
 
       // Get a list of paired and single end files to run.
-      radioBtns.each(function (c) {
+      radioBtns.each(function(c) {
         c = $(this);
 
         if (c.attr("data-type") === "single_end") {
@@ -178,7 +178,7 @@ function PipelineController(
         }
       });
 
-      angular.element(".share-project:checked").each(function () {
+      angular.element(".share-project:checked").each(function() {
         var box = $(this);
         shared.push(box.val());
       });
@@ -195,7 +195,7 @@ function PipelineController(
       if (Object.keys(currentDynamicSourceSettings).length > 0) {
         var dynamicSourceParameters = Object.values(
           currentDynamicSourceSettings
-        ).map(({label, value, name}) => ({label, value, name}));
+        ).map(({ label, value, name }) => ({ label, value, name }));
         selectedParameters.parameters = selectedParameters.parameters.concat(
           dynamicSourceParameters
         );
@@ -211,7 +211,7 @@ function PipelineController(
       }
 
       // Create the parameter object;
-      const params = {workflowId: window.window.PAGE.pipeline.pipelineId};
+      const params = { workflowId: window.window.PAGE.pipeline.pipelineId };
       if ($.isNumeric(ref)) {
         params["ref"] = ref;
       }
@@ -223,7 +223,8 @@ function PipelineController(
       }
 
       if (window.window.PAGE.pipeline.automatedProjectId != null) {
-        params["automatedProject"] = window.window.PAGE.pipeline.automatedProjectId;
+        params["automatedProject"] =
+          window.window.PAGE.pipeline.automatedProjectId;
       }
 
       if (
@@ -247,7 +248,7 @@ function PipelineController(
         url: window.PAGE.urls.startUrl,
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(params),
-        success: function (response, status, request) {
+        success: function(response, status, request) {
           if (response.success) {
             vm.success = true;
           } else {
@@ -269,7 +270,7 @@ function PipelineController(
           // trigger Angular digest with the following call
           $scope.$apply();
         },
-        error: function (response, status, request) {
+        error: function(response, status, request) {
           const errorMsg =
             request +
             "- HTTP " +
@@ -299,8 +300,8 @@ function PipelineController(
    * @param projectId the project id of the sample to remove
    * @param sampleId the sample if to remove
    */
-  vm.removeSample = function (projectId, sampleId) {
-    CartService.removeSample(projectId, sampleId).then(function () {
+  vm.removeSample = function(projectId, sampleId) {
+    CartService.removeSample(projectId, sampleId).then(function() {
       angular.element("#sample-" + sampleId).remove();
       if (angular.element(".sample-container").length === 0) {
         location.reload();
@@ -311,8 +312,8 @@ function PipelineController(
   /**
    * Clear the cart and redirect to the projects page
    */
-  vm.clearAndRedirect = function () {
-    CartService.clear().then(function () {
+  vm.clearAndRedirect = function() {
+    CartService.clear().then(function() {
       window.location = window.PAGE.urls.projectsPage;
     });
   };
@@ -325,7 +326,7 @@ function PipelineController(
 function ParameterModalController($uibModal) {
   var vm = this;
 
-  vm.openModal = function () {
+  vm.openModal = function() {
     $uibModal.open({
       templateUrl: "/parameters.html",
       controller: "ParameterController as paras"
@@ -359,7 +360,7 @@ function ParameterController(
    * that the parameters were updated in the service, optionally
    * save the parameters to the server and close the modal.
    */
-  vm.update = function () {
+  vm.update = function() {
     ParameterService.parametersModified = true;
     if (vm.saveParameters) {
       vm.saveAndUse();
@@ -370,7 +371,7 @@ function ParameterController(
   /**
    * Straight up close the modal.
    */
-  vm.close = function () {
+  vm.close = function() {
     $uibModalInstance.dismiss();
   };
 
@@ -378,7 +379,7 @@ function ParameterController(
    * Reset the specified value back to the default value.
    * @param index the index in the list of parameters we can set.
    */
-  vm.reset = function (index) {
+  vm.reset = function(index) {
     ParameterService.resetCurrentSelectionIndex(index);
   };
 
@@ -387,21 +388,21 @@ function ParameterController(
    * saved set to the list of parameters on the page, and select
    * the parameters.
    */
-  vm.saveAndUse = function () {
+  vm.saveAndUse = function() {
     var parametersToSave = {
       pipelineId: window.PAGE.pipeline.pipelineId,
       parameterSetName: vm.parameterSetName,
       // vm.selectedParameters.parameters is an array of maps, this will reduce it down
       // into a single map with key-value pairs from each parameter name to its corresponding
       // value. The final parameter to reduce is the empty map, that's our initial state.
-      parameterValues: vm.selectedParameters.parameters.reduce(function (
+      parameterValues: vm.selectedParameters.parameters.reduce(function(
         prev,
         curr
-        ) {
-          prev[curr.name] = curr.value;
-          return prev;
-        },
-        {})
+      ) {
+        prev[curr.name] = curr.value;
+        return prev;
+      },
+      {})
     };
 
     $http({
@@ -412,7 +413,7 @@ function ParameterController(
       },
       transformRequest: undefined,
       data: JSON.stringify(parametersToSave)
-    }).then(function (response) {
+    }).then(function(response) {
       var data = response.data;
       $uibModalInstance.dismiss();
       // on success, we can re-use the selected parameters in
@@ -433,7 +434,7 @@ function ParameterController(
    * a marker to the parameter set name to show the user that the
    * params have been modified.
    */
-  vm.valueChanged = function () {
+  vm.valueChanged = function() {
     vm.parametersModified = true;
     vm.selectedParameters.id = "custom";
     if (vm.parameterSetName.indexOf("(*)") == -1) {
@@ -462,7 +463,7 @@ function ParameterService() {
    * so that we can quickly roll back to default values for any
    * parameter set.
    */
-  var originalSettings = window.PAGE.pipeline.parameters.map(function (params) {
+  var originalSettings = window.PAGE.pipeline.parameters.map(function(params) {
     return {
       currentSettings: angular.copy(params),
       defaultSettings: angular.copy(params)
@@ -474,7 +475,7 @@ function ParameterService() {
   /**
    * Get the settings that the page currently has.
    */
-  svc.getOriginalSettings = function () {
+  svc.getOriginalSettings = function() {
     return originalSettings;
   };
 
@@ -484,7 +485,7 @@ function ParameterService() {
    *
    * @param settingsToAdd the settings to add to the current set of settings.
    */
-  svc.addSettingsToFront = function (settingsToAdd) {
+  svc.addSettingsToFront = function(settingsToAdd) {
     var savedParameters = {
       currentSettings: angular.copy(settingsToAdd),
       defaultSettings: angular.copy(settingsToAdd)
@@ -496,7 +497,7 @@ function ParameterService() {
   /**
    * Get the currently selected parameters from the page.
    */
-  svc.getSelectedParameters = function () {
+  svc.getSelectedParameters = function() {
     return selectedParameters;
   };
 
@@ -505,7 +506,7 @@ function ParameterService() {
    *
    * @param currentSelection the parameters that are currently selected
    */
-  svc.setSelectedParameters = function (currentSelection) {
+  svc.setSelectedParameters = function(currentSelection) {
     selectedParameters = currentSelection;
   };
 
@@ -514,7 +515,7 @@ function ParameterService() {
    * parameters back to its default value.
    * @param index the index of the parameter to reset.
    */
-  svc.resetCurrentSelectionIndex = function (index) {
+  svc.resetCurrentSelectionIndex = function(index) {
     selectedParameters.currentSettings.parameters[index] = angular.copy(
       selectedParameters.defaultSettings.parameters[index]
     );
@@ -523,7 +524,7 @@ function ParameterService() {
   /**
    * Completely reset the current settings back to the set of default values.
    */
-  svc.resetCurrentSelection = function () {
+  svc.resetCurrentSelection = function() {
     selectedParameters.currentSettings = angular.copy(
       selectedParameters.defaultSettings
     );
@@ -560,14 +561,14 @@ function DynamicSourceService() {
   /**
    * Get the settings that the page currently has.
    */
-  svc.getSettings = function () {
+  svc.getSettings = function() {
     return settings;
   };
 
   /**
    * Get the currently selected parameters from the page.
    */
-  svc.getSelectedDynamicSourceValue = function (galaxyToolDataTable) {
+  svc.getSelectedDynamicSourceValue = function(galaxyToolDataTable) {
     return settings.currentSettings[galaxyToolDataTable];
   };
 
@@ -576,7 +577,7 @@ function DynamicSourceService() {
    * @param galaxyToolDataTable the Galaxy Tool Data Table to set
    * @param currentSelection the tool data table field that is currently selected
    */
-  svc.setSelectedDynamicSourceValue = function (
+  svc.setSelectedDynamicSourceValue = function(
     galaxyToolDataTable,
     currentSelection
   ) {
@@ -599,10 +600,10 @@ function ParametersWithChoicesService() {
       };
     }
   }
-  svc.getParameters = function () {
+  svc.getParameters = function() {
     return params;
   };
-  svc.getDefaultSelectedParameters = function () {
+  svc.getDefaultSelectedParameters = function() {
     return Object.keys(params).reduce((acc, x) => {
       acc[x] = null;
       return acc;
@@ -615,18 +616,18 @@ function FileUploadCtrl($rootScope, Upload) {
 
   vm.referenceUploadStarted = false;
 
-  vm.upload = function (files) {
+  vm.upload = function(files) {
     if (files && files.length > 0) {
       vm.referenceUploadStarted = true;
       Upload.upload({
-          url: window.PAGE.urls.upload,
-          file: files[0]
-        })
-        .progress(function (evt) {
+        url: window.PAGE.urls.upload,
+        file: files[0]
+      })
+        .progress(function(evt) {
           vm.progress = parseInt((100.0 * evt.loaded) / evt.total);
         })
         .then(
-          function (response) {
+          function(response) {
             var data = response.data;
             vm.uploaded = {
               id: data["uploaded-file-id"],
@@ -636,7 +637,7 @@ function FileUploadCtrl($rootScope, Upload) {
             $rootScope.$emit("REFERENCE_FILE_UPLOADED", vm.uploaded);
             vm.referenceUploadStarted = false;
           },
-          function (response) {
+          function(response) {
             vm.referenceUploadStarted = false;
             window.notifications.show({
               text: response.data.error,
@@ -673,7 +674,6 @@ const pipelineModule = angular
   .controller("FileUploadCtrl", ["$rootScope", "Upload", FileUploadCtrl])
   .service("ParameterService", [ParameterService])
   .service("DynamicSourceService", [DynamicSourceService])
-  .service("ParametersWithChoicesService", [ParametersWithChoicesService])
-  .name;
+  .service("ParametersWithChoicesService", [ParametersWithChoicesService]).name;
 
 angular.module("irida").requires.push(pipelineModule);

@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
@@ -17,8 +18,6 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
-
-const { i18n } = window.PAGE;
 
 /**
  * React component to render the ag-grid to the page.
@@ -315,14 +314,20 @@ export class TableComponent extends React.Component {
       Show a notification that allows the user to reverse the change to the value.
        */
       const text = Boolean(data[field])
-        ? i18n.linelist.editing.undo.full
-        : i18n.linelist.editing.undo.empty;
+        ? i18n(
+            "linelist.editing.undo.full",
+            `${data[FIELDS.sampleName]}`,
+            `${headerName}`,
+            `${data[field]}`
+          )
+        : i18n(
+            "linelist.editing.undo.empty",
+            `${headerName}`,
+            `${data[FIELDS.sampleName]}`
+          );
       showUndoNotification(
         {
-          text: text
-            .replace("[SAMPLE_NAME]", data[FIELDS.sampleName])
-            .replace("[FIELD]", headerName)
-            .replace("[NEW_VALUE]", data[field])
+          text
         },
         () => {
           /**
@@ -367,7 +372,10 @@ export class TableComponent extends React.Component {
           id="linelist-grid"
           rowSelection="multiple"
           onFilterChanged={this.setFilterCount}
-          localeText={i18n.linelist.agGrid}
+          localeText={{
+            loading: i18n("linelist.agGrid.loading"),
+            sampleName: i18n("linelist.agGrid.sampleName")
+          }}
           columnDefs={this.props.fields}
           rowData={this.props.entries}
           frameworkComponents={this.frameworkComponents}

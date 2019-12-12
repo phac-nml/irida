@@ -80,7 +80,7 @@ $dt.on("click", ".remove-btn", function(e) {
               },
               error: function() {
                 showNotification({
-                  text: window.PAGE.i18n.unexpectedRemoveError,
+                  text: i18n("group.remove.notification.failure"),
                   type: "error"
                 });
                 modal.modal("hide");

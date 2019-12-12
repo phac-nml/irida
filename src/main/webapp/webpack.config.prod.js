@@ -18,8 +18,8 @@ exports.config = {
         terserOptions: {
           output: {
             ascii_only: true
-          },
-        },
+          }
+        }
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessor: cssnano,
@@ -39,6 +39,6 @@ exports.config = {
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production")
     }),
-    new CleanWebpackPlugin([BUILD_PATH]),
+    new CleanWebpackPlugin([BUILD_PATH])
   ]
 };

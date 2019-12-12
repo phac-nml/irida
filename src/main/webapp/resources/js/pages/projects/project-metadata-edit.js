@@ -2,7 +2,7 @@ import "jquery";
 import "../../vendor/plugins/jquery/select2";
 
 $(".organism-select").select2({
-  placeholder: window.PAGE.i18n.organism,
+  placeholder: i18n("projects.create.form.select-organism"),
   minimumInputLength: 2,
   ajax: {
     // instead of writing the function to execute the request we use Select2's convenient helper
