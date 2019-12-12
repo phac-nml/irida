@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { FIELDS } from "../../../constants";
 
 const { BASE_URL } = window.TL;
