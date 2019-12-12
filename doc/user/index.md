@@ -75,7 +75,6 @@ If you are a system administrator or lab technician in a sequencing facility, yo
 [user]: user/
 [admin]: administrator/
 [web-upload]: tutorials/web-upload/
-[uploader-tool]: tutorials/uploader-tool/
 [assembly]: tutorials/assembly/
 [snvphyl]: tutorials/snvphyl/
 [sistr]: tutorials/sistr/
