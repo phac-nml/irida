@@ -13,6 +13,7 @@ import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { downloadFilesAsZip } from "../../../../apis/analysis/analysis";
+import { grey6 } from "../../../../styles/colors";
 
 const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
 const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
@@ -90,12 +91,23 @@ export default function OutputFilePreview() {
         <div>
           <Button
             style={{ marginBottom: SPACE_XS }}
-            icon="download"
             onClick={() =>
               downloadFilesAsZip(analysisContext.analysis.identifier)
             }
           >
-            {getI18N("AnalysisOutputs.downloadAllFiles")}
+            <span
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}
+            >
+              <i
+                class="fas fa-file-archive"
+                style={{ color: grey6, marginRight: SPACE_XS }}
+              ></i>
+              {getI18N("AnalysisOutputs.downloadAllFiles")}
+            </span>
           </Button>
           <Tabs defaultActiveKey="1" animated={false}>
             {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
