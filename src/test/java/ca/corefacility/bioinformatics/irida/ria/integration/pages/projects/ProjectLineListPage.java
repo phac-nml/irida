@@ -69,7 +69,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectLineListPage.class);
 	}
 
-	public void openColumnsPaenl() {
+	public void openColumnsPanel() {
 		columnsPanelToggle.click();
 	}
 

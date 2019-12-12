@@ -13,11 +13,6 @@
 			usersLink : /*[[@{/users/}]]*/'/users',
 			usersSelection : /*[[@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}]]*/'/groups/1/ajax/availablemembers',
 			deleteModal : /*[[@{/groups/removeUserModal}]]*/ '/groups/removeUserModal'
-		},
-		i18n : {
-			'unexpectedAddError' : /*[[#{group.users.add.notification.failure}]]*/'_An error happened when adding the user to this group, try again_',
-			'unexpectedRemoveError' : /*[[#{group.users.remove.notification.failure}]]*/'_An error happened when removing the user from this group, try again_',
-			'remove': /*[[#{group.users.remove.button.tooltip}]]*/ '_Remove user from group_'
 		}
 	};
 </script>
