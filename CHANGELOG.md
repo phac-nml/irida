@@ -33,6 +33,7 @@ Changes
 * [UI/Developer]: Lazy load line list export utilities.
 * [Developer]: Update to Chromedriver 79.0.0 for Travis CI.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack. See [i18n documentation](https://irida.corefacility.ca/documentation/developer/interface/i18n/) for more information.
+* [UI/Developer]: Created a Thymeleaf `WebpackerDialect` for dynamically adding front end assets to html pages. See [Webpack Documentation](https://irida.corefacility.ca/documentation/developer/interface/webpack/) for more information.
 
 19.05 to 19.09
 ---------------
