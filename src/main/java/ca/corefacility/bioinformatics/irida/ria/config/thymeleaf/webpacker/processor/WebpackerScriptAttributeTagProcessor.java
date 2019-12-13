@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerTagType;
 
 /**
- * Thymeleaf Tag Processor for elements of the form: <code><div webpack:script="entry_name" /></code>
+ * Thymeleaf Tag Processor for elements with the attr `webpack:script="entry_name"`
  *
  * This is a special case handler for when the link to an entry is within an attribute on an
  * element.  This only exists on the project samples page to handling opening modals directly.

@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Thymeleaf Tag Processor for elements of the form: <code><webpack:css entry="entry_name" /></code>
+ * Thymeleaf Tag Processor for elements with the tag `webpack:css`
  *
  * This processor will:
  * - determine which css files need to be loaded from the webpack manifest file.
