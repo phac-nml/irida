@@ -23,11 +23,20 @@ import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
 
+import "./modals/samples-filter";
+
 /*
 This is required to use select2 inside a modal.
 This is required to use select2 inside a modal.
  */
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+
+/*
+Keep a reference to all the modals that have been loaded onto the page
+ */
+window.IRIDA = window.IRIDA = {
+  modals: {}
+};
 
 /*
 Defaults for table popovers
@@ -427,6 +436,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   Determine which modal to open
    */
   const btn = event.relatedTarget;
+  const scriptId = btn.data("script-id");
   const url = btn.data("url");
   const params = btn.data("params") || {};
   const script_src = btn.data("script");
@@ -437,7 +447,9 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
 
   let script;
   modal.load(`${url}?${$.param(params)}`, function() {
-    if (typeof script_src !== "undefined") {
+    if (typeof window.IRIDA.modals[scriptId] === "function") {
+      window.IRIDA.modals[scriptId]();
+    } else if (typeof script_src !== "undefined") {
       script = document.createElement("script");
       script.type = "text/javascript";
       script.src = script_src;
@@ -452,11 +464,6 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
     modal.modal("hide");
     $dt.select.selectNone();
     $dt.ajax.reload();
-    // Remove the script
-    if (typeof script !== "undefined") {
-      document.getElementsByTagName("head")[0].removeChild(script);
-      script = undefined;
-    }
   });
 
   /*
