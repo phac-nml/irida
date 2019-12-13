@@ -13,7 +13,16 @@ import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { downloadFilesAsZip } from "../../../../apis/analysis/analysis";
-import { grey6 } from "../../../../styles/colors";
+import { blue5, grey7 } from "../../../../styles/colors";
+import styled from "styled-components";
+
+const ZipDownloadButton = styled(Button)`
+  color: ${grey7};
+
+  &:hover {
+    color: ${blue5};
+  }
+`;
 
 const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
 const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
@@ -89,7 +98,7 @@ export default function OutputFilePreview() {
     <TabPaneContent title={getI18N("AnalysisOutputs.outputFilePreview")}>
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
-          <Button
+          <ZipDownloadButton
             style={{ marginBottom: SPACE_XS }}
             onClick={() =>
               downloadFilesAsZip(analysisContext.analysis.identifier)
@@ -103,12 +112,12 @@ export default function OutputFilePreview() {
               }}
             >
               <i
-                class="fas fa-file-archive"
-                style={{ color: grey6, marginRight: SPACE_XS }}
+                className="fas fa-file-archive"
+                style={{ marginRight: SPACE_XS }}
               ></i>
               {getI18N("AnalysisOutputs.downloadAllFiles")}
             </span>
-          </Button>
+          </ZipDownloadButton>
           <Tabs defaultActiveKey="1" animated={false}>
             {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
               <TabPane
