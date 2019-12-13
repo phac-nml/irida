@@ -1,12 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.BasicPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsProcessingPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Test;
+import com.google.common.collect.ImmutableList;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -24,6 +27,8 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 		LoginPage.loginAsAdmin(driver());
 		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
+		checkTranslations(processingPage, ImmutableList.of("project-settings-basic"), null);
+
 		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
 
 		assertTrue("create analysis button should be visible", processingPage.isCreateAnalysisButtonVisible());

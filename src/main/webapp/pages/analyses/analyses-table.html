@@ -129,15 +129,6 @@
           download: /*[[@{/analysis/ajax/download/}]]*/ "",
           deleteUrl: /*[[@{/analysis/ajax/delete/}]]*/ ""
         },
-        i18n: {
-          unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ "",
-          "analysis.details.joberror.standardOutput": /*[[#{analysis.details.joberror.standardOutput}]]*/ "STDOUT",
-          "analysis.details.joberror.standardError": /*[[#{analysis.details.joberror.standardError}]]*/ "STDERR",
-          "analysis.joberror.popover.goto-submission": /*[[#{analysis.joberror.popover.goto-submission}]]*/ "GOTO SUBMISSION {0}",
-          "analysis.joberror": /*[[#{analysis.joberror}]]*/ "JOBERROR",
-          "analysis.joberror.popover.truncated-output": /*[[#{analysis.joberror.popover.truncated-output}]]*/ "TRUNCATED",
-          "analysis.joberror.popover.click-to-show": /*[[#{analysis.joberror.popover.click-to-show}]]*/ "CLICK IT"
-        },
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
       });
     </script>
@@ -156,27 +147,6 @@
         },
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
         page: /*[[${ page }]]*/ 'shared',
-        i18n: {
-          "sample.sampleName": /*[[#{sample.sampleName}]]*/ "SAMPLE NAME",
-          "bc.file": /*[[#{bc.file}]]*/ "FILE",
-          "analysis.table.type": /*[[#{analysis.table.type}]]*/ "ANALYSIS TYPE",
-          "analysis.table.version.unknown": /*[[#{analysis.table.version.unknown}]]*/ "UNKNOWN VERSION",
-          "analysis.table.name.unknown": /*[[#{analysis.table.name.unknown}]]*/ "UNKNOWN NAME",
-          "pipeline": /*[[#{pipeline}]]*/ "PIPELINE",
-          "analysis-submission": /*[[#{analysis-submission}]]*/ "ANALYSIS SUBMISSION",
-          "analysis.date-created": /*[[#{analysis.date-created}]]*/ "CREATED",
-          "form.download": /*[[#{form.download}]]*/ "DOWNLOAD",
-          "project.export.submitter": /*[[#{project.export.submitter}]]*/ "SUBMITTER",
-          "error.request.status-code": /*[[#{error.request.status-code}]]*/ "STATUS CODE",
-          "error.request.url": /*[[#{error.request.url}]]*/ "REQUEST URL",
-          "error.request.status-text": /*[[#{error.request.status-text}]]*/ "STATUS TEXT",
-          "analysis.batch-download.ajax.error": /*[[#{analysis.batch-download.ajax.error}]]*/ "REQUEST ERROR",
-          "error": /*[[#{error}]]*/ "!!!ERROR!!!",
-          "analysis.batch-download.preparing": /*[[#{analysis.batch-download.preparing}]]*/ "PREPARING DOWNLOAD",
-          "analysis.automated-analyses": /*[[#{analysis.automated-analyses}]]*/ "AUTOMATED ANALYSES",
-          "analysis.shared-analyses": /*[[#{analysis.shared-analyses}]]*/ "SHARED ANALYSES",
-          "analysis.batch-download.help-info": /*[[#{analysis.batch-download.help-info}]]*/ "SEND HELP"
-        }
       });
     </script>
     <script th:src="@{/dist/js/analysis-outputs-table.bundle.js}"></script>

@@ -26,29 +26,6 @@
             sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
           },
           fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
-        },
-        i18n: {
-          chips: {
-            name: /*[[#{project.sample.filter-name}]]*/ "Name",
-            range: /*[[#{project.sample.filter-date.label}]]*/ "Date Range",
-            organism: /*[[#{project.sample.filter-organism}]]*/ "Organism"
-          },
-          dateFilter: {
-            format: /*[[#{project.sample.filter.date.format}]]*/ "MMM dd, YYYY",
-            month: /*[[#{project.sample.filter.date.month}]]*/ "_MONTH_",
-            months3: /*[[#{project.sample.filter.date.months3}]]*/ "3 Months_",
-            months6: /*[[#{project.sample.filter.date.months6}]]*/ "6 Months_",
-            year: /*[[#{project.sample.filter.date.year}]]*/ "Year_"
-          },
-          buttons: {
-            selectAll: /*[[#{project.samples.select.selectAll}]]*/ "Select All",
-            selectNone: /*[[#{project.samples.select.selectNone}]]*/ "Select None"
-          },
-          select: {
-            none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
-            one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
-            other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
-          }
         }
       };
     </script>

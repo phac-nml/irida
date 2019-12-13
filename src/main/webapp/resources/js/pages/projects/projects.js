@@ -60,9 +60,9 @@ const config = Object.assign(tableConfig, {
           url: `${window.PAGE.urls.project}${full.id}`,
           label: `${
             full.remote
-              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${
-                  window.PAGE.i18n.remote
-                }">${data}&nbsp;<i style="color: #000;" class="fas fa-exchange-alt pull-right"></i></div>`
+              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${i18n(
+                  "projects.table.remoteSynchronized"
+                )}">${data}&nbsp;<i style="color: #000;" class="fas fa-exchange-alt pull-right"></i></div>`
               : data
           }`,
           width: "200px"

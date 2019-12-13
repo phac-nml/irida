@@ -9,8 +9,8 @@ const $dateRangeFilter = $("#js-daterange");
 
 function formatDateRangeInput(start, end) {
   $dateRangeFilter.val(
-    `${start.format(window.PAGE.i18n.dateFilter.format)} - ${end.format(
-      window.PAGE.i18n.dateFilter.format
+    `${start.format(i18n("project.sample.filter.date.format"))} - ${end.format(
+      i18n("project.sample.filter.date.format")
     )}`
   );
 }
@@ -27,19 +27,19 @@ $dateRangeFilter
     },
     showDropdowns: true,
     ranges: {
-      [window.PAGE.i18n.dateFilter.month]: [
+      [i18n("project.sample.filter.date.month")]: [
         moment().subtract(1, "month"),
         moment()
       ],
-      [window.PAGE.i18n.dateFilter.months3]: [
+      [i18n("project.sample.filter.date.months3")]: [
         moment().subtract(3, "month"),
         moment()
       ],
-      [window.PAGE.i18n.dateFilter.months6]: [
+      [i18n("project.sample.filter.date.months6")]: [
         moment().subtract(6, "month"),
         moment()
       ],
-      [window.PAGE.i18n.dateFilter.year]: [
+      [i18n("project.sample.filter.date.year")]: [
         moment().subtract(1, "year"),
         moment()
       ]

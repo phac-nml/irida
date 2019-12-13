@@ -12,23 +12,13 @@
     <script th:inline="javascript">
       window.PAGE = {
         permissions: /*[[${isAdmin or isOwner}]]*/ false,
-        i18n: {
-          "AssociatedProjects.title":
-            /*[[#{AssociatedProjects.title}]]*/ "AssociatedProjects.title",
-          "AssociatedProjects.subTitle":
-            /*[[#{AssociatedProjects.subTitle}]]*/ "AssociatedProjects.subTitle",
-          "ViewAssociatedProjects.ProjectHeader":
-            /*[[#{ViewAssociatedProjects.ProjectHeader}]]*/ "ViewAssociatedProjects.ProjectHeader",
-          "ViewAssociatedProjects.OrganismHeader":
-            /*[[#{ViewAssociatedProjects.OrganismHeader}]]*/ "ViewAssociatedProjects.OrganismHeader"
-        }
       };
     </script>
   </head>
   <body>
     <div id="root" layout:fragment="settings-content"></div>
     <th:block layout:fragment="scripts">
-      <script src="/dist/js/associated-projects.bundle.js"></script>
+      <script th:src="@{/dist/js/associated-projects.bundle.js}"></script>
     </th:block>
   </body>
 </html>
