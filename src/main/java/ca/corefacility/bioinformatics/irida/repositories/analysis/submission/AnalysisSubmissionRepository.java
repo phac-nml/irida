@@ -47,6 +47,9 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	@Query("select s from AnalysisSubmission s where s.analysisState in ?1")
 	public List<AnalysisSubmission> findByAnalysisState(Collection<AnalysisState> state);
 
+	@Query("select count(s.id) from AnalysisSubmission s where s.analysisState in ?1")
+	public Long countByAnalysisState(Collection<AnalysisState> state);
+
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given states.
 	 * 

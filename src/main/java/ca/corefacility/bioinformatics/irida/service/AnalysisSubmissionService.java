@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -328,4 +329,29 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
+
+	public AnalysisServiceStatus getAnalysisServiceStatus();
+
+	public class AnalysisServiceStatus {
+		private Long running;
+		private Long queued;
+
+		public AnalysisServiceStatus(Long running, Long queued) {
+			this.running = running;
+			this.queued = queued;
+		}
+
+		public Long getRunning() {
+			return running;
+		}
+
+		public Long getQueued() {
+			return queued;
+		}
+
+		@Override
+		public String toString() {
+			return "Running: " + running + ", Queued: " + queued;
+		}
+	}
 }

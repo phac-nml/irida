@@ -4,6 +4,8 @@ import { fetchIridaAnalysisWorkflows } from "../../apis/pipelines/pipelines";
 import Pipeline from "../pipeline/Pipeline";
 import "./styles.css";
 import { SPACE_MD } from "../../styles/spacing";
+import {AnalysisServiceStatus} from "../../pages/analyses/AnalysisServiceStatus"
+
 
 /**
  * Component to render all analysis pipeline for the user to select.
@@ -22,6 +24,9 @@ export class Pipelines extends React.Component {
 
   render() {
     return (
+      <div>
+                <AnalysisServiceStatus running={5} queued={15}/>
+
       <Row className="t-pipelines" gutter={16}>
         {this.state.pipelines.map(pipeline => (
           <Col
@@ -42,6 +47,7 @@ export class Pipelines extends React.Component {
           </Col>
         ))}
       </Row>
+      </div>
     );
   }
 }
