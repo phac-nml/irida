@@ -22,7 +22,6 @@
 			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 			<span th:text="#{samples.files.concatenate.error}">_concatenation error_</span>
 		</div>
-
 		<form th:action="${url}" id="concatenate-form" method="POST" th:with="url=${#httpServletRequest.requestURI}">
 			<div class="row">
 				<div class="col-md-12">
@@ -87,8 +86,8 @@
 
 
 	</div>
-	<th:block layout:fragment="scripts" th:inline="javascript">
-		<webpacker:js entry="sample-files-concatenate"/></script>
+	<th:block layout:fragment="scripts">
+		<webpacker:js entry="sample-files-concatenate"/>
 	</th:block>
 </body>
 
