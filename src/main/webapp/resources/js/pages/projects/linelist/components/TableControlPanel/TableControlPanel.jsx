@@ -1,12 +1,11 @@
 import React from "react";
+
 import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
 
 import styled from "styled-components";
 import { grey2, grey5, grey9 } from "../../../../../styles/colors";
-
-const { i18n } = window.PAGE;
 
 const ControlPanel = styled.div`
   height: 100%;
@@ -47,7 +46,7 @@ export default function TableControlPanel(props) {
         <Columns {...props} />
       </ControlPanelContent>
       <ControlPanelButtons>
-        <Tooltip title={i18n.controlPanel.columns.title} placement="left">
+        <Tooltip title={i18n("linelist.controlPanel.columns.title")} placement="left">
           <Button
             tour="tour-columns"
             shape="circle"

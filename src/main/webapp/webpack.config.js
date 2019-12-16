@@ -1,8 +1,11 @@
 const path = require("path");
+const webpack = require("webpack");
 const merge = require("webpack-merge");
-const cssnano = require("cssnano");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
+
+const dev = require("./webpack.config.dev");
+const prod = require("./webpack.config.prod");
 
 const entries = require("./entries.js");
 
@@ -19,7 +22,9 @@ const config = {
   },
   resolve: {
     extensions: [".js", ".jsx"],
-    alias: { "./dist/cpexcel.js": "" }
+    alias: {
+      "./dist/cpexcel.js": ""
+    }
   },
   entry: entries,
   output: {
@@ -37,7 +42,9 @@ const config = {
       {
         test: /\.(css|sass|scss)$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
           "css-loader",
           {
             loader: "postcss-loader",
@@ -89,31 +96,16 @@ const config = {
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
     }),
-    new OptimizeCSSAssetsPlugin({
-      cssProcessor: cssnano,
-      cssProcessorPluginOptions: {
-        preset: [
-          "default",
-          {
-            discardComments: { removeAll: true },
-            normalizeCharset: { add: true }
-          }
-        ]
-      },
-      cssProcessorOptions: {
-        // Run cssnano in safe mode to avoid
-        // potentially unsafe transformations.
-        safe: true,
-        canPrint: false,
-        map: this.mode === "development" ? { inline: false } : null
-      }
+    new i18nThymeleafWebpackPlugin({
+      functionName: "i18n"
+    }),
+    new webpack.ProvidePlugin({
+      i18n: path.resolve(path.join(__dirname, "resources/js/i18n"))
     })
   ]
 };
 
 module.exports = ({ mode = "development" }) => {
-  const dev = require("./webpack.config.dev");
-  const prod = require("./wepack.config.prod");
   return merge(
     { mode },
     config,

@@ -18,7 +18,11 @@ const { Content } = Layout;
 export function PageWrapper({ title, headerExtras, children }) {
   return (
     <Layout style={{ height: "100%", minHeight: "100%" }}>
-      <PageHeader title={title} extra={headerExtras} />
+      <PageHeader
+        className="t-main-heading"
+        title={title}
+        extra={headerExtras}
+      />
       <Content style={{ padding: SPACE_MD }}>
         <div style={{ padding: SPACE_MD, backgroundColor: grey1 }}>
           {children}

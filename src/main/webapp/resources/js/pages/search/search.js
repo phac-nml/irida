@@ -1,4 +1,5 @@
 import "../../vendor/datatables/datatables";
+
 import $ from "jquery";
 import {
   createItemLink,
@@ -31,7 +32,9 @@ const projectConfig = Object.assign({}, tableConfig, {
           url: `${window.PAGE.urls.project}${full.id}`,
           label: `${
             full.remote
-              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${window.PAGE.i18n.remote}">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
+              ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${i18n(
+                  "projects.table.remoteSynchronized"
+                )}">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
               : data
           }`,
           width: "200px"

@@ -31,7 +31,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public static ProjectsPage goToProjectsPage(WebDriver driver, boolean isAdmin) {
-		get(driver, "/projects" + (isAdmin ? "/all" : ""));
+		get(driver, "projects" + (isAdmin ? "/all" : ""));
 		return PageFactory.initElements(driver, ProjectsPage.class);
 	}
 
