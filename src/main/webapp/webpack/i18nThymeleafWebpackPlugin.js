@@ -10,7 +10,7 @@
 
 "use strict";
 
-const Chunk = require("webpack/lib/Chunk.js")
+const Chunk = require("webpack/lib/Chunk.js");
 
 /**
  * @param {string[]} keys the translation keys required for the entry

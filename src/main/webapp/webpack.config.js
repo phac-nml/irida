@@ -98,9 +98,12 @@ const config = {
     runtimeChunk: "single",
     splitChunks: {
       name: false,
-      chunks (chunk) {
+      chunks(chunk) {
         // exclude modals in projects-samples-*
-        return typeof chunk.name === "string" && !chunk.name.includes('project-samples-');
+        return (
+          typeof chunk.name === "string" &&
+          !chunk.name.includes("project-samples-")
+        );
       }
     }
   },
