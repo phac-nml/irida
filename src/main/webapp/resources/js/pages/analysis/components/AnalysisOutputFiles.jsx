@@ -1,12 +1,25 @@
-import React from "react";
-import { Typography } from "antd";
+/**
+ * @File component renders a preview of output files
+ */
 
-const { Title } = Typography;
+import React from "react";
+import { Layout } from "antd";
+import { SPACE_MD } from "../../../styles/spacing";
+import { grey1 } from "../../../styles/colors";
+import { ANALYSIS, OUTPUT } from "../routes";
+
+const OutputFilePreview = React.lazy(() =>
+  import("./outputs/OutputFilePreview")
+);
+const { Content } = Layout;
 
 export default function AnalysisOutputFiles() {
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.OUTPUT}`;
   return (
-    <Title level={2} className="t-page-title">
-      Output Files
-    </Title>
+    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
+      <Content>
+        <OutputFilePreview path={`${BASE_URL}/${OUTPUT.FILE_PREVIEW}`} />
+      </Content>
+    </Layout>
   );
 }
