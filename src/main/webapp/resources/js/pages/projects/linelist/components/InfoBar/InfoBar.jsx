@@ -1,3 +1,9 @@
+/**
+ * @file This component is rendered at the bottom on the bottom of an
+ * ag-grid table and used to display the number of items selected, and the
+ * total number of elements in the table.
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { FilteredCounts } from "./FilteredCounts";
