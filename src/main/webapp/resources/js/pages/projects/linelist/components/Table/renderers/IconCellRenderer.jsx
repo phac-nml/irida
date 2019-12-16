@@ -1,12 +1,16 @@
+/**
+ * @file Display a column for icons based on specific data from the entry.
+ */
 import React from "react";
 
 import PropTypes from "prop-types";
-import { Icon, Tooltip } from "antd";
+import { Tooltip } from "antd";
+import { blue6 } from "../../../../../../styles/colors";
 
 function LockedIcon() {
   return (
     <Tooltip title={i18n("project.samples.locked-title")} placement="right">
-      <Icon type="lock" theme="twoTone" />
+      <div><i className="fas fa-lock" style={{color: blue6}}/></div>
     </Tooltip>
   );
 }
