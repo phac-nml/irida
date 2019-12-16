@@ -1020,6 +1020,24 @@ public class AnalysisAjaxController {
 		return new AnalysisTreeResponse(tree, message);
 	}
 
+	@RequestMapping("/{submissionId}/provenance")
+	private AnalysisProvenanceResponse getAnalysisProvenance(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		Set<AnalysisOutputFile> outputFiles = analysis.getAnalysisOutputFiles();
+		return new AnalysisProvenanceResponse();
+	}
+
+	@RequestMapping("/{submissionId}/provenance/{filename}")
+	private void getProvenanceByFile(@PathVariable Long id, String filename) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile aof = analysis.getAnalysisOutputFile(filename);
+		logger.debug("AOF IS: ");
+		logger.debug(aof.toString());
+		//return new AnalysisProvenanceResponse();
+	}
+
 	/**
 	 * Response object storing a project and whether or not it's shared with a
 	 * given {@link AnalysisSubmission}
