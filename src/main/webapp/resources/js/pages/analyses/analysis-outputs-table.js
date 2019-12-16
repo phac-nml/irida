@@ -11,7 +11,7 @@ import {
 import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-material.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
 const helpInfoIcon = `<i class="fa fa-2x fa-question-circle spaced-left__sm text-info" title="${escapeHtml(
   i18n("analysis.batch-download.help-info")
@@ -332,7 +332,7 @@ async function getTableData(isShared = true) {
     }
   ].filter(header => header !== null);
   const $grid = newElement(
-    `<div id="grid-outputs" class="ag-theme-material" style="height: 600px; width: 100%; resize: both;"/>`
+    `<div id="grid-outputs" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
   );
   const $dlButton = newElement(
     `<button type="button" class="btn spaced-bottom" disabled="disabled"></button>`
