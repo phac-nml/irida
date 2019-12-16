@@ -1,3 +1,9 @@
+/**
+ * @file Renders a component to display a list of switches which control the column
+ * visibility within the metadata table.  Each switch represents
+ * a Metadata Field.
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { List, Switch } from "antd";
@@ -19,11 +25,6 @@ const ColumnItemText = styled.span`
   width: 100%;
 `;
 
-/**
- * Component to display a list of switches which control the column
- * visibility within the metadata table.  Each switch represents
- * a Metadata Field.
- */
 export default class ColumnVisibility extends React.Component {
   static propTypes = {
     /**
