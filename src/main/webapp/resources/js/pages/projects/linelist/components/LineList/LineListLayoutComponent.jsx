@@ -1,3 +1,8 @@
+/**
+ * @file Component for the overall layout of the line list table, and has the
+ * responsibility of delegating function to the different areas of the table.
+ */
+
 import React from "react";
 import { Layout } from "antd";
 import { Table } from "../Table";
