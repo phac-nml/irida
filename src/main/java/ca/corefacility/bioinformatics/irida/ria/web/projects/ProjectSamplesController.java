@@ -284,49 +284,12 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the modal window for filtering project samples
+	 * Get a list of all organisms listed on the current project and displayed associated projects.
 	 *
-	 * @param projectId  {@link Long} identifier for the current {@link Project}
-	 * @param associated Which associated projects are enabled
-	 * @param filter     {@link UISampleFilter} Current filter parameters.
-	 * @param model      UI Model
-	 * @return {@link String} path to the modal template
+	 * @param projectId  - Identifier for the current project
+	 * @param associated - List of ids of all currently displayed associated projects.
+	 * @return List of names {@link String} of organisms.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getProjectSamplesFilterModal(@PathVariable Long projectId,
-			@RequestParam(required = false, name = "associated[]", defaultValue = "") List<Long> associated,
-			UISampleFilter filter, Model model) {
-		model.addAttribute("filter", filter);
-
-		/*
-		Add the current project to the list of project ids to ensure that we get the organisms
-		that are associated with the current project.
-		 */
-		associated.add(projectId);
-
-		/*
-		Create an alphabetically organized list of unique values of all the different organisms
-		that are in the current and all associated projects.
-		 */
-		Set<String> organismSet = new HashSet<>();
-		for (Long id : associated) {
-			Project project = projectService.read(id);
-			organismSet.addAll(sampleService.getSampleOrganismsForProject(project));
-		}
-		List<String> organisms = new ArrayList<>(organismSet);
-		organisms.sort((o1, o2) -> {
-			if (Strings.isNullOrEmpty(o1)) {
-				o1 = "";
-			}
-			if (Strings.isNullOrEmpty(o2)) {
-				o2 = "";
-			}
-			return o1.compareToIgnoreCase(o2);
-		});
-		model.addAttribute("organisms", organisms);
-		return PROJECT_TEMPLATE_DIR + "filter-modal.tmpl";
-	}
-
 	@RequestMapping("/projects/{projectId}/filter/organisms")
 	public List<String> getOrganismsForAllAssociatedProjects(@PathVariable long projectId,
 			@RequestParam(required = false, name = "associated", defaultValue = "") List<Long> associated) {
@@ -413,9 +376,7 @@ public class ProjectSamplesController {
 			// See if the name is there
 			for (Join<Project, Sample> join : psj) {
 				Sample sample = join.getObject();
-				if (sampleNames.contains(sample.getLabel())) {
-					sampleNames.remove(sample.getLabel());
-				}
+				sampleNames.remove(sample.getLabel());
 				if (sampleNames.size() == 0) {
 					break;
 				}
