@@ -31,8 +31,6 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-copy.js",
   "project-samples-remove":
     "./resources/js/pages/projects/samples/modals/samples-remove.js",
-  "project-samples-filter":
-    "./resources/js/pages/projects/samples/modals/samples-filter.js",
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
@@ -73,7 +71,8 @@ module.exports = {
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
-  "sample-files-concatenate": "./resources/js/pages/samples/sample-files-concatenate.js",
+  "sample-files-concatenate":
+    "./resources/js/pages/samples/sample-files-concatenate.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
   "groups-list": "./resources/js/pages/users/groups-list.js",

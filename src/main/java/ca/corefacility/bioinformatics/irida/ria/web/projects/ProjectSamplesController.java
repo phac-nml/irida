@@ -327,13 +327,39 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "filter-modal.tmpl";
 	}
 
+	@RequestMapping("/projects/{projectId}/filter/organisms")
+	public List<String> getOrganismsForAllAssociatedProjects(@PathVariable long projectId,
+			@RequestParam(required = false, name = "associated", defaultValue = "") List<Long> associated) {
+		// Add the current project to the associated so that we get all the projects organisms
+		associated.add(projectId);
+
+		/*
+		Create an alphabetically organized list of unique values of all the different organisms
+		that are in the current and all associated projects.
+		 */
+		Set<String> organismSet = new HashSet<>();
+		for (Long id : associated) {
+			Project project = projectService.read(id);
+			organismSet.addAll(sampleService.getSampleOrganismsForProject(project));
+		}
+		List<String> organisms = new ArrayList<>(organismSet);
+		organisms.sort((o1, o2) -> {
+			if (Strings.isNullOrEmpty(o1)) {
+				o1 = "";
+			}
+			if (Strings.isNullOrEmpty(o2)) {
+				o2 = "";
+			}
+			return o1.compareToIgnoreCase(o2);
+		});
+		return organisms.stream().filter(s -> !Strings.isNullOrEmpty(s)).collect(Collectors.toList());
+	}
+
 	/**
 	 * Generate a {@link Map} of {@link Sample} to move or share.
 	 *
-	 * @param project  The {@link Project}.
-	 * @param ids
-	 * 		{@link Long} of ids for {@link Sample}
-	 *
+	 * @param project The {@link Project}.
+	 * @param ids     {@link Long} of ids for {@link Sample}
 	 * @return {@link Map} of samples to be moved or shared.
 	 */
 	private Map<String, List<Sample>> generateShareMoveSamplesContent(Project project, List<Long> ids) {

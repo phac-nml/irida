@@ -241,9 +241,37 @@
     </table>
 
     <div id="js-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
-    <div id="js-filter-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"
-         data:template="@{/projects/{id}/template/samples-filter-modal(id=${project.getId()})}"
-         webpacker:script="project-samples-filter"></div>
+    <div id="js-filter-modal-wrapper" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="#{project.sample.filter-title}">Filter Samples</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="js-name" th:text="#{project.sample.filter-name}">Sample NAME</label>
+                        <input type="text" class="form-control t-name-filter" id="js-name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="js-organism" th:text="#{project.sample.filter-organism}">Sample Organism</label>
+                        <select name="organism" id="js-organism" class="form-control">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="daterange" th:text="#{project.sample.filter-date.label}">Date One</label>
+                        <input type="text" class="form-control t-daterange-filter" id="js-daterange"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="js-cancel-filter" class="btn btn-default" data-dismiss="modal">Close
+                    </button>
+                    <button type="button" id="js-do-filter" class="btn btn-primary t-apply-filter-btn"
+                            data-dismiss="modal" th:text="#{project.sample.filter.apply}">Save changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="hidden">
         <span class="qc-warning-wrapper js-qc-warning-wrapper" data-toggle="popover"
