@@ -354,19 +354,19 @@ export class TableComponent extends React.Component {
       <AgGridReact
         id="linelist-grid"
         rowSelection="multiple"
-        // onFilterChanged={this.setFilterCount}
-        // localeText={i18n.linelist.agGrid}
+        onFilterChanged={this.setFilterCount}
+        localeText={i18n.linelist.agGrid}
         columnDefs={this.props.fields}
         rowData={this.props.entries}
         frameworkComponents={this.frameworkComponents}
-        // loadingOverlayComponent="LoadingOverlay"
+        loadingOverlayComponent="LoadingOverlay"
         onGridReady={this.onGridReady}
-        // onDragStopped={this.onColumnDropped}
+        onDragStopped={this.onColumnDropped}
         rowDeselection={true}
-        // suppressRowClickSelection={true}
+        suppressRowClickSelection={true}
         onSelectionChanged={this.onSelectionChange}
         defaultColDef={{
-          // headerCheckboxSelectionFilteredOnly: true,
+          headerCheckboxSelectionFilteredOnly: true,
           sortable: true,
           filter: true
         }}
