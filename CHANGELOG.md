@@ -34,6 +34,7 @@ Changes
 * [UI/Developer]: Lazy load line list export utilities.
 * [Developer]: Update to Chromedriver 79.0.0 for Travis CI.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack. See [i18n documentation](https://irida.corefacility.ca/documentation/developer/interface/i18n/) for more information.
+* [Developer]: Sample filter input has underscores escaped so that proper samples are returned
 
 19.05 to 19.09
 ---------------
