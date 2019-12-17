@@ -22,7 +22,7 @@
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
 
         <div class="btn-group pull-right">
-0          <a class="btn btn-primary btn-sm" th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
+          <a class="btn btn-primary btn-sm" th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
              th:text="#{event.admin.link}">_All Projects_
           </a>
         </div>

@@ -1,3 +1,8 @@
+/**
+ * @file Default layout for all ag-grid tables.  Cleans up icons and styles to
+ * match as close as possible to ant.design principles.  Use this to wrap all
+ * all React instances of ag-grid.
+ */
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";

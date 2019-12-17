@@ -1,9 +1,16 @@
+/**
+ * @file This component is rendered at the bottom on the bottom of an
+ * ag-grid table and used to display the number of items selected, and the
+ * total number of elements in the table.
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { FilteredCounts } from "./FilteredCounts";
 import { SelectedCount } from "./SelectedCount";
 import styled from "styled-components";
-import { grey2, grey5 } from "../../../../../styles/colors";
+import { grey2 } from "../../../../../styles/colors";
+import { GRID_BORDER } from "../../styles";
 
 const Wrapper = styled.div`
   height: 30px;
@@ -13,7 +20,7 @@ const Wrapper = styled.div`
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   background-color: ${grey2};
-  border: 1px solid ${grey5};
+  border: ${GRID_BORDER};
   border-top: none;
   display: flex;
   justify-content: space-between;
