@@ -7,8 +7,7 @@ import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
-
+import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { LoadingOverlay } from "./LoadingOverlay";
 import {
   DateCellRenderer,
@@ -59,13 +58,6 @@ export class TableComponent extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.globalFilter !== this.props.globalFilter) return true;
-    /**
-     * Check to see if the height of the table needs to be updated.
-     * This will only happen  on initial load or if the window height has changed
-     */
-    if (nextProps.height !== this.props.height) {
-      return true;
-    }
 
     if (!isEqual(nextProps.fields, this.props.fields)) {
       /*
@@ -364,43 +356,37 @@ export class TableComponent extends React.Component {
 
   render() {
     return (
-      <div
-        className="ag-grid-table-wrapper"
-        style={{ height: this.props.height }}
-      >
-        <AgGridReact
-          id="linelist-grid"
-          rowSelection="multiple"
-          onFilterChanged={this.setFilterCount}
-          localeText={{
+      <AgGridReact
+        id="linelist-grid"
+        rowSelection="multiple"
+        onFilterChanged={this.setFilterCount}
+        localeText={{
             loading: i18n("linelist.agGrid.loading"),
             sampleName: i18n("linelist.agGrid.sampleName")
           }}
-          columnDefs={this.props.fields}
-          rowData={this.props.entries}
-          frameworkComponents={this.frameworkComponents}
-          loadingOverlayComponent="LoadingOverlay"
-          onGridReady={this.onGridReady}
-          onDragStopped={this.onColumnDropped}
-          rowDeselection={true}
-          suppressRowClickSelection={true}
-          onSelectionChanged={this.onSelectionChange}
-          defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true,
-            sortable: true,
-            filter: true
-          }}
-          enableCellChangeFlash={true}
-          onCellEditingStarted={this.onCellEditingStarted}
-          onCellEditingStopped={this.onCellEditingStopped}
-        />
-      </div>
+        columnDefs={this.props.fields}
+        rowData={this.props.entries}
+        frameworkComponents={this.frameworkComponents}
+        loadingOverlayComponent="LoadingOverlay"
+        onGridReady={this.onGridReady}
+        onDragStopped={this.onColumnDropped}
+        rowDeselection={true}
+        suppressRowClickSelection={true}
+        onSelectionChanged={this.onSelectionChange}
+        defaultColDef={{
+          headerCheckboxSelectionFilteredOnly: true,
+          sortable: true,
+          filter: true
+        }}
+        enableCellChangeFlash={true}
+        onCellEditingStarted={this.onCellEditingStarted}
+        onCellEditingStopped={this.onCellEditingStopped}
+      />
     );
   }
 }
 
 TableComponent.propTypes = {
-  height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array,
