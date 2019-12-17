@@ -53,7 +53,8 @@ public class ProjectSampleSpecification {
 			}
 			// Check for the table search.
 			// This can be expanded in future to search any attribute on the sample (e.g. description)
-			// Note: The .replace("_", "\\_") on the search term is to escape underscores
+			// Underscores within the search term are escaped as the underscores were being treated the same 
+			// as hyphens.
 			if (!Strings.isNullOrEmpty(searchTerm)) {
 				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + searchTerm.replace("_", "\\_") + "%"));
 			}
