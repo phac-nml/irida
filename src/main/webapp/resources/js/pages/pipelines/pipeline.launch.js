@@ -129,9 +129,9 @@ function PipelineController(
    */
   vm.launchButtonTitle = function() {
     if (this.shouldDisableLaunch()) {
-      return window.PAGE.i18n.launchButtonTitleDisarmed;
+      return i18n("workflow.launch.btn.title-disarmed");
     } else {
-      return window.PAGE.i18n.launchButtonTitleArmed;
+      return i18n("workflow.launch.btn.title");
     }
   };
 

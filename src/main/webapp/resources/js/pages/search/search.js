@@ -70,9 +70,7 @@ const sampleConfig = Object.assign({}, tableConfig, {
       render(data, type, full) {
         // Render the name as a link to the actual project.
         return createItemLink({
-          url: `${window.PAGE.urls.project}${full.projectId}/samples/${
-            full.id
-          }`,
+          url: `${window.PAGE.urls.project}${full.projectId}/samples/${full.id}`,
           label: data
           //width: "200px"
         });

@@ -12,16 +12,8 @@ const Wrapper = styled.div`
   padding: 2rem;
 `;
 
-export const Overlay = ({ text }) => {
-  if (typeof window.PAGE.i18n[text] === "undefined") {
-    throw new Error(
-      `Expected 'window.PAGE.i18n[${text}]' to be present on the page.`
-    );
-  }
-  return (
+export const Overlay = ({ text }) => (
     <Wrapper>
       <Spin style={{ marginRight: SPACE_MD }} />
-      <span>{window.PAGE.i18n[text]}</span>
-    </Wrapper>
-  );
-};
+      <span>{text}</span>
+    </Wrapper>);

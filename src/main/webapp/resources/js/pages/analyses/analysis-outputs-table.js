@@ -121,7 +121,7 @@ async function downloadSelected($dlButton, api) {
     const outputs = selectedNodes.map(node => node.data);
     const { data, error } = await prepareAnalysisOutputsDownload(outputs);
     if (error) {
-      console.error(I18N["analysis.batch-download.ajax.error"], error);
+      console.error(i18n("analysis.batch-download.ajax.error"), error);
       return;
     }
     const { selectionSize } = data;
@@ -248,12 +248,12 @@ function displayErrorAlert(error) {
   $app.innerHTML = "";
   const $alert = newElement(
     `<div class="alert alert-danger">
-         <h4>${I18N["analysis.batch-download.ajax.error"]}</h4>
-         <p>${I18N["error.request.status-text"]}: ${message}; ${statusText}</p>
-         <p>${I18N["error.request.status-code"]}: ${status}</p>
-         <p>${
-           I18N["error.request.url"]
-         }: <a href="${responseURL}" target="_blank">${responseURL}</a></p>
+         <h4>${i18n("analysis.batch-download.ajax.error")}</h4>
+         <p>${i18n("error.request.status-text")}: ${message}; ${statusText}</p>
+         <p>${i18n("error.request.status-code")}: ${status}</p>
+         <p>${i18n(
+           "error.request.url"
+         )}: <a href="${responseURL}" target="_blank">${responseURL}</a></p>
        </div>`
   );
   $app.appendChild($alert);
@@ -284,7 +284,7 @@ async function getTableData(isShared = true) {
   const HEADERS = [
     {
       field: "sampleName",
-      headerName: I18N["sample.sampleName"],
+      headerName: i18n("sample.sampleName"),
       checkboxSelection: true,
       headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
@@ -296,7 +296,7 @@ async function getTableData(isShared = true) {
     },
     {
       field: "filePath",
-      headerName: I18N["bc.file"],
+      headerName: i18n("bc.file"),
       cellRenderer: p => {
         const {
           filePath,
@@ -312,44 +312,44 @@ async function getTableData(isShared = true) {
     },
     {
       field: "analysisType",
-      headerName: I18N["analysis.table.type"],
+      headerName: i18n("analysis.table.type"),
       valueGetter: function(p) {
         return p.data.analysisType.type;
       }
     },
     {
       field: "workflowId",
-      headerName: I18N["pipeline"],
+      headerName: i18n("pipeline"),
       valueGetter: function(p) {
         const wfInfo = workflowIds[p.data.workflowId];
         if (wfInfo === null) return p.data.workflowId;
         const version =
           wfInfo.version === "unknown"
-            ? I18N["analysis.table.version.unknown"]
+            ? i18n("analysis.table.version.unknown")
             : "v" + wfInfo.version;
         const name =
           wfInfo.name === "unknown"
-            ? I18N["analysis.table.name.unknown"]
+            ? i18n("analysis.table.name.unknown")
             : wfInfo.name;
         return `${name} (${version})`;
       }
     },
     {
       field: "analysisSubmissionName",
-      headerName: I18N["analysis-submission"],
+      headerName: i18n("analysis-submission"),
       cellRenderer: p =>
         `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {
           field: "userId",
-          headerName: I18N["project.export.submitter"],
+          headerName: i18n("project.export.submitter"),
           cellRenderer: p => `${p.data.userFirstName} ${p.data.userLastName}`
         }
       : null,
     {
       field: "createdDate",
-      headerName: I18N["analysis.date-created"],
+      headerName: i18n("analysis.date-created"),
       cellRenderer: p => formatDate({ date: p.data.createdDate })
     }
   ].filter(header => header !== null);
