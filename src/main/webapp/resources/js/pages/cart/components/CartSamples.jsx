@@ -1,4 +1,5 @@
 import React from "react";
+
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import styled from "styled-components";
@@ -14,7 +15,6 @@ import {
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
-import { getI18N } from "../../../utilities/i18n-utilities";
 import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails";
 import { SampleRenderer } from "./SampleRenderer";
@@ -123,7 +123,7 @@ function CartSamplesComponent({
           block
           onClick={emptyCart}
         >
-          {getI18N("cart.clear")}
+          {i18n("cart.clear")}
         </EmptyCartButton>
       </ButtonsPanelBottom>
     </Wrapper>

@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function Citation() {
@@ -11,10 +11,10 @@ export default function Citation() {
    * Returns the citation for the SISTR workflow
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisSistr.mash")}>
+    <TabPaneContent title={i18n("AnalysisSistr.mash")}>
       <a href="https://doi.org/10.1371/journal.pone.0147101">
-        {getI18N("AnalysisSistr.citationLinkText")}
-        <cite>{getI18N("AnalysisSistr.plosOne")}</cite>
+        {i18n("AnalysisSistr.citationLinkText")}
+        <cite>{i18n("AnalysisSistr.plosOne")}</cite>
       </a>
     </TabPaneContent>
   );

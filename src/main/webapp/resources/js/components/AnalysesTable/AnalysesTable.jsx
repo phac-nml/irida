@@ -11,7 +11,6 @@ import {
   fetchAllPipelinesTypes
 } from "../../apis/analysis/analysis";
 import { AnalysisState } from "./AnalysisState";
-import { getI18N } from "../../utilities/i18n-utilities";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6 } from "../../styles/colors";
@@ -62,12 +61,12 @@ export function AnalysesTable() {
         url: `${window.TL.BASE_URL}analysis`,
         width: 300
       }),
-      title: getI18N("analyses.analysis-name"),
+      title: i18n("analyses.analysis-name"),
       key: "name",
       ...getTextSearchProps("name")
     },
     {
-      title: getI18N("analyses.state"),
+      title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
       filterMultiple: true,
@@ -88,7 +87,7 @@ export function AnalysesTable() {
       }
     },
     {
-      title: getI18N("analyses.type"),
+      title: i18n("analyses.type"),
       key: "type",
       width: 250,
       dataIndex: "type",
@@ -106,7 +105,7 @@ export function AnalysesTable() {
       filters: pipelineTypes
     },
     {
-      title: getI18N("analyses.submitter"),
+      title: i18n("analyses.submitter"),
       width: 200,
       key: "submitter",
       sorter: true,
@@ -119,7 +118,7 @@ export function AnalysesTable() {
       key: "createdDate"
     },
     {
-      title: getI18N("analysis.duration"),
+      title: i18n("analysis.duration"),
       key: "duration",
       width: 150,
       dataIndex: "duration",
@@ -162,7 +161,7 @@ export function AnalysesTable() {
       <div style={{ marginBottom: SPACE_MD }}>
         <Popconfirm
           placement="bottomRight"
-          title={getI18N("analyses.delete-confirm").replace(
+          title={i18n("analyses.delete-confirm").replace(
             "[COUNT]",
             selected.length
           )}
@@ -175,7 +174,7 @@ export function AnalysesTable() {
             disabled={!selected.length}
             onClick={() => setDeleting(true)}
           >
-            {getI18N("analyses.delete")}
+            {i18n("analyses.delete")}
           </Button>
         </Popconfirm>
       </div>

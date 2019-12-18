@@ -11,7 +11,7 @@
 import React, { useContext } from "react";
 import { Icon, Steps } from "antd";
 import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { SPACE_MD } from "../../../styles/spacing";
 import { Running } from "../../../components/icons/Running";
 
@@ -26,33 +26,33 @@ export function AnalysisSteps() {
       style={{ paddingBottom: SPACE_MD, paddingTop: SPACE_MD }}
     >
       <Step
-        title={getI18N("AnalysisSteps.new")}
+        title={i18n("AnalysisSteps.new")}
         icon={analysisContext.analysisState === "NEW" ? <Running /> : null}
       />
       <Step
-        title={getI18N("AnalysisSteps.preparing")}
+        title={i18n("AnalysisSteps.preparing")}
         icon={
           analysisContext.analysisState === "PREPARING" ? <Running /> : null
         }
       />
       <Step
-        title={getI18N("AnalysisSteps.submitting")}
+        title={i18n("AnalysisSteps.submitting")}
         icon={
           analysisContext.analysisState === "SUBMITTING" ? <Running /> : null
         }
       />
       <Step
-        title={getI18N("AnalysisSteps.running")}
+        title={i18n("AnalysisSteps.running")}
         icon={analysisContext.analysisState === "RUNNING" ? <Running /> : null}
       />
       <Step
-        title={getI18N("AnalysisSteps.completing")}
+        title={i18n("AnalysisSteps.completing")}
         icon={
           analysisContext.analysisState === "COMPLETING" ? <Running /> : null
         }
       />
       <Step
-        title={getI18N("AnalysisSteps.completed")}
+        title={i18n("AnalysisSteps.completed")}
         icon={
           analysisContext.analysisState === "COMPLETED" ? <Success /> : null
         }

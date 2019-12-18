@@ -4,38 +4,38 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function SerovarPredictions({ sistrResults }) {
   function serovarPredictions() {
     return [
       {
-        title: getI18N("AnalysisSistr.overallSerovar"),
+        title: i18n("AnalysisSistr.overallSerovar"),
         desc: sistrResults.serovar
       },
       {
-        title: getI18N("AnalysisSistr.antigenSerovar"),
+        title: i18n("AnalysisSistr.antigenSerovar"),
         desc: sistrResults.serovar_antigen
       },
       {
-        title: getI18N("AnalysisSistr.cgmlstSerovar"),
+        title: i18n("AnalysisSistr.cgmlstSerovar"),
         desc: sistrResults.serovar_cgmlst
       },
       {
-        title: getI18N("AnalysisSistr.serogroup"),
+        title: i18n("AnalysisSistr.serogroup"),
         desc: sistrResults.serogroup
       },
       {
-        title: getI18N("AnalysisSistr.h1"),
+        title: i18n("AnalysisSistr.h1"),
         desc: sistrResults.h1
       },
       {
-        title: getI18N("AnalysisSistr.h2"),
+        title: i18n("AnalysisSistr.h2"),
         desc: sistrResults.h2
       },
       {
-        title: getI18N("AnalysisSistr.oAntigen"),
+        title: i18n("AnalysisSistr.oAntigen"),
         desc: sistrResults.o_antigen
       }
     ];
@@ -46,7 +46,7 @@ export default function SerovarPredictions({ sistrResults }) {
    * for the serovar predictions
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisSistr.serovarPredictions")}>
+    <TabPaneContent title={i18n("AnalysisSistr.serovarPredictions")}>
       <BasicList dataSource={serovarPredictions()} />
     </TabPaneContent>
   );

@@ -8,18 +8,18 @@ import { Error } from "../../../../components/icons/Error";
 import { Success } from "../../../../components/icons/Success";
 import { Warning } from "../../../../components/icons/Warning";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function SistrInfo({ sistrResults, sampleName }) {
   const { qc_status } = sistrResults;
   const sistrInfo = [
     {
-      title: getI18N("AnalysisSistr.sampleName"),
+      title: i18n("AnalysisSistr.sampleName"),
       desc: sampleName
     },
     {
-      title: getI18N("AnalysisSistr.qualityControlStatus"),
+      title: i18n("AnalysisSistr.qualityControlStatus"),
       desc:
         qc_status === "PASS" ? (
           <span>
@@ -42,7 +42,7 @@ export default function SistrInfo({ sistrResults, sampleName }) {
    * for the sistr information
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisSistr.sistrInformation")}>
+    <TabPaneContent title={i18n("AnalysisSistr.sistrInformation")}>
       <BasicList dataSource={sistrInfo} />
     </TabPaneContent>
   );

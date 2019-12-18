@@ -3,7 +3,7 @@
  */
 
 import React, { useContext, useEffect, useState } from "react";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import Phylocanvas from "react-phylocanvas";
 import { Button, Radio } from "antd";
@@ -69,33 +69,33 @@ export default function Tree() {
    * Returns the phylogenetic tree
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisPhylogeneticTree.tree")}>
+    <TabPaneContent title={i18n("AnalysisPhylogeneticTree.tree")}>
       {serverMsg !== null ? (
         <WarningAlert message={serverMsg} style={{ marginBottom: SPACE_XS }} />
       ) : null}
       {newickString !== null ? (
         newickString === "" ? (
           <WarningAlert
-            message={getI18N("AnalysisPhylogeneticTree.noPreviewAvailable")}
+            message={i18n("AnalysisPhylogeneticTree.noPreviewAvailable")}
           />
         ) : (
           <div>
             <ButtonGroupWrapper>
               <Radio.Group value={currTreeShape} onChange={e => handleClick(e)}>
                 <Radio.Button value="rectangular">
-                  {getI18N("AnalysisPhylogeneticTree.rectangular")}
+                  {i18n("AnalysisPhylogeneticTree.rectangular")}
                 </Radio.Button>
                 <Radio.Button value="circular">
-                  {getI18N("AnalysisPhylogeneticTree.circular")}
+                  {i18n("AnalysisPhylogeneticTree.circular")}
                 </Radio.Button>
                 <Radio.Button value="radial">
-                  {getI18N("AnalysisPhylogeneticTree.radial")}
+                  {i18n("AnalysisPhylogeneticTree.radial")}
                 </Radio.Button>
                 <Radio.Button value="diagonal">
-                  {getI18N("AnalysisPhylogeneticTree.diagonal")}
+                  {i18n("AnalysisPhylogeneticTree.diagonal")}
                 </Radio.Button>
                 <Radio.Button value="hierarchical">
-                  {getI18N("AnalysisPhylogeneticTree.hierarchical")}
+                  {i18n("AnalysisPhylogeneticTree.hierarchical")}
                 </Radio.Button>
               </Radio.Group>
               <Button
@@ -104,7 +104,7 @@ export default function Tree() {
                 target="_blank"
                 key="advphylo"
               >
-                {getI18N("AnalysisPhylogeneticTree.viewAdvVisualization")}
+                {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
               </Button>
             </ButtonGroupWrapper>
             <VisualizationWrapper>{getTree()}</VisualizationWrapper>

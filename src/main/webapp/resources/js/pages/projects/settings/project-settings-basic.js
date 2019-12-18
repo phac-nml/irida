@@ -22,26 +22,33 @@ const projectSettings = (function(page, notifications) {
           if (minimumCoverage) {
             $("#minimum-coverage-display").html(minimumCoverage + "x");
           } else {
-            $("#minimum-coverage-display").html(page.i18n.not_set);
+            $("#minimum-coverage-display").html(
+              i18n("project.settings.notset")
+            );
           }
 
           if (maximumCoverage) {
             $("#maximum-coverage-display").html(maximumCoverage + "x");
           } else {
-            $("#maximum-coverage-display").html(page.i18n.not_set);
+            $("#maximum-coverage-display").html(
+              i18n("project.settings.notset")
+            );
           }
 
           if (genomeSize) {
             $("#genome-size-display").html(genomeSize + "bp");
           } else {
-            $("#genome-size-display").html(page.i18n.not_set);
+            $("#genome-size-display").html(i18n("project.settings.notset"));
           }
 
           $(".edit-coverage").toggle();
         }
       },
       fail: function() {
-        notifications.show({ text: page.i18n.error, type: "error" });
+        notifications.show({
+          text: i18n("project.settings.notifications.error"),
+          type: "error"
+        });
       }
     });
   });

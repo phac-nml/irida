@@ -8,7 +8,7 @@
 import React from "react";
 import { Button, Typography } from "antd";
 import { Monospace } from "../../../../components/typography";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { formatDate } from "../../../../utilities/date-utilities";
 import { BasicList } from "../../../../components/lists/BasicList";
 
@@ -20,51 +20,51 @@ export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
     let jobError = galaxyJobErrors[index];
     return [
       {
-        title: getI18N("AnalysisError.createdDate"),
+        title: i18n("AnalysisError.createdDate"),
         desc: formatDate({
           date: jobError.createdDate
         })
       },
       {
-        title: getI18N("AnalysisError.updatedDate"),
+        title: i18n("AnalysisError.updatedDate"),
         desc: formatDate({
           date: jobError.updatedDate
         })
       },
       {
-        title: getI18N("AnalysisError.commandLine"),
+        title: i18n("AnalysisError.commandLine"),
         desc: <Text code>{jobError.commandLine.trim()}</Text>
       },
       {
-        title: getI18N("AnalysisError.exitCode"),
+        title: i18n("AnalysisError.exitCode"),
         desc: <Monospace>{jobError.exitCode}</Monospace>
       },
       {
-        title: getI18N("AnalysisError.toolId"),
+        title: i18n("AnalysisError.toolId"),
         desc: jobError.toolId
       },
       {
-        title: getI18N("AnalysisError.toolName"),
+        title: i18n("AnalysisError.toolName"),
         desc: jobError.toolName
       },
       {
-        title: getI18N("AnalysisError.toolVersion"),
+        title: i18n("AnalysisError.toolVersion"),
         desc: <Monospace>{jobError.toolVersion}</Monospace>
       },
       {
-        title: getI18N("AnalysisError.toolDescription"),
+        title: i18n("AnalysisError.toolDescription"),
         desc: jobError.toolDescription
       },
       {
-        title: getI18N("AnalysisError.provenanceId"),
+        title: i18n("AnalysisError.provenanceId"),
         desc: <Monospace>{jobError.provenanceId}</Monospace>
       },
       {
-        title: getI18N("AnalysisError.provenanceUUID"),
+        title: i18n("AnalysisError.provenanceUUID"),
         desc: <Monospace>{jobError.provenanceUUID}</Monospace>
       },
       {
-        title: getI18N("AnalysisError.historyId"),
+        title: i18n("AnalysisError.historyId"),
         desc: (
           <Button
             type="link"
@@ -77,11 +77,11 @@ export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
         )
       },
       {
-        title: getI18N("AnalysisError.jobId"),
+        title: i18n("AnalysisError.jobId"),
         desc: <Monospace>{jobError.jobId}</Monospace>
       },
       {
-        title: getI18N("AnalysisError.identifier"),
+        title: i18n("AnalysisError.identifier"),
         desc: <Monospace>{jobError.identifier}</Monospace>
       }
     ];

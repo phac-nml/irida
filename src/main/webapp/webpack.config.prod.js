@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const cssnano = require("cssnano");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 
 const BUILD_PATH = path.resolve(__dirname, "dist");
@@ -18,8 +18,8 @@ exports.config = {
         terserOptions: {
           output: {
             ascii_only: true
-          },
-        },
+          }
+        }
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessor: cssnano,
@@ -36,9 +36,10 @@ exports.config = {
     ]
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production")
     }),
-    new CleanWebpackPlugin([BUILD_PATH]),
+    new CleanWebpackPlugin()
   ]
 };

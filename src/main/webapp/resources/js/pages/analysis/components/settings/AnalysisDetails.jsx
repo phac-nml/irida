@@ -9,7 +9,7 @@
 import React, { useContext } from "react";
 import { Checkbox, Select, Typography } from "antd";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { AnalysisContext, isAdmin } from "../../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { BasicList } from "../../../../components/lists/BasicList";
@@ -42,7 +42,7 @@ export default function AnalysisDetails() {
   // List of analysis details
   const analysisDetails = [
     {
-      title: getI18N("AnalysisDetails.name"),
+      title: i18n("AnalysisDetails.name"),
       desc: (
         <Paragraph editable={{ onChange: updateSubmissionName }}>
           {analysisContext.analysisName}
@@ -50,26 +50,26 @@ export default function AnalysisDetails() {
       )
     },
     {
-      title: getI18N("AnalysisDetails.id"),
+      title: i18n("AnalysisDetails.id"),
       desc: analysisContext.analysis.identifier
     },
     {
-      title: getI18N("AnalysisDetails.pipeline"),
+      title: i18n("AnalysisDetails.pipeline"),
       desc: `${analysisDetailsContext.workflowName} (${analysisDetailsContext.version})`
     },
     {
-      title: getI18N("AnalysisDetails.priority"),
+      title: i18n("AnalysisDetails.priority"),
       desc:
         isAdmin && analysisContext.analysisState === "NEW"
           ? renderUpdatePrioritySection()
           : analysisDetailsContext.priority
     },
     {
-      title: getI18N("AnalysisDetails.created"),
+      title: i18n("AnalysisDetails.created"),
       desc: formatDate({ date: analysisDetailsContext.createdDate })
     },
     {
-      title: getI18N("AnalysisDetails.duration"),
+      title: i18n("AnalysisDetails.duration"),
       desc: getHumanizedDuration({ date: analysisDetailsContext.duration })
     }
   ];
@@ -104,7 +104,7 @@ export default function AnalysisDetails() {
     for (let priority of analysisDetailsContext.priorities) {
       priorityList.push(
         <Select.Option key={priority} value={priority}>
-          {getI18N(`AnalysisDetailsPriority.${priority}`)}
+          {i18n(`AnalysisDetailsPriority.${priority}`)}
         </Select.Option>
       );
     }
@@ -127,7 +127,7 @@ export default function AnalysisDetails() {
 
   // The following renders the Analysis Details component view
   return (
-    <TabPaneContent title={getI18N("AnalysisDetails.details")}>
+    <TabPaneContent title={i18n("AnalysisDetails.details")}>
       <BasicList dataSource={analysisDetails} />
 
       {window.PAGE.mailConfigured &&
@@ -137,12 +137,12 @@ export default function AnalysisDetails() {
           style={{ marginTop: SPACE_MD }}
           className="t-email-pipeline-result"
         >
-          <Title level={4}>{getI18N("AnalysisDetails.receiveEmail")}</Title>
+          <Title level={4}>{i18n("AnalysisDetails.receiveEmail")}</Title>
           <Checkbox
             onChange={updateEmailPipelineResult}
             checked={analysisDetailsContext.emailPipelineResult}
           >
-            {getI18N("AnalysisDetails.receiveEmailCheckboxLabel")}
+            {i18n("AnalysisDetails.receiveEmailCheckboxLabel")}
           </Checkbox>
         </section>
       ) : null}

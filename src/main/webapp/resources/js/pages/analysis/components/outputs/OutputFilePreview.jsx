@@ -6,7 +6,7 @@ import React, { Suspense, useContext, useEffect } from "react";
 import { Button, Tabs } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
@@ -95,7 +95,7 @@ export default function OutputFilePreview() {
   }
 
   return analysisOutputsContext.outputs !== null ? (
-    <TabPaneContent title={getI18N("AnalysisOutputs.outputFilePreview")}>
+    <TabPaneContent title={i18n("AnalysisOutputs.outputFilePreview")}>
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
           <ZipDownloadButton
@@ -115,13 +115,13 @@ export default function OutputFilePreview() {
                 className="fas fa-file-archive"
                 style={{ marginRight: SPACE_XS }}
               ></i>
-              {getI18N("AnalysisOutputs.downloadAllFiles")}
+              {i18n("AnalysisOutputs.downloadAllFiles")}
             </span>
           </ZipDownloadButton>
           <Tabs defaultActiveKey="1" animated={false}>
             {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
               <TabPane
-                tab={getI18N("AnalysisOutputs.tabularOutput")}
+                tab={i18n("AnalysisOutputs.tabularOutput")}
                 key="tab-output"
               >
                 {tabularOutputPreview()}
@@ -130,7 +130,7 @@ export default function OutputFilePreview() {
 
             {analysisOutputsContext.fileTypes[0].hasTextFile ? (
               <TabPane
-                tab={getI18N("AnalysisOutputs.textOutput")}
+                tab={i18n("AnalysisOutputs.textOutput")}
                 key="text-output"
               >
                 <Suspense fallback={<ContentLoading />}>
@@ -141,7 +141,7 @@ export default function OutputFilePreview() {
 
             {analysisOutputsContext.fileTypes[0].hasJsonFile ? (
               <TabPane
-                tab={getI18N("AnalysisOutputs.jsonOutput")}
+                tab={i18n("AnalysisOutputs.jsonOutput")}
                 key="json-output"
               >
                 <Suspense fallback={<ContentLoading />}>
@@ -152,7 +152,7 @@ export default function OutputFilePreview() {
           </Tabs>
         </div>
       ) : (
-        <WarningAlert message={getI18N("AnalysisOutputs.noOutputsAvailable")} />
+        <WarningAlert message={i18n("AnalysisOutputs.noOutputsAvailable")} />
       )}
     </TabPaneContent>
   ) : (

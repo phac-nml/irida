@@ -1,7 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 
-const { i18n } = window.PAGE;
+import PropTypes from "prop-types";
 
 /**
  * Formats and displays the filtered counts for the table.
@@ -9,9 +8,11 @@ const { i18n } = window.PAGE;
 export function FilteredCounts(props) {
   return (
     <span tour="tour-filter-counts">
-      {i18n.linelist.infobar.filterCounts
-        .replace("[FILTER_COUNT]", props.filterCount)
-        .replace("[TOTAL]", props.totalSamples)}
+      {i18n(
+        "linelist.infobar.filterCounts",
+        props.filterCount,
+        props.totalSamples
+      )}
     </span>
   );
 }

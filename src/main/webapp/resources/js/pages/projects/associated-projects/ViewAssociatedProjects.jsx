@@ -13,7 +13,6 @@ import {
 } from "../../../apis/projects/associated-projects";
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
-import { getI18N } from "../../../utilities/i18n-utilities";
 
 const { Text } = Typography;
 
@@ -80,7 +79,7 @@ export default function ViewAssociatedProjects() {
       render(project) {
         return createProjectLink(project);
       },
-      title: getI18N("ViewAssociatedProjects.ProjectHeader"),
+      title: i18n("ViewAssociatedProjects.ProjectHeader"),
       filterDropdown(props) {
         return <TextFilter {...props} />;
       },
@@ -96,7 +95,7 @@ export default function ViewAssociatedProjects() {
       key: "organism",
       dataIndex: "organism",
       align: "right",
-      title: "Organism",
+      title: i18n("ViewAssociatedProjects.OrganismHeader"),
       render(text) {
         return <Text type="secondary">{text}</Text>;
       },

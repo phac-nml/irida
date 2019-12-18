@@ -1,11 +1,11 @@
 import React from "react";
+
 import isEqual from "lodash/isEqual";
 import PropTypes from "prop-types";
 import { Button, Checkbox, Form, Modal, Select } from "antd";
 
 const { Item } = Form;
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /**
  * Utility method to sort array of strings case insensitively.
@@ -22,14 +22,14 @@ const sortNames = (a, b) => a.toLowerCase().localeCompare(b.toLowerCase());
 function Footer(props) {
   return (
     <div>
-      <Button onClick={props.onCancel}>{i18n.form.btn.cancel}</Button>
+      <Button onClick={props.onCancel}>{i18n("form.btn.cancel")}</Button>
       <Button
         className="t-modal-save-template-btn"
         type="primary"
         disabled={props.disabled}
         onClick={props.onClick}
       >
-        {i18n.form.btn.save}
+        {i18n("form.btn.save")}
       </Button>
     </div>
   );
@@ -54,7 +54,7 @@ export class SaveTemplateModal extends React.Component {
       state: {
         existingTemplate: false,
         status: "error",
-        message: i18n.linelist.templates.saveModal.required,
+        message: i18n("linelist.templates.saveModal.required"),
         valid: false,
         overwriteTemplate: false
       }
@@ -64,7 +64,7 @@ export class SaveTemplateModal extends React.Component {
       fn: name => name.length < 5,
       state: {
         status: "error",
-        message: i18n.linelist.templates.saveModal.length,
+        message: i18n("linelist.templates.saveModal.length"),
         valid: false,
         existingTemplate: false,
         overwriteTemplate: false
@@ -75,7 +75,7 @@ export class SaveTemplateModal extends React.Component {
       fn: name => this._options.findIndex(o => o === name) > -1,
       state: {
         status: "error",
-        message: i18n.linelist.templates.saveModal.nameExists,
+        message: i18n("linelist.templates.saveModal.nameExists"),
         valid: false,
         existingTemplate: true,
         overwriteTemplate: false
@@ -206,7 +206,7 @@ export class SaveTemplateModal extends React.Component {
     return (
       <Modal
         closable={false}
-        title="Modal"
+        title={i18n("linelist.templates.saveModal.title")}
         visible={this.props.visible}
         footer={
           <Footer
@@ -218,7 +218,7 @@ export class SaveTemplateModal extends React.Component {
       >
         <Form>
           <Item
-            label={i18n.linelist.templates.saveModal.name}
+            label={i18n("linelist.templates.saveModal.name")}
             hasFeedback
             validateStatus={this.state.status}
             help={this.state.message}

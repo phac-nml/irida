@@ -11,7 +11,7 @@ import { Button, Checkbox, List, Typography } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 import { AnalysisShareContext } from "../../../../contexts/AnalysisShareContext";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { showNotification } from "../../../../modules/notifications";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
@@ -88,23 +88,23 @@ export default function AnalysisShare() {
       return (
         <div>
           <WarningAlert
-            message={getI18N("AnalysisShare.saveResultsPermanent")}
+            message={i18n("AnalysisShare.saveResultsPermanent")}
             style={{ marginBottom: SPACE_MD }}
           />
-          <p>{getI18N("AnalysisShare.saveResultsMessage")}</p>
+          <p>{i18n(`AnalysisShare.${analysisContext.analysisType}`)}</p>
           <Button
             type="primary"
             onClick={() => saveResultsToRelatedSamples()}
             id="save-results-btn"
           >
-            {getI18N("AnalysisShare.saveResultsToSamples")}
+            {i18n("AnalysisShare.saveResultsToSamples")}
           </Button>
         </div>
       );
     } else {
       return (
         <InfoAlert
-          message={getI18N("AnalysisShare.resultsSaved")}
+          message={i18n("AnalysisShare.resultsSaved")}
           style={{ marginBottom: SPACE_MD }}
         />
       );
@@ -141,18 +141,18 @@ export default function AnalysisShare() {
    * and a save results to related samples if applicable
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisShare.manageResults")}>
+    <TabPaneContent title={i18n("AnalysisShare.manageResults")}>
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
           <section style={{ marginTop: SPACE_MD }}>
             <Title level={2}>
-              {getI18N("AnalysisShare.shareResultsWithProjects")}
+              {i18n("AnalysisShare.shareResultsWithProjects")}
             </Title>
             {renderSharedProjectsList()}
           </section>
         ) : (
           <InfoAlert
-            message={getI18N("AnalysisShare.noProjectsToShareResultsWith")}
+            message={i18n("AnalysisShare.noProjectsToShareResultsWith")}
           />
         )
       ) : null}
@@ -160,7 +160,7 @@ export default function AnalysisShare() {
       {analysisDetailsContext.canShareToSamples &&
       analysisContext.isCompleted ? (
         <section style={{ marginTop: SPACE_MD }}>
-          <Title level={2}>{getI18N("AnalysisShare.saveResults")}</Title>
+          <Title level={2}>{i18n("AnalysisShare.saveResults")}</Title>
           {renderSaveToRelatedSamples()}
         </section>
       ) : null}

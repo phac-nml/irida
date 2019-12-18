@@ -8,7 +8,7 @@
 import React from "react";
 import { PassTabs } from "./PassTabs";
 import { StandardOutput } from "./StandardOutput";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function StandardOutputTab({
@@ -17,7 +17,7 @@ export default function StandardOutputTab({
   galaxyJobErrors
 }) {
   return (
-    <TabPaneContent title={getI18N("AnalysisError.standardOutput")}>
+    <TabPaneContent title={i18n("AnalysisError.standardOutput")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="standard-out"

@@ -12,7 +12,7 @@ import {
   getOutputInfo
 } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, BIOHANSEL } from "../routes";
@@ -67,12 +67,12 @@ export default function AnalysisBioHansel() {
               >
                 <Menu.Item key="info">
                   <Link to={`${BASE_URL}/${BIOHANSEL.INFO}`}>
-                    {getI18N("AnalysisBioHansel.bioHanselInformation")}
+                    {i18n("AnalysisBioHansel.bioHanselInformation")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="file_preview">
                   <Link to={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
-                    {getI18N("AnalysisOutputs.outputFilePreview")}
+                    {i18n("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
               </Menu>
@@ -85,7 +85,7 @@ export default function AnalysisBioHansel() {
         <Content>
           {typeof bioHanselResults === "undefined" ? (
             <WarningAlert
-              message={getI18N("AnalysisBioHansel.resultsUnavailable")}
+              message={i18n("AnalysisBioHansel.resultsUnavailable")}
             />
           ) : bioHanselResults !== null ? (
             <Suspense fallback={<ContentLoading />}>
