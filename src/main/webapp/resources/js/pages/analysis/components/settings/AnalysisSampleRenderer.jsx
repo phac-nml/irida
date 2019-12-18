@@ -4,7 +4,7 @@
  */
 
 import React, { useContext, useState, useLayoutEffect } from "react";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { Avatar, Icon, Input, List } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
@@ -117,13 +117,13 @@ export function AnalysisSampleRenderer() {
       {analysisSamplesContext.loading ? (
         <div>
           <ContentLoading
-            message={getI18N("AnalysisSamples.checkingForSamples")}
+            message={i18n("AnalysisSamples.checkingForSamples")}
           />
         </div>
       ) : analysisSamplesContext.samples.length > 0 ? (
         <div>
           <Search
-            placeholder={getI18N("AnalysisSamples.searchSamples")}
+            placeholder={i18n("AnalysisSamples.searchSamples")}
             onChange={event => searchSamples(event.target.value)}
             style={{ width: "100%", marginBottom: SPACE_MD }}
             allowClear={true}
@@ -131,7 +131,7 @@ export function AnalysisSampleRenderer() {
           {renderSamples()}
         </div>
       ) : (
-        <InfoAlert message={getI18N("AnalysisSamples.samplesDeleted")} />
+        <InfoAlert message={i18n("AnalysisSamples.samplesDeleted")} />
       )}
     </>
   );

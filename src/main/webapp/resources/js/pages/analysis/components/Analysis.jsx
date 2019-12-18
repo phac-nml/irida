@@ -15,7 +15,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
 import { AnalysisSteps } from "./AnalysisSteps";
 import { PageWrapper } from "../../../components/page/PageWrapper";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { Link, Location, Router } from "@reach/router";
 
 import { Error } from "../../../components/icons/Error";
@@ -78,7 +78,7 @@ export default function Analysis() {
       tabLinks.push(
         <Menu.Item key="error">
           <Link to={`${BASE_URL}/${ANALYSIS.ERROR}/`}>
-            {getI18N("Analysis.jobError")}
+            {i18n("Analysis.jobError")}
           </Link>
         </Menu.Item>
       );
@@ -88,7 +88,7 @@ export default function Analysis() {
           tabLinks.push(
             <Menu.Item key="sistr">
               <Link to={`${BASE_URL}/${ANALYSIS.SISTR}/`}>
-                {getI18N("Analysis.sistr")}
+                {i18n("Analysis.sistr")}
               </Link>
             </Menu.Item>
           );
@@ -96,7 +96,7 @@ export default function Analysis() {
           tabLinks.push(
             <Menu.Item key="biohansel">
               <Link to={`${BASE_URL}/${ANALYSIS.BIOHANSEL}/`}>
-                {getI18N("Analysis.biohansel")}
+                {i18n("Analysis.biohansel")}
               </Link>
             </Menu.Item>
           );
@@ -107,7 +107,7 @@ export default function Analysis() {
           tabLinks.push(
             <Menu.Item key="tree">
               <Link to={`${BASE_URL}/${ANALYSIS.TREE}/`}>
-                {getI18N("Analysis.phylogeneticTree")}
+                {i18n("Analysis.phylogeneticTree")}
               </Link>
             </Menu.Item>
           );
@@ -115,7 +115,7 @@ export default function Analysis() {
           tabLinks.push(
             <Menu.Item key="output">
               <Link to={`${BASE_URL}/${ANALYSIS.OUTPUT}`}>
-                {getI18N("Analysis.outputFiles")}
+                {i18n("Analysis.outputFiles")}
               </Link>
             </Menu.Item>
           );
@@ -123,7 +123,7 @@ export default function Analysis() {
         tabLinks.push(
           <Menu.Item key="provenance">
             <Link to={`${BASE_URL}/${ANALYSIS.PROVENANCE}`}>
-              {getI18N("Analysis.provenance")}
+              {i18n("Analysis.provenance")}
             </Link>
           </Menu.Item>
         );
@@ -132,7 +132,7 @@ export default function Analysis() {
     tabLinks.push(
       <Menu.Item key="settings">
         <Link to={`${BASE_URL}/${ANALYSIS.SETTINGS}/`}>
-          {getI18N("Analysis.settings")}
+          {i18n("Analysis.settings")}
         </Link>
       </Menu.Item>
     );

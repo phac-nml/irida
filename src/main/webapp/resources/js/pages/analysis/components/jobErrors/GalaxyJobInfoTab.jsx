@@ -8,7 +8,7 @@
 import React from "react";
 import { PassTabs } from "./PassTabs";
 import { GalaxyJobInfo } from "./GalaxyJobInfo";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function GalaxyJobInfoTab({
@@ -18,7 +18,7 @@ export default function GalaxyJobInfoTab({
   galaxyUrl
 }) {
   return (
-    <TabPaneContent title={getI18N("AnalysisError.galaxyJobInfo")}>
+    <TabPaneContent title={i18n("AnalysisError.galaxyJobInfo")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="job-error-info"

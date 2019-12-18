@@ -1,5 +1,5 @@
 /**
- * @file responsible for handling interactions on the Project > Settings > Rempte Page.
+ * @file responsible for handling interactions on the Project > Settings > Remote Page.
  */
 
 import { showNotification } from "../../../modules/notifications";
@@ -63,7 +63,10 @@ function updateSyncSettings(data) {
       }
     },
     error: function() {
-      showNotification({ text: page.i18n.error, type: "error" });
+      showNotification({
+        text: i18n("project.settings.notifications.error"),
+        type: "error"
+      });
     }
   });
 }

@@ -7,8 +7,8 @@ import {
   PopoverContents
 } from "../../../../../../../components/popovers/index";
 
+
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /*
 The internationalized content of the help popover describing
@@ -16,8 +16,8 @@ what a template is and how to use it.
  */
 const content = (
   <React.Fragment>
-    <p>{i18n.linelist.templates.Popover.content}</p>
-    <p>{i18n.linelist.templates.Popover.description}</p>
+    <p>{i18n("linelist.templates.Popover.content")}</p>
+    <p>{i18n("linelist.templates.Popover.description")}</p>
   </React.Fragment>
 );
 
@@ -31,10 +31,10 @@ export function TemplateSelect(props) {
   return (
     <React.Fragment>
       <label style={{ color: "#707171" }}>
-        {i18n.linelist.templates.title}
+        {i18n("linelist.templates.title")}
         <HelpPopover
           content={<PopoverContents contents={content} />}
-          title={i18n.linelist.templates.Popover.title}
+          title={i18n("linelist.templates.Popover.title")}
         />
       </label>
       <Select

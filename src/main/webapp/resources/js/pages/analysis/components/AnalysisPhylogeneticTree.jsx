@@ -6,7 +6,7 @@
 import React, { Suspense } from "react";
 import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
@@ -39,12 +39,12 @@ export default function AnalysisPhylogeneticTree() {
               >
                 <Menu.Item key="preview">
                   <Link to={`${BASE_URL}/${TREE.PREVIEW}`}>
-                    {getI18N("AnalysisPhylogeneticTree.tree")}
+                    {i18n("AnalysisPhylogeneticTree.tree")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="file_preview">
                   <Link to={`${BASE_URL}/${TREE.FILE_PREVIEW}`}>
-                    {getI18N("AnalysisOutputs.outputFilePreview")}
+                    {i18n("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
               </Menu>

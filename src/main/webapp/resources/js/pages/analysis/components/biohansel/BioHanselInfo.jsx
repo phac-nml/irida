@@ -4,7 +4,7 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import { Error } from "../../../../components/icons/Error";
 import { Success } from "../../../../components/icons/Success";
@@ -13,11 +13,11 @@ import { Warning } from "../../../../components/icons/Warning";
 export default function BioHanselInfo({ bioHanselResults }) {
   const biohanselResults = [
     {
-      title: getI18N("AnalysisBioHansel.sampleName"),
+      title: i18n("AnalysisBioHansel.sampleName"),
       desc: bioHanselResults ? bioHanselResults.sample : ""
     },
     {
-      title: `${getI18N("AnalysisBioHansel.schemeName")} (v${getI18N(
+      title: `${i18n("AnalysisBioHansel.schemeName")} (v${i18n(
         "AnalysisBioHansel.schemeVersion"
       )})`,
       desc: bioHanselResults
@@ -25,18 +25,18 @@ export default function BioHanselInfo({ bioHanselResults }) {
         : ""
     },
     {
-      title: getI18N("AnalysisBioHansel.subtype"),
+      title: i18n("AnalysisBioHansel.subtype"),
       desc: bioHanselResults ? bioHanselResults.subtype : ""
     },
     {
-      title: getI18N("AnalysisBioHansel.averageTileFrequency"),
+      title: i18n("AnalysisBioHansel.averageTileFrequency"),
       desc:
         bioHanselResults && bioHanselResults.avg_tile_coverage
           ? bioHanselResults.avg_tile_coverage.toString()
           : ""
     },
     {
-      title: getI18N("AnalysisBioHansel.qualityControlStatus"),
+      title: i18n("AnalysisBioHansel.qualityControlStatus"),
       desc: bioHanselResults ? (
         bioHanselResults.qc_status === "PASS" ? (
           <Success
@@ -91,7 +91,7 @@ export default function BioHanselInfo({ bioHanselResults }) {
    * for the bio hansel data
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisBioHansel.bioHanselInformation")}>
+    <TabPaneContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
       <BasicList dataSource={biohanselResults}></BasicList>
     </TabPaneContent>
   );

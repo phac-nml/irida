@@ -20,6 +20,7 @@ export function PageWrapper({ title, headerExtras, children }) {
     <Layout style={{ height: "100%", minHeight: "100%" }}>
       <PageHeader
         style={{ backgroundColor: grey1 }}
+        className="t-main-heading"
         title={title}
         extra={headerExtras}
       />

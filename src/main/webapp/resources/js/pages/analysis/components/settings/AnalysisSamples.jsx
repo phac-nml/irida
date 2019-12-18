@@ -9,7 +9,7 @@
  */
 import React, { useContext } from "react";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { AnalysisReferenceFileRenderer } from "./AnalysisReferenceFileRenderer";
 import { AnalysisSampleRenderer } from "./AnalysisSampleRenderer";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
@@ -29,7 +29,7 @@ export default function AnalysisSamples() {
    * rendered
    */
   return (
-    <TabPaneContent title={getI18N("AnalysisSamples.samples")}>
+    <TabPaneContent title={i18n("AnalysisSamples.samples")}>
       {analysisSamplesContext.referenceFile ? (
         <AnalysisReferenceFileRenderer />
       ) : null}

@@ -11,7 +11,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getSistrResults } from "../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, SISTR } from "../routes";
 import { grey1 } from "../../../styles/colors";
@@ -61,32 +61,32 @@ export default function AnalysisSistr() {
                 >
                   <Menu.Item key="info">
                     <Link to={`${BASE_URL}/${SISTR.INFO}`}>
-                      {getI18N("AnalysisSistr.sistrInformation")}
+                      {i18n("AnalysisSistr.sistrInformation")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="serovar_predictions">
                     <Link to={`${BASE_URL}/${SISTR.SEROVAR_PREDICTIONS}`}>
-                      {getI18N("AnalysisSistr.serovarPredictions")}
+                      {i18n("AnalysisSistr.serovarPredictions")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="cgmlst">
                     <Link to={`${BASE_URL}/${SISTR.CGMLST}`}>
-                      {getI18N("AnalysisSistr.cgmlst330")}
+                      {i18n("AnalysisSistr.cgmlst330")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="mash">
                     <Link to={`${BASE_URL}/${SISTR.MASH}`}>
-                      {getI18N("AnalysisSistr.mash")}
+                      {i18n("AnalysisSistr.mash")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="file_preview">
                     <Link to={`${BASE_URL}/${SISTR.FILE_PREVIEW}`}>
-                      {getI18N("AnalysisOutputs.outputFilePreview")}
+                      {i18n("AnalysisOutputs.outputFilePreview")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="citation">
                     <Link to={`${BASE_URL}/${SISTR.CITATION}`}>
-                      {getI18N("AnalysisSistr.citation")}
+                      {i18n("AnalysisSistr.citation")}
                     </Link>
                   </Menu.Item>
                 </Menu>
@@ -128,7 +128,7 @@ export default function AnalysisSistr() {
         </Layout>
       </Layout>
     ) : (
-      <WarningAlert message={getI18N("AnalysisSistr.resultsUnavailable")} />
+      <WarningAlert message={i18n("AnalysisSistr.resultsUnavailable")} />
     )
   ) : (
     <ContentLoading />

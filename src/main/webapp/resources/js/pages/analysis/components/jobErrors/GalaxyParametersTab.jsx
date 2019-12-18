@@ -8,7 +8,7 @@
 import React from "react";
 import { PassTabs } from "./PassTabs";
 import { GalaxyParameters } from "./GalaxyParameters";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function GalaxyParametersTab({
@@ -17,7 +17,7 @@ export default function GalaxyParametersTab({
   galaxyJobErrors
 }) {
   return (
-    <TabPaneContent title={getI18N("AnalysisError.galaxyParameters")}>
+    <TabPaneContent title={i18n("AnalysisError.galaxyParameters")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="galaxy-parameters"

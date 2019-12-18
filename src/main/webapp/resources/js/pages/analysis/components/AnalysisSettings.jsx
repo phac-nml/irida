@@ -15,7 +15,7 @@ import { Link, Location, Router } from "@reach/router";
 
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../contexts/AnalysisDetailsContext";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
@@ -57,12 +57,12 @@ export default function AnalysisSettings() {
               >
                 <Menu.Item key="details">
                   <Link to={`${BASE_URL}/${SETTINGS.DETAILS}`}>
-                    {getI18N("AnalysisDetails.details")}
+                    {i18n("AnalysisDetails.details")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="samples">
                   <Link to={`${BASE_URL}/${SETTINGS.SAMPLES}`}>
-                    {getI18N("AnalysisSamples.samples")}
+                    {i18n("AnalysisSamples.samples")}
                   </Link>
                 </Menu.Item>
                 {analysisDetailsContext.updatePermission
@@ -70,13 +70,13 @@ export default function AnalysisSettings() {
                       analysisContext.isError ? null : (
                         <Menu.Item key="share">
                           <Link to={`${BASE_URL}/${SETTINGS.SHARE}`}>
-                            {getI18N("AnalysisShare.manageResults")}
+                            {i18n("AnalysisShare.manageResults")}
                           </Link>
                         </Menu.Item>
                       ),
                       <Menu.Item key="delete">
                         <Link to={`${BASE_URL}/${SETTINGS.DELETE}`}>
-                          {getI18N("AnalysisDelete.deleteAnalysis")}
+                          {i18n("AnalysisDelete.deleteAnalysis")}
                         </Link>
                       </Menu.Item>
                     ]

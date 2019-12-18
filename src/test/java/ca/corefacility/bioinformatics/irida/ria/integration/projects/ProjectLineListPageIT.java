@@ -9,8 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -45,6 +44,11 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 
+		// Ensure translations are loaded onto the page.
+		assertTrue("Applications translations should be loaded", page.ensureTranslationsLoaded("app"));
+		assertTrue("Translations should be properly loaded on the linelist page.",
+				page.ensureTranslationsLoaded("project-linelist"));
+
 
 		// Test the tour to make sure everything is functional.
 		page.openTour();
@@ -55,7 +59,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		// If we reached this far the tour is good to go
 
 		// OPen the column panel
-		page.openColumnsPaenl();
+		page.openColumnsPanel();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
 		assertEquals("Should be 6 fields to toggle", 6, page.getNumberOfMetadataFields());
@@ -108,7 +112,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		driver().navigate()
 				.refresh();
-		page.openColumnsPaenl();
+		page.openColumnsPanel();
 		page.selectTemplate(TEMPLATE_NAME);
 		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, COLUMN_ID));
 

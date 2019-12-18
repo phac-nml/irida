@@ -12,7 +12,7 @@ import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getJobErrors } from "../../../apis/analysis/analysis";
-import { getI18N } from "../../../utilities/i18n-utilities";
+
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";
@@ -68,7 +68,7 @@ export default function AnalysisError() {
                 >
                   <Menu.Item key="job-error-info">
                     <Link to={`${BASE_URL}/${ERROR.JOB_ERROR_INFO}`}>
-                      {getI18N("AnalysisError.galaxyJobInfo")}
+                      {i18n("AnalysisError.galaxyJobInfo")}
                     </Link>
                   </Menu.Item>
                   {jobErrors.galaxyJobErrors[
@@ -76,7 +76,7 @@ export default function AnalysisError() {
                   ].parameters ? (
                     <Menu.Item key="galaxy-parameters">
                       <Link to={`${BASE_URL}/${ERROR.GALAXY_PARAMETERS}`}>
-                        {getI18N("AnalysisError.galaxyParameters")}
+                        {i18n("AnalysisError.galaxyParameters")}
                       </Link>
                     </Menu.Item>
                   ) : null}
@@ -85,7 +85,7 @@ export default function AnalysisError() {
                   ].standardError ? (
                     <Menu.Item key="standard-error">
                       <Link to={`${BASE_URL}/${ERROR.STANDARD_ERROR}`}>
-                        {getI18N("AnalysisError.standardError")}
+                        {i18n("AnalysisError.standardError")}
                       </Link>
                     </Menu.Item>
                   ) : null}
@@ -94,7 +94,7 @@ export default function AnalysisError() {
                   ].standardOutput ? (
                     <Menu.Item key="standard-out">
                       <Link to={`${BASE_URL}/${ERROR.STANDARD_OUT}`}>
-                        {getI18N("AnalysisError.standardOutput")}
+                        {i18n("AnalysisError.standardOutput")}
                       </Link>
                     </Menu.Item>
                   ) : null}
@@ -141,7 +141,7 @@ export default function AnalysisError() {
       </Layout>
     ) : (
       <div style={{ display: "flex" }}>
-        <WarningAlert message={getI18N("AnalysisError.noJobInfoAvailable")} />
+        <WarningAlert message={i18n("AnalysisError.noJobInfoAvailable")} />
       </div>
     )
   ) : (

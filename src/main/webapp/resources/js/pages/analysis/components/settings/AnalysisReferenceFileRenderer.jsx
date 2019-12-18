@@ -4,7 +4,7 @@
  */
 
 import React, { useContext } from "react";
-import { getI18N } from "../../../../utilities/i18n-utilities";
+
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { SPACE_LG } from "../../../../styles/spacing";
 import { Row, Icon, Button, Typography } from "antd";
@@ -27,7 +27,7 @@ export function AnalysisReferenceFileRenderer() {
     } else {
       referenceFile.push(
         <div style={{ marginBottom: SPACE_LG }} key="samplesDiv-1">
-          <Title level={4}>{getI18N("AnalysisSamples.referenceFile")}</Title>
+          <Title level={4}>{i18n("AnalysisSamples.referenceFile")}</Title>
           <Row key="row-reference-file-1">
             <span
               key="reference-file-1"
@@ -47,7 +47,7 @@ export function AnalysisReferenceFileRenderer() {
                 }}
               >
                 <Icon type="download" />{" "}
-                {getI18N("AnalysisSamples.downloadReferenceFile")}
+                {i18n("AnalysisSamples.downloadReferenceFile")}
               </Button>
             </span>
           </Row>
