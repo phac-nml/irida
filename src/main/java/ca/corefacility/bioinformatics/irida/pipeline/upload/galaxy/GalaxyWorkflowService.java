@@ -18,7 +18,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationOutputs;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**
@@ -114,11 +114,11 @@ public class GalaxyWorkflowService {
 	 * @return  A WorkflowOutputs object with information on output files in the workflow.
 	 * @throws WorkflowException  If there was an issue running the workflow.
 	 */
-	public WorkflowOutputs runWorkflow(WorkflowInputsGalaxy inputs) throws WorkflowException {
+	public WorkflowInvocationOutputs runWorkflow(WorkflowInputsGalaxy inputs) throws WorkflowException {
 		checkNotNull(inputs, "inputs is null");
 		
 		try {
-			return workflowsClient.runWorkflow(inputs.getInputsObject());
+			return workflowsClient.invokeWorkflow(inputs.getInputsObject());
 		} catch (RuntimeException e) {
 			throw new WorkflowException(e);
 		}

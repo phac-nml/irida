@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.WorkflowInputsGeneric;
 
@@ -10,13 +10,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.WorkflowInp
  */
 public class WorkflowInputsGalaxy implements WorkflowInputsGeneric {
 
-	private WorkflowInputs workflowInputs;
+	private WorkflowInvocationInputs workflowInputs;
 	
 	/**
 	 * Builds a new WorkflowInputsGalaxy to wrap around a WorkflowInputs.
 	 * @param workflowInputs the inputs for this workflow.
 	 */
-	public WorkflowInputsGalaxy(WorkflowInputs workflowInputs) {
+	public WorkflowInputsGalaxy(WorkflowInvocationInputs workflowInputs) {
 		this.workflowInputs = workflowInputs;
 	}
 
@@ -24,7 +24,7 @@ public class WorkflowInputsGalaxy implements WorkflowInputsGeneric {
 	 * Gets the WorkflowInputs object.
 	 * @return The WorkflowInputs object.
 	 */
-	public WorkflowInputs getInputsObject() {
+	public WorkflowInvocationInputs getInputsObject() {
 		return workflowInputs;
 	}
 }

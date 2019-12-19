@@ -209,8 +209,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterServiceGalaxy
 				.prepareAnalysisParameters(analysisSubmission.getInputParameters(), iridaWorkflow);
-		WorkflowInputs inputs = workflowInputsGalaxy.getInputsObject();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
+		WorkflowInvocationInputs inputs = workflowInputsGalaxy.getInputsObject();
+		inputs.setDestination(new WorkflowInvocationInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 
 		if (!singleFiles.isEmpty()) {
@@ -219,8 +219,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 					sequenceFilesLabelSingle);
 			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy
 					.uploadSequenceFilesSingleEnd(singleFiles, workflowHistory, workflowLibrary);
-			inputs.setInput(workflowSequenceFileSingleInputId, new WorkflowInputs.WorkflowInput(
-					collectionResponseSingle.getId(), WorkflowInputs.InputSourceType.HDCA));
+			inputs.setInput(workflowSequenceFileSingleInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
+					collectionResponseSingle.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}
 
 		if (!pairedFiles.isEmpty()) {
@@ -229,8 +229,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 					sequenceFilesLabelPaired);
 			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy
 					.uploadSequenceFilesPaired(pairedFiles, workflowHistory, workflowLibrary);
-			inputs.setInput(workflowSequenceFilePairedInputId, new WorkflowInputs.WorkflowInput(
-					collectionResponsePaired.getId(), WorkflowInputs.InputSourceType.HDCA));
+			inputs.setInput(workflowSequenceFilePairedInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
+					collectionResponsePaired.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}
 
 		String analysisId = workflowHistory.getId();
@@ -290,7 +290,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *             If there's an exception with workflow methods.
 	 */
 	private void prepareReferenceFile(ReferenceFile referenceFile, History workflowHistory, String referenceFileLabel,
-			WorkflowDetails workflowDetails, WorkflowInputs inputs)
+			WorkflowDetails workflowDetails, WorkflowInvocationInputs inputs)
 			throws UploadException, GalaxyDatasetException, WorkflowException {
 
 		Dataset referenceDataset = galaxyHistoriesService.fileToHistory(referenceFile.getFile(), InputFileType.FASTA,
@@ -300,7 +300,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 				referenceFileLabel);
 
 		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInputs.WorkflowInput(referenceDataset.getId(), WorkflowInputs.InputSourceType.HDA));
+				new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
 	}
 
 	/**
