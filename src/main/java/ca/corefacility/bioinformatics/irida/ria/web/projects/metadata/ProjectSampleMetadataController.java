@@ -263,6 +263,8 @@ public class ProjectSampleMetadataController {
 
 					Map<MetadataTemplateField, MetadataEntry> newData = new HashMap<>();
 
+					Set<MetadataEntry> metadataEntrySet = new HashSet<>();
+
 					// Need to overwrite duplicate keys
 					for (Entry<String, String> entry : row.entrySet()) {
 						// Make sure we are not saving non-metadata items.
@@ -275,11 +277,11 @@ public class ProjectSampleMetadataController {
 										new MetadataTemplateField(entry.getKey(), "text"));
 							}
 
-							newData.put(key, new MetadataEntry(entry.getValue(), "text"));
+							metadataEntrySet.add(new MetadataEntry(entry.getValue(), "text", key));
 						}
 					}
 
-					sample.mergeMetadata(newData);
+					sample.mergeMetadata(metadataEntrySet);
 
 					// Save metadata back to the sample
 

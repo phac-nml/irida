@@ -131,7 +131,7 @@ public class Sample extends IridaResourceSupport
 	@JoinTable(joinColumns = @JoinColumn(name = "sample_id"))
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;*/
-
+	
 	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "sample", orphanRemoval = true)
 	private Set<MetadataEntry> metadataEntries;
 	
@@ -327,6 +327,7 @@ public class Sample extends IridaResourceSupport
 	}
 
 	@JsonIgnore
+	@Deprecated
 	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
 		return null;
 	}
@@ -340,14 +341,17 @@ public class Sample extends IridaResourceSupport
 	 *            the collection of {@link MetadataEntry}s
 	 */
 	@JsonIgnore
+	@Deprecated
 	public void setMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		//this.metadata = inputMetadata;
 	}
 
+	@JsonIgnore
 	public Set<MetadataEntry> getMetadataEntries() {
 		return metadataEntries;
 	}
 
+	@JsonIgnore
 	public void setMetadataEntries(Set<MetadataEntry> metadataEntries) {
 		this.metadataEntries = metadataEntries;
 	}
@@ -358,6 +362,7 @@ public class Sample extends IridaResourceSupport
 	 * 
 	 * @param inputMetadata the metadata to merge into the sample
 	 */
+	@Deprecated
 	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		// loop through entry set and see if it already exists
 		/*for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
@@ -379,5 +384,35 @@ public class Sample extends IridaResourceSupport
 				metadata.put(entry.getKey(), newMetadataEntry);
 			}
 		}*/
+	}
+
+	public void mergeMetadata(Set<MetadataEntry> inputMetadata) {
+		// loop through entry set and see if it already exists
+		for (MetadataEntry newMetadataEntry : inputMetadata) {
+			Optional<MetadataEntry> metadataEntryForField = getMetadataEntryForField(newMetadataEntry.getField());
+
+			if (metadataEntryForField.isPresent()) {
+				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
+
+				// if the metadata entries are of the same type, I can directly merge
+				if (originalMetadataEntry.getClass()
+						.equals(newMetadataEntry.getClass())) {
+					originalMetadataEntry.merge(newMetadataEntry);
+				} else {
+					// if they are different types, I need to replace the metadata entry instead of merging
+					metadataEntries.remove(originalMetadataEntry);
+					metadataEntries.add(newMetadataEntry);
+				}
+			} else {
+				metadataEntries.add(newMetadataEntry);
+			}
+		}
+	}
+
+	public Optional<MetadataEntry> getMetadataEntryForField(MetadataTemplateField field) {
+		return metadataEntries.stream()
+				.filter(e -> e.getField()
+						.equals(field))
+				.findFirst();
 	}
 }

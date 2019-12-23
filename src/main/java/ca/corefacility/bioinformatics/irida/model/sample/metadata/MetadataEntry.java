@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -47,6 +48,12 @@ public class MetadataEntry {
 	public MetadataEntry(String value, String type) {
 		this.value = value;
 		this.type = type;
+	}
+
+	public MetadataEntry(String value, String type, MetadataTemplateField field){
+		this(value,type);
+
+		this.field = field;
 	}
 
 	public void setType(String type) {
@@ -101,7 +108,13 @@ public class MetadataEntry {
 		return false;
 	}
 
+	@JsonIgnore
 	public MetadataTemplateField getField() {
 		return field;
+	}
+
+	@JsonIgnore
+	public void setField(MetadataTemplateField field) {
+		this.field = field;
 	}
 }

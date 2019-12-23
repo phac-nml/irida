@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Service for managing {@link MetadataTemplate}s and related {@link Project}s
@@ -115,7 +116,10 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param metadata the strings to convert
 	 * @return a Map of {@link MetadataTemplateField}s and {@link MetadataEntry}s
 	 */
+	@Deprecated
 	public Map<MetadataTemplateField, MetadataEntry> getMetadataMap(Map<String, MetadataEntry> metadata);
+
+	public Set<MetadataEntry> getMetadataSet(Map<String, MetadataEntry> metadataMap);
 
 	/**
 	 * Get all the {@link MetadataTemplateField}s on a given {@link Project}

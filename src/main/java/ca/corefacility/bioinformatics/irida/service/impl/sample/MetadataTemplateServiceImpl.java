@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
@@ -162,6 +160,29 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			}
 
 			metadata.put(field, e.getValue());
+		});
+
+		return metadata;
+	}
+
+	public Set<MetadataEntry> getMetadataSet(Map<String, MetadataEntry> metadataMap){
+		Set<MetadataEntry> metadata = new HashSet<>();
+
+		metadataMap.entrySet().forEach(e -> {
+			MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
+
+			// if not, create a new one
+			if (field == null) {
+				field = new MetadataTemplateField(e.getKey(), "text");
+				field = saveMetadataField(field);
+			}
+
+			MetadataEntry entry = e.getValue();
+
+			entry.setField(field);
+
+			metadata.add(entry);
+
 		});
 
 		return metadata;

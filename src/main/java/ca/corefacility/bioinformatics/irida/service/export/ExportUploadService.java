@@ -666,8 +666,8 @@ public class ExportUploadService {
 				//build a metadata map entry
 				Map<String, MetadataEntry> metadata = new HashMap<>();
 				metadata.put(NCBI_ACCESSION_METADATA_LABEL, new MetadataEntry(accession, "text"));
-				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
-						.getMetadataMap(metadata);
+				Set<MetadataEntry> metadataSet = metadataTemplateService
+						.getMetadataSet(metadata);
 
 				//get all the sequencing objects involved
 				Set<SequencingObject> objects = new HashSet<>();
@@ -687,7 +687,7 @@ public class ExportUploadService {
 
 				//update the samples with the accession
 				for (Sample s : samples) {
-					s.mergeMetadata(metadataMap);
+					s.mergeMetadata(metadataSet);
 
 					sampleService.update(s);
 				}

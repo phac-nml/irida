@@ -104,13 +104,13 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 				});
 
 				// convert string map into metadata fields
-				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
-						.getMetadataMap(stringEntries);
+				Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(stringEntries);
 
 				//save metadata back to sample
 				samples.forEach(s -> {
-					s.mergeMetadata(metadataMap);
-					sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
+					s.mergeMetadata(metadataSet);
+					sampleService.updateFields(s.getId(),
+							ImmutableMap.of("metadataEntries", s.getMetadataEntries()));
 				});
 
 			} else {
