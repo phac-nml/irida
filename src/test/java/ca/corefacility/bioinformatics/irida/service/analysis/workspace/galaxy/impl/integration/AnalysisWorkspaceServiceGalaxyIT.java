@@ -45,8 +45,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs.WorkflowInvocationInput;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -339,7 +339,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_SINGLE_NAME));
 
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
 	}
@@ -455,7 +455,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
 	}
@@ -504,10 +504,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
 		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 
-		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInputs is null", workflowInputs);
+		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
 
-		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
 				"core_pipeline_outputs_paired_with_parameters");
 		assertNotNull("toolParameters is null", toolParameters);
 
@@ -560,10 +560,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
 		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 
-		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInputs is null", workflowInputs);
+		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
 
-		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
 				"core_pipeline_outputs_paired_with_parameters");
 		assertNotNull("toolParameters is null", toolParameters);
 
@@ -618,10 +618,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
 		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 
-		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInputs is null", workflowInputs);
+		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
 
-		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
 				"core_pipeline_outputs_paired_with_parameters");
 		assertNull("toolParameters is not null", toolParameters);
 	}
@@ -751,7 +751,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 3, workflowInputsMap.size());
 	}
