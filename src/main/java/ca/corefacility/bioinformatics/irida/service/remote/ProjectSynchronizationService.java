@@ -364,8 +364,8 @@ public class ProjectSynchronizationService {
 		
 		sampleMetadata.values().forEach(e -> e.setId(null));
 		
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);
-		sample.setMetadata(metadata);
+		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(sampleMetadata);
+		sample.setMetadataEntries(metadata);
 		
 		return sample;
 	}
