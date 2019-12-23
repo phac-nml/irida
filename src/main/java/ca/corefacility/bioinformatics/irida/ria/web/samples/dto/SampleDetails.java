@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import java.util.Map;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -11,12 +12,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
  */
 public class SampleDetails {
 	private Sample sample;
-	private Map<MetadataTemplateField, MetadataEntry> metadata;
+	private Set<MetadataEntry> metadata;
 	private boolean modifiable;
 
 	public SampleDetails(Sample sample, boolean modifiable) {
 		this.sample = sample;
-		this.metadata = sample.getMetadata();
+		this.metadata = sample.getMetadataEntries();
 		this.modifiable = modifiable;
 	}
 
@@ -24,7 +25,7 @@ public class SampleDetails {
 		return sample;
 	}
 
-	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
+	public Set<MetadataEntry> getMetadata() {
 		return metadata;
 	}
 

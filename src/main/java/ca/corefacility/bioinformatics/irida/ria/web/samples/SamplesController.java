@@ -208,6 +208,8 @@ public class SamplesController extends BaseController {
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
 
+		Sample sample = sampleService.read(sampleId);
+
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
@@ -245,8 +247,12 @@ public class SamplesController extends BaseController {
 		} else {
 			metadataMap = new HashMap<>();
 		}
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
-		updatedValues.put("metadata", metadata);
+
+		Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(metadataMap);
+
+		sample.mergeMetadata(metadataSet);
+
+		updatedValues.put("metadataEntries", sample.getMetadataEntries());
 
 		if (updatedValues.size() > 0) {
 			try {

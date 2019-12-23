@@ -125,18 +125,18 @@
                         <fieldset id="other-metadata">
                             <legend th:text="#{sample.metadata.other}">_Other Metadata_</legend>
                             <div class="row" id="metadata-fields">
-                                <div th:unless="${#maps.isEmpty(sample.getMetadata())}">
-                                    <div th:each="entry : ${sample.getMetadata()}"  class="col-md-6 metadata-entry">
+                                <div th:unless="${#sets.isEmpty(sample.getMetadataEntries())}">
+                                    <div th:each="entry : ${sample.getMetadataEntries()}"  class="col-md-6 metadata-entry">
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
+                                                <input type="text" class="metadata-key form-control" required="required" th:value="${entry.field}"/>
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-default delete-metadata" type="button">
                                                         <i class="far fa-trash-alt"></i>
                                                     </button>
                                                 </span>
                                             </div>
-                                            <input type="text" class="metadata-value form-control" th:value="${entry.value.value}"/>
+                                            <input type="text" class="metadata-value form-control" th:value="${entry.value}"/>
                                         </div>
                                     </div>
                                 </div>
