@@ -953,20 +953,22 @@ public class AnalysisController {
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			if (!sample.getMetadata().isEmpty()) {
-				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				terms.addAll(
-						metadata.keySet().stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
+			if (!sample.getMetadataEntries().isEmpty()) {
+				Set<MetadataEntry> metadataEntries = sample.getMetadataEntries();
+				terms.addAll(metadataEntries.stream()
+						.map(e -> e.getField()
+								.getLabel())
+						.collect(Collectors.toSet()));
 			}
 		}
 
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Set<MetadataEntry> metadataEntries = sample.getMetadataEntries();
 			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
-			sampleMetadata.entrySet().forEach(e -> {
-				stringMetadata.put(e.getKey().getLabel(), e.getValue());
+			metadataEntries.forEach(e -> {
+				stringMetadata.put(e.getField().getLabel(), e);
 			});
 
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();

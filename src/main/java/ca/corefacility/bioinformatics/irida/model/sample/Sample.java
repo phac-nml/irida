@@ -131,7 +131,7 @@ public class Sample extends IridaResourceSupport
 	@JoinTable(joinColumns = @JoinColumn(name = "sample_id"))
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;*/
-	
+
 	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "sample", orphanRemoval = true)
 	private Set<MetadataEntry> metadataEntries;
 	
@@ -353,6 +353,7 @@ public class Sample extends IridaResourceSupport
 
 	@JsonIgnore
 	public void setMetadataEntries(Set<MetadataEntry> metadataEntries) {
+		metadataEntries.stream().forEach(e -> e.setSample(this));
 		this.metadataEntries = metadataEntries;
 	}
 
@@ -389,6 +390,9 @@ public class Sample extends IridaResourceSupport
 	public void mergeMetadata(Set<MetadataEntry> inputMetadata) {
 		// loop through entry set and see if it already exists
 		for (MetadataEntry newMetadataEntry : inputMetadata) {
+
+			newMetadataEntry.setSample(this);
+
 			Optional<MetadataEntry> metadataEntryForField = getMetadataEntryForField(newMetadataEntry.getField());
 
 			if (metadataEntryForField.isPresent()) {

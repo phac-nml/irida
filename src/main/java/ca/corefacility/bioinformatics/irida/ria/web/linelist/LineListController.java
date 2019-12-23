@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -100,24 +101,20 @@ public class LineListController {
 		Sample sample = sampleService.read(sampleId);
 
 		try {
-			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+			Set<MetadataEntry> metadataEntries = sample.getMetadataEntries();
+
+			//find the field
 			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
 			if (templateField == null) {
 				templateField = new MetadataTemplateField(label, "text");
 				metadataTemplateService.saveMetadataField(templateField);
 			}
-			MetadataEntry entry;
-			/*
-			 Check to see if the field exists already.  If it does, then just update it.
-			 If not create a new entry and carry on.
-			 */
-			if (metadata.containsKey(templateField)) {
-				entry = metadata.get(templateField);
-				entry.setValue(value);
-			} else {
-				entry = new MetadataEntry(value, "text");
-			}
-			metadata.put(templateField, entry);
+
+			//create and merge the new entry in
+			MetadataEntry entry = new MetadataEntry(value, "text", templateField);
+			sample.mergeMetadata(Sets.newHashSet(entry));
+
+			//update the sample
 			sampleService.update(sample);
 			response.setStatus(HttpServletResponse.SC_OK);
 			return "SUCCESS";
