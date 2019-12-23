@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="metadata-entry-refactor" author="tom">
+        <addColumn tableName="metadata_entry">
+            <column name="field_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_METADATA_ENTRY_FIELD" referencedColumnNames="id"
+                             referencedTableName="metadata_field"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="metadata_entry_AUD">
+            <column name="field_id" type="bigint(20)">
+            </column>
+        </addColumn>
+
+        <addColumn tableName="metadata_entry">
+            <column name="sample_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_METADATA_ENTRY_SAMPLE" referencedColumnNames="id"
+                             referencedTableName="sample"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="metadata_entry_AUD">
+            <column name="sample_id" type="bigint(20)">
+            </column>
+        </addColumn>
+
+        <sql>
+            update metadata_entry e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
+            e.field_id=s.metadata_KEY;
+        </sql>
+        <sql>
+            update metadata_entry e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
+            e.sample_id=s.sample_id;
+        </sql>
+
+    </changeSet>
+</databaseChangeLog>

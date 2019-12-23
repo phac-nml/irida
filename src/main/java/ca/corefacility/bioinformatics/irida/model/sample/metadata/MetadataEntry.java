@@ -5,16 +5,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -38,6 +32,14 @@ public class MetadataEntry {
 
 	@NotNull
 	private String type;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "field_id")
+	private MetadataTemplateField field;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sample_id")
+	private Sample sample;
 
 	public MetadataEntry() {
 	}
@@ -97,5 +99,9 @@ public class MetadataEntry {
 			return Objects.equals(entry.getValue(), value) && Objects.equals(entry.getType(), type);
 		}
 		return false;
+	}
+
+	public MetadataTemplateField getField() {
+		return field;
 	}
 }

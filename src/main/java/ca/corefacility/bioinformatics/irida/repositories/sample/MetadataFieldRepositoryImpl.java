@@ -27,7 +27,7 @@ public class MetadataFieldRepositoryImpl implements MetadataFieldRepositoryCusto
 	@Override
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project p) {
 
-		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN sample_metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.metadata_KEY=f.id WHERE p.project_id=:project";
+		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
 		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
 
 		nativeQuery.setParameter("project", p.getId());

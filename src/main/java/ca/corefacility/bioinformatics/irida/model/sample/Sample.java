@@ -127,17 +127,20 @@ public class Sample extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	/*@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(joinColumns = @JoinColumn(name = "sample_id"))
 	@MapKeyColumn(name = "metadata_KEY")
-	private Map<MetadataTemplateField, MetadataEntry> metadata;
+	private Map<MetadataTemplateField, MetadataEntry> metadata;*/
+
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "sample", orphanRemoval = true)
+	private Set<MetadataEntry> metadataEntries;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleGenomeAssemblyJoin> genomeAssemblies;
 
 	public Sample() {
 		createdDate = new Date();
-		metadata = new HashMap<>();
+		metadataEntries = new HashSet<>();
 	}
 
 	/**
@@ -163,8 +166,8 @@ public class Sample extends IridaResourceSupport
 					&& Objects.equals(collectionDate, sample.collectionDate)
 					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
 					&& Objects.equals(isolationSource, sample.isolationSource)
-					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude)
-					&& Objects.equals(metadata, sample.metadata);
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
+
 		}
 
 		return false;
@@ -173,7 +176,7 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
-				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude, metadata);
+				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude, metadataEntries);
 	}
 
 	@Override
@@ -325,7 +328,7 @@ public class Sample extends IridaResourceSupport
 
 	@JsonIgnore
 	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
-		return metadata;
+		return null;
 	}
 
 	
@@ -338,9 +341,17 @@ public class Sample extends IridaResourceSupport
 	 */
 	@JsonIgnore
 	public void setMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
-		this.metadata = inputMetadata;
+		//this.metadata = inputMetadata;
 	}
-	
+
+	public Set<MetadataEntry> getMetadataEntries() {
+		return metadataEntries;
+	}
+
+	public void setMetadataEntries(Set<MetadataEntry> metadataEntries) {
+		this.metadataEntries = metadataEntries;
+	}
+
 	/**
 	 * Merge {@link MetadataEntry} into the sample's existing metadata collection.
 	 * Duplicate keys will be overwritten.
@@ -349,7 +360,7 @@ public class Sample extends IridaResourceSupport
 	 */
 	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		// loop through entry set and see if it already exists
-		for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
+		/*for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
 			MetadataEntry newMetadataEntry = entry.getValue();
 
 			// if the key is found, replace the entry
@@ -367,6 +378,6 @@ public class Sample extends IridaResourceSupport
 				// otherwise add the new entry
 				metadata.put(entry.getKey(), newMetadataEntry);
 			}
-		}
+		}*/
 	}
 }

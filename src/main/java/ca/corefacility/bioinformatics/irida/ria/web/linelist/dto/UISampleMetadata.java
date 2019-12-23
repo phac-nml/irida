@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.linelist.dto;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -24,7 +25,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 	public static final String EDITABLE = "editable";
 	public static final String OWNER = "owner";
 
-	public UISampleMetadata(ProjectSampleJoin join, boolean editable) {
+	public UISampleMetadata(ProjectSampleJoin join, boolean canModifySample) {
 		Project project = join.getSubject();
 		Sample sample = join.getObject();
 
@@ -37,7 +38,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 		this.put(MODIFIED_DATE, sample.getModifiedDate()
 				.toString());
 		this.putAll(getAllMetadataForSample(sample));
-		this.put(EDITABLE, String.valueOf(editable));
+		this.put(EDITABLE, String.valueOf(canModifySample));
 		this.put(OWNER, String.valueOf(join.isOwner()));
 	}
 
@@ -49,11 +50,11 @@ public class UISampleMetadata extends HashMap<String, String> {
 	 */
 	private Map<String, String> getAllMetadataForSample(Sample sample) {
 		Map<String, String> entries = new HashMap<>();
-		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-		for (MetadataTemplateField field : sampleMetadata.keySet()) {
-			MetadataEntry entry = sampleMetadata.get(field);
+		Set<MetadataEntry> metadataEntries = sample.getMetadataEntries();
+		for (MetadataEntry entry : metadataEntries) {
+
 			// Label must be converted into the proper format for client side look up purposes in Ag Grid.
-			entries.put(field.getFieldKey(), entry.getValue());
+			entries.put(entry.getField().getFieldKey(), entry.getValue());
 		}
 		return entries;
 	}
