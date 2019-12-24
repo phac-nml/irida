@@ -27,6 +27,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -86,8 +88,8 @@ public class SISTRSampleUpdaterTest {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testUpdaterPassed() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
-				.put("SISTR serovar (v0.1)", "Enteritidis")
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder().put(
+				"SISTR serovar (v0.1)", "Enteritidis")
 				.put("SISTR cgMLST Subspecies (v0.1)", "enterica")
 				.put("SISTR QC Status (v0.1)", "PASS")
 				.put("SISTR O-antigen (v0.1)", "1,9,12")
@@ -103,23 +105,25 @@ public class SISTRSampleUpdaterTest {
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
 		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
-				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
+				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null)))
+				.build();
 
 		submission.setAnalysis(analysis);
 
 		Sample sample = new Sample();
 		sample.setId(1L);
 
-		ImmutableMap<MetadataTemplateField, MetadataEntry> metadataMap = ImmutableMap
-				.of(new MetadataTemplateField("SISTR Field", "text"), new MetadataEntry("Value1", "text"));
-		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
+		Set<MetadataEntry> metadataSet = Sets.newHashSet(
+				new MetadataEntry("Value1", "text", new MetadataTemplateField("SISTR Field", "text")));
+
+		when(metadataTemplateService.getMetadataSet(any(Map.class))).thenReturn(metadataSet);
 
 		updater.update(Lists.newArrayList(sample), submission);
 
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
-		verify(metadataTemplateService).getMetadataMap(mapCaptor.capture());
+		verify(metadataTemplateService).getMetadataSet(mapCaptor.capture());
 		Map<String, MetadataEntry> metadata = mapCaptor.getValue();
 
 		int found = 0;
@@ -134,20 +138,24 @@ public class SISTRSampleUpdaterTest {
 				found++;
 			}
 		}
-		assertEquals("should have found the same number of results", expectedResults.keySet().size(), found);
+		assertEquals("should have found the same number of results", expectedResults.keySet()
+				.size(), found);
 
 		// this bit just ensures the merged data got saved
 		verify(sampleService).updateFields(eq(sample.getId()), mapCaptor.capture());
-		Map<MetadataTemplateField, MetadataEntry> value = (Map<MetadataTemplateField, MetadataEntry>) mapCaptor
-				.getValue().get("metadata");
+		Set<MetadataEntry> value = (Set<MetadataEntry>) mapCaptor.getValue()
+				.get("metadataEntries");
 
-		assertEquals(metadataMap.keySet().iterator().next(), value.keySet().iterator().next());
+		assertEquals(metadataSet.iterator()
+				.next(), value.iterator()
+				.next());
 	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testUpdateFailResultsNullST() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
-				.put("SISTR serovar (v0.1)", "-:-:-")
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder().put(
+				"SISTR serovar (v0.1)", "-:-:-")
 				.put("SISTR QC Status (v0.1)", "FAIL")
 				.put("SISTR cgMLST Sequence Type (v0.1)", "")
 				.build();
@@ -158,23 +166,25 @@ public class SISTRSampleUpdaterTest {
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
 		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
-				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
+				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null)))
+				.build();
 
 		submission.setAnalysis(analysis);
 
 		Sample sample = new Sample();
 		sample.setId(1L);
 
-		ImmutableMap<MetadataTemplateField, MetadataEntry> metadataMap = ImmutableMap
-				.of(new MetadataTemplateField("SISTR Field", "text"), new MetadataEntry("Value1", "text"));
-		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
+		Set<MetadataEntry> metadataSet = Sets.newHashSet(
+				new MetadataEntry("Value1", "text", new MetadataTemplateField("SISTR Field", "text")));
+
+		when(metadataTemplateService.getMetadataSet(any(Map.class))).thenReturn(metadataSet);
 
 		updater.update(Lists.newArrayList(sample), submission);
 
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
-		verify(metadataTemplateService).getMetadataMap(mapCaptor.capture());
+		verify(metadataTemplateService).getMetadataSet(mapCaptor.capture());
 		Map<String, MetadataEntry> metadata = mapCaptor.getValue();
 
 		int found = 0;
@@ -189,14 +199,17 @@ public class SISTRSampleUpdaterTest {
 				found++;
 			}
 		}
-		assertEquals("should have found the same number of results", expectedResults.keySet().size(), found);
+		assertEquals("should have found the same number of results", expectedResults.keySet()
+				.size(), found);
 
 		// this bit just ensures the merged data got saved
 		verify(sampleService).updateFields(eq(sample.getId()), mapCaptor.capture());
-		Map<MetadataTemplateField, MetadataEntry> value = (Map<MetadataTemplateField, MetadataEntry>) mapCaptor
-				.getValue().get("metadata");
+		Set<MetadataEntry> value = (Set<MetadataEntry>) mapCaptor.getValue()
+				.get("metadataEntries");
 
-		assertEquals(metadataMap.keySet().iterator().next(), value.keySet().iterator().next());
+		assertEquals(metadataSet.iterator()
+				.next(), value.iterator()
+				.next());
 	}
 
 	@Test(expected = PostProcessingException.class)
@@ -207,7 +220,8 @@ public class SISTRSampleUpdaterTest {
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
 		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
-				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
+				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null)))
+				.build();
 
 		submission.setAnalysis(analysis);
 
@@ -225,7 +239,8 @@ public class SISTRSampleUpdaterTest {
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
 		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
-				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
+				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null)))
+				.build();
 
 		submission.setAnalysis(analysis);
 

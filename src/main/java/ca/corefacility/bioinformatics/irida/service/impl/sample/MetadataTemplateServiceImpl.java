@@ -143,50 +143,32 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.findAllMetadataFieldsByLabelQuery(query);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	@PreAuthorize("permitAll()")
-	public Map<MetadataTemplateField, MetadataEntry> getMetadataMap(Map<String, MetadataEntry> metadataMap) {
-		Map<MetadataTemplateField, MetadataEntry> metadata = new HashMap<>();
-		metadataMap.entrySet().forEach(e -> {
-
-			// get the metadatatemplatefield if it exists
-			MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
-
-			// if not, create a new one
-			if (field == null) {
-				field = new MetadataTemplateField(e.getKey(), "text");
-				field = saveMetadataField(field);
-			}
-
-			metadata.put(field, e.getValue());
-		});
-
-		return metadata;
-	}
-
-	@Override
-	@Transactional
-	@PreAuthorize("permitAll()")
-	public Set<MetadataEntry> getMetadataSet(Map<String, MetadataEntry> metadataMap){
+	public Set<MetadataEntry> getMetadataSet(Map<String, MetadataEntry> metadataMap) {
 		Set<MetadataEntry> metadata = new HashSet<>();
 
-		metadataMap.entrySet().forEach(e -> {
-			MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
+		metadataMap.entrySet()
+				.forEach(e -> {
+					MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
 
-			// if not, create a new one
-			if (field == null) {
-				field = new MetadataTemplateField(e.getKey(), "text");
-				field = saveMetadataField(field);
-			}
+					// if not, create a new one
+					if (field == null) {
+						field = new MetadataTemplateField(e.getKey(), "text");
+						field = saveMetadataField(field);
+					}
 
-			MetadataEntry entry = e.getValue();
+					MetadataEntry entry = e.getValue();
 
-			entry.setField(field);
+					entry.setField(field);
 
-			metadata.add(entry);
+					metadata.add(entry);
 
-		});
+				});
 
 		return metadata;
 	}
