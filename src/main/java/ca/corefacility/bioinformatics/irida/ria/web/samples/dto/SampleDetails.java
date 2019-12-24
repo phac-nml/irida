@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
-import java.util.Map;
-import java.util.Set;
-
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
+import java.util.Set;
 
 /**
  * Used to return details of a {@link Sample} back to the user interface.

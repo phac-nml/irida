@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;

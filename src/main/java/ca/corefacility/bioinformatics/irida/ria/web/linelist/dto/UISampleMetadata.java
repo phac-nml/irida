@@ -1,15 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents {@link Sample} metadata in the linelist table.

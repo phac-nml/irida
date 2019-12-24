@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -18,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;

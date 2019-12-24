@@ -323,9 +323,15 @@ public class Sample extends IridaResourceSupport
 		return metadataEntries;
 	}
 
+	/**
+	 * Se the metadata for this sample
+	 *
+	 * @param metadataEntries the entries to set on this sample
+	 */
 	@JsonIgnore
 	public void setMetadataEntries(Set<MetadataEntry> metadataEntries) {
-		metadataEntries.stream().forEach(e -> e.setSample(this));
+		metadataEntries.stream()
+				.forEach(e -> e.setSample(this));
 		this.metadataEntries = metadataEntries;
 	}
 
@@ -361,6 +367,12 @@ public class Sample extends IridaResourceSupport
 		}
 	}
 
+	/**
+	 * Get a {@link MetadataEntry} from this {@link Sample} that has the given {@link MetadataTemplateField}.
+	 *
+	 * @param field the field to get the entry for
+	 * @return An optional of the field if it exists
+	 */
 	public Optional<MetadataEntry> getMetadataEntryForField(MetadataTemplateField field) {
 		return metadataEntries.stream()
 				.filter(e -> e.getField()

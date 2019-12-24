@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
@@ -15,47 +13,27 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.SISTRSampleUpdater;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class SISTRSampleUpdaterTest {
 
