@@ -1022,7 +1022,6 @@ public class AnalysisAjaxController {
 
 	/**
 	 * Get the full analysis provenance
-	 * {@link Analysis}
 	 *
 	 * @param submissionId The analysis submission id
 	 * @param filename     The name of the file for which to get the provenance
@@ -1062,6 +1061,7 @@ public class AnalysisAjaxController {
 
 	/*
 	 * Recursive function to get the previous execution tools and their parameters
+	 *
 	 * @param tool The tool to get the previous execution tools and their parameters for
 	 * @return an arraylist of previous execution tools for the tool
 	 */
@@ -1081,7 +1081,7 @@ public class AnalysisAjaxController {
 	/*
 	 * Gets the previous steps (tools) for the tool
 	 *
-	 * @params tool The tool to get the previous steps for
+	 * @param tool The tool to get the previous steps for
 	 * @return set of previous execution tools for the tool
 	 */
 	private Set<ToolExecution> getPrevTools(ToolExecution tool) {

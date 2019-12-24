@@ -30,16 +30,16 @@ export default function AnalysisProvenance() {
   }, []);
 
   // Get the provenance for the file
-  function getProvenance(e) {
-    if (typeof e !== "undefined") {
+  function getProvenance(filename) {
+    if (typeof filename !== "undefined") {
       if (
         (provenance !== null &&
-          !provenance.data.filename.includes(e.toString())) ||
+          !provenance.data.filename.includes(filename.toString())) ||
         provenance === null
       ) {
         getAnalysisProvenanceByFile(
           analysisContext.analysis.identifier,
-          e.toString()
+          filename.toString()
         ).then(data => {
           setProvenance(data);
         });

@@ -262,6 +262,7 @@ export function downloadFilesAsZip(submissionId) {
 /**
  * Get the provenance for the analysis output files
  * @param {number} submissionId submission for which to get provenance for.
+ * @param {string} filename file for which provenance is requested
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getAnalysisProvenanceByFile(submissionId, filename) {
