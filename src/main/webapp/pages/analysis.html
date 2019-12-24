@@ -16,8 +16,15 @@
         analysisState: [[${analysisSubmission.getAnalysisState()}]],
         analysisType: [[${analysisType}]],
         isAdmin: [[${isAdmin}]],
-        mailConfigured: [[${mailConfigured}]]
+        mailConfigured: [[${mailConfigured}]],
       };
+
+      window.translations = [{
+        "AnalysisShare.saveResultsMessage": /*[[#{workflow.label.share-analysis-samples.__${analysisType}__}]]*/ "",
+        "AnalysisDetailsPriority.LOW": /*[[#{AnalysisDetailsPriority.LOW}]]*/ "",
+        "AnalysisDetailsPriority.MEDIUM": /*[[#{AnalysisDetailsPriority.MEDIUM}]]*/ "",
+        "AnalysisDetailsPriority.HIGH": /*[[#{AnalysisDetailsPriority.HIGH}]]*/ ""
+      }]
     </script>
   </head>
   <body>
@@ -33,3 +40,4 @@
     </th:block>
   </body>
 </html>
+

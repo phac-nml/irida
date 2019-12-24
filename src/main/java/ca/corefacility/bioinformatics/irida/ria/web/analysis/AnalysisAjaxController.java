@@ -988,7 +988,7 @@ public class AnalysisAjaxController {
 	 * @throws IOException If the tree file couldn't be read
 	 */
 	@RequestMapping("/{submissionId}/tree")
-	private AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
+	public AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
 		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
@@ -1020,22 +1020,88 @@ public class AnalysisAjaxController {
 		return new AnalysisTreeResponse(tree, message);
 	}
 
-	@RequestMapping("/{submissionId}/provenance")
-	private AnalysisProvenanceResponse getAnalysisProvenance(@PathVariable Long id) {
-		AnalysisSubmission submission = analysisSubmissionService.read(id);
+	/**
+	 * Get the full analysis provenance
+	 * {@link Analysis}
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param filename     The name of the file for which to get the provenance
+	 * @return dto which contains the the file provenance
+	 */
+	@RequestMapping(value = "/{submissionId}/provenance")
+	@ResponseBody
+	public AnalysisProvenanceResponse getProvenanceByFile(@PathVariable Long submissionId, String filename) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Analysis analysis = submission.getAnalysis();
-		Set<AnalysisOutputFile> outputFiles = analysis.getAnalysisOutputFiles();
-		return new AnalysisProvenanceResponse();
+		AnalysisOutputFile outputFile = null;
+		AnalysisProvenanceResponse analysisProvenance = null;
+		ArrayList<AnalysisToolExecutionParameters> executionParameters;
+
+		// get all output files produced by analysis and get the one which matches the file for which to display provenance
+		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
+
+		for (AnalysisOutputFile file : files) {
+			if (file.getLabel()
+					.contains(filename)) {
+				outputFile = file;
+				break;
+			}
+		}
+
+		if (outputFile != null) {
+			ToolExecution tool = outputFile.getCreatedByTool();
+
+			// get the execution parameters for the created by tool
+			executionParameters = getExecutionParameters(tool);
+
+			analysisProvenance = new AnalysisProvenanceResponse(outputFile.getLabel(),
+					new AnalysisToolExecution(tool.getLabel(), executionParameters, getPreviousExecutionTools(tool)));
+		}
+		return analysisProvenance;
 	}
 
-	@RequestMapping("/{submissionId}/provenance/{filename}")
-	private void getProvenanceByFile(@PathVariable Long id, String filename) {
-		AnalysisSubmission submission = analysisSubmissionService.read(id);
-		Analysis analysis = submission.getAnalysis();
-		AnalysisOutputFile aof = analysis.getAnalysisOutputFile(filename);
-		logger.debug("AOF IS: ");
-		logger.debug(aof.toString());
-		//return new AnalysisProvenanceResponse();
+	/*
+	 * Recursive function to get the previous execution tools and their parameters
+	 * @param tool The tool to get the previous execution tools and their parameters for
+	 * @return an arraylist of previous execution tools for the tool
+	 */
+	private ArrayList<AnalysisToolExecution> getPreviousExecutionTools(ToolExecution tool) {
+		ArrayList<AnalysisToolExecution> previousExecutionTools = new ArrayList<>();
+		ArrayList<AnalysisToolExecutionParameters> executionParameters;
+
+		for (ToolExecution currTool : new ArrayList<>(getPrevTools(tool))) {
+			executionParameters = getExecutionParameters(currTool);
+
+			previousExecutionTools.add(new AnalysisToolExecution(currTool.getLabel(), executionParameters,
+					getPreviousExecutionTools(currTool)));
+		}
+		return previousExecutionTools;
+	}
+
+	/*
+	 * Gets the previous steps (tools) for the tool
+	 *
+	 * @params tool The tool to get the previous steps for
+	 * @return set of previous execution tools for the tool
+	 */
+	private Set<ToolExecution> getPrevTools(ToolExecution tool) {
+		return tool.getPreviousSteps();
+	}
+
+	/*
+	 * Gets the execution parameters for the tool
+	 *
+	 * @param tool The tool to get the execution parameters for
+	 * @return an arraylist of execution parameters for the tool
+	 */
+	private ArrayList<AnalysisToolExecutionParameters> getExecutionParameters(ToolExecution tool) {
+		ArrayList<AnalysisToolExecutionParameters> executionParameters = new ArrayList<>();
+
+		for (Map.Entry<String, String> entry : tool.getExecutionTimeParameters()
+				.entrySet()) {
+			executionParameters.add(new AnalysisToolExecutionParameters(entry.getKey(), entry.getValue()));
+		}
+		return executionParameters;
 	}
 
 	/**

@@ -264,33 +264,21 @@ export function downloadFilesAsZip(submissionId) {
  * @param {number} submissionId submission for which to get provenance for.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getAnalysisProvenance(submissionId) {
+export async function getAnalysisProvenanceByFile(submissionId, filename) {
   try {
     const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/provenance`
+      `${ANALYSIS_URL}/${submissionId}/provenance`,
+      {
+        params: {
+          filename
+        }
+      }
     );
     return { data };
   } catch (error) {
     return { error };
   }
 }
-
-/**
- * Get the provenance for the analysis output files
- * @param {number} submissionId submission for which to get provenance for.
- * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
- */
-export async function getAnalysisProvenanceByFile(submissionId) {
-  try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/provenance/`
-    );
-    return { data };
-  } catch (error) {
-    return { error };
-  }
-}
-
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
