@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -35,6 +36,11 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	 */
 	public PipelineProvidedMetadataEntry(String value, String type, AnalysisSubmission submission) {
 		super(value, type);
+		this.submission = submission;
+	}
+
+	public PipelineProvidedMetadataEntry(String value, String type, AnalysisSubmission submission, MetadataTemplateField field) {
+		super(value, type, field);
 		this.submission = submission;
 	}
 

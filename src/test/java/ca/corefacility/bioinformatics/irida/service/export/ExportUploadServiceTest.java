@@ -245,13 +245,13 @@ public class ExportUploadServiceTest {
 		String newAccession = "SRR12345";
 		MetadataTemplateField field = new MetadataTemplateField(ExportUploadService.NCBI_ACCESSION_METADATA_LABEL,
 				"text");
-		MetadataEntry entry = new MetadataEntry(newAccession, "text");
+		MetadataEntry entry = new MetadataEntry(newAccession, "text", field);
 
 		when(exportSubmissionService.getSubmissionsWithState(any(Set.class)))
 				.thenReturn(Lists.newArrayList(submission));
 		when(sampleService.getSampleForSequencingObject(seqObject))
 				.thenReturn(new SampleSequencingObjectJoin(iridaSample, seqObject));
-		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(ImmutableMap.of(field, entry));
+		when(metadataTemplateService.getMetadataSet(any(Map.class))).thenReturn(Sets.newHashSet(entry));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
 				+ "<SubmissionStatus submission_id=\"SUB11245\" status=\"processed-ok\">\n"
@@ -303,7 +303,8 @@ public class ExportUploadServiceTest {
 		verify(sampleService).update(captor.capture());
 
 		Sample savedSample = captor.getValue();
-		assertTrue("saved sample shuold contain accession", savedSample.getMetadata().containsKey(field));
+		assertTrue("saved sample should contain accession", savedSample.getMetadataEntryForField(field)
+				.isPresent());
 	}
 
 	/**
