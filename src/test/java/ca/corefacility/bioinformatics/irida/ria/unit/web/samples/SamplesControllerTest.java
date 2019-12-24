@@ -128,6 +128,7 @@ public class SamplesControllerTest {
 		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism,
 				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		when(sampleService.updateFields(sample.getId(), updatedValues)).thenReturn(sample);
+		when(sampleService.read(sample.getId())).thenReturn(sample);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
