@@ -30,7 +30,12 @@ Changes
 * [Developer]: Added back minification config to production webpack config.
 * [UI/Developer]: Updated to latest (3.26.0) release of `ant.design`.
 * [Developer]: Fixed url for downloading multiple analysis outputs as well as for viewing the user analysis outputs page.
+* [Documentation]: Removed broken NCBI link and added info to conact NCBI about NCBI SRA exports.
 * [UI/Developer]: Lazy load line list export utilities.
+* [Developer]: Update to Chromedriver 79.0.0 for Travis CI.
+* [UI/Developer]: Standardized JavaScript internationalization through webpack. See [i18n documentation](https://irida.corefacility.ca/documentation/developer/interface/i18n/) for more information.
+* [UI/Developer]: Update version of `yarn`, `babel` dependencies.
+* [Developer]: Sample filter input has underscores escaped so that proper samples are returned
 * [UI]: New login page with configurable logo.
 
 19.05 to 19.09

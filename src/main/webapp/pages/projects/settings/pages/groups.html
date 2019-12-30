@@ -6,10 +6,6 @@
     <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
     <script th:inline="javascript">
       window.PAGE = {
-        i18n: {
-          'remove': /*[[#{project.members.edit.remove}]]*/ '_Remove user from project_'
-
-        },
         urls: {
           'addMember': /*[[@{/projects/{id}/settings/groups(id=${project.getId()})}]]*/ '/projects/1/members',
           'usersLink': /*[[@{/groups/}]]*/'/users',

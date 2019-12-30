@@ -1,8 +1,7 @@
 import React from "react";
+
 import PropTypes from "prop-types";
 import { Button } from "antd";
-
-const { i18n } = window.PAGE;
 
 /**
  * This components is part of the TemplateSelect.  Displays a save button
@@ -28,7 +27,7 @@ export class SaveTemplateButton extends React.Component {
         onClick={this.showSaveModal}
         disabled={typeof this.props.template === "undefined"}
       >
-        {i18n.linelist.templates.saveModified}
+        {i18n("linelist.templates.saveModified")}
       </Button>
     );
   }

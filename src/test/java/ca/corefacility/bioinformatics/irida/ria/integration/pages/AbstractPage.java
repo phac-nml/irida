@@ -267,4 +267,14 @@ public class AbstractPage {
 	public boolean hasErrors() {
 		return !driver.findElements(By.className("t-form-error")).isEmpty();
 	}
+
+	public boolean ensureTranslationsLoaded(String entry) {
+		return driver.findElements(By.id(entry.replace("/", "-") + "-translations")).size() > 0;
+	}
+
+	public boolean ensurePageHeadingIsTranslated(String expected) {
+		return driver.findElement(By.className("t-main-heading"))
+				.getText()
+				.equals(expected);
+	}
 }

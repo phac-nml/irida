@@ -111,7 +111,7 @@ const config = Object.assign({}, tableConfig, {
         Creates a delete button to remove the user from the project.
          */
         const deleteBtn = createDeleteBtn({
-          title: window.PAGE.i18n.remove
+          title: i18n("group.remove.button.tooltip")
         });
         return createButtonCell([deleteBtn]);
       }
@@ -233,7 +233,7 @@ $("#submitAddMember").click(function() {
     error() {
       $("#addUserModal").modal("hide");
       showNotification({
-        text: page.i18n.unexpectedAddError,
+        text: i18n("group.users.add.notification.failure"),
         type: "error"
       });
     }
