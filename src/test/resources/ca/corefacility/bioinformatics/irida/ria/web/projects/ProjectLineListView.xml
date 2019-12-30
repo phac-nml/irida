@@ -145,23 +145,14 @@
     <metadata_entry id="3" value="WRHA" type="text" sample_id="1" field_id="3"/>
     <metadata_entry id="4" value="Sneezing" type="text" sample_id="1" field_id="4"/>
 
-    <!--TODO: Remove the dead entries-->
-    <metadata_entry id="5" value="AB-1001" type="text" />
-
     <metadata_entry id="6" value="Elizabeth" type="text" sample_id="2" field_id="1"/>
     <metadata_entry id="7" value="Feldman" type="text" sample_id="2" field_id="2"/>
     <metadata_entry id="8" value="WRHA" type="text" sample_id="2" field_id="3"/>
     <metadata_entry id="9" value="Coughing" type="text" sample_id="2" field_id="4"/>
 
-    <!--TODO: Remove the dead entries-->
-    <metadata_entry id="10" value="AB-1004" type="text" />
-
     <metadata_entry id="11" value="James" type="text" sample_id="3" field_id="1"/>
     <metadata_entry id="12" value="Brown" type="text" sample_id="3" field_id="2"/>
     <metadata_entry id="13" value="WRHA" type="text" sample_id="3" field_id="3"/>
     <metadata_entry id="14" value="bloody stool" type="text" sample_id="3" field_id="4"/>
-
-    <!--TODO: Remove the dead entries-->
-    <metadata_entry id="15" value="AB-1003" type="text" />
 
 </dataset>
