@@ -1,18 +1,16 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.util.Objects;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Class for storing generic metadata for a {@link Sample}
@@ -35,11 +33,11 @@ public class MetadataEntry {
 	private String type;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "field_id")
+	@JoinColumn(name = "field_id", nullable = false)
 	private MetadataTemplateField field;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sample_id")
+	@JoinColumn(name = "sample_id", nullable = false)
 	private Sample sample;
 
 	public MetadataEntry() {
@@ -50,8 +48,8 @@ public class MetadataEntry {
 		this.type = type;
 	}
 
-	public MetadataEntry(String value, String type, MetadataTemplateField field){
-		this(value,type);
+	public MetadataEntry(String value, String type, MetadataTemplateField field) {
+		this(value, type);
 
 		this.field = field;
 	}
@@ -63,11 +61,11 @@ public class MetadataEntry {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -79,16 +77,16 @@ public class MetadataEntry {
 	public String getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Merges the passed metadata entry into this metadata entry.
-	 * 
+	 *
 	 * @param metadataEntry The new metadata entry.
 	 */
 	public void merge(MetadataEntry metadataEntry) {
 		checkNotNull(metadataEntry, "metadataEntry is null");
-		checkArgument(this.getClass().equals(metadataEntry.getClass()),
-				"Cannot merge " + metadataEntry + " into " + this);
+		checkArgument(this.getClass()
+				.equals(metadataEntry.getClass()), "Cannot merge " + metadataEntry + " into " + this);
 
 		this.type = metadataEntry.getType();
 		this.value = metadataEntry.getValue();

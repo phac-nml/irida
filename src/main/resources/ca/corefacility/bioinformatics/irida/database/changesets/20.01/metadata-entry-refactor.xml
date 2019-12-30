@@ -8,7 +8,7 @@
         <addColumn tableName="metadata_entry">
             <column name="field_id" type="bigint(20)">
                 <constraints foreignKeyName="FK_METADATA_ENTRY_FIELD" referencedColumnNames="id"
-                             referencedTableName="metadata_field"/>
+                             referencedTableName="metadata_field" nullable="false"/>
             </column>
         </addColumn>
 
@@ -20,7 +20,7 @@
         <addColumn tableName="metadata_entry">
             <column name="sample_id" type="bigint(20)">
                 <constraints foreignKeyName="FK_METADATA_ENTRY_SAMPLE" referencedColumnNames="id"
-                             referencedTableName="sample"/>
+                             referencedTableName="sample" nullable="false"/>
             </column>
         </addColumn>
 
