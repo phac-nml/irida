@@ -984,6 +984,7 @@ public class AnalysisAjaxController {
 	 * {@link Analysis}
 	 *
 	 * @param submissionId The analysis submission id
+	 * @param locale       The users current {@link Locale}
 	 * @return dto which contains the newick string and an optional message
 	 * @throws IOException If the tree file couldn't be read
 	 */
