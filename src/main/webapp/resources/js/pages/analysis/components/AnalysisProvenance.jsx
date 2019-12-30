@@ -109,7 +109,7 @@ export default function AnalysisProvenance() {
       >
         <Panel
           header={tool.toolName}
-          key={tool.toolname}
+          key={tool.toolName}
           style={{
             backgroundColor: grey1,
             marginLeft: `${3 * margin}px`,
@@ -196,7 +196,7 @@ export default function AnalysisProvenance() {
 
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title="Provenance">
+      <TabPaneContent title={i18n("Analysis.provenance")}>
         <Collapse accordion onChange={e => getProvenance(e)}>
           {getCreatedByToolPanels()}
         </Collapse>
