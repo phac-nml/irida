@@ -90,9 +90,8 @@
 	<announcement_user />
 	<qc_entry />
 
-	<metadata_entry/>
 	<metadata_field/>
-	<sample_metadata_entry/>
+	<metadata_entry/>
 	<metadata_template/>
 	<metadata_template_metadata_field/>
 	<project_metadata_template/>
@@ -144,7 +143,6 @@
 	<project_metadata_template_AUD/>
 	<project_analysis_submission_AUD/>
 	<metadata_entry_AUD/>
-	<sample_metadata_entry_AUD/>
 	<ncbi_export_submission_AUD/>
 	<ncbi_export_biosample_AUD/>
 	<ncbi_export_submission_biosample_AUD/>
