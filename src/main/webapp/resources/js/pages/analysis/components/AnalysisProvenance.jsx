@@ -6,7 +6,19 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Collapse, Descriptions, Layout } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
-import { grey1 } from "../../../styles/colors";
+import {
+  grey1,
+  grey3,
+  blue2,
+  blue3,
+  blue4,
+  blue5,
+  blue6,
+  blue7,
+  blue8,
+  blue9,
+  blue10
+} from "../../../styles/colors";
 import { getAnalysisProvenanceByFile } from "../../../apis/analysis/analysis";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
@@ -22,6 +34,21 @@ export default function AnalysisProvenance() {
   const [provenance, setProvenance] = useState(null);
   const [toolInfo, setToolInfo] = useState([]);
   const [currFileName, setCurrFileName] = useState(null);
+
+  const toolPanelMargin = 5;
+  const levelColors = [
+    {
+      0: blue10,
+      1: blue9,
+      2: blue8,
+      3: blue7,
+      4: blue6,
+      5: blue5,
+      6: blue4,
+      7: blue3,
+      8: blue2
+    }
+  ];
 
   // Gets the analysis outputs on load if they have not
   // already been loaded
@@ -72,7 +99,12 @@ export default function AnalysisProvenance() {
 
     return (
       <Collapse
-        style={{ border: "none", backgroundColor: grey1 }}
+        style={{
+          border: "none",
+          borderLeft: `8px ${getLevelColor(margin)} solid`,
+          borderRadius: 0,
+          backgroundColor: grey1
+        }}
         key={`collapse-${tool.toolName}-${Math.random()}`}
       >
         <Panel
@@ -81,7 +113,8 @@ export default function AnalysisProvenance() {
           style={{
             backgroundColor: grey1,
             marginLeft: `${3 * margin}px`,
-            borderBottom: "0px"
+            borderBottom: "0px",
+            borderRadius: 0
           }}
         >
           {parameters.length > 0 ? (
@@ -96,19 +129,31 @@ export default function AnalysisProvenance() {
     );
   }
 
+  // Gets the color for the "level" of the execution
+  // tool. Used to display a color gradient along the
+  // left hand side of the provenance for the file to
+  // indicate level
+  function getLevelColor(margin) {
+    let level = margin / toolPanelMargin;
+    if (typeof levelColors[0][level] === "undefined") {
+      return grey3;
+    }
+    return levelColors[0][level];
+  }
+
   // Recursive function to get all the previous execution
   // tools and their respective execution parameters for
   // the tool that the output was created by
   function getPreviousExecutionTools(tool, margin) {
     let prevTools = tool.previousExecutionTools;
 
-    // We either add 5px to the previous
-    // margin or subtract depending on
-    // which "level" the tool is at
+    // We either add the toolPanelMargin (5px) to the previous
+    // margin or subtract depending on which "level" the tool
+    // is to be displayed
     if (prevTools.length > 0) {
-      margin = margin + 5;
+      margin = margin + toolPanelMargin;
     } else {
-      margin = margin - 5;
+      margin = margin - toolPanelMargin;
     }
 
     for (let currTool of prevTools) {
