@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
 import { Alert, Button, Form, Icon, Input } from "antd";
-import { getI18N } from "../utilities/i18n-utilities";
+import { grey6 } from "../styles/colors";
 
 function LoginPage({ form }) {
   const [loading, setLoading] = useState(false);
@@ -31,10 +31,10 @@ function LoginPage({ form }) {
           type="error"
           message={
             <span className="t-login-error">
-              {getI18N("LoginPage.error.message")}
+              {i18n("LoginPage.error.message")}
             </span>
           }
-          description={getI18N("LoginPage.error.description")}
+          description={i18n("LoginPage.error.description")}
           showIcon
           closable
         />
@@ -50,14 +50,14 @@ function LoginPage({ form }) {
             rules: [
               {
                 required: true,
-                message: getI18N("LoginPage.username.required")
+                message: i18n("LoginPage.username.required")
               }
             ]
           })(
             <Input
               name="username"
-              prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
-              placeholder={getI18N("LoginPage.username")}
+              prefix={<Icon type="user" style={{ color: grey6 }} />}
+              placeholder={i18n("LoginPage.username")}
             />
           )}
         </Form.Item>
@@ -66,15 +66,15 @@ function LoginPage({ form }) {
             rules: [
               {
                 required: true,
-                message: getI18N("LoginPage.password.required")
+                message: i18n("LoginPage.password.required")
               }
             ]
           })(
             <Input
               name="password"
-              prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
+              prefix={<Icon type="lock" style={{ color: grey6 }} />}
               type="password"
-              placeholder={getI18N("LoginPage.password")}
+              placeholder={i18n("LoginPage.password")}
             />
           )}
         </Form.Item>
@@ -88,16 +88,16 @@ function LoginPage({ form }) {
             block
             onClick={() => handleSubmit()}
           >
-            {getI18N("LoginPage.submit")}
+            {i18n("LoginPage.submit")}
           </Button>
           {window.PAGE.emailConfigured ? (
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <a href={`${window.PAGE.BASE_URL}password_reset`}>
-                {getI18N("LoginPage.forgot")}
+                {i18n("LoginPage.forgot")}
               </a>
 
               <a href={`${window.PAGE.BASE_URL}password_reset/activate`}>
-                {getI18N("LoginPage.activate")}
+                {i18n("LoginPage.activate")}
               </a>
             </div>
           ) : null}
