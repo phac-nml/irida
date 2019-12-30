@@ -1,14 +1,13 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Describes an individual field in a {@link MetadataTemplate}.
