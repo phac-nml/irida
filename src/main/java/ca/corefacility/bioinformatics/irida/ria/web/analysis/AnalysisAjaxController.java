@@ -993,29 +993,30 @@ public class AnalysisAjaxController {
 		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
-
-		if (file == null) {
-			throw new IOException("No tree file for analysis: " + submission);
-		}
-		List<String> lines = Files.readAllLines(file.getFile());
 		String tree = null;
 		String message = null;
 
-		if(lines.size() > 0)
-		{
-			tree = lines.get(0);
+		if (file == null) {
+			logger.debug("No tree file for analysis: " + submission);
+			tree=null;
+			message= messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound",
+					new Object[] {}, locale);
+		} else {
+			List<String> lines = Files.readAllLines(file.getFile());
 
-			if (lines.size() > 1) {
-				logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
-				message= messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees",
-						new Object[] {}, locale);
-			}
+			if (lines.size() > 0) {
+				tree = lines.get(0);
 
-			if (EMPTY_TREE.equals(tree)) {
-				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
-				tree=null;
-				message= messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree",
-						new Object[] {}, locale);
+				if (lines.size() > 1) {
+					logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+					message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {}, locale);
+				}
+
+				if (EMPTY_TREE.equals(tree)) {
+					logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+					tree = null;
+					message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
+				}
 			}
 		}
 		return new AnalysisTreeResponse(tree, message);
@@ -1026,7 +1027,7 @@ public class AnalysisAjaxController {
 	 *
 	 * @param submissionId The analysis submission id
 	 * @param filename     The name of the file for which to get the provenance
-	 * @return dto which contains the the file provenance
+	 * @return dto which contains the file provenance
 	 */
 	@RequestMapping(value = "/{submissionId}/provenance")
 	@ResponseBody

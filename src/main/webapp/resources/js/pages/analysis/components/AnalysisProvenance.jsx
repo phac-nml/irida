@@ -35,7 +35,13 @@ export default function AnalysisProvenance() {
   const [toolInfo, setToolInfo] = useState([]);
   const [currFileName, setCurrFileName] = useState(null);
 
+  // We use this to offset the margin for each tool
+  // level and parameters
   const toolPanelMargin = 5;
+
+  // We use this to display a color gradient
+  // down the left hand side of the file provenance
+  // to indicate which "level" the tool was run at
   const levelColors = [
     {
       0: blue10,
@@ -113,7 +119,7 @@ export default function AnalysisProvenance() {
           style={{
             backgroundColor: grey1,
             marginLeft: `${3 * margin}px`,
-            borderBottom: "0px",
+            borderBottom: 0,
             borderRadius: 0
           }}
         >
@@ -134,11 +140,8 @@ export default function AnalysisProvenance() {
   // left hand side of the provenance for the file to
   // indicate level
   function getLevelColor(margin) {
-    let level = margin / toolPanelMargin;
-    if (typeof levelColors[0][level] === "undefined") {
-      return grey3;
-    }
-    return levelColors[0][level];
+    const level = margin / toolPanelMargin;
+    return levelColors[0][level] || grey3;
   }
 
   // Recursive function to get all the previous execution
