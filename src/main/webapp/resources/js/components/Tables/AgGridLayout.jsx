@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { blue6, grey2, grey5, grey7, grey8, grey9 } from "../../styles/colors";
 import { Layout } from "antd";
+import { ANT_DESIGN_FONT_FAMILY } from "../../styles/fonts";
 
 const LayoutStyles = styled(Layout)`
   // Wrapper for the entire ag-grid and any associated components
@@ -17,8 +18,7 @@ const LayoutStyles = styled(Layout)`
   border: 1px solid ${grey5};
 
   .ag-root {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-family: ${ANT_DESIGN_FONT_FAMILY};
     color: ${grey8};
   }
 

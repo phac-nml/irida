@@ -11,14 +11,14 @@ import { SelectedCount } from "./SelectedCount";
 import styled from "styled-components";
 import { grey2 } from "../../../../../styles/colors";
 import { GRID_BORDER } from "../../styles";
+import { ANT_DESIGN_FONT_FAMILY } from "../../../../../styles/fonts";
 
 const Wrapper = styled.div`
   height: 30px;
   line-height: 30px;
   padding-left: 1em;
   padding-right: 19px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-family: ${ANT_DESIGN_FONT_FAMILY};
   background-color: ${grey2};
   border: ${GRID_BORDER};
   border-top: none;
