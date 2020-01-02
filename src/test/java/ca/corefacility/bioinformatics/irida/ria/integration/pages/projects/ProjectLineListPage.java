@@ -150,6 +150,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void goToNextTourStage() {
+		waitForTime(500);
 		tourNextButton.click();
 	}
 
@@ -159,6 +160,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public int getTourStep() {
+		waitForTime(500);
 		return Integer.parseInt(tourStepBadge.getText());
 	}
 }

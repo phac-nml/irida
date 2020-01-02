@@ -54,7 +54,6 @@ export function AnalysisTabularPreview({ output }) {
             dataSource={fileRows}
             scroll={{ x: true }}
             pagination={{ pageSize: MAX_TABLE_ROWS_PER_PAGE }}
-            loading={fileRows.length === 0}
           />
         </TabularOutputWrapper>
         <Divider />
