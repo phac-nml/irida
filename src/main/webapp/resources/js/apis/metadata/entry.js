@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-const BASE_URL = `${window.TL.BASE_URL}linelist/entries`;
+const BASE_URL = `linelist/entries`;
 
 /**
  * Get all metadata belonging to samples in the current project.

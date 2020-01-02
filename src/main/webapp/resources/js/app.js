@@ -76,7 +76,7 @@ function openBaseUrlModifier(method, url, async) {
   /*
   Get the base url which is set via the thymeleaf template engine.
    */
-  const BASE_URL = window.TL?._BASE_URL || "/";
+  const BASE_URL = window.TL?.BASE_URL || "/";
   /*
   Create the new url and remove the possibility of any "//"
    */

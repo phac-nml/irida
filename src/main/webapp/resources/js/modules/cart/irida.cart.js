@@ -5,7 +5,7 @@ import { emptyCart, removeSample } from "../../apis/cart/cart";
 function CartService(scope, $http) {
   const svc = this;
   const urls = {
-    project: window.TL.BASE_URL + "cart/project/"
+    project: "cart/project/"
   };
 
   svc.clear = function() {
