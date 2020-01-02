@@ -60,7 +60,7 @@ public class WebpackerManifestParser {
 		/*
 		 * Entry that the entry has resources for the type wanted.
 		 */
-		if (!entries.get(entry).containsKey(type.toString())) {
+		if (!entries.get(entry).containsKey(type.toString()) && !entry.equals("vendor")) {
 			logger.debug(
 					String.format("For the entry %s, Webpack manifest does a %s file type", type.toString(), entry));
 			return null;
