@@ -168,7 +168,7 @@ public class AnalysisController {
 		model.addAttribute("analysisType", analysisType);
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
-		if(submission.getAnalysisState()==AnalysisState.ERROR) {
+		if (submission.getAnalysisState() == AnalysisState.ERROR) {
 			model.addAttribute("previousState", getPreviousStateBeforeError(submissionId));
 		}
 
@@ -182,15 +182,16 @@ public class AnalysisController {
 	 * @return {@link String} State of analysis prior to error
 	 */
 	private AnalysisState getPreviousStateBeforeError(Long submissionId) {
-		AuditReader audit =AuditReaderFactory.get(entityManagerFactory.createEntityManager());
+		AuditReader audit = AuditReaderFactory.get(entityManagerFactory.createEntityManager());
 		AnalysisSubmission previousRevision = null;
 
-		if(audit != null) {
+		if (audit != null) {
 			// Get revisions from the analysis submission audit table for the submission
 			List auditResultSet = audit.createQuery()
 					.forRevisionsOfEntity(AnalysisSubmission.class, true, false)
 					.add(AuditEntity.id()
-							.eq(submissionId)).getResultList();
+							.eq(submissionId))
+					.getResultList();
 
 			// Go through the revisions and find the first one with an error. The revision
 			// prior is set to the previousRevision and it's state is set in the model
@@ -202,7 +203,7 @@ public class AnalysisController {
 				previousRevision = auditedSubmission;
 			}
 		}
-		if(previousRevision==null) {
+		if (previousRevision == null) {
 			return null;
 		}
 
