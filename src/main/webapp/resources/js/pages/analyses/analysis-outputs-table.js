@@ -1,4 +1,8 @@
-import { Grid } from "ag-grid-community/main";
+/**
+ * @file Display table for listing outputs for analyses.
+ * TODO: This needs to be refactored with ant.design.
+ */
+import { Grid } from "ag-grid-community";
 import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
 import { download } from "../../utilities/file-utilities";
@@ -151,12 +155,14 @@ function setDownloadButtonHtml(
  */
 function initAgGrid($grid, headers, rows, $dlButton) {
   const gridOptions = {
-    enableColResize: true,
     columnDefs: headers,
     rowData: rows,
     rowDeselection: true,
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef: {
+      resizable: true,
+      sortable: true,
+      filterable: true
+    },
     rowSelection: "multiple",
     onSelectionChanged: e => {
       const selectedNodes = e.api.getSelectedNodes();
