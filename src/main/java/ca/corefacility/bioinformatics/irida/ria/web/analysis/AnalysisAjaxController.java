@@ -828,35 +828,6 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get the current status for a given {@link AnalysisSubmission}
-	 *
-	 * @param submissionId The {@link UUID} id for a given {@link AnalysisSubmission}
-	 * @param locale       The users current {@link Locale}
-	 * @return {@link HashMap} containing the status and the percent complete for the {@link AnalysisSubmission}
-	 */
-	@RequestMapping(value = "/status/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId, Locale locale) {
-		Map<String, String> result = new HashMap<>();
-		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
-		AnalysisState state = analysisSubmission.getAnalysisState();
-		result.put("state", state.toString());
-		result.put("stateLang", messageSource.getMessage("analysis.state." + state.toString(), null, locale));
-		if (!state.equals(AnalysisState.ERROR)) {
-			float percentComplete = 0;
-			try {
-				percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
-						analysisSubmission.getId());
-				result.put("percentComplete", Float.toString(percentComplete));
-			} catch (ExecutionManagerException e) {
-				logger.error("Error getting the percentage complete", e);
-				result.put("percentageComplete", "");
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * Get a newick file associated with a specific {@link AnalysisSubmission}.
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
