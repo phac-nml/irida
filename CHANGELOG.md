@@ -37,6 +37,7 @@ Changes
 * [UI/Developer]: Update version of `yarn`, `babel` dependencies.
 * [Developer]: Sample filter input has underscores escaped so that proper samples are returned.
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
+* [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
 
 19.05 to 19.09
 ---------------
