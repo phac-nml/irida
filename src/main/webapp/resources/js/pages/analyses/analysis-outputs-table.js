@@ -18,6 +18,12 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+/**
+ * Base URL for AJAX requests.
+ * @type {string}
+ */
+const AJAX_URL = window.PAGE.URLS.base;
+
 const helpInfoIcon = `<i class="fa fa-2x fa-question-circle spaced-left__sm text-info" title="${escapeHtml(
   i18n("analysis.batch-download.help-info")
 )}"></i>`;
@@ -86,9 +92,7 @@ async function downloadSelected($dlButton, api) {
       sampleId,
       filePath
     } = selectedNodes[0].data;
-    let url = setBaseUrl(
-      `analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`
-    );
+    let url = `${AJAX_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
     const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
       filePath
     )}`;
@@ -103,9 +107,7 @@ async function downloadSelected($dlButton, api) {
     }
     const { selectionSize } = data;
     const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
-    const downloadUrl = setBaseUrl(
-      `analysis/ajax/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`
-    );
+    const downloadUrl = `${AJAX_URL}analysis/ajax/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
     download(downloadUrl);
   }
   setDownloadButtonHtml(
@@ -272,9 +274,7 @@ async function getTableData(isShared = true) {
       cellRenderer: p => {
         const { sampleId, sampleName } = p.data;
         const projectUrlPrefix = PROJECT_ID ? `projects/${PROJECT_ID}/` : "";
-        return `<a href="${setBaseUrl(
-          `${projectUrlPrefix}samples/${sampleId}/details`
-        )}" target="_blank">${sampleName}</a>`;
+        return `<a href="${AJAX_URL}${projectUrlPrefix}samples/${sampleId}/details" target="_blank">${sampleName}</a>`;
       }
     },
     {
@@ -321,9 +321,7 @@ async function getTableData(isShared = true) {
       field: "analysisSubmissionName",
       headerName: i18n("analysis-submission"),
       cellRenderer: p =>
-        `<a href="${setBaseUrl(
-          `analysis/${p.data.analysisSubmissionId}`
-        )}" target="_blank">${p.data.analysisSubmissionName}</a>`
+        `<a href="${AJAX_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {
