@@ -1,3 +1,7 @@
+/**
+ * @file Display table for listing outputs for analyses.
+ * TODO: This needs to be refactored with ant.design.
+ */
 import { Grid } from "ag-grid-community";
 import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
