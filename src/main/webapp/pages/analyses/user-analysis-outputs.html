@@ -5,10 +5,12 @@
 <head>
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
     <webpacker:css entry="analysis"/>
+    <webpacker:css entry="analysis-outputs-table"/>
 </head>
 <body>
 <div class="col-md-12" layout:fragment="page">
     <h2 th:text="#{analysis.batch-download.user-title}">__YOUR_ANALYSIS_OUTPUTS__</h2>
+    <div id="root"></div>
     <th:block th:replace="analyses/analyses-table :: batch-download"/>
 </div>
 <th:block layout:fragment="scripts">

@@ -3,6 +3,8 @@ const webpack = require("webpack");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
+const cssnano = require("cssnano");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 
 const dev = require("./webpack.config.dev");
@@ -44,9 +46,7 @@ const config = {
       {
         test: /\.(css|sass|scss)$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader
-          },
+          MiniCssExtractPlugin.loader,
           "css-loader",
           {
             loader: "postcss-loader",
@@ -110,6 +110,25 @@ const config = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/[name]-[contenthash].css"
+    }),
+    new OptimizeCSSAssetsPlugin({
+      cssProcessor: cssnano,
+      cssProcessorPluginOptions: {
+        preset: [
+          "default",
+          {
+            discardComments: { removeAll: true },
+            normalizeCharset: { add: true }
+          }
+        ]
+      },
+      cssProcessorOptions: {
+        // Run cssnano in safe mode to avoid
+        // potentially unsafe transformations.
+        safe: true,
+        canPrint: false,
+        map: this.mode === "development" ? { inline: false } : null
+      }
     }),
     new i18nThymeleafWebpackPlugin({
       functionName: "i18n"
