@@ -187,7 +187,7 @@ public class AnalysisController {
 
 		if (audit != null) {
 			// Get revisions from the analysis submission audit table for the submission
-			List auditResultSet = audit.createQuery()
+			List<?> auditResultSet = audit.createQuery()
 					.forRevisionsOfEntity(AnalysisSubmission.class, true, false)
 					.add(AuditEntity.id()
 							.eq(submissionId))
@@ -197,7 +197,7 @@ public class AnalysisController {
 			// prior is set to the previousRevision and it's state is set in the model
 			for (Object auditResult : auditResultSet) {
 				AnalysisSubmission auditedSubmission = (AnalysisSubmission) auditResult;
-				if (auditedSubmission.getAnalysisState() == AnalysisState.ERROR) {
+				if (auditedSubmission != null && auditedSubmission.getAnalysisState() == AnalysisState.ERROR) {
 					break;
 				}
 				previousRevision = auditedSubmission;
