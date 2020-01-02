@@ -8,6 +8,7 @@ import {
   nameColumnFormat
 } from "../../../components/ant.design/table-renderers";
 import { SPACE_MD } from "../../../styles/spacing";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
@@ -115,7 +116,7 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      ...nameColumnFormat({ url: `${window.TL.BASE_URL}projects` }),
+      ...nameColumnFormat({ url: setBaseUrl(`projects`) }),
       title: i18n("ProjectsTable_th_name")
     },
     {
@@ -156,7 +157,7 @@ export function ProjectsTable() {
     <Menu>
       <Menu.Item key="excel">
         <a
-          href={`${window.TL.BASE_URL}projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`}
+          href={setBaseUrl(`projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file-excel" />
@@ -165,7 +166,7 @@ export function ProjectsTable() {
       </Menu.Item>
       <Menu.Item key="csv">
         <a
-          href={`${window.TL.BASE_URL}projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`}
+          href={setBaseUrl(`projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file" />

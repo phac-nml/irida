@@ -16,6 +16,7 @@ import { showNotification } from "./modules/notifications";
 import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
+import { setBaseUrl } from "./utilities/url-utilities";
 
 const deps = ["ui.bootstrap", "irida.cart"];
 
@@ -73,14 +74,7 @@ get the correct base url.
 const xmlHttpRequestOpen = window.XMLHttpRequest.prototype.open;
 
 function openBaseUrlModifier(method, url, async) {
-  /*
-  Get the base url which is set via the thymeleaf template engine.
-   */
-  const BASE_URL = window.TL?.BASE_URL || "/";
-  /*
-  Create the new url and remove the possibility of any "//"
-   */
-  const newUrl = `${BASE_URL}${url}`.replace(/\/{2}/g, "/");
+  const newUrl = setBaseUrl(url);
   /*
   Call the original open method with the new url.
    */
