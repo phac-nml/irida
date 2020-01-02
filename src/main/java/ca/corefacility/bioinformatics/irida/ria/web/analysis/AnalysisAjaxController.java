@@ -955,40 +955,126 @@ public class AnalysisAjaxController {
 	 * {@link Analysis}
 	 *
 	 * @param submissionId The analysis submission id
+	 * @param locale       The users current {@link Locale}
 	 * @return dto which contains the newick string and an optional message
 	 * @throws IOException If the tree file couldn't be read
 	 */
 	@RequestMapping("/{submissionId}/tree")
-	private AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
+	public AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
 		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
-
-		if (file == null) {
-			throw new IOException("No tree file for analysis: " + submission);
-		}
-		List<String> lines = Files.readAllLines(file.getFile());
 		String tree = null;
 		String message = null;
 
-		if(lines.size() > 0)
-		{
-			tree = lines.get(0);
+		if (file == null) {
+			logger.debug("No tree file for analysis: " + submission);
+			tree=null;
+			message= messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound",
+					new Object[] {}, locale);
+		} else {
+			List<String> lines = Files.readAllLines(file.getFile());
 
-			if (lines.size() > 1) {
-				logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
-				message= messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees",
-						new Object[] {}, locale);
-			}
+			if (lines.size() > 0) {
+				tree = lines.get(0);
 
-			if (EMPTY_TREE.equals(tree)) {
-				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
-				tree=null;
-				message= messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree",
-						new Object[] {}, locale);
+				if (lines.size() > 1) {
+					logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+					message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {}, locale);
+				}
+
+				if (EMPTY_TREE.equals(tree)) {
+					logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+					tree = null;
+					message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
+				}
 			}
 		}
 		return new AnalysisTreeResponse(tree, message);
+	}
+
+	/**
+	 * Get the full analysis provenance
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param filename     The name of the file for which to get the provenance
+	 * @return dto which contains the file provenance
+	 */
+	@RequestMapping(value = "/{submissionId}/provenance")
+	@ResponseBody
+	public AnalysisProvenanceResponse getProvenanceByFile(@PathVariable Long submissionId, String filename) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile outputFile = null;
+		AnalysisProvenanceResponse analysisProvenance = null;
+		ArrayList<AnalysisToolExecutionParameters> executionParameters;
+
+		// get all output files produced by analysis and get the one which matches the file for which to display provenance
+		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
+
+		for (AnalysisOutputFile file : files) {
+			if (file.getLabel()
+					.contains(filename)) {
+				outputFile = file;
+				break;
+			}
+		}
+
+		if (outputFile != null) {
+			ToolExecution tool = outputFile.getCreatedByTool();
+
+			// get the execution parameters for the created by tool
+			executionParameters = getExecutionParameters(tool);
+
+			analysisProvenance = new AnalysisProvenanceResponse(outputFile.getLabel(),
+					new AnalysisToolExecution(tool.getLabel(), executionParameters, getPreviousExecutionTools(tool)));
+		}
+		return analysisProvenance;
+	}
+
+	/*
+	 * Recursive function to get the previous execution tools and their parameters
+	 *
+	 * @param tool The tool to get the previous execution tools and their parameters for
+	 * @return an arraylist of previous execution tools for the tool
+	 */
+	private ArrayList<AnalysisToolExecution> getPreviousExecutionTools(ToolExecution tool) {
+		ArrayList<AnalysisToolExecution> previousExecutionTools = new ArrayList<>();
+		ArrayList<AnalysisToolExecutionParameters> executionParameters;
+
+		for (ToolExecution currTool : new ArrayList<>(getPrevTools(tool))) {
+			executionParameters = getExecutionParameters(currTool);
+
+			previousExecutionTools.add(new AnalysisToolExecution(currTool.getLabel(), executionParameters,
+					getPreviousExecutionTools(currTool)));
+		}
+		return previousExecutionTools;
+	}
+
+	/*
+	 * Gets the previous steps (tools) for the tool
+	 *
+	 * @param tool The tool to get the previous steps for
+	 * @return set of previous execution tools for the tool
+	 */
+	private Set<ToolExecution> getPrevTools(ToolExecution tool) {
+		return tool.getPreviousSteps();
+	}
+
+	/*
+	 * Gets the execution parameters for the tool
+	 *
+	 * @param tool The tool to get the execution parameters for
+	 * @return an arraylist of execution parameters for the tool
+	 */
+	private ArrayList<AnalysisToolExecutionParameters> getExecutionParameters(ToolExecution tool) {
+		ArrayList<AnalysisToolExecutionParameters> executionParameters = new ArrayList<>();
+
+		for (Map.Entry<String, String> entry : tool.getExecutionTimeParameters()
+				.entrySet()) {
+			executionParameters.add(new AnalysisToolExecutionParameters(entry.getKey(), entry.getValue()));
+		}
+		return executionParameters;
 	}
 
 	/**

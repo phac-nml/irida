@@ -16,6 +16,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, BIOHANSEL } from "../routes";
+import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 
 const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
 const OutputFilePreview = React.lazy(() =>
@@ -26,6 +27,9 @@ const { Content, Sider } = Layout;
 
 export default function AnalysisBioHansel() {
   const { analysisContext } = useContext(AnalysisContext);
+  const { analysisOutputsContext, getAnalysisOutputs } = useContext(
+    AnalysisOutputsContext
+  );
   const [bioHanselResults, setBioHanselResults] = useState(null);
 
   const BASE_URL = `${window.PAGE.base}/${ANALYSIS.BIOHANSEL}`;
@@ -33,8 +37,18 @@ export default function AnalysisBioHansel() {
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
   useEffect(() => {
-    getOutputInfo(analysisContext.analysis.identifier).then(data => {
-      const outputInfo = data.find(output => {
+    if (analysisOutputsContext.outputs === null) {
+      getAnalysisOutputs();
+    }
+  }, []);
+
+  useEffect(() => {
+    getBioHanselResults();
+  }, [analysisOutputsContext.outputs]);
+
+  function getBioHanselResults() {
+    if (analysisOutputsContext.outputs !== null) {
+      const outputInfo = analysisOutputsContext.outputs.find(output => {
         return output.filename === "bio_hansel-results.json";
       });
 
@@ -51,8 +65,8 @@ export default function AnalysisBioHansel() {
       } else {
         setBioHanselResults(undefined);
       }
-    });
-  }, []);
+    }
+  }
 
   return (
     <Layout>
