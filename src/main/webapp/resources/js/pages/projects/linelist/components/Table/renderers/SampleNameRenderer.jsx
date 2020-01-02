@@ -1,5 +1,8 @@
+/**
+ * @file React component for use with ag-grid to render the sample name as
+ * a hyper link.
+ */
 import React from "react";
-import PropTypes from "prop-types";
 import { FIELDS } from "../../../constants";
 import { setBaseUrl } from "../../../../../../utilities/url-utilities";
 
@@ -22,7 +25,3 @@ export class SampleNameRenderer extends React.Component {
     );
   }
 }
-
-SampleNameRenderer.propTypes = {
-  data: PropTypes.object.isRequired
-};
