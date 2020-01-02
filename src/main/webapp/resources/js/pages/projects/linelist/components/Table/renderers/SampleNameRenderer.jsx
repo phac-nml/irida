@@ -1,3 +1,7 @@
+/**
+ * @file React component for use with ag-grid to render the sample name as
+ * a hyper link.
+ */
 import React from "react";
 import { FIELDS } from "../../../constants";
 
