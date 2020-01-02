@@ -66,4 +66,27 @@ getCartCount().then(count => {
   document.dispatchEvent(event);
 });
 
+/*
+Since IRIDA can be run on a servlet path, we need to make sure that all requests
+get the correct base url.
+ */
+const xmlHttpRequestOpen = window.XMLHttpRequest.prototype.open;
+
+function openBaseUrlModifier(method, url, async) {
+  /*
+  Get the base url which is set via the thymeleaf template engine.
+   */
+  const BASE_URL = window.TL?._BASE_URL || "/";
+  /*
+  Create the new url and remove the possibility of any "//"
+   */
+  const newUrl = `${BASE_URL}${url}`.replace(/\/{2}/g, "/");
+  /*
+  Call the original open method with the new url.
+   */
+  return xmlHttpRequestOpen.apply(this, [method, newUrl, async]);
+}
+
+window.XMLHttpRequest.prototype.open = openBaseUrlModifier;
+
 export default app;
