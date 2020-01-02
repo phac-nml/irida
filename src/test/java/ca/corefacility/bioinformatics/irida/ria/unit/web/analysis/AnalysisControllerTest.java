@@ -30,6 +30,8 @@ import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 
+import javax.persistence.EntityManagerFactory;
+
 /**
  */
 public class AnalysisControllerTest {
@@ -45,6 +47,7 @@ public class AnalysisControllerTest {
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 	private UserService userServiceMock;
 	private EmailController emailControllerMock;
+	private EntityManagerFactory entityManagerFactoryMock;
 
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
@@ -57,11 +60,11 @@ public class AnalysisControllerTest {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		userServiceMock = mock(UserService.class);
-		MessageSource messageSourceMock = mock(MessageSource.class);
 		emailControllerMock = mock(EmailController.class);
+		entityManagerFactoryMock = mock(EntityManagerFactory.class);
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, emailControllerMock);
+				userServiceMock, emailControllerMock, entityManagerFactoryMock);
 
 	}
 
@@ -69,7 +72,6 @@ public class AnalysisControllerTest {
 	public void testGetAnalysisDetailsTree() throws IOException, IridaWorkflowNotFoundException {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
-		Locale locale = Locale.ENGLISH;
 
 		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
@@ -99,7 +101,6 @@ public class AnalysisControllerTest {
 	public void testGetAnalysisDetailsNotCompleted() throws IOException, IridaWorkflowNotFoundException {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
-		Locale locale = Locale.ENGLISH;
 
 		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
@@ -125,7 +126,6 @@ public class AnalysisControllerTest {
 	public void testGetAnalysisDetailsMissingPipeline() throws IOException, IridaWorkflowNotFoundException {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
-		Locale locale = Locale.ENGLISH;
 		UUID workflowId = UUID.randomUUID();
 
 		Principal principal = () -> USER_NAME;

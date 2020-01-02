@@ -53,8 +53,6 @@ public class AnalysisController {
 	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
 	public static final String ANALYSIS_PAGE = "analysis";
 
-	@Autowired
-	private EntityManagerFactory factory;
 	/*
 	 * SERVICES
 	 */
@@ -63,14 +61,20 @@ public class AnalysisController {
 	private UserService userService;
 	private EmailController emailController;
 
+	/*
+	 *
+	 */
+	private EntityManagerFactory entityManagerFactory;
+
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController, EntityManagerFactory entityManagerFactory) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
 		this.emailController = emailController;
+		this.entityManagerFactory=entityManagerFactory;
 	}
 
 	// ************************************************************************************************
@@ -164,7 +168,9 @@ public class AnalysisController {
 		model.addAttribute("analysisType", analysisType);
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
-		model.addAttribute("previousState" , getPreviousStateBeforeError(submissionId));
+		if(submission.getAnalysisState()==AnalysisState.ERROR) {
+			model.addAttribute("previousState", getPreviousStateBeforeError(submissionId));
+		}
 
 		return "analysis";
 	}
@@ -176,26 +182,26 @@ public class AnalysisController {
 	 * @return {@link String} State of analysis prior to error
 	 */
 	private AnalysisState getPreviousStateBeforeError(Long submissionId) {
-		AuditReader audit = AuditReaderFactory.get(factory.createEntityManager());
-
-		// Get revisions from the analysis submission audit table for the submission
-		List auditResultSet = audit.createQuery()
-				.forRevisionsOfEntity(AnalysisSubmission.class, true, false)
-				.add(AuditEntity.id()
-						.eq(submissionId))
-				.getResultList();
-
-		// Go through the revisions and find the first one with an error. The revision
-		// prior is set to the previousRevision and it's state is set in the model
+		AuditReader audit =AuditReaderFactory.get(entityManagerFactory.createEntityManager());
 		AnalysisSubmission previousRevision = null;
-		for (Object t : auditResultSet) {
-			AnalysisSubmission auditedSubmission = (AnalysisSubmission) t;
-			if (auditedSubmission.getAnalysisState() == AnalysisState.ERROR) {
-				break;
-			}
-			previousRevision = auditedSubmission;
-		}
 
+		if(audit != null) {
+			// Get revisions from the analysis submission audit table for the submission
+			List auditResultSet = audit.createQuery()
+					.forRevisionsOfEntity(AnalysisSubmission.class, true, false)
+					.add(AuditEntity.id()
+							.eq(submissionId)).getResultList();
+
+			// Go through the revisions and find the first one with an error. The revision
+			// prior is set to the previousRevision and it's state is set in the model
+			for (Object auditResult : auditResultSet) {
+				AnalysisSubmission auditedSubmission = (AnalysisSubmission) auditResult;
+				if (auditedSubmission.getAnalysisState() == AnalysisState.ERROR) {
+					break;
+				}
+				previousRevision = auditedSubmission;
+			}
+		}
 		if(previousRevision==null) {
 			return null;
 		}
