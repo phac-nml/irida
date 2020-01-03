@@ -17,7 +17,10 @@ export function setBaseUrl(url) {
   Check to make sure that the given url has not already been given the
   base url.
    */
-  if (BASE_URL !== "/" && url.startsWith(BASE_URL)) {
+  if (
+    (BASE_URL !== "/" && url.startsWith(BASE_URL)) ||
+    url.startsWith("http")
+  ) {
     return url;
   }
   /*
