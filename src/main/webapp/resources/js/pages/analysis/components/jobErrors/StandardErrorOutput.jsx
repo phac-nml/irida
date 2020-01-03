@@ -1,8 +1,5 @@
 /*
- * This file returns a list of the `Standard Error` for
- * a given index. If there is no index provided then just the
- * standard error from the first index in the galaxyJobErrors
- * object is returned.
+ * This file returns a list of the `Standard Error/Output`
  */
 
 import React, { useState } from "react";
@@ -10,10 +7,9 @@ import { Button } from "antd";
 import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
 import { SPACE_XS } from "../../../../styles/spacing";
 
-export function StandardError({ galaxyJobErrors, currIndex }) {
-  const index = currIndex || 0;
+export function StandardErrorOutput({ galaxyError }) {
   const [errorOutput, setErrorOutput] = useState(
-    galaxyJobErrors[index].standardError.trim().split("\n")
+    galaxyError.trim().split("\n")
   );
 
   return (

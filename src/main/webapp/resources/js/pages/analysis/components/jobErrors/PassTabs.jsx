@@ -7,8 +7,7 @@ import React from "react";
 import { Tabs } from "antd";
 import { GalaxyJobInfo } from "./GalaxyJobInfo";
 import { GalaxyParameters } from "./GalaxyParameters";
-import { StandardError } from "./StandardError";
-import { StandardOutput } from "./StandardOutput";
+import { StandardErrorOutput } from "./StandardErrorOutput";
 
 const TabPane = Tabs.TabPane;
 
@@ -64,9 +63,8 @@ export function PassTabs({
                 tab={`Pass ${index + 1}`}
                 key={`${tabName}-pass-${index + 1}`}
               >
-                <StandardError
-                  galaxyJobErrors={galaxyJobErrors}
-                  currIndex={index}
+                <StandardErrorOutput
+                  galaxyError={galaxyJobErrors[index].standardError}
                 />
               </TabPane>
             );
@@ -76,9 +74,8 @@ export function PassTabs({
                 tab={`Pass ${index + 1}`}
                 key={`${tabName}-pass-${index + 1}`}
               >
-                <StandardOutput
-                  galaxyJobErrors={galaxyJobErrors}
-                  currIndex={index}
+                <StandardErrorOutput
+                  galaxyError={galaxyJobErrors[index].standardOutput}
                 />
               </TabPane>
             );
