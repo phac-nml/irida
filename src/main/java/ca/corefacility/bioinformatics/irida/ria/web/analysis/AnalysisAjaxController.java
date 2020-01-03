@@ -234,7 +234,7 @@ public class AnalysisAjaxController {
 					submission.getAnalysis()
 							.getAnalysisType());
 		}
-
+		String analysisDescription = submission.getAnalysisDescription();
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -242,7 +242,7 @@ public class AnalysisAjaxController {
 		response.setStatus(HttpServletResponse.SC_OK);
 
 		// details is a DTO (Data Transfer Object)
-		return new AnalysisDetails(workflowName, version, priority, duration, submission.getCreatedDate(), priorities,
+		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration, submission.getCreatedDate(), priorities,
 				emailPipelineResult, canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
 				submission.getUpdateSamples());
 	}

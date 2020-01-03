@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  */
 
 public class AnalysisDetails {
+	private String analysisDescription;
 	private String workflowName;
 	private String version;
 	private String priority;
@@ -23,9 +24,10 @@ public class AnalysisDetails {
 	public AnalysisDetails() {
 	}
 
-	public AnalysisDetails(String workflowName, String version, String priority, Long duration,
+	public AnalysisDetails(String analysisDescription, String workflowName, String version, String priority, Long duration,
 			Date createdDate, AnalysisSubmission.Priority[] priorities, boolean emailPipelineResult,
 			boolean canShareToSamples, boolean updatePermission, boolean updateSamples) {
+		this.analysisDescription=analysisDescription;
 		this.workflowName = workflowName;
 		this.version = version;
 		this.priority = priority;
@@ -36,6 +38,14 @@ public class AnalysisDetails {
 		this.canShareToSamples = canShareToSamples;
 		this.updatePermission = updatePermission;
 		this.updateSamples = updateSamples;
+	}
+
+	public String getAnalysisDescription() {
+		return analysisDescription;
+	}
+
+	public void setAnalysisDescription(String analysisDescription) {
+		this.analysisDescription = analysisDescription;
 	}
 
 	public String getWorkflowName() {
