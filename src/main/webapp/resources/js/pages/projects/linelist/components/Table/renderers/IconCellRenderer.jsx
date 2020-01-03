@@ -1,13 +1,15 @@
+/**
+ * @file Display a column for icons based on specific data from the entry.
+ */
 import React from "react";
 import PropTypes from "prop-types";
-import { Icon, Tooltip } from "antd";
-
-const { i18n } = window.PAGE;
+import { Tooltip } from "antd";
+import { blue6 } from "../../../../../../styles/colors";
 
 function LockedIcon() {
   return (
-    <Tooltip title={i18n.linelist_icons_tooltips_locked} placement="right">
-      <Icon type="lock" theme="twoTone" />
+    <Tooltip title={i18n("project.samples.locked-title")} placement="right">
+      <div><i className="fas fa-lock" style={{color: blue6}}/></div>
     </Tooltip>
   );
 }
@@ -19,10 +21,6 @@ export class IconCellRenderer extends React.Component {
 
   render() {
     const { owner } = this.props.data;
-    return (
-      <React.Fragment>
-        {!JSON.parse(owner) ? <LockedIcon /> : null}
-      </React.Fragment>
-    );
+    return !JSON.parse(owner) ? <LockedIcon /> : null;
   }
 }

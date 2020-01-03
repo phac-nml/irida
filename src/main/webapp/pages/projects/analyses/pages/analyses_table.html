@@ -9,19 +9,8 @@
     <script th:inline="javascript">
       window.PAGE = {
         canManage: /*[[${isAdmin or isOwner}]]*/ true,
-        url: /*[[@{/ajax/analyses/list?projectId={id}(id=${project.getId()})}]]*/ "",
-        i18n: {
-          "analyses.header": /*[[#{analyses.header}]]*/ "_ANALYSES_",
-          "analyses.id": /*[[#{analyses.id}]]*/ "_ID_",
-          "analyses.state": /*[[#{analyses.state}]]*/ "_STATE_",
-          "analyses.analysis-name": /*[[#{analyses.analysis-name}]]*/ "_NAME_",
-          "analyses.type": /*[[#{analyses.type}]]*/ "_TYPE_",
-          "analyses.submitter": /*[[#{analyses.submitter}]]*/ "_SUBMITTER_",
-          "analysis.date-created": /*[[#{analysis.date-created}]]*/ "_CREATED_",
-          "analysis.duration": /*[[#{analysis.duration}]]*/ "_DURATION_",
-          "analyses.delete": /*[[#{analyses.delete}]]*/ "_DELETE_",
-          "analyses.delete-confirm": /*[[#{analyses.delete-confirm}]]*/ "_DELETE_"
-        }
+        url:
+          /*[[@{/ajax/analyses/list?projectId={id}(id=${project.getId()})}]]*/ ""
       };
     </script>
   </head>

@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { DeleteColumnOverlay } from "./renderers/DeleteColumnOverlay";
 
 import { LoadingOverlay } from "./LoadingOverlay";
@@ -377,15 +377,11 @@ export class TableComponent extends React.Component {
 
   render() {
     return (
-      <div
-        className="ag-grid-table-wrapper"
-        style={{ height: this.props.height }}
-      >
-        <AgGridReact
-          id="linelist-grid"
-          rowSelection="multiple"
-          onFilterChanged={this.setFilterCount}
-          localeText={{
+      <AgGridReact
+        id="linelist-grid"
+        rowSelection="multiple"
+        onFilterChanged={this.setFilterCount}
+        localeText={{
             loading: i18n("linelist.agGrid.loading"),
             sampleName: i18n("linelist.agGrid.sampleName")
           }}
@@ -414,7 +410,6 @@ export class TableComponent extends React.Component {
 }
 
 TableComponent.propTypes = {
-  height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array,
