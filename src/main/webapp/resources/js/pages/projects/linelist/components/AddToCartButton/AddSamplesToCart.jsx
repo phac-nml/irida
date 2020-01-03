@@ -4,8 +4,6 @@ import PropTypes from "prop-types";
 import { Button } from "antd";
 import { actions as cartActions } from "../../../../../redux/reducers/cart";
 
-const { i18n } = window.PAGE;
-
 /**
  * UI Button to single that the selected samples should be added to the global cart.
  * @param {object} props
@@ -26,7 +24,7 @@ export function AddSamplesToCartButtonComponent({
       onClick={addToCart}
     >
       <i className="fas fa-cart-plus spaced-right__sm" />
-      {i18n.linelist.addToCart}
+      {i18n("linelist.addToCart")}
     </Button>
   );
 }

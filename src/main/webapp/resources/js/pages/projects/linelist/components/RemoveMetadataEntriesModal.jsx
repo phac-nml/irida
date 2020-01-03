@@ -23,7 +23,7 @@ export default function RemoveMetadataEntriesModal({
     hideModal();
   }
 
-  const introStrings = window.PAGE.i18n.RemoveMetadataEntriesModal_intro.split(
+  const introStrings = i18n("RemoveMetadataEntriesModal_intro").split(
     "{name}"
   );
   const intro = (
@@ -34,7 +34,7 @@ export default function RemoveMetadataEntriesModal({
     </p>
   );
 
-  const warningStrings = window.PAGE.i18n.RemoveMetadataEntriesModal_warning.split(
+  const warningStrings = i18n("RemoveMetadataEntriesModal_warning").split(
     "{icon}"
   );
   const warning = (
@@ -48,13 +48,13 @@ export default function RemoveMetadataEntriesModal({
   return (
     <Modal
       className="t-delete-entries-modal"
-      title={window.PAGE.i18n.RemoveMetadataEntriesModal_title.replace(
+      title={i18n("RemoveMetadataEntriesModal_title").replace(
         "{name}",
         field.headerName
       )}
       visible={visible}
       okType="danger"
-      okText={window.PAGE.i18n.RemoveMetadataEntriesModal_confirm}
+      okText={i18n("RemoveMetadataEntriesModal_confirm")}
       onOk={removeColumnEntries}
       onCancel={hideModal}
     >

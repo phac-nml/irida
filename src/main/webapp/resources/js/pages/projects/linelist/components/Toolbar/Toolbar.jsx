@@ -10,7 +10,7 @@ const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
-const { i18n, urls } = window.PAGE;
+const { urls } = window.PAGE;
 
 export class ToolbarComponent extends Component {
   state = { tourOpen: false, showTourPopover: false };
@@ -73,7 +73,7 @@ export class ToolbarComponent extends Component {
                   className="fas fa-cloud-upload-alt spaced-right__sm"
                   aria-hidden="true"
                 />
-                {i18n.linelist.importBtn.text}
+                {i18n("linelist.importBtn.text")}
               </Button>
             </Form.Item>
             <Form.Item>
@@ -105,7 +105,7 @@ export class ToolbarComponent extends Component {
                     }}
                     onClick={this.closePopover}
                   >
-                    {i18n.linelist.tour.popover}
+                    {i18n("linelist.tour.popover")}
                   </strong>
                 }
                 visible={this.state.showTourPopover}
@@ -113,7 +113,7 @@ export class ToolbarComponent extends Component {
                 arrowPointAtCenter
               >
                 <Button
-                  title={i18n.linelist.tour.title}
+                  title={i18n("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
                   icon="question"

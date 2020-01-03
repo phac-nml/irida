@@ -38,7 +38,7 @@ export function MetadataFieldMenu({ field, removeColumnData }) {
               className="t-delete-entries"
               onClick={() => setRemoveEntriesModalVisibility(true)}
             >
-              {window.PAGE.i18n.MetadataFieldMenu_remove_entries}
+              {i18n("MetadataFieldMenu_remove_entries")}
             </Menu.Item>
           </Menu>
         }

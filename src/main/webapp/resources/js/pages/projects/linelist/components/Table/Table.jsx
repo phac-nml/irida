@@ -404,7 +404,6 @@ export class TableComponent extends React.Component {
           onCellEditingStarted={this.onCellEditingStarted}
           onCellEditingStopped={this.onCellEditingStopped}
         />
-      </div>
     );
   }
 }
