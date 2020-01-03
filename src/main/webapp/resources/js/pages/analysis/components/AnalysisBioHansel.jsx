@@ -7,10 +7,7 @@ import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import {
-  getDataViaChunks,
-  getOutputInfo
-} from "../../../apis/analysis/analysis";
+import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
