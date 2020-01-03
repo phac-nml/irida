@@ -15,6 +15,7 @@ import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -58,7 +59,7 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: `${window.TL.BASE_URL}analysis/`,
+        url: setBaseUrl(`analysis/`),
         width: 300
       }),
       title: i18n("analyses.analysis-name"),
@@ -135,7 +136,7 @@ export function AnalysesTable() {
           <Button
             shape="circle-outline"
             disabled={record.state.value !== "COMPLETED"}
-            href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
+            href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
             icon="download"
           />

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { authenticateOauthClient } from "../oauth/oauth";
 
-const GALAXY_AJAX_URL = `${window.TL.BASE_URL}ajax/galaxy-export`;
+const GALAXY_AJAX_URL = `ajax/galaxy-export`;
 
 /**
  * This will open an new window providing the user with the ability to authenticate

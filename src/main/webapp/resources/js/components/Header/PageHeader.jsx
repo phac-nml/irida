@@ -10,7 +10,7 @@ Webpack does not know what the servlet context path is.  To fix this, webpack ex
 the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
-__webpack_public_path__ = `${window.TL.BASE_URL}dist/`;
+__webpack_public_path__ = `dist/`;
 
 const GalaxyAlert = React.lazy(() => import("./GalaxyAlert"));
 
