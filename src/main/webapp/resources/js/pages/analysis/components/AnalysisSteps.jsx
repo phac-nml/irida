@@ -9,7 +9,7 @@
  * required by the component
  */
 import React, { useContext } from "react";
-import { Icon, Steps } from "antd";
+import { Steps } from "antd";
 import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
 
 import { SPACE_MD } from "../../../styles/spacing";

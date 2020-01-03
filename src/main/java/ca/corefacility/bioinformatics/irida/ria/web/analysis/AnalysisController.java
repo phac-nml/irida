@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.security.Principal;
-import java.util.*;
 
+import java.util.*;
 import javax.persistence.EntityManagerFactory;
 
 import org.hibernate.envers.AuditReader;
@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -32,8 +31,6 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-
-import com.google.common.collect.ImmutableMap;
 
 
 /**
@@ -44,10 +41,7 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-	// PAGES
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
-			.of(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree", BuiltInAnalysisTypes.SISTR_TYPING, "sistr",
-					BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
+
 	private static final String BASE = "analysis/";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
 	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
