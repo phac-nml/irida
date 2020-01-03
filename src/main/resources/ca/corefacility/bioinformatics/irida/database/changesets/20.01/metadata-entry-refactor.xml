@@ -8,7 +8,7 @@
         <addColumn tableName="metadata_entry">
             <column name="field_id" type="bigint(20)">
                 <constraints foreignKeyName="FK_METADATA_ENTRY_FIELD" referencedColumnNames="id"
-                             referencedTableName="metadata_field" nullable="false"/>
+                             referencedTableName="metadata_field"/>
             </column>
         </addColumn>
 
@@ -20,7 +20,7 @@
         <addColumn tableName="metadata_entry">
             <column name="sample_id" type="bigint(20)">
                 <constraints foreignKeyName="FK_METADATA_ENTRY_SAMPLE" referencedColumnNames="id"
-                             referencedTableName="sample" nullable="false"/>
+                             referencedTableName="sample"/>
             </column>
         </addColumn>
 
@@ -31,12 +31,29 @@
 
         <sql>
             update metadata_entry e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
-            e.field_id=s.metadata_KEY;
+            e.field_id=s.metadata_KEY, e.sample_id=s.sample_id;
         </sql>
+
         <sql>
-            update metadata_entry e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
-            e.sample_id=s.sample_id;
+            update metadata_entry_AUD e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
+            e.field_id=s.metadata_KEY, e.sample_id=s.sample_id;
         </sql>
+
+        <sql>
+            update metadata_entry_AUD e INNER JOIN sample_metadata_entry_AUD s ON e.id=s.metadata_id AND e.REV=s.REV SET
+            e.field_id=s.metadata_KEY, e.sample_id=s.sample_id;
+        </sql>
+
+        <sql>
+            delete p.* from pipeline_metadata_entry p INNER JOIN metadata_entry m ON p.id=m.id WHERE m.sample_id is null
+        </sql>
+
+        <sql>
+            delete from metadata_entry where field_id is null;
+        </sql>
+
+        <addNotNullConstraint tableName="metadata_entry" columnName="field_id" columnDataType="bigint(20)"/>
+        <addNotNullConstraint tableName="metadata_entry" columnName="sample_id" columnDataType="bigint(20)"/>
 
     </changeSet>
 </databaseChangeLog>
