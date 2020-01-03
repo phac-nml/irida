@@ -5,18 +5,47 @@
  * object is returned.
  */
 
-import React from "react";
+import React, { useState } from "react";
+import { Button } from "antd";
 import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
+import { SPACE_XS } from "../../../../styles/spacing";
 
 export function StandardError({ galaxyJobErrors, currIndex }) {
-  // Returns the standard error for the given index from the jobErrors object
-  function getStandardError(index = 0) {
-    return (
-      <OutputWrapper overflowRequired={true}>
-        {galaxyJobErrors[index].standardError.trim()}
-      </OutputWrapper>
-    );
-  }
+  const index = currIndex || 0;
+  const [errorOutput, setErrorOutput] = useState(
+    galaxyJobErrors[index].standardError.trim().split("\n")
+  );
 
-  return <>{getStandardError(currIndex)}</>;
+  return (
+    <div>
+      {errorOutput.length > 1 ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: SPACE_XS
+          }}
+        >
+          <Button
+            type="default"
+            onClick={() =>
+              setErrorOutput(prevErrorOutput => [...prevErrorOutput.reverse()])
+            }
+          >
+            <i
+              style={{ marginRight: SPACE_XS }}
+              className="fa fa-sort-amount-up"
+              aria-hidden="true"
+            ></i>
+            {i18n("AnalysisError.reverseOutput")}
+          </Button>
+        </div>
+      ) : (
+        ""
+      )}
+      <OutputWrapper overflowRequired={true}>
+        {errorOutput.join("\n")}
+      </OutputWrapper>
+    </div>
+  );
 }
