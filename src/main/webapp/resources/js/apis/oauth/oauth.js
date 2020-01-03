@@ -1,5 +1,9 @@
+import { setBaseUrl } from "../../utilities/url-utilities";
+
 const createHref = (clientId, redirectUrl) =>
-  `${window.TL.BASE_URL}api/oauth/authorize?client_id=${clientId}&response_type=code&scope=read&redirect_uri=${redirectUrl}`;
+  setBaseUrl(
+    `api/oauth/authorize?client_id=${clientId}&response_type=code&scope=read&redirect_uri=${redirectUrl}`
+  );
 /**
  * Create a DOMString containing a comma-separated list of window features for the pop up window.
  * @returns {string}

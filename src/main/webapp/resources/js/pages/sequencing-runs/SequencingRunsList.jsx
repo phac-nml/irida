@@ -3,6 +3,7 @@ import "../../vendor/datatables/datatables";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { Button, Table } from "antd";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 export function SequencingRunsList() {
   const {
@@ -23,7 +24,7 @@ export function SequencingRunsList() {
           <Button
             type="link"
             className="t-run-link"
-            href={`${window.TL.BASE_URL}sequencingRuns/${text}`}
+            href={setBaseUrl(`sequencingRuns/${text}`)}
           >
             {text}
           </Button>
@@ -47,10 +48,7 @@ export function SequencingRunsList() {
           return null;
         }
         return (
-          <Button
-            type="link"
-            href={`${window.TL.BASE_URL}users/${text.identifier}`}
-          >
+          <Button type="link" href={setBaseUrl(`users/${text.identifier}`)}>
             {text.label}
           </Button>
         );
