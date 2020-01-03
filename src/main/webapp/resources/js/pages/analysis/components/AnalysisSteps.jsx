@@ -21,7 +21,11 @@ export function AnalysisSteps() {
   const { analysisContext } = useContext(AnalysisContext);
   return (
     <Steps
-      current={stateMap[analysisContext.analysisState]}
+      current={
+        analysisContext.isError
+          ? stateMap[analysisContext.previousState]
+          : stateMap[analysisContext.analysisState]
+      }
       status={analysisContext.isError ? "error" : "finish"}
       style={{ paddingBottom: SPACE_MD, paddingTop: SPACE_MD }}
     >
