@@ -72,13 +72,13 @@ export default function AnalysisProvenance() {
           !provenance.data.filename.includes(filename.toString())) ||
         provenance === null
       ) {
+        setToolInfo([]);
         setCurrFileName(filename.toString());
         getAnalysisProvenanceByFile(
           analysisContext.analysis.identifier,
           filename.toString()
         ).then(data => {
           setProvenance(data);
-          setToolInfo([]);
         });
       }
     }
