@@ -44,14 +44,14 @@ function PagedTableProvider({ children, url }) {
     fetchPageTableUpdate(url, {
       current: tableState.current - 1,
       pageSize: tableState.pageSize,
-      sortColumn: tableState.column,
+      sortField: tableState.column,
       sortDirection: tableState.order,
       search: tableState.search,
       filters: tableState.filters
     }).then(data => {
       setTableState({
         ...tableState,
-        ...{ total: data.total, dataSource: data.dataSource, loading: false }
+        ...{ total: data.total, dataSource: data.models, loading: false }
       });
     });
   };
