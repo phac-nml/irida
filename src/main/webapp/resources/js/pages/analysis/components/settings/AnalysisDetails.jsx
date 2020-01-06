@@ -54,7 +54,7 @@ export default function AnalysisDetails() {
       desc:
         analysisDetailsContext.analysisDescription !== ""
           ? analysisDetailsContext.analysisDescription
-          : "N/A"
+          : i18n("AnalysisDetails.notApplicable")
     },
     {
       title: i18n("AnalysisDetails.id"),
