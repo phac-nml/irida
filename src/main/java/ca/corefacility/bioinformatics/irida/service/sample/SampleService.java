@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -47,6 +49,9 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             {@link Project}.
 	 */
 	public ProjectSampleJoin getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
+
+	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet);
+	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

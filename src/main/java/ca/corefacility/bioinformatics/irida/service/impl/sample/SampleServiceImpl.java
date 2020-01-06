@@ -9,6 +9,9 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +97,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private final UserRepository userRepository;
 
+	private final MetadataEntryRepository metadataEntryRepository;
+
 	/**
 	 * Constructor.
 	 *
@@ -111,7 +116,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
-			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository, Validator validator) {
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
+			MetadataEntryRepository metadataEntryRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -121,6 +127,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.userRepository = userRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
+		this.metadataEntryRepository = metadataEntryRepository;
 	}
 
 	/**
@@ -170,6 +177,57 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample update(Sample object) {
 		object.setModifiedDate(new Date());
 		return super.update(object);
+	}
+
+	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
+	@Transactional
+	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet){
+		Set<MetadataEntry> currentMetadata = s.getMetadataEntries();
+
+		metadataEntryRepository.deleteAll(currentMetadata);
+
+		s.setMetadataEntries(metadataToSet);
+
+		update(s);
+
+		return s;
+	}
+
+	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
+	@Transactional
+	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd){
+		Set<MetadataEntry> currentMetadata = s.getMetadataEntries();
+
+		// loop through entry set and see if it already exists
+		for (MetadataEntry newMetadataEntry : metadataToAdd) {
+			MetadataTemplateField field = newMetadataEntry.getField();
+			newMetadataEntry.setSample(s);
+
+			Optional<MetadataEntry> metadataEntryForField = currentMetadata.stream()
+					.filter(e -> e.getField()
+							.equals(field))
+					.findFirst();
+
+			if (metadataEntryForField.isPresent()) {
+				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
+
+				// if the metadata entries are of the same type, I can directly merge
+				if (originalMetadataEntry.getClass()
+						.equals(newMetadataEntry.getClass())) {
+					originalMetadataEntry.merge(newMetadataEntry);
+				} else {
+					// if they are different types, I need to replace the metadata entry instead of merging
+					currentMetadata.remove(originalMetadataEntry);
+					currentMetadata.add(newMetadataEntry);
+				}
+			} else {
+				currentMetadata.add(newMetadataEntry);
+			}
+		}
+
+		s.setMetadataEntries(currentMetadata);
+
+		return update(s);
 	}
 
 	/**

@@ -84,9 +84,7 @@ public class RESTSampleMetadataController {
 
 		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(metadataMap);
 
-		s.setMetadataEntries(metadata);
-
-		sampleService.update(s);
+		sampleService.updateSampleMetadata(s,metadata);
 
 		return getSampleMetadata(sampleId);
 	}
@@ -108,9 +106,9 @@ public class RESTSampleMetadataController {
 
 		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(metadataMap);
 
-		s.mergeMetadata(metadata);
+		//s.mergeMetadata(metadata);
 
-		sampleService.update(s);
+		sampleService.mergeSampleMetadata(s, metadata);
 
 		return getSampleMetadata(sampleId);
 	}

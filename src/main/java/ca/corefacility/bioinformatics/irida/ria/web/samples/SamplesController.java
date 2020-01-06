@@ -244,11 +244,11 @@ public class SamplesController extends BaseController {
 			metadataMap = new HashMap<>();
 		}
 
-		Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(metadataMap);
+		if (!metadataMap.isEmpty()) {
+			Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(metadataMap);
 
-		sample.mergeMetadata(metadataSet);
-
-		updatedValues.put("metadataEntries", sample.getMetadataEntries());
+			sampleService.updateSampleMetadata(sample, metadataSet);
+		}
 
 		if (updatedValues.size() > 0) {
 			try {

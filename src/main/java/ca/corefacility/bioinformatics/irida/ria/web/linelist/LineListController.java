@@ -112,10 +112,9 @@ public class LineListController {
 
 			//create and merge the new entry in
 			MetadataEntry entry = new MetadataEntry(value, "text", templateField);
-			sample.mergeMetadata(Sets.newHashSet(entry));
 
 			//update the sample
-			sampleService.update(sample);
+			sampleService.mergeSampleMetadata(sample,Sets.newHashSet(entry));
 			response.setStatus(HttpServletResponse.SC_OK);
 			return "SUCCESS";
 		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {

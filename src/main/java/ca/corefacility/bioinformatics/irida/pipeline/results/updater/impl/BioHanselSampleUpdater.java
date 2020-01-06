@@ -108,9 +108,8 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 
 				Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(stringEntries);
 
-				sample.mergeMetadata(metadataSet);
-				sampleService.updateFields(sample.getId(),
-						ImmutableMap.of("metadataEntries", sample.getMetadataEntries()));
+				sampleService.mergeSampleMetadata(sample, metadataSet);
+
 			} else {
 				throw new PostProcessingException(filePath + " not correctly formatted. Expected valid JSON.");
 			}

@@ -98,7 +98,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 						String value = (valueObject != null ? valueObject.toString() : "");
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
-						stringEntries.put(e.getValue() + " (v"+workflowVersion+")", metadataEntry);
+						stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
 					}
 				});
 
@@ -107,9 +107,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 				//save metadata back to sample
 				samples.forEach(s -> {
-					s.mergeMetadata(metadataSet);
-					sampleService.updateFields(s.getId(),
-							ImmutableMap.of("metadataEntries", s.getMetadataEntries()));
+					sampleService.mergeSampleMetadata(s, metadataSet);
 				});
 
 			} else {

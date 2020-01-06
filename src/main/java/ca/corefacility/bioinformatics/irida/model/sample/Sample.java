@@ -324,14 +324,16 @@ public class Sample extends IridaResourceSupport
 	}
 
 	/**
-	 * Se the metadata for this sample
+	 * Set the metadata for this sample
 	 *
 	 * @param metadataEntries the entries to set on this sample
 	 */
 	@JsonIgnore
 	public void setMetadataEntries(Set<MetadataEntry> metadataEntries) {
 		metadataEntries.stream()
-				.forEach(e -> e.setSample(this));
+				.forEach(e -> {
+					e.setSample(this);
+				});
 		this.metadataEntries = metadataEntries;
 	}
 

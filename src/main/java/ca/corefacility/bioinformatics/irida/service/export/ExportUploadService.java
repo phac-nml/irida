@@ -685,9 +685,7 @@ public class ExportUploadService {
 
 				//update the samples with the accession
 				for (Sample s : samples) {
-					s.mergeMetadata(metadataSet);
-
-					sampleService.update(s);
+					sampleService.mergeSampleMetadata(s, metadataSet);
 				}
 			}
 		}

@@ -66,6 +66,7 @@ public class MetadataEntry {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public Long getId() {
 		return id;
 	}
@@ -94,7 +95,7 @@ public class MetadataEntry {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value, type);
+		return Objects.hash(value, type, field);
 	}
 
 	@Override

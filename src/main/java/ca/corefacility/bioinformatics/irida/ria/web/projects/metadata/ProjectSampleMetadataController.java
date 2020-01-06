@@ -281,15 +281,10 @@ public class ProjectSampleMetadataController {
 						}
 					}
 
-					sample.mergeMetadata(metadataEntrySet);
-
 					// Save metadata back to the sample
-
-					samplesToUpdate.add(sample);
-
+					sampleService.mergeSampleMetadata(sample,metadataEntrySet);
 				}
 
-				sampleService.updateMultiple(samplesToUpdate);
 			} catch (EntityNotFoundException e) {
 				// This really should not happen, but hey, you never know!
 				errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
