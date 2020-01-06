@@ -5,34 +5,33 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
-import { SPACE_XS } from "../../../../styles/spacing";
+import { SPACE_XS, SPACE_MD } from "../../../../styles/spacing";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSortAmountUp,
+  faSortAmountDownAlt
+} from "@fortawesome/free-solid-svg-icons";
 
 export function StandardErrorOutput({ galaxyError }) {
-  const [errorOutput, setErrorOutput] = useState(
-    galaxyError.trim().split("\n")
-  );
+  const error = galaxyError.trim().split("\n");
+
+  const [reversed, setReversed] = useState(false);
 
   return (
     <div>
-      {errorOutput.length > 1 ? (
+      {error.length > 1 ? (
         <div
           style={{
             display: "flex",
             justifyContent: "flex-end",
-            marginBottom: SPACE_XS
+            marginBottom: SPACE_MD
           }}
         >
-          <Button
-            type="default"
-            onClick={() =>
-              setErrorOutput(prevErrorOutput => [...prevErrorOutput.reverse()])
-            }
-          >
-            <i
+          <Button type="default" onClick={() => setReversed(!reversed)}>
+            <FontAwesomeIcon
+              icon={reversed ? faSortAmountUp : faSortAmountDownAlt}
               style={{ marginRight: SPACE_XS }}
-              className="fa fa-sort-amount-up"
-              aria-hidden="true"
-            ></i>
+            />
             {i18n("AnalysisError.reverseOutput")}
           </Button>
         </div>
@@ -40,7 +39,7 @@ export function StandardErrorOutput({ galaxyError }) {
         ""
       )}
       <OutputWrapper overflowRequired={true}>
-        {errorOutput.join("\n")}
+        {reversed ? error.reverse().join("\n") : error.join("\n")}
       </OutputWrapper>
     </div>
   );
