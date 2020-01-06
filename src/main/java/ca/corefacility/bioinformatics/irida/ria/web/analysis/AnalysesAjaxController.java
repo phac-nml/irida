@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAuditing;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
@@ -49,18 +51,20 @@ public class AnalysesAjaxController {
 	private IridaWorkflowsService iridaWorkflowsService;
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
+	private EntityManagerFactory entityManagerFactory;
 
 	@Autowired
 	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, ProjectService projectService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, EntityManagerFactory entityManagerFactory) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.projectService = projectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
+		this.entityManagerFactory = entityManagerFactory;
 	}
 
 	/**
@@ -204,11 +208,9 @@ public class AnalysesAjaxController {
 		String stateString = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
 		AnalysisStateModel state = new AnalysisStateModel(stateString, analysisState.toString());
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
-		Long duration = 0L;
-		if (analysisState.equals(AnalysisState.COMPLETED)) {
-			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
-					.getCreatedDate());
-		}
+
+		AnalysisAuditing analysisAudit = new AnalysisAuditing(entityManagerFactory);
+		Long duration = analysisAudit.getAnalysisRunningTime(submission);
 
 		/*
 		Check to see if the user has authority to update (delete) this particular submission.

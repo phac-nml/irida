@@ -8,6 +8,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.hibernate.envers.AuditReader;
@@ -32,7 +33,8 @@ public class AnalysisAuditing {
 	 * @return {@link Long} Running time of the analysis
 	 */
 	public Long getAnalysisRunningTime(AnalysisSubmission submission) {
-		AuditReader audit = AuditReaderFactory.get(entityManagerFactory.createEntityManager());
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		AuditReader audit = AuditReaderFactory.get(entityManager);
 		ArrayList<AnalysisSubmission> uniqueAuditedSubmissions = new ArrayList<>();
 		if (audit != null ) {
 			// Gets a list of the analysis submission revisions for the submission
@@ -41,7 +43,8 @@ public class AnalysisAuditing {
 					.add(AuditEntity.id()
 							.eq(submission.getId()))
 					.getResultList();
-
+			// release the db connection
+			entityManager.close();
 			ArrayList<String> auditedStates = new ArrayList<>();
 
 			// Get a unique list of the audited submissions based on the state
@@ -59,6 +62,12 @@ public class AnalysisAuditing {
 					uniqueAuditedSubmissions.get(uniqueAuditedSubmissions.size() - 1)
 							.getModifiedDate());
 		}
+
+		// Before returning we double check to make sure
+		// the connection to the db has been released
+		if(entityManager.isOpen()) {
+			entityManager.close();
+		}
 		return 0L;
 	}
 
@@ -69,7 +78,8 @@ public class AnalysisAuditing {
 	 * @return {@link String} State of analysis prior to error
 	 */
 	public AnalysisState getPreviousStateBeforeError(Long submissionId) {
-		AuditReader audit = AuditReaderFactory.get(entityManagerFactory.createEntityManager());
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		AuditReader audit = AuditReaderFactory.get(entityManager);
 		AnalysisSubmission previousRevision = null;
 
 		if (audit != null) {
@@ -79,7 +89,8 @@ public class AnalysisAuditing {
 					.add(AuditEntity.id()
 							.eq(submissionId))
 					.getResultList();
-
+			// release the db connection
+			entityManager.close();
 			// Go through the revisions and find the first one with an error. The revision
 			// prior is set to the previousRevision
 			for (Object auditResult : auditResultSet) {
@@ -90,6 +101,13 @@ public class AnalysisAuditing {
 				previousRevision = auditedSubmission;
 			}
 		}
+
+		// Before returning we double check to make sure
+		// the connection to the db has been released
+		if(entityManager.isOpen()) {
+			entityManager.close();
+		}
+
 		if (previousRevision == null) {
 			return null;
 		}
