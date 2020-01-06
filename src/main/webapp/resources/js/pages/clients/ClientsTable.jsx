@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
 import { PageWrapper } from "../../components/page/PageWrapper";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { Button, Table } from "antd";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-export function ClientsTable(props) {
-  console.log(props);
+export function ClientsTable() {
   const {
     loading,
     total,
@@ -18,13 +19,48 @@ export function ClientsTable(props) {
       title: i18n("iridaThing.id"),
       key: "id",
       dataIndex: "id"
+    },
+    {
+      title: i18n("client.clientid"),
+      key: "name",
+      dataIndex: "name",
+      render(text, record) {
+        return (
+          <Button type="link" href={`clients/${record.id}`}>
+            {text}
+          </Button>
+        );
+      }
+    },
+    {
+      title: i18n("client.grant-types"),
+      key: "grants",
+      dataIndex: "grants"
+    },
+    {
+      title: i18n("iridaThing.timestamp"),
+      key: "createdDate",
+      dataIndex: "createdDate",
+      render(text) {
+        return formatInternationalizedDateTime(text);
+      }
+    },
+    {
+      title: i18n("client.details.token.active"),
+      key: "activeTokens",
+      dataIndex: "tokens",
+      align: "right"
     }
   ];
 
   return (
     <PageWrapper
       title={i18n("clients.title")}
-      headerExtras={<Button>{i18n("clients.add")}</Button>}
+      headerExtras={
+        <Button href={setBaseUrl("clients/create")}>
+          {i18n("clients.add")}
+        </Button>
+      }
     >
       <Table
         columns={columnDefs}
@@ -36,50 +72,3 @@ export function ClientsTable(props) {
     </PageWrapper>
   );
 }
-
-// import $ from "jquery";
-// import "../../vendor/datatables/datatables";
-// import {
-//   createItemLink,
-//   generateColumnOrderInfo,
-//   tableConfig
-// } from "../../utilities/datatables-utilities";
-// import { formatDate } from "../../utilities/date-utilities";
-//
-// const COLUMNS = generateColumnOrderInfo();
-//
-// const $table = $("#clientsTable");
-// const config = Object.assign(tableConfig, {
-//   ajax: $table.data("url"),
-//   order: [[COLUMNS.CLIENT_ID, "desc"]],
-//   columnDefs: [
-//     {
-//       className: "clientIdCol",
-//       targets: COLUMNS.ID
-//     },
-//     {
-//       render: function(data, type, row) {
-//         return createItemLink({
-//           label: data,
-//           url: `${$table.data("clients")}${row.id}`
-//         });
-//       },
-//       targets: COLUMNS.CLIENT_ID
-//     },
-//     {
-//       targets: COLUMNS.CREATED_DATE,
-//       render(data) {
-//         const date = formatDate({ date: data });
-//         return `<time>${date}</time>`;
-//       }
-//     }
-//   ]
-// });
-//
-// $table.DataTable(config);
-//
-// $(document).ready(() => {
-//   const $addLink = $("#add-link");
-//   $(".buttons").append($addLink);
-//   $addLink.removeClass("hidden");
-// });

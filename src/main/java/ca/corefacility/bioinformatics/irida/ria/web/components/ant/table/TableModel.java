@@ -4,6 +4,7 @@ import java.util.Date;
 
 public abstract class TableModel {
 	private Long id;
+	private String key;
 	private String name;
 	private Date createdDate;
 	private Date modifiedDate;
@@ -13,10 +14,15 @@ public abstract class TableModel {
 		this.name = name;
 		this.createdDate = createdDate;
 		this.modifiedDate = modifiedDate;
+		this.key = String.valueOf(id); // Strictly for react
 	}
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getKey() {
+		return key;
 	}
 
 	public String getName() {
