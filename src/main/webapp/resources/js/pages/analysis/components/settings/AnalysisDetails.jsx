@@ -50,6 +50,13 @@ export default function AnalysisDetails() {
       )
     },
     {
+      title: i18n("AnalysisDetails.description"),
+      desc:
+        analysisDetailsContext.analysisDescription !== ""
+          ? analysisDetailsContext.analysisDescription
+          : i18n("AnalysisDetails.notApplicable")
+    },
+    {
       title: i18n("AnalysisDetails.id"),
       desc: analysisContext.analysis.identifier
     },

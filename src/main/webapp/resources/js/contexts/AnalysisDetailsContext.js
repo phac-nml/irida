@@ -48,6 +48,7 @@ const reducer = (context, action) => {
 };
 
 const initialContext = {
+  analysisDescription: null,
   emailPipelineResult: false,
   workflowName: null,
   version: null,
