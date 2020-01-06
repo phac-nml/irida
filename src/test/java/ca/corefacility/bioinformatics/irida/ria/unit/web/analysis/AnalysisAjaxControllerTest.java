@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -66,7 +68,7 @@ public class AnalysisAjaxControllerTest {
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 	private ExecutionManagerConfig configFileMock;
 	private EmailController emailControllerMock;
-
+	private EntityManagerFactory entityManagerFactoryMock;
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
@@ -86,11 +88,12 @@ public class AnalysisAjaxControllerTest {
 		userServiceMock = mock(UserService.class);
 		configFileMock = mock(ExecutionManagerConfig.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
+		entityManagerFactoryMock = mock(EntityManagerFactory.class);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock);
+				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, entityManagerFactoryMock);
 
 	}
 

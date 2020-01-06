@@ -2,12 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.security.Principal;
 
-import java.util.*;
 import javax.persistence.EntityManagerFactory;
 
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAuditing;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -54,10 +51,6 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
 	private EmailController emailController;
-
-	/*
-	 *
-	 */
 	private EntityManagerFactory entityManagerFactory;
 
 	@Autowired
@@ -163,45 +156,11 @@ public class AnalysisController {
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
 		if (submission.getAnalysisState() == AnalysisState.ERROR) {
-			model.addAttribute("previousState", getPreviousStateBeforeError(submissionId));
+			AnalysisAuditing analysisAudit = new AnalysisAuditing(entityManagerFactory);
+			model.addAttribute("previousState", analysisAudit.getPreviousStateBeforeError(submissionId));
 		}
 
 		return "analysis";
-	}
-
-	/**
-	 * Gets the state of analysis prior to error
-	 *
-	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
-	 * @return {@link String} State of analysis prior to error
-	 */
-	private AnalysisState getPreviousStateBeforeError(Long submissionId) {
-		AuditReader audit = AuditReaderFactory.get(entityManagerFactory.createEntityManager());
-		AnalysisSubmission previousRevision = null;
-
-		if (audit != null) {
-			// Get revisions from the analysis submission audit table for the submission
-			List<?> auditResultSet = audit.createQuery()
-					.forRevisionsOfEntity(AnalysisSubmission.class, true, false)
-					.add(AuditEntity.id()
-							.eq(submissionId))
-					.getResultList();
-
-			// Go through the revisions and find the first one with an error. The revision
-			// prior is set to the previousRevision and it's state is set in the model
-			for (Object auditResult : auditResultSet) {
-				AnalysisSubmission auditedSubmission = (AnalysisSubmission) auditResult;
-				if (auditedSubmission != null && auditedSubmission.getAnalysisState() == AnalysisState.ERROR) {
-					break;
-				}
-				previousRevision = auditedSubmission;
-			}
-		}
-		if (previousRevision == null) {
-			return null;
-		}
-
-		return previousRevision.getAnalysisState();
 	}
 
 	/**
