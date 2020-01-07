@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
@@ -427,9 +426,9 @@ public class ClientsController extends BaseController {
 	}
 
 	/**
-	 * Get a {@link DataTablesResponse} for the Clients page.
+	 * Get a {@link TableResponse} for the Clients page based on paging and sorting.
 	 *
-	 * @param params {@link DataTablesParams} for the current DataTable.
+	 * @param tableRequest {@link TableRequest} for the current clients table view.
 	 * @return {@link DataTablesResponse}
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
