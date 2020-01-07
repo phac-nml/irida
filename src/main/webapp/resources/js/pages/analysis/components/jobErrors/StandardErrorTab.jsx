@@ -7,7 +7,7 @@
 
 import React from "react";
 import { PassTabs } from "./PassTabs";
-import { StandardError } from "./StandardError";
+import { StandardErrorOutput } from "./StandardErrorOutput";
 
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
@@ -26,7 +26,7 @@ export default function StandardErrorTab({
           galaxyJobErrors={galaxyJobErrors}
         />
       ) : (
-        <StandardError galaxyJobErrors={galaxyJobErrors} />
+        <StandardErrorOutput galaxyError={galaxyJobErrors[0].standardError} />
       )}
     </TabPaneContent>
   );

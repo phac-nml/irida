@@ -62,7 +62,11 @@ export default function AnalysisDetails() {
     },
     {
       title: i18n("AnalysisDetails.pipeline"),
-      desc: `${analysisDetailsContext.workflowName} (${analysisDetailsContext.version})`
+      desc: `${analysisDetailsContext.workflowName} (${
+        analysisDetailsContext.version === "unknown"
+          ? i18n("AnalysisDetails.unknownVersion")
+          : analysisDetailsContext.version
+      })`
     },
     {
       title: i18n("AnalysisDetails.priority"),
