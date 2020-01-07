@@ -312,27 +312,15 @@ public class AnalysisAjaxControllerTest {
 	}
 
 	@Test
-	public void getSharedProjects(){
-		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
-		// get projects already shared with submission
-		Set<Project> projectsShared = projectServiceMock.getProjectsForAnalysisSubmission(submission)
-				.stream()
-				.map(ProjectAnalysisSubmissionJoin::getSubject)
-				.collect(Collectors.toSet());
-
-		assertEquals("There should be 0 shared projects", projectsShared.size() , 0);
-	}
-
-	@Test
-	public void updatedSharedProjects() {
+	public void updateSharedProjects(){
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		Project project = TestDataFactory.constructProject();
 
-		ProjectAnalysisSubmissionJoin a = analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project);
+		analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project);
 
-		assertNotNull("There should be 1 shared projects", a.getSubject());
-
+		assertNotNull("Not null", analysisSubmissionServiceMock.getAnalysisSubmissionsSharedToProject(project));
 	}
+
 
 	@Test
 	public void saveResultsToSamples() {
@@ -352,7 +340,7 @@ public class AnalysisAjaxControllerTest {
 	}
 
 	@Test
-	public void getInputSamples() {
+	public void getInputs() {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
