@@ -1,28 +1,30 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
@@ -38,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.collect.Lists;
 
-import static liquibase.util.SystemUtils.USER_NAME;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -247,4 +248,116 @@ public class AnalysisAjaxControllerTest {
 		assertEquals("FilePointer shouldn't have changed from startSeek",
 				expFileSize + chunkSize, (long) chunkOutsideRangeOfFile.getFilePointer());
 	}
+
+	@Test
+	public void testUpdateAnalysisEmailPipelineResult() throws IridaWorkflowNotFoundException {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+
+		submission.setAnalysisState(AnalysisState.RUNNING);
+		assertFalse("Email result on pipeline completion", submission.getEmailPipelineResult());
+		submission.setEmailPipelineResult(true);
+		assertTrue("Email result on pipeline completion", submission.getEmailPipelineResult());
+	}
+
+	@Test
+	public void testUpdateAnalysisPriority() throws IridaWorkflowNotFoundException {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+
+		submission.setAnalysisState(AnalysisState.NEW);
+		assertEquals("Priority should be medium", submission.getPriority(), AnalysisSubmission.Priority.MEDIUM);
+		submission.setPriority(AnalysisSubmission.Priority.HIGH);
+		assertEquals("Priority should be high", submission.getPriority(), AnalysisSubmission.Priority.HIGH);
+	}
+
+	@Test
+	public void testUpdateAnalysisName() throws IridaWorkflowNotFoundException {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+
+		assertEquals("Submission name should be", submission.getName(), "submission-"+submission.getId());
+		submission.setName("NEW SUBMISSION");
+		assertEquals("Submission name should be", submission.getName(), "NEW SUBMISSION");
+	}
+
+	@Test
+	public void testGetAnalysisDetails() {
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+
+		String submissionName = submission.getName();
+		assertEquals("Submission name should be", submissionName, "submission-"+submission.getId());
+
+		String analysisDescription = submission.getAnalysisDescription();
+		assertEquals("Submission description should be empty", analysisDescription, null);
+
+		assertEquals("Submission id is 5", submission.getId().longValue(), 5L);
+
+		AnalysisSubmission.Priority submissionPriority = submission.getPriority();
+		assertEquals("Priority should be medium", submissionPriority, AnalysisSubmission.Priority.MEDIUM);
+
+		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				Lists.newArrayList());
+
+		assertEquals("Workflow name", description.getName(), "My Workflow");
+		assertEquals("Pipeline type", description.getAnalysisType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
+		assertEquals("Pipeline version should be", description.getVersion(), "V1");
+	}
+
+	@Test
+	public void testDeleteAnalysisSubmission() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+
+		analysisSubmissionServiceMock.delete(submission.getId());
+		assertNull("Submission has been deleted", analysisSubmissionServiceMock.read(submission.getId()));
+	}
+
+	@Test
+	public void getSharedProjects(){
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		// get projects already shared with submission
+		Set<Project> projectsShared = projectServiceMock.getProjectsForAnalysisSubmission(submission)
+				.stream()
+				.map(ProjectAnalysisSubmissionJoin::getSubject)
+				.collect(Collectors.toSet());
+
+		assertEquals("There should be 0 shared projects", projectsShared.size() , 0);
+	}
+
+	@Test
+	public void updatedSharedProjects() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		Project project = TestDataFactory.constructProject();
+
+		ProjectAnalysisSubmissionJoin a = analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project);
+
+		assertNotNull("There should be 1 shared projects", a.getSubject());
+
+	}
+
+	@Test
+	public void saveResultsToSamples() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		try {
+			analysisSubmissionSampleProcessor.updateSamples(submission);
+			assertFalse ("Samples have not been updated", submission.getUpdateSamples());
+
+			submission.setUpdateSamples(true);
+
+			analysisSubmissionServiceMock.update(submission);
+			assertTrue("Samples have been updated", submission.getUpdateSamples());
+		} catch (PostProcessingException e)
+		{
+			assertNotNull(e.toString());
+		}
+	}
+
+	@Test
+	public void getInputSamples() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SequenceFilePair.class);
+
+		assertEquals("There should be 0 samples for this submission", inputFilePairs.size() , 0);
+	}
+
 }
