@@ -6,7 +6,6 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -39,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAuditing;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
@@ -85,7 +84,7 @@ public class AnalysisAjaxController {
 	private UserService userService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private ExecutionManagerConfig configFile;
-	private EntityManagerFactory entityManagerFactory;
+	private AnalysisAudit analysisAudit;
 
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
@@ -93,7 +92,7 @@ public class AnalysisAjaxController {
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission, MetadataTemplateService metadataTemplateService,
 			SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, ExecutionManagerConfig configFile, EntityManagerFactory entityManagerFactory) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, ExecutionManagerConfig configFile, AnalysisAudit analysisAudit) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -107,7 +106,7 @@ public class AnalysisAjaxController {
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.configFile = configFile;
-		this.entityManagerFactory=entityManagerFactory;
+		this.analysisAudit = analysisAudit;
 	}
 
 	/**
@@ -220,7 +219,7 @@ public class AnalysisAjaxController {
 		String priority = submission.getPriority()
 				.toString();
 
-		AnalysisAuditing analysisAudit = new AnalysisAuditing(entityManagerFactory);
+		// Get the run time of the analysis runtime using the analysis
 		Long duration = analysisAudit.getAnalysisRunningTime(submission);
 
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();

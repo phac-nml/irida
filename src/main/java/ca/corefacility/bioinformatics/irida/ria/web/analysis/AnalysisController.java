@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.security.Principal;
 
-import javax.persistence.EntityManagerFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAuditing;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -51,17 +49,17 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
 	private EmailController emailController;
-	private EntityManagerFactory entityManagerFactory;
+	private AnalysisAudit analysisAudit;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController, EntityManagerFactory entityManagerFactory) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController, AnalysisAudit analysisAudit) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
 		this.emailController = emailController;
-		this.entityManagerFactory=entityManagerFactory;
+		this.analysisAudit=analysisAudit;
 	}
 
 	// ************************************************************************************************
@@ -156,7 +154,6 @@ public class AnalysisController {
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
 		if (submission.getAnalysisState() == AnalysisState.ERROR) {
-			AnalysisAuditing analysisAudit = new AnalysisAuditing(entityManagerFactory);
 			model.addAttribute("previousState", analysisAudit.getPreviousStateBeforeError(submissionId));
 		}
 
