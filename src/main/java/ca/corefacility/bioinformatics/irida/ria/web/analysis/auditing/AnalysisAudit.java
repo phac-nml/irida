@@ -10,6 +10,7 @@ import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
@@ -51,10 +52,15 @@ public class AnalysisAudit {
 				uniqueAuditedSubmissions.add(auditedSubmission);
 			}
 		}
-		// Get the run time of the analysis from creation till completion/error
-		return DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(),
-				uniqueAuditedSubmissions.get(uniqueAuditedSubmissions.size() - 1)
-						.getModifiedDate());
+
+		if (uniqueAuditedSubmissions.size() > 0) {
+			// Get the run time of the analysis from creation till completion/error
+			return DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(),
+					uniqueAuditedSubmissions.get(uniqueAuditedSubmissions.size() - 1)
+							.getModifiedDate());
+		}
+
+		return 0L;
 	}
 
 	/**
@@ -68,6 +74,7 @@ public class AnalysisAudit {
 
 		// Get revisions from the analysis submission audit table for the submission
 		Revisions<Integer, AnalysisSubmission> revisions = analysisSubmissionRepository.findRevisions(submissionId);
+
 		// Go through the revisions and find the first one with an error. The revision
 		// prior is set to the previousRevision
 		for (Revision<Integer, AnalysisSubmission> rev : revisions) {
