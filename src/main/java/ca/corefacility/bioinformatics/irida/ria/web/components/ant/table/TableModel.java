@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.components.ant.table;
 
 import java.util.Date;
 
+/**
+ * Used as the base class of any item to be represented in an ant.design Table.
+ */
 public abstract class TableModel {
 	private Long id;
 	private String key;

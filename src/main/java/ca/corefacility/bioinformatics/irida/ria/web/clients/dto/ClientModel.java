@@ -5,6 +5,9 @@ import org.springframework.util.StringUtils;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
 
+/**
+ * Used to represent an {@link IridaClientDetails} in an ant.design table on the Clients page.
+ */
 public class ClientModel extends TableModel {
 	private String grants;
 	private int tokens;
