@@ -24,7 +24,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 	public static final String EDITABLE = "editable";
 	public static final String OWNER = "owner";
 
-	public UISampleMetadata(ProjectSampleJoin join, boolean canModifySample) {
+	public UISampleMetadata(ProjectSampleJoin join, boolean canModifySample, Set<MetadataEntry> metadata) {
 		Project project = join.getSubject();
 		Sample sample = join.getObject();
 
@@ -36,7 +36,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 				.toString());
 		this.put(MODIFIED_DATE, sample.getModifiedDate()
 				.toString());
-		this.putAll(getAllMetadataForSample(sample));
+		this.putAll(getAllMetadataForSample(metadata));
 		this.put(EDITABLE, String.valueOf(canModifySample));
 		this.put(OWNER, String.valueOf(join.isOwner()));
 	}
@@ -47,13 +47,13 @@ public class UISampleMetadata extends HashMap<String, String> {
 	 * @param sample {@link Sample}
 	 * @return {@link Map} of {@link String} field and {@link String} value
 	 */
-	private Map<String, String> getAllMetadataForSample(Sample sample) {
+	private Map<String, String> getAllMetadataForSample(Set<MetadataEntry> metadataEntries) {
 		Map<String, String> entries = new HashMap<>();
-		Set<MetadataEntry> metadataEntries = sample.getMetadataEntries();
 		for (MetadataEntry entry : metadataEntries) {
 
 			// Label must be converted into the proper format for client side look up purposes in Ag Grid.
-			entries.put(entry.getField().getFieldKey(), entry.getValue());
+			entries.put(entry.getField()
+					.getFieldKey(), entry.getValue());
 		}
 		return entries;
 	}

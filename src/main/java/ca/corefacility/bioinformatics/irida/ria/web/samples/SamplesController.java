@@ -136,7 +136,9 @@ public class SamplesController extends BaseController {
 	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
@@ -152,8 +154,9 @@ public class SamplesController extends BaseController {
 	@ResponseBody
 	public SampleDetails getSampleDetails(@RequestParam Long id) {
 		Sample sample = sampleService.read(id);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		boolean modifiable = this.isSampleModifiable(sample);
-		return new SampleDetails(sample, modifiable);
+		return new SampleDetails(sample, modifiable, metadataForSample);
 	}
 
 	/**
@@ -173,7 +176,9 @@ public class SamplesController extends BaseController {
 			model.addAttribute(MODEL_ERROR_ATTR, new HashMap<>());
 		}
 		Sample sample = sampleService.read(sampleId);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS_EDIT);
 		return SAMPLE_EDIT_PAGE;
 	}

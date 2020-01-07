@@ -61,7 +61,9 @@ public class RESTSampleMetadataController {
 		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
-		SampleMetadataResponse response = buildSampleMetadataResponse(s);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+
+		SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
 		return modelMap;
@@ -120,8 +122,8 @@ public class RESTSampleMetadataController {
 	 *            the {@link Sample} to build the object from
 	 * @return a constructed {@link SampleMetadataResponse}
 	 */
-	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s) {
-		SampleMetadataResponse response = new SampleMetadataResponse(s.getMetadataEntries());
+	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s, Set<MetadataEntry> metadataEntries) {
+		SampleMetadataResponse response = new SampleMetadataResponse(metadataEntries);
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
 		return response;

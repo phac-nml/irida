@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.envers.Audited;
@@ -21,7 +20,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -124,7 +126,7 @@ public class Sample extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
-	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "sample", orphanRemoval = true)
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private Set<MetadataEntry> metadataEntries;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
@@ -132,7 +134,6 @@ public class Sample extends IridaResourceSupport
 
 	public Sample() {
 		createdDate = new Date();
-		metadataEntries = new HashSet<>();
 	}
 
 	/**
@@ -316,69 +317,5 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
-	}
-
-	@JsonIgnore
-	public Set<MetadataEntry> getMetadataEntries() {
-		return metadataEntries;
-	}
-
-	/**
-	 * Set the metadata for this sample
-	 *
-	 * @param metadataEntries the entries to set on this sample
-	 */
-	@JsonIgnore
-	public void setMetadataEntries(Set<MetadataEntry> metadataEntries) {
-		metadataEntries.stream()
-				.forEach(e -> {
-					e.setSample(this);
-				});
-		this.metadataEntries = metadataEntries;
-	}
-
-	/**
-	 * Merge {@link MetadataEntry} into the sample's existing metadata collection.
-	 * Duplicate keys will be overwritten.
-	 * 
-	 * @param inputMetadata the metadata to merge into the sample
-	 */
-	public void mergeMetadata(Set<MetadataEntry> inputMetadata) {
-		// loop through entry set and see if it already exists
-		for (MetadataEntry newMetadataEntry : inputMetadata) {
-
-			newMetadataEntry.setSample(this);
-
-			Optional<MetadataEntry> metadataEntryForField = getMetadataEntryForField(newMetadataEntry.getField());
-
-			if (metadataEntryForField.isPresent()) {
-				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
-
-				// if the metadata entries are of the same type, I can directly merge
-				if (originalMetadataEntry.getClass()
-						.equals(newMetadataEntry.getClass())) {
-					originalMetadataEntry.merge(newMetadataEntry);
-				} else {
-					// if they are different types, I need to replace the metadata entry instead of merging
-					metadataEntries.remove(originalMetadataEntry);
-					metadataEntries.add(newMetadataEntry);
-				}
-			} else {
-				metadataEntries.add(newMetadataEntry);
-			}
-		}
-	}
-
-	/**
-	 * Get a {@link MetadataEntry} from this {@link Sample} that has the given {@link MetadataTemplateField}.
-	 *
-	 * @param field the field to get the entry for
-	 * @return An optional of the field if it exists
-	 */
-	public Optional<MetadataEntry> getMetadataEntryForField(MetadataTemplateField field) {
-		return metadataEntries.stream()
-				.filter(e -> e.getField()
-						.equals(field))
-				.findFirst();
 	}
 }

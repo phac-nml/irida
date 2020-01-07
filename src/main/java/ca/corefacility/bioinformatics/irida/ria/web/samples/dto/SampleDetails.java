@@ -13,9 +13,9 @@ public class SampleDetails {
 	private Set<MetadataEntry> metadata;
 	private boolean modifiable;
 
-	public SampleDetails(Sample sample, boolean modifiable) {
+	public SampleDetails(Sample sample, boolean modifiable, Set<MetadataEntry> metadata) {
 		this.sample = sample;
-		this.metadata = sample.getMetadataEntries();
+		this.metadata = metadata;
 		this.modifiable = modifiable;
 	}
 

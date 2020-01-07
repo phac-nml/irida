@@ -52,6 +52,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 
 	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet);
 	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd);
+
+	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

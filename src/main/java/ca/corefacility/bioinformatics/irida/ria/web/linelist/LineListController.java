@@ -80,7 +80,8 @@ public class LineListController {
 		return projectSamples.stream()
 				.map(join -> {
 					ProjectSampleJoin psj = (ProjectSampleJoin)join;
-					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()));
+					Set<MetadataEntry> metadata = sampleService.getMetadataForSample(psj.getObject());
+					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()), metadata);
 				})
 				.collect(Collectors.toList());
 	}
@@ -101,8 +102,6 @@ public class LineListController {
 		Sample sample = sampleService.read(sampleId);
 
 		try {
-			Set<MetadataEntry> metadataEntries = sample.getMetadataEntries();
-
 			//find the field
 			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
 			if (templateField == null) {

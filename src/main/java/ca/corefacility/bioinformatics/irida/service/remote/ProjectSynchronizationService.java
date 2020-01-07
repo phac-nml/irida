@@ -238,7 +238,6 @@ public class ProjectSynchronizationService {
 		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
 		for (Sample s : readSamplesForProject) {
 			s.setId(null);
-			s = syncSampleMetadata(s);
 			List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
 
 			syncExceptions.addAll(syncExceptionsSample);
@@ -284,6 +283,8 @@ public class ProjectSynchronizationService {
 				sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 
 				localSample = sampleService.update(sample);
+
+				localSample = syncSampleMetadata(sample, localSample);
 			}
 
 		} else {
@@ -291,6 +292,8 @@ public class ProjectSynchronizationService {
 			sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 			localSample = sampleService.create(sample);
 			projectService.addSampleToProject(project, sample, true);
+
+			localSample = syncSampleMetadata(sample, localSample);
 		}
 
 		// get the local files and organize by their url
@@ -358,15 +361,16 @@ public class ProjectSynchronizationService {
 	 * @param sample the sample to sync
 	 * @return the synchronized sample
 	 */
-	public Sample syncSampleMetadata(Sample sample){
-		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
-		
-		sampleMetadata.values().forEach(e -> e.setId(null));
-		
+	public Sample syncSampleMetadata(Sample remoteSample, Sample localSample) {
+		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(remoteSample);
+
+		sampleMetadata.values()
+				.forEach(e -> e.setId(null));
+
 		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(sampleMetadata);
-		sample.setMetadataEntries(metadata);
-		
-		return sample;
+		localSample = sampleService.updateSampleMetadata(localSample, metadata);
+
+		return localSample;
 	}
 
 	/**

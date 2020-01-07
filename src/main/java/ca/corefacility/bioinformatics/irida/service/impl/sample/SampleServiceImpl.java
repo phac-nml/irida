@@ -179,24 +179,34 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return super.update(object);
 	}
 
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
+		return metadataEntryRepository.getMetadataForSample(sample);
+	}
+
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
-	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet){
-		Set<MetadataEntry> currentMetadata = s.getMetadataEntries();
+	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {
+		Set<MetadataEntry> currentMetadata = getMetadataForSample(s);
 
 		metadataEntryRepository.deleteAll(currentMetadata);
 
-		s.setMetadataEntries(metadataToSet);
+		for(MetadataEntry e : metadataToSet){
+			e.setSample(s);
+		}
 
-		update(s);
+		metadataEntryRepository.saveAll(metadataToSet);
+
+		s = read(s.getId());
 
 		return s;
 	}
 
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
-	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd){
-		Set<MetadataEntry> currentMetadata = s.getMetadataEntries();
+	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd) {
+		Set<MetadataEntry> currentMetadata = getMetadataForSample(s);
 
 		// loop through entry set and see if it already exists
 		for (MetadataEntry newMetadataEntry : metadataToAdd) {
@@ -225,9 +235,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 		}
 
-		s.setMetadataEntries(currentMetadata);
+		metadataEntryRepository.saveAll(currentMetadata);
 
-		return update(s);
+		return read(s.getId());
 	}
 
 	/**
