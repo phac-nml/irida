@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.history.Revision;
@@ -39,15 +41,13 @@ public class AnalysisAudit {
 		Revisions<Integer, AnalysisSubmission> revisions = analysisSubmissionRepository.findRevisions(
 				submission.getId());
 
-		ArrayList<String> auditedStates = new ArrayList<>();
+		Set<AnalysisState> auditedStates = new HashSet<>();
 
 		// Get a unique list of the audited submissions based on the state
 		for (Revision<Integer, AnalysisSubmission> rev : revisions) {
 			AnalysisSubmission auditedSubmission = rev.getEntity();
-			if (!auditedStates.contains(auditedSubmission.getAnalysisState()
-					.toString())) {
-				auditedStates.add(auditedSubmission.getAnalysisState()
-						.toString());
+			if (!auditedStates.contains(auditedSubmission.getAnalysisState())) {
+				auditedStates.add(auditedSubmission.getAnalysisState());
 				uniqueAuditedSubmissions.add(auditedSubmission);
 			}
 		}
@@ -64,7 +64,6 @@ public class AnalysisAudit {
 	 * @return {@link String} State of analysis prior to error
 	 */
 	public AnalysisState getPreviousStateBeforeError(Long submissionId) {
-
 		AnalysisSubmission previousRevision = null;
 
 		// Get revisions from the analysis submission audit table for the submission
