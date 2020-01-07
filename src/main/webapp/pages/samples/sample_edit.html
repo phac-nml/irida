@@ -125,8 +125,8 @@
                         <fieldset id="other-metadata">
                             <legend th:text="#{sample.metadata.other}">_Other Metadata_</legend>
                             <div class="row" id="metadata-fields">
-                                <div th:unless="${#sets.isEmpty(sample.getMetadataEntries())}">
-                                    <div th:each="entry : ${sample.getMetadataEntries()}"  class="col-md-6 metadata-entry">
+                                <div th:unless="${#sets.isEmpty(metadata)}">
+                                    <div th:each="entry : ${metadata}"  class="col-md-6 metadata-entry">
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <input type="text" class="metadata-key form-control" required="required" th:value="${entry.field}"/>
