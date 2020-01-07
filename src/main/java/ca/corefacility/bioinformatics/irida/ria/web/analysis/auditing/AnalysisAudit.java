@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing;
 
-/*
- * This class is used for auditing analysis submissions
- */
-
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +12,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 
+
+/**
+ * This class component is used for auditing {@link AnalysisSubmission}.
+ */
 @Component
 public class AnalysisAudit {
 
@@ -25,6 +25,7 @@ public class AnalysisAudit {
 	public AnalysisAudit(AnalysisSubmissionRepository analysisSubmissionRepository) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
+
 	/**
 	 * Gets the running time of an analysis
 	 *
@@ -35,7 +36,8 @@ public class AnalysisAudit {
 		ArrayList<AnalysisSubmission> uniqueAuditedSubmissions = new ArrayList<>();
 
 		// Gets a list of the analysis submission revisions for the submission
-		Revisions<Integer, AnalysisSubmission> revisions = analysisSubmissionRepository.findRevisions(submission.getId());
+		Revisions<Integer, AnalysisSubmission> revisions = analysisSubmissionRepository.findRevisions(
+				submission.getId());
 
 		ArrayList<String> auditedStates = new ArrayList<>();
 
