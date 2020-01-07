@@ -1,19 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.net.MalformedURLException;
-import java.security.Principal;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,7 +24,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -44,6 +33,11 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
@@ -85,7 +79,6 @@ public class RemoteAPIControllerTest {
 		int sortColumn = 0;
 		String direction = "asc";
 		String searchValue = "";
-		Principal principal = () -> USER_NAME;
 
 		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
 		api1.setId(1L);
@@ -97,17 +90,21 @@ public class RemoteAPIControllerTest {
 		when(remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 				any(String.class))).thenReturn(apiPage);
 
-		Map<String, Object> ajaxAPIList = remoteAPIController.getAjaxAPIList(page, size, draw, sortColumn, direction,
-				searchValue, principal, locale);
+		TableRequest request = new TableRequest();
+		request.setSortDirection(direction);
+		request.setSortField("modifiedDate");
+		request.setSearch(searchValue);
+		request.setPageSize(size);
+		request.setCurrent(draw);
+		TableResponse response = remoteAPIController.getAjaxAPIList(request);
 
 		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 				any(String.class));
 
-		assertNotNull(ajaxAPIList);
-		assertFalse(ajaxAPIList.isEmpty());
+		assertNotNull(response);
+		assertFalse(response.getModels().isEmpty());
 
-		List<List<String>> apiList = (List<List<String>>) ajaxAPIList.get(DataTable.RESPONSE_PARAM_DATA);
-		assertEquals(2, apiList.size());
+		assertEquals(2, response.getModels().size());
 
 	}
 

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
@@ -29,8 +28,11 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -209,66 +211,19 @@ public class RemoteAPIController extends BaseController {
 	}
 
 	/**
-	 * Ajax request page for getting a list of all {@link RemoteAPI}s
-	 * 
-	 * @param start
-	 *            The start element of the page
-	 * @param length
-	 *            The page length
-	 * @param draw
-	 *            Whether to draw the table
-	 * @param sortColumn
-	 *            The column to sort on
-	 * @param direction
-	 *            The direction of the sort
-	 * @param searchValue
-	 *            The string search value for the table
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @param locale
-	 *            the locale specified by the browser.
-	 * @return a Map for the table
+	 * Get a list of the current page for the Remote API Table
+	 * @param tableRequest - the details for the current page of the Table
+	 * @return {@link TableResponse}
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxAPIList(@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = "0") Integer sortColumn,
-			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "asc") String direction,
-			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue, Principal principal, Locale locale) {
+	public @ResponseBody
+	TableResponse getAjaxAPIList(@RequestBody TableRequest tableRequest) {
+		Page<RemoteAPI> search = remoteAPIService.search(RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
+				tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortField());
 
-		String sortString;
-
-		try {
-			sortString = SORT_COLUMNS.get(sortColumn);
-		} catch (IndexOutOfBoundsException ex) {
-			sortString = SORT_BY_ID;
-		}
-
-		Sort.Direction sortDirection = direction.equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-
-		int pageNum = start / length;
-
-		Page<RemoteAPI> search = remoteAPIService.search(RemoteAPISpecification.searchRemoteAPI(searchValue), pageNum,
-				length, sortDirection, sortString);
-
-		List<Map<String, String>> apiData = new ArrayList<>();
-		for (RemoteAPI api : search) {
-			Map<String, String> row = new HashMap<>();
-			row.put("id", api.getId().toString());
-			row.put("name", api.getName());
-			row.put("createdDate", dateFormatter.print(api.getCreatedDate(), locale));
-
-			apiData.add(row);
-		}
-
-		Map<String, Object> map = new HashMap<>();
-		map.put(DataTable.RESPONSE_PARAM_DRAW, draw);
-		map.put(DataTable.RESPONSE_PARAM_RECORDS_TOTAL, search.getTotalElements());
-		map.put(DataTable.RESPONSE_PARAM_RECORDS_FILTERED, search.getTotalElements());
-
-		map.put(DataTable.RESPONSE_PARAM_DATA, apiData);
-		return map;
+		List<TableModel> apiData = search.getContent().stream().map(RemoteAPIModel::new).collect(
+				Collectors.toList());
+		return new TableResponse(apiData, search.getTotalElements());
 	}
 
 	/**

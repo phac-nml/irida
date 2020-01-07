@@ -47,8 +47,18 @@ public class TableRequest {
 		this.sortField = sortField;
 	}
 
+	public String getSortField() {
+		return sortField;
+	}
+
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
+	}
+
+	public Sort.Direction getSortDirection() {
+		return Strings.isNullOrEmpty(this.sortDirection) ?
+				Sort.Direction.ASC :
+				this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
 	}
 
 	/**
@@ -60,9 +70,7 @@ public class TableRequest {
 	 * @return {@link Sort}
 	 */
 	public Sort getSort() {
-		Sort.Direction direction = Strings.isNullOrEmpty(this.sortDirection) ?
-				Sort.Direction.ASC :
-				this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		return Sort.by(new Sort.Order(direction, this.sortField));
+
+		return Sort.by(new Sort.Order(getSortDirection(), this.sortField));
 	}
 }
