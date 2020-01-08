@@ -132,6 +132,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 		
 		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), anySet())).thenReturn(sample);
 		
 		syncService.syncSample(sample, expired, Maps.newHashMap());
 		
@@ -150,7 +151,9 @@ public class ProjectSynchronizationServiceTest {
 		existingSample.setRemoteStatus(sampleStatus);
 		
 		when(sampleService.update(any(Sample.class))).thenReturn(sample);
-		
+		when(sampleService.updateSampleMetadata(eq(sample),anySet() )).thenReturn(sample);
+
+
 		syncService.syncSample(sample, expired, ImmutableMap.of("http://sample",existingSample));
 		
 		verify(projectService,times(0)).addSampleToProject(expired, sample, true);
