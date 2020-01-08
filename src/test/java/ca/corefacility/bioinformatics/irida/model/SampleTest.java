@@ -34,20 +34,6 @@ public class SampleTest {
 	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 
-	private Sample sample1;
-	private Sample sample2;
-
-	private MetadataTemplateField field1;
-	private MetadataTemplateField field2;
-
-	private MetadataEntry entry1;
-	private MetadataEntry entry2;
-
-	private PipelineProvidedMetadataEntry pipelineEntry1;
-	private PipelineProvidedMetadataEntry pipelineEntry2;
-
-	private AnalysisSubmission submission1;
-
 	@Before
 	public void setUp() {
 		Configuration<?> configuration = Validation.byDefaultProvider()
@@ -58,32 +44,6 @@ public class SampleTest {
 				new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
 		ValidatorFactory factory = configuration.buildValidatorFactory();
 		validator = factory.getValidator();
-
-		sample1 = new Sample("newsample");
-
-		field1 = new MetadataTemplateField("field1", "text");
-		entry1 = new MetadataEntry("entry1", "text", field1);
-
-		field2 = new MetadataTemplateField("field2", "text");
-		entry2 = new MetadataEntry("entry2", "text", field2);
-
-		Set<MetadataEntry> metadataEntries = Sets.newHashSet(entry1, entry2);
-
-		sample1.setMetadataEntries(metadataEntries);
-
-		sample2 = new Sample("newsample2");
-
-		submission1 = AnalysisSubmission.builder(UUID.randomUUID())
-				.inputFiles(Sets.newHashSet(new SequenceFilePair()))
-				.build();
-		submission1.setId(1L);
-
-		pipelineEntry1 = new PipelineProvidedMetadataEntry("pipelineEntry1", "text", submission1, field1);
-		pipelineEntry2 = new PipelineProvidedMetadataEntry("pipelineEntry2", "text", submission1, field2);
-
-		Set<MetadataEntry> metadataEntries2 = Sets.newHashSet(pipelineEntry1, pipelineEntry2);
-
-		sample2.setMetadataEntries(metadataEntries2);
 	}
 
 	@Test
@@ -118,74 +78,6 @@ public class SampleTest {
 	public void testBlacklistedCharactersInSampleName() {
 		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
 		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
-	}
-
-	@Test
-	public void testMergeMetadataSuccess() {
-		MetadataEntry entry = new MetadataEntry("entry2", "text", field1);
-
-		Set<MetadataEntry> inputMetadata = Sets.newHashSet(entry);
-
-		sample1.mergeMetadata(inputMetadata);
-
-		assertEquals("Metadata map does not have correct number of entries", 2, sample1.getMetadataEntries()
-				.size());
-		assertEquals("Updated metadata entry does not match", entry, sample1.getMetadataEntryForField(field1)
-				.orElse(null));
-		assertEquals("Non-updated metadata entry does not match", this.entry2, sample1.getMetadataEntryForField(field2)
-				.orElse(null));
-	}
-
-	@Test
-	public void testMergeMetadataPipelineSuccess() {
-		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
-				.inputFiles(Sets.newHashSet(new SequenceFilePair()))
-				.build();
-		submission.setId(2L);
-
-		PipelineProvidedMetadataEntry entry = new PipelineProvidedMetadataEntry("entry2", "text", submission, field1);
-
-		Set<MetadataEntry> inputMetadata = Sets.newHashSet(entry);
-
-		sample2.mergeMetadata(inputMetadata);
-
-		assertEquals("Metadata map does not have correct number of entries", 2, sample2.getMetadataEntries()
-				.size());
-		assertEquals("Updated metadata entry does not match", entry, sample2.getMetadataEntryForField(field1)
-				.orElse(null));
-
-		PipelineProvidedMetadataEntry actualEntry = (PipelineProvidedMetadataEntry) sample2.getMetadataEntryForField(
-				field1)
-				.orElse(null);
-
-		assertEquals("Updated metadata entry does not point to correct submission", (Long) 2L,
-				actualEntry.getSubmission()
-						.getId());
-		assertEquals("Non-updated metadata entry does not match", this.pipelineEntry2,
-				sample2.getMetadataEntryForField(field2)
-						.orElse(null));
-	}
-
-	@Test
-	public void testMergeMetadataPipelineDifferentEntryTypes() {
-		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
-				.inputFiles(Sets.newHashSet(new SequenceFilePair()))
-				.build();
-		submission.setId(2L);
-
-		MetadataEntry entry = new MetadataEntry("entry2", "text", field1);
-
-		Set<MetadataEntry> inputMetadata = Sets.newHashSet(entry);
-
-		sample2.mergeMetadata(inputMetadata);
-
-		assertEquals("Metadata map does not have correct number of entries", 2, sample2.getMetadataEntries()
-				.size());
-		assertEquals("Updated metadata entry does not match", entry, sample2.getMetadataEntryForField(field1)
-				.orElse(null));
-		assertEquals("Non-updated metadata entry does not match", this.pipelineEntry2,
-				sample2.getMetadataEntryForField(field2)
-						.orElse(null));
 	}
 
 	private void testBlacklists(char[] blacklist) {
