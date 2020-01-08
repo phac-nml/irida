@@ -106,10 +106,11 @@ public class BioHanselSampleUpdaterTest {
 		});
 		assertEquals("Should have the same number of metadata entries", expectedResults.size(), found.get());
 
+		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
-		verify(sampleService).updateFields(eq(sample.getId()), mapCaptor.capture());
-		Set<MetadataEntry> value = (Set<MetadataEntry>) mapCaptor.getValue()
-				.get("metadataEntries");
+		verify(sampleService).mergeSampleMetadata(eq(sample), setCaptor.capture());
+
+		Set<MetadataEntry> value = setCaptor.getValue();
 
 		assertEquals(metadataSet.iterator()
 				.next(), value.iterator()

@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -298,12 +299,15 @@ public class ExportUploadServiceTest {
 
 		verify(sampleService).getSampleForSequencingObject(seqObject);
 
-		ArgumentCaptor<Sample> captor = ArgumentCaptor.forClass(Sample.class);
-		verify(sampleService).update(captor.capture());
+		ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
+		verify(sampleService).mergeSampleMetadata(any(Sample.class), captor.capture());
 
-		Sample savedSample = captor.getValue();
-		assertTrue("saved sample should contain accession", savedSample.getMetadataEntryForField(field)
-				.isPresent());
+		Set<MetadataEntry> savedMetadata = captor.getValue();
+		Optional<MetadataEntry> metadataEntryOptional = savedMetadata.stream()
+				.filter(e -> e.getField()
+						.equals(field))
+				.findAny();
+		assertTrue("saved sample should contain accession", metadataEntryOptional.isPresent());
 	}
 
 	/**
