@@ -6,7 +6,7 @@ import { PagedTableProvider } from "../../contexts/PagedTableContext";
 
 export function RemoteApiPage({}) {
   return (
-    <PageWrapper title={i18n("remoteapi.title")}>
+    <PageWrapper title={i18n("RemoteApi.title")}>
       <PagedTableProvider url="remote_api/ajax/list">
         <RemoteApiTable />
       </PagedTableProvider>

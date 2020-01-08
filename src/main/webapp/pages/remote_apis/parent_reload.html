@@ -7,9 +7,14 @@
       This is loaded into an iFrame.
       Close the bootstrap modal on the parent page.
        */
-      var modal = window.parent.document.querySelector("#remote-connect-wrapper");
-      modal.dataset.result = "success";
-      modal.querySelector(".close").click();
+      // var modal = window.parent.document.querySelector("#remote-connect-wrapper");
+      // modal.dataset.result = "success";
+      // modal.querySelector(".close").click();
+      window.parent.postMessage({
+        type: "remote_api",
+
+      })
+
     </script>
 </body>
 </html>

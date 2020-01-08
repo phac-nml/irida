@@ -36,8 +36,7 @@ export function RemoteApiTable() {
       title: i18n("remoteapi.status"),
       align: "right",
       render(text, item) {
-        console.log(item);
-        return <RemoteApiStatus  />;
+        return <RemoteApiStatus api={item}  />;
       }
     }
   ];
