@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { Table } from "antd";
+import { RemoteApiStatus } from "./RemoteApiStatus";
 
 export function RemoteApiTable() {
   const {
@@ -36,7 +37,7 @@ export function RemoteApiTable() {
       align: "right",
       render(text, item) {
         console.log(item);
-        return "connected";
+        return <RemoteApiStatus  />;
       }
     }
   ];
