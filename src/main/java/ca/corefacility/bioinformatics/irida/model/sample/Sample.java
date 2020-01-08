@@ -169,7 +169,7 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
-				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude, metadataEntries);
+				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude);
 	}
 
 	@Override
