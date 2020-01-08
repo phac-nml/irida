@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
@@ -18,12 +19,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltIn
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 
+
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisInputFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
@@ -67,7 +70,7 @@ public class AnalysisAjaxControllerTest {
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 	private ExecutionManagerConfig configFileMock;
 	private EmailController emailControllerMock;
-
+	private AnalysisAudit analysisAuditMock;
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
@@ -87,11 +90,12 @@ public class AnalysisAjaxControllerTest {
 		userServiceMock = mock(UserService.class);
 		configFileMock = mock(ExecutionManagerConfig.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
+		AnalysisAudit analysisAuditingMock = mock(AnalysisAudit.class);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock);
+				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditingMock);
 
 	}
 
