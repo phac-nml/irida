@@ -12,6 +12,12 @@ import java.util.Set;
  */
 public interface MetadataEntryRepository extends IridaJpaRepository<MetadataEntry, Long> {
 
+	/**
+	 * Get all the {@link MetadataEntry} attached to the given {@link Sample}
+	 *
+	 * @param sample the sample to get metadata for
+	 * @return a set of {@link MetadataEntry}
+	 */
 	@Query("FROM MetadataEntry m WHERE m.sample=?1")
 	Set<MetadataEntry> getMetadataForSample(Sample sample);
 }

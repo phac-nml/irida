@@ -358,7 +358,8 @@ public class ProjectSynchronizationService {
 	/**
 	 * Synchronize the given sample's metadata
 	 *
-	 * @param sample the sample to sync
+	 * @param remoteSample the sample read from the remote api
+	 * @param localSample  the local sample being saved
 	 * @return the synchronized sample
 	 */
 	public Sample syncSampleMetadata(Sample remoteSample, Sample localSample) {

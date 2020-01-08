@@ -110,6 +110,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
 	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
 	 * @param userRepository                     A {@link UserRepository}
+	 * @param metadataEntryRepository            A {@link MetadataEntryRepository}
 	 * @param validator                          validator.
 	 */
 	@Autowired
@@ -179,12 +180,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return super.update(object);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
 	@Override
 	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
 		return metadataEntryRepository.getMetadataForSample(sample);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
 	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {
@@ -203,6 +210,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return s;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
 	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd) {
