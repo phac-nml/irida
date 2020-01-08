@@ -279,7 +279,7 @@ public class AnalysisAjaxController {
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
-		if (iridaWorkflow.getWorkflowDescription()
+		if (iridaWorkflow != null && iridaWorkflow.getWorkflowDescription()
 				.requiresReference() && submission.getReferenceFile()
 				.isPresent()) {
 
@@ -614,7 +614,7 @@ public class AnalysisAjaxController {
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/{submissionId}/share", method = RequestMethod.POST)
-	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
+	public ResponseDetails updateProjectShare(@PathVariable Long submissionId,
 			@RequestBody AnalysisProjectShare projectShare, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Project project = projectService.read(projectShare.getProjectId());
@@ -631,7 +631,8 @@ public class AnalysisAjaxController {
 					locale);
 		}
 
-		return ImmutableMap.of("result", "success", "message", message);
+		return new ResponseDetails(message);
+
 	}
 
 	/**

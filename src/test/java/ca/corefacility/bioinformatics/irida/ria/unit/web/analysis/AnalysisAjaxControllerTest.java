@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,10 +11,9 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
@@ -25,7 +23,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisInputFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -305,22 +305,38 @@ public class AnalysisAjaxControllerTest {
 
 	@Test
 	public void testDeleteAnalysisSubmission() {
+		Long submissionId = 1L;
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
-
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		analysisSubmissionServiceMock.delete(submission.getId());
 		assertNull("Submission has been deleted", analysisSubmissionServiceMock.read(submission.getId()));
 	}
 
 	@Test
 	public void updateSharedProjects(){
+		Long submissionId = 1L;
+		Long projectId = 1L;
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		Project project = TestDataFactory.constructProject();
-
-		analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project);
-
-		assertNotNull("Not null", analysisSubmissionServiceMock.getAnalysisSubmissionsSharedToProject(project));
+		ProjectAnalysisSubmissionJoin paj = TestDataFactory.constructProjectAnalysisSubmissionJoin(project, submission);
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(projectServiceMock.read(projectId)).thenReturn(project);
+		when(analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project)).thenReturn(paj);
+		assertNotNull("Analysis results shared with project is not null", analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project));
 	}
 
+	@Test
+	public void removeSharedProjects(){
+		Long submissionId = 1L;
+		Long projectId = 1L;
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		Project project = TestDataFactory.constructProject();
+		ProjectAnalysisSubmissionJoin paj = TestDataFactory.constructProjectAnalysisSubmissionJoin(project, submission);
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(projectServiceMock.read(projectId)).thenReturn(project);
+		when(analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project)).thenReturn(paj);
+		assertNotNull("Analysis results shared with project is not null", analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project));
+	}
 
 	@Test
 	public void saveResultsToSamples() {
@@ -341,11 +357,27 @@ public class AnalysisAjaxControllerTest {
 
 	@Test
 	public void getInputs() {
+		Long submissionId = 1L;
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
-		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
-				submission, SequenceFilePair.class);
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 
-		assertEquals("There should be 0 samples for this submission", inputFilePairs.size() , 0);
+		AnalysisInputFiles inputFiles = analysisAjaxController.ajaxGetAnalysisInputFiles(submissionId);
+		inputFiles.setReferenceFile(TestDataFactory.constructReferenceFile());
+		Sample sample1 = TestDataFactory.constructSample();
+		sample1.setId(1L);
+		Sample sample2 = TestDataFactory.constructSample();
+		sample1.setId(2L);
+
+		AnalysisSamples newSample  = new AnalysisSamples(sample1.getSampleName(), sample1.getId(), null,null,null);
+		AnalysisSamples anotherNewSample = new AnalysisSamples(sample2.getSampleName(), sample2.getId(), null,null,null);
+
+		List<AnalysisSamples> samples = new ArrayList<>();
+		samples.add(newSample);
+		samples.add(anotherNewSample);
+
+		inputFiles.setSamples(samples);
+
+		assertEquals("There should be 2 samples for this submission", inputFiles.getSamples().size() , 2);
 	}
 
 }
