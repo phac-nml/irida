@@ -52,8 +52,18 @@ public class AnalysisAudit {
 			}
 		}
 
+		/*
+		 * We use the uniqueAuditedSubmissions to store unique revisions
+		 * based on the analysis state so that we don't get duplicate
+		 * revisions for a single state.
+		 */
 		if (uniqueAuditedSubmissions.size() > 0) {
-			// Get the run time of the analysis from creation till completion/error
+			/*
+			 * Get the run time of the analysis from creation till completion/error. We
+			 * get the last modified date of the last unique revision and pass that
+			 * along with the submission created date to getDurationInMilliseconds
+			 * which subtracts the two and returns the duration
+			 */
 			return DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(),
 					uniqueAuditedSubmissions.get(uniqueAuditedSubmissions.size() - 1)
 							.getModifiedDate());
