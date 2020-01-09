@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +8,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AnalysisDetailsPage extends AbstractPage {
@@ -48,7 +45,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "it-has-job-error")
 	private List<WebElement> divHasJobError;
 
-	@FindBy(css = ".t-paired-end h4 span")
+	@FindBy(className = "t-paired-end-sample-name")
 	private List<WebElement> sampleLabels;
 
 	@FindBy(id = "t-analysis-tab-settings")
@@ -57,6 +54,11 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "root")
 	private WebElement rootDiv;
 
+	@FindBy(className = "ant-popover-inner-content")
+	private WebElement confirmDiv;
+
+	@FindBy(id = "t-delete-analysis-btn")
+	private WebElement deleteButton;
 
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
@@ -160,7 +162,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public boolean comparePageTitle(String pageTitle) {
-		int titleFound = rootDiv.findElements(By.xpath("//h2[contains(text(),'" + pageTitle + "')]"))
+		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
 				.size();
 
 		if (titleFound > 0) {
@@ -190,6 +192,33 @@ public class AnalysisDetailsPage extends AbstractPage {
 	public boolean emailPipelineResultVisible() {
 		return !driver.findElements(By.className("t-email-pipeline-result"))
 				.isEmpty();
+	}
+
+	public boolean deleteButtonExists() {
+		return rootDiv.findElements(By.className("ant-btn-danger")).size() > 0;
+	}
+
+	public void deleteAnalysis() {
+		rootDiv.findElements(By.className("ant-btn-danger")).get(0).click();
+		waitForTime(500);
+		waitForElementVisible(By.className("ant-popover-inner-content"));
+		confirmDiv.findElements(By.className("ant-btn-sm")).get(1).click();
+	}
+
+	public boolean hasSharedWithProjects() {
+		return rootDiv.findElements(By.className("ant-checkbox-checked")).size() > 0;
+	}
+
+	public void removeSharedProjects() {
+		rootDiv.findElements(By.className("ant-checkbox-checked")).get(0).click();
+	}
+
+	public int getNumberOfListItems() {
+		return rootDiv.findElements(By.className("ant-list-item-meta-title")).size();
+	}
+
+	public int getNumberOfListItemValues() {
+		return rootDiv.findElements(By.className("ant-list-item-meta-description")).size();
 	}
 
 	public boolean jobErrorAlertVisible() {

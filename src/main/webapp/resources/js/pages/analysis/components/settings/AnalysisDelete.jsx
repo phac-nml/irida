@@ -54,7 +54,10 @@ export default function AnalysisDelete() {
           cancelText={i18n("AnalysisDelete.cancel")}
           onConfirm={handleDeleteConfirm}
         >
-          <Button type="danger" className="spaced-top__lg">
+          <Button
+            type="danger"
+            className="spaced-top__lg t-delete-analysis-btn"
+          >
             {i18n("AnalysisDelete.delete")}
           </Button>
         </Popconfirm>

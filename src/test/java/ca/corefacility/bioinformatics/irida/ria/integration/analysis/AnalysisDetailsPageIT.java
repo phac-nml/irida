@@ -10,43 +10,28 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisDetailsPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 @Ignore
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
 
-	@Ignore
+
 	@Test
 	public void testPageSetUp() throws URISyntaxException, IOException {
 		logger.debug("Testing 'Analysis Details Page'");
 
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
+		assertTrue("Page title should equal", page.comparePageTitle("Tree Preview"));
 
-		// Ensure files are displayed
-		page.displayProvenanceView();
-		assertEquals("Should be displaying 1 file", 1, page.getNumberOfFilesDisplayed());
-
-		// Ensure tools are displayed
-		page.displayTreeTools();
-		assertEquals("Should have 2 tools associated with the tree", 2, page.getNumberOfToolsForTree());
-
-		// Ensure the tool parameters can be displayed;
-		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
-
-		// Ensure the input files are displayed
-		// 2 Files expected since they are a pair.
-		page.displayInputFilesTab();
-		assertEquals("Should display 2 pairs of paired end files", 2, page.getNumberOfSamplesInAnalysis());
-		assertEquals("Sample 1 should not be related to a sample", "Unknown Sample", page.getLabelForSample(0));
 	}
 
 	@Test
@@ -86,32 +71,32 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	// Successfullu completed analysis (COMPLETED state)
-	public void testTabRoutingAnalysisCompleted() throws URISyntaxException, IOException {
+	public void testTabRoutingAnalysisCompletedTree() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 6L, "output");
-		assertTrue("Page title should equal", page.comparePageTitle("Output Files"));
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
+		assertTrue("Page title should equal", page.comparePageTitle("Tree Preview"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "provenance");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "tree/file_preview");
+		assertTrue("Page title should equal", page.comparePageTitle("Output File Preview"));
+
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
 		assertTrue("Page title should equal", page.comparePageTitle("Provenance"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/details");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/samples");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/samples");
 		assertTrue("Page title should equal", page.compareTabTitle("Samples"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/share");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/share");
 		assertTrue("Page title should equal", page.compareTabTitle("Manage Results"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "settings/delete");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/delete");
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
-
-		page = AnalysisDetailsPage.initPage(driver(), 6L, "job-error");
-		assertFalse("No job error information available alert hidden", page.jobErrorAlertVisible());
 	}
 
 	@Test
@@ -122,9 +107,11 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("No job error information available alert visible", page.jobErrorAlertVisible());
 
+		// Should not be able to view output files page if analysis errored
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "output");
-		assertFalse("Page title should not equal", page.comparePageTitle("Output Files"));
+		assertFalse("Page title should not equal", page.comparePageTitle("Output File Preview"));
 
+		// Should not be able to view provenance page if analysis errored
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "provenance");
 		assertFalse("Page title should not equal", page.comparePageTitle("Provenance"));
 
@@ -137,6 +124,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/samples");
 		assertTrue("Page title should equal", page.compareTabTitle("Samples"));
 
+		// Should not be able to share results if analysis errored
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/share");
 		assertFalse("Page title should not equal", page.compareTabTitle("Manage Results"));
 
@@ -144,4 +132,49 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
 	}
 
+	@Test
+	public void testSamplesPage() {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/samples");
+		assertTrue("Page title should equal", page.compareTabTitle("Samples"));
+		assertEquals("Should display 2 pairs of paired end files", 2, page.getNumberOfSamplesInAnalysis());
+	}
+
+	@Test
+	public void testDeleteAnalysis() {
+		LoginPage.loginAsManager(driver());
+
+		AnalysesUserPage analysesPage = AnalysesUserPage.initializeAdminPage(driver());
+		assertEquals("Should have 9 analyses displayed originally", 9, analysesPage.getNumberOfAnalysesDisplayed());
+
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
+		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
+		assertTrue(page.deleteButtonExists());
+		page.deleteAnalysis();
+
+		analysesPage = AnalysesUserPage.initializeAdminPage(driver());
+		assertEquals("Should have 8 analyses left", 8, analysesPage.getNumberOfAnalysesDisplayed());
+	}
+
+	@Test
+	public void testSharedProjects() {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/share");
+		assertTrue("Page title should equal", page.compareTabTitle("Manage Results"));
+		assertTrue("Analysis shared projects", page.hasSharedWithProjects());
+
+		page.removeSharedProjects();
+		assertTrue("Analysis no longer shared with any projects", !page.hasSharedWithProjects());
+	}
+
+	@Test
+	public void testAnalysisDetails() {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
+		assertEquals("There should be 7 labels for analysis details", 7, page.getNumberOfListItems());
+
+		// Analysis Description doesn't have a value
+		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
+	}
 }

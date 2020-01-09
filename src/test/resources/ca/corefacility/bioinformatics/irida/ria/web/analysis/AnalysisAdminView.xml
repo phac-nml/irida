@@ -63,6 +63,7 @@
 	<sequence_file_pair id="2" />
 
 	<sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
+    <sample_sequencingobject id="2" sample_id="2" sequencingobject_id="2" created_date="2013-07-18 14:20:19.0" />
 
     <sequence_file_pair_files pair_id="1" files_id="1" />
     <sequence_file_pair_files pair_id="1" files_id="2" />
@@ -75,6 +76,7 @@
 	<analysis id="2" createdDate="2014-02-06 12:01:02"
 		executionManagerAnalysisId="Whole Genome Phylogenomics Pipeline"
 		analysis_type="PHYLOGENOMICS" />
+
 
     <analysis_submission id="1" name="another analysis" remote_analysis_id="1" analysis_id="1" reference_file_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19"
@@ -129,4 +131,6 @@
 
     <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="1" />
     <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="2" />
+
+    <project_analysis_submission id="1" project_id="1" analysis_submission_id="4" created_date="2013-07-18 14:20:19.0"/>
 </dataset>

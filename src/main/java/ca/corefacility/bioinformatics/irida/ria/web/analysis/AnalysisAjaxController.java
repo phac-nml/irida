@@ -375,35 +375,37 @@ public class AnalysisAjaxController {
 		// set of file extensions for indicating whether the first line of the file should be read
 		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab", TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
-		final Long aofId = aof.getId();
-		final String aofFilename = aof.getFile()
-				.getFileName()
-				.toString();
-		final String fileExt = FileUtilities.getFileExt(aofFilename);
-		if (BLACKLIST_FILE_EXT.contains(fileExt))
-		{
-			return null;
-		}
-		final ToolExecution tool = aof.getCreatedByTool();
-		final String toolName = tool.getToolName();
-		final String toolVersion = tool.getToolVersion();
-		final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+		if(aof != null) {
+			final Long aofId = aof.getId();
+			final String aofFilename = aof.getFile()
+					.getFileName()
+					.toString();
+			final String fileExt = FileUtilities.getFileExt(aofFilename);
+			if (BLACKLIST_FILE_EXT.contains(fileExt)) {
+				return null;
+			}
+			final ToolExecution tool = aof.getCreatedByTool();
+			final String toolName = tool.getToolName();
+			final String toolVersion = tool.getToolVersion();
+			final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
 
-		info.setId(aofId);
-		info.setAnalysisSubmissionId(submission.getId());
-		info.setAnalysisId(analysis.getId());
-		info.setOutputName(outputName);
-		info.setFilename(aofFilename);
-		info.setFileSizeBytes(aof.getFile()
-				.toFile()
-				.length());
-		info.setToolName(toolName);
-		info.setToolVersion(toolVersion);
-		info.setFileExt(fileExt);
-		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
-			addFirstLine(info, aof);
+			info.setId(aofId);
+			info.setAnalysisSubmissionId(submission.getId());
+			info.setAnalysisId(analysis.getId());
+			info.setOutputName(outputName);
+			info.setFilename(aofFilename);
+			info.setFileSizeBytes(aof.getFile()
+					.toFile()
+					.length());
+			info.setToolName(toolName);
+			info.setToolVersion(toolVersion);
+			info.setFileExt(fileExt);
+			if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
+				addFirstLine(info, aof);
+			}
+			return info;
 		}
-		return info;
+		return null;
 	}
 
 

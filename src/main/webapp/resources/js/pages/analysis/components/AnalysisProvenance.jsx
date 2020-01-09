@@ -170,7 +170,10 @@ export default function AnalysisProvenance() {
   // the user is viewing the provenance for
   function getCreatedByToolPanels() {
     let panels = [];
-    if (analysisOutputsContext.outputs !== null) {
+    if (
+      analysisOutputsContext.outputs !== null &&
+      analysisOutputsContext.outputs.length > 0
+    ) {
       for (let output of analysisOutputsContext.outputs) {
         {
           provenance !== null && currFileName === output.filename

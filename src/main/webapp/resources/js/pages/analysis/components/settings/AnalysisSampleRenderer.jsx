@@ -48,6 +48,7 @@ export function AnalysisSampleRenderer() {
             <List.Item>
               <List.Item.Meta
                 key={item.sampleId}
+                className="t-paired-end"
                 avatar={
                   <Avatar>
                     <Icon type="experiment" />
@@ -57,6 +58,7 @@ export function AnalysisSampleRenderer() {
                   <a
                     href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
                     target="_blank"
+                    className="t-paired-end-sample-name"
                   >
                     {item.sampleName}
                   </a>
