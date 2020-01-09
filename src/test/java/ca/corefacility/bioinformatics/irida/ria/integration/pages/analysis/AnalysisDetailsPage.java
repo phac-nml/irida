@@ -221,6 +221,14 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return rootDiv.findElements(By.className("ant-list-item-meta-description")).size();
 	}
 
+	public boolean hasSideBarTabLinks() {
+		return rootDiv.findElements(By.className("ant-layout-has-sider")).size() == 1;
+	}
+
+	public boolean hasHorizontalTabLinks() {
+		return rootDiv.findElements(By.className("ant-menu-horizontal")).size() == 1;
+	}
+
 	public boolean jobErrorAlertVisible() {
 
 		return !driver.findElements(By.className("ant-alert-warning"))

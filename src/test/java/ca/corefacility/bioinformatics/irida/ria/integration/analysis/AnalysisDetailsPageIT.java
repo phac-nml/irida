@@ -32,6 +32,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
 		assertTrue("Page title should equal", page.comparePageTitle("Tree Preview"));
 
+		assertTrue("Has sidebar tab links", page.hasSideBarTabLinks());
+		assertTrue("Has horizontal tab links", page.hasHorizontalTabLinks());
 	}
 
 	@Test
