@@ -29,29 +29,36 @@
             </column>
         </addColumn>
 
+        <!-- update the metadata_entry table with the existing sample_metadata_entry data linking the sample and field-->
         <sql>
             update metadata_entry e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
             e.field_id=s.metadata_KEY, e.sample_id=s.sample_id;
         </sql>
 
+        <!-- update the audit tables with the current data on the entries -->
         <sql>
             update metadata_entry_AUD e INNER JOIN sample_metadata_entry s ON e.id=s.metadata_id SET
             e.field_id=s.metadata_KEY, e.sample_id=s.sample_id;
         </sql>
 
+        <!-- Update the audit tables with the audit records from sample_metadata_entry_AUD and link on the revisions -->
         <sql>
             update metadata_entry_AUD e INNER JOIN sample_metadata_entry_AUD s ON e.id=s.metadata_id AND e.REV=s.REV SET
             e.field_id=s.metadata_KEY, e.sample_id=s.sample_id;
         </sql>
 
+        <!-- Remove any unlinked pipeline metadata entries. They're not linked to anything anymore so can be removed -->
         <sql>
             delete p.* from pipeline_metadata_entry p INNER JOIN metadata_entry m ON p.id=m.id WHERE m.sample_id is null
         </sql>
 
+        <!-- Remove all unlinked metadata_entry rows. They're not associated with a sample anymore so they're not needed.
+        This will also break the notnull constraint we're about to add so they need to be gone. -->
         <sql>
-            delete from metadata_entry where field_id is null;
+            delete from metadata_entry where sample_id is null;
         </sql>
 
+        <!-- Add not nulls to ensure we don't have unlinked entries in the future -->
         <addNotNullConstraint tableName="metadata_entry" columnName="field_id" columnDataType="bigint(20)"/>
         <addNotNullConstraint tableName="metadata_entry" columnName="sample_id" columnDataType="bigint(20)"/>
 
