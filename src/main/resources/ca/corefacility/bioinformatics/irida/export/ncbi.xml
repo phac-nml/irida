@@ -18,12 +18,12 @@
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
 		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
-			<div th:if="${file.getFile().toString().endsWith(&quot;.gz&quot;)}">
+			<div th:if="${file.getFiles().toString().endsWith(&quot;.gz&quot;)}">
 				<File th:attr="file_path=${file.getId() + '.fastq.gz'}">
 					<DataType>generic-data</DataType>
 				</File>
 			</div>
-			<div th:if="${!file.getFile().toString().endsWith(&quot;.gz&quot;)}">
+			<div th:if="${!file.getFiles().toString().endsWith(&quot;.gz&quot;)}">
 				<File th:attr="file_path=${file.getId() + '.fastq'}">
 					<DataType>generic-data</DataType>
 				</File>
