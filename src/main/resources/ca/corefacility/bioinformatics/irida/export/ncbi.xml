@@ -18,9 +18,16 @@
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
 		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
-			<File th:attr="file_path=${file.getId() + '.fastq'}">
-				<DataType>generic-data</DataType>
-			</File>
+			<div th:if="${file.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${file.getId() + '.fastq.gz'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</div>
+			<div th:if="${!file.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${file.getId() + '.fastq'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</div>
 			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
@@ -49,8 +56,18 @@
 					<DataType>generic-data</DataType>
 				</File>
 			</div>
+			<div th:if="${!forward.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${forward.getId() + '.fastq'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</div>
 			<div th:if="${reverse.getFile().toString().endsWith(&quot;.gz&quot;)}" >
 				<File th:attr="file_path=${reverse.getId() + '.fastq.gz'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</div>
+			<div th:if="${!reverse.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${forward.getId() + '.fastq'}">
 					<DataType>generic-data</DataType>
 				</File>
 			</div>
