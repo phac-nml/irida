@@ -114,7 +114,7 @@ export function AnalysesTable() {
     },
     {
       ...dateColumnFormat(),
-      title: "Created Date",
+      title: i18n("iridaThing.timestamp"),
       dataIndex: "createdDate",
       key: "createdDate"
     },
