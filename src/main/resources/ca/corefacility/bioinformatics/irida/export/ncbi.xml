@@ -67,7 +67,7 @@
 				</File>
 			</div>
 			<div th:if="${!reverse.getFile().toString().endsWith(&quot;.gz&quot;)}">
-				<File th:attr="file_path=${forward.getId() + '.fastq'}">
+				<File th:attr="file_path=${reverse.getId() + '.fastq'}">
 					<DataType>generic-data</DataType>
 				</File>
 			</div>
