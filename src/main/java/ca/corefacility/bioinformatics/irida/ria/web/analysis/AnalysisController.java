@@ -141,10 +141,6 @@ public class AnalysisController {
 	public String getAdminAnalysisList(Model model) {
 		model.addAttribute("isAdmin", true);
 		model.addAttribute("all", true);
-
-		AnalysisSubmissionService.AnalysisServiceStatus analysisServiceStatus = analysisSubmissionService.getAnalysisServiceStatus();
-
-		logger.debug(analysisServiceStatus.toString());
 		return PAGE_ANALYSIS_LIST;
 	}
 
@@ -162,11 +158,6 @@ public class AnalysisController {
 		User loggedInUser = userService.getUserByUsername(principal.getName());
 		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
 		model.addAttribute("isAdmin", isAdmin);
-
-		AnalysisSubmissionService.AnalysisServiceStatus analysisServiceStatus = analysisSubmissionService.getAnalysisServiceStatus();
-
-		logger.debug(analysisServiceStatus.toString());
-
 		return PAGE_ANALYSIS_LIST;
 	}
 
