@@ -107,9 +107,7 @@ public class RESTSampleMetadataController {
 		Sample s = sampleService.read(sampleId);
 
 		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(metadataMap);
-
-		//s.mergeMetadata(metadata);
-
+		
 		sampleService.mergeSampleMetadata(s, metadata);
 
 		return getSampleMetadata(sampleId);
