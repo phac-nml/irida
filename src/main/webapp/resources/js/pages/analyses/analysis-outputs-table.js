@@ -1,4 +1,8 @@
-import { Grid } from "ag-grid-community/main";
+/**
+ * @file Display table for listing outputs for analyses.
+ * TODO: This needs to be refactored with ant.design.
+ */
+import { Grid } from "ag-grid-community";
 import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
 import { download } from "../../utilities/file.utilities";
@@ -12,6 +16,13 @@ import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import { setBaseUrl } from "../../utilities/url-utilities";
+
+/**
+ * Base URL for AJAX requests.
+ * @type {string}
+ */
+const AJAX_URL = window.PAGE.URLS.base;
 
 const helpInfoIcon = `<i class="fa fa-2x fa-question-circle spaced-left__sm text-info" title="${escapeHtml(
   i18n("analysis.batch-download.help-info")
@@ -22,12 +33,6 @@ const helpInfoIcon = `<i class="fa fa-2x fa-question-circle spaced-left__sm text
  * @type {RegExp}
  */
 const FILENAME_REGEX = /.*\/(.+\.\w+)/;
-
-/**
- * Base URL for AJAX requests.
- * @type {string}
- */
-const BASE_URL = window.PAGE.URLS.base;
 
 /**
  * Project id if on Project Analysis Outputs page; null if on User Analysis Outputs page
@@ -87,7 +92,7 @@ async function downloadSelected($dlButton, api) {
       sampleId,
       filePath
     } = selectedNodes[0].data;
-    let url = `${BASE_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
+    let url = `${AJAX_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
     const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
       filePath
     )}`;
@@ -102,7 +107,7 @@ async function downloadSelected($dlButton, api) {
     }
     const { selectionSize } = data;
     const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
-    const downloadUrl = `${BASE_URL}analysis/ajax/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
+    const downloadUrl = `${AJAX_URL}analysis/ajax/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
     download(downloadUrl);
   }
   setDownloadButtonHtml(
@@ -151,12 +156,14 @@ function setDownloadButtonHtml(
  */
 function initAgGrid($grid, headers, rows, $dlButton) {
   const gridOptions = {
-    enableColResize: true,
     columnDefs: headers,
     rowData: rows,
     rowDeselection: true,
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef: {
+      resizable: true,
+      sortable: true,
+      filterable: true
+    },
     rowSelection: "multiple",
     onSelectionChanged: e => {
       const selectedNodes = e.api.getSelectedNodes();
@@ -267,7 +274,7 @@ async function getTableData(isShared = true) {
       cellRenderer: p => {
         const { sampleId, sampleName } = p.data;
         const projectUrlPrefix = PROJECT_ID ? `projects/${PROJECT_ID}/` : "";
-        return `<a href="${BASE_URL}${projectUrlPrefix}samples/${sampleId}/details" target="_blank">${sampleName}</a>`;
+        return `<a href="${AJAX_URL}${projectUrlPrefix}samples/${sampleId}/details" target="_blank">${sampleName}</a>`;
       }
     },
     {
@@ -314,7 +321,7 @@ async function getTableData(isShared = true) {
       field: "analysisSubmissionName",
       headerName: i18n("analysis-submission"),
       cellRenderer: p =>
-        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
+        `<a href="${AJAX_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {
