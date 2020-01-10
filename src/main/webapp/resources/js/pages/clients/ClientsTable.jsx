@@ -12,6 +12,7 @@ import {
   ClientNameRenderer,
   DateCellRenderer
 } from "../../components/Tables/renderers";
+import { ClientGrantsFilter } from "../../components/Tables/filters";
 import { AutoSizer } from "react-virtualized";
 
 export function ClientsTable() {
@@ -26,27 +27,32 @@ export function ClientsTable() {
   const columnDefs = [
     {
       headerName: i18n("iridaThing.id"),
-      width: 100,
-      field: "id"
+      width: 130,
+      field: "id",
+      filter: "agNumberColumnFilter"
     },
     {
       headerName: i18n("client.clientid"),
       field: "name",
+      filter: "agTextColumnFilter",
       cellRenderer: "ClientNameRenderer"
     },
     {
       headerName: i18n("client.grant-types"),
       field: "grants",
+      filter: "ClientGrantsFilter",
       cellRenderer: "ClientGrantsRenderer"
     },
     {
       headerName: i18n("iridaThing.timestamp"),
       field: "createdDate",
+      filter: "agDateColumnFilter",
       cellRenderer: "DateCellRenderer"
     },
     {
       headerName: i18n("client.details.token.active"),
-      field: "tokens"
+      field: "tokens",
+      filter: "agNumberColumnFilter"
     }
   ];
 
@@ -66,9 +72,11 @@ export function ClientsTable() {
               <AgGridReact
                 columnDefs={columnDefs}
                 rowData={rows}
+                defaultColDef={{ sortable: true }}
                 frameworkComponents={{
                   ClientGrantsRenderer,
                   ClientNameRenderer,
+                  ClientGrantsFilter,
                   DateCellRenderer
                 }}
               />

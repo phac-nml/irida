@@ -11,7 +11,7 @@ import {
   getAssociatedProjects,
   removeAssociatedProject
 } from "../../../apis/projects/associated-projects";
-import { TextFilter } from "../../../components/Tables/fitlers";
+import { TextFilter } from "../../../components/Tables/filters";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
 
 const { Text } = Typography;
