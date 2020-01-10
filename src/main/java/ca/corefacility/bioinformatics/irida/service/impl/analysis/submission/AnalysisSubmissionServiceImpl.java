@@ -795,6 +795,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisServiceStatus getAnalysisServiceStatus() {
 		Long running = analysisSubmissionRepository.countByAnalysisState(AnalysisState.getRunningStates());
