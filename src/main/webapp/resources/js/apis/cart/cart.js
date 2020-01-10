@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = `${window.TL.BASE_URL}cart`;
+const url = `cart`;
 
 /**
  * Add samples for a project to the cart.
@@ -36,14 +36,6 @@ export const getSamplesForProjects = async ids =>
   axios
     .get(`${url}?${ids.map(id => `projectId=${id}`).join("&")}`)
     .then(({ data }) => data);
-// {
-//
-//   const samples = [];
-//   ids.forEach(id =>
-//     axios.get(`${url}?projectIds=${id}`).then(({ data }) => samples.concat(data))
-//   );
-//   return samples;
-// };
 
 /**
  * Remove all samples from the cart
