@@ -1,15 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
-import java.util.Objects;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import org.hibernate.envers.Audited;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import java.util.Objects;
 
 /**
  * {@link MetadataEntry} that has been created by an analysis pipeline
