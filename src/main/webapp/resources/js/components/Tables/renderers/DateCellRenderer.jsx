@@ -1,6 +1,6 @@
 import React from "react";
 
-import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
+import { formatDate, isDate } from "../../../utilities/date-utilities";
 import { Icon, Popover } from "antd";
 
 /**

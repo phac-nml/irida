@@ -5,7 +5,7 @@ import React from "react";
 
 import PropTypes from "prop-types";
 import { Tooltip } from "antd";
-import { blue6 } from "../../../../../../styles/colors";
+import { blue6 } from "../../../styles/colors";
 
 function LockedIcon() {
   return (

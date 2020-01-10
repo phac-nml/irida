@@ -1,70 +1,52 @@
-import React, { useContext } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
+import React, { useEffect, useState } from "react";
 import { PageWrapper } from "../../components/page/PageWrapper";
-import { Button, Table, Tag } from "antd";
+import { Button } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { SPACE_XS } from "../../styles/spacing";
-import { dateColumnFormat } from "../../components/ant.design/table-renderers";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-material.css";
+import { getAllClients } from "../../apis/clients/clients";
+import { AgGridLayout } from "../../components/Tables/AgGridLayout";
+import {
+  ClientGrantsRenderer,
+  ClientNameRenderer,
+  DateCellRenderer
+} from "../../components/Tables/renderers";
+import { AutoSizer } from "react-virtualized";
 
 export function ClientsTable() {
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange
-  } = useContext(PagedTableContext);
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    getAllClients().then(data => {
+      setRows(data.models);
+    });
+  }, [getAllClients]);
 
   const columnDefs = [
     {
-      title: i18n("iridaThing.id"),
-      key: "id",
-      dataIndex: "id",
-      sorter: (a, b) => a - b
+      headerName: i18n("iridaThing.id"),
+      width: 100,
+      field: "id"
     },
     {
-      title: i18n("client.clientid"),
-      key: "name",
-      dataIndex: "name",
-      render(text, record) {
-        return (
-          <Button type="link" href={`clients/${record.id}`}>
-            {text}
-          </Button>
-        );
-      },
-      sorter: (a, b) => ("" + a).localeCompare(b)
+      headerName: i18n("client.clientid"),
+      field: "name",
+      cellRenderer: "ClientNameRenderer"
     },
     {
-      title: i18n("client.grant-types"),
-      key: "grants",
-      dataIndex: "grants",
-      render(text) {
-        // Default colors for displaying grant types
-        const colors = { password: "geekblue", authorization_code: "volcano" };
-        // Comes back as a coma separated text list
-        return text.split(",").map(grant => (
-          <Tag
-            key={grant}
-            color={colors[grant] || ""}
-            style={{ marginRight: SPACE_XS }}
-          >
-            {grant}
-          </Tag>
-        ));
-      }
+      headerName: i18n("client.grant-types"),
+      field: "grants",
+      cellRenderer: "ClientGrantsRenderer"
     },
     {
-      ...dateColumnFormat(),
-      title: i18n("iridaThing.timestamp"),
-      key: "createdDate",
-      dataIndex: "createdDate",
+      headerName: i18n("iridaThing.timestamp"),
+      field: "createdDate",
+      cellRenderer: "DateCellRenderer"
     },
     {
-      title: i18n("client.details.token.active"),
-      key: "activeTokens",
-      dataIndex: "tokens",
-      align: "right"
+      headerName: i18n("client.details.token.active"),
+      field: "tokens"
     }
   ];
 
@@ -77,13 +59,23 @@ export function ClientsTable() {
         </Button>
       }
     >
-      <Table
-        columns={columnDefs}
-        loading={loading}
-        pagination={{ total, pageSize }}
-        dataSource={dataSource}
-        onChange={handleTableChange}
-      />
+      <AutoSizer>
+        {({ height, width }) => {
+          return (
+            <AgGridLayout height={height} width={width}>
+              <AgGridReact
+                columnDefs={columnDefs}
+                rowData={rows}
+                frameworkComponents={{
+                  ClientGrantsRenderer,
+                  ClientNameRenderer,
+                  DateCellRenderer
+                }}
+              />
+            </AgGridLayout>
+          );
+        }}
+      </AutoSizer>
     </PageWrapper>
   );
 }

@@ -14,7 +14,7 @@ const LayoutStyles = styled(Layout)`
   // Wrapper for the entire ag-grid and any associated components
   box-sizing: border-box;
   height: ${props => props.height}px;
-  width: 100%;
+  width: ${props => (props.width ? `${props.width}px` : "100%")};
   border: 1px solid ${grey5};
 
   .ag-root {

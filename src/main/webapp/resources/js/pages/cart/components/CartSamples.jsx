@@ -12,7 +12,7 @@ import {
   red4,
   red6
 } from "../../../styles/colors";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { AutoSizer } from "react-virtualized";
 import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
 import { actions } from "../../../redux/reducers/cart";

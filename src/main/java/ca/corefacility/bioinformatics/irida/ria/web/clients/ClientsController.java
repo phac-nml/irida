@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
-import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -434,12 +433,12 @@ public class ClientsController extends BaseController {
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TableResponse getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
+	public TableResponse getAjaxClientsList() {
 		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
-				.searchClient(tableRequest.getSearch());
+				.searchClient("");
 
 		Page<IridaClientDetails> page = clientDetailsService.search(specification,
-				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+				PageRequest.of(0, Integer.MAX_VALUE));
 		List<ClientModel> clients = page.getContent().stream()
 				.map(c -> new ClientModel(c, clientDetailsService.countActiveTokensForClient(c)))
 				.collect(Collectors.toList());

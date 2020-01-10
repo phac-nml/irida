@@ -1,13 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
-import { PagedTableProvider } from "../../contexts/PagedTableContext";
 import { ClientsTable } from "./ClientsTable";
 
 export function ClientsPage({}) {
   return (
-    <PagedTableProvider url="clients/ajax/list">
+    // <PagedTableProvider url="clients/ajax/list">
       <ClientsTable />
-    </PagedTableProvider>
+    // </PagedTableProvider>
   );
 }
 

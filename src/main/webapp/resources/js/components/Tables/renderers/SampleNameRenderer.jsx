@@ -3,8 +3,8 @@
  * a hyper link.
  */
 import React from "react";
-import { FIELDS } from "../../../constants";
-import { setBaseUrl } from "../../../../../../utilities/url-utilities";
+import { FIELDS } from "../../../pages/projects/linelist/constants";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 export class SampleNameRenderer extends React.Component {
   constructor(props) {

@@ -13,7 +13,7 @@ import {
   DateCellRenderer,
   IconCellRenderer,
   SampleNameRenderer
-} from "./renderers";
+} from "../../../../../components/Tables/renderers";
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
