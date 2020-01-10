@@ -462,7 +462,8 @@ public class SampleServiceImplTest {
 				.build();
 		submission.setId(2L);
 
-		PipelineProvidedMetadataEntry entry1 = new PipelineProvidedMetadataEntry("entry2", "text", submission, field1);
+		PipelineProvidedMetadataEntry entry1 = new PipelineProvidedMetadataEntry("entry2", "text", submission);
+		entry1.setField(field1);
 
 		MetadataTemplateField field2 = new MetadataTemplateField("field2", "text");
 		MetadataEntry entry2 = new MetadataEntry("entry2", "text", field2);

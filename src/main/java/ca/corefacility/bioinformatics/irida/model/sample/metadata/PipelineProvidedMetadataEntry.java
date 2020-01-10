@@ -39,11 +39,6 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 		this.submission = submission;
 	}
 
-	public PipelineProvidedMetadataEntry(String value, String type, AnalysisSubmission submission, MetadataTemplateField field) {
-		super(value, type, field);
-		this.submission = submission;
-	}
-
 	/**
 	 * Get the {@link AnalysisSubmission} that created this metadata
 	 *
