@@ -10,24 +10,31 @@ import { AgGridLayout } from "../../components/Tables/AgGridLayout";
 import {
   ClientGrantsRenderer,
   ClientNameRenderer,
+  ClientTokenRevokeRenderer,
   DateCellRenderer
 } from "../../components/Tables/renderers";
 import { ClientGrantsFilter } from "../../components/Tables/filters";
 import { AutoSizer } from "react-virtualized";
 
+/**
+ * Renders an ag-grid instance for displaying all available clients.
+ * @return {*}
+ * @constructor
+ */
 export function ClientsTable() {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    getAllClients().then(data => {
-      setRows(data.models);
+    // Fetches the data on page load.
+    getAllClients().then(({ models }) => {
+      setRows(models);
     });
   }, [getAllClients]);
 
   const columnDefs = [
     {
       headerName: i18n("iridaThing.id"),
-      width: 130,
+      width: 100,
       field: "id",
       filter: "agNumberColumnFilter"
     },
@@ -52,7 +59,9 @@ export function ClientsTable() {
     {
       headerName: i18n("client.details.token.active"),
       field: "tokens",
-      filter: "agNumberColumnFilter"
+      filter: "agNumberColumnFilter",
+      cellRenderer: "ClientTokenRevokeRenderer",
+      width: 250
     }
   ];
 
@@ -60,7 +69,7 @@ export function ClientsTable() {
     <PageWrapper
       title={i18n("clients.title")}
       headerExtras={
-        <Button href={setBaseUrl("clients/create")}>
+        <Button type="primary" href={setBaseUrl("clients/create")}>
           {i18n("clients.add")}
         </Button>
       }
@@ -68,15 +77,21 @@ export function ClientsTable() {
       <AutoSizer>
         {({ height, width }) => {
           return (
-            <AgGridLayout height={height} width={width}>
+            <AgGridLayout
+              height={height}
+              width={width}
+              style={{ maxWidth: 1100 }}
+            >
               <AgGridReact
                 columnDefs={columnDefs}
+                getRowNodeId={data => data.id}
                 rowData={rows}
                 defaultColDef={{ sortable: true }}
                 frameworkComponents={{
                   ClientGrantsRenderer,
                   ClientNameRenderer,
                   ClientGrantsFilter,
+                  ClientTokenRevokeRenderer,
                   DateCellRenderer
                 }}
               />

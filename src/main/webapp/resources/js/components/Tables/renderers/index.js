@@ -3,3 +3,4 @@ export { DateCellRenderer } from "./DateCellRenderer";
 export { IconCellRenderer } from "./IconCellRenderer";
 export { ClientGrantsRenderer } from "./ClientGrantsRenderer";
 export { ClientNameRenderer } from "./ClientNameRenderer";
+export { ClientTokenRevokeRenderer } from "./ClientTokenRevokeRenderer";
