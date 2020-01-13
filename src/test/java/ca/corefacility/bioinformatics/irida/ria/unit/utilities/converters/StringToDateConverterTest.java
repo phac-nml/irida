@@ -24,7 +24,7 @@ public class StringToDateConverterTest {
 	@Test
 	public void testConversions() {
 		String unix_epoch_string = "1970-01-01";
-		Date unix_epoch_date = new Date(28800000L);
+		Date unix_epoch_date = new Date(0L);
 		String y2k_string = "2000-01-01";
 		Date y2k_date = new Date(946713600000L);
 
