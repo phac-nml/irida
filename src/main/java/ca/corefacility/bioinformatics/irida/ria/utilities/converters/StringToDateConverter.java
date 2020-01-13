@@ -8,6 +8,12 @@ import java.util.Date;
 
 @Component
 public class StringToDateConverter implements Converter<String, Date> {
+    /**
+     * Converts a file length property (bytes) to kilobytes.
+     *
+     * @param source ISO8601-formatted date (YYYY-MM-DD)
+     * @return Date object
+     */
     @Override
     public Date convert(String source) {
         return DatatypeConverter.parseDate(source).getTime();
