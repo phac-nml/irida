@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.util;
+package ca.corefacility.bioinformatics.irida.ria.utilities.converters;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
