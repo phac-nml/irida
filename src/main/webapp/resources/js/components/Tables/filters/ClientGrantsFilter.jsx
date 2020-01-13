@@ -3,6 +3,10 @@ import { Select } from "antd";
 import { SPACE_XS } from "../../../styles/spacing";
 import { grey4 } from "../../../styles/colors";
 
+/**
+ * Filter for ag-grid Clients table to render a select box
+ * with the available grant types to filter by.
+ */
 export class ClientGrantsFilter extends React.Component {
   constructor(props) {
     super(props);
