@@ -1,9 +1,23 @@
 import axios from "axios";
 
-export function getAllClients() {
-  return axios.get("clients/ajax/list").then(({ data }) => data);
+/**
+ * Get a list of all clients in the IRIDA instance
+ * @return {Promise<*[]|any>}
+ */
+export async function getAllClients() {
+  try {
+    const { data } = await axios.get("clients/ajax/list");
+    return data;
+  } catch (e) {
+    return [];
+  }
 }
 
-export function revokeClientTokens(id) {
-  return axios.put(`clients/ajax/revoke?id=${id}`);
+/**
+ * Revoke all tokens for a given client by identifier.
+ * @param {number} id for the client
+ * @return {Promise<AxiosResponse<T>>}
+ */
+export async function revokeClientTokens(id) {
+  return await axios.put(`clients/ajax/revoke?id=${id}`);
 }
