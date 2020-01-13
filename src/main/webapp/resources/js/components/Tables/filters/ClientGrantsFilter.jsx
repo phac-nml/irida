@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Select } from "antd";
 import { SPACE_XS } from "../../../styles/spacing";
 import { grey4 } from "../../../styles/colors";
@@ -8,6 +9,11 @@ import { grey4 } from "../../../styles/colors";
  * with the available grant types to filter by.
  */
 export class ClientGrantsFilter extends React.Component {
+  static propTypes = {
+    valueGetter: PropTypes.func.isRequired,
+    filterChangedCallback: PropTypes.func.isRequired
+  };
+
   constructor(props) {
     super(props);
 
