@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Select } from "antd";
 import { SPACE_XS } from "../../../styles/spacing";
-import { grey4 } from "../../../styles/colors";
 
 /**
  * Filter for ag-grid Clients table to render a select box
@@ -52,7 +51,7 @@ export class ClientGrantsFilter extends React.Component {
 
   render() {
     return (
-      <div style={{ padding: SPACE_XS, borderBottom: `1px solid ${grey4}` }}>
+      <div style={{ padding: SPACE_XS }}>
         <Select
           defaultValue={this.state.value}
           style={{ width: 200 }}
