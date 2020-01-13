@@ -18,7 +18,7 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.ImmutableSet;

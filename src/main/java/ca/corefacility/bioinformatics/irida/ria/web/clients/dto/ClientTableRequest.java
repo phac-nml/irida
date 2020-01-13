@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.clients.dto;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 
 /**
  * {@link org.springframework.security.oauth2.provider.ClientDetails} does not have a name

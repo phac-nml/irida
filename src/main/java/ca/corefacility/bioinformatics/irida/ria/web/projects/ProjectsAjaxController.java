@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;

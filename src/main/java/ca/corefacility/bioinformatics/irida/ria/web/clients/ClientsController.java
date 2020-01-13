@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.base.Joiner;

@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.clients.dto;
 import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
 /**
  * Used to represent an {@link IridaClientDetails} in an ant.design table on the Clients page.

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
 /**
  * Representation of a {@link Project} used in the UI Projects listing table.

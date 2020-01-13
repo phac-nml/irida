@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.components.ant.table;
+package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
 import org.springframework.data.domain.Sort;
 

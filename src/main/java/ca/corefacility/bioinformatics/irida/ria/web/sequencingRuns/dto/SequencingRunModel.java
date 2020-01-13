@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
 /**
  * Model to format a {@link SequencingRun} into a format that can be used in the UI Table.
