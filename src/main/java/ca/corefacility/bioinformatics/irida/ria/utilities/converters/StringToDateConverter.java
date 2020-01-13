@@ -6,6 +6,10 @@ import org.springframework.stereotype.Component;
 import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 
+/**
+ * Converts an ISO8601-format String to java.util.Date
+ *
+ */
 @Component
 public class StringToDateConverter implements Converter<String, Date> {
     /**
