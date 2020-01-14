@@ -134,6 +134,7 @@
   },
   "resolutions": {
     "jquery": "3.4.0",
-    "fstream": "1.0.12"
+    "fstream": "1.0.12",
+    "angular": "1.7.9"
   }
 }
