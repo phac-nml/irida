@@ -53,13 +53,15 @@ import static org.junit.Assert.*;
 public class RESTSamplesControllerIT {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSamplesControllerIT.class);
 
-	public static final String SAMPLE_BASE = "/api/samples/1";
+	public static final String SAMPLE_BASE = "/api/samples/{sampleId}";
 
 	@Test
 	public void testPatchSampleCollectionDateAsUser() {
 		Map patchData = new HashMap();
-		patchData.put("collectionDate", "2000-01-01");
-		asUser().patch(ITestSystemProperties.BASE_URL + SAMPLE_BASE, patchData).then()
+		patchData.put("collectionDate", "2001-01-01");
+		String sampleId = "1";
+
+		asUser().contentType("application/json").body(patchData).patch(ITestSystemProperties.BASE_URL + SAMPLE_BASE, sampleId).then()
 				.body("resource.collectionDate", equalTo("2000-01-01"));
 	}
 
