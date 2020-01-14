@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.*;
 
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
