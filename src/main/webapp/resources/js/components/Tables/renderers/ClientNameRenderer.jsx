@@ -9,7 +9,11 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
  * @constructor
  */
 export function ClientNameRenderer({ data }) {
-  return <a href={setBaseUrl(`clients/${data.id}`)}>{data.name}</a>;
+  return (
+    <a className="t-client-name" href={setBaseUrl(`clients/${data.id}`)}>
+      {data.name}
+    </a>
+  );
 }
 
 ClientNameRenderer.propTypes = {

@@ -24,7 +24,7 @@ public class ClientsPage extends AbstractPage {
 	}
 
 	public boolean checkClientExistsInTable(String clientId) {
-		List<WebElement> findElements = driver.findElements(By.cssSelector(".ant-table-body .ant-btn-link"));
+		List<WebElement> findElements = driver.findElements(By.className("t-client-name"));
 		for (WebElement ele : findElements) {
 			if (ele.getText().equals(clientId)) {
 				return true;
