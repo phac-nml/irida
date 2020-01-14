@@ -48,4 +48,14 @@ public class StringToDateConverterTest {
 		assertEquals("The beginning of the universe", unix_epoch_date, converter.convert(unix_epoch_string));
 		assertEquals("New millenium", y2k_date, converter.convert(y2k_string));
 	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void testConversionsFail() {
+		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd");
+		isoFormat.setTimeZone(TimeZone.getDefault());
+
+		String empty_string = "";
+
+		Date converted_empty_string = converter.convert(empty_string);
+	}
 }
