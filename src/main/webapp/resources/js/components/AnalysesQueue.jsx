@@ -5,13 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRunning } from "@fortawesome/free-solid-svg-icons";
 import { SPACE_XS } from "../styles/spacing";
 import styled from "styled-components";
+import { formatNumber } from "../utilities/number-utilities";
+import { blue4 } from "../styles/colors";
 
 const LabelTD = styled.td`
   font-weight: bold;
 `;
 
 const ValueTD = styled.td`
-  width: 40px;
+  width: 50px;
   text-align: right;
   font-family: monospace;
 `;
@@ -37,7 +39,7 @@ export function AnalysesQueue({}) {
     <Tag color={"blue"}>
       <div
         style={{
-          width: 140,
+          width: 150,
           display: "flex",
           justifyContent: "space-between",
           alignContent: "center"
@@ -52,13 +54,13 @@ export function AnalysesQueue({}) {
 
         <table>
           <tbody>
-            <tr>
+            <tr style={{ borderBottom: `1px solid ${blue4}` }}>
               <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-              <ValueTD>{running}</ValueTD>
+              <ValueTD>{formatNumber(5000)}</ValueTD>
             </tr>
             <tr>
               <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
-              <ValueTD>{queued}</ValueTD>
+              <ValueTD>{formatNumber(queued)}</ValueTD>
             </tr>
           </tbody>
         </table>
