@@ -134,6 +134,10 @@ public class ClientsController extends BaseController {
 		return CLIENT_DETAILS_PAGE;
 	}
 
+	/**
+	 * Revoke access tokens for a specific client.
+	 * @param id - identifier for a client
+	 */
 	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.PUT)
 	public void revokeClientTokens(@RequestParam Long id) {
 		IridaClientDetails read = clientDetailsService.read(id);
