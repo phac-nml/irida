@@ -56,7 +56,7 @@ export function AnalysesQueue({}) {
           <tbody>
             <tr style={{ borderBottom: `1px solid ${blue4}` }}>
               <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-              <ValueTD>{formatNumber(5000)}</ValueTD>
+              <ValueTD>{formatNumber(running)}</ValueTD>
             </tr>
             <tr>
               <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
