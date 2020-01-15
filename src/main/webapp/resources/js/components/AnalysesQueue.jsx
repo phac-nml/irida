@@ -56,11 +56,11 @@ export function AnalysesQueue({}) {
           <tbody>
             <tr style={{ borderBottom: `1px solid ${blue4}` }}>
               <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-              <ValueTD>{formatNumber(running)}</ValueTD>
+              <ValueTD className="t-running-counts">{formatNumber(running)}</ValueTD>
             </tr>
             <tr>
               <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
-              <ValueTD>{formatNumber(queued)}</ValueTD>
+              <ValueTD className="t-queue-counts">{formatNumber(queued)}</ValueTD>
             </tr>
           </tbody>
         </table>
