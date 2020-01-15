@@ -57,12 +57,14 @@ public class RESTSamplesControllerIT {
 
 	@Test
 	public void testPatchSampleCollectionDateAsUser() {
+		String sampleId = "1";
 		Map patchData = new HashMap();
 		patchData.put("collectionDate", "2001-01-01");
-		String sampleId = "1";
 
-		asUser().contentType("application/json").body(patchData).patch(ITestSystemProperties.BASE_URL + SAMPLE_BASE, sampleId).then()
-				.body("resource.collectionDate", equalTo("2000-01-01"));
+		asUser().contentType("application/json").body(patchData).patch(ITestSystemProperties.BASE_URL + SAMPLE_BASE, sampleId);
+
+		asUser().expect().body("resource.collectionDate", equalTo("2001-01-01"))
+				.when().get(ITestSystemProperties.BASE_URL + SAMPLE_BASE, sampleId);
 	}
 
 }
