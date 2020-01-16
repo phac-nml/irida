@@ -50,7 +50,6 @@ public class MetadataEntry {
 
 	public MetadataEntry(String value, String type, MetadataTemplateField field) {
 		this(value, type);
-
 		this.field = field;
 	}
 
