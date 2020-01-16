@@ -40,7 +40,6 @@ function PagedTableProvider({ children, url }) {
    */
   const updateTable = () => {
     setTableState({ ...tableState, loading: true });
-
     fetchPageTableUpdate(url, {
       current: tableState.current - 1,
       pageSize: tableState.pageSize,
@@ -55,6 +54,8 @@ function PagedTableProvider({ children, url }) {
       });
     });
   };
+
+  const onSearch = term => setTableState({ ...tableState, search: term });
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
@@ -79,7 +80,9 @@ function PagedTableProvider({ children, url }) {
   };
 
   return (
-    <Provider value={{ ...tableState, handleTableChange, updateTable }}>
+    <Provider
+      value={{ ...tableState, handleTableChange, updateTable, onSearch }}
+    >
       {children}
     </Provider>
   );

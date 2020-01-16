@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -47,7 +46,7 @@ public class SequencingRunAjaxController {
 		Page<SequencingRun> list = sequencingRunService.list(sequencingRunsListRequest.getCurrent(),
 				sequencingRunsListRequest.getPageSize(), sequencingRunsListRequest.getSort());
 
-		List<TableModel> runs = list.getContent()
+		List<SequencingRunModel> runs = list.getContent()
 				.stream()
 				.map(s -> new SequencingRunModel(s, messageSource.getMessage("sequencingruns.status." + s.getUploadStatus()
 						.toString(), new Object[] {}, locale)))
