@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
@@ -147,6 +148,16 @@ public class ClientsController extends BaseController {
 		IridaClientDetails read = clientDetailsService.read(id);
 		clientDetailsService.revokeTokensForClient(read);
 		return "redirect:/clients/" + id;
+	}
+
+	/**
+	 * Revoke access tokens for a specific client.
+	 * @param id - identifier for a client
+	 */
+	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.PUT)
+	public void revokeClientTokens(@RequestParam Long id) {
+		IridaClientDetails read = clientDetailsService.read(id);
+		clientDetailsService.revokeTokensForClient(read);
 	}
 
 	/**
@@ -433,7 +444,7 @@ public class ClientsController extends BaseController {
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TableResponse getAjaxClientsList(@RequestBody TableRequest tableRequest) {
+	public TableResponse getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
 		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
 				.searchClient(tableRequest.getSearch());
 

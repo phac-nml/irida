@@ -18,7 +18,7 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsController;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
@@ -78,7 +78,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.search(any(Specification.class), any(Pageable.class))).thenReturn(clientPage);
 
-		TableRequest params = new TableRequest();
+		ClientTableRequest params = new ClientTableRequest();
 		params.setCurrent(1);
 		params.setPageSize(10);
 		params.setSortColumn("createdDate");

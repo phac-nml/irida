@@ -25,7 +25,7 @@ function PagedTableProvider({ children, url }) {
   });
 
   /*
-  Table is updated whenever one of these are changed.
+  Table updated whenever one of these are changed.
    */
   useEffect(() => updateTable(), [
     tableState.search,

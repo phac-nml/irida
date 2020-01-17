@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import {
   PagedTableContext,
   PagedTableProvider
 } from "../../contexts/PagedTableContext";
-import { Input, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Table, Tag } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../styles/spacing";
+import { revokeClientTokens } from "../../apis/clients/clients";
 
 function ClientsTable({}) {
   const {
@@ -19,19 +20,26 @@ function ClientsTable({}) {
     onSearch,
     handleTableChange
   } = useContext(PagedTableContext);
+  const [clients, setClients] = useState(dataSource);
+
+  useEffect(() => setClients(dataSource), [dataSource]);
 
   const columns = [
     {
       title: i18n("iridaThing.id"),
-      dataIndex: "id"
+      width: 80,
+      dataIndex: "id",
+      sorter: true
     },
     {
       title: i18n("client.clientid"),
       dataIndex: "name",
       ellipsis: true,
+      sorter: true,
       render(text, item) {
         return (
           <a
+            className="t-client-name"
             target="_blank"
             rel="noreferrer noopener"
             href={setBaseUrl(`clients/${item.id}`)}
@@ -66,11 +74,42 @@ function ClientsTable({}) {
       title: i18n("client.details.token.active"),
       dataIndex: "tokens",
       align: "right"
+    },
+    {
+      key: "action",
+      align: "right",
+      width: 140,
+      render(text, record) {
+        return record.tokens ? (
+          <Popconfirm
+            title={i18n("client.revoke.confirm", record.name)}
+            placement={"topRight"}
+            onConfirm={() => revokeTokens(record)}
+          >
+            <Button shape={"round"} size={"small"}>
+              {i18n("client.details.token.revoke")}
+            </Button>
+          </Popconfirm>
+        ) : null;
+      }
     }
   ];
 
   function tableSearch(event) {
     onSearch(event.target.value);
+  }
+
+  /**
+   * Revoke the tokens for the current client described
+   * in the current row.
+   */
+  function revokeTokens(client) {
+    revokeClientTokens(client.id).then(() => {
+      const c = [...clients];
+      const index = c.findIndex(i => i.id === client.id);
+      c[index].tokens = 0;
+      setClients(c);
+    });
   }
 
   return (
@@ -87,10 +126,10 @@ function ClientsTable({}) {
       <Table
         columns={columns}
         keyKey={record => record.key}
-        dataSource={dataSource}
+        dataSource={clients}
         loading={loading}
         onChange={handleTableChange}
-        pagination={{ total, pageSize }}
+        pagination={{ total, pageSize, hideOnSinglePage: true }}
       />
     </>
   );
@@ -99,7 +138,7 @@ function ClientsTable({}) {
 function ClientPage() {
   return (
     <PageWrapper title={i18n("clients.title")}>
-      <PagedTableProvider url={setBaseUrl("/clients/ajax/list")}>
+      <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>
         <ClientsTable />
       </PagedTableProvider>
     </PageWrapper>
