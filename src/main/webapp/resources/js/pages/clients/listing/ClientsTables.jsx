@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { render } from "react-dom";
 import { PagedTableContext } from "../../../contexts/PagedTableContext";
 import { Button, Input, Popconfirm, Table, Tag } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -7,7 +6,12 @@ import { dateColumnFormat } from "../../../components/ant.design/table-renderers
 import { SPACE_XS } from "../../../styles/spacing";
 import { revokeClientTokens } from "../../../apis/clients/clients";
 
-export function ClientsTable({}) {
+/**
+ * Table for displaying a list of clients.
+ * @return {*}
+ * @constructor
+ */
+export function ClientsTable() {
   const {
     loading,
     total,
@@ -76,21 +80,27 @@ export function ClientsTable({}) {
       align: "right",
       width: 140,
       render(text, record) {
-        return record.tokens ? (
+        const disabled = !record.tokens;
+        return (
           <Popconfirm
+            disabled={disabled}
             title={i18n("client.revoke.confirm", record.name)}
             placement={"topRight"}
             onConfirm={() => revokeTokens(record)}
           >
-            <Button shape={"round"} size={"small"}>
+            <Button shape={"round"} size={"small"} disabled={disabled}>
               {i18n("client.details.token.revoke")}
             </Button>
           </Popconfirm>
-        ) : null;
+        );
       }
     }
   ];
 
+  /**
+   * Handle searching through the external filter.
+   * @param event
+   */
   function tableSearch(event) {
     onSearch(event.target.value);
   }
@@ -101,6 +111,9 @@ export function ClientsTable({}) {
    */
   function revokeTokens(client) {
     revokeClientTokens(client.id).then(() => {
+      /*
+      Once tokens have been revoked ensure that the table reflects this.
+       */
       const c = [...clients];
       const index = c.findIndex(i => i.id === client.id);
       c[index].tokens = 0;
