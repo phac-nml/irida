@@ -9,7 +9,9 @@
     <link rel="stylesheet" th:href="@{/dist/css/clients-list.bundle.css}" />
   </head>
   <body>
-    <div layout:fragment="page" id="client-root" style="height: 100%;"></div>
+    <div layout:fragment="page" id="client-root" style="height: 100%;">
+      <!-- Base react component found at : /webapp/resources/js/pages/clients/listing/ClientListingPage.jsx -->
+    </div>
     <th:block layout:fragment="scripts">
       <script th:src="@{/dist/js/clients-list.bundle.js}"></script>
     </th:block>
