@@ -2,6 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.clients.dto;
 
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 
+/**
+ * UI request for client details for the clients table.
+ * Required to overwrite the default setSortColumn since
+ * @link ca.corefacility.bioinformatics.irida.model.IridaClientDetails} does not
+ * have a "name" attribute, instead it required a "clientId".
+ */
 public class ClientTableRequest extends TableRequest {
 
 	@Override
