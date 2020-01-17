@@ -1,17 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { render } from "react-dom";
-import { PageWrapper } from "../../components/page/PageWrapper";
-import {
-  PagedTableContext,
-  PagedTableProvider
-} from "../../contexts/PagedTableContext";
+import { PagedTableContext } from "../../../contexts/PagedTableContext";
 import { Button, Input, Popconfirm, Table, Tag } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { dateColumnFormat } from "../../components/ant.design/table-renderers";
-import { SPACE_XS } from "../../styles/spacing";
-import { revokeClientTokens } from "../../apis/clients/clients";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
+import { SPACE_XS } from "../../../styles/spacing";
+import { revokeClientTokens } from "../../../apis/clients/clients";
 
-function ClientsTable({}) {
+export function ClientsTable({}) {
   const {
     loading,
     total,
@@ -134,18 +130,6 @@ function ClientsTable({}) {
     </>
   );
 }
-
-function ClientPage() {
-  return (
-    <PageWrapper title={i18n("clients.title")}>
-      <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>
-        <ClientsTable />
-      </PagedTableProvider>
-    </PageWrapper>
-  );
-}
-
-render(<ClientPage />, document.querySelector("#client-root"));
 
 // import $ from "jquery";
 // import "../../vendor/datatables/datatables";
