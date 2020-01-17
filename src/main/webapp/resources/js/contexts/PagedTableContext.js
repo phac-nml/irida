@@ -55,6 +55,10 @@ function PagedTableProvider({ children, url }) {
     });
   };
 
+  /**
+   * Required when using an external filter on a table.
+   * @param term - search term
+   */
   const onSearch = term => setTableState({ ...tableState, search: term });
 
   /**
