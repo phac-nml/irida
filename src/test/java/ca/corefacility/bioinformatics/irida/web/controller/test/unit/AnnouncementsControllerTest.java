@@ -1,34 +1,26 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import static org.mockito.Matchers.any;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.AnnouncementsController;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.AnnouncementsController;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import org.junit.Before;
-import org.junit.Test;
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.google.common.collect.Lists;
-import org.springframework.ui.ExtendedModelMap;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link AnnouncementsController}
