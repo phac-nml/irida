@@ -17,6 +17,7 @@ The majority of IRIDA's upgrade notes can be seen at <https://github.com/phac-nm
 The 20.01 version of IRIDA includes some significant upgrades to some of the key software libraries used to build the application including [Spring](https://spring.io/) & [Spring Security](https://spring.io/projects/spring-security).  Part of the REST API security changes included enforcing a good practice in setting up a configured redirect URI for OAuth2 `authorization_code` clients.  This means that for any web application that will be connecting to IRIDA via the REST API, IRIDA must know the address of the website that is going to be requesting data.  This is a good security practice to ensure that client credentials are only being used for the appropriate web applications.
 
 ### Performing the changes
+{:.no_toc}
 
 The downside of this change is that it will require IRIDA system administrators to register a redirect URI for all `authorization_code` clients.  This is a manual change and must be performed through the IRIDA user interface.  In order to update these clients, an admin must go into the clients list under the ⚙ icon, and click `Clients`.  This will list all the system clients for your IRIDA installation.
 
@@ -28,7 +29,7 @@ After clicking on an authorization code client, you can verify it needs updated 
 
 ![Client details empty redirect](images/client-update-details-empty.png)
 
-To update the redirect URI, click the "Edit" button.  On this edit page you can fill in the appropriate redirect URI for the client.  For IRIDA servers this will typically be the server URL + `/api/oauth/authorization/token`. Ex: `http://irida.ca/irida/api/oauth/authorization/token`.  Note that this is **not the address of your IRIDA server**.  This will be the address of the IRIDA server using this client to synchronized data from your server.
+To update the redirect URI, click the "Edit" button.  On this edit page you can fill in the appropriate redirect URI for the client.  For IRIDA servers this will typically be the server URL + `/api/oauth/authorization/token`. Ex: `http://irida.ca/irida/api/oauth/authorization/token`.  Note that this is **not the address of your IRIDA server**.  This will be the address of the IRIDA server using this client to synchronize data from your server.
 
 For non-IRIDA applications, you must refer to the application's API documentation for what to use for a redirect URI.  After entering the URI, click the "Update Client" button.
 
@@ -40,13 +41,92 @@ Note that if this process is not completed correctly for a Remote API, data will
 
 See the section under "authorization code" in our documentation for more details about entering the redirect URI at <https://irida.corefacility.ca/documentation/user/administrator/#grant-types>.
 
-## Updating Galaxy importer clients
+### Updating Galaxy importer clients
+{:.no_toc}
 
 Clients for the [Galaxy IRIDA importer](https://github.com/phac-nml/irida-galaxy-importer) must undergo a similar process, but with slightly different values.  The Galaxy importer targets your local IRIDA installation so the redirect URL points at your own IRIDA.  Redirect URLs for Galaxy will be the following:
 
 Your IRIDA server URL + `/galaxy/auth_code`.  Ex: `http://irida.ca/irida/galaxy/auth_code`.
 
 To test this change, try importing some data from Galaxy.  If it works, you've updated everything correctly!
+
+## Sample metadata audit record updates
+
+This upgrade contains some changes to how sample-metadata records are stored in IRIDA's database.  The intent of this update is to help simplify the relationships between samples and metadata records to help with database performance and future developments.  It will also remove some redundancy in the database structure and remove any "dangling" metadata entries which have been removed from a sample, but not fully deleted from the database.
+
+While investigating how these updates will be applied to IRIDA databases, we noticed some irregularities in the audit records for some existing metadata.  Because of this we're recommending additional backup procedures be taken before completing this upgrade.  
+
+To skip straight to the backup procedure, [click here](#metadata-linking-script) For a full technical description of the issue, keep reading below.
+
+### Database structure
+{:.no_toc}
+
+To fully understand this problem, we'll first describe the structure of our metadata system and relevant database tables.  Given the following example of a basic line-list:
+
+|         | Organism   |
+|---------|------------|
+| sample1 | Salmonella |
+
+The tables involved are the following:
+
+
+* `sample` - A record of a sample which contains its name, creation date, and some fixed metadata (ex: "sample1").
+* `metadata_field` - The header of a line-list column.  This table contains the field's name & datatype (ex: "Organism").
+* `metadata_entry` - The value of a cell in the line-list (ex: "Salmonella").
+* `sample_metadata_entry` - The relationship between the above 3 tables (ex: for "sample1", the "Organism" is "Salmonella").
+
+In addition to the above, there is a matching `_AUD` (audit) table for each of these tables which captures any changes to the data and the user & time which the change occurred.  This auditing is managed by [Hibernate Envers](https://hibernate.org/orm/envers/).
+
+In general data will be populated into these tables in the following order:
+
+1. `sample` entry is created as sequencing data is uploaded,
+2. Someone uploads a set of sample metadata, which will first get a `metadata_field`
+  a. Find an existing `metadata_field` for a column header,
+  b. Or create a new `metadata_field` for a header,
+3. `metadata_entry` is created with the appropriate value,
+4. `sample_metadata_entry` is created linking the above 3 items together.
+
+Note items 2, 3, and 4 will generally be done at the same time.  As soon as the metadata values are committed to the database, Envers should create `_AUD` entries for all of the above records.
+
+### The problem
+{:.no_toc}
+
+The issue we noticed is that while Envers seemed to create `_AUD` records for all the above tables when metadata is first added to a sample, subsequent updates of those values *may* not create records for the `sample_metadata_entry_AUD` table, though it properly creates records for the `metadata_entry_AUD` and `sample_AUD` tables.  We found this to be most prevalent when data is synchronized from remote IRIDA installations.  Most of these synchronized records were duplicate entries that were saving the same metadata values back to the sample, but creating new rows in the database.  We are still investigating why this issue was occurring.  Due to the complex nature of the above database tables it appears that Envers was failing to properly audit the relationship between those entities/tables.
+
+Note that we have found **no evidence of missing live data**.  It appears that all metadata records were written to the live database tables as expected.  This issue only appears to effect the `sample_metadata_entry_AUD` table.
+
+### The fix
+{:.no_toc}
+
+Solving this issue involved a refactor of the database structure to remove the `sample_metadata_entry` table.
+
+* `sample` - A record of a sample which contains its name, creation date, and some fixed metadata (ex: "sample1").
+* `metadata_field` - The header of a line-list column.  This table contains the field's name & datatype (ex: "Organism").
+* `metadata_entry` - The value of a cell in the line-list and its relationship to the `metadata_field` and `sample` (ex: for "sample1", the "Organism" is "Salmonella").
+
+This results in a cleaner database structure with less redundancy, and allowed us to refactor IRIDA's codebase to ensure Envers can properly capture any changes to a sample's metadata.  In the long-term this should also allow us to more efficiently build extensions to IRIDA's metadata system.
+
+As with most other database updates, we use [Liquibase](https://www.liquibase.org/) to manage this update.  After the 20.01 upgrade is complete, our Liquibase changeset will also remove any "dangling" `metadata_entry` records to improve performance and the integrity of metadata in the IRIDA system.
+
+### What about old data?
+{:.no_toc}
+
+Since Envers was writing audit records for the `sample_AUD` and `metadata_entry_AUD` tables, we can re-connect many of the disconnected `metadata_entry_AUD` records with their samples.  In places where there is a clear connection between a `metadata_entry_AUD` record and a `sample_AUD` record, we are automatically re-connecting the entries to the appropriate sample and field using Liquibase.  In other cases where the connection is not as clear, we chose not to update the disconnected records in the database to ensure integrity of the existing audit records.  
+
+#### Metadata linking script
+{:.no_toc}
+We've included a small utility script which can be run before the upgrade to generate a report of all disconnected `sample_metadata_entry_AUD` records and their connections to their parent samples where available.  While we do not expect that these records will be needed in the future, we recommend running this utility and saving the report alongside your 20.01 upgrade database backup to ensure the history of these samples is maintained.  This script **must be run before you perform the 20.01 update**.
+
+This script will output a CSV file of the following data:
+
+| `metadata_entry` database id | `metadata_entry` text value | Envers revision number of the entry | User ID of the user that made the change | `sample` database id associated with the metadata | Name of the sample |
+
+You can download this script at <https://github.com/phac-nml/irida/tree/development/src/main/resources/scripts/metadata-mappings>.  This script requires the `Text::CSV` perl package to be installed (available in CPAN and various other package managers).  To run this script:
+
+```bash
+$ perl metadata-mappings.pl -u [database username] -p [database password] -d [irida database name] -h [database host] > [outputfile.csv]
+```
+
 
 # 19.05
 ## FastQC translation to filesystem
