@@ -75,9 +75,7 @@ function getApiProjects(apiId) {
         const status = response.remoteStatus;
         const projectUrl = status.url;
         $projectSelect.append(
-          `<option class="project-option" value="${projectUrl}">${
-            project.label
-          }</option>`
+          `<option class="project-option" value="${projectUrl}">${project.label}</option>`
         );
       });
       $projectSelect.prop("disabled", false);
