@@ -24,7 +24,7 @@ function LoginPage({ form }) {
         width: 400
       }}
     >
-      <div dangerouslySetInnerHTML={{ __html: window.PAGE.logo }} />
+      <img src="/resources/img/irida_logo_light.svg" alt="" />
       {window.PAGE.hasErrors ? (
         <Alert
           style={{ margin: `18px 0 28px 0` }}
@@ -45,7 +45,7 @@ function LoginPage({ form }) {
         name="loginForm"
         method="POST"
       >
-        <Form.Item>
+        <Form.Item label={i18n("LoginPage.username")}>
           {getFieldDecorator("username", {
             rules: [
               {
@@ -57,11 +57,10 @@ function LoginPage({ form }) {
             <Input
               name="username"
               prefix={<Icon type="user" style={{ color: grey6 }} />}
-              placeholder={i18n("LoginPage.username")}
             />
           )}
         </Form.Item>
-        <Form.Item>
+        <Form.Item label={i18n("LoginPage.password")}>
           {getFieldDecorator("password", {
             rules: [
               {
@@ -74,7 +73,6 @@ function LoginPage({ form }) {
               name="password"
               prefix={<Icon type="lock" style={{ color: grey6 }} />}
               type="password"
-              placeholder={i18n("LoginPage.password")}
             />
           )}
         </Form.Item>
@@ -86,7 +84,7 @@ function LoginPage({ form }) {
             htmlType="submit"
             disabled={hasErrors}
             block
-            onClick={() => handleSubmit()}
+            onClick={handleSubmit}
           >
             {i18n("LoginPage.submit")}
           </Button>
@@ -109,4 +107,4 @@ function LoginPage({ form }) {
 
 const WrappedLoginForm = Form.create({ name: "loginForm" })(LoginPage);
 
-render(<WrappedLoginForm />, document.querySelector("#root"));
+render(<WrappedLoginForm />, document.querySelector("#login-root"));

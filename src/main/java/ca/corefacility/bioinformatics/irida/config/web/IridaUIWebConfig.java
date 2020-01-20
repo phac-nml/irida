@@ -1,12 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.*;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
@@ -100,40 +102,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 			}
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
-	}
-
-	@Bean
-	public LoginHandlerInterceptor loginHandlerInterceptor() {
-		/*
-		Check to see if there are custom logos to render to the page.
-		 */
-		File darkLogoFile = new File("/etc/irida/login/irida_logo_dark.svg");
-		if(!darkLogoFile.exists()) {
-			darkLogoFile = new File("../../main/webapp/resources/img/irida_logo_dark.svg");
-		}
-		File lightLogoFile = new File("/etc/irida/login/irida_logo_light.svg");
-		if (!lightLogoFile.exists()) {
-			lightLogoFile = new File("../../main/webapp/resources/img/irida_logo_light.svg");
-		}
-		BufferedReader logoReader;
-		String lightLogo = null;
-		try {
-			logoReader = new BufferedReader(new FileReader(lightLogoFile));
-			lightLogo = logoReader.lines()
-					.collect(Collectors.joining());
-		} catch (FileNotFoundException e) {
-			logger.debug("CANNOT FIND LOGO FILES");
-		}
-
-		String darkLogo = null;
-		try {
-			logoReader = new BufferedReader(new FileReader(darkLogoFile));
-			darkLogo = logoReader.lines()
-					.collect(Collectors.joining());
-		} catch (FileNotFoundException e) {
-			logger.debug("CANNOT FIND LOGO FILES");
-		}
-		return new LoginHandlerInterceptor(darkLogo, lightLogo);
 	}
 
 	@Bean
@@ -225,7 +193,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
-		registry.addInterceptor(loginHandlerInterceptor());
 	}
 
 	/**

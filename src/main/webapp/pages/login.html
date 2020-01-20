@@ -9,27 +9,8 @@
     <script th:inline="javascript">
       window.PAGE = {
         BASE_URL: /*[[@{/}]]*/ "/",
-        logo: /*[[${LIGHT_LOGO}]]*/ "",
         hasErrors: /*[[${error}]]*/ false,
         emailConfigured: /*[[${emailConfigured}]]*/ false,
-        i18n: {
-          "LoginPage.username":
-            /*[[#{LoginPage.username}]]*/ "LoginPage.username",
-          "LoginPage.username.required":
-            /*[[#{LoginPage.username.required}]]*/ "LoginPage.username.required",
-          "LoginPage.password":
-            /*[[#{LoginPage.password}]]*/ "LoginPage.password",
-          "LoginPage.password.required":
-            /*[[#{LoginPage.password.required}]]*/ "LoginPage.password.required",
-          "LoginPage.submit": /*[[#{LoginPage.submit}]]*/ "LoginPage.submit",
-          "LoginPage.forgot": /*[[#{LoginPage.forgot}]]*/ "LoginPage.forgot",
-          "LoginPage.activate":
-            /*[[#{LoginPage.activate}]]*/ "LoginPage.activate",
-          "LoginPage.error.message":
-            /*[[#{LoginPage.error.message}]]*/ "LoginPage.error.message",
-          "LoginPage.error.description":
-            /*[[#{LoginPage.error.description}]]*/ "LoginPage.error.description"
-        }
       };
     </script>
     <style>
@@ -44,11 +25,9 @@
     </style>
   </head>
   <body>
-    <div class="login-wrapper">
-      <div id="root">
+      <div id="login-root">
         <!-- Contents rendered from LoginPage.jsx -->
       </div>
-    </div>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>
