@@ -27,7 +27,7 @@ You can see the Galaxy web interface by opening your web browser and navigating 
 Connecting with an uploader tool
 --------------------------------
 
-Please visit the download page for the [IRIDA MiSeq Uploader Tool](./index.html#irida-miseq-uploader-tool) for more information about how to upload data to the IRIDA virtual appliance.
+Please visit the GitHub for the [IRIDA Uploader](https://github.com/phac-nml/irida-uploader) for more information about how to upload data to the IRIDA virtual appliance.
 
 Connecting with an SSH client
 -----------------------------
