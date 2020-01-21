@@ -36,7 +36,7 @@ export function AnalysesQueue({}) {
   }, [fetchAnalysesQueueCounts]);
 
   return (
-    <Tooltip title={i18n("AnalysesQueue.title")} placement={"bottomRight"}>
+    <Tooltip title={i18n("AnalysesQueue.title")} placement={"left"}>
       <Tag color={"blue"}>
         <div
           style={{
