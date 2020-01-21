@@ -2,8 +2,9 @@
  * Class responsible for ajax call for project sample metadata entries.
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = `linelist/entries`;
+const URL = setBaseUrl(`linelist/entries`);
 
 /**
  * Get all metadata belonging to samples in the current project.
@@ -40,7 +41,7 @@ export function saveMetadataEntryField(sampleId, value, label) {
  */
 export function removeMetadataEntriesForField(label) {
   return axios
-    .delete(`${BASE_URL}?label=${label}&projectId=${window.project.id}`)
+    .delete(`${URL}?label=${label}&projectId=${window.project.id}`)
     .then(response => ({
       message: response.data.message
     }));
