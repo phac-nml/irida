@@ -4,6 +4,7 @@ import { Button, Dropdown, Icon, Menu } from "antd";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { grey1, grey4, grey5 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -111,7 +112,7 @@ export class SampleRenderer extends React.Component {
           <IconText
             type="folder"
             text={
-              <a href={`${window.TL.BASE_URL}projects/${sample.project.id}`}>
+              <a href={setBaseUrl(`projects/${sample.project.id}`)}>
                 {sample.project.label}
               </a>
             }

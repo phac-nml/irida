@@ -3,7 +3,7 @@ import "../../vendor/datatables/datatables";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { Button, Table } from "antd";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { getI18N } from "../../utilities/i18n-utilties";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 export function SequencingRunsList() {
   const {
@@ -17,14 +17,14 @@ export function SequencingRunsList() {
   const columns = [
     {
       dataIndex: "id",
-      title: getI18N("sequencingruns.id"),
+      title: i18n("sequencingruns.id"),
       sorter: true,
       render: text => {
         return (
           <Button
             type="link"
             className="t-run-link"
-            href={`${window.TL.BASE_URL}sequencingRuns/${text}`}
+            href={setBaseUrl(`sequencingRuns/${text}`)}
           >
             {text}
           </Button>
@@ -32,15 +32,15 @@ export function SequencingRunsList() {
       }
     },
     {
-      title: getI18N("sequencingruns.type"),
+      title: i18n("sequencingruns.type"),
       dataIndex: "sequencerType"
     },
     {
-      title: getI18N("sequencingruns.uploadStatus"),
+      title: i18n("sequencingruns.uploadStatus"),
       dataIndex: "uploadStatus"
     },
     {
-      title: getI18N("sequencingruns.uploadUser"),
+      title: i18n("sequencingruns.uploadUser"),
       dataIndex: "user",
       sorter: true,
       render: text => {
@@ -48,10 +48,7 @@ export function SequencingRunsList() {
           return null;
         }
         return (
-          <Button
-            type="link"
-            href={`${window.TL.BASE_URL}users/${text.identifier}`}
-          >
+          <Button type="link" href={setBaseUrl(`users/${text.identifier}`)}>
             {text.label}
           </Button>
         );
@@ -59,7 +56,7 @@ export function SequencingRunsList() {
     },
     {
       ...dateColumnFormat(),
-      title: getI18N("sequencingruns.createdDate"),
+      title: i18n("sequencingruns.createdDate"),
       dataIndex: "createdDate"
     }
   ];

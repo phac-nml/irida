@@ -37,6 +37,8 @@ Changes
 * [UI/Developer]: Update version of `yarn`, `babel` dependencies.
 * [Developer]: Sample filter input has underscores escaped so that proper samples are returned.
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
+* [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
+* [Documentation]: Updated links and references from the old IRIDA MiSeq Uploader to the new IRIDA Uploader as the old uploader will not be supported when python 2 reaches end of life.
 * [UI]: Added the ability to delete all the data in a column in the line list table.
 
 19.05 to 19.09

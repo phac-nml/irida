@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { PagedTableContext } from '../../contexts/PagedTableContext';
-import { Button, Icon, Popconfirm, Table } from 'antd';
+import React, { useContext, useEffect, useState } from "react";
+import { PagedTableContext } from "../../contexts/PagedTableContext";
+import { Button, Icon, Popconfirm, Table } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
-} from '../ant.design/table-renderers';
+} from "../ant.design/table-renderers";
 import {
   deleteAnalysisSubmissions,
   fetchAllPipelinesStates,
   fetchAllPipelinesTypes
-} from '../../apis/analysis/analysis';
-import { AnalysisState } from './AnalysisState';
-import { getI18N } from '../../utilities/i18n-utilties';
-import { getHumanizedDuration } from '../../utilities/date-utilities.js';
-import { getTextSearchProps } from '../ant.design/table-search-props';
-import { blue6 } from '../../styles/colors';
-import { SPACE_MD } from '../../styles/spacing';
+} from "../../apis/analysis/analysis";
+import { AnalysisState } from "./AnalysisState";
+import { getHumanizedDuration } from "../../utilities/date-utilities.js";
+import { getTextSearchProps } from "../ant.design/table-search-props";
+import { blue6 } from "../../styles/colors";
+import { SPACE_MD } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -59,15 +59,15 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: `${window.TL.BASE_URL}analysis/`,
+        url: setBaseUrl(`analysis/`),
         width: 300
       }),
-      title: getI18N("analyses.analysis-name"),
+      title: i18n("analyses.analysis-name"),
       key: "name",
       ...getTextSearchProps("name")
     },
     {
-      title: getI18N("analyses.state"),
+      title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
       filterMultiple: true,
@@ -88,7 +88,7 @@ export function AnalysesTable() {
       }
     },
     {
-      title: getI18N("analyses.type"),
+      title: i18n("analyses.type"),
       key: "type",
       width: 250,
       dataIndex: "type",
@@ -106,7 +106,7 @@ export function AnalysesTable() {
       filters: pipelineTypes
     },
     {
-      title: getI18N("analyses.submitter"),
+      title: i18n("analyses.submitter"),
       width: 200,
       key: "submitter",
       sorter: true,
@@ -119,7 +119,7 @@ export function AnalysesTable() {
       key: "createdDate"
     },
     {
-      title: getI18N("analysis.duration"),
+      title: i18n("analysis.duration"),
       key: "duration",
       width: 150,
       dataIndex: "duration",
@@ -136,7 +136,7 @@ export function AnalysesTable() {
           <Button
             shape="circle-outline"
             disabled={record.state.value !== "COMPLETED"}
-            href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
+            href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
             icon="download"
           />
@@ -162,7 +162,7 @@ export function AnalysesTable() {
       <div style={{ marginBottom: SPACE_MD }}>
         <Popconfirm
           placement="bottomRight"
-          title={getI18N("analyses.delete-confirm").replace(
+          title={i18n("analyses.delete-confirm").replace(
             "[COUNT]",
             selected.length
           )}
@@ -175,7 +175,7 @@ export function AnalysesTable() {
             disabled={!selected.length}
             onClick={() => setDeleting(true)}
           >
-            {getI18N("analyses.delete")}
+            {i18n("analyses.delete")}
           </Button>
         </Popconfirm>
       </div>

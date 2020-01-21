@@ -2,13 +2,13 @@ import React, { useEffect, useReducer, useState } from "react";
 import { Button, Dropdown, Icon, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
-import { getI18N } from "../../../utilities/i18n-utilties";
 import {
   dateColumnFormat,
   idColumnFormat,
   nameColumnFormat
 } from "../../../components/ant.design/table-renderers";
 import { SPACE_MD } from "../../../styles/spacing";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
@@ -103,7 +103,7 @@ export function ProjectsTable() {
   const columns = [
     {
       ...idColumnFormat(),
-      title: getI18N("ProjectsTable_th_id")
+      title: i18n("ProjectsTable_th_id")
     },
     {
       title: "",
@@ -116,11 +116,11 @@ export function ProjectsTable() {
         ) : null
     },
     {
-      ...nameColumnFormat({ url: `${window.TL.BASE_URL}projects` }),
-      title: getI18N("ProjectsTable_th_name")
+      ...nameColumnFormat({ url: setBaseUrl(`projects`) }),
+      title: i18n("ProjectsTable_th_name")
     },
     {
-      title: getI18N("ProjectsTable_th_organism"),
+      title: i18n("ProjectsTable_th_organism"),
       dataIndex: "organism",
       key: "organism",
       sorter: true,
@@ -132,20 +132,20 @@ export function ProjectsTable() {
       )
     },
     {
-      title: getI18N("ProjectsTable_th_samples"),
+      title: i18n("ProjectsTable_th_samples"),
       dataIndex: "samples",
       key: "samples",
       width: 100
     },
     {
       ...dateColumnFormat(),
-      title: getI18N("ProjectsTable_th_created_date"),
+      title: i18n("ProjectsTable_th_created_date"),
       dataIndex: "createdDate",
       key: "created"
     },
     {
       ...dateColumnFormat(),
-      title: getI18N("ProjectsTable_th_modified_date"),
+      title: i18n("ProjectsTable_th_modified_date"),
       dataIndex: "modifiedDate",
       key: "modified",
       defaultSortOrder: "descend"
@@ -157,27 +157,27 @@ export function ProjectsTable() {
     <Menu>
       <Menu.Item key="excel">
         <a
-          href={`${window.TL.BASE_URL}projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`}
+          href={setBaseUrl(`projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file-excel" />
-          {getI18N("ProjectsTable_export_excel")}
+          {i18n("ProjectsTable_export_excel")}
         </a>
       </Menu.Item>
       <Menu.Item key="csv">
         <a
-          href={`${window.TL.BASE_URL}projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`}
+          href={setBaseUrl(`projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
           <Icon className="spaced-right__sm" type="file" />
-          {getI18N("ProjectsTable_export_csv")}
+          {i18n("ProjectsTable_export_csv")}
         </a>
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <PageWrapper title={getI18N("ProjectsTable_header")}>
+    <PageWrapper title={i18n("ProjectsTable_header")}>
       <div
         style={{
           paddingBottom: SPACE_MD,
@@ -187,7 +187,7 @@ export function ProjectsTable() {
       >
         <Dropdown overlay={exportMenu} key="export">
           <Button>
-            {getI18N("ProjectsTable_export")} <Icon type="down" />
+            {i18n("ProjectsTable_export")} <Icon type="down" />
           </Button>
         </Dropdown>
         <Input.Search style={{ width: 300 }} onSearch={onSearch} />

@@ -5,6 +5,7 @@ import { Button, Icon, Modal } from "antd";
 import { red6 } from "../../styles/colors";
 import { useInterval } from "../../hooks/useInterval";
 import { SPACE_SM } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const { i18n } = window.TL;
 
@@ -37,7 +38,7 @@ export default function SessionModal({
     setRemainingTime(remainingTime - 1);
   }, 1000);
 
-  const logout = () => (window.location = `${window.TL.BASE_URL}logout`);
+  const logout = () => (window.location = setBaseUrl(`logout`));
 
   const keepSession = () =>
     axios.head(window.location.href).then(() => resetTimeout());

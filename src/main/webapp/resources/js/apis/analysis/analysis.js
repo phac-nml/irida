@@ -3,9 +3,9 @@
  */
 import axios from "axios";
 
-const ANALYSES_URL = `${window.TL.BASE_URL}ajax/analyses`;
+const ANALYSES_URL = `ajax/analyses`;
 
-const ANALYSIS_URL = `${window.TL.BASE_URL}analysis/ajax`;
+const ANALYSIS_URL = `analysis/ajax`;
 
 /**
  * Get all single sample analysis output file info for the principal user.

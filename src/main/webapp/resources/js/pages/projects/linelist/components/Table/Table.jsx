@@ -8,7 +8,6 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { DeleteColumnOverlay } from "./renderers/DeleteColumnOverlay";
-
 import { LoadingOverlay } from "./LoadingOverlay";
 import {
   DateCellRenderer,
@@ -382,28 +381,28 @@ export class TableComponent extends React.Component {
         rowSelection="multiple"
         onFilterChanged={this.setFilterCount}
         localeText={{
-            loading: i18n("linelist.agGrid.loading"),
-            sampleName: i18n("linelist.agGrid.sampleName")
-          }}
-          columnDefs={this.props.fields}
-          rowData={this.props.entries}
-          frameworkComponents={this.frameworkComponents}
-          loadingOverlayComponent="LoadingOverlay"
-          noRowsOverlayComponent="DeleteColumnOverlay"
-          onGridReady={this.onGridReady}
-          onDragStopped={this.onColumnDropped}
-          rowDeselection={true}
-          suppressRowClickSelection={true}
-          onSelectionChanged={this.onSelectionChange}
-          defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true,
-            sortable: true,
-            filter: true
-          }}
-          enableCellChangeFlash={true}
-          onCellEditingStarted={this.onCellEditingStarted}
-          onCellEditingStopped={this.onCellEditingStopped}
-        />
+          loading: i18n("linelist.agGrid.loading"),
+          sampleName: i18n("linelist.agGrid.sampleName")
+        }}
+        columnDefs={this.props.fields}
+        rowData={this.props.entries}
+        frameworkComponents={this.frameworkComponents}
+        loadingOverlayComponent="LoadingOverlay"
+        noRowsOverlayComponent="DeleteColumnOverlay"
+        onGridReady={this.onGridReady}
+        onDragStopped={this.onColumnDropped}
+        rowDeselection={true}
+        suppressRowClickSelection={true}
+        onSelectionChanged={this.onSelectionChange}
+        defaultColDef={{
+          headerCheckboxSelectionFilteredOnly: true,
+          sortable: true,
+          filter: true
+        }}
+        enableCellChangeFlash={true}
+        onCellEditingStarted={this.onCellEditingStarted}
+        onCellEditingStopped={this.onCellEditingStopped}
+      />
     );
   }
 }
@@ -435,9 +434,6 @@ const mapDispatchToProps = dispatch => ({
   removeFieldEntries: field => dispatch(entryActions.removeFieldEntries(field))
 });
 
-export const Table = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  null,
-  { forwardRef: true }
-)(TableComponent);
+export const Table = connect(mapStateToProps, mapDispatchToProps, null, {
+  forwardRef: true
+})(TableComponent);
