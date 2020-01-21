@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Tag } from "antd";
+import { Tag, Tooltip } from "antd";
 import { fetchAnalysesQueueCounts } from "./../apis/analysis/analysis";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRunning } from "@fortawesome/free-solid-svg-icons";
@@ -36,35 +36,45 @@ export function AnalysesQueue({}) {
   }, [fetchAnalysesQueueCounts]);
 
   return (
-    <Tag color={"blue"}>
-      <div
-        style={{
-          width: 150,
-          display: "flex",
-          justifyContent: "space-between",
-          alignContent: "center"
-        }}
-      >
-        <FontAwesomeIcon
-          icon={faRunning}
-          size="2x"
-          fixedWidth
-          style={{ flex: 1, display: "inline-block", margin: `${SPACE_XS} 0` }}
-        />
+    <Tooltip title={i18n("AnalysesQueue.title")} placement={"bottomRight"}>
+      <Tag color={"blue"}>
+        <div
+          style={{
+            width: 150,
+            display: "flex",
+            justifyContent: "space-between",
+            alignContent: "center"
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faRunning}
+            size="2x"
+            fixedWidth
+            style={{
+              flex: 1,
+              display: "inline-block",
+              margin: `${SPACE_XS} 0`
+            }}
+          />
 
-        <table>
-          <tbody>
-            <tr style={{ borderBottom: `1px solid ${blue4}` }}>
-              <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-              <ValueTD className="t-running-counts">{formatNumber(running)}</ValueTD>
-            </tr>
-            <tr>
-              <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
-              <ValueTD className="t-queue-counts">{formatNumber(queued)}</ValueTD>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </Tag>
+          <table>
+            <tbody>
+              <tr style={{ borderBottom: `1px solid ${blue4}` }}>
+                <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
+                <ValueTD className="t-running-counts">
+                  {formatNumber(running)}
+                </ValueTD>
+              </tr>
+              <tr>
+                <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
+                <ValueTD className="t-queue-counts">
+                  {formatNumber(queued)}
+                </ValueTD>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Tag>
+    </Tooltip>
   );
 }
