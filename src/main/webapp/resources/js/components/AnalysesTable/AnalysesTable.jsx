@@ -59,8 +59,7 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: setBaseUrl(`analysis/`),
-        width: 300
+        url: setBaseUrl(`analysis/`)
       }),
       title: i18n("analyses.analysis-name"),
       key: "name",
@@ -72,7 +71,6 @@ export function AnalysesTable() {
       dataIndex: "state",
       filterMultiple: true,
       filters: pipelineStates,
-      width: 150,
       filterIcon(filtered) {
         return (
           <Icon
@@ -121,7 +119,6 @@ export function AnalysesTable() {
     {
       title: i18n("analysis.duration"),
       key: "duration",
-      width: 150,
       dataIndex: "duration",
       render(timestamp) {
         return getHumanizedDuration({ date: timestamp });
