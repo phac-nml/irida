@@ -122,6 +122,7 @@ Changes
 * [UI]: Fixed bug causing issues with saving Line List templates.
 * [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
 * [Developer]: Updated to latest version of NodeJS LTS (12.13.0) and Yarn (v1.19.1).
+* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
 
 0.22.0 to 19.01
 ----------------
