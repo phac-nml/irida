@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { render } from "react-dom";
-import { Table } from "antd";
+import { Input, Table } from "antd";
 import {
   PagedTableContext,
   PagedTableProvider
@@ -9,6 +9,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import ReactMarkdown from "react-markdown";
+import { SPACE_SM } from "../../styles/spacing";
 
 function AnnouncementsTable() {
   const {
@@ -54,14 +55,33 @@ function AnnouncementsTable() {
     }
   ];
 
+  /**
+   * Handle searching through the external filter.
+   * @param event
+   */
+  function tableSearch(event) {
+    onSearch(event.target.value);
+  }
+
   return (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-      loading={loading}
-      onChange={handleTableChange}
-      pagination={{ total, pageSize, hideOnSinglePage: true }}
-    />
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          marginBottom: SPACE_SM
+        }}
+      >
+        <Input.Search style={{ width: 250 }} onChange={tableSearch} />
+      </div>
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        loading={loading}
+        onChange={handleTableChange}
+        pagination={{ total, pageSize, hideOnSinglePage: true }}
+      />
+    </>
   );
 }
 
@@ -73,68 +93,3 @@ render(
   </PageWrapper>,
   document.querySelector("#announcement-root")
 );
-
-// /**
-//  * Initializes the datatables on the announcements page.
-//  */
-// import $ from "jquery";
-// import {
-//   createItemLink,
-//   generateColumnOrderInfo,
-//   tableConfig
-// } from "../../utilities/datatables-utilities";
-// import { formatDate } from "../../utilities/date-utilities";
-// import "../../vendor/datatables/datatables";
-//
-// // Generate the column names with order for this table.
-// const COLUMNS = generateColumnOrderInfo();
-//
-// const $table = $("#announcementTable");
-//
-// const config = Object.assign({}, tableConfig, {
-//   ajax: $table.data("url"),
-//   // Order the table by the announcement created date.
-//   order: [[COLUMNS.CREATED_DATE, "desc"]],
-//   columnDefs: [
-//     {
-//       targets: COLUMNS.MESSAGE,
-//       className: "preview-column",
-//       render(data, type, full) {
-//         // Message column is only a preview of the message.  This
-//         // needs to be rendered as a link to the full announcement.
-//         return createItemLink({
-//           url: `${window.PAGE.urls.link}${full.id}/details`,
-//           label: data,
-//           width: "100%"
-//         });
-//       }
-//     },
-//     {
-//       targets: COLUMNS.USER_USERNAME,
-//       render(data, type, full) {
-//         // Username needs to link to the users full profile.
-//         return createItemLink({
-//           url: `${window.PAGE.urls.user}${full.user.identifier}`,
-//           label: data
-//         });
-//       }
-//     },
-//     {
-//       targets: COLUMNS.CREATED_DATE,
-//       render(data) {
-//         const date = formatDate({ date: data });
-//         return `<time>${date}</time>`;
-//       }
-//     }
-//   ]
-// });
-//
-// $table.DataTable(config);
-//
-// /**
-//  * Move the buttons for the table into the appropriate location
-//  * above the table.
-//  */
-// const wrapper = $("#create-btn-wrapper");
-// $(".buttons").html(wrapper.html());
-// wrapper.remove();

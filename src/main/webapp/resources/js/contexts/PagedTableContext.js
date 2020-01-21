@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchPageTableUpdate } from "../apis/paged-table/paged-table";
+import debounce from "lodash/debounce";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
@@ -59,7 +60,19 @@ function PagedTableProvider({ children, url }) {
    * Required when using an external filter on a table.
    * @param term - search term
    */
-  const onSearch = term => setTableState({ ...tableState, search: term });
+  const onSearch = term => {
+    console.log(`In onSearch: ${term}`);
+
+    function updateSearchTerm() {
+      console.log(`In updateSearchTerm: ${term}`);
+      setTableState({
+        ...tableState,
+        search: term
+      });
+    }
+
+    debounce(updateSearchTerm, 300);
+  };
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
