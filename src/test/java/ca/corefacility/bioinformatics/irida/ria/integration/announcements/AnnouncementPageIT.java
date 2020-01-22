@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.announcements;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -11,16 +8,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.*;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementControlPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementCreatePage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementDashboardPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementDetailPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementReadPage;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration test to ensure the Announcement Control page works
@@ -49,7 +45,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     @Test
     public void testConfirmTablePopulatedByAnnouncements() {
         controlPage.goTo();
-        assertEquals("Announcement table should be populated by 7 announcements", 7, controlPage.announcementTableSize());
+        assertEquals("Announcement table should be populated by 6 announcements", 6, controlPage.announcementTableSize());
     }
 
     @Test

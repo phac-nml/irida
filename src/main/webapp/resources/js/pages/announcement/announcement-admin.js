@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { render } from "react-dom";
-import { Input, Table } from "antd";
+import { Button, Input, Table } from "antd";
 import {
   PagedTableContext,
   PagedTableProvider
@@ -31,13 +31,16 @@ function AnnouncementsTable() {
     {
       title: i18n("announcement.control.message"),
       dataIndex: "message",
-      render(text) {
+      className: "t-announcement",
+      render(text, full) {
         return (
-          <ReactMarkdown
-            source={text}
-            disallowedTypes={["paragraph"]}
-            unwrapDisallowed
-          />
+          <a href={setBaseUrl(`announcements/${full.id}/details`)}>
+            <ReactMarkdown
+              source={text}
+              disallowedTypes={["paragraph"]}
+              unwrapDisallowed
+            />
+          </a>
         );
       }
     },
@@ -50,6 +53,7 @@ function AnnouncementsTable() {
     },
     {
       ...dateColumnFormat(),
+      className: "t-created-date",
       title: i18n("iridaThing.timestamp"),
       dataIndex: "createdDate"
     }
@@ -86,7 +90,17 @@ function AnnouncementsTable() {
 }
 
 render(
-  <PageWrapper title={i18n("announcement.admin-menu")}>
+  <PageWrapper
+    title={i18n("announcement.admin-menu")}
+    headerExtras={
+      <Button
+        className="t-create-announcement"
+        href={setBaseUrl(`announcements/create`)}
+      >
+        {i18n("announcement.create.title")}
+      </Button>
+    }
+  >
     <PagedTableProvider url={setBaseUrl(`announcements/control/ajax/list`)}>
       <AnnouncementsTable />
     </PagedTableProvider>
