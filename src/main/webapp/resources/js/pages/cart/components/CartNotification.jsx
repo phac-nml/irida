@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Icon } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { blue6 } from "../../../styles/colors";
 
 const Wrapper = styled.div`
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 const CartNotification = ({ text, icon }) => (
   <Wrapper>
     <div>
-      <Icon type={icon} style={{ fontSize: 120 }} />
+      <FontAwesomeIcon icon={icon} style={{ fontSize: 120 }} />
     </div>
     <div>{text}</div>
   </Wrapper>
@@ -25,7 +25,7 @@ const CartNotification = ({ text, icon }) => (
 
 CartNotification.propTypes = {
   text: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired
+  icon: PropTypes.object.isRequired
 };
 
 export default CartNotification;

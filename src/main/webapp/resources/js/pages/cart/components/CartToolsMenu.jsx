@@ -1,11 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Icon, Menu } from "antd";
+import { Menu } from "antd";
 import { Link } from "@reach/router";
 import { COLOR_BORDER_LIGHT, grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCaretSquareLeft,
+  faCaretSquareRight
+} from "@fortawesome/free-solid-svg-icons";
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -14,6 +19,7 @@ const MenuWrapper = styled.div`
   height: 65px;
   border-bottom: 1px solid ${COLOR_BORDER_LIGHT};
   background-color: ${grey1};
+  width: 100%;
 
   .ant-menu {
     line-height: 65px;
@@ -41,9 +47,14 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
         ))}
       </Menu>
       <AnalysesQueue />
-      <Icon
-        style={{ color: grey6, fontSize: 24, margin: SPACE_MD }}
-        type={collapsed ? "menu-fold" : "menu-unfold"}
+      <FontAwesomeIcon
+        icon={collapsed ? faCaretSquareLeft : faCaretSquareRight}
+        style={{
+          color: grey6,
+          fontSize: 24,
+          margin: SPACE_MD,
+          cursor: "pointer"
+        }}
         onClick={toggleSidebar}
       />
     </MenuWrapper>

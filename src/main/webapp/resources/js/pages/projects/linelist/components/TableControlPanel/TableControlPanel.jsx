@@ -3,6 +3,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faColumns } from "@fortawesome/free-solid-svg-icons";
 
 import styled from "styled-components";
 import { grey2, grey5, grey9 } from "../../../../../styles/colors";
@@ -54,10 +56,11 @@ export default function TableControlPanel(props) {
           <Button
             tour="tour-columns"
             shape="circle"
-            icon="table"
             className="t-columns-panel-toggle"
             onClick={props.togglePanel}
-          />
+          >
+            <FontAwesomeIcon icon={faColumns} />
+          </Button>
         </Tooltip>
       </ControlPanelButtons>
     </ControlPanel>

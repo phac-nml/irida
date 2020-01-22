@@ -6,6 +6,10 @@ import { Layout } from "antd";
 import CartSamples from "./CartSamples";
 import { grey2 } from "../../../styles/colors";
 import CartNotification from "./CartNotification";
+import {
+  faExclamationTriangle,
+  faShoppingCart
+} from "@fortawesome/free-solid-svg-icons";
 
 const { Sider } = Layout;
 
@@ -21,7 +25,7 @@ function CartSamplesComponent({ count, collapsed, loaded }) {
     >
       {count === 0 ? (
         <CartNotification
-          icon="shopping-cart"
+          icon={faShoppingCart}
           text={i18n("CartEmpty.heading")}
         />
       ) : loaded ? (
@@ -29,7 +33,7 @@ function CartSamplesComponent({ count, collapsed, loaded }) {
       ) : (
         <CartNotification
           text={i18n("cart.noneMatchingFilter")}
-          icon="warning"
+          icon={faExclamationTriangle}
         />
       )}
     </Sider>

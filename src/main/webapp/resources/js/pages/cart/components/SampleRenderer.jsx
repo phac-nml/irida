@@ -1,10 +1,12 @@
 import React from "react";
 
 import PropTypes from "prop-types";
-import { Button, Dropdown, Icon, Menu } from "antd";
-import { grey1, grey4, grey5 } from "../../../styles/colors";
+import { Button, Dropdown, Menu } from "antd";
+import { grey1, grey4, grey5, grey6 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisV, faFolder } from "@fortawesome/free-solid-svg-icons";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -30,8 +32,8 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
 
 const IconText = ({ type, text }) => (
   <span>
-    <Icon
-      type={type}
+    <FontAwesomeIcon
+      icon={faFolder}
       style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }}
     />
     {text}
@@ -108,7 +110,13 @@ export class SampleRenderer extends React.Component {
             }
             trigger={["hover"]}
           >
-            <Icon className="t-delete-menu-btn" type="more" />
+            <div style={{ display: "inline-block" }}>
+              <FontAwesomeIcon
+                icon={faEllipsisV}
+                className="t-delete-menu-btn"
+                style={{ color: grey6 }}
+              />
+            </div>
           </Dropdown>
         </div>
         <div>

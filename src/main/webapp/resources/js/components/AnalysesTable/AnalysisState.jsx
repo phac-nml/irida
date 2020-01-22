@@ -1,7 +1,9 @@
 import React from "react";
-import { Badge, Icon } from "antd";
+import { Badge } from "antd";
 import { SPACE_XS } from "../../styles/spacing";
 import { green6 } from "../../styles/colors";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Display the state of an analysis
@@ -21,8 +23,8 @@ export function AnalysisState({ state }) {
     default:
       return (
         <span>
-          <Icon
-            type="sync"
+          <FontAwesomeIcon
+            icon={faSync}
             style={{ marginRight: SPACE_XS, color: green6 }}
             spin
           />

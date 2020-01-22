@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { Button, Icon, Modal } from "antd";
+import { Button, Modal } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { red6 } from "../../styles/colors";
 import { useInterval } from "../../hooks/useInterval";
 import { SPACE_SM } from "../../styles/spacing";
@@ -75,9 +77,8 @@ export default function SessionModal({
             alignItems: "center"
           }}
         >
-          <Icon
-            type="clock-circle"
-            theme="twoTone"
+          <FontAwesomeIcon
+            icon={faClock}
             style={{ fontSize: 30 }}
             twoToneColor={red6}
           />
@@ -120,9 +121,8 @@ export default function SessionModal({
           padding: `0 ${SPACE_SM}`
         }}
       >
-        <Icon
-          type="clock-circle"
-          theme="twoTone"
+        <FontAwesomeIcon
+          icon={faClock}
           style={{ fontSize: 55 }}
           twoToneColor={red6}
         />
