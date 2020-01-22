@@ -39,6 +39,8 @@ Changes
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
 * [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
 * [Documentation]: Updated links and references from the old IRIDA MiSeq Uploader to the new IRIDA Uploader as the old uploader will not be supported when python 2 reaches end of life.
+* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
+* [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 
 19.05 to 19.09
