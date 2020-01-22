@@ -5,6 +5,7 @@ import { Icon, Menu } from "antd";
 import { Link } from "@reach/router";
 import { COLOR_BORDER_LIGHT, grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
+import { AnalysesQueue } from "../../../components/AnalysesQueue";
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -39,6 +40,7 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
           </Menu.Item>
         ))}
       </Menu>
+      <AnalysesQueue />
       <Icon
         style={{ color: grey6, fontSize: 24, margin: SPACE_MD }}
         type={collapsed ? "menu-fold" : "menu-unfold"}

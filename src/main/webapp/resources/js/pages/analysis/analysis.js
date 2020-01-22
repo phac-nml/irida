@@ -1,8 +1,8 @@
 import angular from "angular";
 import $ from "jquery";
 import {
-  showNotification,
-  showErrorNotification
+  showErrorNotification,
+  showNotification
 } from "../../modules/notifications";
 import { formatDate } from "../../utilities/date-utilities";
 import { renderPlainTextPreview } from "./plaintext-preview";
