@@ -34,7 +34,6 @@ Once the samples are copied over to the new project, the last step is to add all
 
 
 [web-upload]: ../web-upload/
-[uploader-tool]: ../uploader-tutorial/
 [project]: {{ site.baseurl }}/user/user/project/
 [samples]: {{ site.baseurl }}/user/user/samples/
 [project-members]: {{ site.baseurl }}/user/user/project/index.html#project-members

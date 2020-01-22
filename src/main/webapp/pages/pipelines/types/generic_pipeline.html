@@ -4,6 +4,7 @@
 <head>
     <title th:text="${title}">Pipelines - Launch</title>
     <link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/pipeline-launch.bundle.css}">
     <script th:inline="javascript">
       /*<![CDATA[*/
       window.PAGE = {
@@ -312,6 +313,7 @@
             </div>
 
             <div class="col-lg-3 col-sm-3" ng-switch="pipeline.loading">
+                <div id="queue-root" style="margin: 10px 0; display: flex; justify-content: center"></div>
                 <!-- BUTTONS ON THE SIDE -->
                 <div ng-switch-when="false" class="ng-cloak text-center">
                     <h2 th:if="${automatedProject == null}" th:text="#{workflow.launch.btn}">Ready to Launch?</h2>

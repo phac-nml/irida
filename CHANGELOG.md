@@ -38,6 +38,7 @@ Changes
 * [Developer]: Sample filter input has underscores escaped so that proper samples are returned.
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
 * [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
+* [Documentation]: Updated links and references from the old IRIDA MiSeq Uploader to the new IRIDA Uploader as the old uploader will not be supported when python 2 reaches end of life.
 * [UI/Developer]: Update version of `babel` and `eslint`
 
 19.05 to 19.09
@@ -80,6 +81,7 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
+* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
 
 19.01 to 19.05
 ---------------

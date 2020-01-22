@@ -284,9 +284,22 @@ The overrepresented sequences page displays all of the overrepresented sequences
 
 ![Sequencing run file overrepresented sequences page.](images/sequencing-run-overrepresented-sequences.png)
 
-Uploading Data to IRIDA
+Uploading Data to IRIDA using the IRIDA Uploader
 =======================
-IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader-tool/) for more information on how to upload data.
+
+The IRIDA Uploader is an application used to submit sequencing data from a variety of sequencers to an instance of IRIDA. You can access the latest stable release of the IRIDA Uploader at:
+
+<https://github.com/phac-nml/irida-uploader/releases/latest>
+
+The Uploader is available as a stand alone application with user interface, and as a command line utility.
+
+A tutorial for the stand alone application can be found here: <https://github.com/phac-nml/irida-uploader-tutorial>
+
+The command line utility is available via source code on [Github](https://github.com/phac-nml/irida-uploader) as well as a package on [bioconda](https://anaconda.org/bioconda/irida-uploader)
+
+The documentation for using the IRIDA Uploader is included in the package, but can also be found at:
+
+<https://irida-uploader.readthedocs.io/en/stable/>
 
 Displaying IRIDA Platform Updates/Announcements
 ===============================================
