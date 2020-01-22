@@ -47,7 +47,10 @@ export default function TableControlPanel(props) {
         <Columns {...props} />
       </ControlPanelContent>
       <ControlPanelButtons>
-        <Tooltip title={i18n("linelist.controlPanel.columns.title")} placement="left">
+        <Tooltip
+          title={i18n("linelist.controlPanel.columns.title")}
+          placement="left"
+        >
           <Button
             tour="tour-columns"
             shape="circle"
