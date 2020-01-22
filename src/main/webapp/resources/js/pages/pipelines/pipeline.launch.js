@@ -6,7 +6,7 @@ import React from "react";
 import { render } from "react-dom";
 import { AnalysesQueue } from "../../components/AnalysesQueue";
 
-render(<AnalysesQueue/>, document.querySelector("#queue-root"));
+render(<AnalysesQueue />, document.querySelector("#queue-root"));
 
 /**
  * Main controller for the pipeline launch page.
