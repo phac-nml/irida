@@ -234,5 +234,14 @@ public class AnalysesAjaxController {
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
+
+	/**
+	 * Fetch the current status of the analysis server.
+	 * @return {@link Map} of the running and queued counts.
+	 */
+	@RequestMapping("/queue")
+	public AnalysisSubmissionService.AnalysisServiceStatus fetchAnalysesQueueCounts() {
+		return analysisSubmissionService.getAnalysisServiceStatus();
+	}
 }
 
