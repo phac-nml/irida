@@ -300,7 +300,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
@@ -371,7 +371,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(
 				1L, sequenceFilePathA, sequenceFilePath2A);
@@ -408,7 +408,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPaired, false);
@@ -483,7 +483,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		Map<String, String> parameters = ImmutableMap.of("coverage", "20");
 
@@ -542,7 +542,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters, false);
@@ -598,7 +598,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
 
@@ -649,7 +649,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		Map<String, String> parameters = ImmutableMap.of("invalid", "20");
 
@@ -685,7 +685,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		// construct two pairs of sequence files with same sample (1L)
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
@@ -719,7 +719,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
 				.setupSinglePairSubmissionInDatabaseDifferentSample(1L, 2L, pairSequenceFiles1A, pairSequenceFiles2A,
@@ -779,7 +779,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
 				.setupSinglePairSubmissionInDatabaseSameSample(1L, pairSequenceFiles1A, pairSequenceFiles2A,
@@ -858,7 +858,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
@@ -925,7 +925,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingleSingleSample);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingleSingleSample, false);
@@ -992,7 +992,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
 		List<Path> paths2 = new ArrayList<>();
@@ -1067,7 +1067,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedSingleSample);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
 		List<Path> paths2 = new ArrayList<>();
@@ -1142,7 +1142,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedSingleSample);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
 		List<Path> paths2 = new ArrayList<>();
@@ -1209,7 +1209,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
@@ -1285,7 +1285,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(phylogenomicsWorkflowId);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, phylogenomicsWorkflowId, false);
@@ -1345,7 +1345,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);

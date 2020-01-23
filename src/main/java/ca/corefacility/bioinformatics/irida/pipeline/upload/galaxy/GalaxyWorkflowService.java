@@ -58,7 +58,7 @@ public class GalaxyWorkflowService {
 		String workflowString = new String(fileBytes, workflowCharset);
 		
 		try {
-			Workflow workflow = workflowsClient.importWorkflow(workflowString);
+			Workflow workflow = workflowsClient.importWorkflow(workflowString, false);
 			return workflow.getId();
 		} catch (RuntimeException e) {
 			throw new WorkflowUploadException("Could not upload workflow from " + workflowFile,e);
