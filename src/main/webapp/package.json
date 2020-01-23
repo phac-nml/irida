@@ -79,7 +79,7 @@
     "select2": "^3.5.1",
     "showdown": "^1.7.4",
     "sortablejs": "^1.5.1",
-    "styled-components": "^4.3.2",
+    "styled-components": "^5.0.0",
     "ui-select": "^0.19.6",
     "xlsx": "^0.13.0"
   },
