@@ -38,6 +38,10 @@ Changes
 * [Developer]: Sample filter input has underscores escaped so that proper samples are returned.
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
 * [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
+* [Documentation]: Updated links and references from the old IRIDA MiSeq Uploader to the new IRIDA Uploader as the old uploader will not be supported when python 2 reaches end of life.
+* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
+* [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
+* [UI/Developer]: Updated to V5 of styled-components.
 
 19.05 to 19.09
 ---------------

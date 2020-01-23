@@ -35,7 +35,7 @@
     "angular-marked": "^1.2.2",
     "angular-ui-bootstrap": "^2.5.6",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "^3.26.0",
+    "antd": "^3.26.7",
     "axios": "^0.19.0",
     "bootstrap": "3.4.1",
     "bootstrap-daterangepicker": "^3.0.3",
@@ -79,7 +79,7 @@
     "select2": "^3.5.1",
     "showdown": "^1.7.4",
     "sortablejs": "^1.5.1",
-    "styled-components": "^4.3.2",
+    "styled-components": "^5.0.0",
     "ui-select": "^0.19.6",
     "xlsx": "^0.13.0"
   },
@@ -137,6 +137,7 @@
   },
   "resolutions": {
     "jquery": "3.4.0",
-    "fstream": "1.0.12"
+    "fstream": "1.0.12",
+    "angular": "1.7.9"
   }
 }
