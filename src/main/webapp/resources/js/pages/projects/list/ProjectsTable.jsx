@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Dropdown, Input, Menu, Table, Typography } from "antd";
+import { Button, Dropdown, Input, Menu, Table } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FileExcelTwoTone } from "@ant-design/icons";
 import {
   faExchangeAlt,
   faFile,
-  faFileDownload,
-  faFileExcel
+  faFileDownload
 } from "@fortawesome/free-solid-svg-icons";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
@@ -16,8 +16,6 @@ import {
 } from "../../../components/ant.design/table-renderers";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-
-const { Text } = Typography;
 
 const initialState = {
   loading: true, // true when table fetching data
@@ -165,7 +163,7 @@ export function ProjectsTable() {
           href={setBaseUrl(`projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
-          <FontAwesomeIcon icon={faFileExcel} className="spaced-right__sm" />
+          <FileExcelTwoTone className="spaced-right__sm" />
           {i18n("ProjectsTable_export_excel")}
         </a>
       </Menu.Item>
