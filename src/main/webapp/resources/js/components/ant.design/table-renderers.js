@@ -5,8 +5,7 @@ import { FilterIcon } from "../Tables/fitlers/FilterIcon";
 export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
-  sorter: true,
-  width: 100
+  sorter: true
 });
 
 export const nameColumnFormat = ({ url }) => {

@@ -116,7 +116,7 @@ export function ProjectsTable() {
       title: "",
       dataIndex: "remote",
       key: "remote",
-      width: 30,
+      width: 50,
       render: remote =>
         remote ? (
           <FontAwesomeIcon
@@ -134,13 +134,7 @@ export function ProjectsTable() {
       title: i18n("ProjectsTable_th_organism"),
       dataIndex: "organism",
       key: "organism",
-      sorter: true,
-      width: 150,
-      render: text => (
-        <Text style={{ width: 135 }} ellipsis={true} title={text}>
-          {text}
-        </Text>
-      )
+      sorter: true
     },
     {
       title: i18n("ProjectsTable_th_samples"),
@@ -189,6 +183,7 @@ export function ProjectsTable() {
 
   return (
     <PageWrapper title={i18n("ProjectsTable_header")}>
+      <div>
       <div
         style={{
           paddingBottom: SPACE_MD,
@@ -218,6 +213,7 @@ export function ProjectsTable() {
         dataSource={projects}
         onChange={handleTableChange}
       />
+      </div>
     </PageWrapper>
   );
 }
