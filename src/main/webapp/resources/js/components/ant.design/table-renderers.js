@@ -6,7 +6,8 @@ import { blue6 } from "../../styles/colors";
 export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
-  sorter: true
+  sorter: true,
+  width: 120
 });
 
 export const nameColumnFormat = ({ url }) => {
