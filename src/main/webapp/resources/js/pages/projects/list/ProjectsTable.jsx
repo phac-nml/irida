@@ -184,35 +184,35 @@ export function ProjectsTable() {
   return (
     <PageWrapper title={i18n("ProjectsTable_header")}>
       <div>
-      <div
-        style={{
-          paddingBottom: SPACE_MD,
-          display: "flex",
-          justifyContent: "space-between"
-        }}
-      >
-        <Dropdown overlay={exportMenu} key="export">
-          <Button>
-            {i18n("ProjectsTable_export")}
-            <FontAwesomeIcon
-              icon={faFileDownload}
-              style={{ marginLeft: SPACE_XS }}
-            />
-          </Button>
-        </Dropdown>
-        <Input.Search style={{ width: 300 }} onSearch={onSearch} />
-      </div>
-      <Table
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{
-          total: total,
-          pageSize: state.pageSize
-        }}
-        columns={columns}
-        dataSource={projects}
-        onChange={handleTableChange}
-      />
+        <div
+          style={{
+            paddingBottom: SPACE_MD,
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
+          <Dropdown overlay={exportMenu} key="export">
+            <Button>
+              {i18n("ProjectsTable_export")}
+              <FontAwesomeIcon
+                icon={faFileDownload}
+                style={{ marginLeft: SPACE_XS }}
+              />
+            </Button>
+          </Dropdown>
+          <Input.Search style={{ width: 300 }} onSearch={onSearch} />
+        </div>
+        <Table
+          rowKey={record => record.id}
+          loading={loading}
+          pagination={{
+            total: total,
+            pageSize: state.pageSize
+          }}
+          columns={columns}
+          dataSource={projects}
+          onChange={handleTableChange}
+        />
       </div>
     </PageWrapper>
   );
