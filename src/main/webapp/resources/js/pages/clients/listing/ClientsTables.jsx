@@ -5,8 +5,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../../styles/spacing";
 import { revokeClientTokens } from "../../../apis/clients/clients";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPowerOff } from "@fortawesome/free-solid-svg-icons";
+import { PoweroffOutlined } from "@ant-design/icons";
 
 /**
  * Table for displaying a list of clients.
@@ -96,7 +95,7 @@ export function ClientsTable() {
               placement={"bottomRight"}
             >
               <Button shape={"circle"} disabled={disabled}>
-                <FontAwesomeIcon icon={faPowerOff} />
+                <PoweroffOutlined />
               </Button>
             </Tooltip>
           </Popconfirm>
