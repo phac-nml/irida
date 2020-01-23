@@ -1,7 +1,6 @@
 import React from "react";
 import { Popover } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { QuestionCircleTwoTone } from "@ant-design/icons";
 import PropTypes from "prop-types";
 
 /**
@@ -15,10 +14,8 @@ export function HelpPopover(props) {
   return (
     <Popover content={props.content} title={props.title}>
       <div style={{ display: "inline-block" }}>
-        <FontAwesomeIcon
-          icon={faQuestionCircle}
+        <QuestionCircleTwoTone
           style={{
-            color: "RGBA(46, 149, 248, 1.00)",
             margin: "0 .5rem",
             cursor: "help"
           }}

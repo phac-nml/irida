@@ -1,9 +1,7 @@
 import React from "react";
-
 import { useStateValue } from "./GalaxyState";
 import { Alert } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import { SPACE_SM } from "../../styles/spacing";
 
 /**
@@ -18,7 +16,7 @@ export function GalaxySamples() {
       {fetchingSamples ? (
         <Alert
           message={i18n("GalaxySamples.processing")}
-          icon={<FontAwesomeIcon icon={faSpinner} pulse />}
+          icon={<LoadingOutlined />}
           showIcon
           type="info"
         />

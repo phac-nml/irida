@@ -6,11 +6,7 @@ import { Link } from "@reach/router";
 import { COLOR_BORDER_LIGHT, grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCaretSquareLeft,
-  faCaretSquareRight
-} from "@fortawesome/free-solid-svg-icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -33,6 +29,7 @@ const MenuWrapper = styled.div`
  * @returns {*}
  */
 export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
+  const MenuIcon = collapsed ? MenuUnfoldOutlined : MenuFoldOutlined;
   return (
     <MenuWrapper>
       <Menu
@@ -47,8 +44,7 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
         ))}
       </Menu>
       <AnalysesQueue />
-      <FontAwesomeIcon
-        icon={collapsed ? faCaretSquareLeft : faCaretSquareRight}
+      <MenuIcon
         style={{
           color: grey6,
           fontSize: 24,

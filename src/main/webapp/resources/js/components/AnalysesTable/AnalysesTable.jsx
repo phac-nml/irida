@@ -17,11 +17,9 @@ import { blue6, grey6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileDownload } from "@fortawesome/free-solid-svg-icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import { FilterIcon } from "../Tables/fitlers/FilterIcon";
 import styled from "styled-components";
-
 
 const DownloadButton = styled(Button)`
   color: ${grey6};
@@ -136,7 +134,7 @@ export function AnalysesTable() {
             href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
           >
-            <FontAwesomeIcon icon={faFileDownload} />
+            <DownloadOutlined />
           </DownloadButton>
         );
       }

@@ -1,6 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { FilterOutlined } from "@ant-design/icons";
 import { blue6 } from "../../../styles/colors";
 
 export const FilterIcon = ({ filtered }) => (
@@ -13,8 +12,7 @@ export const FilterIcon = ({ filtered }) => (
       width: "100%"
     }}
   >
-    <FontAwesomeIcon
-      icon={faFilter}
+    <FilterOutlined
       style={{ color: filtered ? blue6 : undefined }}
       className="t-state"
     />

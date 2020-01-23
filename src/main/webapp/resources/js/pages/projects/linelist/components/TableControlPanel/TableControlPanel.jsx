@@ -1,14 +1,11 @@
 import React from "react";
-
 import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faColumns } from "@fortawesome/free-solid-svg-icons";
-
 import styled from "styled-components";
-import { grey2, grey5, grey9 } from "../../../../../styles/colors";
+import { grey2, grey9 } from "../../../../../styles/colors";
 import { GRID_BORDER } from "../../styles";
+import { TableOutlined } from "@ant-design/icons";
 
 const ControlPanel = styled.div`
   height: 100%;
@@ -59,7 +56,7 @@ export default function TableControlPanel(props) {
             className="t-columns-panel-toggle"
             onClick={props.togglePanel}
           >
-            <FontAwesomeIcon icon={faColumns} />
+            <TableOutlined />
           </Button>
         </Tooltip>
       </ControlPanelButtons>

@@ -1,12 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { Button, Dropdown, Input, Menu, Table } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   DownloadOutlined,
   FileExcelOutlined,
-  FileOutlined
+  FileOutlined,
+  SwapOutlined
 } from "@ant-design/icons";
-import { faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import {
@@ -117,11 +116,7 @@ export function ProjectsTable() {
       width: 50,
       render: remote =>
         remote ? (
-          <FontAwesomeIcon
-            icon={faExchangeAlt}
-            title="Remote Project"
-            style={{ cursor: "help" }}
-          />
+          <SwapOutlined title="Remote Project" style={{ cursor: "help" }} />
         ) : null
     },
     {
