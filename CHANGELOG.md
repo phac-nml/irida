@@ -42,6 +42,7 @@ Changes
 * [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
 * [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
 * [UI/Developer]: Updated to V5 of styled-components.
+* [UI/Developer]: Update version of `babel` and `eslint`.
 
 19.05 to 19.09
 ---------------
