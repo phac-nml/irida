@@ -1,12 +1,12 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { Button, Dropdown, Input, Menu, Table } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FileExcelTwoTone } from "@ant-design/icons";
 import {
-  faExchangeAlt,
-  faFile,
-  faFileDownload
-} from "@fortawesome/free-solid-svg-icons";
+  DownloadOutlined,
+  FileExcelOutlined,
+  FileOutlined
+} from "@ant-design/icons";
+import { faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import {
@@ -163,7 +163,7 @@ export function ProjectsTable() {
           href={setBaseUrl(`projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
-          <FileExcelTwoTone className="spaced-right__sm" />
+          <FileExcelOutlined className="spaced-right__sm" />
           {i18n("ProjectsTable_export_excel")}
         </a>
       </Menu.Item>
@@ -172,7 +172,7 @@ export function ProjectsTable() {
           href={setBaseUrl(`projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
-          <FontAwesomeIcon icon={faFile} className="spaced-right__sm" />
+          <FileOutlined className="spaced-right__sm" />
           {i18n("ProjectsTable_export_csv")}
         </a>
       </Menu.Item>
@@ -192,10 +192,7 @@ export function ProjectsTable() {
           <Dropdown overlay={exportMenu} key="export">
             <Button>
               {i18n("ProjectsTable_export")}
-              <FontAwesomeIcon
-                icon={faFileDownload}
-                style={{ marginLeft: SPACE_XS }}
-              />
+              <DownloadOutlined style={{ marginLeft: SPACE_XS }} />
             </Button>
           </Dropdown>
           <Input.Search style={{ width: 300 }} onSearch={onSearch} />
