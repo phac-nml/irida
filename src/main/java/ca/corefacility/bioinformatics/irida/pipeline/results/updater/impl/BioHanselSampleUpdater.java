@@ -106,7 +106,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 					}
 				});
 
-				Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(stringEntries);
+				Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(stringEntries);
 
 				sampleService.mergeSampleMetadata(sample, metadataSet);
 

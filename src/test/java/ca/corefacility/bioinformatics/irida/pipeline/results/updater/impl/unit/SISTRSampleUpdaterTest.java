@@ -94,14 +94,14 @@ public class SISTRSampleUpdaterTest {
 		Set<MetadataEntry> metadataSet = Sets.newHashSet(
 				new MetadataEntry("Value1", "text", new MetadataTemplateField("SISTR Field", "text")));
 
-		when(metadataTemplateService.getMetadataSet(any(Map.class))).thenReturn(metadataSet);
+		when(metadataTemplateService.convertMetadataStringsToSet(any(Map.class))).thenReturn(metadataSet);
 
 		updater.update(Lists.newArrayList(sample), submission);
 
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
-		verify(metadataTemplateService).getMetadataSet(mapCaptor.capture());
+		verify(metadataTemplateService).convertMetadataStringsToSet(mapCaptor.capture());
 		Map<String, MetadataEntry> metadata = mapCaptor.getValue();
 
 		int found = 0;
@@ -156,14 +156,14 @@ public class SISTRSampleUpdaterTest {
 		Set<MetadataEntry> metadataSet = Sets.newHashSet(
 				new MetadataEntry("Value1", "text", new MetadataTemplateField("SISTR Field", "text")));
 
-		when(metadataTemplateService.getMetadataSet(any(Map.class))).thenReturn(metadataSet);
+		when(metadataTemplateService.convertMetadataStringsToSet(any(Map.class))).thenReturn(metadataSet);
 
 		updater.update(Lists.newArrayList(sample), submission);
 
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
-		verify(metadataTemplateService).getMetadataSet(mapCaptor.capture());
+		verify(metadataTemplateService).convertMetadataStringsToSet(mapCaptor.capture());
 		Map<String, MetadataEntry> metadata = mapCaptor.getValue();
 
 		int found = 0;

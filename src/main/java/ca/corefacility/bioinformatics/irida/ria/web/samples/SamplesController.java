@@ -250,7 +250,7 @@ public class SamplesController extends BaseController {
 		}
 
 		if (!metadataMap.isEmpty()) {
-			Set<MetadataEntry> metadataSet = metadataTemplateService.getMetadataSet(metadataMap);
+			Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
 
 			sampleService.updateSampleMetadata(sample, metadataSet);
 		}

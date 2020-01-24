@@ -116,7 +116,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param metadataMap the strings to convert
 	 * @return a Set of {@link MetadataEntry}s
 	 */
-	public Set<MetadataEntry> getMetadataSet(Map<String, MetadataEntry> metadataMap);
+	public Set<MetadataEntry> convertMetadataStringsToSet(Map<String, MetadataEntry> metadataMap);
 
 	/**
 	 * Get all the {@link MetadataTemplateField}s on a given {@link Project}

@@ -251,7 +251,7 @@ public class ExportUploadServiceTest {
 				.thenReturn(Lists.newArrayList(submission));
 		when(sampleService.getSampleForSequencingObject(seqObject))
 				.thenReturn(new SampleSequencingObjectJoin(iridaSample, seqObject));
-		when(metadataTemplateService.getMetadataSet(any(Map.class))).thenReturn(Sets.newHashSet(entry));
+		when(metadataTemplateService.convertMetadataStringsToSet(any(Map.class))).thenReturn(Sets.newHashSet(entry));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
 				+ "<SubmissionStatus submission_id=\"SUB11245\" status=\"processed-ok\">\n"

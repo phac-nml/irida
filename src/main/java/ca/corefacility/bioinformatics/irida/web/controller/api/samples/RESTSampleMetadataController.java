@@ -84,7 +84,7 @@ public class RESTSampleMetadataController {
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
-		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(metadataMap);
+		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
 
 		sampleService.updateSampleMetadata(s,metadata);
 
@@ -106,7 +106,7 @@ public class RESTSampleMetadataController {
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
-		Set<MetadataEntry> metadata = metadataTemplateService.getMetadataSet(metadataMap);
+		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
 		
 		sampleService.mergeSampleMetadata(s, metadata);
 

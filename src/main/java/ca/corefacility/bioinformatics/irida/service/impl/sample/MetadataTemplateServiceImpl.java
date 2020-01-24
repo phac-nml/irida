@@ -149,7 +149,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	@Transactional
 	@PreAuthorize("permitAll()")
-	public Set<MetadataEntry> getMetadataSet(Map<String, MetadataEntry> metadataMap) {
+	public Set<MetadataEntry> convertMetadataStringsToSet(Map<String, MetadataEntry> metadataMap) {
 		Set<MetadataEntry> metadata = new HashSet<>();
 
 		metadataMap.entrySet()

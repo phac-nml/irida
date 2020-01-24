@@ -87,14 +87,14 @@ public class BioHanselSampleUpdaterTest {
 		 */
 		//when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
 
-		when(metadataTemplateService.getMetadataSet(anyMap())).thenReturn(metadataSet);
+		when(metadataTemplateService.convertMetadataStringsToSet(anyMap())).thenReturn(metadataSet);
 
 		bioHanselSampleUpdater.update(Lists.newArrayList(sample), submission);
 
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
-		verify(metadataTemplateService).getMetadataSet(mapCaptor.capture());
+		verify(metadataTemplateService).convertMetadataStringsToSet(mapCaptor.capture());
 		Map<String, MetadataEntry> metadataEntryMap = mapCaptor.getValue();
 
 		AtomicInteger found = new AtomicInteger();

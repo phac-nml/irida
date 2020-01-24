@@ -665,7 +665,7 @@ public class ExportUploadService {
 				Map<String, MetadataEntry> metadata = new HashMap<>();
 				metadata.put(NCBI_ACCESSION_METADATA_LABEL, new MetadataEntry(accession, "text"));
 				Set<MetadataEntry> metadataSet = metadataTemplateService
-						.getMetadataSet(metadata);
+						.convertMetadataStringsToSet(metadata);
 
 				//get all the sequencing objects involved
 				Set<SequencingObject> objects = new HashSet<>();
