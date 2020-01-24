@@ -30,7 +30,7 @@ public class MetadataTemplateField {
 	@NotNull
 	private String type;
 
-	@OneToMany(mappedBy = "field", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
 	private List<MetadataEntry> metadataEntries;
 
 	public MetadataTemplateField() {
@@ -83,6 +83,7 @@ public class MetadataTemplateField {
 
 	/**
 	 * Key for displaying the field in the UI
+	 *
 	 * @return the key of the field.
 	 */
 	public String getFieldKey() {
