@@ -4,8 +4,7 @@ import { PageWrapper } from "../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../contexts/PagedTableContext";
 import { ClientsTable } from "./ClientsTables";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Button } from "antd";
-import { PlusCircleTwoTone } from "@ant-design/icons";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 
 /**
  * Page for displaying the list of all clients.
@@ -17,10 +16,10 @@ function ClientListingPage() {
     <PageWrapper
       title={i18n("clients.title")}
       headerExtras={
-        <Button type={"primary"} href={setBaseUrl(`clients/create`)}>
-          <PlusCircleTwoTone />
-          {i18n("clients.add")}
-        </Button>
+        <AddNewButton
+          href={setBaseUrl(`clients/create`)}
+          text={i18n("clients.add")}
+        />
       }
     >
       <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>

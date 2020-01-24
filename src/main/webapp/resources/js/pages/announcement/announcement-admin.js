@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { render } from "react-dom";
-import { Button, Input, Table } from "antd";
+import { Input, Table } from "antd";
 import {
   PagedTableContext,
   PagedTableProvider
@@ -10,6 +10,7 @@ import { PageWrapper } from "../../components/page/PageWrapper";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import ReactMarkdown from "react-markdown";
 import { SPACE_SM } from "../../styles/spacing";
+import { AddNewButton } from "../../components/Buttons/AddNewButton";
 
 function AnnouncementsTable() {
   const {
@@ -93,12 +94,10 @@ render(
   <PageWrapper
     title={i18n("announcement.admin-menu")}
     headerExtras={
-      <Button
-        className="t-create-announcement"
+      <AddNewButton
         href={setBaseUrl(`announcements/create`)}
-      >
-        {i18n("announcement.create.title")}
-      </Button>
+        text={i18n("announcement.create.title")}
+      />
     }
   >
     <PagedTableProvider url={setBaseUrl(`announcements/control/ajax/list`)}>
