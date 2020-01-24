@@ -43,6 +43,7 @@ Changes
 * [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
 * [UI/Developer]: Updated to V5 of styled-components.
 * [UI/Developer]: Update version of `babel` and `eslint`.
+* [Documentation]: Added info about upgrading to Tomcat 8.
 
 19.05 to 19.09
 ---------------
