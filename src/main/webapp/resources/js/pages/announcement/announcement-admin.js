@@ -10,7 +10,7 @@ import { PageWrapper } from "../../components/page/PageWrapper";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import ReactMarkdown from "react-markdown";
 import { SPACE_SM } from "../../styles/spacing";
-import { AddNewButton } from "../../components/Buttons/AddNewButton";
+import { CreateNewAnnouncement } from "./CreateNewAnnouncement";
 
 function AnnouncementsTable() {
   const {
@@ -89,16 +89,10 @@ function AnnouncementsTable() {
     </>
   );
 }
-
 render(
   <PageWrapper
     title={i18n("announcement.admin-menu")}
-    headerExtras={
-      <AddNewButton
-        href={setBaseUrl(`announcements/create`)}
-        text={i18n("announcement.create.title")}
-      />
-    }
+    headerExtras={<CreateNewAnnouncement />}
   >
     <PagedTableProvider url={setBaseUrl(`announcements/control/ajax/list`)}>
       <AnnouncementsTable />
