@@ -52,7 +52,7 @@ To test this change, try importing some data from Galaxy.  If it works, you've u
 
 ## Sample metadata audit record updates
 
-This upgrade contains some changes to how sample-metadata records are stored in IRIDA's database.  The intent of this update is to help simplify the relationships between samples and metadata records to help with database performance and future developments.  It will also remove some redundancy in the database structure and remove any "dangling" metadata entries which have been removed from a sample, but not fully deleted from the database.
+This upgrade contains some changes to how sample-metadata records are stored in IRIDA's database.  The intent of this update is to simplify the relationships between samples and metadata records to help with database performance and future developments.  It will also remove some redundancy in the database structure and remove any "dangling" metadata entries which have been removed from a sample, but not fully deleted from the database.
 
 While investigating how these updates will be applied to IRIDA databases, we noticed some irregularities in the audit records for some existing metadata.  Because of this we're recommending additional backup procedures be taken before completing this upgrade.  
 
