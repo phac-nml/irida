@@ -5,7 +5,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../../styles/spacing";
 import { revokeClientTokens } from "../../../apis/clients/clients";
-import { PoweroffOutlined } from "@ant-design/icons";
+import { StopOutlined } from "@ant-design/icons";
 
 /**
  * Table for displaying a list of clients.
@@ -80,7 +80,7 @@ export function ClientsTable() {
       key: "action",
       align: "right",
       fixed: "right",
-      width: 140,
+      width: 60,
       render(text, record) {
         const disabled = !record.tokens;
         return (
@@ -95,7 +95,7 @@ export function ClientsTable() {
               placement={"bottomRight"}
             >
               <Button shape={"circle"} disabled={disabled}>
-                <PoweroffOutlined />
+                <StopOutlined />
               </Button>
             </Tooltip>
           </Popconfirm>
