@@ -17,6 +17,11 @@
 	</Description>
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
+		<!-- IRIDA sequence files may either be plaintext (.fastq) or gzip compressed (.fastq.gz)
+		     NCBI requires that uploaded files should have the appropriate file extension.
+		     Determine if the IRIDA sequence file is compressed by looking for .gz extension
+		     and add the appropriate extension to the uploaded files.
+		-->
 		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
 			<th:block th:if="${file.getFiles().toString().endsWith(&quot;.gz&quot;)}">
 				<File th:attr="file_path=${file.getId() + '.fastq.gz'}">
