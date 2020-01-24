@@ -14,13 +14,12 @@ import { Button, Popconfirm } from "antd";
  * @returns {*}
  * @constructor
  */
-export function ConfirmButton({title, onConfirm, label, ...props}) {
+export function ConfirmButton({ title, onConfirm, label, ...props }) {
   return (
-    <Popconfirm
-      title={title}
-      onConfirm={onConfirm}
-    >
-      <Button type="link" {...props}>{label}</Button>
+    <Popconfirm title={title} onConfirm={onConfirm}>
+      <Button type="link" {...props}>
+        {label}
+      </Button>
     </Popconfirm>
   );
 }
