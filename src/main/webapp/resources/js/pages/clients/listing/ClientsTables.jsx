@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PagedTableContext } from "../../../contexts/PagedTableContext";
-import { Button, Input, Popconfirm, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Table, Tag, Tooltip } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../../styles/spacing";
 import { revokeClientTokens } from "../../../apis/clients/clients";
+import { StopOutlined } from "@ant-design/icons";
 
 /**
  * Table for displaying a list of clients.
@@ -78,7 +79,8 @@ export function ClientsTable() {
     {
       key: "action",
       align: "right",
-      width: 140,
+      fixed: "right",
+      width: 60,
       render(text, record) {
         const disabled = !record.tokens;
         return (
@@ -88,9 +90,14 @@ export function ClientsTable() {
             placement={"topRight"}
             onConfirm={() => revokeTokens(record)}
           >
-            <Button shape={"round"} size={"small"} disabled={disabled}>
-              {i18n("client.details.token.revoke")}
-            </Button>
+            <Tooltip
+              title={i18n("client.details.token.revoke")}
+              placement={"bottomRight"}
+            >
+              <Button shape={"circle"} disabled={disabled}>
+                <StopOutlined />
+              </Button>
+            </Tooltip>
           </Popconfirm>
         );
       }
@@ -143,4 +150,3 @@ export function ClientsTable() {
     </>
   );
 }
-

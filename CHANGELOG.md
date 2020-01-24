@@ -39,6 +39,10 @@ Changes
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
 * [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
 * [Documentation]: Updated links and references from the old IRIDA MiSeq Uploader to the new IRIDA Uploader as the old uploader will not be supported when python 2 reaches end of life.
+* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
+* [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
+* [UI/Developer]: Updated to V5 of styled-components.
+* [UI/Developer]: Update version of `babel` and `eslint`.
 
 19.05 to 19.09
 ---------------
@@ -123,7 +127,6 @@ Changes
 * [UI]: Fixed bug causing issues with saving Line List templates.
 * [UI]: Fixed bug when selecting all samples on the project samples page would not add them to cart.
 * [Developer]: Updated to latest version of NodeJS LTS (12.13.0) and Yarn (v1.19.1).
-* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
 
 0.22.0 to 19.01
 ----------------
