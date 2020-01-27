@@ -38,7 +38,7 @@ export function AnnouncementAdminPage({}) {
         <CreateNewAnnouncement createAnnouncement={addNewAnnouncement} />
       }
     >
-      <PagedTableProvider url={setBaseUrl(`announcements/control/ajax/list`)}>
+      <PagedTableProvider url={setBaseUrl(`ajax/announcements/control/list`)}>
         <AnnouncementsTable
           ref={tableRef}
           updateAnnouncement={updateTableAnnouncement}

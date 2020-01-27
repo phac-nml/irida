@@ -1,13 +1,13 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import RichTextEditor from "react-rte";
 import styled from "styled-components";
-
-import ReactMarkdown from "react-markdown";
 import { Tabs } from "antd";
+import { ANT_DESIGN_FONT_FAMILY } from "../../styles/fonts";
 
 const StyledEditor = styled.div`
   .DraftEditor-root {
     min-height: 200px;
+    font-family: ${ANT_DESIGN_FONT_FAMILY};
   }
 `;
 
@@ -23,7 +23,8 @@ const TOOLBAR_CONFIG = {
   INLINE_STYLE_BUTTONS: [
     { label: "Bold", style: "BOLD", className: "custom-css-class" },
     { label: "Italic", style: "ITALIC" },
-    { label: "Underline", style: "UNDERLINE" }
+    { label: "Underline", style: "UNDERLINE" },
+    { label: "Monospace", style: "CODE" }
   ],
   BLOCK_TYPE_DROPDOWN: [
     { label: "Normal", style: "unstyled" },
@@ -50,23 +51,43 @@ export const MarkdownEditor = forwardRef((props, ref) => {
     }
   }));
 
-  function onTextChange(value) {
+  function onChange(value) {
     setEditorState(value);
+  }
+
+  function onTextChange(event) {
+    setEditorState(
+      editorState.setContentFromString(event.target.value, "markdown")
+    );
   }
 
   return (
     <StyledEditor>
       <Tabs animated={false}>
-        <Tabs.TabPane tab={"Write"} key={"write"}>
+        <Tabs.TabPane tab={i18n("MarkdownEditor.write")} key={"write"}>
           <RichTextEditor
+            autoFocus
             toolbarConfig={TOOLBAR_CONFIG}
             value={editorState}
-            onChange={onTextChange}
+            onChange={onChange}
           />
         </Tabs.TabPane>
-        <Tabs.TabPane tab={"Preview"} key={"preview"}>
+        <Tabs.TabPane tab={i18n("MarkdownEditor.paste")} key={"paste"}>
+          <textarea
+            value={editorState.toString("markdown")}
+            style={{
+              width: "100%",
+              border: `1px solid #ddd`,
+              borderRadius: 3,
+              padding: 9
+            }}
+            onChange={onTextChange}
+            rows={10}
+          />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab={i18n("MarkdownEditor.Preview")} key={"preview"}>
           <div>
-            <ReactMarkdown source={editorState.toString("markdown")} />
+            <RichTextEditor value={editorState} readOnly />
           </div>
         </Tabs.TabPane>
       </Tabs>

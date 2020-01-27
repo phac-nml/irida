@@ -19,17 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -216,27 +212,6 @@ public class AnnouncementsController extends BaseController {
         model.addAttribute("numTotal", totalUsers);
 
         return ANNOUNCEMENT_DETAILS;
-    }
-
-    /**
-     * Get all announcements to be displayed in a DataTables for admin control centre
-     *
-     * @param params
-     *        {@link DataTablesParams} for the current DataTable.
-     *
-     * @return {@link DataTablesResponse}
-     */
-    @RequestMapping(value = "/control/ajax/list")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody
-    TableResponse getAnnouncementsAdmin(@RequestBody TableRequest params) {
-        final Page<Announcement> page = announcementService
-                .search(AnnouncementSpecification.searchAnnouncement(params.getSearch()),
-                        PageRequest.of(params.getCurrent(), params.getPageSize(), params.getSort()));
-
-        final List<AnnouncementTableModel> announcements = page.getContent().stream().map(AnnouncementTableModel::new)
-                .collect(Collectors.toList());
-        return new TableResponse(announcements, page.getTotalElements());
     }
 
     /**

@@ -1,17 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -20,6 +25,19 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 public class AnnouncementAjaxController {
 	private final AnnouncementService announcementService;
 	private final UserService userService;
+
+	@RequestMapping(value = "/control/list")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public @ResponseBody
+	TableResponse getAnnouncementsAdmin(@RequestBody TableRequest params) {
+		final Page<Announcement> page = announcementService
+				.search(AnnouncementSpecification.searchAnnouncement(params.getSearch()),
+						PageRequest.of(params.getCurrent(), params.getPageSize(), params.getSort()));
+
+		final List<AnnouncementTableModel> announcements = page.getContent().stream().map(AnnouncementTableModel::new)
+				.collect(Collectors.toList());
+		return new TableResponse(announcements, page.getTotalElements());
+	}
 
 	@Autowired
 	public AnnouncementAjaxController(AnnouncementService announcementService, UserService userService) {

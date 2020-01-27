@@ -28,8 +28,8 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       sorter: true
     },
     {
-      title: i18n("announcement.control.message"),
-      dataIndex: "message",
+      title: i18n("AnnouncementTable.title"),
+      dataIndex: "name",
       className: "t-announcement",
       render(text, full) {
         return (
