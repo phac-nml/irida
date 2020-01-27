@@ -1,25 +1,23 @@
-import React, { useContext } from "react";
-import { render } from "react-dom";
-import { Input, Table } from "antd";
-import {
-  PagedTableContext,
-  PagedTableProvider
-} from "../../contexts/PagedTableContext";
+import React, { useContext, forwardRef, useImperativeHandle } from "react";
+import { PagedTableContext } from "../../contexts/PagedTableContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { PageWrapper } from "../../components/page/PageWrapper";
-import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import ReactMarkdown from "react-markdown";
-import { SPACE_SM } from "../../styles/spacing";
-import { CreateNewAnnouncement } from "./CreateNewAnnouncement";
+import { dateColumnFormat } from "../../components/ant.design/table-renderers";
+import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
+import { Button, Input, Table } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditAnnouncement } from "./EditAnnouncement";
+import { DeleteAnnouncement } from "./DeleteAnnouncement";
 
-function AnnouncementsTable() {
+export const AnnouncementsTable = forwardRef((props, ref) => {
   const {
     loading,
     total,
     pageSize,
     dataSource,
     onSearch,
-    handleTableChange
+    handleTableChange,
+    updateTable
   } = useContext(PagedTableContext);
 
   const columns = [
@@ -57,6 +55,28 @@ function AnnouncementsTable() {
       className: "t-created-date",
       title: i18n("iridaThing.timestamp"),
       dataIndex: "createdDate"
+    },
+    {
+      key: "actions",
+      align: "right",
+      fixed: "right",
+      width: 120,
+      render(text, record) {
+        return (
+          <span>
+            <span style={{ marginRight: SPACE_XS }}>
+              <EditAnnouncement
+                announcement={record}
+                updateAnnouncement={props.updateAnnouncement}
+              />
+            </span>
+            <DeleteAnnouncement
+              id={record.id}
+              deleteAnnouncement={props.deleteAnnouncement}
+            />
+          </span>
+        );
+      }
     }
   ];
 
@@ -67,6 +87,12 @@ function AnnouncementsTable() {
   function tableSearch(event) {
     onSearch(event.target.value);
   }
+
+  useImperativeHandle(ref, () => ({
+    updateTable() {
+      updateTable();
+    }
+  }));
 
   return (
     <>
@@ -88,15 +114,4 @@ function AnnouncementsTable() {
       />
     </>
   );
-}
-render(
-  <PageWrapper
-    title={i18n("announcement.admin-menu")}
-    headerExtras={<CreateNewAnnouncement />}
-  >
-    <PagedTableProvider url={setBaseUrl(`announcements/control/ajax/list`)}>
-      <AnnouncementsTable />
-    </PagedTableProvider>
-  </PageWrapper>,
-  document.querySelector("#announcement-root")
-);
+});

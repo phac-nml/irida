@@ -139,41 +139,6 @@ public class AnnouncementsController extends BaseController {
         return ANNOUNCEMENT_ADMIN;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getCreateAnnouncementPage() {
-
-        return ANNOUNCEMENT_CREATE;
-    }
-
-    /**
-     * Create a new announcement
-     *
-     * @param message
-     *              The content of the message for the announcement
-     * @param model
-     *              The model for the view
-     * @param principal
-     *              The currently logged in user creating the announcement
-     * @return A redirect to the announcement control centre page
-     */
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String submitCreateAnnouncement(@RequestParam(required = true) String message,
-                                   Model model,
-                                   Principal principal) {
-        User creator = userService.getUserByUsername(principal.getName());
-        Announcement a = new Announcement(message, creator);
-
-        try {
-            announcementService.create(a);
-        } catch (Exception e) {
-            model.addAttribute("errors", "Announcement was not created successfully");
-        }
-
-        return "redirect:/announcements/admin";
-    }
-
     /**
      * Updates an existing announcement object in the database
      *

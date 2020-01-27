@@ -13,30 +13,40 @@ const StyledEditor = styled.div`
 
 const TOOLBAR_CONFIG = {
   // Optionally specify the groups to display (displayed in the order listed).
-  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
+  display: [
+    "INLINE_STYLE_BUTTONS",
+    "BLOCK_TYPE_BUTTONS",
+    "LINK_BUTTONS",
+    "BLOCK_TYPE_DROPDOWN",
+    "HISTORY_BUTTONS"
+  ],
   INLINE_STYLE_BUTTONS: [
-    {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
-    {label: 'Italic', style: 'ITALIC'},
-    {label: 'Underline', style: 'UNDERLINE'}
+    { label: "Bold", style: "BOLD", className: "custom-css-class" },
+    { label: "Italic", style: "ITALIC" },
+    { label: "Underline", style: "UNDERLINE" }
   ],
   BLOCK_TYPE_DROPDOWN: [
-    {label: 'Normal', style: 'unstyled'},
-    {label: 'Heading', style: 'header-three'}
+    { label: "Normal", style: "unstyled" },
+    { label: "Heading", style: "header-three" }
   ],
   BLOCK_TYPE_BUTTONS: [
-    {label: 'UL', style: 'unordered-list-item'},
-    {label: 'OL', style: 'ordered-list-item'}
+    { label: "UL", style: "unordered-list-item" },
+    { label: "OL", style: "ordered-list-item" }
   ]
 };
 
 export const MarkdownEditor = forwardRef((props, ref) => {
   const [editorState, setEditorState] = useState(
-    RichTextEditor.createEmptyValue()
+    props.markdown
+      ? RichTextEditor.createValueFromString(props.markdown, "markdown")
+      : RichTextEditor.createEmptyValue()
   );
 
   useImperativeHandle(ref, () => ({
     getMarkdown() {
-      return editorState.toString("markdown");
+      const markdown = editorState.toString("markdown");
+      setEditorState(RichTextEditor.createEmptyValue());
+      return markdown;
     }
   }));
 
@@ -48,7 +58,11 @@ export const MarkdownEditor = forwardRef((props, ref) => {
     <StyledEditor>
       <Tabs animated={false}>
         <Tabs.TabPane tab={"Write"} key={"write"}>
-          <RichTextEditor toolbarConfig={TOOLBAR_CONFIG} value={editorState} onChange={onTextChange} />
+          <RichTextEditor
+            toolbarConfig={TOOLBAR_CONFIG}
+            value={editorState}
+            onChange={onTextChange}
+          />
         </Tabs.TabPane>
         <Tabs.TabPane tab={"Preview"} key={"preview"}>
           <div>
