@@ -7,7 +7,7 @@ export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
   sorter: true,
-  width: 50
+  width: 120
 });
 
 export const nameColumnFormat = ({ url }) => {
