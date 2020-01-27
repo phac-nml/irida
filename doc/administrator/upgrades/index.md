@@ -79,19 +79,19 @@ In addition to the above, there is a matching `_AUD` (audit) table for each of t
 
 In general data will be populated into these tables in the following order:
 
-1. `sample` entry is created as sequencing data is uploaded,
-2. Someone uploads a set of sample metadata, which will first get a `metadata_field`
+1. `sample` entry is created as sequencing data is uploaded (ex: "sample1"),
+2. Someone uploads a set of sample metadata, which will first get a `metadata_field` (ex: "Organism")
   a. Find an existing `metadata_field` for a column header,
   b. Or create a new `metadata_field` for a header,
-3. `metadata_entry` is created with the appropriate value,
-4. `sample_metadata_entry` is created linking the above 3 items together.
+3. `metadata_entry` is created with the appropriate value (ex: "Salmonella"),
+4. `sample_metadata_entry` is created linking the above 3 items together (ex: for "sample1" the "Organism" is "Salmonella").
 
 Note items 2, 3, and 4 will generally be done at the same time.  As soon as the metadata values are committed to the database, Envers should create `_AUD` entries for all of the above records.
 
 ### The problem
 {:.no_toc}
 
-The issue we noticed is that while Envers seemed to create `_AUD` records for all the above tables when metadata is first added to a sample, subsequent updates of those values *may* not create records for the `sample_metadata_entry_AUD` table, though it properly creates records for the `metadata_entry_AUD` and `sample_AUD` tables.  We found this to be most prevalent when data is synchronized from remote IRIDA installations.  Most of these synchronized records were duplicate entries that were saving the same metadata values back to the sample, but creating new rows in the database.  We are still investigating why this issue was occurring.  Due to the complex nature of the above database tables it appears that Envers was failing to properly audit the relationship between those entities/tables.
+The issue we noticed is that while Envers seemed to create `_AUD` records for all the above tables when metadata is first added to a sample, subsequent updates of those values *may* not create records for the `sample_metadata_entry_AUD` table, though it properly creates records for the `metadata_entry_AUD` and `sample_AUD` tables.  We found this to be most prevalent when data is synchronized from remote IRIDA installations, but also occurred in some cases where pipelines were re-run and metadata being re-saved to samples.  Most of these records were duplicate entries that were saving the same metadata values back to the sample, but creating new rows in the database.  We are still investigating why this issue was occurring.  Due to the complex nature of the above database tables it appears that Envers was failing to properly audit the relationship between those entities/tables.
 
 Note that we have found **no evidence of missing live data**.  It appears that all metadata records were written to the live database tables as expected.  This issue only appears to effect the `sample_metadata_entry_AUD` table.
 
