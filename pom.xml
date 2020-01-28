@@ -947,6 +947,9 @@
 					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<stopPort>9966</stopPort>
 					<stopKey>STOP</stopKey>
+					<webApp>
+						<contextPath>/foobar</contextPath>
+					</webApp>
 				</configuration>
 				<executions>
 					<execution>
