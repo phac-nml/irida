@@ -29,9 +29,8 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
@@ -219,9 +218,9 @@ public class RemoteAPIController extends BaseController {
 	public @ResponseBody
 	TableResponse getAjaxAPIList(@RequestBody TableRequest tableRequest) {
 		Page<RemoteAPI> search = remoteAPIService.search(RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
-				tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortField());
+				tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortColumn());
 
-		List<TableModel> apiData = search.getContent().stream().map(RemoteAPIModel::new).collect(
+		List<RemoteAPIModel> apiData = search.getContent().stream().map(RemoteAPIModel::new).collect(
 				Collectors.toList());
 		return new TableResponse(apiData, search.getTotalElements());
 	}
