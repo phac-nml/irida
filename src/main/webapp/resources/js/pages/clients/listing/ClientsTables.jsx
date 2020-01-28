@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PagedTableContext } from "../../../contexts/PagedTableContext";
-import { Button, Input, Popconfirm, Table, Tag, Tooltip } from "antd";
+import { Button, Input, Popconfirm, Table, Tag } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../../styles/spacing";
@@ -80,7 +80,7 @@ export function ClientsTable() {
       key: "action",
       align: "right",
       fixed: "right",
-      width: 60,
+      width: 200,
       render(text, record) {
         const disabled = !record.tokens;
         return (
@@ -90,14 +90,10 @@ export function ClientsTable() {
             placement={"topRight"}
             onConfirm={() => revokeTokens(record)}
           >
-            <Tooltip
-              title={i18n("client.details.token.revoke")}
-              placement={"bottomRight"}
-            >
-              <Button shape={"circle"} disabled={disabled}>
+              <Button disabled={disabled}>
                 <StopOutlined />
+                {i18n("client.details.token.revoke")}
               </Button>
-            </Tooltip>
           </Popconfirm>
         );
       }
