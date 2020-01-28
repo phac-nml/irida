@@ -109,11 +109,6 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 		 * @return true if the {@param bundleName} has a translation file
 		 */
 		private boolean doesTranslationsFileExist(String bundleName) {
-			/*
-			IRIDA can be run in either Jetty or Tomcat, which have different file structures once compiled.
-			We need to check both locations to see if the file actually exists.  Thymeleaf does not care
-			at this point where it is since it only looks at the path relative to the pages directory.
-			 */
 			try {
 				URL url = ((WebEngineContext) this.getContext()).getServletContext()
 						.getResource("/pages/templates/i18n/" + bundleName + ".html");
