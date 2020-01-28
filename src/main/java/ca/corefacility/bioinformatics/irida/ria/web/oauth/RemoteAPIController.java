@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -35,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPIMode
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -65,6 +69,7 @@ public class RemoteAPIController extends BaseController {
 	private final RemoteAPIService remoteAPIService;
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteAPITokenService tokenService;
+	private final UserService userService;
 	private final OltuAuthorizationController authController;
 	private final MessageSource messageSource;
 	private final Formatter<Date> dateFormatter;
@@ -77,11 +82,12 @@ public class RemoteAPIController extends BaseController {
 					"remoteapi.create.serviceURIConflict"));
 
 	@Autowired
-	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
+	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService, UserService userService,
 			RemoteAPITokenService tokenService, OltuAuthorizationController authController, MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
 		this.projectRemoteService = projectRemoteService;
 		this.tokenService = tokenService;
+		this.userService = userService;
 		this.authController = authController;
 		this.messageSource = messageSource;
 		this.dateFormatter = new DateFormatter();
@@ -101,7 +107,10 @@ public class RemoteAPIController extends BaseController {
 	 * @return The view name of the remote apis listing page
 	 */
 	@RequestMapping
-	public String list() {
+	public String list(Model model, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		model.addAttribute("isAdmin", user.getSystemRole()
+				.equals(Role.ROLE_ADMIN));
 		return CLIENTS_PAGE;
 	}
 

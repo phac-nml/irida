@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
 import java.net.MalformedURLException;
+import java.security.Principal;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,6 +37,7 @@ public class RemoteAPIControllerTest {
 	private RemoteAPIService remoteAPIService;
 	private ProjectRemoteService projectRemoteService;
 	private RemoteAPITokenService tokenService;
+	private UserService userService;
 	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
 
@@ -49,7 +52,8 @@ public class RemoteAPIControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
 		tokenService = mock(RemoteAPITokenService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, tokenService,
+		userService = mock(UserService.class);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService, tokenService,
 				authController, messageSource);
 		locale = LocaleContextHolder.getLocale();
 
@@ -57,45 +61,47 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testList() {
-		String list = remoteAPIController.list();
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+		String list = remoteAPIController.list(model, principal);
 		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxList() {
-//		int page = 0;
-//		int size = 10;
-//		int draw = 1;
-//		int sortColumn = 0;
-//		String direction = "asc";
-//		String searchValue = "";
-//
-//		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
-//		api1.setId(1L);
-//		RemoteAPI api2 = new RemoteAPI("api name 2", "http://nowhere", "another api", "client2", "secret2");
-//		api2.setId(2L);
-//
-//		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
-//
-//		when(remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-//				any(String.class))).thenReturn(apiPage);
-//
-//		TableRequest request = new TableRequest();
-//		request.setSortDirection(direction);
-//		request.setSortField("modifiedDate");
-//		request.setSearch(searchValue);
-//		request.setPageSize(size);
-//		request.setCurrent(draw);
-//		TableResponse response = remoteAPIController.getAjaxAPIList(request);
-//
-//		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-//				any(String.class));
-//
-//		assertNotNull(response);
-//		assertFalse(response.getModels().isEmpty());
-//
-//		assertEquals(2, response.getModels().size());
+		//		int page = 0;
+		//		int size = 10;
+		//		int draw = 1;
+		//		int sortColumn = 0;
+		//		String direction = "asc";
+		//		String searchValue = "";
+		//
+		//		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
+		//		api1.setId(1L);
+		//		RemoteAPI api2 = new RemoteAPI("api name 2", "http://nowhere", "another api", "client2", "secret2");
+		//		api2.setId(2L);
+		//
+		//		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
+		//
+		//		when(remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
+		//				any(String.class))).thenReturn(apiPage);
+		//
+		//		TableRequest request = new TableRequest();
+		//		request.setSortDirection(direction);
+		//		request.setSortField("modifiedDate");
+		//		request.setSearch(searchValue);
+		//		request.setPageSize(size);
+		//		request.setCurrent(draw);
+		//		TableResponse response = remoteAPIController.getAjaxAPIList(request);
+		//
+		//		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
+		//				any(String.class));
+		//
+		//		assertNotNull(response);
+		//		assertFalse(response.getModels().isEmpty());
+		//
+		//		assertEquals(2, response.getModels().size());
 
 	}
 
@@ -150,8 +156,7 @@ public class RemoteAPIControllerTest {
 
 		assertEquals(RemoteAPIController.ADD_API_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));
-		@SuppressWarnings("unchecked")
-		Map<String, String> errors = (Map<String, String>) model.get("errors");
+		@SuppressWarnings("unchecked") Map<String, String> errors = (Map<String, String>) model.get("errors");
 		assertTrue(errors.containsKey("serviceURI"));
 
 		verify(remoteAPIService).create(client);
