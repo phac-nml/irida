@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.clients;
 
 import java.security.SecureRandom;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
@@ -28,9 +27,9 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.base.Joiner;
@@ -149,6 +148,16 @@ public class ClientsController extends BaseController {
 		IridaClientDetails read = clientDetailsService.read(id);
 		clientDetailsService.revokeTokensForClient(read);
 		return "redirect:/clients/" + id;
+	}
+
+	/**
+	 * Revoke access tokens for a specific client.
+	 * @param id - identifier for a client
+	 */
+	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.PUT)
+	public void revokeClientTokens(@RequestParam Long id) {
+		IridaClientDetails read = clientDetailsService.read(id);
+		clientDetailsService.revokeTokensForClient(read);
 	}
 
 	/**
@@ -426,23 +435,26 @@ public class ClientsController extends BaseController {
 	}
 
 	/**
-	 * Get a {@link TableResponse} for the Clients page based on paging and sorting.
+	 * Get a {@link TableResponse} for the Clients page.
 	 *
-	 * @param tableRequest {@link TableRequest} for the current clients table view.
-	 * @return {@link DataTablesResponse}
+	 * @param tableRequest
+	 * 		{@link TableRequest} for the current clients table.
+	 *
+	 * @return {@link TableResponse}
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TableResponse getAjaxClientsList(@RequestBody TableRequest tableRequest) {
+	public TableResponse getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
 		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
 				.searchClient(tableRequest.getSearch());
 
-		Page<IridaClientDetails> page = clientDetailsService.search(specification,
-				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
-		List<ClientModel> clients = page.getContent().stream()
-				.map(c -> new ClientModel(c, clientDetailsService.countActiveTokensForClient(c)))
-				.collect(Collectors.toList());
-		return new TableResponse(clients, page.getTotalElements());
+		Page<IridaClientDetails> page = clientDetailsService
+				.search(specification, PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+		List<ClientModel> models = new ArrayList<>();
+		for (IridaClientDetails client : page.getContent()) {
+			models.add(new ClientModel(client, clientDetailsService.countActiveTokensForClient(client)));
+		}
+		return new TableResponse(models, page.getTotalElements());
 	}
 
 	/**

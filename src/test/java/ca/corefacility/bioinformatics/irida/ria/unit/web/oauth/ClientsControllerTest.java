@@ -18,8 +18,8 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.ImmutableSet;
@@ -78,14 +78,14 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.search(any(Specification.class), any(Pageable.class))).thenReturn(clientPage);
 
-		TableRequest request = new TableRequest();
-		request.setCurrent(1);
-		request.setPageSize(10);
-		request.setSortDirection("asc");
-		request.setSortField("createdDate");
-		TableResponse response = controller.getAjaxClientsList(request);
+		ClientTableRequest params = new ClientTableRequest();
+		params.setCurrent(1);
+		params.setPageSize(10);
+		params.setSortColumn("createdDate");
+		params.setSortDirection("ascend");
+		TableResponse response = controller.getAjaxClientsList(params);
 
-		assertEquals(2, response.getModels().size());
+		assertEquals(2, response.getDataSource().size());
 
 		verify(clientDetailsService).search(any(Specification.class), any(Pageable.class));
 	}

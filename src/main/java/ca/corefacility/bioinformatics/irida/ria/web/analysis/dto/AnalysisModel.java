@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
 /**
  * Used to represent an {@link AnalysisSubmission} for consumption by the user interface.

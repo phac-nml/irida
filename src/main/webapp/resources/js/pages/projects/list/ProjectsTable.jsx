@@ -109,7 +109,7 @@ export function ProjectsTable() {
       title: "",
       dataIndex: "remote",
       key: "remote",
-      width: 30,
+      width: 50,
       render: remote =>
         remote ? (
           <Icon type="swap" title="Remote Project" style={{ cursor: "help" }} />
@@ -123,13 +123,7 @@ export function ProjectsTable() {
       title: i18n("ProjectsTable_th_organism"),
       dataIndex: "organism",
       key: "organism",
-      sorter: true,
-      width: 150,
-      render: text => (
-        <Text style={{ width: 135 }} ellipsis={true} title={text}>
-          {text}
-        </Text>
-      )
+      sorter: true
     },
     {
       title: i18n("ProjectsTable_th_samples"),
@@ -178,31 +172,33 @@ export function ProjectsTable() {
 
   return (
     <PageWrapper title={i18n("ProjectsTable_header")}>
-      <div
-        style={{
-          paddingBottom: SPACE_MD,
-          display: "flex",
-          justifyContent: "space-between"
-        }}
-      >
-        <Dropdown overlay={exportMenu} key="export">
-          <Button>
-            {i18n("ProjectsTable_export")} <Icon type="down" />
-          </Button>
-        </Dropdown>
-        <Input.Search style={{ width: 300 }} onSearch={onSearch} />
+      <div>
+        <div
+          style={{
+            paddingBottom: SPACE_MD,
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
+          <Dropdown overlay={exportMenu} key="export">
+            <Button>
+              {i18n("ProjectsTable_export")} <Icon type="down" />
+            </Button>
+          </Dropdown>
+          <Input.Search style={{ width: 300 }} onSearch={onSearch} />
+        </div>
+        <Table
+          rowKey={record => record.id}
+          loading={loading}
+          pagination={{
+            total: total,
+            pageSize: state.pageSize
+          }}
+          columns={columns}
+          dataSource={projects}
+          onChange={handleTableChange}
+        />
       </div>
-      <Table
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{
-          total: total,
-          pageSize: state.pageSize
-        }}
-        columns={columns}
-        dataSource={projects}
-        onChange={handleTableChange}
-      />
     </PageWrapper>
   );
 }

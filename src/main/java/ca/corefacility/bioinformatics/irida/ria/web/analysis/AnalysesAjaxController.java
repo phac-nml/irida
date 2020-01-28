@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListReq
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisTypeModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -232,6 +232,15 @@ public class AnalysesAjaxController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
+	/**
+	 * Fetch the current status of the analysis server.
+	 * @return {@link Map} of the running and queued counts.
+	 */
+	@RequestMapping("/queue")
+	public AnalysisSubmissionService.AnalysisServiceStatus fetchAnalysesQueueCounts() {
+		return analysisSubmissionService.getAnalysisServiceStatus();
 	}
 }
 

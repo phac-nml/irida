@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -794,5 +795,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public AnalysisServiceStatus getAnalysisServiceStatus() {
+		Long running = analysisSubmissionRepository.countByAnalysisState(AnalysisState.getRunningStates());
+		Long queued = analysisSubmissionRepository.countByAnalysisState(Lists.newArrayList(AnalysisState.NEW));
+
+		return new AnalysisServiceStatus(running, queued);
+	}
 
 }

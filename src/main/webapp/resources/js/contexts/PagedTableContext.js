@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchPageTableUpdate } from "../apis/paged-table/paged-table";
+import debounce from "lodash/debounce";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
@@ -25,7 +26,7 @@ function PagedTableProvider({ children, url }) {
   });
 
   /*
-  Table is updated whenever one of these are changed.
+  Table updated whenever one of these are changed.
    */
   useEffect(() => updateTable(), [
     tableState.search,
@@ -40,7 +41,6 @@ function PagedTableProvider({ children, url }) {
    */
   const updateTable = () => {
     setTableState({ ...tableState, loading: true });
-
     fetchPageTableUpdate(url, {
       current: tableState.current - 1,
       pageSize: tableState.pageSize,
@@ -55,6 +55,17 @@ function PagedTableProvider({ children, url }) {
       });
     });
   };
+
+  /**
+   * Required when using an external filter on a table.
+   * @param term - search term
+   */
+  const onSearch = debounce(term => {
+    setTableState({
+      ...tableState,
+      search: term
+    });
+  }, 300);
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
@@ -79,7 +90,9 @@ function PagedTableProvider({ children, url }) {
   };
 
   return (
-    <Provider value={{ ...tableState, handleTableChange, updateTable }}>
+    <Provider
+      value={{ ...tableState, handleTableChange, updateTable, onSearch }}
+    >
       {children}
     </Provider>
   );
