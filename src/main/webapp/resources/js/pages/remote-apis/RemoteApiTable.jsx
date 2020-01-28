@@ -10,7 +10,8 @@ export function RemoteApiTable() {
     total,
     pageSize,
     dataSource,
-    handleTableChange
+    handleTableChange,
+    updateTable
   } = useContext(PagedTableContext);
 
   const columnDefs = [
@@ -35,8 +36,9 @@ export function RemoteApiTable() {
     {
       title: i18n("remoteapi.status"),
       align: "right",
+      width: 160,
       render(text, item) {
-        return <RemoteApiStatus api={item}  />;
+        return <RemoteApiStatus api={item} updateTable={updateTable}  />;
       }
     }
   ];
@@ -45,7 +47,7 @@ export function RemoteApiTable() {
     <Table
       columns={columnDefs}
       loading={loading}
-      pagination={{ total, pageSize }}
+      pagination={{ total, pageSize, hideOnSinglePage: true }}
       dataSource={dataSource}
       onChange={handleTableChange}
     />

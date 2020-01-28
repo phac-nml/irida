@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html>
-<body>
-
-    <script>
+  <body>
+    <script th:inline="javascript">
       /*
-      This is loaded into an iFrame.
-      Close the bootstrap modal on the parent page.
-       */
-      // var modal = window.parent.document.querySelector("#remote-connect-wrapper");
-      // modal.dataset.result = "success";
-      // modal.querySelector(".close").click();
-      window.parent.postMessage({
-        type: "remote_api",
-
-      })
-
+  This is loaded into an iFrame.
+  Close the bootstrap modal on the parent page.
+   */
+      const modal = window.parent.document.querySelector(
+        "#remote-connect-wrapper"
+      );
+      if (modal) {
+        modal.dataset.result = "success";
+        modal.querySelector(".close").click();
+      } else {
+        const opener = window.opener;
+        if (opener) {
+          opener.postMessage("remote_api_connect", /*[[@{/}]]*/ "/");
+          window.close();
+        }
+      }
     </script>
-</body>
+  </body>
 </html>
