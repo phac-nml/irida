@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import { Session } from "../session/Session";
 import { blue1 } from "../../styles/colors";
 import { Notifications } from "../notifications/Notifications";
+import GalaxyAlert from "./GalaxyAlert";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -11,8 +12,6 @@ the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = `dist/`;
-
-const GalaxyAlert = React.lazy(() => import("./GalaxyAlert"));
 
 export class PageHeader extends React.Component {
   state = {
