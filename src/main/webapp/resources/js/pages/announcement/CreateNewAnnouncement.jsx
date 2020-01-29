@@ -5,6 +5,12 @@ import { MarkdownEditor } from "../../components/editors/MarkdownEditor";
 import { EditOutlined } from "@ant-design/icons";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 
+/**
+ * Component to add a button which will open a modal to create an announcement.
+ * @param {function} createAnnouncement
+ * @returns {*}
+ * @constructor
+ */
 export function CreateNewAnnouncement({ createAnnouncement }) {
   const markdownRef = useRef();
 

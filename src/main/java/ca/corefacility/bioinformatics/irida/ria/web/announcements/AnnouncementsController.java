@@ -41,7 +41,6 @@ public class AnnouncementsController extends BaseController {
     private static final String ANNOUNCEMENT_VIEW = "announcements/announcements";
     private static final String ANNOUNCEMENT_VIEW_READ = "announcements/read";
     private static final String ANNOUNCEMENT_ADMIN = "announcements/control";
-    private static final String ANNOUNCEMENT_CREATE = "announcements/create";
     private static final String ANNOUNCEMENT_DETAILS = "announcements/details";
 
     private final UserService userService;

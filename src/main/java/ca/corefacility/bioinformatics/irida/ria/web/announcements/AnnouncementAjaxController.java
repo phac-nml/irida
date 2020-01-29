@@ -20,24 +20,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Controller for all ajax requests from the UI for announcements.
+ */
 @RestController
 @RequestMapping("/ajax/announcements")
 public class AnnouncementAjaxController {
 	private final AnnouncementService announcementService;
 	private final UserService userService;
-
-	@RequestMapping(value = "/control/list")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public @ResponseBody
-	TableResponse getAnnouncementsAdmin(@RequestBody TableRequest params) {
-		final Page<Announcement> page = announcementService
-				.search(AnnouncementSpecification.searchAnnouncement(params.getSearch()),
-						PageRequest.of(params.getCurrent(), params.getPageSize(), params.getSort()));
-
-		final List<AnnouncementTableModel> announcements = page.getContent().stream().map(AnnouncementTableModel::new)
-				.collect(Collectors.toList());
-		return new TableResponse(announcements, page.getTotalElements());
-	}
 
 	@Autowired
 	public AnnouncementAjaxController(AnnouncementService announcementService, UserService userService) {
@@ -45,6 +35,33 @@ public class AnnouncementAjaxController {
 		this.userService = userService;
 	}
 
+	/**
+	 * Returns a paged list of announcements for an administrator.
+	 *
+	 * @param tableRequest details about the current page of the table requested
+	 * @return a {@link TableResponse} containing the list of announcements.
+	 */
+	@RequestMapping(value = "/control/list")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public @ResponseBody
+	TableResponse getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
+		final Page<Announcement> page = announcementService.search(
+				AnnouncementSpecification.searchAnnouncement(tableRequest.getSearch()),
+				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+
+		final List<AnnouncementTableModel> announcements = page.getContent()
+				.stream()
+				.map(AnnouncementTableModel::new)
+				.collect(Collectors.toList());
+		return new TableResponse(announcements, page.getTotalElements());
+	}
+
+	/**
+	 * Creates a new announcement
+	 *
+	 * @param announcementRequest details about the announcement to create.
+	 * @param principal           the currently logged in user
+	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void createNewAnnouncement(@RequestBody AnnouncementRequest announcementRequest, Principal principal) {
@@ -53,6 +70,11 @@ public class AnnouncementAjaxController {
 		announcementService.create(announcement);
 	}
 
+	/**
+	 * Update an existing announcement
+	 *
+	 * @param announcementRequest - the details of the announcement to update.
+	 */
 	@RequestMapping(value = "/update", method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void updateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
@@ -61,6 +83,11 @@ public class AnnouncementAjaxController {
 		announcementService.update(announcement);
 	}
 
+	/**
+	 * Delete an existing announcement.
+	 *
+	 * @param announcementRequest - the announcement to delete
+	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
