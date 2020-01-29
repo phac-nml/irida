@@ -126,6 +126,8 @@ export function AnalysesTable() {
       title: "",
       key: "download",
       fixed: "right",
+      align: "right",
+      width: 60,
       render(text, record) {
         return (
           <DownloadButton
