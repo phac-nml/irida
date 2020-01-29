@@ -46,7 +46,7 @@ Changes
 * [UI/Developer]: Update version of `babel` and `eslint`.
 * [Documentation]: Fixed documentation link for developer authorization/oauth docs.
 * [Documentation]: Added info about upgrading to Tomcat 8.
-* [UI]: Updated client listing table to use an ant design Table.
+* [UI]: Updated clients listing table to use `ant.design` tables.
 
 19.05 to 19.09
 ---------------
@@ -88,7 +88,6 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
-* [UI]: Updated clients listing table to use `ant.design` tables.
 
 19.01 to 19.05
 ---------------
