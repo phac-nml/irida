@@ -46,6 +46,7 @@ Changes
 * [UI/Developer]: Update version of `babel` and `eslint`.
 * [Documentation]: Fixed documentation link for developer authorization/oauth docs.
 * [Documentation]: Added info about upgrading to Tomcat 8.
+* [UI]: Updated client listing table to use an ant design Table.
 
 19.05 to 19.09
 ---------------
