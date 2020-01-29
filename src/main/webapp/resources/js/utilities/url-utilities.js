@@ -9,6 +9,9 @@
  * @return {string|*}
  */
 export function setBaseUrl(url) {
+  // Remove any leading slashes
+  url = url.replace(/^\/+/, "");
+
   /*
   Get the base url which is set via the thymeleaf template engine.
    */
@@ -26,5 +29,5 @@ export function setBaseUrl(url) {
   /*
   Create the new url and remove the possibility of any "//"
    */
-  return `${BASE_URL}${url}`.replace(/\/{2}/g, "/");
+  return `${BASE_URL}${url}`;
 }
