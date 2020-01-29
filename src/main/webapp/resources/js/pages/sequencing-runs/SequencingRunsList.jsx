@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import "../../vendor/datatables/datatables";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { Button, Table } from "antd";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
