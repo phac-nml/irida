@@ -27,7 +27,7 @@ export function setBaseUrl(url) {
     return url;
   }
   /*
-  Create the new url and remove the possibility of any "//"
+  Create the new url
    */
   return `${BASE_URL}${url}`;
 }
