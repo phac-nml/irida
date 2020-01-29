@@ -1592,10 +1592,10 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-antd@^4.0.0-rc.2:
-  version "4.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.0.0-rc.2.tgz#a2e06c8b4d3c1305515bfd2fa380e15d7be82c57"
-  integrity sha512-zyj3VjgxV84lz4/bTzZsSDD7MwY5sRZmOx0RbLDiV0nthOgerD7sbEQgGUgWJ3yVro9pPaTjAEcxeLiBiZyVaw==
+antd@^4.0.0-rc.3:
+  version "4.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.0.0-rc.3.tgz#cfac75cf056de5f9e664bbf5ebf5df1547506169"
+  integrity sha512-JrwPInRNX2fFCTVm3aEQQeOeKFVtkbWmelhGc0UnU/DPkDQULw4QLb+WPkDMD7Ta87IpwK7c55Gor7gX3tlzoA==
   dependencies:
     "@ant-design/icons" "^4.0.0-rc.0"
     "@ant-design/react-slick" "~0.25.5"
@@ -1615,7 +1615,7 @@ antd@^4.0.0-rc.2:
     rc-dialog "~7.6.0"
     rc-drawer "~3.1.1"
     rc-dropdown "~3.0.0-alpha.0"
-    rc-field-form "^0.0.0-alpha.26"
+    rc-field-form "^0.0.0-rc.0"
     rc-input-number "~4.5.0"
     rc-mentions "~1.0.0-alpha.3"
     rc-menu "~8.0.0-alpha.7"
@@ -8088,7 +8088,7 @@ rc-dropdown@~3.0.0-alpha.0:
     classnames "^2.2.6"
     rc-trigger "^4.0.0-alpha.4"
 
-rc-field-form@^0.0.0-alpha.26:
+rc-field-form@^0.0.0-rc.0:
   version "0.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/rc-field-form/-/rc-field-form-0.0.0-rc.0.tgz#579fd9c38a1820286a218341b449931d3773c9c9"
   integrity sha512-WMAAuHIw8dq67YDS5Isfx2Ez12gAZL82/r/SKlqvjB11PvEWDENHcZl45QR9/2Abzpx4nBGkSCf0oufEdRXDZg==
