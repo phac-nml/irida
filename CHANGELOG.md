@@ -46,6 +46,7 @@ Changes
 * [UI/Developer]: Update version of `babel` and `eslint`.
 * [Documentation]: Fixed documentation link for developer authorization/oauth docs.
 * [Documentation]: Added info about upgrading to Tomcat 8.
+* [Documentation]: Added notice to upgrading guide about mysql 5.5 hibernate dialect.
 
 19.05 to 19.09
 ---------------
