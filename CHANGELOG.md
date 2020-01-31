@@ -1,6 +1,9 @@
 Changes
 =======
 
+20.01 to 20.05
+--------------
+
 19.09 to 20.01
 --------------
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
