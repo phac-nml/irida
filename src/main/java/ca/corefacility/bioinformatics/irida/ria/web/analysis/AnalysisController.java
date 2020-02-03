@@ -298,7 +298,7 @@ public class AnalysisController {
 		try {
 			if (submission.getAnalysisState()
 					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
+				if (analysisType.toString().contains("PHYLOGENOMICS") || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
 					tree(submission, model);
 				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
