@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { Button, Icon, Popconfirm, Table } from "antd";
+import { Button, Icon, Popconfirm } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -17,6 +17,7 @@ import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
+import { PagedTable } from "../ant.design/PagedTable";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -25,14 +26,7 @@ import { AnalysesQueue } from "./../AnalysesQueue";
  */
 export function AnalysesTable() {
   const CAN_MANAGE = window.PAGE.canManage;
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange,
-    updateTable
-  } = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   /**
    * Handler for deleting an analysis.
@@ -70,6 +64,7 @@ export function AnalysesTable() {
       title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
+      width: 170,
       filterMultiple: true,
       filters: pipelineStates,
       filterIcon(filtered) {
@@ -120,6 +115,7 @@ export function AnalysesTable() {
     {
       title: i18n("analysis.duration"),
       key: "duration",
+      width: 180,
       dataIndex: "duration",
       render(timestamp) {
         return getHumanizedDuration({ date: timestamp });
@@ -155,47 +151,43 @@ export function AnalysesTable() {
     };
   }
 
+  const buttons = (
+    <Popconfirm
+      placement="bottomRight"
+      title={i18n("analyses.delete-confirm").replace(
+        "[COUNT]",
+        selected.length
+      )}
+      onVisibleChange={visible => setDeleting(visible)}
+      onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
+    >
+      <Button
+        className="t-delete-selected"
+        loading={deleting}
+        disabled={!selected.length}
+        onClick={() => setDeleting(true)}
+      >
+        {i18n("analyses.delete")}
+      </Button>
+    </Popconfirm>
+  );
+
   return (
     <div>
       <div
         style={{
           marginBottom: SPACE_MD,
-          display: "flex"
+          display: "flex",
+          flexDirection: "row-reverse"
         }}
       >
-        <div style={{ flex: 1 }}>
-          <Popconfirm
-            placement="bottomRight"
-            title={i18n("analyses.delete-confirm").replace(
-              "[COUNT]",
-              selected.length
-            )}
-            onVisibleChange={visible => setDeleting(visible)}
-            onConfirm={() =>
-              deleteAnalyses(selected).then(() => setSelected([]))
-            }
-          >
-            <Button
-              className="t-delete-selected"
-              loading={deleting}
-              disabled={!selected.length}
-              onClick={() => setDeleting(true)}
-            >
-              {i18n("analyses.delete")}
-            </Button>
-          </Popconfirm>
-        </div>
         <AnalysesQueue />
       </div>
-      <Table
-        rowSelection={rowSelection}
-        scroll={{ x: "max-content" }}
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{ total, pageSize }}
+      <PagedTable
+        buttons={buttons}
         columns={columns}
-        dataSource={dataSource}
-        onChange={handleTableChange}
+        rowSelection={rowSelection}
+        rowKey={record => record.id}
       />
     </div>
   );

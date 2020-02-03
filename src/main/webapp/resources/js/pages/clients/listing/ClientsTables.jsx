@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import { PagedTableContext } from "../../../contexts/PagedTableContext";
-import { Button, Input, Popconfirm, Table, Tag } from "antd";
+import { Button, Popconfirm, Tag } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
-import { SPACE_XS } from "../../../styles/spacing";
 import { revokeClientTokens } from "../../../apis/clients/clients";
 import { StopOutlined } from "@ant-design/icons";
+import { PagedTable } from "../../../components/ant.design/PagedTable";
 
 /**
  * Table for displaying a list of clients.
@@ -13,7 +13,7 @@ import { StopOutlined } from "@ant-design/icons";
  * @constructor
  */
 export function ClientsTable() {
-  const { onSearch, updateTable, pagedConfig } = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   const columns = [
     {
@@ -98,21 +98,5 @@ export function ClientsTable() {
     revokeClientTokens(id).then(updateTable);
   }
 
-  return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row-reverse",
-          marginBottom: SPACE_XS
-        }}
-      >
-        <Input.Search
-          style={{ width: 250 }}
-          onChange={e => onSearch(e.target.value)}
-        />
-      </div>
-      <Table columns={columns} {...pagedConfig} />
-    </>
-  );
+  return <PagedTable columns={columns} url={setBaseUrl("clients/ajax/list")} />;
 }
