@@ -5,12 +5,14 @@ import { Input, Table } from "antd";
 
 /**
  * Table component to standardize paged tables with ant.design.
+ * @param search - Whether to display the search box or not.
+ * @param {node} buttons any element to include in the button section.
  * @param {array} columns definitions as specified by Ant Design
  * @param {array} props list of remaining Ant Design table properties.
  * @returns {*}
  * @constructor
  */
-export function PagedTable({ buttons, columns, ...props }) {
+export function PagedTable({ search = true, buttons, columns, ...props }) {
   const { onSearch, pagedConfig } = useContext(PagedTableContext);
 
   return (
@@ -22,12 +24,14 @@ export function PagedTable({ buttons, columns, ...props }) {
         }}
       >
         <div style={{ flex: 1 }}>{buttons}</div>
-        <div>
-          <Input.Search
-            style={{ width: 250 }}
-            onChange={e => onSearch(e.target.value)}
-          />
-        </div>
+        {search ? (
+          <div>
+            <Input.Search
+              style={{ width: 250 }}
+              onChange={e => onSearch(e.target.value)}
+            />
+          </div>
+        ) : null}
       </div>
       <Table
         {...props}
