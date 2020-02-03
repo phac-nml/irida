@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements.dto;
 
+/**
+ * Data transfer object for requesting information about an
+ * announcement.
+ */
 public class AnnouncementRequest {
 	private Long id;
 	private String message;

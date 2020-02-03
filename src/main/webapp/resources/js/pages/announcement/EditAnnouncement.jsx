@@ -5,7 +5,6 @@ import { MarkdownEditor } from "../../components/editors/MarkdownEditor";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 
 export function EditAnnouncement({ announcement, updateAnnouncement }) {
-
   const markdownRef = useRef();
 
   function saveMarkdown() {

@@ -1,18 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
+import "../../vendor/datatables/datatables";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
-import { Button, Table } from "antd";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
+import { Button } from "antd";
+import { PagedTable } from "../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 export function SequencingRunsList() {
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange
-  } = useContext(PagedTableContext);
-
   const columns = [
     {
       dataIndex: "id",
@@ -61,14 +54,11 @@ export function SequencingRunsList() {
   ];
 
   return (
-    <Table
+    <PagedTable
+      search={false}
       scroll={{ x: "max-content" }}
       rowKey={record => record.id}
-      pagination={{ total, pageSize }}
-      loading={loading}
       columns={columns}
-      dataSource={dataSource}
-      onChange={handleTableChange}
     />
   );
 }

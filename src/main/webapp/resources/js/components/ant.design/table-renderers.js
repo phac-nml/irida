@@ -14,6 +14,7 @@ export const nameColumnFormat = ({ url }) => {
   return {
     dataIndex: "name",
     key: "name",
+    width: 200,
     sorter: true,
     ellipsis: true,
     filterIcon(filtered) {
