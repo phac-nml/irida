@@ -33,7 +33,7 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * If there are breaking changes to the IRIDA Plugin API this version will
 	 * change, giving you an indication of when to update your plugin.
 	 */
-	public static final String PLUGIN_API_VERSION = "1.0.0";
+	public static final String PLUGIN_API_VERSION = "1.1.0";
 
 	/**
 	 * Get the AnalysisSampleUpdater if available for this analysis pipeline
