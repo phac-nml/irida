@@ -1,9 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import { fetchPageTableUpdate } from "../apis/paged-table/paged-table";
 import debounce from "lodash/debounce";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
+
+const initialState = {
+  dataSource: undefined,
+  loading: true,
+  search: "",
+  current: 1,
+  pageSize: 10,
+  order: "descend",
+  column: "createdDate",
+  total: undefined,
+  filters: {}
+};
+
+const types = {
+  LOADING: 0,
+  LOADED: 1,
+  SEARCH: 2,
+  CHANGE: 3
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case types.LOADING:
+      return { ...state, loading: true };
+    case types.LOADED:
+      return {
+        ...state,
+        loading: false,
+        dataSource: action.payload.dataSource,
+        total: action.payload.total
+      };
+    case types.SEARCH:
+      return {
+        ...state,
+        search: action.payload.term
+      };
+    case types.CHANGE:
+      return {
+        ...state,
+        pageSize: action.payload.pageSize,
+        current: action.payload.current,
+        order: action.payload.order || "descend",
+        column: action.payload.column || "createdDate",
+        filters: action.payload.filters || {}
+      };
+    default:
+      return { ...state };
+  }
+}
 
 /**
  * Provider for all ant.design server paged tables.
@@ -13,59 +62,50 @@ const { Provider, Consumer } = (PagedTableContext = React.createContext());
  * @constructor
  */
 function PagedTableProvider({ children, url }) {
-  const [tableState, setTableState] = useState({
-    loading: true,
-    dataSource: undefined,
-    search: "",
-    current: 1,
-    pageSize: 10,
-    order: "descend",
-    column: "createdDate",
-    total: undefined,
-    filters: {}
-  });
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   /*
   Table updated whenever one of these are changed.
    */
-  useEffect(() => updateTable(), [
-    tableState.search,
-    tableState.current,
-    tableState.order,
-    tableState.column,
-    tableState.filters
+  useEffect(updateTable, [
+    state.search,
+    state.current,
+    state.order,
+    state.column,
+    state.filters
   ]);
 
   /**
    * Called whenever the table needs to be re-rendered.
    */
-  const updateTable = () => {
-    setTableState({ ...tableState, loading: true });
+  function updateTable() {
+    dispatch({ type: types.LOADING });
     fetchPageTableUpdate(url, {
-      current: tableState.current - 1,
-      pageSize: tableState.pageSize,
-      sortColumn: tableState.column,
-      sortDirection: tableState.order,
-      search: tableState.search,
-      filters: tableState.filters
-    }).then(data => {
-      setTableState({
-        ...tableState,
-        ...{ total: data.total, dataSource: data.dataSource, loading: false }
-      });
-    });
-  };
+      current: state.current - 1,
+      pageSize: state.pageSize,
+      sortColumn: state.column,
+      sortDirection: state.order,
+      search: state.search,
+      filters: state.filters
+    }).then(({ dataSource, total }) =>
+      dispatch({
+        type: types.LOADED,
+        payload: {
+          dataSource,
+          total
+        }
+      })
+    );
+  }
 
   /**
    * Required when using an external filter on a table.
    * @param term - search term
    */
-  const onSearch = debounce(term => {
-    setTableState({
-      ...tableState,
-      search: term
-    });
-  }, 300);
+  const onSearch = debounce(
+    term => dispatch({ type: types.SEARCH, payload: { term } }),
+    300
+  );
 
   /**
    * Handler for default table actions (paging, filtering, and sorting)
@@ -77,13 +117,13 @@ function PagedTableProvider({ children, url }) {
   const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
-    setTableState({
-      ...tableState,
-      ...{
+    dispatch({
+      type: types.CHANGE,
+      payload: {
         pageSize,
         current,
-        order: order || "descend",
-        column: field || "createdDate",
+        order,
+        column: field,
         filters
       }
     });
@@ -91,7 +131,20 @@ function PagedTableProvider({ children, url }) {
 
   return (
     <Provider
-      value={{ ...tableState, handleTableChange, updateTable, onSearch }}
+      value={{
+        onSearch,
+        updateTable,
+        pagedConfig: {
+          dataSource: state.dataSource,
+          loading: state.loading,
+          onChange: handleTableChange,
+          pagination: {
+            total: state.total,
+            pageSize: state.pageSize,
+            hideOnSinglePage: true
+          }
+        }
+      }}
     >
       {children}
     </Provider>

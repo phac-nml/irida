@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { PagedTableContext } from "../../../contexts/PagedTableContext";
 import { Button, Input, Popconfirm, Table, Tag } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -13,17 +13,7 @@ import { StopOutlined } from "@ant-design/icons";
  * @constructor
  */
 export function ClientsTable() {
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    onSearch,
-    handleTableChange
-  } = useContext(PagedTableContext);
-  const [clients, setClients] = useState(dataSource);
-
-  useEffect(() => setClients(dataSource), [dataSource]);
+  const { onSearch, updateTable, pagedConfig } = useContext(PagedTableContext);
 
   const columns = [
     {
@@ -88,12 +78,12 @@ export function ClientsTable() {
             disabled={disabled}
             title={i18n("client.revoke.confirm", record.name)}
             placement={"topRight"}
-            onConfirm={() => revokeTokens(record)}
+            onConfirm={() => revokeTokens(record.id)}
           >
-              <Button disabled={disabled}>
-                <StopOutlined />
-                {i18n("client.details.token.revoke")}
-              </Button>
+            <Button disabled={disabled}>
+              <StopOutlined />
+              {i18n("client.details.token.revoke")}
+            </Button>
           </Popconfirm>
         );
       }
@@ -101,27 +91,11 @@ export function ClientsTable() {
   ];
 
   /**
-   * Handle searching through the external filter.
-   * @param event
-   */
-  function tableSearch(event) {
-    onSearch(event.target.value);
-  }
-
-  /**
    * Revoke the tokens for the current client described
    * in the current row.
    */
-  function revokeTokens(client) {
-    revokeClientTokens(client.id).then(() => {
-      /*
-      Once tokens have been revoked ensure that the table reflects this.
-       */
-      const c = [...clients];
-      const index = c.findIndex(i => i.id === client.id);
-      c[index].tokens = 0;
-      setClients(c);
-    });
+  function revokeTokens(id) {
+    revokeClientTokens(id).then(updateTable);
   }
 
   return (
@@ -133,16 +107,12 @@ export function ClientsTable() {
           marginBottom: SPACE_XS
         }}
       >
-        <Input.Search style={{ width: 250 }} onChange={tableSearch} />
+        <Input.Search
+          style={{ width: 250 }}
+          onChange={e => onSearch(e.target.value)}
+        />
       </div>
-      <Table
-        columns={columns}
-        keyKey={record => record.key}
-        dataSource={clients}
-        loading={loading}
-        onChange={handleTableChange}
-        pagination={{ total, pageSize, hideOnSinglePage: true }}
-      />
+      <Table columns={columns} {...pagedConfig} />
     </>
   );
 }
