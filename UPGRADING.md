@@ -4,12 +4,16 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+20.01 to 20.05
+--------------
+
 19.09 to 20.01
 --------------
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 * This upgrade changes the Java version to Java 11.  To upgrade, follow the install instructions for your system in <https://irida.corefacility.ca/documentation/administrator/web/#prerequisite-install-instructions>.
 * Tomcat 8 (or another Servlet 3.1 compatible servlet container) is required for this IRIDA version.  Systems using Tomcat 7 must be upgraded before deploying this update.
 * This upgrade adds a required field to OAuth2 clients using the `authorization_code` grant (that is external applications connecting to IRIDA via the web application).  This includes other IRIDA installations synchronizing data via the Remote API system, and Galaxy importer clients.  In order for these systems to continue working properly, administrators must register a redirect URI for all `authorization_code` clients.  For more on this process, see <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
+* The configuration key `hibernate.dialect=org.hibernate.dialect.MySQL55Dialect` should be set in your `/etc/irida/irida.conf` file for this release.  Note the change from `MySQL5Dialect` to `MySQL55Dialect`.
 
 19.05 to 19.09
 --------------
