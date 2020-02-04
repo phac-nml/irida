@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Alert } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
 import { removeGalaxySession } from "../../apis/galaxy/galaxy";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_XS } from "../../styles/spacing";
 
-export default function GalaxyAlert() {
+const GalaxyMessage = () => {
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)
     .split("/tool_runner")[0];
 
-  const message = (
+  return (
     <span>
       <span style={{ fontWeight: FONT_WEIGHT_HEAVY, marginRight: SPACE_XS }}>
         {window.GALAXY.TITLE}
@@ -30,15 +30,21 @@ export default function GalaxyAlert() {
       </a>
     </span>
   );
+};
 
-  return (
+export default function GalaxyAlert() {
+  const [galaxy, setGalaxy] = useState(false);
+
+  useEffect(() => setGalaxy(typeof window.GALAXY !== "undefined"), []);
+
+  return galaxy ? (
     <Alert
       type="info"
-      message={message}
+      message={<GalaxyMessage />}
       banner
       closable
       closeText={window.GALAXY.CANCEL}
       onClose={removeGalaxySession}
     />
-  );
+  ) : null;
 }

@@ -12,7 +12,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-	<header class="js-page-header"></header>
+	<div class="js-page-header"></div>
 	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
 	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
 		<div class="container-fluid">
