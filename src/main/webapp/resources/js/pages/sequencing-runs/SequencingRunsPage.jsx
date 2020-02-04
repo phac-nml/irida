@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
-import { PagedTableProvider } from "../../contexts/PagedTableContext";
+import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { SequencingRunsList } from "./SequencingRunsList";
 
 render(
