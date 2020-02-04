@@ -143,7 +143,7 @@ class i18nThymeleafWebpackPlugin {
             /*
             This adds a file for translations for webpack to write to the file system.
              */
-            const filename = `i18n/${entrypointName}.html`;
+            const filename = `../pages/templates/i18n/${entrypointName}.html`;
             const newChunk = new Chunk(filename);
             newChunk.files = [filename];
             newChunk.ids = [];
