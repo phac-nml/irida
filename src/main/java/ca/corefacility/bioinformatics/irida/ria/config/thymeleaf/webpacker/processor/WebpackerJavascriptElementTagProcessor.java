@@ -72,9 +72,9 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 					WebpackerTagType.HTML);
 			if (htmlResources != null) {
 				htmlResources.forEach(file -> {
-					if (file.startsWith(INTERNATIONALIZATION_PREFIX)) {
+					if (file.contains(INTERNATIONALIZATION_PREFIX)) {
 						model.add(modelFactory.createOpenElementTag(INTERNATIONALIZATION_TAG, INTERNATIONALIZATION_ATTR,
-								String.format("../dist/i18n/%s :: i18n", entry), false));
+								String.format("templates/i18n/%s :: i18n", entry), false));
 						model.add(modelFactory.createCloseElementTag(INTERNATIONALIZATION_TAG));
 					}
 				});
