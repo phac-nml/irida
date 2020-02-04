@@ -2,7 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.proc
 
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
@@ -22,14 +25,16 @@ public class WebpackerScriptAttributeTagProcessor extends AbstractAttributeTagPr
 	private static final String ATTR_NAME = "script";
 	private static final int PRECEDENCE = 10000;
 
-	public WebpackerScriptAttributeTagProcessor(final String dialectPrefix) {
+	public WebpackerScriptAttributeTagProcessor(String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, null, false, ATTR_NAME, true, PRECEDENCE, true);
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName,
 			String attributeValue, IElementTagStructureHandler structureHandler) {
-		List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(attributeValue, WebpackerTagType.JS);
+		ServletContext servletContext = ((WebEngineContext) context).getServletContext();
+		List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(servletContext, attributeValue,
+				WebpackerTagType.JS);
 
 		if (jsResources != null) {
 			// Since this is specifically for un-chunked, we only need the second item in the array

@@ -2,7 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.proc
 
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.model.AttributeValueQuotes;
 import org.thymeleaf.model.IModel;
 import org.thymeleaf.model.IModelFactory;
@@ -29,23 +32,24 @@ public class WebpackerCSSElementTagProcessor extends AbstractElementTagProcessor
 	private static final String ELEMENT_NAME = "link";
 	private static final int PRECEDENCE = 1000;
 
-	public WebpackerCSSElementTagProcessor(final String dialectPrefix) {
+	public WebpackerCSSElementTagProcessor(String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_TYPE.toString(), true, null, false, PRECEDENCE);
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
 			IElementTagStructureHandler structureHandler) {
-		final String entry = tag.getAttributeValue(WebpackerDialect.ENTRY_ATTR);
+		String entry = tag.getAttributeValue(WebpackerDialect.ENTRY_ATTR);
 
 		/*
 		 * Look into the manifests and pull out all the chunks for the given entry and type.
 		 */
-		List<String> chunks = WebpackerManifestParser.getChunksForEntryType(entry, TAG_TYPE);
+		ServletContext servletContext = ((WebEngineContext) context).getServletContext();
+		List<String> chunks = WebpackerManifestParser.getChunksForEntryType(servletContext, entry, TAG_TYPE);
 
 		if (chunks != null) {
-			final IModelFactory modelFactory = context.getModelFactory();
-			final IModel model = modelFactory.createModel();
+			IModelFactory modelFactory = context.getModelFactory();
+			IModel model = modelFactory.createModel();
 
 			/*
 			 * For each chunk we are going to create a new link formatted for thymeleaf to

@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -46,8 +49,9 @@ public class WebpackerManifestParser {
 	 * @param type  - the type of resource files to get.
 	 * @return List of chunks
 	 */
-	public static List<String> getChunksForEntryType(String entry, WebpackerTagType type) {
-		Map<String, Map<String, List<String>>> entries = getEntryMap();
+	public static List<String> getChunksForEntryType(
+			ServletContext context, String entry, WebpackerTagType type) {
+		Map<String, Map<String, List<String>>> entries = getEntryMap(context);
 
 		/*
 		 * Ensure the entry actually exists in webpack.
@@ -75,10 +79,12 @@ public class WebpackerManifestParser {
 	 *
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
-	private static Map<String, Map<String, List<String>>> getEntryMap() {
+	private static Map<String, Map<String, List<String>>> getEntryMap(ServletContext context) {
 		try {
 			if (WebpackerManifestParser.entryMap == null || autoUpdatable) {
-				File manifestFile = ResourceUtils.getFile("file:src/main/webapp/dist/manifest.json");
+				String path = context.getResource("/dist/manifest.json")
+						.getPath();
+				File manifestFile = ResourceUtils.getFile(path);
 				try (InputStream is = Files.newInputStream(manifestFile.toPath())) {
 					String checksum = org.apache.commons.codec.digest.DigestUtils.sha256Hex(is);
 					if (!checksum.equals(WebpackerManifestParser.manifestChecksum)) {
@@ -89,7 +95,7 @@ public class WebpackerManifestParser {
 					throw new FileProcessorException("could not calculate checksum", e);
 				}
 			}
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | MalformedURLException e) {
 			logger.error("Cannot find webpack manifest file.");
 		}
 		return WebpackerManifestParser.entryMap;

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.thymeleaf.context.ITemplateContext;
@@ -36,7 +37,7 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 	private static final String INTERNATIONALIZATION_TAG = "th:block";
 	private static final String JAVASCRIPT_ATTR = "th:src";
 
-	public WebpackerJavascriptElementTagProcessor(final String dialectPrefix) {
+	public WebpackerJavascriptElementTagProcessor(String dialectPrefix) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_TYPE.toString(), true, null, false, PRECEDENCE);
 	}
 
@@ -54,11 +55,11 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 		/*
 		 * Read the 'entry' attribute from the tag.
 		 */
-		final String entry = tag.getAttributeValue(WebpackerDialect.ENTRY_ATTR);
+		String entry = tag.getAttributeValue(WebpackerDialect.ENTRY_ATTR);
 
 		if (entry != null) {
-			final IModelFactory modelFactory = context.getModelFactory();
-			final IModel model = modelFactory.createModel();
+			IModelFactory modelFactory = context.getModelFactory();
+			IModel model = modelFactory.createModel();
 
 			/*
 			 * Each javascript entry may require its own internationalization messages.  There is a custom webpack
@@ -66,8 +67,9 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 			 * the path to the webpack manifest.  We will get Thymeleaf to insert the fragments above the entry
 			 * script.
 			 */
-			final List<String> htmlResources = WebpackerManifestParser
-					.getChunksForEntryType(entry, WebpackerTagType.HTML);
+			ServletContext servletContext = ((WebEngineContext) context).getServletContext();
+			List<String> htmlResources = WebpackerManifestParser.getChunksForEntryType(servletContext, entry,
+					WebpackerTagType.HTML);
 			if (htmlResources != null) {
 				htmlResources.forEach(file -> {
 					if (file.startsWith(INTERNATIONALIZATION_PREFIX)) {
@@ -81,13 +83,14 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 			/*
 			 * Add all javascript chunks for this entry to the page.
 			 */
-			final List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(entry, WebpackerTagType.JS);
+			List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(servletContext, entry,
+					WebpackerTagType.JS);
 			if (jsResources != null) {
 				jsResources.forEach(chunk -> {
 					if (!existingChunks.contains(chunk)) {
 						existingChunks.add(chunk);
-						model.add(modelFactory
-								.createOpenElementTag(JAVASCRIPT_TAG, JAVASCRIPT_ATTR, String.format("@{/dist/%s}", chunk)));
+						model.add(modelFactory.createOpenElementTag(JAVASCRIPT_TAG, JAVASCRIPT_ATTR,
+								String.format("@{/dist/%s}", chunk)));
 						model.add(modelFactory.createCloseElementTag(JAVASCRIPT_TAG));
 					}
 				});
