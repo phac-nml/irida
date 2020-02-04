@@ -338,7 +338,7 @@ The purpose of each method is as follows:
 
 ### 3.2.5. (Optional) Implement an [Updater][irida-updater] class
 
-An [Updater][irida-updater] class is used to perform post-processing on the resulting files, primarily intended to write back pipeline results into the IRIDA metadata system. Please see the [ExamplePluginUpdater.java][irida-updater] for an example implementation, or the built-in implementations in <https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/pipeline/results/impl>. Implementing this class is optional for your pipeline.
+An [Updater][irida-updater] class is used to perform post-processing on the resulting files, primarily intended to write back pipeline results into the IRIDA metadata system. Please see the [ExamplePluginUpdater.java][irida-updater] for an example implementation, or the built-in implementations in <https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/pipeline/results/updater/impl>. Implementing this class is optional for your pipeline.
 
 If you do implement this class, you will also want to make sure to update the `messages_en.properties` file with an entry like:
 
