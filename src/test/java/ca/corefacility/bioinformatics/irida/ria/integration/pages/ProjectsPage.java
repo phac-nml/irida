@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,14 +13,17 @@ import org.openqa.selenium.support.PageFactory;
  * <p>
  * Page Object to represent the projects page.
  * </p>
- *
  */
 public class ProjectsPage extends AbstractPage {
-	@FindBy(css = ".ant-table-body table")
-	WebElement projectsTable;
 
-	@FindBy(className = "ant-table-column-title")
+	@FindBy(className = "ant-table-row")
+	List<WebElement> projectRows;
+
+	@FindBy(css = "thead .ant-table-cell")
 	List<WebElement> headers;
+
+	@FindBy(className = "t-name")
+	List<WebElement> projectsNameCells;
 
 	@FindBy(css = ".ant-input-search .ant-input")
 	WebElement searchInput;
@@ -36,8 +38,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public int getNumberOfProjects() {
-		return projectsTable.findElements(By.cssSelector("tbody tr"))
-				.size();
+		return projectRows.size();
 	}
 
 	public void sortProjectTableBy(String columnName) {
@@ -53,23 +54,14 @@ public class ProjectsPage extends AbstractPage {
 		}
 	}
 
-	public List<String> getProjectsSortListByColumnName(String columnName) {
-		for (int i = 0; i < headers.size(); i++) {
-			WebElement header = headers.get(i);
-			if (header.getText()
-					.equals(columnName)) {
-				return projectsTable.findElements(By.cssSelector("tbody tr td:nth-child(" + (i + 1) + ")"))
-						.stream()
-						.map(WebElement::getText)
-						.collect(Collectors.toList());
-			}
-		}
-		return null;
+	public List<String> getProjectNamesSortList() {
+		return projectsNameCells.stream()
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
 	}
 
 	public void clickProjectList(String projectName) {
-		projectsTable.findElements(By.cssSelector("tbody tr td:nth-child(3)"))
-				.stream()
+		projectRows.stream()
 				.filter(el -> el.getText()
 						.equals(projectName))
 				.collect(Collectors.toList())
