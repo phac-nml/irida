@@ -14,11 +14,11 @@ import org.openqa.selenium.support.PageFactory;
  * <p>
  * Page Object to represent the projects page.
  * </p>
- *
  */
 public class ProjectsPage extends AbstractPage {
-	@FindBy(css = ".ant-table-body table")
-	WebElement projectsTable;
+
+	@FindBy(className = "ant-table-row")
+	List<WebElement> projectRows;
 
 	@FindBy(className = "ant-table-column-title")
 	List<WebElement> headers;
@@ -36,8 +36,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public int getNumberOfProjects() {
-		return projectsTable.findElements(By.cssSelector("tbody tr"))
-				.size();
+		return projectRows.size();
 	}
 
 	public void sortProjectTableBy(String columnName) {
@@ -58,9 +57,10 @@ public class ProjectsPage extends AbstractPage {
 			WebElement header = headers.get(i);
 			if (header.getText()
 					.equals(columnName)) {
-				return projectsTable.findElements(By.cssSelector("tbody tr td:nth-child(" + (i + 1) + ")"))
-						.stream()
-						.map(WebElement::getText)
+				int counter = i + 1;
+				return projectRows.stream()
+						.map(row -> row.findElement(By.cssSelector("td:nth-child(" + counter + ")"))
+								.getText())
 						.collect(Collectors.toList());
 			}
 		}
@@ -68,8 +68,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void clickProjectList(String projectName) {
-		projectsTable.findElements(By.cssSelector("tbody tr td:nth-child(3)"))
-				.stream()
+		projectRows.stream()
 				.filter(el -> el.getText()
 						.equals(projectName))
 				.collect(Collectors.toList())
