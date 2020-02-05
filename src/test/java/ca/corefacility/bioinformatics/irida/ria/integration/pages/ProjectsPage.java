@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,8 +19,11 @@ public class ProjectsPage extends AbstractPage {
 	@FindBy(className = "ant-table-row")
 	List<WebElement> projectRows;
 
-	@FindBy(className = "ant-table-column-title")
+	@FindBy(css = "thead .ant-table-cell")
 	List<WebElement> headers;
+
+	@FindBy(className = "t-name")
+	List<WebElement> projectsNameCells;
 
 	@FindBy(css = ".ant-input-search .ant-input")
 	WebElement searchInput;
@@ -52,19 +54,10 @@ public class ProjectsPage extends AbstractPage {
 		}
 	}
 
-	public List<String> getProjectsSortListByColumnName(String columnName) {
-		for (int i = 0; i < headers.size(); i++) {
-			WebElement header = headers.get(i);
-			if (header.getText()
-					.equals(columnName)) {
-				int counter = i + 1;
-				return projectRows.stream()
-						.map(row -> row.findElement(By.cssSelector("td:nth-child(" + counter + ")"))
-								.getText())
-						.collect(Collectors.toList());
-			}
-		}
-		return null;
+	public List<String> getProjectNamesSortList() {
+		return projectsNameCells.stream()
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
 	}
 
 	public void clickProjectList(String projectName) {
