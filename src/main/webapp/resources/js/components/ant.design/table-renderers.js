@@ -16,7 +16,7 @@ export const nameColumnFormat = ({ url }) => {
     sorter: true,
     ellipsis: true,
     filterIcon(filtered) {
-      return <FilterIcon filtered={filtered} />;
+      return <FilterIcon className="t-name-filter-btn" filtered={filtered} />;
     },
     render(name, data) {
       return (

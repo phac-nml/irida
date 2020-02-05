@@ -22,7 +22,7 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "t-delete-selected")
 	private WebElement deleteSelectedBtn;
 
-	@FindBy(className = "t-name")
+	@FindBy(className = "t-name-filter-btn")
 	private WebElement nameFilterButton;
 
 	@FindBy(className = "t-name-filter")
