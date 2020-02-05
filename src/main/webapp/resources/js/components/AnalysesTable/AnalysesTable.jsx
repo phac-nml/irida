@@ -15,6 +15,8 @@ import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { AnalysesQueue } from "./../AnalysesQueue";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -58,8 +60,7 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: `${window.TL.BASE_URL}analysis`,
-        width: 300
+        url: setBaseUrl(`analysis/`)
       }),
       title: i18n("analyses.analysis-name"),
       key: "name",
@@ -71,7 +72,6 @@ export function AnalysesTable() {
       dataIndex: "state",
       filterMultiple: true,
       filters: pipelineStates,
-      width: 150,
       filterIcon(filtered) {
         return (
           <Icon
@@ -120,7 +120,6 @@ export function AnalysesTable() {
     {
       title: i18n("analysis.duration"),
       key: "duration",
-      width: 150,
       dataIndex: "duration",
       render(timestamp) {
         return getHumanizedDuration({ date: timestamp });
@@ -135,7 +134,7 @@ export function AnalysesTable() {
           <Button
             shape="circle-outline"
             disabled={record.state.value !== "COMPLETED"}
-            href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
+            href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
             icon="download"
           />
@@ -158,25 +157,35 @@ export function AnalysesTable() {
 
   return (
     <div>
-      <div style={{ marginBottom: SPACE_MD }}>
-        <Popconfirm
-          placement="bottomRight"
-          title={i18n("analyses.delete-confirm").replace(
-            "[COUNT]",
-            selected.length
-          )}
-          onVisibleChange={visible => setDeleting(visible)}
-          onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
-        >
-          <Button
-            className="t-delete-selected"
-            loading={deleting}
-            disabled={!selected.length}
-            onClick={() => setDeleting(true)}
+      <div
+        style={{
+          marginBottom: SPACE_MD,
+          display: "flex"
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          <Popconfirm
+            placement="bottomRight"
+            title={i18n("analyses.delete-confirm").replace(
+              "[COUNT]",
+              selected.length
+            )}
+            onVisibleChange={visible => setDeleting(visible)}
+            onConfirm={() =>
+              deleteAnalyses(selected).then(() => setSelected([]))
+            }
           >
-            {i18n("analyses.delete")}
-          </Button>
-        </Popconfirm>
+            <Button
+              className="t-delete-selected"
+              loading={deleting}
+              disabled={!selected.length}
+              onClick={() => setDeleting(true)}
+            >
+              {i18n("analyses.delete")}
+            </Button>
+          </Popconfirm>
+        </div>
+        <AnalysesQueue />
       </div>
       <Table
         rowSelection={rowSelection}
