@@ -15,6 +15,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, SISTR } from "../routes";
 import { grey1 } from "../../../styles/colors";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const SerovarPredictions = React.lazy(() =>
@@ -34,7 +35,7 @@ export default function AnalysisSistr() {
   const { analysisContext } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
 
-  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.SISTR}`;
+  const DEFAULT_URL = setBaseUrl(ANALYSIS.SISTR);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the SISTR results
@@ -60,32 +61,32 @@ export default function AnalysisSistr() {
                   selectedKeys={[keyname ? keyname[1] : SISTR.INFO]}
                 >
                   <Menu.Item key="info">
-                    <Link to={`${BASE_URL}/${SISTR.INFO}`}>
+                    <Link to={`${DEFAULT_URL}/${SISTR.INFO}`}>
                       {i18n("AnalysisSistr.sistrInformation")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="serovar_predictions">
-                    <Link to={`${BASE_URL}/${SISTR.SEROVAR_PREDICTIONS}`}>
+                    <Link to={`${DEFAULT_URL}/${SISTR.SEROVAR_PREDICTIONS}`}>
                       {i18n("AnalysisSistr.serovarPredictions")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="cgmlst">
-                    <Link to={`${BASE_URL}/${SISTR.CGMLST}`}>
+                    <Link to={`${DEFAULT_URL}/${SISTR.CGMLST}`}>
                       {i18n("AnalysisSistr.cgmlst330")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="mash">
-                    <Link to={`${BASE_URL}/${SISTR.MASH}`}>
+                    <Link to={`${DEFAULT_URL}/${SISTR.MASH}`}>
                       {i18n("AnalysisSistr.mash")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="file_preview">
-                    <Link to={`${BASE_URL}/${SISTR.FILE_PREVIEW}`}>
+                    <Link to={`${DEFAULT_URL}/${SISTR.FILE_PREVIEW}`}>
                       {i18n("AnalysisOutputs.outputFilePreview")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="citation">
-                    <Link to={`${BASE_URL}/${SISTR.CITATION}`}>
+                    <Link to={`${DEFAULT_URL}/${SISTR.CITATION}`}>
                       {i18n("AnalysisSistr.citation")}
                     </Link>
                   </Menu.Item>
@@ -102,25 +103,25 @@ export default function AnalysisSistr() {
                 <SistrInfo
                   sistrResults={sistrResults.result}
                   sampleName={sistrResults.sampleName}
-                  path={`${BASE_URL}/${SISTR.INFO}`}
+                  path={`${DEFAULT_URL}/${SISTR.INFO}`}
                   default
                 />
                 <SerovarPredictions
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/${SISTR.SEROVAR_PREDICTIONS}`}
+                  path={`${DEFAULT_URL}/${SISTR.SEROVAR_PREDICTIONS}`}
                 />
                 <CgMlst
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/${SISTR.CGMLST}`}
+                  path={`${DEFAULT_URL}/${SISTR.CGMLST}`}
                 />
                 <Mash
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/${SISTR.MASH}`}
+                  path={`${DEFAULT_URL}/${SISTR.MASH}`}
                 />
-                <OutputFilePreview path={`${BASE_URL}/${SISTR.FILE_PREVIEW}`} />
+                <OutputFilePreview path={`${DEFAULT_URL}/${SISTR.FILE_PREVIEW}`} />
                 <Citation
                   sistrResults={sistrResults.result}
-                  path={`${BASE_URL}/${SISTR.CITATION}`}
+                  path={`${DEFAULT_URL}/${SISTR.CITATION}`}
                 />
               </Router>
             </Suspense>

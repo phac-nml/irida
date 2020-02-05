@@ -7,7 +7,8 @@ import React, { useContext } from "react";
 
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { SPACE_LG } from "../../../../styles/spacing";
-import { Row, Icon, Button, Typography } from "antd";
+import { Button, Icon, Row, Typography } from "antd";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const { Title } = Typography;
 
@@ -60,7 +61,7 @@ export function AnalysisReferenceFileRenderer() {
   const downloadReferenceFile = () => {
     if (analysisSamplesContext.referenceFile.identifier !== undefined) {
       window.open(
-        `${window.TL.BASE_URL}referenceFiles/download/${analysisSamplesContext.referenceFile.identifier}`,
+        setBaseUrl(`referenceFiles/download/${analysisSamplesContext.referenceFile.identifier}`),
         "_blank"
       );
     }

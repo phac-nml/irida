@@ -14,6 +14,7 @@ import { showNotification } from "../../../../modules/notifications";
 import { deleteAnalysis } from "../../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 export default function AnalysisDelete() {
   /*
@@ -34,7 +35,7 @@ export default function AnalysisDelete() {
     );
 
     window.setTimeout(function() {
-      window.location.replace(window.TL.BASE_URL);
+      window.location.replace(setBaseUrl(""));
     }, 3500);
   }
 

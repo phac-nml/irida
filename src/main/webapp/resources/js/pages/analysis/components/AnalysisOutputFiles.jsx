@@ -7,6 +7,7 @@ import { Layout } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, OUTPUT } from "../routes";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const OutputFilePreview = React.lazy(() =>
   import("./outputs/OutputFilePreview")
@@ -14,11 +15,10 @@ const OutputFilePreview = React.lazy(() =>
 const { Content } = Layout;
 
 export default function AnalysisOutputFiles() {
-  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.OUTPUT}`;
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <Content>
-        <OutputFilePreview path={`${BASE_URL}/${OUTPUT.FILE_PREVIEW}`} />
+        <OutputFilePreview path={setBaseUrl(`${ANALYSIS.OUTPUT}/${OUTPUT.FILE_PREVIEW}`)} />
       </Content>
     </Layout>
   );

@@ -3,13 +3,14 @@
  * required by the component
  */
 
-import React, { useContext, useState, useLayoutEffect } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { Avatar, Icon, Input, List } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const { Search } = Input;
 
@@ -55,7 +56,7 @@ export function AnalysisSampleRenderer() {
                 }
                 title={
                   <a
-                    href={`${window.TL.BASE_URL}samples/${item.sampleId}/details`}
+                    href={setBaseUrl(`samples/${item.sampleId}/details`)}
                     target="_blank"
                   >
                     {item.sampleName}
@@ -65,7 +66,7 @@ export function AnalysisSampleRenderer() {
                   <div>
                     <div key={`file-${item.forward.identifier}`}>
                       <a
-                        href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
+                        href={setBaseUrl(`sequenceFiles/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`)}
                         target="_blank"
                       >
                         {item.forward.fileName}
@@ -73,7 +74,7 @@ export function AnalysisSampleRenderer() {
                     </div>
                     <div key={`file-${item.reverse.identifier}`}>
                       <a
-                        href={`${window.TL.BASE_URL}sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
+                        href={setBaseUrl(`sequenceFiles/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`)}
                         target="_blank"
                       >
                         {item.reverse.fileName}

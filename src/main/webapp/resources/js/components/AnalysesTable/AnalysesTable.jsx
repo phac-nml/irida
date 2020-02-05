@@ -60,7 +60,7 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: setBaseUrl(`analysis/`)
+        url: setBaseUrl(`analysis`)
       }),
       title: i18n("analyses.analysis-name"),
       key: "name",
