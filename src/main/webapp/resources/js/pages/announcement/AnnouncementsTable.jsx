@@ -1,12 +1,14 @@
 import React, { forwardRef, useContext, useImperativeHandle } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import ReactMarkdown from "react-markdown";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../styles/spacing";
 import { EditAnnouncement } from "./EditAnnouncement";
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
-import { PagedTable } from "../../components/ant.design/PagedTable";
+import {
+  PagedTable,
+  PagedTableContext
+} from "../../components/ant.design/PagedTable";
 
 export const AnnouncementsTable = forwardRef((props, ref) => {
   const { updateTable } = useContext(PagedTableContext);
