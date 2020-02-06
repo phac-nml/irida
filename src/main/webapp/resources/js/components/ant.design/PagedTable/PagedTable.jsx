@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { SPACE_XS } from "../../styles/spacing";
+import { PagedTableContext } from "./PagedTableContext";
+import { SPACE_XS } from "../../../styles/spacing";
 import { Input, Table } from "antd";
 
 /**

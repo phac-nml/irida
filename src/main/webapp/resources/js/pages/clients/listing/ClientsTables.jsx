@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
-import { PagedTableContext } from "../../../contexts/PagedTableContext";
+import {
+  PagedTable,
+  PagedTableContext
+} from "../../../components/ant.design/PagedTable";
 import { Button, Popconfirm, Tag } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { revokeClientTokens } from "../../../apis/clients/clients";
 import { StopOutlined } from "@ant-design/icons";
-import { PagedTable } from "../../../components/ant.design/PagedTable";
 
 /**
  * Table for displaying a list of clients.
@@ -98,5 +100,5 @@ export function ClientsTable() {
     revokeClientTokens(id).then(updateTable);
   }
 
-  return <PagedTable columns={columns} url={setBaseUrl("clients/ajax/list")} />;
+  return <PagedTable columns={columns} />;
 }

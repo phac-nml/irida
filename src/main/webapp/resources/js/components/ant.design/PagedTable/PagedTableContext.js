@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from "react";
-import { fetchPageTableUpdate } from "../apis/paged-table/paged-table";
+import { fetchPageTableUpdate } from "../../../apis/paged-table/paged-table";
 import debounce from "lodash/debounce";
 
 let PagedTableContext;

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { Button, Icon, Popconfirm } from "antd";
 import {
   dateColumnFormat,
@@ -17,7 +17,6 @@ import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { PagedTable } from "../ant.design/PagedTable";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
