@@ -2,7 +2,6 @@ import React from "react";
 
 import PropTypes from "prop-types";
 import { Tag } from "antd";
-import { SaveTemplateButton } from "./SaveTemplateButton";
 
 /**
  * This class represents the contents of an option in an
@@ -11,21 +10,8 @@ import { SaveTemplateButton } from "./SaveTemplateButton";
  */
 export function TemplateSelectOption(props) {
   const { template, index, current, saved } = props;
-  const { name, fields, modified } = template;
+  const { name, fields } = template;
 
-  /**
-   * Render an update or save button depending on whether the option is for
-   * an existing template or a new one.
-   */
-  function renderUpdateSave() {
-    return (
-      <SaveTemplateButton
-        template={props.template}
-        showSaveModal={props.showSaveModal}
-        saveTemplate={props.saveTemplate}
-      />
-    );
-  }
 
   return (
     <React.Fragment>
@@ -46,7 +32,6 @@ export function TemplateSelectOption(props) {
               {i18n("linelist.templates.saved").toUpperCase()}
             </Tag>
           ) : null}
-          {modified.length === 0 ? null : renderUpdateSave()}
           <Tag className="templates-option--field-count">
             {fields.filter(f => !f.hide).length}
           </Tag>
@@ -60,7 +45,5 @@ TemplateSelectOption.propTypes = {
   template: PropTypes.object.isRequired,
   saved: PropTypes.bool.isRequired,
   current: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  saveTemplate: PropTypes.func.isRequired,
-  showSaveModal: PropTypes.func.isRequired
+  index: PropTypes.number.isRequired
 };

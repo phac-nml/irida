@@ -2,6 +2,7 @@ import React from "react";
 
 import PropTypes from "prop-types";
 import { Button } from "antd";
+import { SPACE_XS } from "../../../../../../../styles/spacing";
 
 /**
  * This components is part of the TemplateSelect.  Displays a save button
@@ -21,11 +22,9 @@ export class SaveTemplateButton extends React.Component {
     return (
       <Button
         className="t-template-save-btn"
-        size="small"
         type="primary"
-        ghost
         onClick={this.showSaveModal}
-        disabled={typeof this.props.template === "undefined"}
+        style={{ marginLeft: SPACE_XS }}
       >
         {i18n("linelist.templates.saveModified")}
       </Button>

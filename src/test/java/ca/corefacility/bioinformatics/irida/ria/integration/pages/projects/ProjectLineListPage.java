@@ -24,10 +24,10 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(css = ".template-option--name:first-of-type")
+	@FindBy(className = "ant-select-selector")
 	private WebElement templateSelectToggle;
 
-	@FindBy(className = "template-option--name")
+	@FindBy(className = "ant-dropdown-menu-item")
 	private List<WebElement> templateOptions;
 
 	@FindBy(className = "t-template-save-btn")
@@ -86,14 +86,17 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void toggleMetadataField (int field) {
-		fieldSwitches.get(field).click();
+		WebElement fieldSwitch = fieldSwitches.get(field);
+		waitForElementToBeClickable(fieldSwitch);
+		fieldSwitch.click();
+		waitForTime(400);
 	}
 
 	public void selectTemplate(String template) {
-		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
-		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
-		for (WebElement option : templateOptions) {
+		waitForElementsVisible(By.className("ant-select-dropdown"));
+		List<WebElement> options = driver.findElements(By.className("template-option--name"));
+		for (WebElement option : options) {
 			if (option.getText()
 					.equals(template)) {
 				option.click();

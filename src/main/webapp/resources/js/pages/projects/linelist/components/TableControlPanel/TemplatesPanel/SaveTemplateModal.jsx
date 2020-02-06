@@ -216,7 +216,7 @@ export class SaveTemplateModal extends React.Component {
           />
         }
       >
-        <Form>
+        <Form layout="vertical">
           <Item
             label={i18n("linelist.templates.saveModal.name")}
             hasFeedback
