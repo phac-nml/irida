@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { PagedTable } from "../../components/ant.design/PagedTable";
+import {
+  PagedTable,
+  PagedTableContext
+} from "../../components/ant.design/PagedTable";
 import { RemoteApiStatus } from "./RemoteApiStatus";
 
 export function RemoteApiTable() {
