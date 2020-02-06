@@ -1,6 +1,5 @@
 import React, { forwardRef, useContext, useImperativeHandle } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import ReactMarkdown from "react-markdown";
 import { dateColumnFormat } from "../../components/ant.design/table-renderers";
 import { SPACE_XS } from "../../styles/spacing";
 import { EditAnnouncement } from "./EditAnnouncement";
@@ -9,6 +8,7 @@ import {
   PagedTable,
   PagedTableContext
 } from "../../components/ant.design/PagedTable";
+import RichTextEditor from "react-rte/lib/RichTextEditor";
 
 export const AnnouncementsTable = forwardRef((props, ref) => {
   const { updateTable } = useContext(PagedTableContext);
@@ -27,10 +27,9 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       render(text, full) {
         return (
           <a href={setBaseUrl(`announcements/${full.id}/details`)}>
-            <ReactMarkdown
-              source={text}
-              disallowedTypes={["paragraph"]}
-              unwrapDisallowed
+            <RichTextEditor
+              value={RichTextEditor.createValueFromString(text, "markdown")}
+              readOnly
             />
           </a>
         );
