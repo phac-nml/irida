@@ -21,6 +21,7 @@ export function SaveTemplateButton({ disabled, template, templates, saveTemplate
   }
 
   function showSaveModal() {
+    form.resetFields();
     /*
     Update the confirm button on the modal when the state of the name
     changes.

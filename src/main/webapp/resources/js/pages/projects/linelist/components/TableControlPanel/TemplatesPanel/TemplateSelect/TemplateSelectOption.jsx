@@ -33,7 +33,7 @@ export function TemplateSelectOption(props) {
   return (
     <>
       <TemplateOption>
-        <TemplateOptionField>{name}</TemplateOptionField>
+        <TemplateOptionField className="t-template-name">{name}</TemplateOptionField>
         <span>
           {saved && index === current ? (
             <Tag color="green">
