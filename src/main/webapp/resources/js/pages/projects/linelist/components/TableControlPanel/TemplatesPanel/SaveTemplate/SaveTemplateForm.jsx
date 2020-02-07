@@ -1,6 +1,13 @@
 import React, { useEffect, useReducer } from "react";
 import { AutoComplete, Checkbox, Form } from "antd";
 
+/**
+ * @fileOverview Component to render a react ant design form for saving
+ * a new / updated template.  The template name must either be unique (i.e
+ * not existing in the system) or the checkbox to overwrite the existing template
+ * must be selected.
+ */
+
 const initialState = {
   name: { value: "", validation: {} },
   options: [],
