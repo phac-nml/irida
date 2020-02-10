@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon, Popover } from "antd";
+import { Popover, Icon } from "antd";
 import PropTypes from "prop-types";
 
 /**

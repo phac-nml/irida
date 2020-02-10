@@ -2,12 +2,6 @@ import "jquery";
 import angular from "angular";
 import "ng-file-upload";
 
-import React from "react";
-import { render } from "react-dom";
-import { AnalysesQueue } from "../../components/AnalysesQueue";
-
-render(<AnalysesQueue />, document.querySelector("#queue-root"));
-
 /**
  * Main controller for the pipeline launch page.
  * @param $scope Application model object

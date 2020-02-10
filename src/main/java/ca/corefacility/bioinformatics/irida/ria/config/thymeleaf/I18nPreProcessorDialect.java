@@ -1,13 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.util.ResourceUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.dialect.IPreProcessorDialect;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.model.IModelFactory;
@@ -90,7 +89,7 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 					if (matcher.find()) {
 						String bundle = matcher.group(1);
 						if (doesTranslationsFileExist(bundle)) {
-							String path = "templates/i18n/" + bundle + " :: i18n";
+							String path = "../dist/i18n/" + bundle + " :: i18n";
 
 							// Add in translations block for js bundle
 							super.handleOpenElement(modelFactory.createOpenElementTag("th:block", "th:replace", path, false));
@@ -110,10 +109,8 @@ public class I18nPreProcessorDialect implements IPreProcessorDialect {
 		 */
 		private boolean doesTranslationsFileExist(String bundleName) {
 			try {
-				URL url = ((WebEngineContext) this.getContext()).getServletContext()
-						.getResource("/pages/templates/i18n/" + bundleName + ".html");
-				return url != null;
-			} catch (MalformedURLException e) {
+				return ResourceUtils.getFile("file:src/main/webapp/dist/i18n/" + bundleName + ".html").exists();
+			} catch (FileNotFoundException e) {
 				return false;
 			}
 		}

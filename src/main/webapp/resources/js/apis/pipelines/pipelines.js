@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-const URL = `pipelines/ajax`;
+const URL = `${window.TL.BASE_URL}pipelines/ajax`;
 
 /**
  * Get the IRIDA workflow description info for a workflow
