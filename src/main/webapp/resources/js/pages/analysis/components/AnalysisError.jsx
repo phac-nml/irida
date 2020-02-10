@@ -18,7 +18,6 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, ERROR } from "../routes";
 import { grey1 } from "../../../styles/colors";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")

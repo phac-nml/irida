@@ -40,7 +40,7 @@ const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
-    const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}`;
+  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}`;
 
   const title = (
     <>
@@ -132,6 +132,7 @@ export default function Analysis() {
     tabLinks.push(
       <Menu.Item key="settings">
         <Link to={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}>
+
           {i18n("Analysis.settings")}
         </Link>
       </Menu.Item>

@@ -6,7 +6,7 @@ import { SequencingRunsList } from "./SequencingRunsList";
 
 render(
   <PageWrapper title={i18n("sequencingruns.title")}>
-    <PagedTableProvider url={`ajax/sequencingRuns/list`}>
+    <PagedTableProvider url={`${window.TL.BASE_URL}ajax/sequencingRuns/list`}>
       <SequencingRunsList />
     </PagedTableProvider>
   </PageWrapper>,

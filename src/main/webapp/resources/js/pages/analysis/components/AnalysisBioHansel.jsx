@@ -14,7 +14,6 @@ import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, BIOHANSEL } from "../routes";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
 const OutputFilePreview = React.lazy(() =>

@@ -14,6 +14,7 @@ import { ANALYSIS, TREE } from "../routes";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import {AnalysisContext} from "../../../contexts/AnalysisContext";
 
+
 const Tree = React.lazy(() => import("./tree/Tree"));
 const OutputFilePreview = React.lazy(() =>
   import("./outputs/OutputFilePreview")
@@ -22,9 +23,9 @@ const OutputFilePreview = React.lazy(() =>
 const { Content, Sider } = Layout;
 
 export default function AnalysisPhylogeneticTree() {
-
   const { analysisContext } = useContext(AnalysisContext);
   const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.TREE);
+
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   /*

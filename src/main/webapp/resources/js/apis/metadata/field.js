@@ -12,6 +12,6 @@ import axios from "axios";
 export function fetchMetadataFields(projectId) {
   return axios({
     method: "get",
-    url: `linelist/fields?projectId=${projectId}`
+    url: `${window.TL.BASE_URL}linelist/fields?projectId=${projectId}`
   });
 }

@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-const URL = `linelist/entries`;
+const BASE_URL = `${window.TL.BASE_URL}linelist/entries`;
 
 /**
  * Get all metadata belonging to samples in the current project.
@@ -14,7 +14,7 @@ const URL = `linelist/entries`;
 export function fetchMetadataEntries(projectId) {
   return axios({
     method: "get",
-    url: `${URL}?projectId=${projectId}`
+    url: `${BASE_URL}?projectId=${projectId}`
   });
 }
 
@@ -30,5 +30,5 @@ export function saveMetadataEntryField(sampleId, value, label) {
   params.append("sampleId", sampleId);
   params.append("value", value);
   params.append("label", label);
-  return axios.post(URL, params);
+  return axios.post(BASE_URL, params);
 }
