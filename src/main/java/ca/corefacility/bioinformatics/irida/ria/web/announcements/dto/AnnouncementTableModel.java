@@ -8,18 +8,21 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
  * User interface model for DataTables for administration of {@link Announcement}
  */
 public class AnnouncementTableModel extends TableModel {
-	private String message;
-	private User user;
+	private final User user;
+	private final String message;
 
 	public AnnouncementTableModel(Announcement announcement) {
 		super(announcement.getId(), announcement.getLabel(), announcement.getCreatedDate(), null);
 		// Only display the first line of the message.
-		this.message = announcement.getMessage().split("\\r?\\n")[0];
-		if(this.message.length() > 80){
+		String name = announcement.getMessage()
+				.split("\\r?\\n")[0];
+		if (name.length() > 80) {
 			// If the message is still really long just take a substring of it.
-			this.message = this.message.substring(0, 79) + " ...";
+			name = name.substring(0, 79) + " ...";
 		}
-		this.user = announcement.getUser();
+		setName(name);
+		message = announcement.getMessage();
+		user = announcement.getUser();
 	}
 
 	public String getMessage() {

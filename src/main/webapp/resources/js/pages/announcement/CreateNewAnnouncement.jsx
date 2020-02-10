@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Modal } from "antd";
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
-import { MarkdownEditor } from "../../components/editors/MarkdownEditor";
+import { MarkdownEditor } from "../../components/markdown/MarkdownEditor";
 import { EditOutlined } from "@ant-design/icons";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 
@@ -26,6 +26,9 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
       width: "80%",
       content: <MarkdownEditor ref={markdownRef} />,
       okText: i18n("CreateNewAnnouncement.okBtn"),
+      okButtonProps: {
+        className: "t-submit-announcement"
+      },
       onOk() {
         saveMarkdown();
       }
@@ -34,6 +37,7 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
 
   return (
     <AddNewButton
+      className="t-create-announcement"
       onClick={displayModal}
       text={i18n("CreateNewAnnouncement.title")}
     />

@@ -8,7 +8,7 @@ import {
   PagedTable,
   PagedTableContext
 } from "../../components/ant.design/PagedTable";
-import RichTextEditor from "react-rte/lib/RichTextEditor";
+import { MarkdownViewer } from "../../components/markdown/MarkdownViewer";
 
 export const AnnouncementsTable = forwardRef((props, ref) => {
   const { updateTable } = useContext(PagedTableContext);
@@ -27,10 +27,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       render(text, full) {
         return (
           <a href={setBaseUrl(`announcements/${full.id}/details`)}>
-            <RichTextEditor
-              value={RichTextEditor.createValueFromString(text, "markdown")}
-              readOnly
-            />
+            <MarkdownViewer markdown={text} />
           </a>
         );
       }

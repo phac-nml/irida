@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Modal } from "antd";
-import { MarkdownEditor } from "../../components/editors/MarkdownEditor";
+import { MarkdownEditor } from "../../components/markdown/MarkdownEditor";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 
 export function EditAnnouncement({ announcement, updateAnnouncement }) {

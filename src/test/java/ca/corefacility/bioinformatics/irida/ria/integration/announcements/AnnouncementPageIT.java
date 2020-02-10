@@ -23,32 +23,32 @@ import static org.junit.Assert.assertTrue;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/announcements/AnnouncementPageIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
+public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
-    //Page objects
-    private AnnouncementControlPage controlPage;
-    private AnnouncementCreatePage createPage;
-    private AnnouncementReadPage readPage;
-    private AnnouncementDetailPage detailPage;
-    private AnnouncementDashboardPage dashboardPage;
+	//Page objects
+	private AnnouncementControlPage controlPage;
+	private AnnouncementReadPage readPage;
+	private AnnouncementDetailPage detailPage;
+	private AnnouncementDashboardPage dashboardPage;
 
-    @Before
-    public void setUpTest() {
-        LoginPage.loginAsAdmin(driver());
-        controlPage = new AnnouncementControlPage(driver());
-        createPage = new AnnouncementCreatePage(driver());
-        readPage = new AnnouncementReadPage(driver());
-        detailPage = new AnnouncementDetailPage(driver());
-        dashboardPage = new AnnouncementDashboardPage(driver());
-    }
+	@Override
+	@Before
+	public void setUpTest() {
+		LoginPage.loginAsAdmin(driver());
+		controlPage = new AnnouncementControlPage(driver());
+		readPage = new AnnouncementReadPage(driver());
+		detailPage = new AnnouncementDetailPage(driver());
+		dashboardPage = new AnnouncementDashboardPage(driver());
+	}
 
-    @Test
-    public void testConfirmTablePopulatedByAnnouncements() {
-        controlPage.goTo();
-        assertEquals("Announcement table should be populated by 6 announcements", 6, controlPage.announcementTableSize());
-    }
+	@Test
+	public void testConfirmTablePopulatedByAnnouncements() {
+		controlPage.goTo();
+		assertEquals("Announcement table should be populated by 6 announcements", 6,
+				controlPage.announcementTableSize());
+	}
 
-    @Test
+	@Test
 	public void testSortAnnouncementsByDate() throws ParseException {
 		controlPage.goTo();
 		controlPage.clickDateCreatedHeader();
@@ -66,22 +66,22 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 
     @Test
     public void testSubmitNewAnnouncement() {
-        String message = "This is a great announcement";
+		final String message = "This is a great announcement";
+		controlPage.goTo();
 
-        controlPage.goTo();
-
-		int numAnnouncementsBefore = controlPage.getCreatedDates().size();
-
-        controlPage.clickCreateNewAnnouncementButton();
-        createPage.enterMessage(message);
-        controlPage.waitForJQueryAjaxResponse();
+		int numAnnouncementsBefore = controlPage.getCreatedDates()
+				.size();
+		CreateAnnouncementComoponent createAnnouncementComoponent = CreateAnnouncementComoponent.goTo(driver());
+		controlPage.clickCreateNewAnnouncementButton();
+		createAnnouncementComoponent.enterMessage(message);
 
 		// New messages should appear first in the table
 		String newMessage = controlPage.getAnnouncement(0);
 
 		assertTrue("Unexpected announcement content.", newMessage.equals(message));
 		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
-				controlPage.getCreatedDates().size());
+				controlPage.getCreatedDates()
+						.size());
 	}
 
     @Test
@@ -111,9 +111,9 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 
     @Test
     public void testUpdateAnnouncement() {
-        String newMessage = "Updated!!!";
+		final String newMessage = "Updated!!!";
 
-        controlPage.goTo();
+		controlPage.goTo();
 		controlPage.gotoMessageDetails(4);
 		detailPage.enterMessage(newMessage);
 
