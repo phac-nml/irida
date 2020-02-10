@@ -5,7 +5,7 @@ import axios from "axios";
 
 const ANALYSES_URL = `ajax/analyses`;
 
-const ANALYSIS_URL = `analysis/ajax`;
+const ANALYSIS_URL = `/ajax/analysis`;
 
 /*
  * Get all the data required for the analysis -> details page.

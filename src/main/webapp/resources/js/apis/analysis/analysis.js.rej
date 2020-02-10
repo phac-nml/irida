@@ -1,0 +1,14 @@
+diff a/src/main/webapp/resources/js/apis/analysis/analysis.js b/src/main/webapp/resources/js/apis/analysis/analysis.js	(rejected hunks)
+@@ -269 +269,3 @@ export async function getAnalysisProvenance(submissionId) {
+-    const {data} = await axios.get(`${ANALYSIS_URL}/${submissionId}/provenance`);
++    const { data } = await axios.get(
++      `${ANALYSIS_URL}/${submissionId}/provenance`
++    );
+@@ -284 +285,3 @@ export async function getAnalysisProvenanceByFile(submissionId) {
+-    const {data} = await axios.get(`${ANALYSIS_URL}/${submissionId}/provenance/`);
++    const { data } = await axios.get(
++      `${ANALYSIS_URL}/${submissionId}/provenance/`
++    );
+@@ -286 +289 @@ export async function getAnalysisProvenanceByFile(submissionId) {
+-  } catch(error) {
++  } catch (error) {

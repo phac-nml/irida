@@ -3,7 +3,7 @@
  * the output preview files
  */
 
-import React, { Suspense } from "react";
+import React, {Suspense, useContext} from "react";
 import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
 
@@ -12,6 +12,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, TREE } from "../routes";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import {AnalysisContext} from "../../../contexts/AnalysisContext";
 
 const Tree = React.lazy(() => import("./tree/Tree"));
 const OutputFilePreview = React.lazy(() =>
@@ -21,7 +22,9 @@ const OutputFilePreview = React.lazy(() =>
 const { Content, Sider } = Layout;
 
 export default function AnalysisPhylogeneticTree() {
-  const DEFAULT_URL = setBaseUrl(ANALYSIS.TREE);
+
+  const { analysisContext } = useContext(AnalysisContext);
+  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.TREE);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   /*

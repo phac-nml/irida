@@ -35,7 +35,7 @@ export default function AnalysisSistr() {
   const { analysisContext } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
 
-  const DEFAULT_URL = setBaseUrl(ANALYSIS.SISTR);
+  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.SISTR);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the SISTR results

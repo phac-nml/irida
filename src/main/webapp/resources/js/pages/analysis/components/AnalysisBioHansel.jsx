@@ -30,7 +30,7 @@ export default function AnalysisBioHansel() {
   );
   const [bioHanselResults, setBioHanselResults] = useState(null);
 
-  const DEFAULT_URL = setBaseUrl(`${ANALYSIS.BIOHANSEL}`);
+  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.BIOHANSEL);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined

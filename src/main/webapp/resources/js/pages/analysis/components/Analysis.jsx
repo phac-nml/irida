@@ -39,8 +39,8 @@ const AnalysisOutputFiles = lazy(() => import("./AnalysisOutputFiles"));
 const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
-  const URL_BASE = window.PAGE.base;
   const { analysisContext } = useContext(AnalysisContext);
+    const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}`;
 
   const title = (
     <>
@@ -77,7 +77,7 @@ export default function Analysis() {
     if (analysisContext.isError) {
       tabLinks.push(
         <Menu.Item key="error">
-          <Link to={`${URL_BASE}/${ANALYSIS.ERROR}/`}>
+          <Link to={`${DEFAULT_URL}/${ANALYSIS.ERROR}/`}>
             {i18n("Analysis.jobError")}
           </Link>
         </Menu.Item>
@@ -87,7 +87,7 @@ export default function Analysis() {
         if (analysisContext.analysisType === "SISTR_TYPING") {
           tabLinks.push(
             <Menu.Item key="sistr">
-              <Link to={`${URL_BASE}/${ANALYSIS.SISTR}/`}>
+              <Link to={`${DEFAULT_URL}/${ANALYSIS.SISTR}/`}>
                 {i18n("Analysis.sistr")}
               </Link>
             </Menu.Item>
@@ -95,7 +95,7 @@ export default function Analysis() {
         } else if (analysisContext.analysisType === "BIO_HANSEL") {
           tabLinks.push(
             <Menu.Item key="biohansel">
-              <Link to={`${URL_BASE}/${ANALYSIS.BIOHANSEL}/`}>
+              <Link to={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/`}>
                 {i18n("Analysis.biohansel")}
               </Link>
             </Menu.Item>
@@ -106,7 +106,7 @@ export default function Analysis() {
         ) {
           tabLinks.push(
             <Menu.Item key="tree">
-              <Link to={`${URL_BASE}/${ANALYSIS.TREE}/`}>
+              <Link to={`${DEFAULT_URL}/${ANALYSIS.TREE}/`}>
                 {i18n("Analysis.phylogeneticTree")}
               </Link>
             </Menu.Item>
@@ -114,7 +114,7 @@ export default function Analysis() {
         } else {
           tabLinks.push(
             <Menu.Item key="output">
-              <Link to={`${URL_BASE}/${ANALYSIS.OUTPUT}`}>
+              <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
                 {i18n("Analysis.outputFiles")}
               </Link>
             </Menu.Item>
@@ -122,7 +122,7 @@ export default function Analysis() {
         }
         tabLinks.push(
           <Menu.Item key="provenance">
-            <Link to={`${URL_BASE}/${ANALYSIS.PROVENANCE}`}>
+            <Link to={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}>
               {i18n("Analysis.provenance")}
             </Link>
           </Menu.Item>
@@ -131,7 +131,7 @@ export default function Analysis() {
     }
     tabLinks.push(
       <Menu.Item key="settings">
-        <Link to={`${URL_BASE}/${ANALYSIS.SETTINGS}/`}>
+        <Link to={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}>
           {i18n("Analysis.settings")}
         </Link>
       </Menu.Item>
@@ -171,24 +171,24 @@ export default function Analysis() {
         <AnalysisOutputsProvider>
           <Router style={{ paddingTop: SPACE_MD }}>
             <AnalysisError
-              path={`${URL_BASE}/${ANALYSIS.ERROR}/*`}
+              path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
               default={analysisContext.isError}
               key="error"
             />
             {analysisContext.isCompleted
               ? [
                   <AnalysisSistr
-                    path={`${URL_BASE}/${ANALYSIS.SISTR}/*`}
+                    path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
                     default={analysisType === "SISTR_TYPING"}
                     key="sistr"
                   />,
                   <AnalysisBioHansel
-                    path={`${URL_BASE}/${ANALYSIS.BIOHANSEL}/*`}
+                    path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
                     default={analysisType === "BIO_HANSEL"}
                     key="biohansel"
                   />,
                   <AnalysisPhylogeneticTree
-                    path={`${URL_BASE}/${ANALYSIS.TREE}/*`}
+                    path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
                       analysisType === "PHYLOGENOMICS" ||
                       analysisType === "MLST_MENTALIST"
@@ -196,11 +196,11 @@ export default function Analysis() {
                     key="tree"
                   />,
                   <AnalysisProvenance
-                    path={`${URL_BASE}/${ANALYSIS.PROVENANCE}`}
+                    path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
                     key="provenance"
                   />,
                   <AnalysisOutputFiles
-                    path={`${URL_BASE}/${ANALYSIS.OUTPUT}`}
+                    path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
                       analysisType !== "SISTR_TYPING" &&
                       analysisType !== "BIO_HANSEL" &&
@@ -212,7 +212,7 @@ export default function Analysis() {
                 ]
               : null}
             <AnalysisSettingsContainer
-              path={`${URL_BASE}/${ANALYSIS.SETTINGS}/*`}
+              path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/*`}
               default={!analysisContext.isError && !analysisContext.isCompleted}
               key="settings"
             />
