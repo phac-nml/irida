@@ -33,7 +33,7 @@ export default function AnalysisSettings() {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const URL_BASE = `${window.PAGE.base}/${ANALYSIS.SETTINGS}`;
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.SETTINGS}`;
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   const analysisRunning =
     !analysisContext.isError && !analysisContext.isCompleted;
@@ -56,12 +56,12 @@ export default function AnalysisSettings() {
                 selectedKeys={[keyname ? keyname[1] : SETTINGS.DETAILS]}
               >
                 <Menu.Item key="details">
-                  <Link to={`${URL_BASE}/${SETTINGS.DETAILS}`}>
+                  <Link to={`${BASE_URL}/${SETTINGS.DETAILS}`}>
                     {i18n("AnalysisDetails.details")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="samples">
-                  <Link to={`${URL_BASE}/${SETTINGS.SAMPLES}`}>
+                  <Link to={`${BASE_URL}/${SETTINGS.SAMPLES}`}>
                     {i18n("AnalysisSamples.samples")}
                   </Link>
                 </Menu.Item>
@@ -69,13 +69,13 @@ export default function AnalysisSettings() {
                   ? [
                       analysisContext.isError ? null : (
                         <Menu.Item key="share">
-                          <Link to={`${URL_BASE}/${SETTINGS.SHARE}`}>
+                          <Link to={`${BASE_URL}/${SETTINGS.SHARE}`}>
                             {i18n("AnalysisShare.manageResults")}
                           </Link>
                         </Menu.Item>
                       ),
                       <Menu.Item key="delete">
-                        <Link to={`${URL_BASE}/${SETTINGS.DELETE}`}>
+                        <Link to={`${BASE_URL}/${SETTINGS.DELETE}`}>
                           {i18n("AnalysisDelete.deleteAnalysis")}
                         </Link>
                       </Menu.Item>
@@ -94,7 +94,7 @@ export default function AnalysisSettings() {
               <AnalysisDetails
                 path={
                   analysisRunning
-                    ? `${URL_BASE}/${SETTINGS.DETAILS}`
+                    ? `${BASE_URL}/${SETTINGS.DETAILS}`
                     : SETTINGS.DETAILS
                 }
                 default
@@ -102,7 +102,7 @@ export default function AnalysisSettings() {
               <AnalysisSamples
                 path={
                   analysisRunning
-                    ? `${URL_BASE}/${SETTINGS.SAMPLES}`
+                    ? `${BASE_URL}/${SETTINGS.SAMPLES}`
                     : SETTINGS.SAMPLES
                 }
               />
@@ -110,7 +110,7 @@ export default function AnalysisSettings() {
                 <AnalysisShare
                   path={
                     analysisRunning
-                      ? `${URL_BASE}/${SETTINGS.SHARE}`
+                      ? `${BASE_URL}/${SETTINGS.SHARE}`
                       : SETTINGS.SHARE
                   }
                 />
@@ -119,7 +119,7 @@ export default function AnalysisSettings() {
               <AnalysisDelete
                 path={
                   analysisRunning
-                    ? `${URL_BASE}/${SETTINGS.DELETE}`
+                    ? `${BASE_URL}/${SETTINGS.DELETE}`
                     : SETTINGS.DELETE
                 }
               />

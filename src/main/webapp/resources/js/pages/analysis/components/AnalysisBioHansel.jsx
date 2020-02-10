@@ -14,7 +14,6 @@ import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, BIOHANSEL } from "../routes";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
 const OutputFilePreview = React.lazy(() =>
@@ -30,7 +29,7 @@ export default function AnalysisBioHansel() {
   );
   const [bioHanselResults, setBioHanselResults] = useState(null);
 
-  const DEFAULT_URL = setBaseUrl(`${ANALYSIS.BIOHANSEL}`);
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.BIOHANSEL}`;
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
@@ -78,12 +77,12 @@ export default function AnalysisBioHansel() {
                 selectedKeys={[keyname ? keyname[1] : BIOHANSEL.INFO]}
               >
                 <Menu.Item key="info">
-                  <Link to={`${DEFAULT_URL}/${BIOHANSEL.INFO}`}>
+                  <Link to={`${BASE_URL}/${BIOHANSEL.INFO}`}>
                     {i18n("AnalysisBioHansel.bioHanselInformation")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="file_preview">
-                  <Link to={`${DEFAULT_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
+                  <Link to={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
                     {i18n("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
@@ -104,11 +103,11 @@ export default function AnalysisBioHansel() {
               <Router>
                 <BioHanselInfo
                   bioHanselResults={bioHanselResults}
-                  path={`${DEFAULT_URL}/${BIOHANSEL.INFO}`}
+                  path={`${BASE_URL}/${BIOHANSEL.INFO}`}
                   default
                 />
                 <OutputFilePreview
-                  path={`${DEFAULT_URL}/${BIOHANSEL.FILE_PREVIEW}`}
+                  path={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}
                 />
               </Router>
             </Suspense>

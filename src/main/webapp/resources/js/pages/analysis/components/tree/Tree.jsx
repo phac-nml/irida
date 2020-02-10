@@ -14,7 +14,6 @@ import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import styled from "styled-components";
 import { SPACE_MD, SPACE_XS } from "../../../../styles/spacing";
 import { BORDER_LIGHT } from "../../../../styles/borders";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const CANVAS_HEIGHT = 600;
 
@@ -101,7 +100,7 @@ export default function Tree() {
               </Radio.Group>
               <Button
                 type="primary"
-                href={setBaseUrl(`analysis/${analysisContext.analysis.identifier}/advanced-phylo`)}
+                href={`${window.TL.BASE_URL}analysis/${analysisContext.analysis.identifier}/advanced-phylo`}
                 target="_blank"
                 key="advphylo"
               >

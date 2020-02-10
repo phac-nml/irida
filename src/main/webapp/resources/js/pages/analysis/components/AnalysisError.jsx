@@ -18,7 +18,6 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, ERROR } from "../routes";
 import { grey1 } from "../../../styles/colors";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -40,7 +39,7 @@ export default function AnalysisError() {
   const [jobErrors, setJobErrors] = useState(null);
   const [currActiveKey, setCurrActiveKey] = useState(1);
 
-  const DEFAULT_URL = setBaseUrl(ANALYSIS.ERROR);
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.ERROR}`;
   const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
 
   // Sets the job errors into a local state variable on page load
@@ -68,7 +67,7 @@ export default function AnalysisError() {
                   selectedKeys={[keyname ? keyname[1] : ERROR.JOB_ERROR_INFO]}
                 >
                   <Menu.Item key="job-error-info">
-                    <Link to={`${DEFAULT_URL}/${ERROR.JOB_ERROR_INFO}`}>
+                    <Link to={`${BASE_URL}/${ERROR.JOB_ERROR_INFO}`}>
                       {i18n("AnalysisError.galaxyJobInfo")}
                     </Link>
                   </Menu.Item>
@@ -76,7 +75,7 @@ export default function AnalysisError() {
                     jobErrors.galaxyJobErrors.length - 1
                   ].parameters ? (
                     <Menu.Item key="galaxy-parameters">
-                      <Link to={`${DEFAULT_URL}/${ERROR.GALAXY_PARAMETERS}`}>
+                      <Link to={`${BASE_URL}/${ERROR.GALAXY_PARAMETERS}`}>
                         {i18n("AnalysisError.galaxyParameters")}
                       </Link>
                     </Menu.Item>
@@ -85,7 +84,7 @@ export default function AnalysisError() {
                     jobErrors.galaxyJobErrors.length - 1
                   ].standardError ? (
                     <Menu.Item key="standard-error">
-                      <Link to={`${DEFAULT_URL}/${ERROR.STANDARD_ERROR}`}>
+                      <Link to={`${BASE_URL}/${ERROR.STANDARD_ERROR}`}>
                         {i18n("AnalysisError.standardError")}
                       </Link>
                     </Menu.Item>
@@ -94,7 +93,7 @@ export default function AnalysisError() {
                     jobErrors.galaxyJobErrors.length - 1
                   ].standardOutput ? (
                     <Menu.Item key="standard-out">
-                      <Link to={`${DEFAULT_URL}/${ERROR.STANDARD_OUT}`}>
+                      <Link to={`${BASE_URL}/${ERROR.STANDARD_OUT}`}>
                         {i18n("AnalysisError.standardOutput")}
                       </Link>
                     </Menu.Item>
@@ -114,26 +113,26 @@ export default function AnalysisError() {
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
                   galaxyUrl={jobErrors.galaxyUrl}
-                  path={`${DEFAULT_URL}/${ERROR.JOB_ERROR_INFO}`}
+                  path={`${BASE_URL}/${ERROR.JOB_ERROR_INFO}`}
                   default
                 />
                 <GalaxyParametersTab
                   currActiveKey={currActiveKey}
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${DEFAULT_URL}/${ERROR.GALAXY_PARAMETERS}`}
+                  path={`${BASE_URL}/${ERROR.GALAXY_PARAMETERS}`}
                 />
                 <StandardErrorTab
                   currActiveKey={currActiveKey}
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${DEFAULT_URL}/${ERROR.STANDARD_ERROR}`}
+                  path={`${BASE_URL}/${ERROR.STANDARD_ERROR}`}
                 />
                 <StandardOutputTab
                   currActiveKey={currActiveKey}
                   updateActiveKey={updateActiveKey}
                   galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${DEFAULT_URL}/${ERROR.STANDARD_OUT}`}
+                  path={`${BASE_URL}/${ERROR.STANDARD_OUT}`}
                 />
               </Router>
             </Suspense>

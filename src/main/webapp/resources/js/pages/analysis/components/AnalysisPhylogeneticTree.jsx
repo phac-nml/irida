@@ -11,7 +11,6 @@ import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, TREE } from "../routes";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const Tree = React.lazy(() => import("./tree/Tree"));
 const OutputFilePreview = React.lazy(() =>
@@ -21,7 +20,7 @@ const OutputFilePreview = React.lazy(() =>
 const { Content, Sider } = Layout;
 
 export default function AnalysisPhylogeneticTree() {
-  const DEFAULT_URL = setBaseUrl(ANALYSIS.TREE);
+  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.TREE}`;
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   /*
@@ -39,12 +38,12 @@ export default function AnalysisPhylogeneticTree() {
                 selectedKeys={[keyname ? keyname[1] : TREE.PREVIEW]}
               >
                 <Menu.Item key="preview">
-                  <Link to={`${DEFAULT_URL}/${TREE.PREVIEW}`}>
+                  <Link to={`${BASE_URL}/${TREE.PREVIEW}`}>
                     {i18n("AnalysisPhylogeneticTree.tree")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="file_preview">
-                  <Link to={`${DEFAULT_URL}/${TREE.FILE_PREVIEW}`}>
+                  <Link to={`${BASE_URL}/${TREE.FILE_PREVIEW}`}>
                     {i18n("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
@@ -58,8 +57,8 @@ export default function AnalysisPhylogeneticTree() {
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Router>
-              <Tree path={`${DEFAULT_URL}/${TREE.PREVIEW}`} default />
-              <OutputFilePreview path={`${DEFAULT_URL}/${TREE.FILE_PREVIEW}`} />
+              <Tree path={`${BASE_URL}/${TREE.PREVIEW}`} default />
+              <OutputFilePreview path={`${BASE_URL}/${TREE.FILE_PREVIEW}`} />
             </Router>
           </Suspense>
         </Content>
