@@ -3,6 +3,7 @@ Changes
 
 20.01 to 20.05
 --------------
+* [UI/Developer]: Removed webpack progress.
 
 19.09 to 20.01
 --------------
