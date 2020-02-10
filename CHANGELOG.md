@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI/Developer]: Removed webpack progress.
 * [UI]: Updated clients listing table to use `ant.design` tables.
+* [UI]: Updated admin announcements table and creation to use `ant.design`.
 
 19.09 to 20.01
 --------------
