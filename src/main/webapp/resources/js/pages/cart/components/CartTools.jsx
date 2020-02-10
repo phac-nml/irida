@@ -7,7 +7,6 @@ import { CartToolsMenu } from "./CartToolsMenu";
 import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /*
 Lazy loaded since we do not need it unless we came from galaxy.
@@ -78,7 +77,7 @@ export default class CartTools extends Component {
           fromGalaxy: false
         }),
         () => {
-          navigate(setBaseUrl(`cart/pipelines`));
+          navigate(`${window.TL.BASE_URL}cart/pipelines`);
           this.removeGalaxyListener();
         }
       );
@@ -92,20 +91,23 @@ export default class CartTools extends Component {
     const paths = [
       this.state.fromGalaxy
         ? {
-            link: setBaseUrl(`cart/galaxy`),
+            link: `${window.TL.BASE_URL}cart/galaxy`,
             text: i18n("CartTools.menu.galaxy"),
             component: (
-              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
+              <GalaxyComponent
+                key="galaxy"
+                path={`${window.TL.BASE_URL}cart/galaxy`}
+              />
             )
           }
         : null,
       {
-        link: setBaseUrl(`cart/pipelines`),
+        link: `${window.TL.BASE_URL}cart/pipelines`,
         text: i18n("CartTools.menu.pipelines"),
         component: (
           <Pipelines
             key="pipelines"
-            path={setBaseUrl(`cart/pipelines`)}
+            path={`${window.TL.BASE_URL}cart/pipelines`}
             displaySelect={
               this.props.count > 0 || window.PAGE.automatedProject != null
             }

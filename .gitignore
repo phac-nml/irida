@@ -17,4 +17,3 @@ doc/_site
 src/main/webapp/resources/css
 src/main/webapp/node
 /src/main/webapp/dist
-/src/main/webapp/pages/templates/i18n/*.html

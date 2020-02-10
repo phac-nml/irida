@@ -41,7 +41,7 @@ public class ExportUploadServiceTest {
 
 	@Test
 	public void testUploadSubmission() throws UploadException, IOException {
-		NcbiExportSubmission submission = createFakeSubmission(".fastq");
+		NcbiExportSubmission submission = createFakeSubmission();
 
 		String ftpHost = "localhost";
 		String ftpUser = "test";
@@ -84,54 +84,9 @@ public class ExportUploadServiceTest {
 		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq"));
 	}
 
-	@Test
-	public void testUploadSubmissionGzipped() throws UploadException, IOException {
-		NcbiExportSubmission submission = createFakeSubmission(".fastq.gz");
-
-		String ftpHost = "localhost";
-		String ftpUser = "test";
-		String ftpPassword = "password";
-		String baseDirectory = "/home/test/submit/Test";
-
-		FakeFtpServer server = new FakeFtpServer();
-		server.addUserAccount(new UserAccount(ftpUser, ftpPassword, "/home/test"));
-
-		FileSystem fileSystem = new UnixFakeFileSystem();
-		fileSystem.add(new DirectoryEntry(baseDirectory));
-		server.setFileSystem(fileSystem);
-
-		// finds an open port
-		server.setServerControlPort(0);
-
-		ExportUploadService exportUploadService = new ExportUploadService(null, null, null, null,
-				new TestEmailController());
-		try {
-			server.start();
-			int ftpPort = server.getServerControlPort();
-
-			exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
-			String xml = "<xml></xml>";
-
-			exportUploadService.uploadSubmission(submission, xml);
-		} finally {
-			server.stop();
-		}
-
-		@SuppressWarnings("unchecked")
-		List<String> listNames = fileSystem.listNames(baseDirectory);
-		assertEquals("submission directory exists", 1, listNames.size());
-		String createdDirectory = baseDirectory + "/" + listNames.iterator().next();
-
-		assertTrue("submission.xml created", fileSystem.exists(createdDirectory + "/submission.xml"));
-		assertTrue("submit.ready created", fileSystem.exists(createdDirectory + "/submit.ready"));
-		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next()
-				.getSequenceFile();
-		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq.gz"));
-	}
-
 	@Test(expected = UploadException.class)
 	public void testUploadSubmissionNoBaseDirectory() throws UploadException, IOException {
-		NcbiExportSubmission submission = createFakeSubmission(".fastq");
+		NcbiExportSubmission submission = createFakeSubmission();
 
 		String ftpHost = "localhost";
 		String ftpUser = "test";
@@ -165,7 +120,7 @@ public class ExportUploadServiceTest {
 
 	@Test(expected = UploadException.class)
 	public void testUploadSubmissionBadCredentials() throws UploadException, IOException {
-		NcbiExportSubmission submission = createFakeSubmission(".fastq");
+		NcbiExportSubmission submission = createFakeSubmission();
 
 		String ftpHost = "localhost";
 		String ftpUser = "test";
@@ -194,7 +149,7 @@ public class ExportUploadServiceTest {
 
 	@Test(expected = UploadException.class)
 	public void testUploadSubmissionBadServer() throws UploadException, IOException {
-		NcbiExportSubmission submission = createFakeSubmission(".fastq");
+		NcbiExportSubmission submission = createFakeSubmission();
 
 		String ftpHost = "localhost";
 		String ftpUser = "test";
@@ -354,16 +309,15 @@ public class ExportUploadServiceTest {
 	/**
 	 * Create a fake submission for test uploads
 	 *
-	 * @param sequenceFileExtension {@link String} File extension for sequence file (".fastq" or ".fastq.gz")
 	 * @return a {@link NcbiExportSubmission}
 	 * @throws IOException if the test file couldn't be created
 	 */
-	private NcbiExportSubmission createFakeSubmission(String sequenceFileExtension) throws IOException {
+	private NcbiExportSubmission createFakeSubmission() throws IOException {
 		NcbiExportSubmission submission = new NcbiExportSubmission();
 		submission.setId(1L);
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles();
-		Path tempFile = Files.createTempFile("sequencefile", sequenceFileExtension);
+		Path tempFile = Files.createTempFile("sequencefile", ".fastq");
 		SequenceFile sequenceFile = new SequenceFile(tempFile);
 		sequenceFile.setId(1L);
 		SingleEndSequenceFile singleFile = new SingleEndSequenceFile(sequenceFile);

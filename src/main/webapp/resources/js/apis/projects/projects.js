@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-const URL = `ajax/projects`;
+const URL = `${window.TL.BASE_URL}ajax/projects`;
 
 /**
  * Returns the projects on the current page of the projects table.

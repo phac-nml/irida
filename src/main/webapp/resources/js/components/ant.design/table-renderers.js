@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon } from "antd";
+import { Button, Icon } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { blue6 } from "../../styles/colors";
 
@@ -7,15 +7,15 @@ export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
   sorter: true,
-  width: 120
+  width: 50
 });
 
-export const nameColumnFormat = ({ url }) => {
+export const nameColumnFormat = ({ url, width = 300 }) => {
   return {
     dataIndex: "name",
     key: "name",
     sorter: true,
-    ellipsis: true,
+    width,
     filterIcon(filtered) {
       return (
         <Icon
@@ -28,9 +28,26 @@ export const nameColumnFormat = ({ url }) => {
     },
     render(name, data) {
       return (
-        <a className="t-name" href={`${url}/${data.id}`} title={name}>
-          {name}
-        </a>
+        <Button
+          type="link"
+          className="t-name"
+          href={`${url}/${data.id}`}
+          title={name}
+          style={{
+            textAlign: "left"
+          }}
+        >
+          <span
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: width - 50
+            }}
+          >
+            {name}
+          </span>
+        </Button>
       );
     }
   };

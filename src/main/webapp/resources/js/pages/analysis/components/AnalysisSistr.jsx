@@ -15,7 +15,6 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, SISTR } from "../routes";
 import { grey1 } from "../../../styles/colors";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const SerovarPredictions = React.lazy(() =>
