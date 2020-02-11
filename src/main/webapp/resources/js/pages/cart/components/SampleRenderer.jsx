@@ -1,11 +1,10 @@
 import React from "react";
 
 import PropTypes from "prop-types";
-import { Button, Dropdown, Menu } from "antd";
-import { grey1, grey4, grey5, grey6 } from "../../../styles/colors";
+import { Button, Dropdown, Icon, Menu } from "antd";
+import { grey1, grey4, grey5 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { FolderOutlined, MoreOutlined } from "@ant-design/icons";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -29,9 +28,10 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
   </Menu>
 );
 
-const IconText = ({ text }) => (
+const IconText = ({ type, text }) => (
   <span>
-    <FolderOutlined
+    <Icon
+      type={type}
       style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }}
     />
     {text}
@@ -108,12 +108,7 @@ export class SampleRenderer extends React.Component {
             }
             trigger={["hover"]}
           >
-            <div style={{ display: "inline-block" }}>
-              <MoreOutlined
-                className="t-delete-menu-btn"
-                style={{ color: grey6 }}
-              />
-            </div>
+            <Icon className="t-delete-menu-btn" type="more" />
           </Dropdown>
         </div>
         <div>
