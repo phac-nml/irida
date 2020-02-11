@@ -28,7 +28,7 @@ function getTextSearchProps(dataIndex) {
           ref={node => {
             searchInput = node;
           }}
-          className="t-name-filter"
+          className={`t-${dataIndex}-filter`}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={e =>
@@ -39,21 +39,20 @@ function getTextSearchProps(dataIndex) {
         />
         <Button
           type="primary"
-          className="t-name-filter-ok"
+          className={`t-${dataIndex}-filter-ok`}
           onClick={() => confirm()}
-          icon="search"
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
-          Search
+          {i18n("Filter.search")}
         </Button>
         <Button
-          className="t-name-filter-clear"
+          className={`t-${dataIndex}-filter-clear`}
           onClick={() => clearFilters()}
           size="small"
           style={{ width: 90 }}
         >
-          Reset
+          {i18n("Filter.reset")}
         </Button>
       </div>
     )

@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Represents page found at url: /projects/{projectId}/linelist
@@ -24,10 +26,10 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(css = ".template-option--name:first-of-type")
+	@FindBy(className = "ant-select-selector")
 	private WebElement templateSelectToggle;
 
-	@FindBy(className = "template-option--name")
+	@FindBy(className = "ant-dropdown-menu-item")
 	private List<WebElement> templateOptions;
 
 	@FindBy(className = "t-template-save-btn")
@@ -39,7 +41,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ant-select-search__field")
 	private WebElement templateNameInput;
 
-	@FindBy(className = "t-modal-save-template-btn")
+	@FindBy(className = "t-save-btn")
 	private WebElement modalSaveTemplateBtn;
 
 	@FindBy(className = "t-undo-btn")
@@ -86,14 +88,17 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void toggleMetadataField (int field) {
-		fieldSwitches.get(field).click();
+		WebElement fieldSwitch = fieldSwitches.get(field);
+		waitForElementToBeClickable(fieldSwitch);
+		fieldSwitch.click();
+		waitForTime(400);
 	}
 
 	public void selectTemplate(String template) {
-		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
-		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
-		for (WebElement option : templateOptions) {
+		waitForElementsVisible(By.className("ant-select-dropdown"));
+		List<WebElement> options = driver.findElements(By.className("t-template-name"));
+		for (WebElement option : options) {
 			if (option.getText()
 					.equals(template)) {
 				option.click();
@@ -102,11 +107,16 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void saveMetadataTemplate (String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
 		templateSaveBtn.click();
-		waitForElementsVisible(By.className("ant-select-selection__rendered"));
-		templateNameInputWrapper.click();
-		templateNameInput.sendKeys(name);
-		modalSaveTemplateBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("save_template_name")));
+		WebElement saveNameInput = driver.findElement(By.id("save_template_name"));
+		saveNameInput.sendKeys(name);
+		waitForTime(400);
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".ant-modal-confirm-btns .ant-btn-primary")));
+		WebElement saveBtn = driver.findElement(By.cssSelector(".ant-modal-confirm-btns .ant-btn-primary"));
+		saveBtn.click();
 		waitForElementInvisible(By.className("ant-modal-wrap "));
 	}
 
@@ -139,8 +149,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void clearTableFilter() {
-		tableFilterInput.clear();
-		tableFilterInput.sendKeys(Keys.BACK_SPACE);
+		tableFilterInput.sendKeys(Keys.HOME, Keys.chord(Keys.SHIFT, Keys.END), Keys.BACK_SPACE);
 		waitForTime(500);
 	}
 

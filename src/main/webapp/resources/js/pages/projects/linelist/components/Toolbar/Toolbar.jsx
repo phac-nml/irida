@@ -1,11 +1,11 @@
 import React, { Component, Suspense } from "react";
 import { connect } from "react-redux";
-
 import PropTypes from "prop-types";
 import { actions as entryActions } from "../../reducers/entries";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
+import { CloudUploadOutlined, QuestionOutlined } from "@ant-design/icons";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
@@ -70,10 +70,7 @@ export class ToolbarComponent extends Component {
           <Form layout="inline">
             <Form.Item>
               <Button href={urls.import} tour="tour-import">
-                <i
-                  className="fas fa-cloud-upload-alt spaced-right__sm"
-                  aria-hidden="true"
-                />
+                <CloudUploadOutlined />
                 {i18n("linelist.importBtn.text")}
               </Button>
             </Form.Item>
@@ -117,9 +114,10 @@ export class ToolbarComponent extends Component {
                   title={i18n("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
-                  icon="question"
                   onClick={this.openTour}
-                />
+                >
+                  <QuestionOutlined />
+                </Button>
               </Popover>
             </Form.Item>
           </Form>

@@ -1,53 +1,28 @@
 import React from "react";
-import { Button, Icon } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { blue6 } from "../../styles/colors";
+import { FilterIcon } from "../Tables/fitlers/FilterIcon";
 
 export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
   sorter: true,
-  width: 50
+  width: 120
 });
 
-export const nameColumnFormat = ({ url, width = 300 }) => {
+export const nameColumnFormat = ({ url }) => {
   return {
     dataIndex: "name",
     key: "name",
     sorter: true,
-    width,
+    ellipsis: true,
     filterIcon(filtered) {
-      return (
-        <Icon
-          type="filter"
-          theme="filled"
-          style={{ color: filtered ? blue6 : undefined }}
-          className="t-name"
-        />
-      );
+      return <FilterIcon className="t-name-filter-btn" filtered={filtered} />;
     },
     render(name, data) {
       return (
-        <Button
-          type="link"
-          className="t-name"
-          href={`${url}/${data.id}`}
-          title={name}
-          style={{
-            textAlign: "left"
-          }}
-        >
-          <span
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              width: width - 50
-            }}
-          >
-            {name}
-          </span>
-        </Button>
+        <a className="t-name" href={`${url}/${data.id}`} title={name}>
+          {name}
+        </a>
       );
     }
   };
