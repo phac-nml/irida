@@ -66,12 +66,6 @@ function PagedTableProvider({ children, url }) {
   const handleTableChange = (pagination, filters, sorter) => {
     const { pageSize, current } = pagination;
     const { order, field } = sorter;
-
-    // Need to remove null filters in ant design v4
-    const nFilters = { ...filters };
-    Object.keys(nFilters).forEach(
-      k => nFilters[k] == null && delete nFilters[k]
-    );
     setTableState({
       ...tableState,
       ...{
@@ -79,7 +73,7 @@ function PagedTableProvider({ children, url }) {
         current,
         order: order || "descend",
         column: field || "createdDate",
-        filters: nFilters
+        filters
       }
     });
   };

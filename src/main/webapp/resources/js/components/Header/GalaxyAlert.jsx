@@ -1,6 +1,5 @@
 import React from "react";
-import { Alert } from "antd";
-import { LinkOutlined } from "@ant-design/icons";
+import { Alert, Icon } from "antd";
 import { removeGalaxySession } from "../../apis/galaxy/galaxy";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_XS } from "../../styles/spacing";
@@ -26,7 +25,7 @@ export default function GalaxyAlert() {
         rel="noopener noreferrer"
         href="https://irida.corefacility.ca/documentation/user/user/samples/#galaxy-export"
       >
-        {window.GALAXY.DOCUMENTATION} <LinkOutlined />
+        {window.GALAXY.DOCUMENTATION} <Icon type="link" />
       </a>
     </span>
   );

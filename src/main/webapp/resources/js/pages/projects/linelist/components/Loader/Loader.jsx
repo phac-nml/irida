@@ -1,14 +1,13 @@
 import React from "react";
 
 import { Alert } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
 
 export const Loader = () => (
   <Alert
     message={i18n("linelist.Loader.message")}
     description={
       <div>
-        <LoadingOutlined />
+        <i className="fas fa-spinner fa-pulse spaced-right__sm" />
         {i18n("linelist.Loader.description")}
       </div>
     }
