@@ -1,9 +1,10 @@
 import React from "react";
-import { Icon, Popover } from "antd";
+import { Popover } from "antd";
+import { QuestionCircleTwoTone } from "@ant-design/icons";
 import PropTypes from "prop-types";
 
 /**
- * This create a help (?) icon with a popover that will contain the contents passed
+ * This creates a help (?) icon with a popover that will contain the contents passed
  * in props
  * @param {object} props
  * @returns {*}
@@ -12,14 +13,14 @@ import PropTypes from "prop-types";
 export function HelpPopover(props) {
   return (
     <Popover content={props.content} title={props.title}>
-      <Icon
-        type="question-circle-o"
-        style={{
-          color: "RGBA(46, 149, 248, 1.00)",
-          margin: "0 .5rem",
-          cursor: "help"
-        }}
-      />
+      <div style={{ display: "inline-block" }}>
+        <QuestionCircleTwoTone
+          style={{
+            margin: "0 .5rem",
+            cursor: "help"
+          }}
+        />
+      </div>
     </Popover>
   );
 }
