@@ -5,6 +5,7 @@ import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { MainNavigation } from "../nav/MainNavigation";
+import { grey1 } from "../../styles/colors";
 
 const { Content, Header } = Layout;
 
@@ -19,8 +20,8 @@ __webpack_public_path__ = `dist/`;
 export function PageHeader({ children }) {
   return (
     <Layout>
-      <Header>
-        <MainNavigation />
+      <Header style={{ backgroundColor: grey1 }}>
+        <MainNavigation style={{ height: 64 }} />
         <Session />
         <Notifications />
         <GalaxyAlert />
