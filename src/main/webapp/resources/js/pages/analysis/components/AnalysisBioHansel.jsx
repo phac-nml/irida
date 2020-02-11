@@ -29,7 +29,7 @@ export default function AnalysisBioHansel() {
   );
   const [bioHanselResults, setBioHanselResults] = useState(null);
 
-  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.BIOHANSEL}`;
+  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.BIOHANSEL);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
@@ -77,12 +77,12 @@ export default function AnalysisBioHansel() {
                 selectedKeys={[keyname ? keyname[1] : BIOHANSEL.INFO]}
               >
                 <Menu.Item key="info">
-                  <Link to={`${BASE_URL}/${BIOHANSEL.INFO}`}>
+                  <Link to={`${DEFAULT_URL}/${BIOHANSEL.INFO}`}>
                     {i18n("AnalysisBioHansel.bioHanselInformation")}
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="file_preview">
-                  <Link to={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
+                  <Link to={`${DEFAULT_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
                     {i18n("AnalysisOutputs.outputFilePreview")}
                   </Link>
                 </Menu.Item>
@@ -103,11 +103,11 @@ export default function AnalysisBioHansel() {
               <Router>
                 <BioHanselInfo
                   bioHanselResults={bioHanselResults}
-                  path={`${BASE_URL}/${BIOHANSEL.INFO}`}
+                  path={`${DEFAULT_URL}/${BIOHANSEL.INFO}`}
                   default
                 />
                 <OutputFilePreview
-                  path={`${BASE_URL}/${BIOHANSEL.FILE_PREVIEW}`}
+                  path={`${DEFAULT_URL}/${BIOHANSEL.FILE_PREVIEW}`}
                 />
               </Router>
             </Suspense>

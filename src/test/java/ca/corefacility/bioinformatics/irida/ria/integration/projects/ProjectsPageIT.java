@@ -29,16 +29,16 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		checkTranslations(page, ImmutableList.of("projects"), "Projects");
 
 		assertEquals("Should be 8 projects", 8, page.getNumberOfProjects());
-		List<String> projectNames = page.getProjectsSortListByColumnName("Project Name");
+		List<String> projectNames = page.getProjectNamesSortList();
 		assertFalse("Projects name should not be sorted originally", Ordering.natural()
 				.isOrdered(projectNames));
 		page.sortProjectTableBy("Project Name");
-		projectNames = page.getProjectsSortListByColumnName("Project Name");
+		projectNames = page.getProjectNamesSortList();
 		assertTrue("Project names should now be sorted", Ordering.natural()
 				.isOrdered(projectNames));
 
 		page.sortProjectTableBy("Project Name");
-		projectNames = page.getProjectsSortListByColumnName("Project Name");
+		projectNames = page.getProjectNamesSortList();
 		assertTrue("Project names should be sorted reverse.", Ordering.natural()
 				.reverse()
 				.isOrdered(projectNames));

@@ -1,7 +1,8 @@
 import React from "react";
-import { Badge, Icon } from "antd";
+import { Badge } from "antd";
 import { SPACE_XS } from "../../styles/spacing";
 import { green6 } from "../../styles/colors";
+import { SyncOutlined } from "@ant-design/icons";
 
 /**
  * Display the state of an analysis
@@ -21,8 +22,7 @@ export function AnalysisState({ state }) {
     default:
       return (
         <span>
-          <Icon
-            type="sync"
+          <SyncOutlined
             style={{ marginRight: SPACE_XS, color: green6 }}
             spin
           />
