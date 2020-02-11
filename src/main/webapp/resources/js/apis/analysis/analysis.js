@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-const ANALYSES_URL = `ajax/analyses`;
+const ANALYSES_URL = `/ajax/analyses`;
 
 const ANALYSIS_URL = `/ajax/analysis`;
 
