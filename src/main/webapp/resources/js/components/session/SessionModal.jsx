@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { Button, Modal } from "antd";
-import { ClockCircleTwoTone } from "@ant-design/icons";
+import { Button, Icon, Modal } from "antd";
 import { red6 } from "../../styles/colors";
 import { useInterval } from "../../hooks/useInterval";
 import { SPACE_SM } from "../../styles/spacing";
@@ -76,7 +75,12 @@ export default function SessionModal({
             alignItems: "center"
           }}
         >
-          <ClockCircleTwoTone style={{ fontSize: 30 }} twoToneColor={red6} />
+          <Icon
+            type="clock-circle"
+            theme="twoTone"
+            style={{ fontSize: 30 }}
+            twoToneColor={red6}
+          />
           <span style={{ paddingLeft: SPACE_SM }}>
             {i18n("session_modal_intro")}
           </span>
@@ -116,7 +120,9 @@ export default function SessionModal({
           padding: `0 ${SPACE_SM}`
         }}
       >
-        <ClockCircleTwoTone
+        <Icon
+          type="clock-circle"
+          theme="twoTone"
           style={{ fontSize: 55 }}
           twoToneColor={red6}
         />
