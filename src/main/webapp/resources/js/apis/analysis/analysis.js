@@ -3,11 +3,9 @@
  */
 import axios from "axios";
 
-// Ajax URL for Analysis
-const ANALYSIS_URL = `${window.TL.BASE_URL}ajax/analysis`;
+const ANALYSES_URL = `/ajax/analyses`;
 
-// Ajax URL for Analyses
-const ANALYSES_URL = `${window.TL.BASE_URL}ajax/analyses`;
+const ANALYSIS_URL = `/ajax/analysis`;
 
 /*
  * Get all the data required for the analysis -> details page.
