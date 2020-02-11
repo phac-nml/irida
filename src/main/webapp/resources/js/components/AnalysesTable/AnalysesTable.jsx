@@ -16,7 +16,7 @@ import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6, grey6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { AnalysesQueue } from "./../AnalysesQueue";
+import { AnalysesQueue } from "../../components/AnalysesQueue";
 import { DownloadOutlined } from "@ant-design/icons";
 import { FilterIcon } from "../Tables/fitlers/FilterIcon";
 import styled from "styled-components";

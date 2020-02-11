@@ -354,3 +354,11 @@ export async function fetchAllPipelinesTypes() {
 export async function deleteAnalysisSubmissions({ ids }) {
   return axios.delete(`${ANALYSES_URL}/delete?ids=${ids.join(",")}`);
 }
+
+/**
+ * Fetch the current state of the analysis server.
+ * @return {Promise<T>} return a map of the running an queued counts.
+ */
+export async function fetchAnalysesQueueCounts() {
+  return axios.get(`${ANALYSES_URL}/queue`).then(({ data }) => data);
+}
