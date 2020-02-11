@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { Button, Popconfirm, Table } from "antd";
+import { Button, Icon, Popconfirm, Table } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -13,21 +13,10 @@ import {
 import { AnalysisState } from "./AnalysisState";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
-import { blue6, grey6 } from "../../styles/colors";
+import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { DownloadOutlined } from "@ant-design/icons";
-import { FilterIcon } from "../Tables/fitlers/FilterIcon";
-import styled from "styled-components";
-
-const DownloadButton = styled(Button)`
-  color: ${grey6};
-
-  &:hover {
-    color: ${blue6};
-  }
-`;
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -84,7 +73,14 @@ export function AnalysesTable() {
       filterMultiple: true,
       filters: pipelineStates,
       filterIcon(filtered) {
-        return <FilterIcon filtered={filtered} />;
+        return (
+          <Icon
+            type="filter"
+            theme="filled"
+            style={{ color: filtered ? blue6 : undefined }}
+            className="t-state"
+          />
+        );
       },
       render(state) {
         return <AnalysisState state={state} />;
@@ -97,7 +93,14 @@ export function AnalysesTable() {
       dataIndex: "type",
       filterMultiple: true,
       filterIcon(filtered) {
-        return <FilterIcon filtered={filtered} />;
+        return (
+          <Icon
+            type="filter"
+            theme="filled"
+            style={{ color: filtered ? blue6 : undefined }}
+            className="t-type"
+          />
+        );
       },
       filters: pipelineTypes
     },
@@ -126,18 +129,15 @@ export function AnalysesTable() {
       title: "",
       key: "download",
       fixed: "right",
-      align: "right",
-      width: 60,
       render(text, record) {
         return (
-          <DownloadButton
+          <Button
             shape="circle-outline"
             disabled={record.state.value !== "COMPLETED"}
             href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
-          >
-            <DownloadOutlined />
-          </DownloadButton>
+            icon="download"
+          />
         );
       }
     }
