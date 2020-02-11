@@ -12,6 +12,8 @@ import { getSistrResults } from "../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 
+import { setBaseUrl } from "../../../utilities/url-utilities";
+
 import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, SISTR } from "../routes";
 import { grey1 } from "../../../styles/colors";
