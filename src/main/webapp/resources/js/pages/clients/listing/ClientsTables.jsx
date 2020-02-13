@@ -1,10 +1,13 @@
-import React, {useContext} from "react";
-import {PagedTable, PagedTableContext} from "../../../components/ant.design/PagedTable";
-import {Button, Popconfirm, Tag} from "antd";
-import {setBaseUrl} from "../../../utilities/url-utilities";
-import {dateColumnFormat} from "../../../components/ant.design/table-renderers";
-import {revokeClientTokens} from "../../../apis/clients/clients";
-import {StopOutlined} from "@ant-design/icons";
+import React, { useContext } from "react";
+import {
+  PagedTable,
+  PagedTableContext
+} from "../../../components/ant.design/PagedTable";
+import { Button, Popconfirm, Tag } from "antd";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
+import { revokeClientTokens } from "../../../apis/clients/clients";
+import { StopOutlined } from "@ant-design/icons";
 
 /**
  * Table for displaying a list of clients.
@@ -28,10 +31,7 @@ export function ClientsTable() {
       sorter: true,
       render(text, item) {
         return (
-          <a
-            className="t-client-name"
-            href={setBaseUrl(`clients/${item.id}`)}
-          >
+          <a className="t-client-name" href={setBaseUrl(`clients/${item.id}`)}>
             {text}
           </a>
         );
@@ -41,7 +41,11 @@ export function ClientsTable() {
       title: i18n("client.grant-types"),
       dataIndex: "grants",
       render(grants) {
-        const colors = { password: "purple", authorization_code: "volcano" };
+        const colors = {
+          password: "purple",
+          authorization_code: "volcano",
+          refresh_token: "magenta"
+        };
         return (
           <div>
             {grants.map(g => (
