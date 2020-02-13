@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Used as the base class of any item to be represented in an ant.design Table.
  */
-public class TableModel<T> {
+public abstract class TableModel {
 	private Long id;
 	private String key;
 	private String name;

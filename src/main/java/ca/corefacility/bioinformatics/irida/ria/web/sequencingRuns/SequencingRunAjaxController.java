@@ -47,7 +47,7 @@ public class SequencingRunAjaxController {
 		Page<SequencingRun> list = sequencingRunService.list(sequencingRunsListRequest.getCurrent(),
 				sequencingRunsListRequest.getPageSize(), sequencingRunsListRequest.getSort());
 
-		List<TableModel<?>> runs = new ArrayList<>();
+		List<TableModel> runs = new ArrayList<>();
 		for (SequencingRun run : list.getContent()) {
 			runs.add(new SequencingRunModel(run, messageSource.getMessage(
 					"sequencingruns.status." + run.getUploadStatus()

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.clients;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
@@ -28,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClie
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
@@ -445,17 +445,16 @@ public class ClientsController extends BaseController {
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TableResponse getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
+	public TableResponse<ClientModel> getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
 		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
 				.searchClient(tableRequest.getSearch());
 
 		Page<IridaClientDetails> page = clientDetailsService
 				.search(specification, PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
-		List<TableModel<?>> models = new ArrayList<>();
-		for (IridaClientDetails client : page.getContent()) {
-			models.add(new ClientModel(client, clientDetailsService.countActiveTokensForClient(client)));
-		}
-		return new TableResponse(models, page.getTotalElements());
+		List<ClientModel> models = page.getContent().stream().map(client -> new ClientModel(client, clientDetailsService.countActiveTokensForClient(client)))
+				.collect(Collectors.toList());
+
+		return new TableResponse<ClientModel>(models, page.getTotalElements());
 	}
 
 	/**
