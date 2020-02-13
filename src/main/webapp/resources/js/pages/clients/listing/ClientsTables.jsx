@@ -1,13 +1,10 @@
-import React, { useContext } from "react";
-import {
-  PagedTable,
-  PagedTableContext
-} from "../../../components/ant.design/PagedTable";
-import { Button, Popconfirm, Tag } from "antd";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
-import { revokeClientTokens } from "../../../apis/clients/clients";
-import { StopOutlined } from "@ant-design/icons";
+import React, {useContext} from "react";
+import {PagedTable, PagedTableContext} from "../../../components/ant.design/PagedTable";
+import {Button, Popconfirm, Tag} from "antd";
+import {setBaseUrl} from "../../../utilities/url-utilities";
+import {dateColumnFormat} from "../../../components/ant.design/table-renderers";
+import {revokeClientTokens} from "../../../apis/clients/clients";
+import {StopOutlined} from "@ant-design/icons";
 
 /**
  * Table for displaying a list of clients.
@@ -33,8 +30,6 @@ export function ClientsTable() {
         return (
           <a
             className="t-client-name"
-            target="_blank"
-            rel="noreferrer noopener"
             href={setBaseUrl(`clients/${item.id}`)}
           >
             {text}
