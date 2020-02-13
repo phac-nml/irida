@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClie
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
@@ -450,7 +451,7 @@ public class ClientsController extends BaseController {
 
 		Page<IridaClientDetails> page = clientDetailsService
 				.search(specification, PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
-		List<ClientModel> models = new ArrayList<>();
+		List<TableModel<?>> models = new ArrayList<>();
 		for (IridaClientDetails client : page.getContent()) {
 			models.add(new ClientModel(client, clientDetailsService.countActiveTokensForClient(client)));
 		}

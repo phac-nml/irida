@@ -6,15 +6,15 @@ import java.util.List;
  * Response sent when items are requested for a table.
  */
 public class TableResponse {
-	private List<? extends TableModel> dataSource;
+	private List<TableModel<?>> dataSource;
 	private Long total;
 
-	public TableResponse(List<? extends TableModel> dataSource, Long total) {
+	public TableResponse(List<TableModel<?>> dataSource, Long total) {
 		this.dataSource = dataSource;
 		this.total = total;
 	}
 
-	public List<? extends TableModel> getDataSource() {
+	public List<TableModel<?>> getDataSource() {
 		return dataSource;
 	}
 

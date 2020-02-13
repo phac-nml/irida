@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListReq
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisTypeModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -163,10 +164,10 @@ public class AnalysesAjaxController {
 		/*
 		UI cannot consume it as-is.  Format into something the UI will like use the the AnalysisModel
 		 */
-		List<AnalysisModel> analyses = page.getContent()
-				.stream()
-				.map(submission -> this.createAnalysisModel(submission, locale))
-				.collect(Collectors.toList());
+		List<TableModel<?>> analyses = new ArrayList<>();
+		for(AnalysisSubmission submission : page.getContent()) {
+			analyses.add(this.createAnalysisModel(submission, locale));
+		}
 
 		return new TableResponse(analyses, page.getTotalElements());
 	}
