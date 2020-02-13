@@ -4,8 +4,12 @@
   "scripts": {
     "build": "webpack --env.mode production",
     "start": "webpack --env.mode development",
-    "clean": "rm -r node* resources/dist/",
-    "precommit": "lint-staged"
+    "clean": "rm -r node* resources/dist/"
+  },
+  "husky": {
+    "hooks": {
+      "pre-receive": "lint-staged"
+    }
   },
   "lint-staged": {
     "resources/**/*.{js,json,scss}": [
