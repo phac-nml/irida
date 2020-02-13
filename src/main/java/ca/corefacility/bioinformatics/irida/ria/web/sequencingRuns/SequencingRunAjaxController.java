@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -47,11 +47,12 @@ public class SequencingRunAjaxController {
 		Page<SequencingRun> list = sequencingRunService.list(sequencingRunsListRequest.getCurrent(),
 				sequencingRunsListRequest.getPageSize(), sequencingRunsListRequest.getSort());
 
-		List<TableModel> runs = list.getContent()
-				.stream()
-				.map(s -> new SequencingRunModel(s, messageSource.getMessage("sequencingruns.status." + s.getUploadStatus()
-						.toString(), new Object[] {}, locale)))
-				.collect(Collectors.toList());
+		List<TableModel> runs = new ArrayList<>();
+		for (SequencingRun run : list.getContent()) {
+			runs.add(new SequencingRunModel(run, messageSource.getMessage(
+					"sequencingruns.status." + run.getUploadStatus()
+							.toString(), new Object[] {}, locale)));
+		}
 
 		return new TableResponse(runs, list.getTotalElements());
 	}
