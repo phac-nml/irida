@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
@@ -43,17 +42,17 @@ public class SequencingRunAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping("/list")
-	public TableResponse listSequencingRuns(@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
+	public TableResponse<SequencingRunModel> listSequencingRuns(@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
 		Page<SequencingRun> list = sequencingRunService.list(sequencingRunsListRequest.getCurrent(),
 				sequencingRunsListRequest.getPageSize(), sequencingRunsListRequest.getSort());
 
-		List<TableModel> runs = new ArrayList<>();
+		List<SequencingRunModel> runs = new ArrayList<>();
 		for (SequencingRun run : list.getContent()) {
 			runs.add(new SequencingRunModel(run, messageSource.getMessage(
 					"sequencingruns.status." + run.getUploadStatus()
 							.toString(), new Object[] {}, locale)));
 		}
 
-		return new TableResponse(runs, list.getTotalElements());
+		return new TableResponse<>(runs, list.getTotalElements());
 	}
 }
