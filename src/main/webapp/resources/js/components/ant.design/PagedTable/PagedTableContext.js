@@ -64,14 +64,16 @@ function reducer(state, action) {
 function PagedTableProvider({
   children,
   url,
-  column = "createdDate",
-  order = "descend"
+  column,
+  order
 }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     column,
     order
   });
+
+  console.log(state);
 
   /*
   Table updated whenever one of these are changed.
@@ -92,8 +94,8 @@ function PagedTableProvider({
     fetchPageTableUpdate(url, {
       current: state.current - 1,
       pageSize: state.pageSize,
-      sortColumn: state.column,
-      sortDirection: state.order,
+      sortColumn: state.column || "createdDate",
+      sortDirection: state.order || "descend",
       search: state.search,
       filters: state.filters
     }).then(({ dataSource, total }) =>
