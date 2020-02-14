@@ -4,6 +4,8 @@ import java.util.List;
 
 /**
  * Response sent when items are requested for a table.
+ *
+ * @param <T> The type of {@link TableModel} included in the response.
  */
 public class TableResponse<T extends TableModel> {
 	private List<T> dataSource;
