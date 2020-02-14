@@ -34,6 +34,15 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "t-file-header")
 	private List<WebElement> files;
 
+	@FindBy(className = "t-file-name")
+	private List<WebElement> fileNames;
+
+	@FindBy(className = "t-galaxy-parameter")
+	private List<WebElement> galaxyParameters;
+
+	@FindBy(className = "t-tool-name")
+	private List<WebElement> toolList;
+
 	@FindBy(className = "share-project")
 	List<WebElement> shareCheckboxes;
 
@@ -63,6 +72,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "t-delete-analysis-btn")
 	private WebElement deleteButton;
 
+	@FindBy(id="t-sample-search-input")
+	private WebElement searchInput;
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -87,14 +99,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 				.isEmpty();
 	}
 
-	/**
-	 * Open the accordion that contains the tools for the tree.
-	 */
-	public void displayTreeTools() {
-		setCurrentFile();
-		this.currentFile.findElement(By.className("accordion-toggle"))
-				.click();
-	}
 
 	/**
 	 * Determine the number of files created.
@@ -102,48 +106,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Integer}
 	 */
 	public int getNumberOfFilesDisplayed() {
-		return fileInfo.size();
-	}
-
-	/**
-	 * Determine the number of tools used to create the tree.
-	 *
-	 * @return {@link Integer} count of number of tools.
-	 */
-	public int getNumberOfToolsForTree() {
-		return currentFile.findElements(By.className("tool"))
-				.size();
-	}
-
-	/**
-	 * Determine the number of parameters and their values used in the first
-	 * tool
-	 *
-	 * @return {@link Integer} count of number of parameters
-	 */
-	public int getNumberOfParametersForTool() {
-		waitForElementVisible(By.className("tool"));
-		this.currentFile.findElements(By.className("tool"))
-				.get(0)
-				.click();
-		WebElement paramTable = currentFile.findElement(By.className("parameters"));
-		return paramTable.findElements(By.className("parameter"))
-				.size();
-	}
-
-	/**
-	 * Sets the current file for use by multiple methods.
-	 */
-	private void setCurrentFile() {
-		this.currentFile = null;
-		for (WebElement fileDiv : fileInfo) {
-			WebElement filename = fileDiv.findElement(By.className("name"));
-			if (filename.getText()
-					.contains("tree")) {
-				this.currentFile = fileDiv;
-				break;
-			}
-		}
+		return fileNames.size();
 	}
 
 	public int getNumberOfSamplesInAnalysis() {
@@ -173,11 +136,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 
-	public String getLabelForSample(int index) {
-		return sampleLabels.get(index)
-				.getText();
-	}
-
 	public boolean emailPipelineResultVisible() {
 		return !driver.findElements(By.className("t-email-pipeline-result"))
 				.isEmpty();
@@ -189,7 +147,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public void deleteAnalysis() {
 		rootDiv.findElements(By.className("ant-btn-danger")).get(0).click();
-		waitForTime(1000);
+		waitForTime(500);
 		waitForElementVisible(By.className("ant-popover-inner-content"));
 		confirmDiv.findElements(By.className("ant-btn-sm")).get(1).click();
 	}
@@ -226,5 +184,26 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public int getProvenanceFileCount() {
 		return files.size();
+	}
+
+	public int getGalaxyParametersCount() {
+		return galaxyParameters.size();
+	}
+
+	public int getToolCount() {
+		return toolList.size();
+	}
+
+	public void getFileProvenance() {
+		files.get(0).click();
+	}
+
+	public void displayToolExecutionParameters() {
+		toolList.get(0).click();
+	}
+
+	public void filterSamples(String searchStr) {
+		searchInput.sendKeys(searchStr);
+		waitForTime(500);
 	}
 }

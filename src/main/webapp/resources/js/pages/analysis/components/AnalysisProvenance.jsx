@@ -98,6 +98,7 @@ export default function AnalysisProvenance() {
         <Descriptions.Item
           label={param.parameterName}
           key={`${tool.toolName}-${param.parameterName}`}
+          className="t-galaxy-parameter"
         >
           {param.parameterValue}
         </Descriptions.Item>
@@ -123,6 +124,7 @@ export default function AnalysisProvenance() {
             borderBottom: 0,
             borderRadius: 0
           }}
+          className="t-tool-name"
         >
           {parameters.length > 0 ? (
             <Descriptions bordered column={2} size="small">

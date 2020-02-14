@@ -129,6 +129,7 @@ export function AnalysisSampleRenderer() {
             onChange={event => searchSamples(event.target.value)}
             style={{ width: "100%", marginBottom: SPACE_MD }}
             allowClear={true}
+            id="t-sample-search-input"
           />
           {renderSamples()}
         </div>

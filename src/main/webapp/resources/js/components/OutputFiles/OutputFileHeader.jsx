@@ -36,6 +36,7 @@ export function OutputFileHeader({ output }) {
           style={{
             fontSize: FONT_SIZE_DEFAULT
           }}
+          className="t-file-name"
         >
           {`${output.toolName} ${output.toolVersion} - ${output.outputName} - ${output.filename}`}
         </Text>

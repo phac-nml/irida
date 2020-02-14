@@ -140,6 +140,9 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/samples");
 		assertTrue("Page title should equal", page.compareTabTitle("Samples"));
 		assertEquals("Should display 2 pairs of paired end files", 2, page.getNumberOfSamplesInAnalysis());
+
+		page.filterSamples("01-");
+		assertEquals("Should display 1 pair of paired end files", 1, page.getNumberOfSamplesInAnalysis());
 	}
 
 	@Test
@@ -188,9 +191,14 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
 
 		assertEquals("There should be one file" , 1, page.getProvenanceFileCount());
+
+		page.getFileProvenance();
+		assertEquals("Should have 2 tools associated with the tree", 2, page.getToolCount());
+
+		page.displayToolExecutionParameters();
+		assertEquals("First tool should have 1 parameter", 1, page.getGalaxyParametersCount());
 	}
 
-	@Ignore
 	@Test
 	public void testOutputFiles() {
 		LoginPage.loginAsManager(driver());
