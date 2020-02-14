@@ -15,7 +15,7 @@ const BreadCrumbs = styled(Breadcrumb)`
 `;
 
 export function Breadcrumbs({ crumbs = [] }) {
-  return crumbs ? (
+  return crumbs.length ? (
     <BreadCrumbs>
       <Breadcrumb.Item>
         <a href={setBaseUrl("")}>
