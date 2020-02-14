@@ -145,9 +145,8 @@ public class ClientsController extends BaseController {
 	 * @return redirect back to the client page
 	 */
 	@RequestMapping("/revoke")
-	public String revokeTokens(@RequestParam Long id) {
-		IridaClientDetails read = clientDetailsService.read(id);
-		clientDetailsService.revokeTokensForClient(read);
+	public String revokeTokensAndRedirect(@RequestParam Long id) {
+		revokeClientTokens(id);
 		return "redirect:/clients/" + id;
 	}
 
@@ -155,7 +154,7 @@ public class ClientsController extends BaseController {
 	 * Revoke access tokens for a specific client.
 	 * @param id - identifier for a client
 	 */
-	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.DELETE)
 	public void revokeClientTokens(@RequestParam Long id) {
 		IridaClientDetails read = clientDetailsService.read(id);
 		clientDetailsService.revokeTokensForClient(read);
