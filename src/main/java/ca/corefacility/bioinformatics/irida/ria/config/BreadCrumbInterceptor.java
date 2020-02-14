@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableSet;
 @Component
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
-	private final MessageSource messageSource;
 
 	@Autowired
 	private ProjectService projectService;
@@ -37,15 +36,16 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private SampleService sampleService;
 
+	@Autowired
+	private MessageSource messageSource;
+
 	Set<String> BASE_CRUMBS = ImmutableSet.of("projects", "samples", "export", "settings");
 
 	/**
 	 * Constructor
-	 *
-	 * @param messageSource {@link MessageSource} for internationalization of breadcrumb
 	 */
-	public BreadCrumbInterceptor(MessageSource messageSource) {
-		this.messageSource = messageSource;
+	public BreadCrumbInterceptor() {
+
 	}
 
 	/**
