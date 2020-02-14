@@ -92,8 +92,8 @@ function PagedTableProvider({
     fetchPageTableUpdate(url, {
       current: state.current - 1,
       pageSize: state.pageSize,
-      sortColumn: state.column,
-      sortDirection: state.order,
+      sortColumn: state.column ||  "createdDate",
+      sortDirection: state.order ||  "descend",
       search: state.search,
       filters: state.filters
     }).then(({ dataSource, total }) =>
