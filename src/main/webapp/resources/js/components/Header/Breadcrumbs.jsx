@@ -1,16 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { Breadcrumb } from "antd";
-import { blue1, blue3 } from "../../styles/colors";
+import { grey2, grey4, grey8 } from "../../styles/colors";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { HomeTwoTone } from "@ant-design/icons";
 
 const BreadCrumbs = styled(Breadcrumb)`
-  background-color: ${blue1};
+  background-color: ${grey2};
   padding: ${SPACE_XS} 15px;
   justify-content: flex-start;
-  border-bottom: 1px solid ${blue3};
+  border-bottom: 1px solid ${grey4};
   margin-bottom: ${SPACE_MD};
 `;
 
@@ -19,7 +19,7 @@ export function Breadcrumbs({ crumbs = [] }) {
     <BreadCrumbs>
       <Breadcrumb.Item>
         <a href={setBaseUrl("")}>
-          <HomeTwoTone />
+          <HomeTwoTone style={{ color: grey8 }} />
         </a>
       </Breadcrumb.Item>
       {crumbs.map(crumb => (

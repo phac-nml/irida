@@ -1,14 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +16,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Interceptor for handling UI BreadCrumbs
@@ -30,10 +30,14 @@ import com.google.common.collect.ImmutableList;
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
 	private final MessageSource messageSource;
-	private List<String> BASE_CRUMBS = ImmutableList.of("/projects", "/samples", "/export", "/settings");
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Autowired
+	private SampleService sampleService;
+
+	Set<String> BASE_CRUMBS = ImmutableSet.of("projects", "samples", "export", "settings");
 
 	/**
 	 * Constructor
@@ -54,55 +58,103 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 
 		String servletPath = request.getServletPath();
 
-		if (hasGoodPath(servletPath) && hasGoodModelAndView(modelAndView)) {
-			List<String> parts = Arrays.stream(servletPath.split("/"))
-					.filter(part -> !Strings.isNullOrEmpty(part))
-					.collect(Collectors.toList());
-
-			// There is only one item then we are at the bottom and do not need any breadcrumbs
-			if (parts.size() == 0)
-				return;
-
-			List<BreadCrumb> breadCrumbs = new ArrayList<>();
-
-			Locale locale = request.getLocale();
-			// Check to ensure that there is some sort of context path.
-			String contextPath = request.getContextPath();
-			StringBuilder url = new StringBuilder(contextPath);
-
-			// Determine where we are in the application.
-			if ("projects".equals(parts.get(0))) {// First thing after is the project id.
-				Long projectId = Long.parseLong(parts.get(1));
-				Project project = projectService.read(projectId);
-				breadCrumbs.add(new BreadCrumb(project.getLabel(), url.append("/projects/")
-						.append(projectId)
-						.toString()));
-
-				// Check if there is another part
-				if (parts.size() > 2) {
-					String msg = tryGetMessage(parts.get(2), locale);
-					breadCrumbs.add(new BreadCrumb(msg, url.append(parts.get(2))
-							.toString()));
-				}
-			} modelAndView.getModelMap()
-					.put("breadcrumbs", breadCrumbs);
-			//
-			//			List<Map<String, String>> crumbs = new ArrayList<>();
-			//
-			//
-			//			try {
-			//				for (String noun : parts) {
-			//					url.append("/");
-			//					url.append(noun);
-			//					crumbs.add(ImmutableMap.of("text", tryGetMessage(noun, locale), "url", url.toString()));
-			//				}
-			//				// Add the breadcrumbs to the model
-			//				modelAndView.getModelMap()
-			//						.put("crumbs", crumbs);
-			//			} catch (NoSuchMessageException e) {
-			//				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
-//			}
+		if (!hasGoodPath(servletPath) && !hasGoodModelAndView(modelAndView)) {
+			// No breadcrumbs required here.
+			return;
 		}
+
+		/*
+		Keep track of each breadcrumb in a list, this is the order they will
+		be rendered in the UI.
+		 */
+		List<BreadCrumb> breadCrumbs = new ArrayList<>();
+		Locale locale = request.getLocale();
+
+		/*
+		Need the context path in case of servlet container path.
+		 */
+		String contextPath = request.getContextPath();
+
+		/*
+		Each href for a breadcrumb is an extension on the current so we will
+		just build up one big one.
+		 */
+		StringBuilder url = new StringBuilder(contextPath);
+
+		/*
+		Break the url into parts, each "part" will become a breadcrumb.
+		 */
+		List<String> partsList = Arrays.stream(servletPath.split("/"))
+				.filter(part -> !Strings.isNullOrEmpty(part))
+				.collect(Collectors.toList());
+		ListIterator<String> parts = partsList.listIterator();
+
+		while (parts.hasNext()) {
+			String next = parts.next();
+
+			/*
+			If this is this is the last crumb, then don't do anything with it since it is the current page.
+			 */
+			if (parts.hasNext()) {
+				url.append("/");
+				if (BASE_CRUMBS.contains(next)) {
+
+					/*
+					Check to see if it is a base crumb -> these will need internationalization
+					 */
+					breadCrumbs.add(new BreadCrumb(messageSource.getMessage("bc." + next, new Object[] {}, locale),
+							url.append(next)
+									.toString()));
+				} else if (NumberUtils.isNumber(next)) {
+					String parent = partsList.get(parts.previousIndex() - 1);
+					if (parent.equals("projects")) {
+						Project project = projectService.read(Long.parseLong(next));
+						breadCrumbs.add(new BreadCrumb(project.getLabel(), url.append(next)
+								.toString()));
+					} else if (parent.equals("samples")) {
+						Sample sample = sampleService.read(Long.parseLong(next));
+						breadCrumbs.add(new BreadCrumb(sample.getLabel(), url.append(next)
+								.toString()));
+					}
+				}
+
+			}
+		}
+
+		// Determine where we are in the application.
+		//		if ("projects".equals(parts.get(0))) {// First thing after is the project id.
+		//			Long projectId = Long.parseLong(parts.get(1));
+		//			Project project = projectService.read(projectId);
+		//			breadCrumbs.add(new BreadCrumb(project.getLabel(), url.append("/projects/")
+		//					.append(projectId)
+		//					.toString()));
+		//
+		//			// Check if there is another part
+		//			if (parts.size() > 2) {
+		//				String msg = tryGetMessage(parts.get(2), locale);
+		//				breadCrumbs.add(new BreadCrumb(msg, url.append(parts.get(2))
+		//						.toString()));
+		//			}
+		//		}
+		modelAndView.getModelMap()
+				.put("breadcrumbs", breadCrumbs);
+		//
+		//			List<Map<String, String>> crumbs = new ArrayList<>();
+		//
+		//
+		//			try {
+		//				for (String noun : parts) {
+		//					url.append("/");
+		//					url.append(noun);
+		//					crumbs.add(ImmutableMap.of("text", tryGetMessage(noun, locale), "url", url.toString()));
+		//				}
+		//				// Add the breadcrumbs to the model
+		//				modelAndView.getModelMap()
+		//						.put("crumbs", crumbs);
+		//			} catch (NoSuchMessageException e) {
+		//				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
+		//			}
+
 	}
 
 	/**
