@@ -31,6 +31,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "file-info")
 	private List<WebElement> fileInfo;
 
+	@FindBy(className = "t-file-header")
+	private List<WebElement> files;
+
 	@FindBy(className = "share-project")
 	List<WebElement> shareCheckboxes;
 
@@ -78,24 +81,10 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return PageFactory.initElements(driver, AnalysisDetailsPage.class);
 	}
 
-	/**
-	 * Open the tab to display the list of files for this analysis.
-	 */
-	public void displayProvenanceView() {
-		tabProvenance.click();
-	}
-
 
 	public boolean priorityEditVisible() {
 		return !driver.findElements(By.className("t-priority-edit"))
 				.isEmpty();
-	}
-
-	/**
-	 * Open the tab to display the list of input files for the analysis
-	 */
-	public void displayInputFilesTab() {
-		tabInputFiles.click();
 	}
 
 	/**
@@ -200,7 +189,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public void deleteAnalysis() {
 		rootDiv.findElements(By.className("ant-btn-danger")).get(0).click();
-		waitForTime(500);
+		waitForTime(1000);
 		waitForElementVisible(By.className("ant-popover-inner-content"));
 		confirmDiv.findElements(By.className("ant-btn-sm")).get(1).click();
 	}
@@ -233,5 +222,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 		return !driver.findElements(By.className("ant-alert-warning"))
 				.isEmpty();
+	}
+
+	public int getProvenanceFileCount() {
+		return files.size();
 	}
 }

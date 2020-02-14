@@ -72,7 +72,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	// Successfullu completed analysis (COMPLETED state)
+	// Successfully completed analysis (COMPLETED state)
 	public void testTabRoutingAnalysisCompletedTree() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 
@@ -178,5 +178,25 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Analysis Description doesn't have a value
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
+	}
+
+	@Test
+	public void testProvenance() {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
+
+		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
+
+		assertEquals("There should be one file" , 1, page.getProvenanceFileCount());
+	}
+
+	@Ignore
+	@Test
+	public void testOutputFiles() {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
+		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
+
+		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 	}
 }

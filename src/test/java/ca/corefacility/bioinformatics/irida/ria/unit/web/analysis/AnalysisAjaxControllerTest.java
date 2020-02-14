@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 import java.util.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -382,6 +383,12 @@ public class AnalysisAjaxControllerTest {
 		inputFiles.setSamples(samples);
 
 		assertEquals("There should be 2 samples for this submission", inputFiles.getSamples().size() , 2);
+	}
+
+	@Ignore
+	@Test
+	public void getProvenance() {
+
 	}
 
 }
