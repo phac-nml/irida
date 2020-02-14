@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,22 +11,29 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Interceptor for handling UI BreadCrumbs
  */
+@Component
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
 	private final MessageSource messageSource;
 	private List<String> BASE_CRUMBS = ImmutableList.of("/projects", "/samples", "/export", "/settings");
+
+	@Autowired
+	private ProjectService projectService;
 
 	/**
 	 * Constructor
@@ -49,26 +59,49 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 					.filter(part -> !Strings.isNullOrEmpty(part))
 					.collect(Collectors.toList());
 
-			Locale locale = request.getLocale();
-			List<Map<String, String>> crumbs = new ArrayList<>();
+			// There is only one item then we are at the bottom and do not need any breadcrumbs
+			if (parts.size() == 0)
+				return;
 
+			List<BreadCrumb> breadCrumbs = new ArrayList<>();
+
+			Locale locale = request.getLocale();
 			// Check to ensure that there is some sort of context path.
 			String contextPath = request.getContextPath();
-
 			StringBuilder url = new StringBuilder(contextPath);
 
-			try {
-				for (String noun : parts) {
-					url.append("/");
-					url.append(noun);
-					crumbs.add(ImmutableMap.of("text", tryGetMessage(noun, locale), "url", url.toString()));
+			// Determine where we are in the application.
+			if ("projects".equals(parts.get(0))) {// First thing after is the project id.
+				Long projectId = Long.parseLong(parts.get(1));
+				Project project = projectService.read(projectId);
+				breadCrumbs.add(new BreadCrumb(project.getLabel(), url.append("/projects/")
+						.append(projectId)
+						.toString()));
+
+				// Check if there is another part
+				if (parts.size() > 2) {
+					String msg = tryGetMessage(parts.get(2), locale);
+					breadCrumbs.add(new BreadCrumb(msg, url.append(parts.get(2))
+							.toString()));
 				}
-				// Add the breadcrumbs to the model
-				modelAndView.getModelMap()
-						.put("crumbs", crumbs);
-			} catch (NoSuchMessageException e) {
-				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
-			}
+			} modelAndView.getModelMap()
+					.put("breadcrumbs", breadCrumbs);
+			//
+			//			List<Map<String, String>> crumbs = new ArrayList<>();
+			//
+			//
+			//			try {
+			//				for (String noun : parts) {
+			//					url.append("/");
+			//					url.append(noun);
+			//					crumbs.add(ImmutableMap.of("text", tryGetMessage(noun, locale), "url", url.toString()));
+			//				}
+			//				// Add the breadcrumbs to the model
+			//				modelAndView.getModelMap()
+			//						.put("crumbs", crumbs);
+			//			} catch (NoSuchMessageException e) {
+			//				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
+//			}
 		}
 	}
 
@@ -80,12 +113,8 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	 * @return Internationalized message or original noun if message doesn't exist (e.g. noun is an id number)
 	 */
 	private String tryGetMessage(String noun, Locale locale) {
-		try {
-			final String message = messageSource.getMessage("bc." + noun, null, locale);
-			return Strings.isNullOrEmpty(message) ? noun : message;
-		} catch (NoSuchMessageException e) {
-			return noun;
-		}
+		final String message = messageSource.getMessage("bc." + noun, null, locale);
+		return Strings.isNullOrEmpty(message) ? noun : message;
 	}
 
 	/**
@@ -115,5 +144,23 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
 		return modelAndView != null && !modelAndView.getViewName()
 				.contains("redirect:");
+	}
+
+	private static class BreadCrumb {
+		private String label;
+		private String url;
+
+		public BreadCrumb(String label, String url) {
+			this.label = label;
+			this.url = url;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public String getUrl() {
+			return url;
+		}
 	}
 }
