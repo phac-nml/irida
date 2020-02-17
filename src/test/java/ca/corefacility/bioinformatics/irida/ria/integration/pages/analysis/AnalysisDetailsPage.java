@@ -200,6 +200,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public void displayToolExecutionParameters() {
 		toolList.get(0).click();
+		rootDiv.findElements(By.className("ant-descriptions-view")).get(0).findElements(By.className("t-galaxy-parameter")).size();
+
 	}
 
 	public void filterSamples(String searchStr) {

@@ -394,6 +394,10 @@ public class AnalysisAjaxController {
 			info.setAnalysisId(analysis.getId());
 			info.setOutputName(outputName);
 			info.setFilename(aofFilename);
+
+			logger.debug("FILE IS");
+			logger.debug(aof.getFile().toAbsolutePath().toString());
+
 			info.setFileSizeBytes(aof.getFile()
 					.toFile()
 					.length());

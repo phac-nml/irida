@@ -19,7 +19,6 @@ import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
-@Ignore
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
 
