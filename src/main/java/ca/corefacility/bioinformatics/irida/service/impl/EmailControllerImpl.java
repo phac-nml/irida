@@ -311,9 +311,9 @@ public class EmailControllerImpl implements EmailController {
 
 		final Context ctx = new Context(locale);
 
-		ctx.setVariable("projectName", project.getName());
+		ctx.setVariable("failedProject", project.getName());
 		ctx.setVariable("user", syncUser.getUsername());
-		ctx.setVariable("settingsUrl", projectSettingsUrl);
+		ctx.setVariable("settingsLink", projectSettingsUrl);
 
 		try {
 			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
