@@ -20,13 +20,13 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetup() {
 		LoginPage.loginAsAdmin(driver());
 		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver());
-		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 
 		// Test the name filter
 		page.searchForAnalysisByName("My Fake Submission");
 		assertEquals("Should have 1 Analysis displayed after filtering", 1, page.getNumberOfAnalysesDisplayed());
 		page.clearNameFilter();
-		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 
 		/*
 		Test deleting a analysis
@@ -35,7 +35,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		 9 - 17 are the actual element displayed within the overlay of the fixed column.
 		 */
 		page.deleteAnalysis(9);
-		assertEquals("Should have 8 analyses displayed after deleting one", 8, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 9 analyses displayed after deleting one", 9, page.getNumberOfAnalysesDisplayed());
 
 	}
 }

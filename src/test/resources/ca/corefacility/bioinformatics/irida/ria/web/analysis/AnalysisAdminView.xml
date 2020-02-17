@@ -115,6 +115,10 @@
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="2"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
+    <analysis_submission id="10" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02"
+                         name="My Completed Submission NO OUTPUTS"
+                         analysis_id="2" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
 
     <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" command_line="/bin/snp-matrix" />
     <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" command_line="/bin/vcf2pseudoalign" />

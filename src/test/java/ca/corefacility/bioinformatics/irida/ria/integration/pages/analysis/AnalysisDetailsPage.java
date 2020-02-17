@@ -7,29 +7,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AnalysisDetailsPage extends AbstractPage {
 	public static final String RELATIVE_URL = "analysis/";
-
-	@FindBy(id = "analysis-download-btn")
-	private WebElement analysisDownloadBtn;
-
-	@FindBy(id = "preview")
-	private WebElement tabPreview;
-
-	@FindBy(id = "provenance")
-	private WebElement tabProvenance;
-
-	@FindBy(id = "inputs")
-	private WebElement tabInputFiles;
-
-	@FindBy(id = "share")
-	private WebElement tabShare;
-
-	@FindBy(className = "file-info")
-	private List<WebElement> fileInfo;
 
 	@FindBy(className = "t-file-header")
 	private List<WebElement> files;
@@ -43,25 +24,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "t-tool-name")
 	private List<WebElement> toolList;
 
-	@FindBy(className = "share-project")
-	List<WebElement> shareCheckboxes;
-
 	@FindBy(className = "t-paired-end")
 	private List<WebElement> pairedEndElements;
-
-	@FindBy(id = "editAnalysisButton")
-	private WebElement editButton;
-
-	private WebElement currentFile;
-
-	@FindBy(className = "it-has-job-error")
-	private List<WebElement> divHasJobError;
-
-	@FindBy(className = "t-paired-end-sample-name")
-	private List<WebElement> sampleLabels;
-
-	@FindBy(id = "t-analysis-tab-settings")
-	private WebElement settingsTab;
 
 	@FindBy(id = "root")
 	private WebElement rootDiv;
@@ -74,6 +38,43 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	@FindBy(id="t-sample-search-input")
 	private WebElement searchInput;
+
+	@FindBy(id="t-download-all-files-btn")
+	private List<WebElement> downloadAllFilesButton;
+
+	@FindBy(className="ant-steps")
+	private List<WebElement> analysisSteps;
+
+	@FindBy(className = "ant-alert-message")
+	private List<WebElement> warningAlerts;
+
+	@FindBy(className="t-reference-file-download-btn")
+	private List<WebElement> referenceFileDownloadButton;
+
+	@FindBy(className="t-download-output-file-btn")
+	private List<WebElement> downloadOutputFileButtons;
+
+	@FindBy(className="ant-descriptions-view")
+	private List<WebElement> descriptionViewDivs;
+
+	@FindBy(className="ant-menu-horizontal")
+	private List<WebElement> horizontalTabMenus;
+
+	@FindBy(className="ant-layout-has-sider")
+	private List<WebElement> verticalTabMenus;
+
+	@FindBy(className="ant-list-item-meta-description")
+	private List<WebElement> listDescriptionValues;
+
+	@FindBy(className="ant-list-item-meta-title")
+	private List<WebElement> listTitleValues;
+
+	@FindBy(className="ant-checkbox")
+	private List<WebElement> checkBoxes;
+
+	@FindBy(className="ant-checkbox-checked")
+	private List<WebElement> checkedCheckBoxes;
+
 
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
@@ -109,10 +110,20 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return fileNames.size();
 	}
 
+	/**
+	 * Determine the number of samples used by analysis.
+	 *
+	 * @return {@link Integer}
+	 */
 	public int getNumberOfSamplesInAnalysis() {
 		return pairedEndElements.size();
 	}
 
+	/**
+	 * Compares the expected page title to the actual
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean comparePageTitle(String pageTitle) {
 		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
 				.size();
@@ -124,6 +135,11 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return false;
 	}
 
+	/**
+	 * Compares the expected tab title to the actual
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean compareTabTitle(String pageTitle) {
 		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
 				.size();
@@ -135,77 +151,238 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return false;
 	}
 
-
+	/**
+	 * Determines if email pipeline section is visible
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean emailPipelineResultVisible() {
 		return !driver.findElements(By.className("t-email-pipeline-result"))
 				.isEmpty();
 	}
 
+	/**
+	 * Determines if delete button exists
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean deleteButtonExists() {
-		return rootDiv.findElements(By.className("ant-btn-danger")).size() > 0;
+		return deleteButton.isDisplayed();
 	}
 
+	/**
+	 * Clicks the delete button, waits, then clicks the confirm
+	 * button within the popover div
+	 */
 	public void deleteAnalysis() {
-		rootDiv.findElements(By.className("ant-btn-danger")).get(0).click();
+		deleteButton.click();
 		waitForTime(500);
 		waitForElementVisible(By.className("ant-popover-inner-content"));
 		confirmDiv.findElements(By.className("ant-btn-sm")).get(1).click();
 	}
 
+	/**
+	 * Determines if project has shared projects
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean hasSharedWithProjects() {
-		return rootDiv.findElements(By.className("ant-checkbox-checked")).size() > 0;
+		return checkedCheckBoxes.size() > 0;
 	}
 
+	/**
+	 * Removes shared projects
+	 */
 	public void removeSharedProjects() {
-		rootDiv.findElements(By.className("ant-checkbox-checked")).get(0).click();
+		checkedCheckBoxes.get(0).click();
 	}
 
+	/**
+	 * Adds shared project
+	 */
+	public void addSharedProjects() {
+		checkBoxes.get(0).click();
+	}
+
+	/**
+	 * Determines the number of list items (titles)
+	 *
+	 * @return {@link Integer}
+	 */
 	public int getNumberOfListItems() {
-		return rootDiv.findElements(By.className("ant-list-item-meta-title")).size();
+		return listTitleValues.size();
 	}
 
+	/**
+	 * Determines if the actual and expected analysis details
+	 * are identical
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean analysisDetailsEqual() {
+		boolean expectedEqualsActual = true;
+		String expectedDetails[] = new String[] {  "My Completed Submission", "4", "SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013 10:01 AM", "a few seconds" };
+		String actualDetails[] = new String[7];
+
+		int index=0;
+		for(WebElement item : listDescriptionValues) {
+			actualDetails[index] = item.getText();
+			index++;
+		}
+
+		for(int i=0; i < expectedDetails.length; i++) {
+			if(!expectedDetails[i].equals(actualDetails[i])) {
+				expectedEqualsActual = false;
+				break;
+			}
+		}
+		return expectedEqualsActual;
+	}
+
+	/**
+	 *  Determines the number of list items (descriptions)
+	 *
+	 * @return {@link Boolean}
+	 */
 	public int getNumberOfListItemValues() {
-		return rootDiv.findElements(By.className("ant-list-item-meta-description")).size();
+		return listDescriptionValues.size();
 	}
 
+	/**
+	 *  Determines if there is a sider for tabs
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean hasSideBarTabLinks() {
-		return rootDiv.findElements(By.className("ant-layout-has-sider")).size() == 1;
+		return verticalTabMenus.size() == 1;
 	}
 
+	/**
+	 *  Determines if there is a horizontal tab menu
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean hasHorizontalTabLinks() {
-		return rootDiv.findElements(By.className("ant-menu-horizontal")).size() == 1;
+		return horizontalTabMenus.size() == 1;
 	}
 
+	/**
+	 *  Determines if there is a job error warning alert
+	 *
+	 * @return {@link Boolean}
+	 */
 	public boolean jobErrorAlertVisible() {
 
 		return !driver.findElements(By.className("ant-alert-warning"))
 				.isEmpty();
 	}
 
+	/**
+	 *  Determines number of output files for provenance
+	 *
+	 * @return {@link Integer}
+	 */
 	public int getProvenanceFileCount() {
 		return files.size();
 	}
 
+	/**
+	 *  Determines number of galaxy parameters for a tool
+	 *
+	 * @return {@link Integer}
+	 */
 	public int getGalaxyParametersCount() {
 		return galaxyParameters.size();
 	}
 
+	/**
+	 *  Determines number of tools used by analysis
+	 *
+	 * @return {@link Integer}
+	 */
 	public int getToolCount() {
 		return toolList.size();
 	}
 
+	/**
+	 *  Gets provenance for file selected
+	 */
 	public void getFileProvenance() {
 		files.get(0).click();
 	}
 
+	/**
+	 *  Clicks on the tool to display its execution params
+	 */
 	public void displayToolExecutionParameters() {
 		toolList.get(0).click();
-		rootDiv.findElements(By.className("ant-descriptions-view")).get(0).findElements(By.className("t-galaxy-parameter")).size();
-
+		descriptionViewDivs.get(0).findElements(By.className("t-galaxy-parameter")).size();
 	}
 
+	/**
+	 *  Filters samples based on search string and waits
+	 *  before returning
+	 */
 	public void filterSamples(String searchStr) {
 		searchInput.sendKeys(searchStr);
 		waitForTime(500);
+	}
+
+	/**
+	 *  Determines if download all files button is
+	 *  visible on output file preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean downloadAllFilesButtonVisible() {
+		return downloadAllFilesButton.size() == 1;
+	}
+
+	/**
+	 *  Determines if download file button is
+	 *  visible on output file preview page for
+	 *  individual files
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean downloadOutputFileButtonVisible() {
+		return downloadOutputFileButtons.size() == 1;
+	}
+
+	/**
+	 *  Gets the warning alert text and returns
+	 *
+	 * @return {@link String}
+	 */
+	public String noOutputFilesAlertVisible() {
+		return warningAlerts.get(0).getText();
+	}
+
+	/**
+	 *  Gets the warning alert text and returns
+	 *
+	 * @return {@link String}
+	 */
+	public String noProvenanceAlertVisible() {
+		return warningAlerts.get(0).getText();
+	}
+
+	/**
+	 *  Determines if analysis steps are displayed
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean analysisStepsVisible() {
+		return analysisSteps.size() > 0;
+	}
+
+	/**
+	 *  Determines reference file download button is
+	 *  displayed on samples page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean referenceFileDownloadButtonVisible() {
+		return referenceFileDownloadButton.size() == 1;
 	}
 }

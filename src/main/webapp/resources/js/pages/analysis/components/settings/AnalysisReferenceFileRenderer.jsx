@@ -45,6 +45,7 @@ export function AnalysisReferenceFileRenderer() {
                 onClick={() => {
                   downloadReferenceFile();
                 }}
+                className="t-reference-file-download-btn"
               >
                 <Icon type="download" />{" "}
                 {i18n("AnalysisSamples.downloadReferenceFile")}

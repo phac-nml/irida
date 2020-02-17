@@ -53,6 +53,7 @@ export function OutputFileHeader({ output }) {
             })
           }
           icon="download"
+          className="t-download-output-file-btn"
         >
           {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
         </Button>

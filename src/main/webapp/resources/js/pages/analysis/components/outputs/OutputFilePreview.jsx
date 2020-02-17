@@ -110,6 +110,7 @@ export default function OutputFilePreview() {
                 justifyContent: "space-between",
                 alignItems: "center"
               }}
+              id="t-download-all-files-btn"
             >
               <i
                 className="fas fa-file-archive"
