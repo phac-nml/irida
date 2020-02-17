@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -48,6 +49,8 @@ public class ProjectSynchronizationServiceTest {
 	private SequenceFilePairRemoteService pairRemoteService;
 	@Mock
 	private RemoteAPITokenService tokenService;
+	@Mock
+	private EmailController emailController;
 
 	ProjectSynchronizationService syncService;
 
@@ -62,7 +65,7 @@ public class ProjectSynchronizationServiceTest {
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
 				metadataTemplateService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
-				pairRemoteService, tokenService);
+				pairRemoteService, tokenService, emailController);
 
 		api = new RemoteAPI();
 		expired = new Project();
