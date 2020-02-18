@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 /**
  * Controller handling basic operations for listing, viewing, adding, and
@@ -63,8 +62,6 @@ public class RemoteAPIController extends BaseController {
 	public static final String INVALID_OAUTH_TOKEN = "invalid_token";
 
 	private final String SORT_BY_ID = "id";
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "name", "clientId", "createdDate");
-	private static final String SORT_ASCENDING = "asc";
 
 	private final RemoteAPIService remoteAPIService;
 	private final ProjectRemoteService projectRemoteService;
@@ -220,18 +217,22 @@ public class RemoteAPIController extends BaseController {
 
 	/**
 	 * Get a list of the current page for the Remote API Table
+	 *
 	 * @param tableRequest - the details for the current page of the Table
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
-	TableResponse getAjaxAPIList(@RequestBody TableRequest tableRequest) {
-		Page<RemoteAPI> search = remoteAPIService.search(RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
+	TableResponse<RemoteAPIModel> getAjaxAPIList(@RequestBody TableRequest tableRequest) {
+		Page<RemoteAPI> search = remoteAPIService.search(
+				RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
 				tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortColumn());
 
-		List<RemoteAPIModel> apiData = search.getContent().stream().map(RemoteAPIModel::new).collect(
-				Collectors.toList());
-		return new TableResponse(apiData, search.getTotalElements());
+		List<RemoteAPIModel> apiData = search.getContent()
+				.stream()
+				.map(RemoteAPIModel::new)
+				.collect(Collectors.toList());
+		return new TableResponse<>(apiData, search.getTotalElements());
 	}
 
 	/**
