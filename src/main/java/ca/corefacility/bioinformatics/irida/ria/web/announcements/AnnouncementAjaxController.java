@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -43,8 +46,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/control/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public @ResponseBody
-	TableResponse getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
+	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
 		final Page<Announcement> page = announcementService.search(
 				AnnouncementSpecification.searchAnnouncement(tableRequest.getSearch()),
 				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
@@ -53,7 +55,7 @@ public class AnnouncementAjaxController {
 				.stream()
 				.map(AnnouncementTableModel::new)
 				.collect(Collectors.toList());
-		return new TableResponse(announcements, page.getTotalElements());
+		return new TableResponse<>(announcements, page.getTotalElements());
 	}
 
 	/**

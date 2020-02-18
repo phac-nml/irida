@@ -6,5 +6,5 @@ import axios from "axios";
  * @return {Promise<AxiosResponse<T>>}
  */
 export async function revokeClientTokens(id) {
-  return await axios.put(`clients/ajax/revoke?id=${id}`);
+  return await axios.delete(`clients/ajax/revoke?id=${id}`);
 }

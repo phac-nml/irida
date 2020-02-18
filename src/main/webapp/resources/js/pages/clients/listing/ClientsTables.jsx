@@ -31,12 +31,7 @@ export function ClientsTable() {
       sorter: true,
       render(text, item) {
         return (
-          <a
-            className="t-client-name"
-            target="_blank"
-            rel="noreferrer noopener"
-            href={setBaseUrl(`clients/${item.id}`)}
-          >
+          <a className="t-client-name" href={setBaseUrl(`clients/${item.id}`)}>
             {text}
           </a>
         );
@@ -46,7 +41,11 @@ export function ClientsTable() {
       title: i18n("client.grant-types"),
       dataIndex: "grants",
       render(grants) {
-        const colors = { password: "purple", authorization_code: "volcano" };
+        const colors = {
+          password: "purple",
+          authorization_code: "volcano",
+          refresh_token: "magenta"
+        };
         return (
           <div>
             {grants.map(g => (

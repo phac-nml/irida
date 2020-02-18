@@ -11,8 +11,6 @@ const initialState = {
   search: "",
   current: 1,
   pageSize: 10,
-  order: "descend",
-  column: "createdDate",
   total: undefined,
   filters: {}
 };
@@ -45,8 +43,8 @@ function reducer(state, action) {
         ...state,
         pageSize: action.payload.pageSize,
         current: action.payload.current,
-        order: action.payload.order || "descend",
-        column: action.payload.column || "createdDate",
+        order: action.payload.order,
+        column: action.payload.column,
         filters: action.payload.filters || {}
       };
     default:
@@ -58,11 +56,22 @@ function reducer(state, action) {
  * Provider for all ant.design server paged tables.
  * @param children Child DOM elements
  * @param {string} url - to fetch the table contents from
+ * @param {string} column - column to sort by
+ * @param {string} order - direction to sort
  * @returns {*}
  * @constructor
  */
-function PagedTableProvider({ children, url }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+function PagedTableProvider({
+  children,
+  url,
+  column = "createdDate",
+  order = "descend"
+}) {
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    column,
+    order
+  });
 
   /*
   Table updated whenever one of these are changed.
@@ -83,8 +92,8 @@ function PagedTableProvider({ children, url }) {
     fetchPageTableUpdate(url, {
       current: state.current - 1,
       pageSize: state.pageSize,
-      sortColumn: state.column,
-      sortDirection: state.order,
+      sortColumn: state.column ||  "createdDate",
+      sortDirection: state.order ||  "descend",
       search: state.search,
       filters: state.filters
     }).then(({ dataSource, total }) =>
