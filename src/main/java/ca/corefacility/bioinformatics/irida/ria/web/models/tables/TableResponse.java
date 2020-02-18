@@ -4,17 +4,19 @@ import java.util.List;
 
 /**
  * Response sent when items are requested for a table.
+ *
+ * @param <T> The type of {@link TableModel} included in the response.
  */
-public class TableResponse {
-	private List<? extends TableModel> dataSource;
+public class TableResponse<T extends TableModel> {
+	private List<T> dataSource;
 	private Long total;
 
-	public TableResponse(List<? extends TableModel> dataSource, Long total) {
+	public TableResponse(List<T> dataSource, Long total) {
 		this.dataSource = dataSource;
 		this.total = total;
 	}
 
-	public List<? extends TableModel> getDataSource() {
+	public List<T> getDataSource() {
 		return dataSource;
 	}
 

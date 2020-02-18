@@ -104,7 +104,7 @@ public class AnalysesAjaxController {
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
 	 */
 	@RequestMapping("/list")
-	public TableResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
+	public TableResponse<AnalysisModel> getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
 			@RequestParam(required = false, defaultValue = "false") Boolean admin,
 			@RequestParam(required = false) Long projectId, Locale locale) throws IridaWorkflowNotFoundException {
 
@@ -168,7 +168,7 @@ public class AnalysesAjaxController {
 				.map(submission -> this.createAnalysisModel(submission, locale))
 				.collect(Collectors.toList());
 
-		return new TableResponse(analyses, page.getTotalElements());
+		return new TableResponse<AnalysisModel>(analyses, page.getTotalElements());
 	}
 
 	/**
