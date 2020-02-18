@@ -64,16 +64,14 @@ function reducer(state, action) {
 function PagedTableProvider({
   children,
   url,
-  column,
-  order
+  column = "createdDate",
+  order = "descend"
 }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     column,
     order
   });
-
-  console.log(state);
 
   /*
   Table updated whenever one of these are changed.
