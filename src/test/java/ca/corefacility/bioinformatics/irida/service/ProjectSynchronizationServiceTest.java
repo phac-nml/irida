@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import org.junit.Before;
 import org.junit.Test;
@@ -127,9 +128,32 @@ public class ProjectSynchronizationServiceTest {
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
-	
+
 	@Test
-	public void testSyncNewSample(){
+	public void testSyncProjectsUnauthorized() {
+		expired.getRemoteStatus()
+				.setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
+		Project remoteProject = new Project();
+		remoteProject.setRemoteStatus(expired.getRemoteStatus());
+		User readBy = new User();
+		expired.getRemoteStatus()
+				.setReadBy(readBy);
+		when(projectService.getProjectsWithRemoteSyncStatus(RemoteStatus.SyncStatus.MARKED)).thenReturn(
+				Lists.newArrayList(expired));
+		when(projectRemoteService.read(expired.getRemoteStatus()
+				.getURL())).thenThrow(new IridaOAuthException("unauthorized", api));
+
+		syncService.findMarkedProjectsToSync();
+
+		assertEquals(SyncStatus.UNAUTHORIZED, remoteProject.getRemoteStatus()
+				.getSyncStatus());
+
+		verify(emailController).sendProjectSyncUnauthorizedEmail(expired);
+	}
+
+	@Test
+	public void testSyncNewSample() {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
 		sample.setRemoteStatus(sampleStatus);
