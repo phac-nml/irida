@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
 import org.springframework.data.domain.Sort;
 
@@ -11,6 +11,9 @@ public class TableRequest {
 	private String sortColumn;
 	private String sortDirection;
 	private String search;
+
+	public TableRequest() {
+	}
 
 	public int getCurrent() {
 		return current;

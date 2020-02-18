@@ -1,19 +1,11 @@
-package ca.corefacility.bioinformatics.irida.ria.web.oauth;
+package ca.corefacility.bioinformatics.irida.ria.web.clients;
 
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTClient;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import java.security.SecureRandom;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
+
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
@@ -32,9 +24,20 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolationException;
-import java.security.SecureRandom;
-import java.util.*;
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
@@ -142,10 +145,19 @@ public class ClientsController extends BaseController {
 	 * @return redirect back to the client page
 	 */
 	@RequestMapping("/revoke")
-	public String revokeTokens(@RequestParam Long id) {
+	public String revokeTokensAndRedirect(@RequestParam Long id) {
+		revokeClientTokens(id);
+		return "redirect:/clients/" + id;
+	}
+
+	/**
+	 * Revoke access tokens for a specific client.
+	 * @param id - identifier for a client
+	 */
+	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.DELETE)
+	public void revokeClientTokens(@RequestParam Long id) {
 		IridaClientDetails read = clientDetailsService.read(id);
 		clientDetailsService.revokeTokensForClient(read);
-		return "redirect:/clients/" + id;
 	}
 
 	/**
@@ -423,26 +435,25 @@ public class ClientsController extends BaseController {
 	}
 
 	/**
-	 * Get a {@link DataTablesResponse} for the Clients page.
+	 * Get a {@link TableResponse} for the Clients page.
 	 *
-	 * @param params
-	 * 		{@link DataTablesParams} for the current DataTable.
+	 * @param tableRequest
+	 * 		{@link TableRequest} for the current clients table.
 	 *
-	 * @return {@link DataTablesResponse}
+	 * @return {@link TableResponse}
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public DataTablesResponse getAjaxClientsList(@DataTablesRequest DataTablesParams params) {
+	public TableResponse<ClientModel> getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
 		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
-				.searchClient(params.getSearchValue());
+				.searchClient(tableRequest.getSearch());
 
 		Page<IridaClientDetails> page = clientDetailsService
-				.search(specification, PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-		List<DataTablesResponseModel> models = new ArrayList<>();
-		for (IridaClientDetails client : page.getContent()) {
-			models.add(new DTClient(client, clientDetailsService.countActiveTokensForClient(client)));
-		}
-		return new DataTablesResponse(params, page, models);
+				.search(specification, PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+		List<ClientModel> models = page.getContent().stream().map(client -> new ClientModel(client, clientDetailsService.countActiveTokensForClient(client)))
+				.collect(Collectors.toList());
+
+		return new TableResponse<ClientModel>(models, page.getTotalElements());
 	}
 
 	/**
