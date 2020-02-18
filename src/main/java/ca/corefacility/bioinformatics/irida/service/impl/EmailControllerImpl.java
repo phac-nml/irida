@@ -306,7 +306,8 @@ public class EmailControllerImpl implements EmailController {
 		try {
 			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
-			message.setSubject(messageSource.getMessage("email.syncexpired.subject", null, locale));
+			message.setSubject(
+					messageSource.getMessage("email.syncexpired.subject", new Object[] { project.getName() }, locale));
 			message.setFrom(serverEmail);
 			message.setTo(syncUser.getEmail());
 
