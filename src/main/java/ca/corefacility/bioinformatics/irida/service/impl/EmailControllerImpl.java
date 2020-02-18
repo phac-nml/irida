@@ -41,11 +41,11 @@ public class EmailControllerImpl implements EmailController {
 	public static final String PIPELINE_STATUS_TEMPLATE = "pipeline-status-email";
 	public static final String SYNC_EXPIRED_TEMPLATE = "sync-expired";
 
-	private @Value("${mail.server.email}")
-	String serverEmail;
+	@Value("${mail.server.email}")
+	private String serverEmail;
 
-	private @Value("${server.base.url}")
-	String serverURL;
+	@Value("${server.base.url}")
+	private String serverURL;
 
 	private ConfigurableJavaMailSender javaMailSender;
 	private TemplateEngine templateEngine;
