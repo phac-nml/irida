@@ -24,12 +24,11 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 @RequestMapping("/ajax/sequencingRuns")
 public class SequencingRunAjaxController {
 
-	private SequencingRunService sequencingRunService;
-	private MessageSource messageSource;
+	private final SequencingRunService sequencingRunService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public SequencingRunAjaxController(SequencingRunService sequencingRunService,
-			MessageSource messageSource) {
+	public SequencingRunAjaxController(SequencingRunService sequencingRunService, MessageSource messageSource) {
 		this.sequencingRunService = sequencingRunService;
 		this.messageSource = messageSource;
 	}
