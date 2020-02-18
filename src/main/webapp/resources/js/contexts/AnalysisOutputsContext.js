@@ -34,8 +34,6 @@ function AnalysisOutputsProvider(props) {
       // Used by output file preview to only display
       // tabs that are required
 
-      console.log(data);
-
       if (data !== "") {
         data.find(function(el) {
           if (!hasJsonFile) {

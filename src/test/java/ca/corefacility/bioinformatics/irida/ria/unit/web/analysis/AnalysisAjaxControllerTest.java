@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxControl
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisInputFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProvenanceResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
@@ -385,10 +386,16 @@ public class AnalysisAjaxControllerTest {
 		assertEquals("There should be 2 samples for this submission", inputFiles.getSamples().size() , 2);
 	}
 
-	@Ignore
 	@Test
 	public void getProvenance() {
+		Long submissionId = 1L;
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 
+		AnalysisProvenanceResponse provenance = analysisAjaxController.getProvenanceByFile(submissionId, "snp_tree.tree");
+		assertTrue("Provenance response is not null", provenance != null);
+		assertTrue("Provenance created by tool is 'testTool'", provenance.getCreatedByTool().getToolName().equals("testTool"));
+		assertTrue("Provenance created by tool -> previousExecutionTools is null", provenance.getCreatedByTool().getPreviousExecutionTools().size() == 0);
 	}
 
 }

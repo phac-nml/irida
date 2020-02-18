@@ -207,10 +207,8 @@ public class TestDataFactory {
 	}
 
 	public static ProjectAnalysisSubmissionJoin constructProjectAnalysisSubmissionJoin(
-			Project project, AnalysisSubmission submission) {
-
-			return new ProjectAnalysisSubmissionJoin(project, submission);
-
+		Project project, AnalysisSubmission submission) {
+		return new ProjectAnalysisSubmissionJoin(project, submission);
 	}
 
 	public static List<Join<Project, Sample>> constructListJoinProjectSample() {
