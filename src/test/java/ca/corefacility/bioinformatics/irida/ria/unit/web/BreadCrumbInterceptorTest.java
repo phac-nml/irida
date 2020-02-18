@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
@@ -14,20 +13,16 @@ import org.springframework.web.servlet.ModelAndView;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link BreadCrumbInterceptor}
  */
 public class BreadCrumbInterceptorTest {
-	private MessageSource messageSource;
 	private BreadCrumbInterceptor breadCrumbInterceptor;
 
 	@Before
 	public void setUp() {
-		this.messageSource = mock(MessageSource.class);
-		this.breadCrumbInterceptor = new BreadCrumbInterceptor(this.messageSource);
+		this.breadCrumbInterceptor = new BreadCrumbInterceptor();
 	}
 
 	@Test
@@ -35,10 +30,6 @@ public class BreadCrumbInterceptorTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setServletPath("/projects/51/samples/4");
 		request.addPreferredLocale(Locale.US);
-
-		when(messageSource.getMessage("bc.projects", null, Locale.US)).thenReturn("Projects");
-		when(messageSource.getMessage("bc.samples", null, Locale.US)).thenReturn("Samples");
-
 
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Map<String, ?> model = new HashMap<>();
@@ -58,12 +49,6 @@ public class BreadCrumbInterceptorTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setServletPath("/projects/this/has/no/ids");
 		request.addPreferredLocale(Locale.US);
-
-		when(messageSource.getMessage("bc.projects", null, Locale.US)).thenReturn("Projects");
-		when(messageSource.getMessage("bc.this", null, Locale.US)).thenReturn("This");
-		when(messageSource.getMessage("bc.has", null, Locale.US)).thenReturn("Has");
-		when(messageSource.getMessage("bc.no", null, Locale.US)).thenReturn("No");
-		when(messageSource.getMessage("bc.ids", null, Locale.US)).thenReturn("IDs");
 
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Map<String, ?> model = new HashMap<>();
