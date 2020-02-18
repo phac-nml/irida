@@ -81,7 +81,7 @@ export default function Tree() {
         ) : (
           <div>
             <ButtonGroupWrapper>
-              <Radio.Group value={currTreeShape} onChange={e => handleClick(e)}>
+              <Radio.Group value={currTreeShape} onChange={e => handleClick(e)} id="t-tree-shape-tools">
                 <Radio.Button value="rectangular">
                   {i18n("AnalysisPhylogeneticTree.rectangular")}
                 </Radio.Button>
@@ -103,11 +103,12 @@ export default function Tree() {
                 href={`${window.TL.BASE_URL}analysis/${analysisContext.analysis.identifier}/advanced-phylo`}
                 target="_blank"
                 key="advphylo"
+                id="t-advanced-phylo-btn"
               >
                 {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
               </Button>
             </ButtonGroupWrapper>
-            <VisualizationWrapper>{getTree()}</VisualizationWrapper>
+            <VisualizationWrapper id="t-phylocanvas-wrapper">{getTree()}</VisualizationWrapper>
           </div>
         )
       ) : (

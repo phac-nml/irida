@@ -35,7 +35,8 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		 9 - 17 are the actual element displayed within the overlay of the fixed column.
 		 */
 		page.deleteAnalysis(9);
-		assertEquals("Should have 9 analyses displayed after deleting one", 9, page.getNumberOfAnalysesDisplayed());
+		// Still 10 left as there is a total of 13 analyses (10 displayed on each page of table)
+		assertEquals("Should have 10 analyses displayed after deleting one", 10, page.getNumberOfAnalysesDisplayed());
 
 	}
 }

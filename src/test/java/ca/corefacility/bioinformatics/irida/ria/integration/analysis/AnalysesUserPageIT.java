@@ -24,12 +24,12 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPageSetUp() {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
-		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 
 		// Test the name filter
 		page.searchForAnalysisByName("My Fake Submission");
 		assertEquals("Should have 1 Analysis displayed after filtering", 1, page.getNumberOfAnalysesDisplayed());
 		page.clearNameFilter();
-		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 	}
 }
