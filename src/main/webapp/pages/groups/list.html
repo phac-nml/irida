@@ -4,17 +4,13 @@
       data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{nav.main.groups-list}">_Groups_</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/groups-list.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/groups-list.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
             urls: {
                 link: /*[[@{/groups/}]]*/ '/groups',
                 deleteGroup: /*[[@{/groups/}]]*/ '/groups/',
                 deleteModal: /*[[@{/groups/deleteConfirmModal}]]*/ '/groups/deleteConfirmModal'
-            },
-            i18n: {
-            	unexpectedRemoveError: /*[[#{group.remove.notification.failure}]]*/ '_An error occured when removing your group. Try again._',
-            	remove: /*[[#{group.remove.button.tooltip}]]*/ '_Remove group_'
             }
         };
     </script>
@@ -42,7 +38,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/groups-list.bundle.js}"></script>
+    <script th:src="@{/dist/js/groups-list.bundle.js}"></script>
 </th:block>
 </body>
 </html>

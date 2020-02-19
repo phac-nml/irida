@@ -17,11 +17,11 @@
 		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" sistr_typing_uploads="OFF" />
+		projectDescription="description"  />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-		projectDescription="description2" sistr_typing_uploads="OFF" />
+		projectDescription="description2"  />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
-		projectDescription="description3" sistr_typing_uploads="OFF" />
+		projectDescription="description3"  />
 
 	<sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
 		 sampleName="sample1" />

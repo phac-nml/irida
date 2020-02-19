@@ -1,5 +1,8 @@
 import React, { Component, Suspense } from "react";
+import { connect } from "react-redux";
+
 import PropTypes from "prop-types";
+import { actions as entryActions } from "../../reducers/entries";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
@@ -8,12 +11,12 @@ const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
-const { i18n, urls } = window.PAGE;
+const { urls } = window.PAGE;
 
-export class Toolbar extends Component {
+export class ToolbarComponent extends Component {
   state = { tourOpen: false, showTourPopover: false };
 
-    componentDidMount() {
+  componentDidMount() {
     if (typeof window.localStorage === "object") {
       if (!window.localStorage.getItem("linelist-tour")) {
         window.localStorage.setItem("linelist-tour", "complete");
@@ -71,13 +74,13 @@ export class Toolbar extends Component {
                   className="fas fa-cloud-upload-alt spaced-right__sm"
                   aria-hidden="true"
                 />
-                {i18n.linelist.importBtn.text}
+                {i18n("linelist.importBtn.text")}
               </Button>
             </Form.Item>
             <Form.Item>
               <Search
                 tour="tour-search"
-                onKeyUp={e => this.props.quickSearch(e.target.value)}
+                onKeyUp={e => this.props.updateFilter(e.target.value)}
                 id="js-table-filter"
                 className="table-filter t-table-filter"
                 style={{
@@ -103,7 +106,7 @@ export class Toolbar extends Component {
                     }}
                     onClick={this.closePopover}
                   >
-                    {i18n.linelist.tour.popover}
+                    {i18n("linelist.tour.popover")}
                   </strong>
                 }
                 visible={this.state.showTourPopover}
@@ -111,7 +114,7 @@ export class Toolbar extends Component {
                 arrowPointAtCenter
               >
                 <Button
-                  title={i18n.linelist.tour.title}
+                  title={i18n("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
                   icon="question"
@@ -126,11 +129,21 @@ export class Toolbar extends Component {
   }
 }
 
-Toolbar.propTypes = {
+ToolbarComponent.propTypes = {
   selectedCount: PropTypes.number.isRequired,
   exportCSV: PropTypes.func.isRequired,
   exportXLSX: PropTypes.func.isRequired,
-  addSamplesToCart: PropTypes.func.isRequired,
-  quickSearch: PropTypes.func.isRequired,
-  scrollTableToTop: PropTypes.func.isRequired
+  scrollTableToTop: PropTypes.func.isRequired,
+  updateFilter: PropTypes.func.isRequired
 };
+
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({
+  updateFilter: value => dispatch(entryActions.setGlobalFilter(value))
+});
+
+export const Toolbar = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ToolbarComponent);

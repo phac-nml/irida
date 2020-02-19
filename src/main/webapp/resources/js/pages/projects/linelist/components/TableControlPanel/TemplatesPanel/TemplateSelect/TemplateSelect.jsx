@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { Select } from "antd";
 import { TemplateSelectOption } from "./TemplateSelectOption";
 import {
@@ -9,7 +8,6 @@ import {
 } from "../../../../../../../components/popovers/index";
 
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /*
 The internationalized content of the help popover describing
@@ -17,8 +15,8 @@ what a template is and how to use it.
  */
 const content = (
   <React.Fragment>
-    <p>{i18n.linelist.templates.Popover.content}</p>
-    <p>{i18n.linelist.templates.Popover.description}</p>
+    <p>{i18n("linelist.templates.Popover.content")}</p>
+    <p>{i18n("linelist.templates.Popover.description")}</p>
   </React.Fragment>
 );
 
@@ -27,16 +25,15 @@ const content = (
  * component to select a specific Metadata template.
  */
 export function TemplateSelect(props) {
-  const { current, useTemplate } = props;
-  const templates = props.templates.toJS();
+  const { current, templates, useTemplate } = props;
 
   return (
     <React.Fragment>
       <label style={{ color: "#707171" }}>
-        {i18n.linelist.templates.title}
+        {i18n("linelist.templates.title")}
         <HelpPopover
           content={<PopoverContents contents={content} />}
-          title={i18n.linelist.templates.Popover.title}
+          title={i18n("linelist.templates.Popover.title")}
         />
       </label>
       <Select
@@ -61,6 +58,6 @@ export function TemplateSelect(props) {
 
 TemplateSelect.propTypes = {
   current: PropTypes.number.isRequired,
-  templates: ImmutablePropTypes.list.isRequired,
+  templates: PropTypes.array.isRequired,
   useTemplate: PropTypes.func.isRequired
 };

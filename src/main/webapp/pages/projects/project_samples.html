@@ -5,9 +5,9 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples.bundle.css}"/>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-copy.bundle.css}">
-    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-filter.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-samples.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/dist/css/project-samples-copy.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-samples-filter.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
         isRemoteProject: /*[[${project.isRemote()}]]*/ false,
@@ -26,29 +26,6 @@
             sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
           },
           fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
-        },
-        i18n: {
-          chips: {
-            name: /*[[#{project.sample.filter-name}]]*/ "Name",
-            range: /*[[#{project.sample.filter-date.label}]]*/ "Date Range",
-            organism: /*[[#{project.sample.filter-organism}]]*/ "Organism"
-          },
-          dateFilter: {
-            format: /*[[#{project.sample.filter.date.format}]]*/ "MMM dd, YYYY",
-            month: /*[[#{project.sample.filter.date.month}]]*/ "_MONTH_",
-            months3: /*[[#{project.sample.filter.date.months3}]]*/ "3 Months_",
-            months6: /*[[#{project.sample.filter.date.months6}]]*/ "6 Months_",
-            year: /*[[#{project.sample.filter.date.year}]]*/ "Year_"
-          },
-          buttons: {
-            selectAll: /*[[#{project.samples.select.selectAll}]]*/ "Select All",
-            selectNone: /*[[#{project.samples.select.selectNone}]]*/ "Select None"
-          },
-          select: {
-            none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
-            one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
-            other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
-          }
         }
       };
     </script>
@@ -73,7 +50,7 @@
                                    data:remote-msg="#{project.samples.tooltip.merge.remote-project}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
-                                   data:script="@{/resources/dist/js/project-samples-merge.bundle.js}">
+                                   data:script="@{/dist/js/project-samples-merge.bundle.js}">
                                     <i class="fa fa-compress fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.merge}"/>
                                 </a>
@@ -85,7 +62,7 @@
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data-params="{&quot;move&quot;: false}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
-                                   data:script="@{/resources/dist/js/project-samples-copy.bundle.js}">
+                                   data:script="@{/dist/js/project-samples-copy.bundle.js}">
                                     <i class="fa fa-share-alt fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.share}"/>
                                 </a>
@@ -98,7 +75,7 @@
                                    data:remote-msg="#{project.samples.tooltip.move.remote-project}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
-                                   data:script="@{/resources/dist/js/project-samples-copy.bundle.js}">
+                                   data:script="@{/dist/js/project-samples-copy.bundle.js}">
                                     <i class="fa fa-truck fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.move}"/>
                                 </a>
@@ -109,7 +86,7 @@
                                    data:enabled-msg="#{project.samples.tooltip.remove.requires-more-than-one}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/remove-modal(projectId=${project.getId()})}"
-                                   data:script="@{/resources/dist/js/project-samples-remove.bundle.js}">
+                                   data:script="@{/dist/js/project-samples-remove.bundle.js}">
                                     <i class="fa fa-trash fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.remove}"/>
                                 </a>
@@ -197,7 +174,7 @@
                                 <a href="#" class="js-sample-tool-btn t-linker-btn"
                                    data-toggle="tooltip" data-enabled-at="0"
                                    data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
-                                   data:script="@{/resources/dist/js/project-samples-linker.bundle.js}"
+                                   data:script="@{/dist/js/project-samples-linker.bundle.js}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}">
                                     <i class="fa fa-terminal fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.linker}"/>
@@ -265,7 +242,7 @@
     <div id="js-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
     <div id="js-filter-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"
          data:template="@{/projects/{id}/template/samples-filter-modal(id=${project.getId()})}"
-         data:script="@{/resources/dist/js/project-samples-filter.bundle.js}"></div>
+         data:script="@{/dist/js/project-samples-filter.bundle.js}"></div>
 
     <div class="hidden">
         <span class="qc-warning-wrapper js-qc-warning-wrapper" data-toggle="popover"
@@ -342,7 +319,7 @@
           });
         </script>
     </div>
-    <script th:src="@{/resources/dist/js/project-samples.bundle.js}"></script>
+    <script th:src="@{/dist/js/project-samples.bundle.js}"></script>
 </th:block>
 </body>
 </html>

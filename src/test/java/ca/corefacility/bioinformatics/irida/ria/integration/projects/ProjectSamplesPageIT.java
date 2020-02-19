@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -22,6 +23,16 @@ import static org.junit.Assert.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
+	@After
+	public void resetTable() {
+		/*
+		This was added to ensure that after every test the samples table is returned to its default
+		state.  Current DataTables stores a reference to which page in the table the user is on.
+		 */
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.closeModalIfOpen();
+		page.selectPaginationPage(1);
+	}
 
 	@Test(expected = AssertionError.class)
 	public void testGoingToInvalidPage() {
@@ -99,9 +110,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testAssociatedProjects() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should be displaying 23 samples", "Showing 1 to 10 of 23 entries", page.getTableInfo());
 		page.displayAssociatedProject();
-		assertEquals("Should be displaying 22 samples", "Showing 1 to 10 of 22 entries", page.getTableInfo());
+		assertEquals("Should be displaying 24 samples", "Showing 1 to 10 of 24 entries", page.getTableInfo());
 	}
 
 	@Test
@@ -117,7 +128,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 
 		page.selectAllSamples();
-		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
+		assertEquals("Should have all samples selected", "23 samples selected", page.getSelectedInfoText());
 
 		page.deselectAllSamples();
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
@@ -131,9 +142,20 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSampleWithShift(4);
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 
-		page.addSelectedSamplesToCart();
-		assertEquals("Should be 5 samples in the cart", 5, page.getCartCount());
 
+		page.goToNextPage();
+		page.selectSample(1);
+		page.selectSample(2);
+		assertEquals("Should be 7 selected samples", "7 samples selected", page.getSelectedInfoText());
+
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be 7 samples in the cart", 7, page.getCartCount());
+		page.selectPaginationPage(1);
+
+		// Need to make sure select all samples works
+		page.selectAllSamples();
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be 23 samples in the cart", 23, page.getCartCount());
 	}
 
 	@Test
@@ -157,7 +179,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Merge with a new name
 		page.selectSample(0);
-		page.selectSample(2);
+		page.selectSample(1);
 		String newSampleName = "NEW_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
@@ -276,12 +298,12 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testMoveSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should be displaying 23 samples", "Showing 1 to 10 of 23 entries", page.getTableInfo());
 		List<String> movedNames = page.getSampleNamesOnPage().subList(2, 4);
 		page.selectSample(2);
 		page.selectSample(3);
 		page.moveSamples("project3");
-		assertEquals("Should be displaying 19 samples", "Showing 1 to 10 of 19 entries", page.getTableInfo());
+		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		ProjectSamplesPage.gotToPage(driver(), 3);
 		List<String> newNames = page.getSampleNamesOnPage();
@@ -301,9 +323,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Remove process
 		page.removeSamples();
-		assertEquals("Should be only 2 pages of projects now", 2, page.getPaginationCount());
+		assertEquals("Should be only 3 pages of projects now", 3, page.getPaginationCount());
 		page.selectPaginationPage(2);
-		assertEquals("Should only be displaying 9 samples.", 9, page.getNumberProjectsDisplayed());
+		assertEquals("Should only be displaying 10 samples.", 10, page.getNumberProjectsDisplayed());
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 	}
 
@@ -311,9 +333,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testFilteringSamplesByProperties() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should have 23 projects displayed", "Showing 1 to 10 of 23 entries", page.getTableInfo());
 		page.filterByName("5");
-		assertEquals("Should have 17 projects displayed", "Showing 1 to 10 of 17 entries", page.getTableInfo());
+		assertEquals("Should have 19 projects displayed", "Showing 1 to 10 of 19 entries", page.getTableInfo());
 		page.filterByName("52");
 		assertEquals("Should have 3 projects displayed", "Showing 1 to 3 of 3 entries", page.getTableInfo());
 
@@ -323,15 +345,26 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test clearing the filters
 		page.clearFilter();
-		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should have 23 projects displayed", "Showing 1 to 10 of 23 entries", page.getTableInfo());
 
 		// Should ignore case
 		page.filterByName("sample");
-		assertEquals("Should ignore case when filtering", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should ignore case when filtering", "Showing 1 to 10 of 23 entries", page.getTableInfo());
 
 		// Test date range filter
 		page.clearFilter();
-		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should have 23 samples displayed", "Showing 1 to 10 of 23 entries", page.getTableInfo());
+
+		// Should find sample with underscores not hyphens
+		page.filterByName("sample_5_fg_22");
+		assertEquals("Should only have returned 2 sample", 2, page.getSampleNamesOnPage().size());
+		assertEquals("Should have sample with exact name", "sample_5_fg_22", page.getSampleNamesOnPage().get(0));
+
+		// Should find sample with hyphens not underscores
+		page.filterByName("sample-5-fg-22");
+		assertEquals("Should only have returned 1 sample", 1, page.getSampleNamesOnPage().size());
+		assertEquals("Should have sample with exact name", "sample-5-fg-22", page.getSampleNamesOnPage().get(0));
+
 	}
 
 	@Test
@@ -347,7 +380,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test clearing the filters
 		page.clearFilter();
-		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		assertEquals("Should have 23 samples displayed", "Showing 1 to 10 of 23 entries", page.getTableInfo());
 	}
 
 	@Test

@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@Column(name = "file_path", unique = true)
@@ -147,7 +147,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	}
 
 	@com.fasterxml.jackson.annotation.JsonIgnore
-	public final ToolExecution getCreatedByTool() {
+	public ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}
 

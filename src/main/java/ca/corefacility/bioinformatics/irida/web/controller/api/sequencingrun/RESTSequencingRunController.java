@@ -38,9 +38,12 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	}
 
 	/**
-	 * Constructor for {@link RESTProjectsController}, requires a reference to a {@link ProjectService}.
+	 * Constructor for {@link RESTProjectsController}, requires a reference to a
+	 * {@link ProjectService}.
 	 *
-	 * @param service the {@link SequencingRunService} to be used by this controller.
+	 * @param service
+	 *            the {@link SequencingRunService} to be used by this
+	 *            controller.
 	 */
 	@Autowired
 	public RESTSequencingRunController(SequencingRunService service) {

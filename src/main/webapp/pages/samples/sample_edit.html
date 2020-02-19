@@ -4,7 +4,7 @@
       data-layout-decorate="~{samples/_base}">
 <head>
     <title th:text="#{samples.edit.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/sample-edit.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/sample-edit.bundle.css}">
 </head>
 <body>
 <div layout:fragment="main">
@@ -178,7 +178,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/pages/samples/edit.js}"></script>
+    <script th:src="@{/dist/js/sample-edit.bundle.js}"></script>
 </th:block>
 </body>
 </html>

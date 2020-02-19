@@ -7,14 +7,22 @@ import {
   sampleDetailsReducer
 } from "../../components/SampleDetails";
 import { actions } from "../../redux/reducers/app";
-import { reducer as galaxyReducer } from "../../components/galaxy/reducer";
 import {
   empty,
+  loadFullCart,
   removeProjectFromCart,
-  removeSampleFromCart,
-  loadFullCart
+  removeSampleFromCart
 } from "../../redux/sagas/cart";
 import { Cart } from "./components/Cart";
+import { setBaseUrl } from "../../utilities/url-utilities";
+
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`dist/`);
 
 const store = getStore(
   { sampleDetailsReducer },

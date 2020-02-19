@@ -46,26 +46,26 @@ public class UserRevListenerIT {
 	@WithMockOAuth2Client(clientId = "testClient", username = "fbristow", password = "Password1!")
 	public void testModifyWithOAuth2() {
 
-		Project read = projectRepository.findOne(1L);
+		Project read = projectRepository.findById(1L).orElse(null);
 		read.setName("A new name");
 		projectRepository.save(read);
 
-		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId());
+		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId()).orElse(null);
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
-				findLastChangeRevision.getRevisionNumber());
+				findLastChangeRevision.getRevisionNumber().orElse(null));
 		assertEquals("client id should be set in revision", new Long(1), findRevision.getClientId());
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "Password1!")
 	public void testModifyWithUsernamePassword() {
-		Project read = projectRepository.findOne(1L);
+		Project read = projectRepository.findById(1L).orElse(null);
 		read.setName("A new name");
 		projectRepository.save(read);
 
-		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId());
+		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId()).orElse(null);
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
-				findLastChangeRevision.getRevisionNumber());
+				findLastChangeRevision.getRevisionNumber().orElse(null));
 		assertNull(findRevision.getClientId());
 	}
 }

@@ -1,36 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.project;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -43,7 +12,22 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A project object.
@@ -57,7 +41,7 @@ public class Project extends IridaResourceSupport
 		implements MutableIridaThing, IridaProject, Comparable<Project>, RemoteSynchronizable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String name;
@@ -65,7 +49,8 @@ public class Project extends IridaResourceSupport
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
@@ -76,46 +61,6 @@ public class Project extends IridaResourceSupport
 	private String projectDescription;
 
 	private String remoteURL;
-	
-	@NotNull
-	@Column(name="assemble_uploads")
-	private boolean assembleUploads;
-	
-	@NotNull
-	@Column(name="sistr_typing_uploads")
-	@Enumerated(EnumType.STRING)
-	private AutomatedSISTRSetting sistrTypingUploads;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectUserJoin> users;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<UserGroupProjectJoin> groups;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectSampleJoin> samples;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "subject")
-	private List<RelatedProjectJoin> relatedProjects;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
-	private List<RelatedProjectJoin> projectsRelatedTo;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectReferenceFileJoin> referenceFiles;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectMetadataTemplateJoin> metadataTemplates;
-	
-	@NotAudited
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy = "project")
-	private List<ProjectEvent> events;
-	
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectAnalysisSubmissionJoin> analysisSubmissions;
-	
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<NcbiExportSubmission> ncbiSubmissions;
 
 	private String organism;
 	
@@ -139,10 +84,51 @@ public class Project extends IridaResourceSupport
 	@Enumerated(EnumType.STRING)
 	private ProjectSyncFrequency syncFrequency;
 
+	@Column(name = "analysis_priority")
+	@Enumerated(EnumType.STRING)
+	private AnalysisSubmission.Priority analysisPriority;
+
+	/*
+	 * This group of properties are here to ensure cascading deletion by JPA when a project is deleted.  They are not used within the class.
+	 */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectUserJoin> users;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<UserGroupProjectJoin> groups;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectSampleJoin> samples;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "subject")
+	private List<RelatedProjectJoin> relatedProjects;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
+	private List<RelatedProjectJoin> projectsRelatedTo;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectReferenceFileJoin> referenceFiles;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectMetadataTemplateJoin> metadataTemplates;
+
+	@NotAudited
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "project")
+	private List<ProjectEvent> events;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectAnalysisSubmissionJoin> analysisSubmissions;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "submittedProject")
+	private List<AnalysisSubmissionTemplate> analysisTemplates;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<NcbiExportSubmission> ncbiSubmissions;
+	//End of cascade deletion properties
+
 	public Project() {
-		assembleUploads = false;
-		sistrTypingUploads = AutomatedSISTRSetting.OFF;
 		createdDate = new Date();
+		analysisPriority = AnalysisSubmission.Priority.LOW;
 	}
 
 	/**
@@ -238,15 +224,7 @@ public class Project extends IridaResourceSupport
 	public void setOrganism(String organism) {
 		this.organism = organism;
 	}
-	
-	public void setAssembleUploads(boolean assembleUploads) {
-		this.assembleUploads = assembleUploads;
-	}
-	
-	public boolean getAssembleUploads(){
-		return assembleUploads;
-	}
-	
+
 	@Override
 	public RemoteStatus getRemoteStatus() {
 		return remoteStatus;
@@ -290,24 +268,12 @@ public class Project extends IridaResourceSupport
 	}
 
 	@JsonIgnore
-	public AutomatedSISTRSetting getSistrTypingUploads() {
-		return sistrTypingUploads;
+	public AnalysisSubmission.Priority getAnalysisPriority() {
+		return analysisPriority;
 	}
 
 	@JsonIgnore
-	public void setSistrTypingUploads(AutomatedSISTRSetting sistrTypingUploads) {
-		this.sistrTypingUploads = sistrTypingUploads;
-	}
-
-	/**
-	 * Setting for how to run automated SISTR analyses.
-	 * OFF - Do not run
-	 * AUTO - Run SISTR
-	 * AUTO_METADATA - Run and save results to metadata
-	 */
-	public enum AutomatedSISTRSetting {
-		OFF,
-		AUTO,
-		AUTO_METADATA
+	public void setAnalysisPriority(AnalysisSubmission.Priority analysisPriority) {
+		this.analysisPriority = analysisPriority;
 	}
 }

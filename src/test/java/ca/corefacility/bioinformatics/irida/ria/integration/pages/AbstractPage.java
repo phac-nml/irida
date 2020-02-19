@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 import static org.junit.Assert.*;
@@ -25,9 +25,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080"
-			: System.getProperty("jetty.port");
-	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
+	protected static final String BASE_URL = System.getProperty("server.base.url", "http://localhost:" + System.getProperty("jetty.port", "8080")) + "/";
 	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	protected final int DEFAULT_WAIT = 500;
@@ -214,12 +212,12 @@ public class AbstractPage {
 	}
 
 	/**
-	 * Get the current JETTY port
+	 * Get the BASE URL
 	 *
 	 * @return
 	 */
-	public String getApplicationPort() {
-		return APPLICATION_PORT;
+	public String getBaseUrl() {
+		return BASE_URL;
 	}
 
 	/**
@@ -240,8 +238,8 @@ public class AbstractPage {
 	 */
 	public void waitForJQueryAjaxResponse() {
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until((Predicate<WebDriver>) input ->
-						(Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery.active == 0"));
+				.until((ExpectedCondition<Boolean>) wd ->
+						(Boolean) ((JavascriptExecutor) wd).executeScript("return jQuery.active == 0"));
 	}
 
 	/**
@@ -272,5 +270,15 @@ public class AbstractPage {
 	 */
 	public boolean hasErrors() {
 		return !driver.findElements(By.className("t-form-error")).isEmpty();
+	}
+
+	public boolean ensureTranslationsLoaded(String entry) {
+		return driver.findElements(By.id(entry.replace("/", "-") + "-translations")).size() > 0;
+	}
+
+	public boolean ensurePageHeadingIsTranslated(String expected) {
+		return driver.findElement(By.className("t-main-heading"))
+				.getText()
+				.equals(expected);
 	}
 }

@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
+import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
 import ca.corefacility.bioinformatics.irida.web.spring.view.*;
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,12 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,7 @@ import java.util.Map;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
-public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
+public class IridaRestApiWebConfig implements WebMvcConfigurer {
 
 	/** named constant for allowing unlimited upload sizes. */
 	public static final Long UNLIMITED_UPLOAD_SIZE = -1L;
@@ -74,12 +76,15 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		jsonView.setPrettyPrint(true);
 
 		// add support for serializing Path data
-		jsonView.getObjectMapper().registerModule(new Jdk7Module());
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(Path.class, new PathJson.PathSerializer());
+		jsonView.getObjectMapper()
+				.registerModule(module);
 
 		views.add(jsonView);
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
-		jaxb2marshaller
-				.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.web.assembler.resource" });
+		jaxb2marshaller.setPackagesToScan(
+				new String[] { "ca.corefacility.bioinformatics.irida.web.assembler.resource" });
 		MarshallingView marshallingView = new MarshallingView(jaxb2marshaller);
 		views.add(marshallingView);
 		views.add(new FastaView());

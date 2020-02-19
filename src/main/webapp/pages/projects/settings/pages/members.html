@@ -3,13 +3,9 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.members}">Title</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/project-users-groups.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
-        i18n: {
-          'remove': /*[[#{project.members.edit.remove}]]*/ '_Remove user from project_'
-
-        },
         urls: {
           'addMember': /*[[@{/projects/{id}/settings/members(id=${project.getId()})}]]*/ '/projects/1/settings/members',
           'usersLink': /*[[@{/users/}]]*/'/users',
@@ -72,8 +68,8 @@
                                th:text="#{project.members.add.username}">
                         </label>
 
-                        <select id="add-member-membername" name="memberId" class="form-control input-full"
-                                th:placeholder="#{project.members.add.select-user}"></select>
+                        <input id="add-member-membername" name="memberId" class="form-control input-full"
+                                th:placeholder="#{project.members.add.select-user}"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="add-member-role" th:text="#{project.members.add.role}">_Group
@@ -100,7 +96,7 @@
 
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/project-users-groups.bundle.js}"></script>
+    <script th:src="@{/dist/js/project-users-groups.bundle.js}"></script>
 </th:block>
 </body>
 </html>

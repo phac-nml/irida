@@ -4,7 +4,7 @@
 	  data-layout-decorate="~{template/page}">
 <head>
 <title th:text="${group.label}">_IRIDA Group_</title>
-	<link rel="stylesheet" th:href="@{/resources/dist/css/group-members.bundle.css}">
+	<link rel="stylesheet" th:href="@{/dist/css/group-members.bundle.css}">
 <script th:inline="javascript">
 	var PAGE = {
 		urls : {
@@ -13,11 +13,6 @@
 			usersLink : /*[[@{/users/}]]*/'/users',
 			usersSelection : /*[[@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}]]*/'/groups/1/ajax/availablemembers',
 			deleteModal : /*[[@{/groups/removeUserModal}]]*/ '/groups/removeUserModal'
-		},
-		i18n : {
-			'unexpectedAddError' : /*[[#{group.users.add.notification.failure}]]*/'_An error happened when adding the user to this group, try again_',
-			'unexpectedRemoveError' : /*[[#{group.users.remove.notification.failure}]]*/'_An error happened when removing the user from this group, try again_',
-			'remove': /*[[#{group.users.remove.button.tooltip}]]*/ '_Remove user from group_'
 		}
 	};
 </script>
@@ -95,7 +90,7 @@
 				<div class="modal-body">
 	                <div class="form-group">
 	                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.user}">_Username_</label>
-						<select id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"></select>
+						<input id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"/>
 	                </div>
 	                <div class="form-group">
 	                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
@@ -121,7 +116,7 @@
 	</main>
 
 <th:block layout:fragment="scripts">
-	<script th:src="@{/resources/dist/js/group-members.bundle.js}"></script>
+	<script th:src="@{/dist/js/group-members.bundle.js}"></script>
 </th:block>
 </body>
 </html>

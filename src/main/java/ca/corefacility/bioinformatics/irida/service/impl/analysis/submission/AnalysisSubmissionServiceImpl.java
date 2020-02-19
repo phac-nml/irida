@@ -1,23 +1,44 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
+import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTemplateRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
-import org.hibernate.TransientPropertyValueException;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,51 +52,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
-import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implementation of an AnalysisSubmissionService.
- * 
+ *
  *
  */
 @Service
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceImpl.class);
-	
+
 	/**
 	 * A {@link Map} defining the progress transitions points for each state in
 	 * an {@link AnalysisSubmission}.
@@ -94,12 +88,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			put(AnalysisState.COMPLETED,            100.0f).
 			build();
 	// @formatter:on
-	
+
 	private static final float RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.RUNNING);
 	private static final float FINISHED_RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.FINISHED_RUNNING);
-	
+
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisSubmissionTemplateRepository analysisTemplateRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
@@ -113,25 +108,29 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 *  @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 *
+	 * @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 * @param analysisTemplateRepository   repository for {@link AnalysisSubmissionTemplate}s
 	 * @param userRepository               A repository for accessing user information.
 	 * @param referenceFileRepository      the reference file repository
 	 * @param sequencingObjectService      the {@link SequencingObject} service.
 	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
 	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
 	 * @param jobErrorRepository           A repository for accessing {@link JobError}
-	 * @param iridaWorkflowsService		   The {@link IridaWorkflowsService}
+	 * @param iridaWorkflowsService        The {@link IridaWorkflowsService}
 	 * @param validator                    A validator.
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
+			AnalysisSubmissionTemplateRepository analysisTemplateRepository, UserRepository userRepository,
+			final ReferenceFileRepository referenceFileRepository,
 			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
 			ProjectAnalysisSubmissionJoinRepository pasRepository, JobErrorRepository jobErrorRepository,
 			IridaWorkflowsService iridaWorkflowsService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.analysisTemplateRepository = analysisTemplateRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -139,7 +138,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.jobErrorRepository = jobErrorRepository;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
-	
+
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
 		this.analysisExecutionService = analysisExecutionService;
 	}
@@ -149,11 +148,11 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
 
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, project);
+				.filterAnalyses(search, name, states, null, workflowIds, project, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -162,10 +161,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, null, workflowIds, null);
+				.filterAnalyses(search, name, states, null, workflowIds, null, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -174,10 +173,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states,
 			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, state, user, workflowIds, null);
+				.filterAnalyses(search, name, states, user, workflowIds, null, false);
 		return super.search(specification, pageRequest);
 	}
 
@@ -236,7 +235,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException {
+	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) {
 		return super.findRevisions(id);
 	}
 
@@ -245,8 +244,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
-			throws EntityRevisionDeletedException {
+	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable) {
 		return super.findRevisions(id, pageable);
 	}
 
@@ -286,7 +284,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	public void delete(Long id) throws EntityNotFoundException {
 		final AnalysisSubmission submission = read(id);
-		
+
 		if (AnalysisCleanedState.NOT_CLEANED.equals(submission.getAnalysisCleanedState())) {
 			// We're "CLEANING" it right now!
 			submission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
@@ -302,10 +300,22 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		} else {
 			logger.debug("Not cleaning submission [" + id + "] when deleting, it's already cleaned.");
 		}
-		
+
 		super.delete(id);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#ids, 'canUpdateAnalysisSubmission')")
+	@Transactional
+	public void deleteMultiple(Collection<Long> ids) {
+		for (Long id : ids) {
+			delete(id);
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -373,31 +383,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public AnalysisSubmission create(AnalysisSubmission analysisSubmission) throws ConstraintViolationException,
-			EntityExistsException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
+			throws ConstraintViolationException, EntityExistsException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
-		
-		try {
-			return super.create(analysisSubmission);
-		} catch (final InvalidDataAccessApiUsageException e) {
-			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
-			if (e.getCause() != null) {
-				final Throwable primaryCause = e.getCause();
-				if (primaryCause.getCause() != null
-						&& primaryCause.getCause() instanceof TransientPropertyValueException) {
-					final TransientPropertyValueException propertyException = (TransientPropertyValueException) primaryCause
-							.getCause();
-					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
-						throw new UnsupportedOperationException(
-								"You must save the named properties *before* you use them in a submission.", e);
-					}
-				}
-			}
 
-			throw e;
-		}
+		return super.create(analysisSubmission);
+
 	}
 
 	/**
@@ -421,12 +416,101 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		return getAnalysisSubmissionsForUser(user);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadAnalysisSubmission')")
 	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(Collection<UUID> workflowIds) {
 		return analysisSubmissionRepository.findByWorkflowIds(workflowIds);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project) {
+		return analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#projectsToShare, 'canManageLocalProjectSettings')")
+	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
+			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
+			String statusMessage, String analysisDescription, Project projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResults) {
+
+		// Single end reads
+		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+
+		ReferenceFile referenceFile = null;
+		// Add reference file
+		if (referenceFileId != null && description.requiresReference()) {
+			// Note: This cannot be empty if through the UI if the
+			// pipeline required a reference file.
+			referenceFile = referenceFileRepository.findById(referenceFileId).orElse(null);
+		}
+
+		AnalysisSubmissionTemplate template = null;
+		if (description.acceptsParameters()) {
+			if (namedParameters != null) {
+				template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(),
+						namedParameters, referenceFile, writeResultsToSamples, analysisDescription,
+						emailPipelineResults, projectsToShare);
+
+			} else {
+				if (!params.isEmpty()) {
+					template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(), params,
+							referenceFile, writeResultsToSamples, analysisDescription, emailPipelineResults,
+							projectsToShare);
+				}
+			}
+		}
+
+		template.setStatusMessage(statusMessage);
+
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = userRepository.loadUserByUsername(userDetails.getUsername());
+		template.setSubmitter(user);
+
+		template = analysisTemplateRepository.save(template);
+
+		return template;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public AnalysisSubmissionTemplate readAnalysisSubmissionTemplateForProject(Long id, Project project) {
+		List<AnalysisSubmissionTemplate> analysisTemplatesForProject = getAnalysisTemplatesForProject(project);
+
+		Optional<AnalysisSubmissionTemplate> first = analysisTemplatesForProject.stream()
+				.filter(t -> t.getId()
+						.equals(id))
+				.findFirst();
+
+		if(!first.isPresent()){
+			throw new EntityNotFoundException("Could not get analysis template " + id + " for project " + project.getId());
+		}
+
+		return first.get();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public void deleteAnalysisSubmissionTemplateForProject(Long id, Project project) {
+		AnalysisSubmissionTemplate template = readAnalysisSubmissionTemplateForProject(id, project);
+		analysisTemplateRepository.delete(template);
 	}
 
 	/**
@@ -443,7 +527,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
-			
+
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
@@ -462,7 +546,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				if (ref != null && description.requiresReference()) {
 					// Note: This cannot be empty if through the UI if the
 					// pipeline required a reference file.
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -482,7 +566,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				createdSubmissions.add(create(builder.build()));
 
 			}
-			
+
 		}
 
 		// Paired end reads
@@ -502,7 +586,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.emailPipelineResult(emailPipelineResult);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
-					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 					builder.referenceFile(referenceFile);
 				}
 
@@ -525,7 +609,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				createdSubmissions.add(create(builder.build()));
 			}
 		}
-		
+
 		// Share with the required projects
 		for (AnalysisSubmission submission : createdSubmissions) {
 			for (Project project : projectsToShare) {
@@ -553,7 +637,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Add reference file
 		if (ref != null && description.requiresReference()) {
-			ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+			ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
 			builder.referenceFile(referenceFile);
 		}
 
@@ -624,12 +708,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			 * (10%) and FINISHED_RUNNING_PERCENT (90%) so that after all jobs
 			 * are complete we are only at 90%. The remaining 10% involves
 			 * transferring files back to Galaxy.
-			 * 
+			 *
 			 * For example, if there are 10 out of 20 jobs finished on Galaxy,
 			 * then the proportion of jobs complete is 10/20 = 0.5. So, the
 			 * percent complete for the overall analysis is: percentComplete =
 			 * 10 + (90 - 10) * 0.5 = 50%.
-			 * 
+			 *
 			 * If there are 20 out of 20 jobs finished in Galaxy, then the
 			 * percent complete is: percentComplete = 10 + (90 - 10) * 1.0 =
 			 * 90%.
@@ -639,7 +723,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			GalaxyWorkflowStatus workflowStatus = galaxyHistoriesService.getStatusForHistory(workflowHistoryId);
 			return RUNNING_PERCENT + (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT)
 					* workflowStatus.getProportionComplete();
-			
+
 		case FINISHED_RUNNING:
 		case COMPLETING:
 		case TRANSFERRED:
@@ -700,7 +784,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states) {
 		return analysisSubmissionRepository.findByAnalysisState(states);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -711,5 +795,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public AnalysisServiceStatus getAnalysisServiceStatus() {
+		Long running = analysisSubmissionRepository.countByAnalysisState(AnalysisState.getRunningStates());
+		Long queued = analysisSubmissionRepository.countByAnalysisState(Lists.newArrayList(AnalysisState.NEW));
+
+		return new AnalysisServiceStatus(running, queued);
+	}
 
 }

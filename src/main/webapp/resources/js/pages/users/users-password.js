@@ -5,6 +5,7 @@ import {
   passwordCharacterReqsValidation,
   validationConfig
 } from "../../utilities/form-validation";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 // Minimum password length
 const PWD_MIN_LENGTH = 8;
@@ -25,23 +26,12 @@ function submitBtnToggle() {
   return $submit.prop("disabled", $pwdForm.valid() ? false : "disabled");
 }
 
-function getBaseUrl() {
-  try {
-    // window.TL.BASE_URL is undefined on the password_reset page
-    // this function should not be called on the password_reset page
-    return window.TL.BASE_URL;
-  } catch (e) {
-    // in case window.TL.BASE_URL is undefined, return a reasonable default
-    return "/";
-  }
-}
-
 function getUsernameValidationUrl() {
-  return getBaseUrl() + "users/validate-username";
+  return setBaseUrl("users/validate-username");
 }
 
 function getEmailValidationUrl() {
-  return getBaseUrl() + "users/validate-email";
+  return setBaseUrl("users/validate-email");
 }
 
 function passwordResetValidation() {

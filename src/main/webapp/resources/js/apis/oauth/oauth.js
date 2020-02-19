@@ -1,7 +1,9 @@
+import { setBaseUrl } from "../../utilities/url-utilities";
+
 const createHref = (clientId, redirectUrl) =>
-  `${
-    window.TL.BASE_URL
-  }api/oauth/authorize?client_id=${clientId}&response_type=code&scope=read&redirect_uri=${redirectUrl}`;
+  setBaseUrl(
+    `api/oauth/authorize?client_id=${clientId}&response_type=code&scope=read&redirect_uri=${redirectUrl}`
+  );
 /**
  * Create a DOMString containing a comma-separated list of window features for the pop up window.
  * @returns {string}
@@ -15,11 +17,11 @@ const getWindowFeatures = () => {
 
   // Fixes dual-screen position Most browsers Firefox
   const dualScreenLeft =
-    typeof window.screenLeft != "undefined"
+    typeof window.screenLeft !== "undefined"
       ? window.screenLeft
       : window.screenX;
   const dualScreenTop =
-    typeof window.screenTop != "undefined" ? window.screenTop : window.screenY;
+    typeof window.screenTop !== "undefined" ? window.screenTop : window.screenY;
 
   const width = window.innerWidth
     ? window.innerWidth

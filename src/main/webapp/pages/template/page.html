@@ -3,7 +3,7 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{template/base}">
 <head>
-	<link rel="stylesheet" th:href="@{/resources/dist/css/app.bundle.css}">
+	<link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -23,29 +23,14 @@
 			</ol>
 		</div>
 	</div>
-	<div class="container-fluid body-content">
+	<div class="container-fluid body-content" style="display: flex; flex-direction: column;">
 		<div class="row" layout:fragment="page"></div>
 	</div>
 
-	<script type="text/ng-template" id="/session-modal.html">
-		<div>
-			<div class="modal-header">
-				<b class="modal-title">
-					<span th:text="#{session.timeout-modal.header}"></span>
-					&nbsp;{{timeleft | countdown}}</b>
-			</div>
-			<div class="modal-footer">
-				<a class="btn btn-default" th:href="@{/logout}" th:text="#{session.timeout-modal.logout}">Log me out
-				</a>
-				<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here
-				</button>
-			</div>
-		</div>
-	</script>
-
 	<script th:inline="javascript">
 		window.TL = {
-			BASE_URL      : /*[[@{/}]]*/ '/',
+			_BASE_URL      : /*[[@{/}]]*/ '/',
+			LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
 		  	URLS: {
 			  cart: {
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
@@ -58,12 +43,6 @@
 					"prev" : /*[[#{table.previous}]]*/ 'Previous',
 					"next" : /*[[#{table.next}]]*/ 'Next',
 					"last" : /*[[#{table.last}]]*/ 'Last'
-				}
-			},
-			date: {
-				moment: {
-					short: /*[[#{moment.short}]]*/ 'Do MMM YYYY',
-					full: /*[[#{moment.full}]]*/ 'MMM D, YYYY h:mm:ss a'
 				}
 			}
 		};
@@ -79,14 +58,8 @@
 			DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
 		};
 	</script>
-
-	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
-	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
-	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
-	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
-	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
-	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-	<script th:src="@{/resources/dist/js/app.bundle.js}"></script>
+	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
+	<script th:src="@{/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">
 		<!--/* optional script tags */-->

@@ -1,8 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { SaveTemplateModal } from "./SaveTemplateModal";
 import { TemplateSelect } from "./TemplateSelect/TemplateSelect";
+import styled from "styled-components";
+import { grey5 } from "../../../../../../styles/colors";
+
+const Wrapper = styled.div`
+  height: 75px;
+  borderbottom: 1px solid ${grey5};
+  padding: 1rem;
+`;
 
 /**
  * This component is responsible for rendering all components that handle
@@ -27,19 +34,10 @@ export class TemplatesPanel extends React.Component {
 
   render() {
     const { templates, current } = this.props;
-    const template =
-      typeof templates.get(current) === "undefined"
-        ? undefined
-        : templates.get(current).toJS();
+    const template = templates[current];
 
     return (
-      <div
-        style={{
-          height: 75,
-          borderBottom: "1px solid rgba(189, 195, 199, 1.00)",
-          padding: "1rem"
-        }}
-      >
+      <Wrapper>
         <TemplateSelect {...this.props} showSaveModal={this.showSaveModal} />
         <SaveTemplateModal
           template={template}
@@ -47,7 +45,7 @@ export class TemplatesPanel extends React.Component {
           onClose={this.closeModal}
           {...this.props}
         />
-      </div>
+      </Wrapper>
     );
   }
 }
@@ -55,6 +53,6 @@ export class TemplatesPanel extends React.Component {
 TemplatesPanel.propTypes = {
   current: PropTypes.number.isRequired,
   saveTemplate: PropTypes.func.isRequired,
-  templates: ImmutablePropTypes.list.isRequired,
+  templates: PropTypes.array.isRequired,
   modified: PropTypes.object
 };

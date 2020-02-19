@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -22,21 +23,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.*;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -49,7 +47,7 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
-public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
+public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
@@ -58,9 +56,12 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
+	@Value("${locales.default}")
+	private String defaultLocaleValue;
+
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private MessageSource messageSource;
 
@@ -76,14 +77,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	}
 
 	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
-		logger.debug("Configuring LocaleChangeInterceptor");
-		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
-		return localeChangeInterceptor;
-	}
-
-	@Bean
 	public GalaxySessionInterceptor galaxySessionInterceptor() {
 		return new GalaxySessionInterceptor();
 	}
@@ -96,7 +89,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
 				for (Path entry : stream) {
 					List<String> lines = Files.readAllLines(entry);
-					analytics.append(Joiner.on("\n").join(lines));
+					analytics.append(Joiner.on("\n")
+							.join(lines));
 					analytics.append("\n");
 				}
 			} catch (DirectoryIteratorException ex) {
@@ -116,8 +110,11 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Bean(name = "localeResolver")
 	public LocaleResolver localeResolver() {
 		logger.debug("Configuring LocaleResolver");
+
+		Locale defaultLocale = Locale.forLanguageTag(defaultLocaleValue);
+
 		SessionLocaleResolver slr = new SessionLocaleResolver();
-		slr.setDefaultLocale(Locale.ENGLISH);
+		slr.setDefaultLocale(defaultLocale);
 		return slr;
 	}
 
@@ -132,7 +129,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		// CSS: default location "/static/styles" during development and
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+		registry.addResourceHandler("/dist/**").addResourceLocations("/dist/");
 	}
 
 	@Override
@@ -190,7 +187,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
-		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(galaxySessionInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
@@ -206,11 +202,12 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 
 	/**
 	 * This is to add additional Thymeleaf dialects.
-	 * 
+	 *
 	 * @return A Set of Thymeleaf dialects.
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
+		dialects.add(new I18nPreProcessorDialect());
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());

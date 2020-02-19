@@ -42,7 +42,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "t-modal-save-template-btn")
 	private WebElement modalSaveTemplateBtn;
 
-	@FindBy(className = "t-undo-edit")
+	@FindBy(className = "t-undo-btn")
 	private WebElement undoEditBtn;
 
 	@FindBy(className = "t-columns-panel-toggle")
@@ -69,7 +69,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectLineListPage.class);
 	}
 
-	public void openColumnsPaenl() {
+	public void openColumnsPanel() {
 		columnsPanelToggle.click();
 	}
 
@@ -129,7 +129,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void cancelCellEdit() {
-		waitForTime(200);
+		waitForElementToBeClickable(undoEditBtn);
 		undoEditBtn.click();
 	}
 
@@ -150,7 +150,8 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void goToNextTourStage() {
-		tourNextButton.click();
+		waitForTime(500);
+		driver.findElement(By.cssSelector("button[data-tour-elem=\"right-arrow\"]")).click();
 	}
 
 	public void closeTour() {

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useEffect } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Layout } from "antd";
@@ -23,7 +23,7 @@ function CartComponent({ count = 0, loadCart }) {
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (
-    <Content style={{ display: "flex", height: "100%" }}>
+    <Content style={{ display: "flex", alignItems: "stretch" }}>
       <Content style={{ flexGrow: 1 }}>
         <Suspense fallback={<div />}>
           <CartTools
@@ -54,7 +54,4 @@ const mapDispatchToProps = dispatch => ({
   loadCart: () => dispatch(actions.loadCart())
 });
 
-export const Cart = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CartComponent);
+export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);

@@ -1,11 +1,11 @@
 import React from "react";
+
+import isEqual from "lodash/isEqual";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { Button, Checkbox, Form, Modal, Select } from "antd";
 
 const { Item } = Form;
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /**
  * Utility method to sort array of strings case insensitively.
@@ -22,14 +22,14 @@ const sortNames = (a, b) => a.toLowerCase().localeCompare(b.toLowerCase());
 function Footer(props) {
   return (
     <div>
-      <Button onClick={props.onCancel}>{i18n.form.btn.cancel}</Button>
+      <Button onClick={props.onCancel}>{i18n("form.btn.cancel")}</Button>
       <Button
         className="t-modal-save-template-btn"
         type="primary"
         disabled={props.disabled}
         onClick={props.onClick}
       >
-        {i18n.form.btn.save}
+        {i18n("form.btn.save")}
       </Button>
     </div>
   );
@@ -44,7 +44,7 @@ export class SaveTemplateModal extends React.Component {
     template: PropTypes.object,
     onClose: PropTypes.func.isRequired,
     current: PropTypes.number.isRequired,
-    templates: ImmutablePropTypes.list.isRequired
+    templates: PropTypes.array.isRequired
   };
 
   validations = [
@@ -54,7 +54,7 @@ export class SaveTemplateModal extends React.Component {
       state: {
         existingTemplate: false,
         status: "error",
-        message: i18n.linelist.templates.saveModal.required,
+        message: i18n("linelist.templates.saveModal.required"),
         valid: false,
         overwriteTemplate: false
       }
@@ -64,7 +64,7 @@ export class SaveTemplateModal extends React.Component {
       fn: name => name.length < 5,
       state: {
         status: "error",
-        message: i18n.linelist.templates.saveModal.length,
+        message: i18n("linelist.templates.saveModal.length"),
         valid: false,
         existingTemplate: false,
         overwriteTemplate: false
@@ -75,7 +75,7 @@ export class SaveTemplateModal extends React.Component {
       fn: name => this._options.findIndex(o => o === name) > -1,
       state: {
         status: "error",
-        message: i18n.linelist.templates.saveModal.nameExists,
+        message: i18n("linelist.templates.saveModal.nameExists"),
         valid: false,
         existingTemplate: true,
         overwriteTemplate: false
@@ -95,13 +95,11 @@ export class SaveTemplateModal extends React.Component {
 
   constructor(props) {
     super(props);
-    this._options = this.props.templates
-      .map(t => t.get("name"))
-      .sort(sortNames);
+    this._options = this.props.templates.map(t => t.name).sort(sortNames);
 
     this.state = {
       options: this._options,
-      disabledLabel: this._options.get(0) // Name of the "all fields" option. Cannot save by that name.
+      disabledLabel: this._options[0] // Name of the "all fields" option. Cannot save by that name.
     };
   }
 
@@ -117,7 +115,7 @@ export class SaveTemplateModal extends React.Component {
     Check to see if there is a new template being used, the new template
     will require a refresh to the UI.
      */
-    if (prevProps.template !== template) {
+    if (!isEqual(prevProps.template, template)) {
       const existingTemplate = template.id > -1;
       const value = existingTemplate ? template.name : undefined;
       this.setState({
@@ -146,8 +144,7 @@ export class SaveTemplateModal extends React.Component {
     let options = Array.from(this._options);
     if (value) {
       // Determine if the name is in the current list of templates
-      const index = options.findIndex(o => o === value);
-      if (index === -1) {
+      if (!options.includes(value)) {
         options.unshift(value);
       }
     }
@@ -177,16 +174,15 @@ export class SaveTemplateModal extends React.Component {
    * Save the current template using the entered name.
    */
   saveTemplate = () => {
-    const template = this.props.templates.get(this.props.current).toJS();
-    const fields = template.modified.filter(t => !t.hide);
+    const fields = this.props.template.modified.filter(t => !t.hide);
     const name = this.state.value;
     const overwrite = this.state.overwriteTemplate;
     let id = undefined;
 
     if (overwrite) {
       // Get the template to overwrite because we need its id.
-      const t = this.props.templates.find(t => t.get("name") === name);
-      id = t.get("id");
+      const t = this.props.templates.find(t => t.name === name);
+      id = t.id;
     }
 
     this.props.saveTemplate(name, fields, id);
@@ -210,7 +206,7 @@ export class SaveTemplateModal extends React.Component {
     return (
       <Modal
         closable={false}
-        title="Modal"
+        title={i18n("linelist.templates.saveModal.title")}
         visible={this.props.visible}
         footer={
           <Footer
@@ -222,7 +218,7 @@ export class SaveTemplateModal extends React.Component {
       >
         <Form>
           <Item
-            label={i18n.linelist.templates.saveModal.name}
+            label={i18n("linelist.templates.saveModal.name")}
             hasFeedback
             validateStatus={this.state.status}
             help={this.state.message}
@@ -235,6 +231,7 @@ export class SaveTemplateModal extends React.Component {
               filterOption={this.filterOption}
               onSearch={this.onSearch}
               onChange={this.onSearch}
+              onBlur={this.onSearch}
             >
               {options.map(template => (
                 <Option

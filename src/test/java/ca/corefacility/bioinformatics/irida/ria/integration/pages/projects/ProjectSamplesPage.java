@@ -11,6 +11,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
+
 /**
  * <p>
  * Page Object to represent the project samples page.
@@ -89,7 +91,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
-	@FindBy(className = "select2-selection")
+	@FindBy(css = "a.select2-choice")
 	private WebElement select2Opener;
 
 	@FindBy(className = "select2-search__field")
@@ -168,6 +170,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	
 	@FindBy(className = "locked-sample")
 	private List<WebElement> lockedSamples;
+
+	@FindBy(css = "[data-dt-idx=\"1\"]")
+	private WebElement firstTablePageBtn;
+
+	@FindBy(css = ".paginate_button.next a")
+	private WebElement nextTablePageBtn;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -417,13 +425,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void enterSelect2Value(String value) {
-		select2Opener.click();
-		// Wait for select2 to be open properly.
-		waitForTime(500);
-		sendInputTextSlowly(value, select2Input);
-		// Wait needed to allow select2 to populate.
-		waitForTime(500);
-		select2Input.sendKeys(Keys.RETURN);
+		Select2Utility select2Utility = new Select2Utility(driver);
+		select2Utility.openSelect2Input();
+		select2Utility.searchByText(value);
+		select2Utility.selectDefaultMatch();
 	}
 
 	private void shareMoveSamples(String project, boolean owner) {
@@ -463,6 +468,22 @@ public class ProjectSamplesPage extends ProjectPageBase {
 			}
 		}
 		return locked;
+	}
+
+	public void goToNextPage() {
+		nextTablePageBtn.click();
+		waitForTime(500);
+	}
+
+	public void closeModalIfOpen() {
+		List<WebElement> modals = driver.findElements(By.className("modal-open"));
+		if (modals.size() > 0) {
+			Actions actions = new Actions(driver);
+			actions.moveToElement(modals.get(0))
+					.moveByOffset(5, 5)
+					.click()
+					.perform();
+		}
 	}
 	
 	/**

@@ -27,7 +27,7 @@ import java.util.*;
 @EntityListeners(AuditingEntityListener.class)
 public class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Lob
@@ -36,7 +36,8 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
@@ -67,7 +68,6 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	@NotNull
 	@Column(name = "sequencer_type")
 	private String sequencerType;
-
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "user_id")

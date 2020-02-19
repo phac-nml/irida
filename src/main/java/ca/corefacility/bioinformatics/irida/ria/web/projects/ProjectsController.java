@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.domain.Page;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -44,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -56,10 +54,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -384,11 +378,9 @@ public class ProjectsController {
 	@RequestMapping("/projects/{projectId}/analyses")
 	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "analyses");
 		return "projects/analyses/pages/analyses_table.html";
@@ -543,42 +535,6 @@ public class ProjectsController {
 	}
 
 	/**
-	 * User mapping to get a list of all project they are on.
-	 *
-	 * @param params {@link DataTablesParams} passed from the UI DataTables instance.
-	 * @return {@link DataTablesResponse}
-	 */
-	@RequestMapping("/projects/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getAjaxProjectList(@DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService.findProjectsForUser(params.getSearchValue(), params.getCurrentPage(),
-				params.getLength(), params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent()
-				.stream()
-				.map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
-	}
-
-	/**
-	 * Admin mapping to get a list of all project they are on.
-	 *
-	 * @param params {@link DataTablesParams} passed from the UI DataTables instance.
-	 * @return {@link DataTablesResponse}
-	 */
-	@RequestMapping("/projects/admin/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getAjaxAdminProjectsList(@DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService.findAllProjects(params.getSearchValue(), params.getCurrentPage(),
-				params.getLength(), params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent()
-				.stream()
-				.map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
-	}
-
-	/**
 	 * Export Projects table as either an excel file or CSV
 	 *
 	 * @param type      of file to export (csv or excel)
@@ -615,9 +571,9 @@ public class ProjectsController {
 		List<DTProject> dtProjects = projects.stream()
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
-		List<String> headers = ImmutableList.of("id", "name", "organism", "samples", "created", "modified")
+		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name", "ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date", "ProjectsTable_th_modified_date")
 				.stream()
-				.map(h -> messageSource.getMessage("projects.table." + h, new Object[] {}, locale))
+				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
 		// Create the filename

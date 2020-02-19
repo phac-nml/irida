@@ -3,15 +3,17 @@
  */
 import axios from "axios";
 
+const ANALYSES_URL = `ajax/analyses`;
+
+const ANALYSIS_URL = `analysis/ajax`;
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getPrincipalUserSingleSampleAnalysisOutputs() {
   try {
-    const { data } = await axios.get(
-      `${window.PAGE.URLS.base}analysis/ajax/user/analysis-outputs`
-    );
+    const { data } = await axios.get(`${ANALYSIS_URL}/user/analysis-outputs`);
     return { data };
   } catch (error) {
     return { error: error };
@@ -26,9 +28,7 @@ export async function getPrincipalUserSingleSampleAnalysisOutputs() {
 export async function getProjectSharedSingleSampleAnalysisOutputs(projectId) {
   try {
     const { data } = await axios.get(
-      `${
-        window.PAGE.URLS.base
-      }analysis/ajax/project/${projectId}/shared-analysis-outputs`
+      `${ANALYSIS_URL}/project/${projectId}/shared-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -46,9 +46,7 @@ export async function getProjectAutomatedSingleSampleAnalysisOutputs(
 ) {
   try {
     const { data } = await axios.get(
-      `${
-        window.PAGE.URLS.base
-      }analysis/ajax/project/${projectId}/automated-analysis-outputs`
+      `${ANALYSIS_URL}/project/${projectId}/automated-analysis-outputs`
     );
     return { data };
   } catch (error) {
@@ -65,11 +63,31 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${window.PAGE.URLS.base}analysis/ajax/download/prepare`,
+      url: `${ANALYSIS_URL}/download/prepare`,
       data: outputs
     });
     return { data };
   } catch (error) {
     return { error: error };
   }
+}
+
+export async function fetchAllPipelinesStates() {
+  return axios.get(`${ANALYSES_URL}/states`).then(response => response.data);
+}
+
+export async function fetchAllPipelinesTypes() {
+  return axios.get(`${ANALYSES_URL}/types`).then(response => response.data);
+}
+
+export async function deleteAnalysisSubmissions({ ids }) {
+  return axios.delete(`${ANALYSES_URL}/delete?ids=${ids.join(",")}`);
+}
+
+/**
+ * Fetch the current state of the analysis server.
+ * @return {Promise<T>} return a map of the running an queued counts.
+ */
+export async function fetchAnalysesQueueCounts() {
+  return axios.get("ajax/analyses/queue").then(({ data }) => data);
 }

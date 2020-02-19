@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 
@@ -71,6 +72,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			Collection<UUID> workflowIds);
 
 	/**
+	 * Delete multiple {@link AnalysisSubmission}s
+	 *
+	 * @param ids the collection of IDs to delete
+	 */
+	public void deleteMultiple(Collection<Long> ids);
+
+	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
@@ -120,6 +128,52 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
 			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
+
+	/**
+	 * Create a new {@link AnalysisSubmissionTemplate} for a project with the given settings
+	 *
+	 * @param workflow              {@link IridaWorkflow} that the files will be run on
+	 * @param referenceFileId       {@link Long} id for a {@link ReferenceFile}
+	 * @param params                {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters       the named parameters to use for the workflow.
+	 * @param submissionName        {@link String} the name for the analysis
+	 * @param statusMessage         A status message for the submission template
+	 * @param analysisDescription   {@link String} the description of the analysis being submitted
+	 * @param projectsToShare       The {@link Project} to save the analysis to
+	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the samples on successful
+	 *                              completion.
+	 * @param emailPipelineResults  Whether or not to email the pipeline results to the user
+	 * @return the newly created {@link AnalysisSubmissionTemplate}
+	 */
+	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
+			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
+			String statusMessage, String analysisDescription, Project projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResults);
+
+	/**
+	 * Get all the {@link AnalysisSubmissionTemplate}s for a given {@link Project}
+	 *
+	 * @param project the {@link Project} to get templates for
+	 * @return a list of all {@link AnalysisSubmissionTemplate}s
+	 */
+	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project);
+
+	/**
+	 * Get an {@link AnalysisSubmissionTemplate} on the given {@link Project}
+	 *
+	 * @param id      the {@link AnalysisSubmissionTemplate} id
+	 * @param project the {@link Project} to get templates for
+	 * @return the found {@link AnalysisSubmissionTemplate}
+	 */
+	public AnalysisSubmissionTemplate readAnalysisSubmissionTemplateForProject(Long id, Project project);
+
+	/**
+	 * Delete an {@link AnalysisSubmissionTemplate} from the given {@link Project}
+	 *
+	 * @param id      The id of an {@link AnalysisSubmissionTemplate}.
+	 * @param project the {@link Project} to delete from
+	 */
+	public void deleteAnalysisSubmissionTemplateForProject(Long id, Project project);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
@@ -207,13 +261,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest);
 
 	/**
@@ -221,12 +275,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states       Set of {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
@@ -234,13 +288,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
-	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param states      Set of {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param pageRequest a {@link PageRequest} for the restults to show
 	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
@@ -274,4 +328,36 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
+
+	/**
+	 * Get the status of the analysis service.  This will be the number of running and queued analyses
+	 * @return An {@link AnalysisServiceStatus} object showing the number of running and queued analyses
+	 */
+	public AnalysisServiceStatus getAnalysisServiceStatus();
+
+	/**
+	 * Class to store the number of running and queued analyses
+	 */
+	class AnalysisServiceStatus {
+		private Long running;
+		private Long queued;
+
+		public AnalysisServiceStatus(Long running, Long queued) {
+			this.running = running;
+			this.queued = queued;
+		}
+
+		public Long getRunning() {
+			return running;
+		}
+
+		public Long getQueued() {
+			return queued;
+		}
+
+		@Override
+		public String toString() {
+			return "Running: " + running + ", Queued: " + queued;
+		}
+	}
 }

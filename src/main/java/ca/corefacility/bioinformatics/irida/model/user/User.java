@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUser
 
 /**
  * A user object.
- * 
+ *
  */
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -47,7 +47,7 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	public static final String USER_USERNAME_CONSTRAINT_NAME = "user_username_constraint";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull(message = "{user.username.notnull}")
@@ -93,7 +93,8 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
@@ -130,7 +131,7 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	/**
 	 * Construct an instance of {@link User} with all properties (except
 	 * identifier) set.
-	 * 
+	 *
 	 * @param username
 	 *            the username for this {@link User}.
 	 * @param email
@@ -156,7 +157,7 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 
 	/**
 	 * Construct an instance of {@link User} with all properties set.
-	 * 
+	 *
 	 * @param id
 	 *            the identifier for this {@link User}.
 	 * @param username
@@ -226,7 +227,7 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(User.class).add("username", username).add("email", email)
+		return com.google.common.base.MoreObjects.toStringHelper(User.class).add("username", username).add("email", email)
 				.add("firstName", firstName).add("lastName", lastName).add("phoneNumber", phoneNumber).toString();
 	}
 

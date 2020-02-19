@@ -1,33 +1,28 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Button, Dropdown, Icon, Menu, List } from "antd";
-import styled from "styled-components";
-import { getI18N } from "../../../utilities/i18n-utilties";
-import {
-  FONT_COLOR_MUTED,
-  FONT_COLOR_PRIMARY,
-  FONT_SIZE_SMALL
-} from "../../../styles/fonts";
-import { grey1, grey2, grey3, grey4 } from "../../../styles/colors";
-import { SPACE_XS, SPACE_MD, SPACE_SM } from "../../../styles/spacing";
 
-const ProjectLink = styled.a`
-  display: block;
-  color: ${FONT_COLOR_MUTED};
-  font-size: ${FONT_SIZE_SMALL};
-  text-decoration: underline;
-`;
+import PropTypes from "prop-types";
+import { Button, Dropdown, Icon, Menu } from "antd";
+import { grey1, grey4, grey5 } from "../../../styles/colors";
+import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
-  <Menu className="t-delete-menu" style={{ border: `1px solid ${grey4}` }}>
+  <Menu
+    className="t-delete-menu"
+    style={{
+      border: `1px solid ${grey4}`,
+      borderRadius: 2,
+      boxShadow: `0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`
+    }}
+  >
     <Menu.Item>
       <div onClick={removeSample} className="t-delete-sample">
-        {getI18N("SampleRenderer.remove.sample")}
+        {i18n("SampleRenderer.remove.sample")}
       </div>
     </Menu.Item>
     <Menu.Item>
       <div onClick={removeProject} className="t-delete-project">
-        {getI18N("SampleRenderer.remove.project")}
+        {i18n("SampleRenderer.remove.project")}
       </div>
     </Menu.Item>
   </Menu>
@@ -35,7 +30,10 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
 
 const IconText = ({ type, text }) => (
   <span>
-    <Icon type={type} style={{ marginRight: SPACE_XS }} />
+    <Icon
+      type={type}
+      style={{ marginRight: SPACE_XS, color: grey5, fontSize: 18 }}
+    />
     {text}
   </span>
 );
@@ -78,52 +76,51 @@ export class SampleRenderer extends React.Component {
       <div
         style={{
           ...this.props.style,
-          padding: `0 ${SPACE_SM}`,
+          padding: SPACE_SM,
           backgroundColor: grey1,
           borderBottom: `1px solid ${grey4}`
         }}
       >
-        <List.Item
+        <div
           className="t-cart-sample"
           key={sample.id}
-          extra={
-            <Dropdown
-              overlay={
-                <DeleteMenu
-                  removeSample={this.removeSample}
-                  removeProject={this.removeProject}
-                />
-              }
-              trigger={["click"]}
-            >
-              <Button className="t-delete-menu-btn" shape="circle" size="small">
-                <Icon type="ellipsis" />
-              </Button>
-            </Dropdown>
-          }
-          actions={[
-            <IconText
-              type="folder"
-              text={
-                <a href={`${window.TL.BASE_URL}projects/${sample.project.id}`}>
-                  {sample.project.label}
-                </a>
-              }
-            />
-          ]}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: SPACE_XS
+          }}
         >
-          <List.Item.Meta
-            title={
-              <Button
-                className="t-sample-name"
-                size="small"
-                onClick={this.displaySample}
-              >
-                {sample.label}
-              </Button>
+          <div style={{ flexGrow: 1 }}>
+            <Button
+              className="t-sample-name"
+              size="small"
+              onClick={this.displaySample}
+            >
+              {sample.label}
+            </Button>
+          </div>
+          <Dropdown
+            overlay={
+              <DeleteMenu
+                removeSample={this.removeSample}
+                removeProject={this.removeProject}
+              />
+            }
+            trigger={["hover"]}
+          >
+            <Icon className="t-delete-menu-btn" type="more" />
+          </Dropdown>
+        </div>
+        <div>
+          <IconText
+            type="folder"
+            text={
+              <a href={setBaseUrl(`projects/${sample.project.id}`)}>
+                {sample.project.label}
+              </a>
             }
           />
-        </List.Item>
+        </div>
       </div>
     );
   }

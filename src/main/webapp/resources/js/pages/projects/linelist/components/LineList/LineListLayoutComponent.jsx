@@ -1,15 +1,20 @@
+/**
+ * @file Component for the overall layout of the line list table, and has the
+ * responsibility of delegating function to the different areas of the table.
+ */
+
 import React from "react";
 import { Layout } from "antd";
 import { Table } from "../Table";
 import { Toolbar } from "../Toolbar";
 import { InfoBar } from "../InfoBar";
 import TableControlPanel from "../TableControlPanel/TableControlPanel";
+import { AgGridLayout } from "../../../../../components/Tables/AgGridLayout";
 
 const { Sider, Content } = Layout;
 
 export class LineListLayoutComponent extends React.Component {
   linelistRef = React.createRef();
-  tableRef = React.createRef();
 
   state = {
     collapsed: true,
@@ -66,25 +71,14 @@ export class LineListLayoutComponent extends React.Component {
   };
 
   /**
-   * Add selected samples to the cart.
-   */
-  addSamplesToCart = () => this.tableRef.current.addSamplesToCart();
-
-  /**
    * Export table to a csv file
    */
-  exportCSV = () => this.tableRef.current.exportCSV();
+  exportCSV = () => this.tableRef.exportCSV();
 
   /**
    * Export table to an excel file
    */
-  exportXLSX = () => this.tableRef.current.exportXLSX();
-
-  /**
-   * Search the table for a specific value
-   * @param {string} value
-   */
-  quickSearch = value => this.tableRef.current.quickSearch(value);
+  exportXLSX = () => this.tableRef.exportXLSX();
 
   /**
    * Update the state of the filter
@@ -98,27 +92,24 @@ export class LineListLayoutComponent extends React.Component {
    * Scroll the table to the top.
    */
   scrollTableToTop = () => {
-    this.tableRef.current.scrollToTop();
+    this.tableRef.scrollToTop();
   };
 
   render() {
     return (
       <div ref={this.linelistRef}>
         <Toolbar
-          quickSearch={this.quickSearch}
           exportCSV={this.exportCSV}
           exportXLSX={this.exportXLSX}
           addSamplesToCart={this.addSamplesToCart}
           selectedCount={this.props.selectedCount}
           scrollTableToTop={this.scrollTableToTop}
         />
-        <Layout className="ag-theme-balham">
+        <AgGridLayout height={this.state.height}>
           <Content>
             <Table
-              {...this.props}
+              ref={tableReference => (this.tableRef = tableReference)}
               onFilter={this.updateFilterCount}
-              height={this.state.height}
-              ref={this.tableRef}
             />
           </Content>
           <Sider
@@ -140,17 +131,17 @@ export class LineListLayoutComponent extends React.Component {
               templateModified={this.props.templateModified}
             />
           </Sider>
-        </Layout>
+        </AgGridLayout>
         <InfoBar
           selectedCount={this.props.selectedCount}
           filterCount={
             this.state.filterCount
               ? this.state.filterCount
               : this.props.entries
-              ? this.props.entries.size
+              ? this.props.entries.length
               : 0
           }
-          totalSamples={this.props.entries ? this.props.entries.size : 0}
+          totalSamples={this.props.entries ? this.props.entries.length : 0}
         />
       </div>
     );

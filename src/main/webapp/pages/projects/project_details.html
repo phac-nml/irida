@@ -4,7 +4,7 @@
 
 <head>
   <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
-  <link rel="stylesheet" th:href="@{/resources/dist/css/project-events.bundle.css}">
+  <link rel="stylesheet" th:href="@{/dist/css/project-events.bundle.css}">
 </head>
 
 <body>
@@ -17,6 +17,6 @@
   </main>
 </body>
 <th:block layout:fragment="scripts">
-  <script th:src="@{/resources/dist/js/project-events.bundle.js}"></script>
+  <script th:src="@{/dist/js/project-events.bundle.js}"></script>
 </th:block>
 </html>
