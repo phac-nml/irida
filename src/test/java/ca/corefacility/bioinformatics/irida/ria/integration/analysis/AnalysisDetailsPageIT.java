@@ -2,8 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -18,42 +17,45 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisDetailsPage;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Sets;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
 
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
+	private FileUtilities fileUtilities = new FileUtilities();
 
 	@Autowired
 	@Qualifier("outputFileBaseDirectory")
 	private Path outputFileBaseDirectory;
 
+	@Autowired
+	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
+
 	@Before
 	// Tree file used by multiple tests
 	public void setFile() throws IOException {
-		// We need to copy the file manually as it uses a relative path.
-		final Path snpTree = Paths.get("src/test/resources/files/snp_tree.tree");
-		try {
-			Files.createDirectories(outputFileBaseDirectory.resolve(snpTree.getParent()));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Directory already exists for snp tree.");
-		}
-		try {
-			Files.copy(snpTree, outputFileBaseDirectory.resolve(snpTree));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Already moved snp tree into directory.");
-		}
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/snp_tree.tree");
 	}
 
 	@Test
@@ -70,18 +72,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testBioHanselOutput() throws IOException {
-		// We need to copy the file manually as it uses a relative path.
-		final Path bioHanselResults = Paths.get("src/test/resources/files/bio_hansel-results.json");
-		try {
-			Files.createDirectories(outputFileBaseDirectory.resolve(bioHanselResults.getParent()));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Directory already exists for bio_hansel results.");
-		}
-		try {
-			Files.copy(bioHanselResults, outputFileBaseDirectory.resolve(bioHanselResults));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Already moved bio_hansel results into directory.");
-		}
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/bio_hansel-results.json");
 
 		LoginPage.loginAsManager(driver());
 
@@ -179,18 +170,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	// Has no specific results output tab (for example tree, biohansel, sistr) so the output file preview
 	// page is the default view
 	public void testPipelineResultsWithoutSpecialTab() throws IOException{
-		// We need to copy the file manually as it uses a relative path.
-		final Path refSeqMashMatches = Paths.get("src/test/resources/files/refseq-masher-matches.tsv");
-		try {
-			Files.createDirectories(outputFileBaseDirectory.resolve(refSeqMashMatches.getParent()));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Directory already exists for ref seq mash matches.");
-		}
-		try {
-			Files.copy(refSeqMashMatches, outputFileBaseDirectory.resolve(refSeqMashMatches));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Already moved ref seq mash matches into directory.");
-		}
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/refseq-masher-matches.tsv");
 
 		LoginPage.loginAsManager(driver());
 
@@ -253,18 +233,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testSistrOutput() throws IOException {
-		// We need to copy the file manually as it uses a relative path.
-		final Path sistrPredictions = Paths.get("src/test/resources/files/sistr-predictions-pass.json");
-		try {
-			Files.createDirectories(outputFileBaseDirectory.resolve(sistrPredictions.getParent()));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Directory already exists for sistr predictions.");
-		}
-		try {
-			Files.copy(sistrPredictions, outputFileBaseDirectory.resolve(sistrPredictions));
-		} catch (final FileAlreadyExistsException e) {
-			logger.info("Already moved sistr predictions into directory.");
-		}
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/sistr-predictions-pass.json");
 
 		LoginPage.loginAsManager(driver());
 
@@ -383,6 +352,44 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testUnknownPipelineOutput() throws IOException, URISyntaxException, IridaWorkflowException {
+		IridaWorkflowsService iridaWorkflowsService;
+		IridaWorkflow unknownWorkflow;
+
+		// Register an UNKNOWN workflow
+		Path workflowVersion1DirectoryPath = Paths.get(TestAnalysis.class.getResource(
+				"workflows/TestAnalysis/1.0").toURI());
+
+		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(
+				Sets.newHashSet()), new IridaWorkflowIdSet(Sets.newHashSet()));
+
+		unknownWorkflow = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion1DirectoryPath);
+		logger.debug("Registering workflow: " + unknownWorkflow.toString());
+		iridaWorkflowsService.registerWorkflow(unknownWorkflow);
+
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/snp_tree_2.tree");
+
+		LoginPage.loginAsManager(driver());
+
+		// Has an UNKNOWN analysis type so the view should default to the Output File Preview page.
+		// This submission is setup with refseq_masher parameters and output file
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 14L, "");
+		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
+
+		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
+		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
+		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
+
+		page = AnalysisDetailsPage.initPage(driver(), 14L, "provenance");
+		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
+		assertEquals("There should be one file" , 1, page.getProvenanceFileCount());
+		page.getFileProvenance();
+		assertEquals("Should have 2 tools associated with the tree", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("First tool should have 2 parameter", 2, page.getGalaxyParametersCount());
+	}
+
+	@Test
 	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
@@ -400,17 +407,4 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
 	}
 
-	@Test
-	public void testUnknownPipelineOutput() {
-		LoginPage.loginAsManager(driver());
-		// Has an UNKNOWN analysis type
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 14L, "");
-
-
-		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
-
-		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
-		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
-		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
-	}
 }
