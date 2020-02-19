@@ -45,7 +45,13 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	 * Constructor
 	 */
 	public BreadCrumbInterceptor() {
+	}
 
+	public BreadCrumbInterceptor(ProjectService projectService, SampleService sampleService,
+			MessageSource messageSource) {
+		this.projectService = projectService;
+		this.sampleService = sampleService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -120,40 +126,8 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 
 			}
 		}
-
-		// Determine where we are in the application.
-		//		if ("projects".equals(parts.get(0))) {// First thing after is the project id.
-		//			Long projectId = Long.parseLong(parts.get(1));
-		//			Project project = projectService.read(projectId);
-		//			breadCrumbs.add(new BreadCrumb(project.getLabel(), url.append("/projects/")
-		//					.append(projectId)
-		//					.toString()));
-		//
-		//			// Check if there is another part
-		//			if (parts.size() > 2) {
-		//				String msg = tryGetMessage(parts.get(2), locale);
-		//				breadCrumbs.add(new BreadCrumb(msg, url.append(parts.get(2))
-		//						.toString()));
-		//			}
-		//		}
 		modelAndView.getModelMap()
 				.put("breadcrumbs", breadCrumbs);
-		//
-		//			List<Map<String, String>> crumbs = new ArrayList<>();
-		//
-		//
-		//			try {
-		//				for (String noun : parts) {
-		//					url.append("/");
-		//					url.append(noun);
-		//					crumbs.add(ImmutableMap.of("text", tryGetMessage(noun, locale), "url", url.toString()));
-		//				}
-		//				// Add the breadcrumbs to the model
-		//				modelAndView.getModelMap()
-		//						.put("crumbs", crumbs);
-		//			} catch (NoSuchMessageException e) {
-		//				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
-		//			}
 
 	}
 
