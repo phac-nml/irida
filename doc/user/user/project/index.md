@@ -347,7 +347,20 @@ The status section will be one of the following messages:
 * `Synchronized` - This project is up to date since the last project synchronization job has been run.
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
 * `Error` - An error occurred during the last project synchronization job.
-* `Unsynchronized` - This project will no longer be synchronized.   
+* `Unsynchronized` - This project will no longer be synchronized. 
+
+#### Reconnecting after token expiry
+
+Occasionally the token used for synchronizing a remote project may expire at which point the project will need to be reconnected.  When this token expires, the synchronization user for the project (usually the person who created the project) will receive an email notifying them that the connection has expired and they must reconnect.
+
+To re-connect after an expired token:
+* Go to the project/settings/remote page. [Docs about this page are above](#remote-project-settings).
+* Check the "Synchronization User" field.  If you are not this user, you should stop and inform them that they must perform this task.
+* Check the "Remote Connection" section.  If the token is invalid, it should say "Expired/invalid token" and have a "Connect" button.
+* Click the "Connect" button and follow the prompts to re-connect to the remote IRIDA installation.
+* After the token is refreshed, click the "Sync Now" button at the top of the page.  This will re-initialize the sync job and it will be added to the queue to refresh.
+
+![Delete project](images/sync-expired.png)
 
 Deleting a project
 ------------------
