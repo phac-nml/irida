@@ -4,14 +4,6 @@ import { Button, Input } from "antd";
 function getTextSearchProps(dataIndex) {
   let searchInput;
   return {
-    onFilter: (value, record) => {
-      // Sometimes the values can be undefined so give it a default value.
-      const item = record[dataIndex] || "";
-      return item
-        .toString()
-        .toLowerCase()
-        .includes(value.trim().toLowerCase());
-    },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.select());
