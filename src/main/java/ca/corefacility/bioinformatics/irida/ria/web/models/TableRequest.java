@@ -37,7 +37,7 @@ public class TableRequest {
 	}
 
 	public String getSearch() {
-		return search;
+		return search.trim();
 	}
 
 	public void setSearch(String search) {

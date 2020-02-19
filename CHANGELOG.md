@@ -1,6 +1,10 @@
 Changes
 =======
 
+20.01 to 20.05
+--------------
+* [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+
 19.09 to 20.01
 --------------
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
