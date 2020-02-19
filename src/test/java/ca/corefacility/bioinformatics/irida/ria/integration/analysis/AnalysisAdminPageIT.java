@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.AnalysesQueue;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 
@@ -36,6 +37,11 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		 */
 		page.deleteAnalysis(9);
 		assertEquals("Should have 8 analyses displayed after deleting one", 8, page.getNumberOfAnalysesDisplayed());
+
+		// Check to make sure the analyses queue is being set up properly
+		AnalysesQueue queue = AnalysesQueue.getAnalysesQueue(driver());
+		assertEquals("Should have 5 analyses running", 5, queue.getRunningCounts());
+		assertEquals("Should have 1 analysis queued", 1, queue.getQueueCounts());
 
 	}
 }

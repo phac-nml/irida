@@ -4,14 +4,12 @@
   "scripts": {
     "build": "webpack --env.mode production",
     "start": "webpack --env.mode development",
-    "clean": "rm -r node* resources/dist/",
-    "precommit": "lint-staged"
+    "clean": "rm -r node* resources/dist/"
   },
-  "lint-staged": {
-    "resources/**/*.{js,json,scss}": [
-      "prettier --write",
-      "git add"
-    ]
+  "husky": {
+    "hooks": {
+      "pre-receive": "lint-staged"
+    }
   },
   "browserslist": [
     "last 2 Chrome versions",
@@ -21,6 +19,7 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
+    "@ant-design/icons": "^4.0.0-rc.0",
     "@fortawesome/fontawesome-free": "^5.12.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
@@ -124,6 +123,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
     "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
     "resolve-url-loader": "^3.1.1",
     "sass-loader": "^8.0.0",
     "source-map-loader": "^0.2.4",
