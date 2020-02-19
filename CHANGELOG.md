@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI/Developer]: Removed webpack progress.
 * [UI]: Updated clients listing table to use `ant.design` tables.
+* [API]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
 
 19.09 to 20.01
 --------------
