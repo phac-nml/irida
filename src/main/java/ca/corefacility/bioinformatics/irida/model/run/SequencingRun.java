@@ -68,6 +68,7 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	@NotNull
 	@Column(name = "sequencer_type")
 	private String sequencerType;
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "user_id")
@@ -82,7 +83,7 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	public SequencingRun(final LayoutType layoutType, String sequencerType) {
 		this();
 		this.layoutType = layoutType;
-		this.sequencerType = sequencerType;
+		setSequencerType(sequencerType);
 	}
 
 	@Override
@@ -203,7 +204,7 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 	}
 
 	public void setSequencerType(String sequencerType) {
-		this.sequencerType = sequencerType;
+		this.sequencerType = sequencerType.toLowerCase();
 	}
 
 	/**
