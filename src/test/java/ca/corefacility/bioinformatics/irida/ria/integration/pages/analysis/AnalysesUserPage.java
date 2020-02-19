@@ -65,6 +65,7 @@ public class AnalysesUserPage extends AbstractPage {
 		nameFilterButton.click();
 		waitForElementToBeClickable(nameFilterClear);
 		nameFilterClear.click();
+		waitForElementInvisible(By.className("t-name-filter-clear"));
 	}
 
 	public void deleteAnalysis(int row) {
