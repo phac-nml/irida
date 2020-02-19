@@ -19,7 +19,10 @@ public class AnalysesFilters {
 	}
 
 	public void setName(List<String> name) {
-		this.name = name.size() > 0 ? name.get(0) : null;
+		this.name = name.size() > 0 ?
+				name.get(0)
+						.trim() :
+				null;
 	}
 
 	public void setState(List<String> stateStrings) {
