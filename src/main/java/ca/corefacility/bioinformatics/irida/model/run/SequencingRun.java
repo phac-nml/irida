@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.*;
 
 /**
@@ -67,6 +68,7 @@ public class SequencingRun extends IridaResourceSupport implements MutableIridaT
 
 	@NotNull
 	@Column(name = "sequencer_type")
+	@Pattern(regexp = "[a-z0-9\\-_]*", message = "{sequencingrun.type.regex}")
 	private String sequencerType;
 
 	@JsonIgnore
