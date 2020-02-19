@@ -24,7 +24,7 @@ export function PageWrapper({ title, headerExtras, children }) {
         title={title}
         extra={headerExtras}
       />
-      <Content style={{ padding: SPACE_MD }}>
+      <Content style={{ padding: SPACE_MD, paddingTop: 0 }}>
         <div style={{ padding: SPACE_MD, backgroundColor: grey1 }}>
           {children}
         </div>

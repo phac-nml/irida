@@ -24,13 +24,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisTypeModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
@@ -49,20 +48,18 @@ public class AnalysesAjaxController {
 	private IridaWorkflowsService iridaWorkflowsService;
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
-	private AnalysisAudit analysisAudit;
 
 	@Autowired
 	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, ProjectService projectService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit) {
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.projectService = projectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
-		this.analysisAudit = analysisAudit;
 	}
 
 	/**
@@ -107,7 +104,7 @@ public class AnalysesAjaxController {
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
 	 */
 	@RequestMapping("/list")
-	public TableResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
+	public TableResponse<AnalysisModel> getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
 			@RequestParam(required = false, defaultValue = "false") Boolean admin,
 			@RequestParam(required = false) Long projectId, Locale locale) throws IridaWorkflowNotFoundException {
 
@@ -166,12 +163,12 @@ public class AnalysesAjaxController {
 		/*
 		UI cannot consume it as-is.  Format into something the UI will like use the the AnalysisModel
 		 */
-		List<TableModel> analyses = page.getContent()
+		List<AnalysisModel> analyses = page.getContent()
 				.stream()
 				.map(submission -> this.createAnalysisModel(submission, locale))
 				.collect(Collectors.toList());
 
-		return new TableResponse(analyses, page.getTotalElements());
+		return new TableResponse<AnalysisModel>(analyses, page.getTotalElements());
 	}
 
 	/**
@@ -206,8 +203,11 @@ public class AnalysesAjaxController {
 		String stateString = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
 		AnalysisStateModel state = new AnalysisStateModel(stateString, analysisState.toString());
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
-
-		Long duration = analysisAudit.getAnalysisRunningTime(submission);
+		Long duration = 0L;
+		if (analysisState.equals(AnalysisState.COMPLETED)) {
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
+					.getCreatedDate());
+		}
 
 		/*
 		Check to see if the user has authority to update (delete) this particular submission.
@@ -243,4 +243,3 @@ public class AnalysesAjaxController {
 		return analysisSubmissionService.getAnalysisServiceStatus();
 	}
 }
-

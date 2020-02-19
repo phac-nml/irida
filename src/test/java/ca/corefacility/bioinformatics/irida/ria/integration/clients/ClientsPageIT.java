@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientsPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,17 +18,15 @@ import static org.junit.Assert.assertTrue;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/IridaClientDetailsServiceImplIT.xml")
 public class ClientsPageIT extends AbstractIridaUIITChromeDriver {
-	private ClientsPage clientsPage;
 
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
-		clientsPage = new ClientsPage(driver());
 	}
 
 	@Test
 	public void testCheckClientsPageNumber() {
-		clientsPage.goTo();
+		ClientsPage clientsPage = ClientsPage.goTo(driver());
 		int clientsTableSize = clientsPage.clientsTableSize();
 		assertEquals(2, clientsTableSize);
 		assertTrue(clientsPage.checkClientExistsInTable("testClient"));
