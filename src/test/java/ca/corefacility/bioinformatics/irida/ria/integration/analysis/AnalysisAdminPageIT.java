@@ -21,13 +21,13 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetup() {
 		LoginPage.loginAsAdmin(driver());
 		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver());
-		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 
 		// Test the name filter
 		page.searchForAnalysisByName("My Fake Submission");
 		assertEquals("Should have 1 Analysis displayed after filtering", 1, page.getNumberOfAnalysesDisplayed());
 		page.clearNameFilter();
-		assertEquals("Should have 9 analyses displayed originally", 9, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 
 		/*
 		Test deleting a analysis
@@ -36,12 +36,16 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		 9 - 17 are the actual element displayed within the overlay of the fixed column.
 		 */
 		page.deleteAnalysis(9);
-		assertEquals("Should have 8 analyses displayed after deleting one", 8, page.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 10 analyses displayed after deleting one", 10, page.getNumberOfAnalysesDisplayed());
 
 		// Check to make sure the analyses queue is being set up properly
 		AnalysesQueue queue = AnalysesQueue.getAnalysesQueue(driver());
 		assertEquals("Should have 5 analyses running", 5, queue.getRunningCounts());
 		assertEquals("Should have 1 analysis queued", 1, queue.getQueueCounts());
 
+		// Test filtering on second page to ensure server side filtering
+		page.searchForAnalysisByName("from a long time ago");
+		assertEquals("Should have 1 Analysis displayed after filtering for item on second page", 1,
+				page.getNumberOfAnalysesDisplayed());
 	}
 }
