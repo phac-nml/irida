@@ -10,7 +10,7 @@ function getTextSearchProps(dataIndex) {
       return item
         .toString()
         .toLowerCase()
-        .includes(value.toLowerCase());
+        .includes(value.trim().toLowerCase());
     },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
