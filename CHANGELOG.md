@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI/Developer]: Removed webpack progress.
 * [UI]: Updated clients listing table to use `ant.design` tables.
+* [UI]: Sending email to sync user when a remote project's token expires.
 
 19.09 to 20.01
 --------------
