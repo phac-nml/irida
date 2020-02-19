@@ -36,6 +36,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		 9 - 17 are the actual element displayed within the overlay of the fixed column.
 		 */
 		page.deleteAnalysis(9);
+
 		// Still 10 left as there is a total of 13 analyses (10 displayed on each page of table)
 		assertEquals("Should have 10 analyses displayed after deleting one", 10, page.getNumberOfAnalysesDisplayed());
 
@@ -44,5 +45,9 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 5 analyses running", 5, queue.getRunningCounts());
 		assertEquals("Should have 1 analysis queued", 1, queue.getQueueCounts());
 
+		// Test filtering on second page to ensure server side filtering
+		page.searchForAnalysisByName("from a long time ago");
+		assertEquals("Should have 1 Analysis displayed after filtering for item on second page", 1,
+				page.getNumberOfAnalysesDisplayed());
 	}
 }
