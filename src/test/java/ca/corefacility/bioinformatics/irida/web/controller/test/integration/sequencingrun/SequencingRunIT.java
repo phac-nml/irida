@@ -42,9 +42,6 @@ import com.google.common.collect.ImmutableMap;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunIT {
 
-	// TODO: When more run types are available test that they are represented in
-	// listing and reading
-
 	@Test
 	public void testListRuns() {
 		asAdmin().expect().and().body("resource.resources.description", hasItems("run 1", "run 2", "run 3")).and()
