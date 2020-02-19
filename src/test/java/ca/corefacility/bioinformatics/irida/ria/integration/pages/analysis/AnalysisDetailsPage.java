@@ -141,9 +141,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean analysisDetailsEqual() {
+	public boolean analysisDetailsEqual(String expectedDetails[]) {
 		boolean expectedEqualsActual = true;
-		String expectedDetails[] = new String[] {  "My Completed Submission", "4", "SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013 10:01 AM", "a few seconds" };
 		String actualDetails[] = new String[7];
 
 		int index=0;

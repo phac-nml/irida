@@ -67,7 +67,10 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
 
-		assertTrue("The correct details are displayed for the analysis", page.analysisDetailsEqual());
+		String expectedAnalysisDetails[] = new String[] { "My Completed Submission", "4",
+				"SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013 10:01 AM", "a few seconds" };
+		assertTrue("The correct details are displayed for the analysis",
+				page.analysisDetailsEqual(expectedAnalysisDetails));
 	}
 
 	@Test
@@ -87,7 +90,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
-		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
+		assertTrue("There should be a download button for the file that is displayed",
+				page.downloadOutputFileButtonVisible());
 	}
 
 	@Test
@@ -133,7 +137,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
-		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
+		assertTrue("There should be a download button for the file that is displayed",
+				page.downloadOutputFileButtonVisible());
 
 		// Has no output files
 		page = AnalysisDetailsPage.initPage(driver(), 10L, "tree/file_preview");
@@ -154,7 +159,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Has horizontal tab links", page.hasHorizontalTabLinks());
 
 		// Completed submission should not display steps component
-		assertTrue("Analysis steps are not visible since the analysis is in completed state", !page.analysisStepsVisible());
+		assertTrue("Analysis steps are not visible since the analysis is in completed state",
+				!page.analysisStepsVisible());
 
 		// Submissions without trees and not sistr or biohansel
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "");
@@ -163,14 +169,16 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Any other submission state should display steps component
 		page = AnalysisDetailsPage.initPage(driver(), 2L, "");
-		assertTrue("Analysis steps are visible since the analysis isn't in completed state", page.analysisStepsVisible());
+		assertTrue("Analysis steps are visible since the analysis isn't in completed state",
+				page.analysisStepsVisible());
 	}
 
 	@Test
 	// Has no specific results output tab (for example tree, biohansel, sistr) so the output file preview
 	// page is the default view
-	public void testPipelineResultsWithoutSpecialTab() throws IOException{
-		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/refseq-masher-matches.tsv");
+	public void testPipelineResultsWithoutSpecialTab() throws IOException {
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory,
+				"src/test/resources/files/refseq-masher-matches.tsv");
 
 		LoginPage.loginAsManager(driver());
 
@@ -179,7 +187,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
-		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
+		assertTrue("There should be a download button for the file that is displayed",
+				page.downloadOutputFileButtonVisible());
 	}
 
 	@Test
@@ -189,7 +198,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Has output files so display a provenance
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
-		assertEquals("There should be one file" , 1, page.getProvenanceFileCount());
+		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
 		page.getFileProvenance();
 		assertEquals("Should have 2 tools associated with the tree", 2, page.getToolCount());
 		page.displayToolExecutionParameters();
@@ -198,8 +207,9 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Has no output files so no provenance displayed
 		page = AnalysisDetailsPage.initPage(driver(), 10L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
-		assertEquals("There should be no file" , 0, page.getProvenanceFileCount());
-		assertEquals("Has a no provenance available alert", "Unable to display provenance as no output files were found for analysis.", page.getWarningAlertText());
+		assertEquals("There should be no file", 0, page.getProvenanceFileCount());
+		assertEquals("Has a no provenance available alert",
+				"Unable to display provenance as no output files were found for analysis.", page.getWarningAlertText());
 	}
 
 	@Test
@@ -233,7 +243,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testSistrOutput() throws IOException {
-		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/sistr-predictions-pass.json");
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory,
+				"src/test/resources/files/sistr-predictions-pass.json");
 
 		LoginPage.loginAsManager(driver());
 
@@ -253,13 +264,14 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/mash");
 		assertTrue("Page title should equal", page.comparePageTitle("Mash"));
-		assertTrue("Has 4 list items for Mash",  page.expectedNumberOfListItemsEqualsActual(4));
+		assertTrue("Has 4 list items for Mash", page.expectedNumberOfListItemsEqualsActual(4));
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/file_preview");
 		assertTrue("Page title should equal", page.comparePageTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
-		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
+		assertTrue("There should be a download button for the file that is displayed",
+				page.downloadOutputFileButtonVisible());
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/citation");
 		assertTrue("Page title should equal", page.comparePageTitle("Citation"));
@@ -357,11 +369,11 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		IridaWorkflow unknownWorkflow;
 
 		// Register an UNKNOWN workflow
-		Path workflowVersion1DirectoryPath = Paths.get(TestAnalysis.class.getResource(
-				"workflows/TestAnalysis/1.0").toURI());
+		Path workflowVersion1DirectoryPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0")
+				.toURI());
 
-		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(
-				Sets.newHashSet()), new IridaWorkflowIdSet(Sets.newHashSet()));
+		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(Sets.newHashSet()),
+				new IridaWorkflowIdSet(Sets.newHashSet()));
 
 		unknownWorkflow = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion1DirectoryPath);
 		logger.debug("Registering workflow: " + unknownWorkflow.toString());
@@ -378,15 +390,27 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
-		assertTrue("There should be a download button for the file that is displayed", page.downloadOutputFileButtonVisible());
+		assertTrue("There should be a download button for the file that is displayed",
+				page.downloadOutputFileButtonVisible());
 
 		page = AnalysisDetailsPage.initPage(driver(), 14L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
-		assertEquals("There should be one file" , 1, page.getProvenanceFileCount());
+		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
 		page.getFileProvenance();
 		assertEquals("Should have 2 tools associated with the tree", 1, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 2 parameter", 2, page.getGalaxyParametersCount());
+
+		page = AnalysisDetailsPage.initPage(driver(), 14L, "settings/details");
+		assertTrue("Page title should equal", page.compareTabTitle("Details"));
+		assertEquals("There should be 7 labels for analysis details", 7, page.getNumberOfListItems());
+		// Analysis Description doesn't have a value
+		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
+
+		String expectedAnalysisDetails[] = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
+				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013 10:01 AM", "a few seconds" };
+		assertTrue("The correct details are displayed for the analysis",
+				page.analysisDetailsEqual(expectedAnalysisDetails));
 	}
 
 	@Test
