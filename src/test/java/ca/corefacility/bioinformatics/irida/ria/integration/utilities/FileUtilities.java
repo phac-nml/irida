@@ -24,7 +24,8 @@ public class FileUtilities {
 	 * Copies a file required by the it tests to folder
 	 * to the outputFileBaseDirectory
 	 *
-	 * @param relativeFilePath the relative path to the file
+	 * @param outputFileBaseDirectory configured path for where the output files are stored
+	 * @param relativeFilePath        the relative path to the file
 	 */
 	public void copyFileToDirectory(Path outputFileBaseDirectory, String relativeFilePath) throws IOException {
 		String fileName[] = relativeFilePath.split("/");
