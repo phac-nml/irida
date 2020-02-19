@@ -32,9 +32,8 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
 			ImmutableMap.of("href", "/projects", "text", "Projects"),
-			ImmutableMap.of("href", "/projects/" + 1, "text", "1"),
-			ImmutableMap.of("href", "/projects/1/settings", "text", "Settings"),
-			ImmutableMap.of("href", "/projects/1/settings/members", "text", "Members"));
+			ImmutableMap.of("href", "/projects/1", "text", "project"),
+			ImmutableMap.of("href", "/projects/1/settings", "text", "Settings"));
 
 	@Before
 	public void setUpTest() {
