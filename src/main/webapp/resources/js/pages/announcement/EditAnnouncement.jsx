@@ -4,6 +4,13 @@ import { Button, Modal } from "antd";
 import { MarkdownEditor } from "../../components/markdown/MarkdownEditor";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 
+/**
+ * Render React component to edit an announcement.
+ * @param {string} announcement - announcement to edit.
+ * @param {function} updateAnnouncement - function to update the announcement.
+ * @returns {*}
+ * @constructor
+ */
 export function EditAnnouncement({ announcement, updateAnnouncement }) {
   const markdownRef = useRef();
 
