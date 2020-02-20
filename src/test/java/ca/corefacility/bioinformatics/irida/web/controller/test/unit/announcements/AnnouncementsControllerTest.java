@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
+package ca.corefacility.bioinformatics.irida.web.controller.test.unit.announcements;
 
 import java.security.Principal;
 import java.util.List;
@@ -115,24 +115,6 @@ public class AnnouncementsControllerTest {
         assertEquals("Unexpected number attributes in model", 1, modelMap.keySet().size());
         assertEquals("Unexpected number joins in model", 2, ((List) modelMap.get("announcements")).size());
         assertTrue("Unexpected page returned", ANNOUNCEMENT_ADMIN.equals(page));
-    }
-
-    @Test
-    public void testSubmitCreateAnnouncement() {
-//        Principal principal = () -> USER_NAME;
-//        ExtendedModelMap model = new ExtendedModelMap();
-//
-//        String message = "The newest message";
-//        Announcement a = new Announcement(message, user);
-//
-//        when(announcementService.create(any(Announcement.class))).thenReturn(a);
-//        when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-//
-//        announcementsController.submitCreateAnnouncement(message, model, principal);
-//
-//        assertTrue("Unexpected page returned", ANNOUNCEMENT_CREATE.equals(announcementsController.getCreateAnnouncementPage()));
-//        verify(announcementService).create(any(Announcement.class));
-//        verify(userService, times(1)).getUserByUsername(USER_NAME);
     }
 
     @Test
