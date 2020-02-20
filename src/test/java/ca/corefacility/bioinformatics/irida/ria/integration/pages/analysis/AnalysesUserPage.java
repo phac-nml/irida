@@ -58,6 +58,7 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForElementToBeClickable(nameFilterSubmit);
 		nameFilterInput.sendKeys(name);
 		nameFilterSubmit.click();
+		waitForElementInvisible(By.className("t-name-filter"));
 	}
 
 	public void clearNameFilter() {
