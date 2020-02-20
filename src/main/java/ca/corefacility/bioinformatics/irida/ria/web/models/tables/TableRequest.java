@@ -40,18 +40,25 @@ public class TableRequest {
 	}
 
 	public String getSearch() {
-		return search.trim();
-	}
-
-	public void setSearch(String search) {
-		this.search = search;
+		return search;
 	}
 
 	/**
-	 * Since we he need an actual {@link Sort} object and cannot pass this from
-	 * the client, we create one from the information fathered from the client
-	 * Direction of sort
-	 * Column (attribute) of sort
+	 * Set the search term for the TableRequest.  This method will trim any leading and trailing whitespace.
+	 *
+	 * @param search The search term for the request
+	 */
+	public void setSearch(String search) {
+		if (search != null) {
+			this.search = search.trim();
+		} else {
+			search = null;
+		}
+	}
+
+	/**
+	 * Since we he need an actual {@link Sort} object and cannot pass this from the client, we create one from the
+	 * information fathered from the client Direction of sort Column (attribute) of sort
 	 *
 	 * @return {@link Sort}
 	 */
