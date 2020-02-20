@@ -40,14 +40,11 @@ public class TableRequest {
 	}
 
 	public String getSearch() {
-		if (search == null) {
-			return null;
-		}
-		return search.trim();
+		return search;
 	}
 
 	public void setSearch(String search) {
-		this.search = search;
+		this.search = search.trim();
 	}
 
 	/**
