@@ -83,6 +83,7 @@ public class ClientsControllerTest {
 		params.setPageSize(10);
 		params.setSortColumn("createdDate");
 		params.setSortDirection("ascend");
+		params.setSearch("");
 		TableResponse response = controller.getAjaxClientsList(params);
 
 		assertEquals(2, response.getDataSource().size());
