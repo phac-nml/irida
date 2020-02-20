@@ -3,15 +3,24 @@ import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { AddNewButton } from "../../components/Buttons/AddNewButton";
 
 function UsersTable() {
-  return <h2>FUCK ME</h2>;
+  return <h2>OK THIS IS BETTER ME</h2>;
 }
 
 function UsersPage() {
   return (
-    <PageWrapper title={i18n("users.title")}>
-      <PagedTableProvider url={setBaseUrl("users/ajax/list")}>
+    <PageWrapper
+      title={i18n("UsersPage.title")}
+      headerExtras={
+        <AddNewButton
+          href={setBaseUrl(`users/create`)}
+          text={i18n("UsersPage.add")}
+        />
+      }
+    >
+      <PagedTableProvider url={setBaseUrl("ajax/users/list")}>
         <UsersTable />
       </PagedTableProvider>
     </PageWrapper>

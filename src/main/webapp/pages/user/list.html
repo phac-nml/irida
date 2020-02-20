@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       data-layout-decorate="~{template/page}">
 <head>
-    <title th:text="#{users.title}">_USER LIST TITLE_</title>
+    <title th:text="#{UsersPage.title}">_USER LIST TITLE_</title>
     <link rel="stylesheet" th:href="@{/dist/css/users-list.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
@@ -17,9 +17,6 @@
 <body>
 <div id="react-root" layout:fragment="page" style="height: 100%">
     <main class="col-md-12">
-        <h1 th:text="#{users.title}">_Users_</h1>
-        <a href="/users/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/users/create}"
-           class="btn btn-default mrgn-bttm-md">Add User</a>
         <table id="usersTable" class="table table-striped table-hover">
             <thead>
             <tr th:inline="text">
