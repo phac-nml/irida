@@ -40,6 +40,9 @@ public class TableRequest {
 	}
 
 	public String getSearch() {
+		if (search == null) {
+			return null;
+		}
 		return search.trim();
 	}
 
