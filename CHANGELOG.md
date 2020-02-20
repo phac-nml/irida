@@ -7,6 +7,7 @@ Changes
 * [UI]: Updated clients listing table to use `ant.design` tables.
 * [UI]: Sending email to sync user when a remote project's token expires.
 * [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+* [UI]: Updated admin announcements table and creation to use `ant.design`.
 
 19.09 to 20.01
 --------------

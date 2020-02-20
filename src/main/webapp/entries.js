@@ -71,7 +71,7 @@ module.exports = {
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
-    "./resources/js/pages/announcement/announcement-admin.js",
+    "./resources/js/pages/announcement/AnnouncementAdminPage.jsx",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
