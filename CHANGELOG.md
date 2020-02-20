@@ -7,7 +7,7 @@ Changes
 * [UI]: Updated clients listing table to use `ant.design` tables.
 * [UI]: Sending email to sync user when a remote project's token expires.
 * [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
-* [API]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
+* [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
 
 19.09 to 20.01
 --------------
