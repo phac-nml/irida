@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
 /**
- * User interface model for DataTables for administration of {@link Announcement}
+ * User interface model for administration of {@link Announcement}
  */
 public class AnnouncementTableModel extends TableModel {
 	private final User user;
