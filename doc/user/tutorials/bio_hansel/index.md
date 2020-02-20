@@ -62,7 +62,7 @@ Monitoring Pipeline Status
 
 To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
 
-![](images/analysis.png)
+![](images/view-analysis-status.png)
 
 The will bring you to a page where you can monitor the status of each launched workflow.
 
@@ -74,15 +74,15 @@ Viewing Individual Sample Results
 
 Once the pipeline is complete, you will be able to view the `bio_hansel` pipeline results and download the output files of the analysis.
 
-![](images/bio_hansel-analysis-details-SRR1203042.png)
+![](images/biohansel-results.png)
 
-You can view the `bio_hansel` analysis output files:
+You can view the `bio_hansel` analysis output files in tabular or json view:
 
-![](images/bio_hansel-analysis_details-SRR1203042-output-preview.png)
+![](images/biohansel-output-files.png)
 
 You can view the detailed `bio_hansel` match results in a tabular view:
 
-![](images/bio_hansel-analysis_details-preview-match_results.png)
+![](images/biohansel-output-files-detailed-match-results.png)
 
 
 Viewing Results For Multiple Samples
@@ -90,7 +90,7 @@ Viewing Results For Multiple Samples
 
 If you had checked the **Save bio_hansel results to Project Line List Metadata** checkbox on the `bio_hansel` pipeline launch page, you will be able to view the results of your analyses in the **Line List** table on the **Project** page:
 
-![](images/bio_hansel-line_list_table-3-samples.png)
+![](images/biohansel-linelist.png)
 
 
 Interpreting the Results
