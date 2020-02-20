@@ -44,7 +44,11 @@ public class TableRequest {
 	}
 
 	public void setSearch(String search) {
-		this.search = search.trim();
+		if (search != null) {
+			this.search = search.trim();
+		} else {
+			search = null;
+		}
 	}
 
 	/**
