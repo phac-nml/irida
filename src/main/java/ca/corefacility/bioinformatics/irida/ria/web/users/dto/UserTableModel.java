@@ -15,6 +15,7 @@ public class UserTableModel extends TableModel {
 	private String username;
 	private String role;
 	private Date lastLogin;
+	private boolean enabled;
 
 	public UserTableModel(User user) {
 		super(user.getId(), user.getUsername(), user.getCreatedDate(), user.getModifiedDate());
@@ -25,6 +26,7 @@ public class UserTableModel extends TableModel {
 		this.role = user.getSystemRole()
 				.getName();
 		this.lastLogin = user.getLastLogin();
+		this.enabled = user.isEnabled();
 	}
 
 	public String getFirstName() {
@@ -49,5 +51,9 @@ public class UserTableModel extends TableModel {
 
 	public Date getLastLogin() {
 		return lastLogin;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
 	}
 }

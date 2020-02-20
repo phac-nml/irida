@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +31,7 @@ public class UsersAjaxController {
 
 	@RequestMapping("/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public TableResponse<UserTableModel> getUsersPagedList(TableRequest request) {
+	public TableResponse<UserTableModel> getUsersPagedList(@RequestBody TableRequest request) {
 		Specification<User> specification = UserSpecification.searchUser(request.getSearch());
 		PageRequest pageRequest = PageRequest.of(request.getCurrent(), request.getPageSize(), request.getSort());
 		Page<User> userPage = userService.search(specification, pageRequest);

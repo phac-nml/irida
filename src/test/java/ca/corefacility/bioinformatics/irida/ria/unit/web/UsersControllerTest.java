@@ -6,14 +6,11 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,10 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUser;
 import ca.corefacility.bioinformatics.irida.ria.web.users.UsersController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -90,28 +83,6 @@ public class UsersControllerTest {
 	@Test
 	public void showAllUsers() {
 		assertEquals(USERS_PAGE, controller.getUsersPage());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Ignore
-	@Test
-	public void testGetAjaxUserList() {
-
-		when(userService.search(any(Specification.class), any(Pageable.class))).thenReturn(
-				userPage);
-		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
-		DataTablesParams params = mock(DataTablesParams.class);
-		when(params.getLength()).thenReturn(1);
-
-		DataTablesResponse response = controller.getAjaxUserList(params, Locale.US);
-
-		List<DataTablesResponseModel> users = response.getData();
-
-		assertEquals(NUM_TOTAL_ELEMENTS, users.size());
-		DTUser firstUser = (DTUser) users.get(0);
-		assertEquals("Tom", firstUser.getFirstName());
-		assertEquals("tom@nowhere.com", firstUser.getEmail());
-		verify(messageSource, times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -449,6 +449,7 @@ public class UsersController {
 
 	/**
 	 * Get a list of users based on search criteria.
+	 *
 	 * @param params {@link DataTablesParams} for the current Users DataTables.
 	 * @param locale {@link Locale}
 	 * @return {@link DataTablesResponse} of the filtered users list.
@@ -463,11 +464,12 @@ public class UsersController {
 	//		List<DataTablesResponseModel> usersData = new ArrayList<>();
 	//		for (User user : userPage) {
 	//			// getting internationalized system role from the message source
-	//			String roleMessageName = "systemrole." + user.getSystemRole().getName();
+	//			String roleMessageName = "systemrole." + user.getSystemRole()
+	//					.getName();
 	//			String systemRole = messageSource.getMessage(roleMessageName, null, locale);
 	//
-	//			usersData.add(new DTUser(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), systemRole,
-	//					user.getCreatedDate(), user.getModifiedDate(), user.getLastLogin()));
+	//			usersData.add(new DTUser(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(),
+	//					user.getEmail(), systemRole, user.getCreatedDate(), user.getModifiedDate(), user.getLastLogin()));
 	//		}
 	//
 	//		return new DataTablesResponse(params, userPage, usersData);

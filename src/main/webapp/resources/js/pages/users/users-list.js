@@ -1,12 +1,73 @@
-import React from "react";
+import React, { useContext } from "react";
 import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
-import { PagedTableProvider } from "../../components/ant.design/PagedTable";
+import {
+  PagedTable,
+  PagedTableContext,
+  PagedTableProvider
+} from "../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
+import { dateColumnFormat } from "../../components/ant.design/table-renderers";
+import { Checkbox } from "antd";
+import { UserRoleSelect } from "./UserRoleSelect";
 
 function UsersTable() {
-  return <h2>OK THIS IS BETTER ME</h2>;
+  const { updateTable } = useContext(PagedTableContext);
+
+  const columns = [
+    {
+      title: "",
+      fixed: "left",
+      render(text, full) {
+        // TODO: Make this a component that will update the server.
+        return <Checkbox checked={full.enabled} />;
+      }
+    },
+    {
+      title: i18n("users.username"),
+      dataIndex: "name",
+      fixed: "left",
+      render(text, full) {
+        return <a href={setBaseUrl(`users/${full.id}`)}>{text}</a>;
+      }
+    },
+    {
+      title: i18n("users.firstName"),
+      dataIndex: "firstName"
+    },
+    {
+      title: i18n("users.lastName"),
+      dataIndex: "lastName"
+    },
+    {
+      title: i18n("users.email"),
+      dataIndex: "email",
+      render(text, full) {
+        return <a href={`mailto:${text}`}>{text}</a>;
+      }
+    },
+    {
+      title: i18n("users.role"),
+      dataIndex: "role",
+      width: 150,
+      render(text) {
+        return <UserRoleSelect role={text} />;
+      }
+    },
+    {
+      ...dateColumnFormat(),
+      title: i18n("users.created"),
+      dataIndex: "createdDate"
+    },
+    {
+      ...dateColumnFormat(),
+      title: i18n("users.last-login"),
+      dataIndex: "lastLogin"
+    }
+  ];
+
+  return <PagedTable columns={columns} />;
 }
 
 function UsersPage() {
