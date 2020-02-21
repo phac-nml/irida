@@ -29,6 +29,8 @@ export function MarkdownViewer({ markdown }) {
   We can use `dangerouslySetInnerHTML` here since we know where the content of
   the markdown is coming from.
    */
-  Promise.resolve(markdownConverter.makeHtml(markdown)).then(md => setValue(md));
+  Promise.resolve(markdownConverter.makeHtml(markdown)).then(md =>
+    setValue(md)
+  );
   return <StyledViewer dangerouslySetInnerHTML={{ __html: value }} />;
 }
