@@ -1,3 +1,6 @@
+/**
+ * @fileOverview Announcements administration page.
+ */
 import React, { useRef } from "react";
 import { render } from "react-dom";
 import {
@@ -11,6 +14,11 @@ import { PageWrapper } from "../../components/page/PageWrapper";
 import { AnnouncementsTable } from "./AnnouncementsTable";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 
+/**
+ * React component to render the administration announcements page.
+ * @returns {*}
+ * @constructor
+ */
 export function AnnouncementAdminPage({}) {
   const tableRef = useRef(null);
 

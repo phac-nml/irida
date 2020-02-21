@@ -10,11 +10,25 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
  * Represents the filters on the Analyses Table.
  */
 public class AnalysesFilters {
+	private String name;
 	private List<AnalysisState> state = new ArrayList<>();
 	private List<String> type = new ArrayList<>();
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(List<String> name) {
+		this.name = name.size() > 0 ?
+				name.get(0)
+						.trim() :
+				null;
+	}
+
 	public void setState(List<String> stateStrings) {
-		this.state = stateStrings.stream().map(AnalysisState::valueOf).collect(Collectors.toList());
+		this.state = stateStrings.stream()
+				.map(AnalysisState::valueOf)
+				.collect(Collectors.toList());
 	}
 
 	public List<AnalysisState> getState() {
