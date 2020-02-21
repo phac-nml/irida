@@ -30,14 +30,14 @@ Initial Data
 
 The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run-assembly-small/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
 
-![assembly-tutorial-samples.png][]
+![assembly-samples][]
 
 Adding Samples to the Cart
 ==========================
 
 Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart.  For this tutorial please select all three samples and click the **Add to Cart** button.
 
-![select-samples.png][]
+![add-to-cart.png][]
 
 Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
 
@@ -48,7 +48,7 @@ Selecting a Pipeline
 
 Once inside the cart, all available pipelines will be displayed.
 
-![select-a-pipeline-view.png][]
+![pipeline-select][]
 
 There are two different types of assembly pipelines available:
 
@@ -62,37 +62,34 @@ Selecting Parameters
 
 Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters.
 
-![assembly-pipeline-page.png][]
+![assembly-pipeline-page][]
 
 We will use the default parameters.  Please select the **Ready to Launch?** button to continue.
 
-![ready-to-launch-button.png][]
+![launch-button][]
 
 Once the button is selected you should see a screen showing that your pipeline has been launched.
 
-![pipeline-launch.png][]
+![pipeline-launched][]
 
 Monitoring Pipeline Status
 ==========================
 
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
+To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
 
-![your-analyses-menu.png][]
+![view-your-analyses][]
 
 The will bring you to a page where you can monitor the status of each launched workflow.
 
-![your-analyses-page.png][]
+![monitor-analyses][]
 
-Clicking the pipeline name **AssemblyAnnotationCollection_...** will bring you to a page for that analysis pipeline.
 
-![assembly-pipeline-page-details.png][]
-
-This page will continue to refresh as the pipeline progresses through each stage.  It will take a few minutes for the assembly and annotation pipeline to complete.
+Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a few minutes for the assembly and annotation pipeline to complete.
 
 Viewing the Results
 ===================
 
-Once the pipeline is complete, you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
+Once the pipeline is complete, you will be given the option to download the results of the analysis. Please click **Download** to download these results now.
 
 ![assembly-pipeline-results.png][]
 

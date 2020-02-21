@@ -5,6 +5,7 @@ search_title: "refseq_masher: What's in your sequence data?"
 description: "Using refseq_masher in IRIDA."
 ---
 
+
 refseq_masher: What's in your sequence data?
 ============================================
 {:.no_toc}
@@ -15,6 +16,7 @@ This tutorial will run [refseq_masher] against a publicly available reads set.
 
 * TOC
 {:toc}
+
 
 Get tutorial reads data 
 ------------------------------------------
@@ -55,51 +57,48 @@ Select sample "SRR1203042" and add it to your Cart:
 Select refseq_masher Pipeline
 -----------------------------
 
-You'll see the various Pipelines in IRIDA:
+Once inside the cart all available pipelines will be listed in the main area of the page.
 
-![select-pipeline]
-
-Select the `refseq_masher` pipeline:
-
-![card]
+![pipeline-select]
 
 
 Configure and Launch refseq_masher Analysis
 -------------------------------------------
 
-![launch-masher]
+![refseq-pipeline-page]
 
 Modify the parameters to run `refseq_masher` if desired:
 
-![masher-params]
+![refseq-customize]
+
+![refseq-customize-parameters]
+
 
 Click the "Launch" button to submit the analysis. 
 
-![pipeline-submitted]
-
-Click the "Let's see how this pipeline is doing" button to go to **Your Analyses** page to monitor your analysis status.
+![launch-button]
 
 
 Monitoring Analysis Status
 --------------------------
 
-Go to the **Your Analyses** page by clicking on **Analysis > Your Analyses**:
+To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
 
-![analyses-your-analyses]
+![view-your-analyses][]
 
-In the **Your Analyses** table, you should see an entry like:
+The will bring you to a page where you can monitor the status of each launched workflow.
 
-![pipeline-progress]
+![monitor-analyses][]
 
-Clicking the analysis named **RefSeqMasherOnPairedReads_...** will bring you to a page that looks like:
+Clicking the first refseq masher analysis will bring you to a page that looks like:
 
 ![analysis-in-progress]
 
 When the analysis has completed, it should look like:
 
-![analysis-complete]
+![refseq-results]
 
-You should see 2 files under "Output Files":
+You should see 2 files under "Output File Preview":
 
 - `SRR1203042-refseq-masher-matches.tsv` 
     - Top matching NCBI Genomes to sample `SRR1203042` 
@@ -172,25 +171,74 @@ About some of the fields in `SRR1203042-refseq-masher-contains.tsv`:
 *For more info on interpreting refseq_masher **contains** results, see [refseq_masher contains documentation][contains]* and the [Mash Screen] documentation.
 
 
-[refseq_masher]: https://github.com/phac-nml/refseq_masher
+Viewing Provenance Information
+==============================
+
+To view the pipeline provenance information, please select the **Provenance** tab.
+
+![refseq-provenance]
+
+The provenance is displayed on a per file basis. Clicking on `refseq-masher-matches.tsv` file will display it's provenance. Expanding each tool will display the parameters that the tool was executed with.
+
+![refseq-provenance-tools]
+
+
+Viewing Pipeline Details
+========================
+
+To view analysis details, please select the **Settings** tab.
+
+![refseq-settings]
+
+To edit an analysis name, please select the **Pencil** icon next to the analysis name.
+
+![refseq-settings-edit-name]
+
+Add the text `_01` to the end of the name and hit enter.
+
+![refseq-settings-edit-name-updated]
+
+To view samples used by the analysis, please select the **Samples** tab.
+
+![refseq-settings-samples]
+
+To share analysis results with other projects and/or save results back to samples, please select the **Manage Results** tab.
+
+![refseq-settings-manage-results]
+
+To delete an analysis, please select the **Delete Analysis** tab.
+
+![delete-analysis]
+
+
+
+
+[add-to-cart]: images/add-to-cart.png
+[analysis-in-progress]: images/analysis-in-progress.png
+[contains]: https://github.com/phac-nml/refseq_masher#contains---find-what-ncbi-refseq-genomes-are-contained-in-your-input-sequences
+[delete-analysis]: images/delete-analysis.png
+[EBI]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
+[launch-button]: images/launch-button.png
 [Mash]: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0997-x
 [Mash Screen]: https://mash.readthedocs.io/en/latest/tutorials.html#screening-a-read-set-for-containment-of-refseq-genomes
+[matches]: https://github.com/phac-nml/refseq_masher#matches---find-the-closest-matching-ncbi-refseq-genomes-in-your-input-sequences
+[monitor-analyses]: images/monitor-analyses.png
+[new-sample]: images/new-sample.png
 [NCBI RefSeq Genomes]: https://www.ncbi.nlm.nih.gov/genome
-[EBI]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
+[refseq-customize]: images/refseq-customize.png
+[refseq-customize-parameters]: images/refseq-customize-parameters.png
+[refseq_masher]: https://github.com/phac-nml/refseq_masher
+[refseq-pipeline-page]: images/refseq-pipeline-page.png
+[refseq-provenance]: images/refseq-provenance.png
+[refseq-provenance-tools]: images/refseq-provenance-tools.png
+[refseq-results]: images/refseq-results.png
+[refseq-settings]: images/refseq-settings.png
+[refseq-settings-edit-name]: images/refseq-settings-edit-name.png
+[refseq-settings-edit-name-updated]: images/refseq-settings-edit-name-updated.png
+[refseq-settings-samples]: images/refseq-settings-samples.png
+[refseq-settings-manage-results]: images/refseq-settings-manage-results.png
+[seq-uploaded]: images/seq-uploaded.png
 [SRR1203042_1.fastq.gz]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_1.fastq.gz
 [SRR1203042_2.fastq.gz]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_2.fastq.gz
-[matches]: https://github.com/phac-nml/refseq_masher#matches---find-the-closest-matching-ncbi-refseq-genomes-in-your-input-sequences
-[contains]: https://github.com/phac-nml/refseq_masher#contains---find-what-ncbi-refseq-genomes-are-contained-in-your-input-sequences
-[analyses-your-analyses]: images/analyses-your-analyses.png
-[card]: images/card.png
-[add-to-cart]: images/add-to-cart.gif
-[analysis-complete]: images/analysis-complete.png
-[analysis-in-progress]: images/analysis-in-progress.png
-[launch-masher]: images/launch-masher.png
-[masher-params]: images/masher-params.png
-[new-sample]: images/new-sample.png
-[pipeline-progress]: images/pipeline-progress.png
-[pipeline-submitted]: images/pipeline-submitted.png
-[select-pipeline]: images/select-pipeline.png
-[seq-uploaded]: images/seq-uploaded.png
 [upload-fastqs]: images/upload-fastqs.png
+[view-your-analyses]: images/view-your-analyses.png

@@ -22,7 +22,7 @@ Initial Data
 ============
 The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>. It is assumed the sequence files in `miseq-run-salmonella/` have been uploaded into appropriate samples as described in the Web Upload Tutorial. Before starting this tutorial you should have a project with samples that appear as:
 
-![mentalist-tutorial-samples.png][]
+![mentalist-samples][]
 
 Adding Samples to the Cart
 ==========================
@@ -38,9 +38,9 @@ Once the samples have been added to the cart, the samples can be reviewed by cli
 Selecting a Pipeline
 ====================
 
-Once inside the cart, you can select a pipeline from the available pipeline grid:
+Once inside the cart all available pipelines will be listed in the main area of the page.
 
-![select-a-pipeline-view.png][]
+![pipeline-select][]
 
 For this tutorial, we will select the **MentaLiST MLST Pipeline**.
 
@@ -49,35 +49,35 @@ Selecting Parameters
 
 Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters.
 
-![mentalist-pipeline-page.png][]
+![mentalist-pipeline-page][]
 
 Before launching the pipeline, we must select a MentaLiST kmer database to run our samples against. Select an appropriate 'Salmonella enterica' database from the **Kmer DB** drop-down menu. Note that the kmer databases available on your system will have a different date and may have been built with a different value of k than the ones shown below. If there is no 'Salmonella enterica' database available, please contact your IRIDA system administrator and refer to the [administrator documentation][mentalist-admin-docs] for detailed instructions on installing MentaLiST kmer databases. Use the **Ready to Launch?** button to start the pipeline.
 
-![ready-to-launch-button.png][]
+![launch-button][]
 
 Once the button is selected you should see a screen showing that your pipeline has been launched.
 
-![pipeline-launch.png][]
+![pipeline-launched][]
 
 Monitoring Pipeline Status
 ==========================
 
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
+To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
 
-![your-analyses-menu.png][]
+![view-your-analyses][]
 
 The will bring you to a page where you can monitor the status of each launched workflow.
 
-![your-analyses-page.png][]
+![monitor-analysis][]
 
-Clicking the pipeline name **MLSTMentalist_20180404** will bring you to a page for that analysis pipeline. This page will continue to refresh as the pipeline progresses through each stage.  It will take a while for the MentaLiST analysis pipeline to complete.
+Clicking the pipeline name **MLSTMentalist_20200221** will bring you to a page for that analysis pipeline. This page will continue to refresh as the pipeline progresses through each stage.  It will take a while for the MentaLiST analysis pipeline to complete.
 
 Viewing the Results
 ===================
 
 Once the pipeline is complete, you will see the MentaLiST MLST results within your browser and you will be given the option to download the results of the analysis.
 
-![mentalist-results.png][]
+![mentalist-results][]
 
 Interpreting the Results
 ========================
@@ -86,36 +86,72 @@ MentaLiST provides MLST results in a simple tab-separated value file that can be
 
 The first row is a header. The following rows represent the MLST results for each sample. The first column contains the sample ID. Subsequent columns contain allele calls for each locus in the typing scheme. The sequence type (ST) and clonal complex are reported in the final two columns.
 
-![mentalist-results-file.png]
+![mentalist-results-file]
 
 Viewing Provenance Information
 ==============================
 
 To view the pipeline provenance information, please select the **Provenance** tab.
 
-![mentalist-provenance.png][]
+![mentalist-provenance][]
 
-This will display the individual steps of this pipeline and the parameters used at each step.
+The provenance is displayed on a per file basis. Clicking on the `mentalist_call.tsv` file will display it's provenance. Expanding each tool will display the parameters that the tool was executed with.
 
-[mentalist-github]: https://github.com/WGS-TB/MentaLiST
-[mentalist-admin-docs]: ../../../administrator/galaxy/pipelines/mentalist
-[mentalist-tutorial-samples.png]: images/mentalist-tutorial-samples.png
-[mentalist-data-managers.png]: images/mentalist-data-managers.png
+![mentalist-provenance-tools][]
+
+
+Viewing Pipeline Details
+========================
+
+To view analysis details, please select the **Settings** tab.
+
+![mentalist-settings]
+
+To edit an analysis name, please select the **Pencil** icon next to the analysis name.
+
+![mentalist-settings-edit-name]
+
+Add the text `_01` to the end of the name and hit enter.
+
+![mentalist-settings-edit-name-updated]
+
+To view samples used by the analysis, please select the **Samples** tab.
+
+![mentalist-settings-samples]
+
+To share analysis results with other projects, please select the **Manage Results** tab.
+
+![mentalist-manage-results]
+
+To delete an analysis, please select the **Delete Analysis** tab.
+
+![delete-analysis]
+
+
 [add-to-cart.png]: images/add-to-cart.png
-[cart-button.png]: images/cart-button.png
-[select-a-pipeline.png]: images/select-a-pipeline.png
-[select-a-pipeline-view.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-a-pipeline-view.png
-[mentalist-pipeline-page.png]: images/mentalist-pipeline-page.png
-[ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
-[pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
-[your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
-[your-analyses-page.png]: images/your-analyses-page.png
-[mentalist-results.png]: images/mentalist-results.png
-[mentalist-results-file.png]: images/mentalist-results-file.png
-[mentalist-provenance.png]: images/mentalist-provenance.png
-[microsoft-notepad]: https://en.wikipedia.org/wiki/Microsoft_Notepad
 [apple-textedit]: https://en.wikipedia.org/wiki/TextEdit
-[microsoft-excel]: https://products.office.com/en-ca/excel
+[cart-button.png]: images/cart-button.png
+[delete-analysis]: images/delete-analysis.png
+[launch-button]: images/launch-button.png
 [libreoffice-calc]: https://www.libreoffice.org/discover/calc/
+[mentalist-admin-docs]: ../../../administrator/galaxy/pipelines/mentalist
 [mentalist-docs]: https://github.com/WGS-TB/MentaLiST/tree/mentalist_v0.1/docs
+[mentalist-github]: https://github.com/WGS-TB/MentaLiST
+[mentalist-manage-results]: images/mentalist-manage-results.png
 [mentalist-paper]: http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000146
+[mentalist-pipeline-page]: images/mentalist-pipeline-page.png
+[mentalist-provenance]: images/mentalist-provenance.png
+[mentalist-provenance-tools]: images/mentalist-provenance-tools.png
+[mentalist-results]: images/mentalist-results.png
+[mentalist-results-file]: images/mentalist-results-file.png
+[mentalist-samples]: images/mentalist-samples.png
+[mentalist-settings]: images/mentalist-settings.png
+[mentalist-settings-edit-name]: images/mentalist-settings-edit-name.png
+[mentalist-settings-edit-name-updated]: images/mentalist-settings-name-updated.png
+[mentalist-settings-samples]: images/mentalist-settings-samples.png
+[microsoft-excel]: https://products.office.com/en-ca/excel
+[microsoft-notepad]: https://en.wikipedia.org/wiki/Microsoft_Notepad
+[monitor-analysis]: images/view-analysis-status.png
+[pipeline-launched]: images/pipeline-launched.png
+[pipeline-select]: images/pipeline-select.png
+[view-your-analyses]: images/view-your-analyses.png

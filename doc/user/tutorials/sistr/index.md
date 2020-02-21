@@ -59,11 +59,13 @@ Once the button is selected you should see a screen showing that your pipeline h
 Monitoring Pipeline Status
 ==========================
 
-The will bring you to a page where you can monitor the status of each launched workflow.
+To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
 
-![monitor-analyses]
+![view-analysis-status]
 
-Clicking the pipeline name **SISTRTyping_20200220_AE014613** will bring you to a page for that analysis pipeline. It will take a while for the SISTR analysis pipeline to complete.
+This will bring you to a page where you can monitor the status of each launched workflow.
+
+Clicking the pipeline name in the table will bring you to a page for that analysis pipeline. It will take a while for the SISTR analysis pipeline to complete.
 
 Viewing the Results
 ===================
@@ -152,4 +154,5 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [sistr-settings-edit-name-updated]: images/sistr-settings-edit-name-updated.png
 [sistr-web]: https://lfz.corefacility.ca/sistr-app/
 [tutorial-sistr-samples]: images/tutorial-sistr-samples.png
+[view-analysis-status]: images/view-analysis-status.png
 [Web Upload Tutorial]: ../web-upload/
