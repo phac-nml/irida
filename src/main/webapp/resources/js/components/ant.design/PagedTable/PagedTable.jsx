@@ -2,7 +2,17 @@ import React, { useContext } from "react";
 import { PagedTableContext } from "./PagedTableContext";
 import { SPACE_XS } from "../../../styles/spacing";
 import { Input, Table } from "antd";
-import { grey4 } from "../../../styles/colors";
+import styled from "styled-components";
+import { grey4, grey7 } from "../../../styles/colors";
+
+const StyledTable = styled(Table)`
+  border: 1px solid ${grey4};
+  border-radius: 2px;
+  tr.disabled,
+  tr.disabled a {
+    color: ${grey7};
+  }
+`;
 
 /**
  * Table component to standardize paged tables with ant.design.
@@ -34,8 +44,7 @@ export function PagedTable({ search = true, buttons, columns, ...props }) {
           </div>
         ) : null}
       </div>
-      <Table
-        style={{ border: `1px solid ${grey4}`, borderRadius: 2 }}
+      <StyledTable
         {...props}
         {...pagedConfig}
         columns={columns}
