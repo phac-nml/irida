@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -123,37 +122,6 @@ public class RemoteAPIControllerTest {
 		assertTrue(errors.containsKey("serviceURI"));
 
 		verify(remoteAPIService).create(client);
-	}
-
-	@Test
-	@Ignore
-	public void testCheckApiStatusActive() {
-		//		Long apiId = 1L;
-		//		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		//		when(remoteAPIService.read(apiId)).thenReturn(client);
-		//		when(projectRemoteService.getServiceStatus(client)).thenReturn(true);
-		//		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
-		//
-		//		assertEquals(RemoteAPIController.VALID_OAUTH_CONNECTION, checkApiStatus);
-		//
-		//		verify(remoteAPIService).read(apiId);
-		//		verify(projectRemoteService).getServiceStatus(client);
-	}
-
-	@Test
-	public void testCheckApiStatusInactive() {
-		//		Long apiId = 1L;
-		//		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		//
-		//		when(remoteAPIService.read(apiId)).thenReturn(client);
-		//		when(projectRemoteService.getServiceStatus(client)).thenThrow(new IridaOAuthException("invalid token", client));
-		//
-		//		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
-		//
-		//		assertEquals(RemoteAPIController.INVALID_OAUTH_TOKEN, checkApiStatus);
-		//
-		//		verify(remoteAPIService).read(apiId);
-		//		verify(projectRemoteService).getServiceStatus(client);
 	}
 
 	@Test(expected = IridaOAuthException.class)

@@ -18,7 +18,10 @@ export function RemoteApiTable() {
     {
       title: i18n("remoteapi.name"),
       key: "name",
-      dataIndex: "name"
+      dataIndex: "name",
+      render(text) {
+        return <span className="t-api-name">{text}</span>;
+      }
     },
     {
       title: i18n("iridaThing.timestamp"),
@@ -38,5 +41,5 @@ export function RemoteApiTable() {
     }
   ];
 
-  return <PagedTable columns={columnDefs} />;
+  return <PagedTable className="t-remoteapi-table" columns={columnDefs} />;
 }
