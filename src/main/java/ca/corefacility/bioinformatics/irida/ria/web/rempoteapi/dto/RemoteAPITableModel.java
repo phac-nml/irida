@@ -6,8 +6,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 /**
  * Represents a {@link RemoteAPI} in the Remote API table.
  */
-public class RemoteAPIModel extends TableModel {
-	public RemoteAPIModel(RemoteAPI api) {
+public class RemoteAPITableModel extends TableModel {
+	public RemoteAPITableModel(RemoteAPI api) {
 		super(api.getId(), api.getName(), api.getCreatedDate(), api.getModifiedDate());
 	}
 }

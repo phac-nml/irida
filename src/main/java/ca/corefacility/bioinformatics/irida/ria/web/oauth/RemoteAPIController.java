@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -13,10 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,12 +29,8 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -213,48 +209,6 @@ public class RemoteAPIController extends BaseController {
 		}
 
 		return responsePage;
-	}
-
-	/**
-	 * Get a list of the current page for the Remote API Table
-	 *
-	 * @param tableRequest - the details for the current page of the Table
-	 * @return {@link TableResponse}
-	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	TableResponse<RemoteAPIModel> getAjaxAPIList(@RequestBody TableRequest tableRequest) {
-		Page<RemoteAPI> search = remoteAPIService.search(
-				RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
-				tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortColumn());
-
-		List<RemoteAPIModel> apiData = search.getContent()
-				.stream()
-				.map(RemoteAPIModel::new)
-				.collect(Collectors.toList());
-		return new TableResponse<>(apiData, search.getTotalElements());
-	}
-
-	/**
-	 * Check the currently logged in user's OAuth2 connection status to a given
-	 * API
-	 * 
-	 * @param apiId
-	 *            The ID of the api
-	 * @return "valid" or "invalid_token" message
-	 */
-	@RequestMapping("/status/{apiId}")
-	@ResponseBody
-	public String checkApiStatus(@PathVariable Long apiId) {
-		RemoteAPI api = remoteAPIService.read(apiId);
-
-		try {
-			projectRemoteService.getServiceStatus(api);
-			return VALID_OAUTH_CONNECTION;
-		} catch (IridaOAuthException ex) {
-			logger.debug("Can't connect to API: " + ex.getMessage());
-			return INVALID_OAUTH_TOKEN;
-		}
 	}
 
 	/**
