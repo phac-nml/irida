@@ -96,7 +96,9 @@ public class RemoteAPIController extends BaseController {
 
 	/**
 	 * Get the remote apis listing page
-	 * 
+	 *
+	 * @param model     {@link Model}
+	 * @param principal {@link Principal} currently logged in usef
 	 * @return The view name of the remote apis listing page
 	 */
 	@RequestMapping
