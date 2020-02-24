@@ -7,25 +7,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
- *
  */
 public class AnalysesUserPage extends AbstractPage {
 	@FindBy(css = "tbody.ant-table-tbody .t-name")
 	private List<WebElement> rows;
 
-	@FindBy(css = ".ant-table-selection-column .ant-checkbox-input")
+	@FindBy(css = ".ant-table-selection-column .ant-checkbox-wrapper")
 	private List<WebElement> rowCheckboxes;
 
 	@FindBy(className = "t-delete-selected")
 	private WebElement deleteSelectedBtn;
 
-	@FindBy(className = "t-name-filter-btn")
+	@FindBy(className = "t-name")
 	private WebElement nameFilterButton;
 
 	@FindBy(className = "t-name-filter")
@@ -61,6 +58,7 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForElementToBeClickable(nameFilterSubmit);
 		nameFilterInput.sendKeys(name);
 		nameFilterSubmit.click();
+		waitForElementInvisible(By.className("t-name-filter"));
 	}
 
 	public void clearNameFilter() {
@@ -68,17 +66,14 @@ public class AnalysesUserPage extends AbstractPage {
 		nameFilterButton.click();
 		waitForElementToBeClickable(nameFilterClear);
 		nameFilterClear.click();
+		waitForElementInvisible(By.className("t-name-filter-clear"));
 	}
 
 	public void deleteAnalysis(int row) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.invisibilityOf(rowCheckboxes.get(row)));
-		rowCheckboxes.get(row)
-				.click();
+		waitForElementToBeClickable(rowCheckboxes.get(row)).click();
 		waitForElementToBeClickable(deleteSelectedBtn).click();
 		WebElement popover = waitForElementVisible(By.className("ant-popover-inner-content"));
-		popover.findElement(By.cssSelector(".ant-btn.ant-btn-primary.ant-btn-sm"))
-				.click();
+		popover.findElement(By.cssSelector(".ant-btn.ant-btn-primary.ant-btn-sm")).click();
 		waitForTime(500);
 	}
 }

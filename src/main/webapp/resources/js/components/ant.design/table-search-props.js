@@ -4,14 +4,6 @@ import { Button, Input } from "antd";
 function getTextSearchProps(dataIndex) {
   let searchInput;
   return {
-    onFilter: (value, record) => {
-      // Sometimes the values can be undefined so give it a default value.
-      const item = record[dataIndex] || "";
-      return item
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase());
-    },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.select());
@@ -28,7 +20,7 @@ function getTextSearchProps(dataIndex) {
           ref={node => {
             searchInput = node;
           }}
-          className={`t-${dataIndex}-filter`}
+          className="t-name-filter"
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={e =>
@@ -39,20 +31,21 @@ function getTextSearchProps(dataIndex) {
         />
         <Button
           type="primary"
-          className={`t-${dataIndex}-filter-ok`}
+          className="t-name-filter-ok"
           onClick={() => confirm()}
+          icon="search"
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
-          {i18n("Filter.search")}
+          Search
         </Button>
         <Button
-          className={`t-${dataIndex}-filter-clear`}
+          className="t-name-filter-clear"
           onClick={() => clearFilters()}
           size="small"
           style={{ width: 90 }}
         >
-          {i18n("Filter.reset")}
+          Reset
         </Button>
       </div>
     )

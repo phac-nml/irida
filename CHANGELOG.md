@@ -1,6 +1,14 @@
 Changes
 =======
 
+20.01 to 20.05
+--------------
+* [UI/Developer]: Removed webpack progress.
+* [UI]: Updated clients listing table to use `ant.design` tables.
+* [UI]: Sending email to sync user when a remote project's token expires.
+* [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+* [UI]: Updated admin announcements table and creation to use `ant.design`.
+
 19.09 to 20.01
 --------------
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
@@ -46,6 +54,8 @@ Changes
 * [UI/Developer]: Update version of `babel` and `eslint`.
 * [Documentation]: Fixed documentation link for developer authorization/oauth docs.
 * [Documentation]: Added info about upgrading to Tomcat 8.
+* [Documentation]: Added notice to upgrading guide about mysql 5.5 hibernate dialect.
+* [UI]: Fixed page title for users list page.
 
 19.05 to 19.09
 ---------------

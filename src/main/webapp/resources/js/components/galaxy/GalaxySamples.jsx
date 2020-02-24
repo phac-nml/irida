@@ -1,7 +1,7 @@
 import React from "react";
+
 import { useStateValue } from "./GalaxyState";
-import { Alert } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Alert, Icon } from "antd";
 import { SPACE_SM } from "../../styles/spacing";
 
 /**
@@ -16,7 +16,7 @@ export function GalaxySamples() {
       {fetchingSamples ? (
         <Alert
           message={i18n("GalaxySamples.processing")}
-          icon={<LoadingOutlined />}
+          icon={<Icon type="loading" />}
           showIcon
           type="info"
         />

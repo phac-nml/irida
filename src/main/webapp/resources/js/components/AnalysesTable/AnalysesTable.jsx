@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { Button, Popconfirm, Table } from "antd";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import { Button, Icon, Popconfirm } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -13,21 +13,10 @@ import {
 import { AnalysisState } from "./AnalysisState";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
-import { blue6, grey6 } from "../../styles/colors";
+import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { DownloadOutlined } from "@ant-design/icons";
-import { FilterIcon } from "../Tables/fitlers/FilterIcon";
-import styled from "styled-components";
-
-const DownloadButton = styled(Button)`
-  color: ${grey6};
-
-  &:hover {
-    color: ${blue6};
-  }
-`;
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -36,14 +25,7 @@ const DownloadButton = styled(Button)`
  */
 export function AnalysesTable() {
   const CAN_MANAGE = window.PAGE.canManage;
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange,
-    updateTable
-  } = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   /**
    * Handler for deleting an analysis.
@@ -81,10 +63,18 @@ export function AnalysesTable() {
       title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
+      width: 170,
       filterMultiple: true,
       filters: pipelineStates,
       filterIcon(filtered) {
-        return <FilterIcon filtered={filtered} />;
+        return (
+          <Icon
+            type="filter"
+            theme="filled"
+            style={{ color: filtered ? blue6 : undefined }}
+            className="t-state"
+          />
+        );
       },
       render(state) {
         return <AnalysisState state={state} />;
@@ -97,7 +87,14 @@ export function AnalysesTable() {
       dataIndex: "type",
       filterMultiple: true,
       filterIcon(filtered) {
-        return <FilterIcon filtered={filtered} />;
+        return (
+          <Icon
+            type="filter"
+            theme="filled"
+            style={{ color: filtered ? blue6 : undefined }}
+            className="t-type"
+          />
+        );
       },
       filters: pipelineTypes
     },
@@ -117,6 +114,7 @@ export function AnalysesTable() {
     {
       title: i18n("analysis.duration"),
       key: "duration",
+      width: 180,
       dataIndex: "duration",
       render(timestamp) {
         return getHumanizedDuration({ date: timestamp });
@@ -126,18 +124,15 @@ export function AnalysesTable() {
       title: "",
       key: "download",
       fixed: "right",
-      align: "right",
-      width: 60,
       render(text, record) {
         return (
-          <DownloadButton
+          <Button
             shape="circle-outline"
             disabled={record.state.value !== "COMPLETED"}
             href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
-          >
-            <DownloadOutlined />
-          </DownloadButton>
+            icon="download"
+          />
         );
       }
     }
@@ -155,47 +150,43 @@ export function AnalysesTable() {
     };
   }
 
+  const buttons = (
+    <Popconfirm
+      placement="bottomRight"
+      title={i18n("analyses.delete-confirm").replace(
+        "[COUNT]",
+        selected.length
+      )}
+      onVisibleChange={visible => setDeleting(visible)}
+      onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
+    >
+      <Button
+        className="t-delete-selected"
+        loading={deleting}
+        disabled={!selected.length}
+        onClick={() => setDeleting(true)}
+      >
+        {i18n("analyses.delete")}
+      </Button>
+    </Popconfirm>
+  );
+
   return (
     <div>
       <div
         style={{
           marginBottom: SPACE_MD,
-          display: "flex"
+          display: "flex",
+          flexDirection: "row-reverse"
         }}
       >
-        <div style={{ flex: 1 }}>
-          <Popconfirm
-            placement="bottomRight"
-            title={i18n("analyses.delete-confirm").replace(
-              "[COUNT]",
-              selected.length
-            )}
-            onVisibleChange={visible => setDeleting(visible)}
-            onConfirm={() =>
-              deleteAnalyses(selected).then(() => setSelected([]))
-            }
-          >
-            <Button
-              className="t-delete-selected"
-              loading={deleting}
-              disabled={!selected.length}
-              onClick={() => setDeleting(true)}
-            >
-              {i18n("analyses.delete")}
-            </Button>
-          </Popconfirm>
-        </div>
         <AnalysesQueue />
       </div>
-      <Table
-        rowSelection={rowSelection}
-        scroll={{ x: "max-content" }}
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{ total, pageSize }}
+      <PagedTable
+        buttons={buttons}
         columns={columns}
-        dataSource={dataSource}
-        onChange={handleTableChange}
+        rowSelection={rowSelection}
+        rowKey={record => record.id}
       />
     </div>
   );

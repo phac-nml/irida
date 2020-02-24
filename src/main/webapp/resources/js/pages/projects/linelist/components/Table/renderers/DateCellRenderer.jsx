@@ -1,8 +1,7 @@
 import React from "react";
+
 import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
-import { Popover } from "antd";
-import { ExclamationCircleTwoTone, InfoCircleTwoTone } from "@ant-design/icons";
-import { SPACE_XS } from "../../../../../../styles/spacing";
+import { Icon, Popover } from "antd";
 
 /**
  * Component to properly display dates in the ag-grid
@@ -22,13 +21,16 @@ export class DateCellRenderer extends React.Component {
             content={content}
             title={
               <span>
-                <ExclamationCircleTwoTone style={{ marginRight: SPACE_XS }} />
+                <Icon type="exclamation-circle-o" />{" "}
                 {i18n("linelist.dateCell.popover.title")}
               </span>
             }
           >
             <span>
-              <InfoCircleTwoTone style={{ color: "white" }} />
+              <i
+                style={{ color: "white" }}
+                className="fas fa-info-circle fa-fw"
+              />
             </span>
           </Popover>
         </div>
