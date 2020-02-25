@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.dialects.login.LoginProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -213,6 +214,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
+		dialects.add(new LoginProcessorDialect());
 		return dialects;
 	}
 }

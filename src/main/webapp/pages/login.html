@@ -10,24 +10,25 @@
       window.PAGE = {
         BASE_URL: /*[[@{/}]]*/ "/",
         hasErrors: /*[[${error}]]*/ false,
-        emailConfigured: /*[[${emailConfigured}]]*/ false,
+        emailConfigured: /*[[${emailConfigured}]]*/ false
       };
     </script>
     <style>
       body {
-        min-height: 100vh;
-        background-color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
+        height: 100vh;
       }
     </style>
   </head>
   <body>
-      <div id="login-root">
-        <!-- Contents rendered from LoginPage.jsx -->
+    <th:block login:page="${@environment.getProperty('login.page')}">
+      <div
+        style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column"
+      >
+        <div id="login-root" style="width: 300px">
+          <!-- Contents rendered from LoginPage.jsx -->
+        </div>
       </div>
+    </th:block>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>

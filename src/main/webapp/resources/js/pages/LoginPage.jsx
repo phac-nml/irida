@@ -18,12 +18,7 @@ function LoginPage({ form }) {
   }
 
   return (
-    <div
-      style={{
-        padding: "1rem",
-        width: 400
-      }}
-    >
+    <>
       <img src="/resources/img/irida_logo_light.svg" alt="" />
       {window.PAGE.hasErrors ? (
         <Alert
@@ -101,7 +96,7 @@ function LoginPage({ form }) {
           ) : null}
         </Form.Item>
       </Form>
-    </div>
+    </>
   );
 }
 
