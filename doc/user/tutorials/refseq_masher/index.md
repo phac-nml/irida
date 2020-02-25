@@ -32,18 +32,12 @@ Download forward and reverse reads for `SRR1203042`:
 - [SRR1203042_2.fastq.gz] 
 
 
-Load WGS for SRR1203042 into IRIDA
-----------------------------------
+Initial Data
+============
 
-Create Sample in IRIDA:
+It is assumed the sequence files (forward and reverse) `SRR1203042_1.fastq.gz` and `SRR1203042_2.fastq.gz` have been uploaded into a sample as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with a sample as seen below:
 
-![new-sample]
-
-![upload-fastqs]
- 
-Upload `SRR1203042_1.fastq.gz` and `SRR1203042_2.fastq.gz`:
-
-![seq-uploaded]
+![refseq-masher-samples]
 
 
 Add Sample to Cart
@@ -53,6 +47,9 @@ Select sample "SRR1203042" and add it to your Cart:
 
 ![add-to-cart]
 
+Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
+
+![cart-button]
 
 Select refseq_masher Pipeline
 -----------------------------
@@ -60,7 +57,6 @@ Select refseq_masher Pipeline
 Once inside the cart all available pipelines will be listed in the main area of the page.
 
 ![pipeline-select]
-
 
 Configure and Launch refseq_masher Analysis
 -------------------------------------------
@@ -186,9 +182,13 @@ The provenance is displayed on a per file basis. Clicking on `refseq-masher-matc
 Viewing Pipeline Details
 ========================
 
-To view analysis details, please select the **Settings** tab.
+To view analysis details, please select the **Settings** tab. From here you can view the analysis name, analysis description, analysis id, pipeline and pipeline version used by the analysis, analysis priority, when the analysis was created, and duration of the analysis.
 
 ![refseq-settings]
+
+If the analysis is not in `COMPLETED` or `ERROR` state, you can update if you would like to receive an email upon pipeline completion.
+
+![email-upon-completion]
 
 To edit an analysis name, please select the **Pencil** icon next to the analysis name.
 
@@ -215,19 +215,23 @@ To delete an analysis, please select the **Delete Analysis** tab.
 
 [add-to-cart]: images/add-to-cart.png
 [analysis-in-progress]: images/analysis-in-progress.png
+[cart-button]: images/cart-button.png
 [contains]: https://github.com/phac-nml/refseq_masher#contains---find-what-ncbi-refseq-genomes-are-contained-in-your-input-sequences
 [delete-analysis]: images/delete-analysis.png
 [EBI]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
-[launch-button]: images/launch-button.png
+[email-upon-completion]: ../../../images/tutorials/common/pipelines/email-upon-completion.png
+[launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [Mash]: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0997-x
 [Mash Screen]: https://mash.readthedocs.io/en/latest/tutorials.html#screening-a-read-set-for-containment-of-refseq-genomes
 [matches]: https://github.com/phac-nml/refseq_masher#matches---find-the-closest-matching-ncbi-refseq-genomes-in-your-input-sequences
 [monitor-analyses]: images/monitor-analyses.png
 [new-sample]: images/new-sample.png
 [NCBI RefSeq Genomes]: https://www.ncbi.nlm.nih.gov/genome
+[pipeline-select]: images/pipeline-select.png
 [refseq-customize]: images/refseq-customize.png
 [refseq-customize-parameters]: images/refseq-customize-parameters.png
 [refseq_masher]: https://github.com/phac-nml/refseq_masher
+[refseq-masher-samples]: images/refseq-masher-samples.png
 [refseq-pipeline-page]: images/refseq-pipeline-page.png
 [refseq-provenance]: images/refseq-provenance.png
 [refseq-provenance-tools]: images/refseq-provenance-tools.png
@@ -242,3 +246,4 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [SRR1203042_2.fastq.gz]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_2.fastq.gz
 [upload-fastqs]: images/upload-fastqs.png
 [view-your-analyses]: images/view-your-analyses.png
+[Web Upload Tutorial]: ../web-upload/

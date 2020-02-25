@@ -117,9 +117,13 @@ The provenance is displayed on a per file basis. Clicking on `bio_hansel_tech-re
 Viewing Pipeline Details
 ========================
 
-To view analysis details, please select the **Settings** tab.
+To view analysis details, please select the **Settings** tab. From here you can view the analysis name, analysis description, analysis id, pipeline and pipeline version used by the analysis, analysis priority, when the analysis was created, and duration of the analysis.
 
 ![bio-hansel-settings]
+
+If the analysis is not in `COMPLETED` or `ERROR` state, you can update if you would like to receive an email upon pipeline completion.
+
+![email-upon-completion]
 
 To edit an analysis name, please select the **Pencil** icon next to the analysis name.
 
@@ -162,8 +166,9 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [cart-button]: images/cart-button.png
 [delete-analysis]: images/delete-analysis.png
 [docs]: ../../user/bio_hansel/
+[email-upon-completion]: ../../../images/tutorials/common/pipelines/email-upon-completion.png
 [forward reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_1.fastq.gz
-[launch-button]: images/launch.png
+[launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [monitor-analyses]: images/view-analysis-status.png
 [reverse reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_2.fastq.gz
 [select-a-pipeline]: images/select-a-pipeline.png

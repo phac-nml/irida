@@ -29,11 +29,11 @@ Adding Samples to the Cart
 
 Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart. For this tutorial please select the single sample and click the **Add to Cart** button.
 
-![add-to-cart.png][]
+![add-to-cart][]
 
 Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
 
-![cart-button.png][]
+![cart-button][]
 
 Selecting a Pipeline
 ====================
@@ -103,9 +103,13 @@ The provenance is displayed on a per file basis. Clicking on the `mentalist_call
 Viewing Pipeline Details
 ========================
 
-To view analysis details, please select the **Settings** tab.
+To view analysis details, please select the **Settings** tab. From here you can view the analysis name, analysis description, analysis id, pipeline and pipeline version used by the analysis, analysis priority, when the analysis was created, and duration of the analysis.
 
 ![mentalist-settings]
+
+If the analysis is not in `COMPLETED` or `ERROR` state, you can update if you would like to receive an email upon pipeline completion.
+
+![email-upon-completion]
 
 To edit an analysis name, please select the **Pencil** icon next to the analysis name.
 
@@ -128,11 +132,12 @@ To delete an analysis, please select the **Delete Analysis** tab.
 ![delete-analysis]
 
 
-[add-to-cart.png]: images/add-to-cart.png
+[add-to-cart]: images/add-to-cart.png
 [apple-textedit]: https://en.wikipedia.org/wiki/TextEdit
-[cart-button.png]: images/cart-button.png
+[cart-button]: images/cart-button.png
 [delete-analysis]: images/delete-analysis.png
-[launch-button]: images/launch-button.png
+[email-upon-completion]: ../../../images/tutorials/common/pipelines/email-upon-completion.png
+[launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [libreoffice-calc]: https://www.libreoffice.org/discover/calc/
 [mentalist-admin-docs]: ../../../administrator/galaxy/pipelines/mentalist
 [mentalist-docs]: https://github.com/WGS-TB/MentaLiST/tree/mentalist_v0.1/docs

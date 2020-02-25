@@ -116,6 +116,8 @@ To view the pipeline provenance information, please select the **Provenance** ta
 
 This will display the individual steps of this pipeline and the parameters used at each step.
 
+[email-upon-completion]: ../../../images/tutorials/common/pipelines/email-upon-completion.png
+[launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [FLASH]: http://ccb.jhu.edu/software/FLASH/
 [SPAdes]: http://bioinf.spbau.ru/spades
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
@@ -124,7 +126,7 @@ This will display the individual steps of this pipeline and the parameters used 
 [select-samples.png]: images/select-samples.png
 [cart-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/cart-button.png
 [assembly-pipeline-page.png]: images/assembly-pipeline-page.png
-[ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
+
 [select-a-pipeline.png]: images/select-a-pipeline.png
 [select-a-pipeline-view.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-a-pipeline-view.png
 [pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png

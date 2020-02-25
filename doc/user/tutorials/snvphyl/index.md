@@ -17,7 +17,7 @@ This is a quick tutorial on how to construct a whole genome SNV phylogeny with [
 Initial Data
 ============
 
-The data for this tutorial comes from https://irida.corefacility.ca/downloads/data/irida-sample-data.zip. It is assumed the sequence files in miseq-run-assembly-small/ have been uploaded into appropriate samples as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with samples that appear as:
+The data for this tutorial comes from  https://irida.corefacility.ca/downloads/snvphyl-galaxy/examples/snvphyl-example-lm.tar.gz. It is assumed the sequence files (forward and reverse) `CFSAN002349` and `CFSAN023463` in fastq/ have been uploaded into appropriate samples as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with samples that appear as:
 
 ![snvphyl-samples]
 
@@ -25,16 +25,21 @@ The data for this tutorial comes from https://irida.corefacility.ca/downloads/da
 Adding Samples to the Cart
 ==========================
 
-Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart. For this tutorial please select all 3 samples and click the **Add to Cart** button.
+Before a pipeline can be run, a set of samples and sequence read data must be selected and added to the cart. For this tutorial please select the  2 samples and click the **Add to Cart** button.
 
 ![add-to-cart]
+
+Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
+
+![cart-button.png]
 
 Selecting a Pipeline
 ====================
 
+For this tutorial, we will select the **SNVPhyl Phylogenomics Pipeline**.
+
 ![pipeline-select]
 
-For this tutorial, we will select the **SNVPhyl Phylogenomics Pipeline**.
 
 Selecting Parameters
 ====================
@@ -43,7 +48,7 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![snvphyl-pipeline-page][]
 
-SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  A number of example reference files are provided under the `references/` folder in the sample data package.  Please upload the file `08-5578.fasta` using the following steps.
+SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` using the following steps.
 
 ![snvpyhyl-pipeline-upload-ref-file]
 
@@ -77,22 +82,22 @@ The will bring you to a page where you can monitor the status of each launched w
 
 ![monitor-analyses][]
 
-Clicking the pipeline name **SNVPhyl_20200221** will bring you to a page for that analysis pipeline.
+Clicking the pipeline name **SNVPhyl_20200225** will bring you to a page for that analysis pipeline.
 
 ![analysis-in-progress][]
 
 It will take a while the SNVPhyl analysis pipeline to complete.
 
-When the analysis has completed, it should look like:
-
-![snvphyl-results]
-
 Viewing the Results
 ===================
 
-Once the pipeline is complete, you will see the generated phylogenetic tree within your browser and you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
+Once the pipeline is complete, you will see the generated phylogenetic tree within your browser.
 
-![snvphyl-results.png][]
+![snvphyl-results][]
+
+You can view the `SNVPhyl` analysis output files by selecting the Output File Preview tab. From here you can download all the files by selecting the **Download All Files** button or download individual files by selecting the relevant button next to the file name:
+
+![snvphyl-output-files][]
 
 A number of files are provided within the download package.  These are described below:
 
@@ -122,9 +127,13 @@ The provenance is displayed on a per file basis. Clicking on `mappingQuality.txt
 Viewing Pipeline Details
 ========================
 
-To view analysis details, please select the **Settings** tab.
+To view analysis details, please select the **Settings** tab. From here you can view the analysis name, analysis description, analysis id, pipeline and pipeline version used by the analysis, analysis priority, when the analysis was created, and duration of the analysis.
 
 ![snvphyl-settings]
+
+If the analysis is not in `COMPLETED` or `ERROR` state, you can update if you would like to receive an email upon pipeline completion.
+
+![email-upon-completion]
 
 To edit an analysis name, please select the **Pencil** icon next to the analysis name.
 
@@ -148,10 +157,23 @@ To delete an analysis, please select the **Delete Analysis** tab.
 
 
 
+Advanced SNVPHyl Visualizations
+===============================
+
+SNVPHyl Analyses can be combined with metadata from the sample the were run to get a more complete picture.  For more information see  [Advanced Visualizations]({{ site.baseurl }}/user/user/analysis-visualizations).
+
+To view the advanced visualization, click the **Phylogenetic Tree** tab and click the **View Advanced Visualization** button on the **Tree Preview** tab.
+
+![snvphyl-results-adv-tree]
+
+
+
 [add-to-cart]: images/add-to-cart.png
 [analysis-in-progress]: images/analysis-in-progress.png
+[cart-button.png]: images/cart-button.png
 [delete-analysis]: images/delete-analysis.png
-[launch-button]: images/launch-button.png
+[email-upon-completion]: ../../../images/tutorials/common/pipelines/email-upon-completion.png
+[launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [min-read-coverage]: images/min-read-coverage.png
 [min-read-coverage-modified]: images/min-read-coverage-modified.png
 [monitor-analyses]: images/monitor-analyses.png
@@ -160,9 +182,14 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [SNVPhyl]: http://snvphyl.readthedocs.io/
 [snvphyl-customize]: images/snvphyl-customize.png
 [snvphyl-customize-parameters]: images/snvphyl-parameters.png
+[snvphyl-output-files]: images/snvphyl-output-files.png
 [SNVPhyl Output Guide]: http://snvphyl.readthedocs.io/en/latest/user/output/
 [snvphyl-pipeline-page]: images/snvphyl-pipeline-page.png
 [snvpyhyl-pipeline-upload-ref-file]: images/snvpyhyl-pipeline-upload-ref-file.png
+[snvphyl-provenance]: images/snvphyl-provenance.png
+[snvphyl-provenance-tools]: images/snvphyl-provenance-tools.png
+[snvphyl-results]: images/snvphyl-results.png
+[snvphyl-results-adv-tree]: images/snvphyl-results-adv-tree.png
 [snvphyl-samples]: images/snvphyl-samples.png
 [snvphyl-settings]: images/snvphyl-settings.png
 [snvphyl-settings-edit-name]: images/snvphyl-settings-edit-name.png
@@ -170,13 +197,4 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [snvphyl-settings-samples]: images/snvphyl-settings-samples.png
 [snvphyl-settings-manage-results]: images/snvphyl-settings-manage-results.png
 [view-your-analyses]: images/view-your-analyses.png
-
-
-
-
-[snvphyl-provenance.png]: images/snvphyl-provenance.png
-
-Advanced SNVPHyl Visualizations
-===============================
-
-SNVPHyl Analyses can be combined with metadata from the sample the were run to get a more complete picture.  For more information see  [Advanced Visualizations]({{ site.baseurl }}/user/user/analysis-visualizations).
+[Web Upload Tutorial]: ../web-upload/
