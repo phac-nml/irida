@@ -81,7 +81,7 @@ export default function Tree() {
         ) : (
           <div>
             <ButtonGroupWrapper>
-              <Radio.Group value={currTreeShape} onChange={e => handleClick(e)} id="t-tree-shape-tools">
+              <Radio.Group value={currTreeShape} onChange={handleClick} id="t-tree-shape-tools">
                 <Radio.Button value="rectangular">
                   {i18n("AnalysisPhylogeneticTree.rectangular")}
                 </Radio.Button>

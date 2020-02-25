@@ -373,33 +373,25 @@ public class AnalysisAjaxController {
 			String outputName) {
 		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip", "pdf", "html", "xlsx");
 		// set of file extensions for indicating whether the first line of the file should be read
-		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab", TREE_EXT);
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab",
+				TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
-		if(aof != null) {
-			final Long aofId = aof.getId();
-			final String aofFilename = aof.getFile()
+		if (aof != null) {
+			String fileExt = FileUtilities.getFileExt(aof.getFile()
 					.getFileName()
-					.toString();
-			final String fileExt = FileUtilities.getFileExt(aofFilename);
+					.toString());
 			if (BLACKLIST_FILE_EXT.contains(fileExt)) {
 				return null;
 			}
-			final ToolExecution tool = aof.getCreatedByTool();
-			final String toolName = tool.getToolName();
-			final String toolVersion = tool.getToolVersion();
-			final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+			ToolExecution tool = aof.getCreatedByTool();
 
-			info.setId(aofId);
-			info.setAnalysisSubmissionId(submission.getId());
-			info.setAnalysisId(analysis.getId());
-			info.setOutputName(outputName);
-			info.setFilename(aofFilename);
-			info.setFileSizeBytes(aof.getFile()
+			AnalysisOutputFileInfo info = new AnalysisOutputFileInfo(aof.getId(), submission.getId(), analysis.getId(),
+					aof.getFile()
+							.getFileName()
+							.toString(), fileExt, aof.getFile()
 					.toFile()
-					.length());
-			info.setToolName(toolName);
-			info.setToolVersion(toolVersion);
-			info.setFileExt(fileExt);
+					.length(), tool.getToolName(), tool.getToolVersion(), outputName);
+
 			if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
 				addFirstLine(info, aof);
 			}

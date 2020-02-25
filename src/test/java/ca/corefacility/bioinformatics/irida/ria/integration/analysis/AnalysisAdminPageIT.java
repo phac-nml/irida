@@ -24,7 +24,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
 
 		// Test the name filter
-		page.searchForAnalysisByName("My Fake Submission");
+		page.searchForAnalysisByName("My Really Bad Mistake!");
 		assertEquals("Should have 1 Analysis displayed after filtering", 1, page.getNumberOfAnalysesDisplayed());
 		page.clearNameFilter();
 		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
@@ -46,7 +46,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 1 analysis queued", 1, queue.getQueueCounts());
 
 		// Test filtering on second page to ensure server side filtering
-		page.searchForAnalysisByName("from a long time ago");
+		page.searchForAnalysisByName("My Fake Submission");
 		assertEquals("Should have 1 Analysis displayed after filtering for item on second page", 1,
 				page.getNumberOfAnalysesDisplayed());
 	}

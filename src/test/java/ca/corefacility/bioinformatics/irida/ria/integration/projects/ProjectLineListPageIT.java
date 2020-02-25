@@ -40,7 +40,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		driver().manage()
 				.window()
-				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
+				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 
