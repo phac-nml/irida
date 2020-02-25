@@ -1,5 +1,5 @@
-import { take, put } from "redux-saga/effects";
-import { sampleDetailsTypes, sampleDetailsActions } from "./reducer";
+import { put, take } from "redux-saga/effects";
+import { sampleDetailsActions, sampleDetailsTypes } from "./reducer";
 import { getSampleDetails } from "../../apis/samples/samples";
 
 export function* getDetailsForSample() {

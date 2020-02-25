@@ -28,14 +28,15 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListReq
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisTypeModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.google.common.base.Strings;
 
 /**
  * Controller to handle ajax requests for Analyses
@@ -105,13 +106,23 @@ public class AnalysesAjaxController {
 	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
 	 */
 	@RequestMapping("/list")
-	public TableResponse getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
+	public TableResponse<AnalysisModel> getPagedAnalyses(@RequestBody AnalysesListRequest analysesListRequest,
 			@RequestParam(required = false, defaultValue = "false") Boolean admin,
 			@RequestParam(required = false) Long projectId, Locale locale) throws IridaWorkflowNotFoundException {
 
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		User user = (User) authentication.getPrincipal();
+		
+		/*
+		Check to see if there is a name filter
+		 */
+		String nameFilter = null;
+		if (!Strings.isNullOrEmpty(analysesListRequest.getFilters()
+				.getName())) {
+			nameFilter = analysesListRequest.getFilters()
+					.getName();
+		}
 
 		/*
 		Check to see if we are filtering by workflow type
@@ -149,27 +160,27 @@ public class AnalysesAjaxController {
 
 		if (projectId != null) {
 			Project project = projectService.read(projectId);
-			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), null,
+			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), nameFilter,
 					stateFilters, workflowIds, project, pageRequest);
 		} else if (admin && user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			// User is an admin and requesting the listing of all pages.
-			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), null, stateFilters,
-					workflowIds, pageRequest);
+			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), nameFilter,
+					stateFilters, workflowIds, pageRequest);
 		} else {
-			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), null, stateFilters,
-					user, workflowIds, pageRequest);
+			page = analysisSubmissionService.listSubmissionsForUser(analysesListRequest.getSearch(), nameFilter,
+					stateFilters, user, workflowIds, pageRequest);
 		}
 
 		/*
 		UI cannot consume it as-is.  Format into something the UI will like use the the AnalysisModel
 		 */
-		List<TableModel> analyses = page.getContent()
+		List<AnalysisModel> analyses = page.getContent()
 				.stream()
 				.map(submission -> this.createAnalysisModel(submission, locale))
 				.collect(Collectors.toList());
 
-		return new TableResponse(analyses, page.getTotalElements());
+		return new TableResponse<AnalysisModel>(analyses, page.getTotalElements());
 	}
 
 	/**
@@ -233,6 +244,15 @@ public class AnalysesAjaxController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
+	/**
+	 * Fetch the current status of the analysis server.
+	 * @return {@link Map} of the running and queued counts.
+	 */
+	@RequestMapping("/queue")
+	public AnalysisSubmissionService.AnalysisServiceStatus fetchAnalysesQueueCounts() {
+		return analysisSubmissionService.getAnalysisServiceStatus();
 	}
 }
 

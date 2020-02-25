@@ -1,5 +1,6 @@
 import $ from "jquery";
 import "./../../vendor/datatables/datatables";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 $("#filesTable").DataTable();
 
@@ -8,7 +9,7 @@ $("button.download-file").on("click", function() {
   const fileId = that.data("file-id");
   const objectId = that.data("object-id");
   const iframe = document.createElement("iframe");
-  iframe.src = `${window.TL.BASE_URL}sequenceFiles/download/${objectId}/file/${fileId}`;
+  iframe.src = setBaseUrl(`sequenceFiles/download/${objectId}/file/${fileId}`);
   iframe.style.display = "none";
   document.body.appendChild(iframe);
 });

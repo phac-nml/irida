@@ -21,7 +21,14 @@ import { SPACE_MD } from "../../styles/spacing";
  * @returns {Element} - Returns a component which displays the tab title and content
  */
 
-export function TabPaneContent({ title, xs = 24, xl = 18, xxl = 12, children, ...props }) {
+export function TabPaneContent({
+  title,
+  xs = 24,
+  xl = 18,
+  xxl = 12,
+  children,
+  ...props
+}) {
   return (
     <Col xs={xs} xl={xl} xxl={xxl}>
       <PageHeader

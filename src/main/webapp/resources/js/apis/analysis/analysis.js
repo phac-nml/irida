@@ -3,9 +3,9 @@
  */
 import axios from "axios";
 
-const ANALYSES_URL = `${window.TL.BASE_URL}ajax/analyses`;
+const ANALYSES_URL = `ajax/analyses`;
 
-const ANALYSIS_URL = `${window.TL.BASE_URL}analysis/ajax`;
+const ANALYSIS_URL = `analysis/ajax`;
 
 /**
  * Get all single sample analysis output file info for the principal user.
@@ -82,4 +82,12 @@ export async function fetchAllPipelinesTypes() {
 
 export async function deleteAnalysisSubmissions({ ids }) {
   return axios.delete(`${ANALYSES_URL}/delete?ids=${ids.join(",")}`);
+}
+
+/**
+ * Fetch the current state of the analysis server.
+ * @return {Promise<T>} return a map of the running an queued counts.
+ */
+export async function fetchAnalysesQueueCounts() {
+  return axios.get("ajax/analyses/queue").then(({ data }) => data);
 }
