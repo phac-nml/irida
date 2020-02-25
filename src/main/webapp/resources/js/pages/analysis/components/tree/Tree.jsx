@@ -32,7 +32,7 @@ const ButtonGroupWrapper = styled.div`
 export default function Tree() {
   const [newickString, setNewickString] = useState(null);
   const [serverMsg, setServerMsg] = useState(null);
-  const [currTreeShape, setCurrTreeShape] = useState("circular");
+  const [currTreeShape, setCurrTreeShape] = useState("rectangular");
   const { analysisContext } = useContext(AnalysisContext);
 
   // On load gets the newick string for the analysis
