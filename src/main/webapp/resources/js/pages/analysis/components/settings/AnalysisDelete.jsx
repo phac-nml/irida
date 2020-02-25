@@ -14,6 +14,7 @@ import { showNotification } from "../../../../modules/notifications";
 import { deleteAnalysis } from "../../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { SPACE_LG } from "../../../../styles/spacing";
 
 export default function AnalysisDelete() {
   /*
@@ -54,7 +55,11 @@ export default function AnalysisDelete() {
           cancelText={i18n("AnalysisDelete.cancel")}
           onConfirm={handleDeleteConfirm}
         >
-          <Button type="danger" className="spaced-top__lg">
+          <Button
+            type="danger"
+            style={{marginTop: SPACE_LG}}
+            id="t-delete-analysis-btn"
+          >
             {i18n("AnalysisDelete.delete")}
           </Button>
         </Popconfirm>

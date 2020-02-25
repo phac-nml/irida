@@ -33,20 +33,23 @@ function AnalysisOutputsProvider(props) {
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required
-      data.find(function(el) {
-        if (!hasJsonFile) {
-          hasJsonFile = jsonExtSet.has(el.fileExt);
-        }
 
-        if (!hasTabularFile) {
-          hasTabularFile = tabExtSet.has(el.fileExt);
-        }
+      if (data !== "") {
+        data.find(function(el) {
+          if (!hasJsonFile) {
+            hasJsonFile = jsonExtSet.has(el.fileExt);
+          }
 
-        if (!hasTextFile) {
-          hasTextFile =
-            !tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt);
-        }
-      });
+          if (!hasTabularFile) {
+            hasTabularFile = tabExtSet.has(el.fileExt);
+          }
+
+          if (!hasTextFile) {
+            hasTextFile =
+              !tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt);
+          }
+        });
+      }
 
       setAnalysisOutputsContext(analysisOutputsContext => {
         return {

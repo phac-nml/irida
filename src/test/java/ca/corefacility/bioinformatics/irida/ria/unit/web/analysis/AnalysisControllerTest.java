@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
 import java.io.IOException;
@@ -90,7 +89,7 @@ public class AnalysisControllerTest {
 		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		//assertEquals("Tree should be set", "tree", model.get("phylogeneticiTree"));
+		assertEquals("Phylogenetic Tree tab should be available", BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
@@ -118,7 +117,7 @@ public class AnalysisControllerTest {
 		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertFalse("Phylogenetic Tree tab should not be available", model.containsAttribute("phylogeneticTree"));
+		assertFalse("Phylogenetic Tree tab should not be available", submission.getAnalysisState() == AnalysisState.COMPLETED);
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 	}

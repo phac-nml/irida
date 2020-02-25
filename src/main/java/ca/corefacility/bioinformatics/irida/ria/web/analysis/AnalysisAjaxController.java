@@ -276,7 +276,7 @@ public class AnalysisAjaxController {
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
-		if (iridaWorkflow.getWorkflowDescription()
+		if (iridaWorkflow != null && iridaWorkflow.getWorkflowDescription()
 				.requiresReference() && submission.getReferenceFile()
 				.isPresent()) {
 
@@ -373,37 +373,31 @@ public class AnalysisAjaxController {
 			String outputName) {
 		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip", "pdf", "html", "xlsx");
 		// set of file extensions for indicating whether the first line of the file should be read
-		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab", TREE_EXT);
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab",
+				TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
-		final Long aofId = aof.getId();
-		final String aofFilename = aof.getFile()
-				.getFileName()
-				.toString();
-		final String fileExt = FileUtilities.getFileExt(aofFilename);
-		if (BLACKLIST_FILE_EXT.contains(fileExt))
-		{
-			return null;
-		}
-		final ToolExecution tool = aof.getCreatedByTool();
-		final String toolName = tool.getToolName();
-		final String toolVersion = tool.getToolVersion();
-		final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+		if (aof != null) {
+			String fileExt = FileUtilities.getFileExt(aof.getFile()
+					.getFileName()
+					.toString());
+			if (BLACKLIST_FILE_EXT.contains(fileExt)) {
+				return null;
+			}
+			ToolExecution tool = aof.getCreatedByTool();
 
-		info.setId(aofId);
-		info.setAnalysisSubmissionId(submission.getId());
-		info.setAnalysisId(analysis.getId());
-		info.setOutputName(outputName);
-		info.setFilename(aofFilename);
-		info.setFileSizeBytes(aof.getFile()
-				.toFile()
-				.length());
-		info.setToolName(toolName);
-		info.setToolVersion(toolVersion);
-		info.setFileExt(fileExt);
-		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
-			addFirstLine(info, aof);
+			AnalysisOutputFileInfo info = new AnalysisOutputFileInfo(aof.getId(), submission.getId(), analysis.getId(),
+					aof.getFile()
+							.getFileName()
+							.toString(), fileExt, aof.getFile()
+					.toFile()
+					.length(), tool.getToolName(), tool.getToolVersion(), outputName);
+
+			if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
+				addFirstLine(info, aof);
+			}
+			return info;
 		}
-		return info;
+		return null;
 	}
 
 
@@ -611,7 +605,7 @@ public class AnalysisAjaxController {
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/{submissionId}/share", method = RequestMethod.POST)
-	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
+	public ResponseDetails updateProjectShare(@PathVariable Long submissionId,
 			@RequestBody AnalysisProjectShare projectShare, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Project project = projectService.read(projectShare.getProjectId());
@@ -628,7 +622,8 @@ public class AnalysisAjaxController {
 					locale);
 		}
 
-		return ImmutableMap.of("result", "success", "message", message);
+		return new ResponseDetails(message);
+
 	}
 
 	/**

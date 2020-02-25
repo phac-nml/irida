@@ -1,24 +1,37 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-
 import java.util.*;
 
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+
+
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -32,10 +45,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.Lists;
+
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AnalysisAjaxControllerTest {
 	/*
@@ -60,6 +73,7 @@ public class AnalysisAjaxControllerTest {
 	private ExecutionManagerConfig configFileMock;
 	private EmailController emailControllerMock;
 	private AnalysisAudit analysisAuditMock;
+	private HttpServletResponse httpServletResponseMock;
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
@@ -79,12 +93,13 @@ public class AnalysisAjaxControllerTest {
 		userServiceMock = mock(UserService.class);
 		configFileMock = mock(ExecutionManagerConfig.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
-		AnalysisAudit analysisAuditingMock = mock(AnalysisAudit.class);
+		analysisAuditMock = mock(AnalysisAudit.class);
+		httpServletResponseMock = mock(HttpServletResponse.class);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditingMock);
+				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock);
 
 	}
 
@@ -241,4 +256,122 @@ public class AnalysisAjaxControllerTest {
 		assertEquals("FilePointer shouldn't have changed from startSeek",
 				expFileSize + chunkSize, (long) chunkOutsideRangeOfFile.getFilePointer());
 	}
+
+	@Test
+	public void testUpdateAnalysisEmailPipelineResult() throws IridaWorkflowNotFoundException {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		AnalysisEmailPipelineResult res = new AnalysisEmailPipelineResult(submission.getId(), true);
+		submission.setAnalysisState(AnalysisState.RUNNING);
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		assertFalse("Email result on pipeline completion", submission.getEmailPipelineResult());
+		analysisAjaxController.ajaxUpdateEmailPipelineResult(res, Locale.getDefault(), httpServletResponseMock);
+		verify(analysisSubmissionServiceMock, times(1)).updateEmailPipelineResult(submission, res.getEmailPipelineResult());
+	}
+
+	@Test
+	public void testUpdateAnalysisPriority() throws IridaWorkflowNotFoundException {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		AnalysisSubmissionInfo info = new AnalysisSubmissionInfo(submission.getId(), null, AnalysisSubmission.Priority.HIGH);
+		submission.setAnalysisState(AnalysisState.NEW);
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		assertEquals("Priority should be medium", submission.getPriority(), submission.getPriority());
+		analysisAjaxController.ajaxUpdateSubmission(info, Locale.getDefault(), httpServletResponseMock);
+		verify(analysisSubmissionServiceMock, times(1)).updatePriority(submission, info.getPriority());
+	}
+
+	@Test
+	public void testUpdateAnalysisName() throws IridaWorkflowNotFoundException {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		AnalysisSubmissionInfo info = new AnalysisSubmissionInfo(submission.getId(), "NEW SUBMISSION NAME", null);
+		submission.setAnalysisState(AnalysisState.NEW);
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		assertEquals("Submission name should be", submission.getName(), "submission-"+submission.getId());
+		analysisAjaxController.ajaxUpdateSubmission(info, Locale.getDefault(), httpServletResponseMock);
+		verify(analysisSubmissionServiceMock, times(1)).updateAnalysisName(submission, info.getAnalysisName());
+	}
+
+	@Test
+	public void testGetAnalysisDetails() {
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				Lists.newArrayList());
+		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
+
+		analysisAjaxController.ajaxGetDataForDetailsTab(submission.getId(), Locale.getDefault(), httpServletResponseMock);
+		assertNotNull("Submission exists", analysisSubmissionServiceMock.read(submission.getId()));
+		verify(iridaWorkflowsServiceMock, times(1)).getIridaWorkflowOrUnknown(submission);
+		verify(analysisAuditMock, times(1)).getAnalysisRunningTime(submission);
+		verify(analysisSubmissionSampleProcessor, times(1)).hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+	}
+
+	@Test
+	public void testDeleteAnalysisSubmission() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		assertNotNull("Submission exists", analysisSubmissionServiceMock.read(submission.getId()));
+		analysisSubmissionServiceMock.delete(submission.getId());
+		verify(analysisSubmissionServiceMock, times(1)).delete(submission.getId());
+	}
+
+	@Test
+	public void updateSharedProjects(){
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		Project project = TestDataFactory.constructProject();
+		ProjectAnalysisSubmissionJoin paj = TestDataFactory.constructProjectAnalysisSubmissionJoin(project, submission);
+		AnalysisProjectShare aPS = new AnalysisProjectShare(project.getId(), true);
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		when(projectServiceMock.read(project.getId())).thenReturn(project);
+		analysisAjaxController.updateProjectShare(submission.getId(), aPS, Locale.getDefault());
+		assertNotNull("Submission exists", submission);
+		assertNotNull("Project exists", project);
+		when(analysisSubmissionServiceMock.shareAnalysisSubmissionWithProject(submission, project)).thenReturn(paj);
+		verify(analysisSubmissionServiceMock, times(1)).read(submission.getId());
+		verify(projectServiceMock, times(1)).read(project.getId());
+		verify(analysisSubmissionServiceMock, times(1)).shareAnalysisSubmissionWithProject(submission, project);
+	}
+
+
+	@Test
+	public void saveResultsToSamples() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		analysisAjaxController.saveResultsToSamples(submission.getId(), Locale.getDefault(), httpServletResponseMock);
+		try {
+			submission.setUpdateSamples(true);
+			verify(analysisSubmissionSampleProcessor, times(1)).updateSamples(submission);
+			verify(analysisSubmissionServiceMock, times(1)).update(submission);
+			assertTrue("Samples have been updated", submission.getUpdateSamples());
+		} catch (PostProcessingException e)
+		{
+			assertNotNull(e.toString());
+		}
+	}
+
+	@Test
+	public void testGetAnalysisInputFiles() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		analysisAjaxController.ajaxGetAnalysisInputFiles(submission.getId());
+		assertNotNull("Submission exists", submission);
+		verify(sequencingObjectService, times(1)).getSequencingObjectsOfTypeForAnalysisSubmission(submission,
+				SequenceFilePair.class);
+		verify(iridaWorkflowsServiceMock, times(1)).getIridaWorkflowOrUnknown(submission);
+	}
+
+	@Test
+	public void testProvenance() {
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
+		AnalysisProvenanceResponse provenance = analysisAjaxController.getProvenanceByFile(submission.getId(), "snp_tree.tree");
+		assertTrue("Provenance response is not null", provenance != null);
+		assertTrue("Provenance created by tool is 'testTool'", provenance.getCreatedByTool().getToolName().equals("testTool"));
+		assertTrue("Provenance created by tool -> previousExecutionTools is null", provenance.getCreatedByTool().getPreviousExecutionTools().size() == 0);
+	}
+
 }

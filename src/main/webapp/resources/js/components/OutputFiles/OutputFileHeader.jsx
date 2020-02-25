@@ -36,6 +36,7 @@ export function OutputFileHeader({ output }) {
           style={{
             fontSize: FONT_SIZE_DEFAULT
           }}
+          className="t-file-name"
         >
           {`${output.toolName} ${output.toolVersion} - ${output.outputName} - ${output.filename}`}
         </Text>
@@ -52,6 +53,7 @@ export function OutputFileHeader({ output }) {
             })
           }
           icon="download"
+          className="t-download-output-file-btn"
         >
           {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
         </Button>

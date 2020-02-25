@@ -6,7 +6,7 @@
 import React, { useContext } from "react";
 
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
-import { SPACE_LG } from "../../../../styles/spacing";
+import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import { Row, Icon, Button, Typography } from "antd";
 
 const { Title } = Typography;
@@ -45,8 +45,9 @@ export function AnalysisReferenceFileRenderer() {
                 onClick={() => {
                   downloadReferenceFile();
                 }}
+                className="t-reference-file-download-btn"
               >
-                <Icon type="download" />{" "}
+                <Icon type="download" style={{marginRight: SPACE_XS}} />
                 {i18n("AnalysisSamples.downloadReferenceFile")}
               </Button>
             </span>
