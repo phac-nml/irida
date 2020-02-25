@@ -141,7 +141,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 				page.downloadOutputFileButtonVisible());
 
 		// Has no output files
-		page = AnalysisDetailsPage.initPage(driver(), 10L, "tree/file_preview");
+		page = AnalysisDetailsPage.initPage(driver(), 10L, "");
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be no output files", 0, page.getNumberOfFilesDisplayed());
 		assertEquals("Has a no output files alert", "No outputs available to display", page.getWarningAlertText());
@@ -360,7 +360,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Advanced Phylogenetic Tree button is not visible", page.advancedPhylogeneticTreeButtonNotFound());
 		assertTrue("Tree wrapper is not visible", page.phylocanvasWrapperNotFound());
 		assertTrue("Tree is not visible", page.treeNotFound());
-		assertEquals("Unable to find tree file. No tree available to display.", page.getWarningAlertText());
+		assertEquals("No outputs available to display", page.getWarningAlertText());
 	}
 
 	@Test
