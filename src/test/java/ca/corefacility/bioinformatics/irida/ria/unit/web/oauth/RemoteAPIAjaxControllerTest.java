@@ -26,6 +26,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
+/**
+ * Testing for {@link RemoteAPIAjaxController}
+ */
 public class RemoteAPIAjaxControllerTest {
 	private RemoteAPIService remoteAPIService;
 	private ProjectRemoteService projectRemoteService;
