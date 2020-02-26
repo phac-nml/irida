@@ -5,8 +5,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -17,6 +22,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITabl
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
+/**
+ * Controller for asynchronous requests for remote api functionality.
+ */
 @RestController
 @RequestMapping("/ajax/remote_api")
 public class RemoteAPIAjaxController {
@@ -39,8 +47,7 @@ public class RemoteAPIAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	TableResponse<RemoteAPITableModel> getAjaxAPIList(@RequestBody TableRequest tableRequest) {
+	public TableResponse<RemoteAPITableModel> getAjaxAPIList(@RequestBody TableRequest tableRequest) {
 		Page<RemoteAPI> search = remoteAPIService.search(
 				RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
 				tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortColumn());
@@ -60,15 +67,16 @@ public class RemoteAPIAjaxController {
 	 * @return "valid" or "invalid_token" message
 	 */
 	@RequestMapping("/status/{apiId}")
-	@ResponseBody
-	public String checkApiStatus(@PathVariable Long apiId) {
+	public ResponseEntity<String> checkAPIStatus(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 
 		try {
 			projectRemoteService.getServiceStatus(api);
-			return VALID_OAUTH_CONNECTION;
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(VALID_OAUTH_CONNECTION);
 		} catch (IridaOAuthException ex) {
-			return INVALID_OAUTH_TOKEN;
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(INVALID_OAUTH_TOKEN);
 		}
 	}
 }
