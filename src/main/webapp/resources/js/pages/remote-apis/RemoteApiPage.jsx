@@ -11,7 +11,7 @@ export function RemoteApiPage({}) {
     <PageWrapper
       title={i18n("RemoteApi.title")}
       headerExtras={
-        window.PAGE?.isAdmin ? (
+        window.PAGE.admin ? (
           <AddNewButton
             text={i18n("remoteapi.add")}
             href={setBaseUrl("remote_api/create")}
