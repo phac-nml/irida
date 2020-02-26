@@ -371,7 +371,7 @@ public class AnalysisAjaxController {
 	 */
 	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
-		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip", "pdf", "html", "xlsx");
+		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("html", "xlsx");
 		// set of file extensions for indicating whether the first line of the file should be read
 		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab",
 				TREE_EXT);

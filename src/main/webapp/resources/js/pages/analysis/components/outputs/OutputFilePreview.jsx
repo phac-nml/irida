@@ -3,7 +3,7 @@
  */
 
 import React, { Suspense, useContext, useEffect } from "react";
-import { Button, Tabs } from "antd";
+import { Button, Dropdown, Icon, Menu, Tabs } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
 
@@ -12,7 +12,7 @@ import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
-import { downloadFilesAsZip } from "../../../../apis/analysis/analysis";
+import { downloadFilesAsZip, downloadOutputFile } from "../../../../apis/analysis/analysis";
 import { blue5, grey7 } from "../../../../styles/colors";
 import styled from "styled-components";
 
@@ -34,7 +34,8 @@ export default function OutputFilePreview() {
     analysisOutputsContext,
     getAnalysisOutputs,
     jsonExtSet,
-    tabExtSet
+    tabExtSet,
+    blacklistExtSet
   } = useContext(AnalysisOutputsContext);
 
   const { analysisContext } = useContext(AnalysisContext);
@@ -44,6 +45,14 @@ export default function OutputFilePreview() {
       getAnalysisOutputs();
     }
   }, []);
+
+  function getMenu () {
+    let fileNames = [];
+    for (const output of analysisOutputsContext.outputs) {
+      fileNames.push(<Menu.Item key={output.id}>{output.filename}</Menu.Item>);
+    }
+    return <Menu onClick={(e) => downloadOutputFile({submissionId: analysisContext.analysis.identifier, fileId: e.key})}>{fileNames}</Menu>;
+  }
 
   function jsonOutputPreview() {
     let jsonOutput = [];
@@ -85,7 +94,7 @@ export default function OutputFilePreview() {
       if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
         continue;
       }
-      if (!jsonExtSet.has(output.fileExt) && !tabExtSet.has(output.fileExt)) {
+      if (!jsonExtSet.has(output.fileExt) && !tabExtSet.has(output.fileExt) && !blacklistExtSet.has(output.fileExt)) {
         textOutput.unshift(
           <AnalysisTextPreview output={output} key={output.filename} />
         );
@@ -98,27 +107,13 @@ export default function OutputFilePreview() {
     <TabPaneContent title={i18n("AnalysisOutputs.outputFilePreview")}>
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
-          <ZipDownloadButton
-            style={{ marginBottom: SPACE_XS }}
-            onClick={() =>
-              downloadFilesAsZip(analysisContext.analysis.identifier)
-            }
-          >
-            <span
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}
-              id="t-download-all-files-btn"
-            >
+          <Dropdown.Button id="t-download-all-files-btn" style={{ marginBottom: SPACE_XS }} onClick={() => downloadFilesAsZip(analysisContext.analysis.identifier)} overlay={getMenu()}>
               <i
                 className="fas fa-file-archive"
                 style={{ marginRight: SPACE_XS }}
               ></i>
               {i18n("AnalysisOutputs.downloadAllFiles")}
-            </span>
-          </ZipDownloadButton>
+          </Dropdown.Button>
           <Tabs defaultActiveKey="1" animated={false}>
             {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
               <TabPane
