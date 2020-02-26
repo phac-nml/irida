@@ -121,11 +121,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		return slr;
 	}
 
-	@Bean
-	public BreadCrumbInterceptor breadCrumbInterceptor() {
-		return new BreadCrumbInterceptor();
-	}
-
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		logger.debug("Configuring Resource Handlers");
@@ -192,7 +187,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(galaxySessionInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
-		registry.addInterceptor(breadCrumbInterceptor());
+		registry.addInterceptor(new BreadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
 	}
 

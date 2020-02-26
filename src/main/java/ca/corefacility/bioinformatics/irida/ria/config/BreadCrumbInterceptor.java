@@ -64,7 +64,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 
 		String servletPath = request.getServletPath();
 
-		if (!hasGoodPath(servletPath) && !hasGoodModelAndView(modelAndView)) {
+		if (!hasGoodPath(servletPath) || !hasGoodModelAndView(modelAndView)) {
 			// No breadcrumbs required here.
 			return;
 		}
