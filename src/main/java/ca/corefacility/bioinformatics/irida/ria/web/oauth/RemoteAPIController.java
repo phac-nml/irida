@@ -214,6 +214,29 @@ public class RemoteAPIController extends BaseController {
 	}
 
 	/**
+	 * Check the currently logged in user's OAuth2 connection status to a given
+	 * API and return the proper html to the user.
+	 *
+	 * @param apiId The ID of the api
+	 * @return html fragment for current connection state.
+	 */
+	@RequestMapping("/status/web/{apiId}")
+	public String checkWebApiStatus(@PathVariable Long apiId) {
+		// TODO: This is to be removed when remote api details page is refactored
+		//       Use similar functionality in RemoateAPIAjaxController.
+		RemoteAPI api = remoteAPIService.read(apiId);
+		String status;
+		try {
+			projectRemoteService.getServiceStatus(api);
+			status = VALID_OAUTH_CONNECTION;
+		} catch (IridaOAuthException ex) {
+			logger.debug("Can't connect to API: " + ex.getMessage());
+			status = INVALID_OAUTH_TOKEN;
+		}
+		return "remote_apis/fragments.html :: #" + status;
+	}
+
+	/**
 	 * Get the HTML modal for connecting to a remote API
 	 *
 	 * @param apiId Identifier for the remote API to connect to.
