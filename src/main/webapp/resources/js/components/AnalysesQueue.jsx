@@ -8,11 +8,11 @@ import styled from "styled-components";
 import { formatNumber } from "../utilities/number-utilities";
 import { blue4 } from "../styles/colors";
 
-const LabelTD = styled.td`
+const Label = styled.span`
   font-weight: bold;
 `;
 
-const ValueTD = styled.td`
+const Value = styled.span`
   width: 50px;
   text-align: right;
   font-family: monospace;
@@ -51,28 +51,30 @@ export function AnalysesQueue({}) {
             size="2x"
             fixedWidth
             style={{
-              flex: 1,
               display: "inline-block",
               margin: `${SPACE_XS} 0`
             }}
           />
 
-          <table>
-            <tbody>
-              <tr style={{ borderBottom: `1px solid ${blue4}` }}>
-                <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-                <ValueTD className="t-running-counts">
-                  {formatNumber(running)}
-                </ValueTD>
-              </tr>
-              <tr>
-                <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
-                <ValueTD className="t-queue-counts">
-                  {formatNumber(queued)}
-                </ValueTD>
-              </tr>
-            </tbody>
-          </table>
+          <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Label>{i18n("AnalysesQueue.running")}</Label>
+              <Value className="t-running-counts">
+                {formatNumber(running)}
+              </Value>
+            </div>
+            <div
+              style={{
+                height: 1,
+                borderTop: `1px solid ${blue4}`,
+                width: "100%"
+              }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Label>{i18n("AnalysesQueue.queued")}</Label>
+              <Value className="t-queue-counts">{formatNumber(queued)}</Value>
+            </div>
+          </div>
         </div>
       </Tag>
     </Tooltip>
