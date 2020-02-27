@@ -5,8 +5,9 @@ import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
 
 import styled from "styled-components";
-import { grey2, grey5, grey9 } from "../../../../../styles/colors";
+import { grey2, grey9 } from "../../../../../styles/colors";
 import { GRID_BORDER } from "../../styles";
+import { InsertRowLeftOutlined } from "@ant-design/icons";
 
 const ControlPanel = styled.div`
   height: 100%;
@@ -54,10 +55,11 @@ export default function TableControlPanel(props) {
           <Button
             tour="tour-columns"
             shape="circle"
-            icon="table"
             className="t-columns-panel-toggle"
             onClick={props.togglePanel}
-          />
+          >
+            <InsertRowLeftOutlined />
+          </Button>
         </Tooltip>
       </ControlPanelButtons>
     </ControlPanel>

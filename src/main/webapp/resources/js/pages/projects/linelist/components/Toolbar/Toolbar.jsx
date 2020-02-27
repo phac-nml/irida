@@ -6,6 +6,7 @@ import { actions as entryActions } from "../../reducers/entries";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
@@ -117,9 +118,10 @@ export class ToolbarComponent extends Component {
                   title={i18n("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
-                  icon="question"
                   onClick={this.openTour}
-                />
+                >
+                  <QuestionCircleOutlined />
+                </Button>
               </Popover>
             </Form.Item>
           </Form>
