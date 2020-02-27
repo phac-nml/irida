@@ -6,7 +6,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { HomeTwoTone } from "@ant-design/icons";
 
 export function Breadcrumbs({ crumbs = [] }) {
-  return crumbs.length ? (
+  return crumbs?.length ? (
     <Breadcrumb
       style={{
         backgroundColor: grey2,

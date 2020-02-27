@@ -31,13 +31,12 @@ public class BreadCrumbInterceptorTest {
 	private BreadCrumbInterceptor breadCrumbInterceptor;
 	private ProjectService projectService;
 	private SampleService sampleService;
-	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		this.projectService = mock(ProjectService.class);
 		this.sampleService = mock(SampleService.class);
-		this.messageSource = mock(MessageSource.class);
+		MessageSource messageSource = mock(MessageSource.class);
 		this.breadCrumbInterceptor = new BreadCrumbInterceptor(projectService, sampleService, messageSource);
 	}
 

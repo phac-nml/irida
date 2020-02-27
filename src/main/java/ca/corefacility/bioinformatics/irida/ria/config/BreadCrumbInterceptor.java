@@ -154,11 +154,15 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 
-		boolean goodPath = false;
+		// Need to remove the leading '/'
+		path = path.substring(1);
+
 		for (String crumb : BASE_CRUMBS) {
-			goodPath = goodPath || path.startsWith(crumb);
+			if (path.startsWith(crumb)) {
+				return true;
+			}
 		}
-		return goodPath;
+		return false;
 	}
 
 	/**
