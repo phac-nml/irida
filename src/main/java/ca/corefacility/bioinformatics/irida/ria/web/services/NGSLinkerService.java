@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.LinkerCmdRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.NGSLinkerCmdRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -24,7 +24,7 @@ public class NGSLinkerService {
 		this.sampleService = sampleService;
 	}
 
-	public String generateLinkerCommand(LinkerCmdRequest request) {
+	public String generateLinkerCommand(NGSLinkerCmdRequest request) {
 		Project project = projectService.read(request.getProjectId());
 		Long totalSamples = sampleService.getNumberOfSamplesForProject(project);
 

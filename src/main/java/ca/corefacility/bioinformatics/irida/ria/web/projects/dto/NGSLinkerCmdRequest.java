@@ -2,11 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import java.util.List;
 
-public class LinkerCmdRequest {
+/**
+ * Data transfer object for creating a command for the ngs-linker.pl
+ */
+public class NGSLinkerCmdRequest {
 	private List<Long> sampleIds;
 	private Long projectId;
 
-	public LinkerCmdRequest() {
+	public NGSLinkerCmdRequest() {
 	}
 
 	public List<Long> getSampleIds() {

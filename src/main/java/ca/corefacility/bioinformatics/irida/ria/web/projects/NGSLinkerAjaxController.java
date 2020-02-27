@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.LinkerCmdRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.NGSLinkerCmdRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.NGSLinkerService;
 
 @RestController
@@ -22,7 +22,7 @@ public class NGSLinkerAjaxController {
 	}
 
 	@RequestMapping("/cmd")
-	public ResponseEntity<String> getLinkerCommand(@RequestBody LinkerCmdRequest request) {
+	public ResponseEntity<String> getLinkerCommand(@RequestBody NGSLinkerCmdRequest request) {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(linkerService.generateLinkerCommand(request));
 	}
