@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 function getTextSearchProps(dataIndex) {
   let searchInput;
@@ -33,11 +34,11 @@ function getTextSearchProps(dataIndex) {
           type="primary"
           className="t-name-filter-ok"
           onClick={() => confirm()}
-          icon="search"
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
-          Search
+          <SearchOutlined />
+          {i18n("form.search")}
         </Button>
         <Button
           className="t-name-filter-clear"
@@ -45,7 +46,7 @@ function getTextSearchProps(dataIndex) {
           size="small"
           style={{ width: 90 }}
         >
-          Reset
+          {i18n("form.reset")}
         </Button>
       </div>
     )
