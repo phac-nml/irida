@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { render } from "react-dom";
 import { Button, Modal, Typography } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
@@ -8,14 +8,13 @@ import { SPACE_SM } from "../../../../styles/spacing";
 
 const { Paragraph, Text } = Typography;
 
+/**
+ * React component to display the ngs-linker command to a user based
+ * on the currently selected samples.
+ * @returns {*}
+ * @constructor
+ */
 function Linker() {
-  const inputRef = useRef();
-
-  function copyToClipboard() {
-    inputRef.current.select();
-    document.execCommand("copy");
-  }
-
   function handleSampleIds(e) {
     // Post data to get linker command.
     const { detail } = e;
@@ -23,13 +22,13 @@ function Linker() {
       Modal.success({
         className: "t-linker-modal",
         width: 500,
-        title: i18n("ngs.linker.title"),
+        title: i18n("Linker.title"),
         content: (
           <>
-            <Paragraph>{i18n("ngs.linker.details")}</Paragraph>
+            <Paragraph>{i18n("Linker.details")}</Paragraph>
             <Text type="secondary">
               <span
-                dangerouslySetInnerHTML={{ __html: i18n("ngs.linker.note") }}
+                dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }}
               />
             </Text>
             <Paragraph
@@ -54,6 +53,10 @@ function Linker() {
     });
   }
 
+  /*
+  These Listeners and Dispatchers are a way to get around the separation between react
+  components and the legacy JS code already on the page.
+  */
   document.addEventListener("sample-ids-return", handleSampleIds, false);
 
   function showModal() {
