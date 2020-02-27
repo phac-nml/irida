@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Icon } from "antd";
 import { blue6 } from "../../../styles/colors";
+import { ShoppingCartOutlined, WarningOutlined } from "@ant-design/icons";
 
 const Wrapper = styled.div`
   font-size: 30px;
@@ -17,7 +17,11 @@ const Wrapper = styled.div`
 const CartNotification = ({ text, icon }) => (
   <Wrapper>
     <div>
-      <Icon type={icon} style={{ fontSize: 120 }} />
+      {icon === "shopping-cart" ? (
+        <ShoppingCartOutlined style={{ fontSize: 120 }} />
+      ) : (
+        <WarningOutlined style={{ fontSize: 120 }} />
+      )}
     </div>
     <div>{text}</div>
   </Wrapper>
