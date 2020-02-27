@@ -190,11 +190,9 @@ To view analysis details, please select the **Settings** tab. From here you can 
 
 ![refseq-settings]
 
-
 To edit an analysis name, please select the **Pencil** icon next to the analysis name.
 
 ![refseq-settings-edit-name]
-
 
 To view samples used by the analysis, please select the **Samples** tab.
 

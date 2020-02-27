@@ -124,7 +124,6 @@ To edit an analysis name, please select the **Pencil** icon next to the analysis
 
 ![mentalist-settings-edit-name]
 
-
 To view samples used by the analysis, please select the **Samples** tab.
 
 ![mentalist-settings-samples]

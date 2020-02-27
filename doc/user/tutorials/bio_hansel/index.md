@@ -61,11 +61,13 @@ Once the button is selected you should see a screen showing that your pipeline h
 Monitoring Pipeline Status
 ==========================
 
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
+To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
+
+![view-your-analyses]
+
+This will bring you to a page where you can monitor the status of each launched workflow.
 
 ![monitor-analyses]
-
-The will bring you to a page where you can monitor the status of each launched workflow.
 
 Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a while for the bio_hansel analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. This option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
@@ -134,7 +136,6 @@ To view analysis details, please select the **Settings** tab. From here you can 
 
 ![biohansel-settings]
 
-
 To edit an analysis name, please select the **Pencil** icon next to the analysis name
 
 ![biohansel-settings-edit-name]
@@ -183,4 +184,5 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [pipeline-select]: images/pipeline-select.png
 [reverse reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_2.fastq.gz
 [SRR1203042]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
+[view-your-analyses]: images/view-your-analyses.png
 [Web Upload Tutorial]: ../web-upload/
