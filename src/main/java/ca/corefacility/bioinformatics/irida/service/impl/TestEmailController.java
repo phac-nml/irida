@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,13 @@ public class TestEmailController extends EmailControllerImpl {
 
 	@Override
 	public void sendPipelineStatusEmail(AnalysisSubmission submission) {
-		logger.info("TestEmailController#sendPipelineStatusEmail called for " + submission.getSubmitter().getEmail());
+		logger.info("TestEmailController#sendPipelineStatusEmail called for " + submission.getSubmitter()
+				.getEmail());
+	}
+
+	@Override
+	public void sendProjectSyncUnauthorizedEmail(Project project) {
+		logger.info("TestEmailController#sendProjectSyncUnauthorizedEmail called for project " + project.getId());
 	}
 
 	@Override

@@ -58,6 +58,7 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForElementToBeClickable(nameFilterSubmit);
 		nameFilterInput.sendKeys(name);
 		nameFilterSubmit.click();
+		waitForElementInvisible(By.className("t-name-filter"));
 	}
 
 	public void clearNameFilter() {
@@ -65,6 +66,7 @@ public class AnalysesUserPage extends AbstractPage {
 		nameFilterButton.click();
 		waitForElementToBeClickable(nameFilterClear);
 		nameFilterClear.click();
+		waitForElementInvisible(By.className("t-name-filter-clear"));
 	}
 
 	public void deleteAnalysis(int row) {

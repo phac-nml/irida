@@ -1,10 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,19 +10,24 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
+
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsController;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.ClientsController;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class ClientsControllerTest {
 	private IridaClientDetailsService clientDetailsService;
@@ -75,11 +78,14 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.search(any(Specification.class), any(Pageable.class))).thenReturn(clientPage);
 
-		DataTablesParams params = new DataTablesParams(1, 10, 1, "", Sort.by(Sort.Direction.ASC, "createdDate"), new HashMap<>());
-		DataTablesResponse response = controller.getAjaxClientsList(params);
+		ClientTableRequest params = new ClientTableRequest();
+		params.setCurrent(1);
+		params.setPageSize(10);
+		params.setSortColumn("createdDate");
+		params.setSortDirection("ascend");
+		TableResponse response = controller.getAjaxClientsList(params);
 
-		List<DataTablesResponseModel> models = response.getData();
-		assertEquals(2, models.size());
+		assertEquals(2, response.getDataSource().size());
 
 		verify(clientDetailsService).search(any(Specification.class), any(Pageable.class));
 	}
