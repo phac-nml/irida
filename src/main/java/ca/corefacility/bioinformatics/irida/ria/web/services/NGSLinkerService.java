@@ -26,15 +26,14 @@ public class NGSLinkerService {
 
 	public String generateLinkerCommand(LinkerCmdRequest request) {
 		Project project = projectService.read(request.getProjectId());
-		int totalSamples = sampleService.getSamplesForProject(project)
-				.size();
+		Long totalSamples = sampleService.getNumberOfSamplesForProject(project);
 
 		/*
 		Generate basic command, this is the same if it is for the whole
 		project or just a couple samples.
 		 */
 		StringBuilder command = new StringBuilder(LINKER_SCRIPT);
-		command.append(" -p");
+		command.append(" -p ").append(request.getProjectId());
 
 		/*
 		Determine if we need to add specific sample id's. This means the
