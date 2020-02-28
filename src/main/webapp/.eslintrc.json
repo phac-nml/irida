@@ -12,6 +12,9 @@
     "react-hooks/rules-of-hooks": "error",
     "no-console": "warn"
   },
+  "globals": {
+    "i18n": "readonly"
+  },
   "parser": "babel-eslint",
   "plugins": ["react", "import", "jsx-a11y", "react-hooks"],
   "parserOptions": {
