@@ -5,6 +5,14 @@ import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { HomeTwoTone } from "@ant-design/icons";
 
+/**
+ * React component to render ant design Breadrumbs to pages that contain
+ * a server set variable `breadcrumbs`
+ *
+ * @param {array} crumbs - list of links to render to the page.
+ * @returns {*}
+ * @constructor
+ */
 export function Breadcrumbs({ crumbs = [] }) {
   return crumbs?.length ? (
     <Breadcrumb
