@@ -6,8 +6,19 @@ import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { BORDER_RADIUS, BORDERED_LIGHT } from "../../../../styles/borders";
+import styled from "styled-components";
 
 const { Paragraph, Text } = Typography;
+
+const CommandText = styled(Paragraph)`
+  font-family: monospace;
+  font-size: 14px;
+  margin-top: ${SPACE_SM};
+  padding: 2px;
+  background-color: ${grey2};
+  border: ${BORDERED_LIGHT};
+  border-radius: ${BORDER_RADIUS};
+`;
 
 /**
  * React component to display the ngs-linker command to a user based
@@ -30,22 +41,13 @@ function Linker() {
             <Text type="secondary">
               <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
             </Text>
-            <Paragraph
-              style={{
-                fontFamily: "monospace",
-                fontSize: 14,
-                marginTop: SPACE_SM,
-                padding: 2,
-                backgroundColor: grey2,
-                border: BORDERED_LIGHT,
-                borderRadius: BORDER_RADIUS
-              }}
+            <CommandText
               className="t-cmd-text"
               ellipsis={{ rows: 1 }}
               copyable={{ text: data }}
             >
               {data}
-            </Paragraph>
+            </CommandText>
           </>
         )
       });
