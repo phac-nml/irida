@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { blue6 } from "../../../styles/colors";
-import { ShoppingCartOutlined, WarningOutlined } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExclamationCircle,
+  faShoppingCart
+} from "@fortawesome/free-solid-svg-icons";
 
 const Wrapper = styled.div`
   font-size: 30px;
@@ -18,9 +22,9 @@ const CartNotification = ({ text, icon }) => (
   <Wrapper>
     <div>
       {icon === "shopping-cart" ? (
-        <ShoppingCartOutlined style={{ fontSize: 120 }} />
+        <FontAwesomeIcon icon={faShoppingCart} style={{ fontSize: 120 }} />
       ) : (
-        <WarningOutlined style={{ fontSize: 120 }} />
+        <FontAwesomeIcon icon={faExclamationCircle} style={{ fontSize: 120 }} />
       )}
     </div>
     <div>{text}</div>

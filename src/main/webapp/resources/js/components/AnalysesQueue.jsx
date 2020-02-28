@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Tag, Tooltip } from "antd";
 import { fetchAnalysesQueueCounts } from "./../apis/analysis/analysis";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRunning } from "@fortawesome/free-solid-svg-icons";
 import { SPACE_XS } from "../styles/spacing";
 import styled from "styled-components";
 import { formatNumber } from "../utilities/number-utilities";
 import { blue4 } from "../styles/colors";
+import { SyncOutlined } from "@ant-design/icons";
 
 const Label = styled.span`
   font-weight: bold;
@@ -46,13 +45,12 @@ export function AnalysesQueue({}) {
             alignContent: "center"
           }}
         >
-          <FontAwesomeIcon
-            icon={faRunning}
-            size="2x"
-            fixedWidth
+          <SyncOutlined
+            spin
             style={{
+              fontSize: 20,
               display: "inline-block",
-              margin: `${SPACE_XS} 0`
+              margin: `10px ${SPACE_XS}`
             }}
           />
 
