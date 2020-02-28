@@ -9,9 +9,8 @@
     <link rel="stylesheet" th:href="@{/dist/css/project-samples-copy.bundle.css}">
     <link rel="stylesheet" th:href="@{/dist/css/project-samples-filter.bundle.css}">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = {
         isRemoteProject: /*[[${project.isRemote()}]]*/ false,
-        linker: /*[[${linker}]]*/'',
         urls: {
           projects: {
             available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
@@ -171,14 +170,7 @@
                                 </a>
                             </li>
                             <li th:if="${linkerAvailable}" role="menuitem">
-                                <a href="#" class="js-sample-tool-btn t-linker-btn"
-                                   data-toggle="tooltip" data-enabled-at="0"
-                                   data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
-                                   data:script="@{/dist/js/project-samples-linker.bundle.js}"
-                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
-                                    <i class="fa fa-terminal fa-fw spaced-right__sm" aria-hidden="true"></i>
-                                    <th:block th:text="#{project.samples.export.linker}"/>
-                                </a>
+                                <a href="#"><span id="linker"></span></a>
                             </li>
                             <li th:if="${#httpSession.getAttribute('galaxyExportToolCallbackURL')} != null" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
                                 <a href="#" data-toggle="modal" data-target="#galaxy-modal" class="js-sample-tool-btn"
