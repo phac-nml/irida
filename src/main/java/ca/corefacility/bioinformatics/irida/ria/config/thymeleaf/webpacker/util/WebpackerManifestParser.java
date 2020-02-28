@@ -45,6 +45,7 @@ public class WebpackerManifestParser {
 	/**
 	 * Get a list of webpack chunks for a specific file type given an entry.
 	 *
+	 * @param context - the {@link ServletContext}
 	 * @param entry - the current webpack entry to get chunks for.
 	 * @param type  - the type of resource files to get.
 	 * @return List of chunks
