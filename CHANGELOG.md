@@ -9,6 +9,7 @@ Changes
 * [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
 * [UI]: Updated admin announcements table and creation to use `ant.design`.
 * [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
+* [Developer]: Added Apache 2.0 licence information to `package.json`.
 
 19.09 to 20.01
 --------------
