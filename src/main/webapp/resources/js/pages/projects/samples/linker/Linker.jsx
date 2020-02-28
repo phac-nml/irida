@@ -27,9 +27,7 @@ function Linker() {
           <>
             <Paragraph>{i18n("Linker.details")}</Paragraph>
             <Text type="secondary">
-              <span
-                dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }}
-              />
+              <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
             </Text>
             <Paragraph
               style={{
