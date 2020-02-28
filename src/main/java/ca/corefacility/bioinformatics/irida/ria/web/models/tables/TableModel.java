@@ -6,18 +6,18 @@ import java.util.Date;
  * Used as the base class of any item to be represented in an ant.design Table.
  */
 public abstract class TableModel {
-	private Long id;
-	private String key;
+	private final Long id;
+	private final String key;
 	private String name;
-	private Date createdDate;
-	private Date modifiedDate;
+	private final Date createdDate;
+	private final Date modifiedDate;
 
 	public TableModel(Long id, String name, Date createdDate, Date modifiedDate) {
 		this.id = id;
 		this.name = name;
 		this.createdDate = createdDate;
 		this.modifiedDate = modifiedDate;
-		this.key = String.valueOf(id); // Strictly for react
+		key = String.valueOf(id); // Strictly for react
 	}
 
 	public Long getId() {
@@ -30,6 +30,10 @@ public abstract class TableModel {
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getCreatedDate() {
