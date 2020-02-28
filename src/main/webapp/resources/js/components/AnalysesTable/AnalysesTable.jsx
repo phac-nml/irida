@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { Button, Icon, Popconfirm, Table } from "antd";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import { Button, Icon, Popconfirm } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -16,6 +16,7 @@ import { getTextSearchProps } from "../ant.design/table-search-props";
 import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { AnalysesQueue } from "./../AnalysesQueue";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -24,14 +25,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  */
 export function AnalysesTable() {
   const CAN_MANAGE = window.PAGE.canManage;
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange,
-    updateTable
-  } = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   /**
    * Handler for deleting an analysis.
@@ -59,8 +53,7 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: setBaseUrl(`analysis/`),
-        width: 300
+        url: setBaseUrl(`analysis/`)
       }),
       title: i18n("analyses.analysis-name"),
       key: "name",
@@ -70,9 +63,9 @@ export function AnalysesTable() {
       title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
+      width: 170,
       filterMultiple: true,
       filters: pipelineStates,
-      width: 150,
       filterIcon(filtered) {
         return (
           <Icon
@@ -121,7 +114,7 @@ export function AnalysesTable() {
     {
       title: i18n("analysis.duration"),
       key: "duration",
-      width: 150,
+      width: 180,
       dataIndex: "duration",
       render(timestamp) {
         return getHumanizedDuration({ date: timestamp });
@@ -157,37 +150,43 @@ export function AnalysesTable() {
     };
   }
 
+  const buttons = (
+    <Popconfirm
+      placement="bottomRight"
+      title={i18n("analyses.delete-confirm").replace(
+        "[COUNT]",
+        selected.length
+      )}
+      onVisibleChange={visible => setDeleting(visible)}
+      onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
+    >
+      <Button
+        className="t-delete-selected"
+        loading={deleting}
+        disabled={!selected.length}
+        onClick={() => setDeleting(true)}
+      >
+        {i18n("analyses.delete")}
+      </Button>
+    </Popconfirm>
+  );
+
   return (
     <div>
-      <div style={{ marginBottom: SPACE_MD }}>
-        <Popconfirm
-          placement="bottomRight"
-          title={i18n("analyses.delete-confirm").replace(
-            "[COUNT]",
-            selected.length
-          )}
-          onVisibleChange={visible => setDeleting(visible)}
-          onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
-        >
-          <Button
-            className="t-delete-selected"
-            loading={deleting}
-            disabled={!selected.length}
-            onClick={() => setDeleting(true)}
-          >
-            {i18n("analyses.delete")}
-          </Button>
-        </Popconfirm>
+      <div
+        style={{
+          marginBottom: SPACE_MD,
+          display: "flex",
+          flexDirection: "row-reverse"
+        }}
+      >
+        <AnalysesQueue />
       </div>
-      <Table
-        rowSelection={rowSelection}
-        scroll={{ x: "max-content" }}
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{ total, pageSize }}
+      <PagedTable
+        buttons={buttons}
         columns={columns}
-        dataSource={dataSource}
-        onChange={handleTableChange}
+        rowSelection={rowSelection}
+        rowKey={record => record.id}
       />
     </div>
   );

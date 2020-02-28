@@ -10,7 +10,9 @@ import { blue6 } from "../../../../../../styles/colors";
 function LockedIcon() {
   return (
     <Tooltip title={i18n("project.samples.locked-title")} placement="right">
-      <div><i className="fas fa-lock" style={{color: blue6}}/></div>
+      <div>
+        <i className="fas fa-lock" style={{ color: blue6 }} />
+      </div>
     </Tooltip>
   );
 }

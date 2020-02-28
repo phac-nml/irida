@@ -150,7 +150,8 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void goToNextTourStage() {
-		tourNextButton.click();
+		waitForTime(500);
+		driver.findElement(By.cssSelector("button[data-tour-elem=\"right-arrow\"]")).click();
 	}
 
 	public void closeTour() {
