@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  CloudServerOutlined,
   DownloadOutlined,
   FilterOutlined,
   SyncOutlined
@@ -15,3 +16,7 @@ export const IconDownloadFile = ({ ...props }) => (
 );
 
 export const IconSyncSpin = ({ ...props }) => <SyncOutlined spin {...props} />;
+
+export const IconCloudServer = ({ ...props }) => (
+  <CloudServerOutlined {...props} />
+);

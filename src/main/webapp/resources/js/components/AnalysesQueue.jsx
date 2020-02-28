@@ -5,7 +5,7 @@ import { SPACE_XS } from "../styles/spacing";
 import styled from "styled-components";
 import { formatNumber } from "../utilities/number-utilities";
 import { blue4, blue6 } from "../styles/colors";
-import { CloudServerOutlined } from "@ant-design/icons";
+import { IconCloudServer } from "./icons/Icons";
 
 const LabelTD = styled.span`
   font-weight: bold;
@@ -48,7 +48,7 @@ export function AnalysesQueue({}) {
               color: blue6
             }}
           >
-            <CloudServerOutlined
+            <IconCloudServer
               style={{ fontSize: "2em", flex: 1, padding: SPACE_XS }}
             />
 
@@ -75,7 +75,8 @@ export function AnalysesQueue({}) {
                 style={{
                   display: "flex",
                   justifyContent: "space-between"
-                }}>
+                }}
+              >
                 <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
                 <ValueTD className="t-queue-counts">
                   {formatNumber(queued)}
