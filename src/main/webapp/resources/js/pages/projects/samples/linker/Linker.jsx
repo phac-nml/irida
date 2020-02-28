@@ -2,9 +2,10 @@ import React from "react";
 import { render } from "react-dom";
 import { Button, Modal, Typography } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
-import { grey2, grey4, grey9 } from "../../../../styles/colors";
+import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
 import { SPACE_SM } from "../../../../styles/spacing";
+import { BORDER_RADIUS, BORDERED_LIGHT } from "../../../../styles/borders";
 
 const { Paragraph, Text } = Typography;
 
@@ -35,9 +36,9 @@ function Linker() {
                 fontSize: 14,
                 marginTop: SPACE_SM,
                 padding: 2,
-                border: `1px solid ${grey4}`,
                 backgroundColor: grey2,
-                borderRadius: 2
+                border: BORDERED_LIGHT,
+                borderRadius: BORDER_RADIUS
               }}
               className="t-cmd-text"
               ellipsis={{ rows: 1 }}
