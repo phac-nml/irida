@@ -134,7 +134,7 @@ To view analysis details, please select the **Settings** tab. From here you can 
 
 ![snvphyl-settings]
 
-To edit an analysis name, please select the **Pencil** icon next to the analysis name.
+To edit an analysis name, please select the Pencil icon next to the analysis name. Once you have edited the analysis name, pressing the `ENTER` key on your keyboard or clicking anywhere on the page will update the name. To cancel editing a name you can either hit the `ESC` key on your keyboard or if the name has not been changed you can also click anywhere on the page.
 
 ![snvphyl-settings-edit-name]
 
