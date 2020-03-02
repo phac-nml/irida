@@ -78,9 +78,7 @@ export function AnalysesQueue({}) {
                 }}
               >
                 <Label>{i18n("AnalysesQueue.queued")}</Label>
-                <Value className="t-queue-counts">
-                  {formatNumber(queued)}
-                </Value>
+                <Value className="t-queue-counts">{formatNumber(queued)}</Value>
               </div>
             </div>
           </div>
