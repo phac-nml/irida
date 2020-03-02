@@ -5,6 +5,7 @@ import {
   DownloadOutlined,
   DownOutlined,
   FilterOutlined,
+  FolderOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
   LockOutlined,
@@ -47,3 +48,5 @@ export const IconInfoCircle = ({ ...props }) => (
 );
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
+
+export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
