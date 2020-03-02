@@ -1,7 +1,9 @@
 import React from "react";
 import {
+  BoldOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
+  CodeOutlined,
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
@@ -9,15 +11,20 @@ import {
   FilterOutlined,
   FolderOutlined,
   InfoCircleOutlined,
+  ItalicOutlined,
+  LinkOutlined,
   LoadingOutlined,
   LockOutlined,
+  OrderedListOutlined,
   PlusCircleTwoTone,
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  StrikethroughOutlined,
   SyncOutlined,
-  TableOutlined
+  TableOutlined,
+  UnorderedListOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -74,3 +81,27 @@ export const IconPlusCircle = ({ ...props }) => (
 );
 
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
+
+/*
+Editor Icons
+ */
+
+export const IconBold = ({ ...props }) => <BoldOutlined {...props} />;
+
+export const IconItalic = ({ ...props }) => <ItalicOutlined {...props} />;
+
+export const IconStrikeThrough = ({ ...props }) => (
+  <StrikethroughOutlined {...props} />
+);
+
+export const IconUnorderedList = ({ ...props }) => (
+  <UnorderedListOutlined {...props} />
+);
+
+export const IconOrderedList = ({ ...props }) => (
+  <OrderedListOutlined {...props} />
+);
+
+export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
+
+export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
