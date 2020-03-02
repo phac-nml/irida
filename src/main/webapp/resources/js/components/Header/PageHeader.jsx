@@ -13,8 +13,6 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = `${window.TL.BASE_URL}dist/`;
 
-const GalaxyAlert = React.lazy(() => import("./GalaxyAlert"));
-
 export class PageHeader extends React.Component {
   state = {
     inGalaxy: false
