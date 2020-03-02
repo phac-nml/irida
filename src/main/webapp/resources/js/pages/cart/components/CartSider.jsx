@@ -6,7 +6,10 @@ import { Layout } from "antd";
 import CartSamples from "./CartSamples";
 import { blue6, grey2 } from "../../../styles/colors";
 import styled from "styled-components";
-import { ExclamationOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import {
+  IconExclamationCircle,
+  IconShoppingCart
+} from "../../../components/icons/Icons";
 
 const Wrapper = styled.div`
   font-size: 30px;
@@ -33,7 +36,7 @@ function CartSamplesComponent({ count, collapsed, loaded }) {
       {count === 0 ? (
         <Wrapper>
           <div>
-            <ShoppingCartOutlined style={{ fontSize: 120 }} />
+            <IconShoppingCart style={{ fontSize: 120 }} />
           </div>
           <div>{i18n("CartEmpty.heading")}</div>
         </Wrapper>
@@ -42,7 +45,7 @@ function CartSamplesComponent({ count, collapsed, loaded }) {
       ) : (
         <Wrapper>
           <div>
-            <ExclamationOutlined style={{ fontSize: 120 }} />
+            <IconExclamationCircle style={{ fontSize: 120 }} />
           </div>
           <div>{i18n("cart.noneMatchingFilter")}</div>
         </Wrapper>

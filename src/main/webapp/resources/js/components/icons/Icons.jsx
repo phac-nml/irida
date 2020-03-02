@@ -2,13 +2,16 @@ import React from "react";
 import {
   CloudServerOutlined,
   CloudUploadOutlined,
+  DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
+  ExclamationCircleOutlined,
   FilterOutlined,
   FolderOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
   LockOutlined,
+  PlusCircleTwoTone,
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
@@ -56,8 +59,18 @@ export const IconQuestionCircle = ({ ...props }) => (
 
 export const IconQuestion = ({ ...props }) => <QuestionOutlined {...props} />;
 
+export const IconExclamationCircle = ({ ...props }) => (
+  <ExclamationCircleOutlined {...props} />
+);
+
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
 
 export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
 
 export const IconTable = ({ ...props }) => <TableOutlined {...props} />;
+
+export const IconPlusCircle = ({ ...props }) => (
+  <PlusCircleTwoTone {...props} />
+);
+
+export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;

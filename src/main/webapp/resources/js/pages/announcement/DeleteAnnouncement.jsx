@@ -1,8 +1,7 @@
 import React from "react";
-import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Popconfirm } from "antd";
 import { red6 } from "../../styles/colors";
-import { IconQuestionCircle } from "../../components/icons/Icons";
+import { IconQuestionCircle, IconTrash } from "../../components/icons/Icons";
 
 /**
  * Component to render a Delete announcement button.
@@ -21,7 +20,7 @@ export function DeleteAnnouncement({ id, deleteAnnouncement }) {
       icon={<IconQuestionCircle style={{ color: red6 }} />}
     >
       <Button shape={"circle"}>
-        <DeleteOutlined />
+        <IconTrash />
       </Button>
     </Popconfirm>
   );
