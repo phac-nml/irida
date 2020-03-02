@@ -1,7 +1,8 @@
 import React from "react";
-import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Popconfirm } from "antd";
 import { red6 } from "../../styles/colors";
+import { IconQuestionCircle } from "../../components/icons/Icons";
 
 /**
  * Component to render a Delete announcement button.
@@ -17,7 +18,7 @@ export function DeleteAnnouncement({ id, deleteAnnouncement }) {
       title={i18n("DeleteAnnouncement.title")}
       onConfirm={() => deleteAnnouncement({ id })}
       okText={i18n("DeleteAnnouncement.ok")}
-      icon={<QuestionCircleOutlined style={{ color: red6 }} />}
+      icon={<IconQuestionCircle style={{ color: red6 }} />}
     >
       <Button shape={"circle"}>
         <DeleteOutlined />

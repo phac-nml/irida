@@ -9,9 +9,11 @@ import {
   InfoCircleOutlined,
   LoadingOutlined,
   LockOutlined,
+  QuestionCircleOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
-  SyncOutlined
+  SyncOutlined,
+  TableOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -47,6 +49,12 @@ export const IconInfoCircle = ({ ...props }) => (
   <InfoCircleOutlined {...props} />
 );
 
+export const IconQuestionCircle = ({ ...props }) => (
+  <QuestionCircleOutlined {...props} />
+);
+
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
 
 export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
+
+export const IconTable = ({ ...props }) => <TableOutlined {...props} />;
