@@ -22,6 +22,7 @@ import {
   QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  StopOutlined,
   StrikethroughOutlined,
   SyncOutlined,
   TableOutlined,
@@ -84,6 +85,8 @@ export const IconPlusCircle = ({ ...props }) => (
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
 
 export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
+
+export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 /*
 Editor Icons
