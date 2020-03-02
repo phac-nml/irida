@@ -29,16 +29,13 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 @Repository
 public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFile> implements
 		SequenceFileRemoteRepository {
-	private static final ParameterizedTypeReference<ListResourceWrapper<SequenceFile>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<SequenceFile>>() {
+	public static final MediaType DEFAULT_DOWNLOAD_MEDIA_TYPE = new MediaType("application", "fastq");
+	private static final ParameterizedTypeReference<ListResourceWrapper<SequenceFile>> listTypeReference = new ParameterizedTypeReference<>() {
 	};
-
-	private static final ParameterizedTypeReference<ResourceWrapper<SequenceFile>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<SequenceFile>>() {
+	private static final ParameterizedTypeReference<ResourceWrapper<SequenceFile>> objectTypeReference = new ParameterizedTypeReference<>() {
 	};
-
 	// OAuth2 token storage service for making requests
 	private final RemoteAPITokenService tokenService;
-
-	public static final MediaType DEFAULT_DOWNLOAD_MEDIA_TYPE = new MediaType("application", "fastq");
 
 	/**
 	 * Create a new SequenceFileRemoteRepositoryImpl
@@ -61,7 +58,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
-		// add the sequence file message converter
+		// add the sequence file message markdownConverter
 		List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
 		converters.add(new SequenceFileMessageConverter(file.getFileName()));
 		restTemplate.setMessageConverters(converters);
@@ -69,7 +66,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 		// add the application/fastq accept header
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setAccept(Arrays.asList(mediaTypes));
-		HttpEntity<Path> requestEntity = new HttpEntity<Path>(requestHeaders);
+		HttpEntity<Path> requestEntity = new HttpEntity<>(requestHeaders);
 
 		// get the file
 		ResponseEntity<Path> exchange = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, Path.class);

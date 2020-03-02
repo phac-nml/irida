@@ -1,18 +1,11 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
-import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
-import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementAdmin;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
-import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,25 +16,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
+import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- *  Controller for handling {@link ca.corefacility.bioinformatics.irida.model.announcements.Announcement} views
+ * Controller for handling {@link ca.corefacility.bioinformatics.irida.model.announcements.Announcement} views
  */
 @Controller
 @RequestMapping(value = "/announcements")
-public class AnnouncementsController extends BaseController{
+public class AnnouncementsController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementsController.class);
 
     private static final String ANNOUNCEMENT_VIEW = "announcements/announcements";
     private static final String ANNOUNCEMENT_VIEW_READ = "announcements/read";
     private static final String ANNOUNCEMENT_ADMIN = "announcements/control";
-    private static final String ANNOUNCEMENT_CREATE = "announcements/create";
     private static final String ANNOUNCEMENT_DETAILS = "announcements/details";
 
     private final UserService userService;
@@ -135,41 +134,6 @@ public class AnnouncementsController extends BaseController{
         return ANNOUNCEMENT_ADMIN;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getCreateAnnouncementPage() {
-
-        return ANNOUNCEMENT_CREATE;
-    }
-
-    /**
-     * Create a new announcement
-     *
-     * @param message
-     *              The content of the message for the announcement
-     * @param model
-     *              The model for the view
-     * @param principal
-     *              The currently logged in user creating the announcement
-     * @return A redirect to the announcement control centre page
-     */
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String submitCreateAnnouncement(@RequestParam(required = true) String message,
-                                   Model model,
-                                   Principal principal) {
-        User creator = userService.getUserByUsername(principal.getName());
-        Announcement a = new Announcement(message, creator);
-
-        try {
-            announcementService.create(a);
-        } catch (Exception e) {
-            model.addAttribute("errors", "Announcement was not created successfully");
-        }
-
-        return "redirect:/announcements/admin";
-    }
-
     /**
      * Updates an existing announcement object in the database
      *
@@ -247,26 +211,6 @@ public class AnnouncementsController extends BaseController{
         model.addAttribute("numTotal", totalUsers);
 
         return ANNOUNCEMENT_DETAILS;
-    }
-
-    /**
-     * Get all announcements to be displayed in a DataTables for admin control centre
-     *
-     * @param params
-     * 		{@link DataTablesParams} for the current DataTable.
-     *
-     * @return {@link DataTablesResponse}
-     */
-    @RequestMapping(value = "/control/ajax/list")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DataTablesResponse getAnnouncementsAdmin(@DataTablesRequest DataTablesParams params) {
-        final Page<Announcement> page = announcementService
-                .search(AnnouncementSpecification.searchAnnouncement(params.getSearchValue()),
-                        PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-
-        final List<DataTablesResponseModel> announcements = page.getContent().stream().map(DTAnnouncementAdmin::new)
-                .collect(Collectors.toList());
-        return new DataTablesResponse(params, page, announcements);
     }
 
     /**

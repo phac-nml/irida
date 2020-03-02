@@ -31,17 +31,17 @@ import com.google.common.base.Objects;
  * hibernate: "use this class to convert a {@code Path} to some sort of
  * database column."</li>
  * </ol>
- * 
+ *
  * This is ugly because we're using Hibernate-specific implementations of stuff.
  * Ideally, we'd use the {@code @Converter} stuff that comes with JPA2.1, but
- * Hibernate Envers barfs when you use the JPA converter annotations. See:
+ * Hibernate Envers barfs when you use the JPA markdownConverter annotations. See:
  * https://hibernate.atlassian.net/browse/HHH-9042
- * 
+ *
  * I e-mailed the author of the bug report because he mentioned that he had a
  * workaround. If he gets back to me, I will create another merge request to
  * remove this class and replace with with a much more sane JPA-compliant
  * version.
- * 
+ *
  *
  */
 @MappedSuperclass
@@ -79,7 +79,8 @@ public class PathConverter implements UserType {
 	}
 
 	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+	public void nullSafeSet(
+			PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
 			throws HibernateException, SQLException {
 		String path = value == null ? null : value.toString();
 		StringType.INSTANCE.nullSafeSet(st, path, index, session);
