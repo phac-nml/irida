@@ -3,6 +3,7 @@ import {
   CloudServerOutlined,
   DownloadOutlined,
   FilterOutlined,
+  LoadingOutlined,
   SyncOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
@@ -20,3 +21,5 @@ export const IconSyncSpin = ({ ...props }) => <SyncOutlined spin {...props} />;
 export const IconCloudServer = ({ ...props }) => (
   <CloudServerOutlined {...props} />
 );
+
+export const IconLoading = ({ ...props }) => <LoadingOutlined {...props} />;
