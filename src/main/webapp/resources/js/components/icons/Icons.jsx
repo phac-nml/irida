@@ -7,6 +7,7 @@ import {
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
+  EditOutlined,
   ExclamationCircleOutlined,
   FilterOutlined,
   FolderOutlined,
@@ -81,6 +82,8 @@ export const IconPlusCircle = ({ ...props }) => (
 );
 
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
+
+export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
 /*
 Editor Icons
