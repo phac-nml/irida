@@ -8,6 +8,7 @@ import {
   InfoCircleOutlined,
   LoadingOutlined,
   LockOutlined,
+  SearchOutlined,
   ShoppingCartOutlined,
   SyncOutlined
 } from "@ant-design/icons";
@@ -16,6 +17,8 @@ import { blue6 } from "../../styles/colors";
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
 );
+
+export const IconSearch = ({ ...props }) => <SearchOutlined {...props} />;
 
 export const IconDownloadFile = ({ ...props }) => (
   <DownloadOutlined {...props} />
