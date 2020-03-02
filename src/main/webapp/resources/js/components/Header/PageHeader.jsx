@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -25,11 +26,12 @@ export class PageHeader extends React.Component {
 
   render() {
     return (
-      <>
+      <div>
+        <Breadcrumbs crumbs={window.breadcrumbs} />
         <Session />
         <Notifications />
         {this.state.inGalaxy ? <GalaxyAlert /> : null}
-      </>
+      </div>
     );
   }
 }

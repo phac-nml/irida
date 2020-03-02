@@ -32,14 +32,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 					"href", "/samples",
 					"text", "Samples"
 			),
-			ImmutableMap.of(
-					"href", "/samples/" + SAMPLE_ID,
-					"text", String.valueOf(SAMPLE_ID)
-			),
-			ImmutableMap.of(
-					"href", "/samples/" + SAMPLE_ID + "/sequenceFiles",
-					"text", "Sequence Files"
-			)
+			ImmutableMap.of("href", "/samples/" + SAMPLE_ID, "text", "sample1")
 	);
 
 	@Before

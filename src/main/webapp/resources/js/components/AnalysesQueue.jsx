@@ -7,11 +7,11 @@ import { formatNumber } from "../utilities/number-utilities";
 import { blue4, blue6 } from "../styles/colors";
 import { IconCloudServer } from "./icons/Icons";
 
-const LabelTD = styled.span`
+const Label = styled.span`
   font-weight: bold;
 `;
 
-const ValueTD = styled.span`
+const Value = styled.span`
   width: 50px;
   text-align: right;
   font-family: monospace;
@@ -66,10 +66,10 @@ export function AnalysesQueue({}) {
                   justifyContent: "space-between"
                 }}
               >
-                <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-                <ValueTD className="t-running-counts">
+                <Label>{i18n("AnalysesQueue.running")}</Label>
+                <Value className="t-running-counts">
                   {formatNumber(running)}
-                </ValueTD>
+                </Value>
               </div>
               <div
                 style={{
@@ -77,10 +77,10 @@ export function AnalysesQueue({}) {
                   justifyContent: "space-between"
                 }}
               >
-                <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
-                <ValueTD className="t-queue-counts">
+                <Label>{i18n("AnalysesQueue.queued")}</Label>
+                <Value className="t-queue-counts">
                   {formatNumber(queued)}
-                </ValueTD>
+                </Value>
               </div>
             </div>
           </div>

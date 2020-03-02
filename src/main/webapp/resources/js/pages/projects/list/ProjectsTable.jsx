@@ -194,6 +194,7 @@ export function ProjectsTable() {
             total: total,
             pageSize: state.pageSize
           }}
+          scroll={{ x: "max-content" }}
           columns={columns}
           dataSource={projects}
           onChange={handleTableChange}
