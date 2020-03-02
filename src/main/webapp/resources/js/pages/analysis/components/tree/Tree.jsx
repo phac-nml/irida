@@ -13,13 +13,13 @@ import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import styled from "styled-components";
 import { SPACE_MD, SPACE_XS } from "../../../../styles/spacing";
-import { BORDER_LIGHT } from "../../../../styles/borders";
+import { BORDERED_LIGHT } from "../../../../styles/borders";
 
 const CANVAS_HEIGHT = 600;
 
 const VisualizationWrapper = styled.div`
   height: ${CANVAS_HEIGHT}px;
-  border: ${BORDER_LIGHT};
+  border: ${BORDERED_LIGHT};
 `;
 
 const ButtonGroupWrapper = styled.div`
@@ -81,7 +81,11 @@ export default function Tree() {
         ) : (
           <div>
             <ButtonGroupWrapper>
-              <Radio.Group value={currTreeShape} onChange={handleClick} id="t-tree-shape-tools">
+              <Radio.Group
+                value={currTreeShape}
+                onChange={handleClick}
+                id="t-tree-shape-tools"
+              >
                 <Radio.Button value="rectangular">
                   {i18n("AnalysisPhylogeneticTree.rectangular")}
                 </Radio.Button>
@@ -108,7 +112,9 @@ export default function Tree() {
                 {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
               </Button>
             </ButtonGroupWrapper>
-            <VisualizationWrapper id="t-phylocanvas-wrapper">{getTree()}</VisualizationWrapper>
+            <VisualizationWrapper id="t-phylocanvas-wrapper">
+              {getTree()}
+            </VisualizationWrapper>
           </div>
         )
       ) : (
