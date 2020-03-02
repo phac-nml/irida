@@ -9,8 +9,11 @@
 - [UI]: Updated admin announcements table and creation to use `ant.design`.
 - [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
 - [UI]: Updated breadcrumbs to have cleaner look and feel and include the actual project and sample names.
+- [UI/Developer]: Updated to `react` 16.13.0.
 
-## 19.09 to 20.01
+  19.09 to 20.01
+
+---
 
 - [UI]: Fixed default server language. It was accidentally set to 'fr' for release. (19.09.1)
 - [Developer]: Upgraded development Java version to Java 11 (LTS).
