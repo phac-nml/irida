@@ -9,20 +9,14 @@
 			display: none !important;
 		}
 	</style>
+	<script th:inline="javascript">
+		window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
+	</script>
 </head>
 <body>
 <th:block layout:fragment="content">
-	<header class="js-page-header"></header>
 	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
-	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
-		<div class="container-fluid">
-			<ol>
-				<li th:each="crumb : ${crumbs} ">
-					<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
-				</li>
-			</ol>
-		</div>
-	</div>
+	<header class="js-page-header"></header>
 	<div class="container-fluid body-content" style="display: flex; flex-direction: column;">
 		<div class="row" layout:fragment="page"></div>
 	</div>
