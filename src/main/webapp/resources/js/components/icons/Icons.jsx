@@ -1,10 +1,13 @@
 import React from "react";
 import {
   CloudServerOutlined,
+  CloudUploadOutlined,
   DownloadOutlined,
   DownOutlined,
   FilterOutlined,
+  InfoCircleOutlined,
   LoadingOutlined,
+  LockOutlined,
   ShoppingCartOutlined,
   SyncOutlined
 } from "@ant-design/icons";
@@ -24,6 +27,10 @@ export const IconCloudServer = ({ ...props }) => (
   <CloudServerOutlined {...props} />
 );
 
+export const IconCloudUpload = ({ ...props }) => (
+  <CloudUploadOutlined {...props} />
+);
+
 export const IconLoading = ({ ...props }) => <LoadingOutlined {...props} />;
 
 export const IconDropDown = ({ ...props }) => <DownOutlined {...props} />;
@@ -31,3 +38,9 @@ export const IconDropDown = ({ ...props }) => <DownOutlined {...props} />;
 export const IconShoppingCart = ({ ...props }) => (
   <ShoppingCartOutlined {...props} />
 );
+
+export const IconInfoCircle = ({ ...props }) => (
+  <InfoCircleOutlined {...props} />
+);
+
+export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
