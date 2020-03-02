@@ -10,6 +10,7 @@ import {
   LoadingOutlined,
   LockOutlined,
   QuestionCircleOutlined,
+  QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
   SyncOutlined,
@@ -52,6 +53,8 @@ export const IconInfoCircle = ({ ...props }) => (
 export const IconQuestionCircle = ({ ...props }) => (
   <QuestionCircleOutlined {...props} />
 );
+
+export const IconQuestion = ({ ...props }) => <QuestionOutlined {...props} />;
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
 

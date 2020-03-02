@@ -6,7 +6,10 @@ import { actions as entryActions } from "../../reducers/entries";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
-import { IconCloudUpload } from "../../../../../components/icons/Icons";
+import {
+  IconCloudUpload,
+  IconQuestion
+} from "../../../../../components/icons/Icons";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
@@ -115,9 +118,10 @@ export class ToolbarComponent extends Component {
                   title={i18n("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
-                  icon="question"
                   onClick={this.openTour}
-                />
+                >
+                  <IconQuestion />
+                </Button>
               </Popover>
             </Form.Item>
           </Form>
