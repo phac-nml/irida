@@ -83,7 +83,7 @@ The will bring you to a page where you can monitor the status of each launched w
 
 ![monitor-analyses][]
 
-Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a while for the RefSeqMasher analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. This option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
+Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a while for the RefSeqMasher analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
 ![analysis-in-progress]
 
@@ -190,7 +190,7 @@ To view analysis details, please select the **Settings** tab. From here you can 
 
 ![refseq-settings]
 
-To edit an analysis name, please select the Pencil icon next to the analysis name. Once you have edited the analysis name, pressing the `ENTER` key on your keyboard or clicking anywhere on the page will update the name. To cancel editing a name you can either hit the `ESC` key on your keyboard or if the name has not been changed you can also click anywhere on the page.
+To edit an analysis name, please select the Pencil icon next to the analysis name. Once you have edited the analysis name, pressing the `ENTER` key on your keyboard or clicking anywhere outside of the text box will update the name. To cancel editing a name you can either hit the `ESC` key on your keyboard or if the name has not been changed you can also click anywhere outside of the text box.
 
 ![refseq-settings-edit-name]
 
