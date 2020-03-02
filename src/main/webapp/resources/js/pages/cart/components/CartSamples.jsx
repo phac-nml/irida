@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { SPACE_SM } from "../../../styles/spacing";
-import { blue6, grey3, red4, red6 } from "../../../styles/colors";
+import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
