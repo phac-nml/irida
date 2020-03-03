@@ -199,15 +199,21 @@ public class AbstractPage {
 	 *            expected href - text: expected text displayed
 	 */
 	public void checkBreadCrumbs(List<Map<String, String>> expected) {
-		List<WebElement> crumbs = driver.findElement(By.className("breadcrumbs")).findElements(By.tagName("a"));
+		List<WebElement> crumbs = driver.findElement(By.className("ant-breadcrumb"))
+				.findElements(By.tagName("a"));
+		crumbs.remove(0); // Remove the home link.
+
 		assertEquals("Should have the correct number of breadcrumbs", expected.size(), crumbs.size());
 		for (int i = 0; i < crumbs.size(); i++) {
 			WebElement crumb = crumbs.get(i);
 			String href = crumb.getAttribute("href");
 			String text = crumb.getText();
-			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
-			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
-			assertEquals("Should have the epected text in the breadcrumb", expected.get(i).get("text"), text);
+			assertTrue("Should have the expected url in the breadcrumb", href.contains(expected.get(i)
+					.get("href")));
+			assertTrue("Should have the expected url in the breadcrumb", href.contains(expected.get(i)
+					.get("href")));
+			assertEquals("Should have the expected text in the breadcrumb", expected.get(i)
+					.get("text"), text);
 		}
 	}
 
