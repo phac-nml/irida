@@ -1,6 +1,7 @@
 {
   "name": "irida-ui",
   "version": "1.0.0",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "webpack --env.mode production",
     "start": "webpack --env.mode development",
