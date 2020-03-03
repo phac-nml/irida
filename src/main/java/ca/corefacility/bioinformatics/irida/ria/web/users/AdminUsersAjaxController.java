@@ -33,6 +33,12 @@ public class AdminUsersAjaxController {
 		this.userService = userService;
 	}
 
+	/**
+	 * Get a paged listing of users for the administration user.  This can be filtered and sorted.
+	 *
+	 * @param request - the information about the current page of users to return
+	 * @return {@link TableResponse}
+	 */
 	@RequestMapping("/list")
 	public TableResponse<UserTableModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
 		Specification<User> specification = UserSpecification.searchUser(request.getSearch());
@@ -47,6 +53,12 @@ public class AdminUsersAjaxController {
 		return new TableResponse<>(users, userPage.getTotalElements());
 	}
 
+	/**
+	 * Update a user status (if the user is enabled within IRIDA).
+	 *
+	 * @param id        - the identifier for the {@link User} whom status is being updated.
+	 * @param isEnabled - {@link Boolean} value whether the {@link User} should be enabled or not.
+	 */
 	@RequestMapping("/edit")
 	public void updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled) {
 		User user = userService.read(id);
