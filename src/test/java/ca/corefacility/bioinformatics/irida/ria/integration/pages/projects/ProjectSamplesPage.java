@@ -13,6 +13,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
 
+import com.google.common.base.Strings;
+
 /**
  * <p>
  * Page Object to represent the project samples page.
@@ -454,7 +456,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		linkerBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
-		return linkerCmd.getAttribute("value");
+		String cmd = linkerCmd.getAttribute("aria-label");
+		if (Strings.isNullOrEmpty(cmd)) {
+			cmd = linkerCmd.getText();
+		}
+		return cmd;
 	}
 	
 	public List<String> getLockedSampleNames(){
