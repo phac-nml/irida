@@ -4,6 +4,7 @@ Changes
 20.01 to 20.05
 --------------
 * [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+* [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
 
 19.09 to 20.01
 --------------
