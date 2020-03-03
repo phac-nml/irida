@@ -16,7 +16,15 @@ export function RemoteApiTable() {
       key: "name",
       dataIndex: "name",
       render(text, record) {
-        return <Button type="link" href={`remote_api/${record.id}`} className="t-api-name">{text}</Button>;
+        return (
+          <Button
+            type="link"
+            href={`remote_api/${record.id}`}
+            className="t-api-name"
+          >
+            {text}
+          </Button>
+        );
       }
     },
     {
