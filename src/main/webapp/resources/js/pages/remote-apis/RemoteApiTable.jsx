@@ -7,6 +7,11 @@ import {
 import { RemoteApiStatus } from "./RemoteApiStatus";
 import { Button } from "antd";
 
+/**
+ * Render a table to display remote API's
+ * @returns {string|*}
+ * @constructor
+ */
 export function RemoteApiTable() {
   const { updateTable } = useContext(PagedTableContext);
 
