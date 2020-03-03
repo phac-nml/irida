@@ -5,22 +5,18 @@ import {
   PagedTableContext
 } from "../../components/ant.design/PagedTable";
 import { RemoteApiStatus } from "./RemoteApiStatus";
+import { Button } from "antd";
 
 export function RemoteApiTable() {
   const { updateTable } = useContext(PagedTableContext);
 
   const columnDefs = [
     {
-      title: i18n("iridaThing.id"),
-      key: "id",
-      dataIndex: "id"
-    },
-    {
       title: i18n("remoteapi.name"),
       key: "name",
       dataIndex: "name",
-      render(text) {
-        return <span className="t-api-name">{text}</span>;
+      render(text, record) {
+        return <Button type="link" href={`remote_api/${record.id}`} className="t-api-name">{text}</Button>;
       }
     },
     {
