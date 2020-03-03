@@ -85,6 +85,11 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Bean
+	public BreadCrumbInterceptor breadCrumbInterceptor() {
+		return new BreadCrumbInterceptor();
+	}
+
+	@Bean
 	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
 		StringBuilder analytics = new StringBuilder();
@@ -119,11 +124,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		SessionLocaleResolver slr = new SessionLocaleResolver();
 		slr.setDefaultLocale(defaultLocale);
 		return slr;
-	}
-
-	@Bean
-	public BreadCrumbInterceptor breadCrumbInterceptor() {
-		return new BreadCrumbInterceptor(messageSource);
 	}
 
 	@Override
