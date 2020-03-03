@@ -334,7 +334,7 @@
           <script
             type="text/ng-template"
             id="inputs.html"
-            th:with="fileCount = ${#lists.size(paired_end)}"
+            th:with="pairedCount = ${#lists.size(paired_end)}, singleCount = ${#lists.size(single_end)}"
           >
 			  <th:block th:if="${referenceFile}">
 				  <h2 th:text="#{analysis.details.reference}"></h2>
@@ -347,7 +347,7 @@
 			  </th:block>
 
 			  <h2 th:text="#{analysis.details.reads}"></h2>
-			  <div th:if="${fileCount > 0}">
+			  <div th:if="${pairedCount > 0}">
 				  <ul class="list-group">
 					  <li class="list-group-item t-paired-end" th:each="pair : ${paired_end}">
 						  <h4 class="list-group-item-heading" th:if="${pair.sample}">
@@ -360,26 +360,54 @@
 							  <i class="far fa-times-circle"></i>
 							  <span th:text="#{analysis.details.input.no-sample}">_NO_ONE_HOME_</span>
 						  </h4>
-            <hr style="margin: 10px 0">
-                     			<div th:with="forward=${pair.sequenceFilePair.getForwardSequenceFile()}" class="sequence-file">
-                     				<i class="fas fa-arrow-right sequence-file__icon"></i> <span class="sequence-file__name"><a
-                 th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${forward.id})}"
-                 th:text="${forward.label}"></a></span>
-                     				<span th:text="${forward.getFileSize()}"></span>
-                     			</div>
-                     			<div th:with="reverse=${pair.sequenceFilePair.getReverseSequenceFile()}" class="sequence-file">
-                     				<i class="fas fa-arrow-left sequence-file__icon"></i> <span class="sequence-file__name"><a
-                 th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${reverse.id})}"
-                 th:text="${reverse.label}"></a></span> <span th:text="${reverse.getFileSize()}"></span>
-                     			</div>
-                     		</li>
-                     	</ul>
-                     </div>
-                     <div class="alert alert-info" th:unless="${fileCount > 0}"
-                     	 th:text="#{analysis.input-files.no-paired-end}">
-                     	__NO_PAIRED_END_DATA_
-                     </div>
-          </script>
+              <hr style="margin: 10px 0">
+              <div th:with="forward=${pair.sequenceFilePair.getForwardSequenceFile()}" class="sequence-file">
+                <i class="fas fa-arrow-right sequence-file__icon"></i> 
+                <span class="sequence-file__name">
+                  <a th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${forward.id})}"
+                    th:text="${forward.label}"></a>
+                </span>
+                <span th:text="${forward.getFileSize()}"></span>
+              </div>
+              <div th:with="reverse=${pair.sequenceFilePair.getReverseSequenceFile()}" class="sequence-file">
+                <i class="fas fa-arrow-left sequence-file__icon"></i>
+                <span class="sequence-file__name">
+                  <a th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${reverse.id})}"
+                    th:text="${reverse.label}"></a>
+                </span> <span th:text="${reverse.getFileSize()}"></span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div th:if="${singleCount > 0}">
+          <ul class="list-group">
+					  <li class="list-group-item t-single-end" th:each="single : ${single_end}">
+						  <h4 class="list-group-item-heading" th:if="${single.sample}">
+							  <a target="_blank" th:href="@{/samples/{id}/details(id=${single.sample.id})}">
+								  <i class="fas fa-flask"></i>
+								  <span th:text="${single.sample.sampleName}"></span>
+							  </a>
+						  </h4>
+						  <h4 th:unless="${single.sample}">
+							  <i class="far fa-times-circle"></i>
+							  <span th:text="#{analysis.details.input.no-sample}">_NO_ONE_HOME_</span>
+						  </h4>
+              <hr style="margin: 10px 0">
+              <div th:with="forward=${single.getSequenceFile().getSequenceFile()}" class="sequence-file">
+                <i class="fas fa-minus sequence-file__icon"></i> 
+                <span class="sequence-file__name">
+                  <a th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${single.id}, fileId=${forward.id})}"
+                    th:text="${forward.label}"></a>
+                </span>
+                <span th:text="${forward.getFileSize()}"></span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="alert alert-info" th:unless="${pairedCount > 0 OR singleCount > 0}"
+          th:text="#{analysis.input-files.no-paired-end}">__NO_PAIRED_END_DATA_
+        </div>
+      </script>
 
           <script type="text/ng-template" id="provenance.html">
             <div th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">

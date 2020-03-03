@@ -1,27 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -35,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -57,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -66,6 +44,26 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for Analysis.
@@ -276,6 +274,22 @@ public class AnalysisController {
 					.compareTo(b.sample.getLabel());
 		}).collect(Collectors.toList());
 		model.addAttribute("paired_end", sampleFiles);
+
+		// - Single
+		Set<SingleEndSequenceFile> inputFilesSingle = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SingleEndSequenceFile.class);
+		List<SampleSingleFiles> singleFiles = inputFilesSingle.stream().map(SampleSingleFiles::new).sorted((a, b) -> {
+			if (a.sample == null && b.sample == null) {
+				return 0;
+			} else if (a.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return a.sample.getLabel()
+					.compareTo(b.sample.getLabel());
+		}).collect(Collectors.toList());
+		model.addAttribute("single_end", singleFiles);
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -1112,6 +1126,39 @@ public class AnalysisController {
 
 		public SequenceFilePair getSequenceFilePair() {
 			return sequenceFilePair;
+		}
+	}
+
+	/**
+	 * UI Model to return a single end sequence file with its sample
+	 */
+	private class SampleSingleFiles {
+		private Sample sample;
+		private SingleEndSequenceFile singleEndFile;
+
+		SampleSingleFiles(SingleEndSequenceFile singleEndFile) {
+			this.singleEndFile = singleEndFile;
+			try {
+				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
+						singleEndFile);
+				this.sample = sampleSequencingObjectJoin.getSubject();
+			} catch (Exception e) {
+				logger.debug(
+						"Sequence file [" + singleEndFile.getIdentifier() + "] does not have a parent sample", e);
+				sample = null;
+			}
+		}
+
+		public Long getId() {
+			return singleEndFile.getId();
+		}
+
+		public Sample getSample() {
+			return sample;
+		}
+
+		public SingleEndSequenceFile getSequenceFile() {
+			return singleEndFile;
 		}
 	}
 }
