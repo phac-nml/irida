@@ -361,7 +361,7 @@
 							  <span th:text="#{analysis.details.input.no-sample}">_NO_ONE_HOME_</span>
 						  </h4>
               <hr style="margin: 10px 0">
-              <div th:with="forward=${pair.sequenceFilePair.getForwardSequenceFile()}" class="sequence-file">
+              <div th:with="forward=${pair.getSequencingObject().getForwardSequenceFile()}" class="sequence-file">
                 <i class="fas fa-arrow-right sequence-file__icon"></i> 
                 <span class="sequence-file__name">
                   <a th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${forward.id})}"
@@ -369,7 +369,7 @@
                 </span>
                 <span th:text="${forward.getFileSize()}"></span>
               </div>
-              <div th:with="reverse=${pair.sequenceFilePair.getReverseSequenceFile()}" class="sequence-file">
+              <div th:with="reverse=${pair.getSequencingObject().getReverseSequenceFile()}" class="sequence-file">
                 <i class="fas fa-arrow-left sequence-file__icon"></i>
                 <span class="sequence-file__name">
                   <a th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${reverse.id})}"
@@ -393,7 +393,7 @@
 							  <span th:text="#{analysis.details.input.no-sample}">_NO_ONE_HOME_</span>
 						  </h4>
               <hr style="margin: 10px 0">
-              <div th:with="forward=${single.getSequenceFile().getSequenceFile()}" class="sequence-file">
+              <div th:with="forward=${single.getSequencingObject().getSequenceFile()}" class="sequence-file">
                 <i class="fas fa-minus sequence-file__icon"></i> 
                 <span class="sequence-file__name">
                   <a th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${single.id}, fileId=${forward.id})}"
