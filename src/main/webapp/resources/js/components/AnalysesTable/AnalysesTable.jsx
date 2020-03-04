@@ -13,11 +13,10 @@ import {
 import { AnalysisState } from "./AnalysisState";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
 import { getTextSearchProps } from "../ant.design/table-search-props";
-import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { DownloadOutlined, FilterOutlined } from "@ant-design/icons";
+import { IconDownloadFile, IconTableFilter } from "../icons/Icons";
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -68,12 +67,7 @@ export function AnalysesTable() {
       filterMultiple: true,
       filters: pipelineStates,
       filterIcon(filtered) {
-        return (
-          <FilterOutlined
-            style={{ color: filtered ? blue6 : undefined }}
-            className="t-state"
-          />
-        );
+        return <IconTableFilter className="t-state" filtered={filtered} />;
       },
       render(state) {
         return <AnalysisState state={state} />;
@@ -86,12 +80,7 @@ export function AnalysesTable() {
       dataIndex: "type",
       filterMultiple: true,
       filterIcon(filtered) {
-        return (
-          <FilterOutlined
-            style={{ color: filtered ? blue6 : undefined }}
-            className="t-type"
-          />
-        );
+        return <IconTableFilter className="t-type" filtered={filtered} />;
       },
       filters: pipelineTypes
     },
@@ -129,7 +118,7 @@ export function AnalysesTable() {
             href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
             download
           >
-            <DownloadOutlined />
+            <IconDownloadFile />
           </Button>
         );
       }

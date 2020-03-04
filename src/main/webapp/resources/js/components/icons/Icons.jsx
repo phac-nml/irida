@@ -1,0 +1,113 @@
+import React from "react";
+import {
+  BoldOutlined,
+  CloudServerOutlined,
+  CloudUploadOutlined,
+  CodeOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  DownOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  FilterOutlined,
+  FolderOutlined,
+  InfoCircleOutlined,
+  ItalicOutlined,
+  LinkOutlined,
+  LoadingOutlined,
+  LockOutlined,
+  OrderedListOutlined,
+  PlusCircleTwoTone,
+  QuestionCircleOutlined,
+  QuestionOutlined,
+  SearchOutlined,
+  ShoppingCartOutlined,
+  StopOutlined,
+  StrikethroughOutlined,
+  SyncOutlined,
+  TableOutlined,
+  UnorderedListOutlined
+} from "@ant-design/icons";
+import { blue6 } from "../../styles/colors";
+
+export const IconTableFilter = ({ filtered, ...props }) => (
+  <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
+);
+
+export const IconSearch = ({ ...props }) => <SearchOutlined {...props} />;
+
+export const IconDownloadFile = ({ ...props }) => (
+  <DownloadOutlined {...props} />
+);
+
+export const IconSyncSpin = ({ ...props }) => <SyncOutlined spin {...props} />;
+
+export const IconCloudServer = ({ ...props }) => (
+  <CloudServerOutlined {...props} />
+);
+
+export const IconCloudUpload = ({ ...props }) => (
+  <CloudUploadOutlined {...props} />
+);
+
+export const IconLoading = ({ ...props }) => <LoadingOutlined {...props} />;
+
+export const IconDropDown = ({ ...props }) => <DownOutlined {...props} />;
+
+export const IconShoppingCart = ({ ...props }) => (
+  <ShoppingCartOutlined {...props} />
+);
+
+export const IconInfoCircle = ({ ...props }) => (
+  <InfoCircleOutlined {...props} />
+);
+
+export const IconQuestionCircle = ({ ...props }) => (
+  <QuestionCircleOutlined {...props} />
+);
+
+export const IconQuestion = ({ ...props }) => <QuestionOutlined {...props} />;
+
+export const IconExclamationCircle = ({ ...props }) => (
+  <ExclamationCircleOutlined {...props} />
+);
+
+export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
+
+export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
+
+export const IconTable = ({ ...props }) => <TableOutlined {...props} />;
+
+export const IconPlusCircle = ({ ...props }) => (
+  <PlusCircleTwoTone {...props} />
+);
+
+export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
+
+export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
+
+export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
+
+/*
+Editor Icons
+ */
+
+export const IconBold = ({ ...props }) => <BoldOutlined {...props} />;
+
+export const IconItalic = ({ ...props }) => <ItalicOutlined {...props} />;
+
+export const IconStrikeThrough = ({ ...props }) => (
+  <StrikethroughOutlined {...props} />
+);
+
+export const IconUnorderedList = ({ ...props }) => (
+  <UnorderedListOutlined {...props} />
+);
+
+export const IconOrderedList = ({ ...props }) => (
+  <OrderedListOutlined {...props} />
+);
+
+export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
+
+export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;

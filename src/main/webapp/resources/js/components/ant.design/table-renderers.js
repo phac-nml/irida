@@ -1,7 +1,6 @@
 import React from "react";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { blue6 } from "../../styles/colors";
-import { FilterOutlined } from "@ant-design/icons";
+import { IconTableFilter } from "../icons/Icons";
 
 export const idColumnFormat = () => ({
   dataIndex: "id",
@@ -18,12 +17,7 @@ export const nameColumnFormat = ({ url }) => {
     sorter: true,
     ellipsis: true,
     filterIcon(filtered) {
-      return (
-        <FilterOutlined
-          style={{ color: filtered ? blue6 : undefined }}
-          className="t-name"
-        />
-      );
+      return <IconTableFilter className="t-name" filtered={filtered} />;
     },
     render(name, data) {
       return (
