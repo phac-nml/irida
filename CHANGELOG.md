@@ -11,6 +11,7 @@ Changes
 * [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
 * [UI]: Updated breadcrumbs to have cleaner look and feel and include the actual project and sample names.
 * [UI/Developer]: Updated to `react` 16.13.0.
+* [Developer]: Added Apache 2.0 licence information to `package.json`.
 * [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
 
 19.09 to 20.01
