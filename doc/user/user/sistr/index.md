@@ -67,7 +67,7 @@ Interpretation of the produced output is as follows:
 Basic information on the sample and quality of the SISTR results.
 
 * **Sample Name**: The name of the sample used within this analysis.
-* **Quality Control Status**: A value of `PASS` or `FAIL` depending on the quality of the input genome as determined by SISTR.
+* **Quality Control Status**: A value of `PASS`, `FAIL`, or `WARNING` depending on the quality of the input genome as determined by SISTR.
 
 #### 2. Serovar Predictions
 
