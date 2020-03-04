@@ -20,7 +20,7 @@ function LoginPage({ form }) {
   return (
     <>
       <img src="/resources/img/irida_logo_light.svg" alt="" />
-      {window.PAGE.hasErrors ? (
+      {window.PAGE?.hasErrors ? (
         <Alert
           style={{ margin: `18px 0 28px 0` }}
           type="error"

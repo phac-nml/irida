@@ -20,15 +20,13 @@
     </style>
   </head>
   <body>
-    <th:block login:page="${@environment.getProperty('login.page')}">
-      <div
-        style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column"
-      >
-        <div id="login-root" style="width: 300px">
-          <!-- Contents rendered from LoginPage.jsx -->
-        </div>
+    <div
+      style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column"
+    >
+      <div id="login-root" style="width: 300px">
+        <!-- Contents rendered from LoginPage.jsx -->
       </div>
-    </th:block>
+    </div>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf;
+package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.dialects;
 
 import java.net.MalformedURLException;
 import java.net.URL;

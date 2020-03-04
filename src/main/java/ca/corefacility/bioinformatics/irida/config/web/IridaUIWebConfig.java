@@ -30,6 +30,8 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
@@ -37,8 +39,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.dialects.login.LoginProcessorDialect;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.dialects.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -61,6 +62,9 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 	@Value("${locales.default}")
 	private String defaultLocaleValue;
+
+	@Value("${ui.templates}")
+	private String extraUITemplates;
 
 	@Autowired
 	private Environment env;
@@ -137,22 +141,26 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
-		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
-		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
-		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove-modal.tmpl");
+		registry.addViewController("/projects/templates/merge")
+				.setViewName("projects/templates/merge");
+		registry.addViewController("/projects/templates/copy")
+				.setViewName("projects/templates/copy");
+		registry.addViewController("/projects/templates/move")
+				.setViewName("projects/templates/move");
+		registry.addViewController("/projects/templates/remove")
+				.setViewName("projects/templates/remove-modal.tmpl");
 		registry.addViewController("/projects/templates/referenceFiles/delete")
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
-
-	@Bean
-	public SpringResourceTemplateResolver templateResolver(){
+	private SpringResourceTemplateResolver generateDefaultTemplateResolver() {
 		SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
 		templateResolver.setApplicationContext(this.applicationContext);
-		templateResolver.setPrefix(TEMPLATE_LOCATION);
+		templateResolver.setPrefix(IridaUIWebConfig.TEMPLATE_LOCATION);
 		templateResolver.setSuffix(TEMPLATE_SUFFIX);
 		templateResolver.setTemplateMode(TemplateMode.HTML);
+		templateResolver.setOrder(2);
+		templateResolver.setCheckExistence(true);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
@@ -164,10 +172,41 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		return templateResolver;
 	}
 
+	/**
+	 * This is to handle any templates (usually just the login page) that are overridden
+	 * by and organization.  The location of these files can be modified within the configuration.properties
+	 * file.
+	 *
+	 * @return {@link ITemplateResolver}
+	 */
+	private FileTemplateResolver templateResolverExternal() {
+		FileTemplateResolver resolver = new FileTemplateResolver();
+		resolver.setSuffix(TEMPLATE_SUFFIX);
+		resolver.setOrder(1);
+		resolver.setPrefix(extraUITemplates);
+		resolver.setTemplateMode(TemplateMode.HTML);
+		resolver.setCheckExistence(true);
+		resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+
+		// Set template cache timeout if in production
+		// Don't cache at all if in development
+		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+		} else {
+			resolver.setCacheable(false);
+		}
+		return resolver;
+	}
+
+	public SpringResourceTemplateResolver templateResolverLocal() {
+		return generateDefaultTemplateResolver();
+	}
+
 	@Bean
-	public SpringTemplateEngine templateEngine(){
+	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.addTemplateResolver(templateResolverLocal());
+		templateEngine.addTemplateResolver(templateResolverExternal());
 		templateEngine.setEnableSpringELCompiler(false);
 		templateEngine.setAdditionalDialects(additionalDialects());
 		return templateEngine;
@@ -214,7 +253,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
-		dialects.add(new LoginProcessorDialect());
+		//		dialects.add(new LoginProcessorDialect());
 		return dialects;
 	}
 }
