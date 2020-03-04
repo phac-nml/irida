@@ -75,25 +75,26 @@ function LoginPage({ form }) {
           <Button
             id="t-submit-btn"
             type="primary"
+            block
             loading={loading}
             htmlType="submit"
             disabled={hasErrors}
-            block
             onClick={handleSubmit}
           >
             {i18n("LoginPage.submit")}
           </Button>
-          {window.PAGE.emailConfigured ? (
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <a href={`${window.PAGE.BASE_URL}password_reset`}>
-                {i18n("LoginPage.forgot")}
-              </a>
+        </Form.Item>
+        <Form.Item style={{ display: "flex", justifyContent: "space-between" }}>
+          <Button type="link" href={`${window.PAGE.BASE_URL}password_reset`}>
+            {i18n("LoginPage.forgot")}
+          </Button>
 
-              <a href={`${window.PAGE.BASE_URL}password_reset/activate`}>
-                {i18n("LoginPage.activate")}
-              </a>
-            </div>
-          ) : null}
+          <Button
+            type="link"
+            href={`${window.PAGE.BASE_URL}password_reset/activate`}
+          >
+            {i18n("LoginPage.activate")}
+          </Button>
         </Form.Item>
       </Form>
     </>
