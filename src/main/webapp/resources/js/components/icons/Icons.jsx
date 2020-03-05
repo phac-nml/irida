@@ -1,6 +1,7 @@
 import React from "react";
 import {
   BoldOutlined,
+  ClockCircleOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -38,6 +39,8 @@ import { blue6 } from "../../styles/colors";
  * Passing `props` in and spreading them allows any attribute to be passed
  * along to the icon (e.g. classes, styles, etc...).
  */
+
+export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
 
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
