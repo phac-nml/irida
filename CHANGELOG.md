@@ -13,6 +13,7 @@ Changes
 * [UI/Developer]: Updated to `react` 16.13.0.
 * [Developer]: Added Apache 2.0 licence information to `package.json`.
 * [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
+* [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
 
 19.09 to 20.01
 --------------
