@@ -15,7 +15,6 @@ export function HelpPopover(props) {
     <Popover content={props.content} title={props.title}>
       <IconQuestionCircle
         style={{
-          color: "RGBA(46, 149, 248, 1.00)",
           margin: "0 .5rem",
           cursor: "help"
         }}
