@@ -12,7 +12,7 @@ import { BasicList } from "../../../../components/lists/BasicList";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 export default function SistrInfo({ sistrResults, sampleName }) {
-  const { qc_status } = sistrResults;
+  const { qc_status, qc_messages } = sistrResults;
   const sistrInfo = [
     {
       title: i18n("AnalysisSistr.sampleName"),
@@ -23,19 +23,58 @@ export default function SistrInfo({ sistrResults, sampleName }) {
       desc:
         qc_status === "PASS" ? (
           <span>
-            <Success message={qc_status} />
+            <Success
+              message={qc_status}
+            />
           </span>
         ) : qc_status === "FAIL" ? (
           <span>
-            <Error message={qc_status} />
+            <Error
+              message={
+                formatQcMessage(
+                  qc_status,
+                  qc_messages
+                )}
+            />
           </span>
         ) : (
           <span>
-            <Warning message={qc_status} />
+            <Warning
+              message={
+                formatQcMessage(
+                  qc_status,
+                  qc_messages
+                )}
+            />
           </span>
         )
     }
   ];
+
+  /*
+   * Formats the QC status and QC messages to display
+   * in a list.
+   */
+  function formatQcMessage(qc_status, qc_messages) {
+    let msgs = [];
+    if (qc_messages) {
+      msgs = qc_messages.trim().split("|");
+    }
+
+    return (
+      <>
+        <span>{qc_status}</span>
+        <br />
+        {msgs.length > 0 ? (
+          <ul>
+            {msgs.map(msg => {
+              return <li key={msg}>{msg}</li>;
+            })}
+          </ul>
+        ) : null}
+      </>
+    );
+  }
 
   /*
    * Returns a simple list which displays labels and values
