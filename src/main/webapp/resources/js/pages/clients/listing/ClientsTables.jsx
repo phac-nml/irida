@@ -7,7 +7,7 @@ import { Button, Popconfirm, Tag } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { revokeClientTokens } from "../../../apis/clients/clients";
-import { StopOutlined } from "@ant-design/icons";
+import { IconStop } from "../../../components/icons/Icons";
 
 /**
  * Table for displaying a list of clients.
@@ -82,7 +82,7 @@ export function ClientsTable() {
             onConfirm={() => revokeTokens(record.id)}
           >
             <Button disabled={disabled}>
-              <StopOutlined />
+              <IconStop />
               {i18n("client.details.token.revoke")}
             </Button>
           </Popconfirm>
