@@ -17,6 +17,8 @@ import {
   LinkOutlined,
   LoadingOutlined,
   LockOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
   QuestionCircleOutlined,
@@ -123,3 +125,13 @@ export const IconOrderedList = ({ ...props }) => (
 export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
 
 export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
+
+/*
+Menu Icons
+ */
+
+export const IconMenuFold = ({ ...props }) => <MenuFoldOutlined {...props} />;
+
+export const IconMenuUnfold = ({ ...props }) => (
+  <MenuUnfoldOutlined {...props} />
+);
