@@ -35,6 +35,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -264,18 +266,20 @@ public class AnalysisController {
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
-		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
-			if (a.sample == null && b.sample == null) {
-				return 0;
-			} else if (a.sample == null) {
-				return -1;
-			} else if (b.sample == null) {
-				return 1;
-			}
-			return a.sample.getLabel()
-					.compareTo(b.sample.getLabel());
-		}).collect(Collectors.toList());
+		List<SampleSequencingObject> sampleFiles = inputFilePairs.stream()
+				.map(SampleSequencingObject::new)
+				.sorted()
+				.collect(Collectors.toList());
 		model.addAttribute("paired_end", sampleFiles);
+
+		// - Single
+		Set<SingleEndSequenceFile> inputFilesSingle = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SingleEndSequenceFile.class);
+		List<SampleSequencingObject> singleFiles = inputFilesSingle.stream()
+				.map(SampleSequencingObject::new)
+				.sorted()
+				.collect(Collectors.toList());
+		model.addAttribute("single_end", singleFiles);
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -1083,35 +1087,48 @@ public class AnalysisController {
 	}
 
 	/**
-	 * UI Model to return a pair aof Sequence files with its accompanying sample.
+	 * UI Model to return Sequence files with its accompanying sample.
 	 */
-	private class SampleFiles {
+	private class SampleSequencingObject implements Comparable<SampleSequencingObject>{
 		private Sample sample;
-		private SequenceFilePair sequenceFilePair;
+		private SequencingObject sequencingObject;
 
-		SampleFiles(SequenceFilePair sequenceFilePair) {
-			this.sequenceFilePair = sequenceFilePair;
+		SampleSequencingObject(SequencingObject sequencingObject) {
+			this.sequencingObject = sequencingObject;
 			try {
 				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
-						sequenceFilePair);
+						sequencingObject);
 				this.sample = sampleSequencingObjectJoin.getSubject();
 			} catch (Exception e) {
-				logger.debug(
-						"Sequence file pair [" + sequenceFilePair.getIdentifier() + "] does not have a parent sample", e);
+				logger.debug("Sequence file [" + sequencingObject.getIdentifier() + "] does not have a parent sample",
+						e);
 				sample = null;
 			}
 		}
 
 		public Long getId() {
-			return sequenceFilePair.getId();
+			return sequencingObject.getId();
 		}
 
 		public Sample getSample() {
 			return sample;
 		}
 
-		public SequenceFilePair getSequenceFilePair() {
-			return sequenceFilePair;
+		public SequencingObject getSequencingObject() {
+			return sequencingObject;
+		}
+
+		@Override
+		public int compareTo(SampleSequencingObject b) {
+			if (this.sample == null && b.sample == null) {
+				return 0;
+			} else if (this.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return this.sample.getLabel()
+					.compareTo(b.sample.getLabel());
 		}
 	}
 }
