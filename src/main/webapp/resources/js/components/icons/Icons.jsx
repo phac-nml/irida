@@ -30,6 +30,15 @@ import {
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
+/**
+ * @fileOverview All user interface icons used in JSX files should be loaded
+ * through this file to ensure standardization and ability to quickly update
+ * all icons.
+ *
+ * Passing `props` in and spreading them allows any attribute to be passed
+ * along to the icon (e.g. classes, styles, etc...).
+ */
+
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
 );
