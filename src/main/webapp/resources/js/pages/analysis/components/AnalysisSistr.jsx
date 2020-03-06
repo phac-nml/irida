@@ -1,6 +1,6 @@
 /*
  * This file renders the SISTR results which includes
- * the SISTR Information, Serovar Predicitons, cgMLST330,
+ * the SISTR Information(including Serovar Predicitons), cgMLST330,
  * and Mash
  */
 
@@ -19,9 +19,6 @@ import { ANALYSIS, SISTR } from "../routes";
 import { grey1 } from "../../../styles/colors";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
-const SerovarPredictions = React.lazy(() =>
-  import("./sistr/SerovarPredictions")
-);
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
 
@@ -66,11 +63,6 @@ export default function AnalysisSistr() {
                       {i18n("AnalysisSistr.sistrInformation")}
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="serovar_predictions">
-                    <Link to={`${DEFAULT_URL}/${SISTR.SEROVAR_PREDICTIONS}`}>
-                      {i18n("AnalysisSistr.serovarPredictions")}
-                    </Link>
-                  </Menu.Item>
                   <Menu.Item key="cgmlst">
                     <Link to={`${DEFAULT_URL}/${SISTR.CGMLST}`}>
                       {i18n("AnalysisSistr.cgmlst330")}
@@ -79,11 +71,6 @@ export default function AnalysisSistr() {
                   <Menu.Item key="mash">
                     <Link to={`${DEFAULT_URL}/${SISTR.MASH}`}>
                       {i18n("AnalysisSistr.mash")}
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="file_preview">
-                    <Link to={`${DEFAULT_URL}/${SISTR.FILE_PREVIEW}`}>
-                      {i18n("AnalysisOutputs.outputFilePreview")}
                     </Link>
                   </Menu.Item>
                   <Menu.Item key="citation">
@@ -107,10 +94,6 @@ export default function AnalysisSistr() {
                   path={`${DEFAULT_URL}/${SISTR.INFO}`}
                   default
                 />
-                <SerovarPredictions
-                  sistrResults={sistrResults.result}
-                  path={`${DEFAULT_URL}/${SISTR.SEROVAR_PREDICTIONS}`}
-                />
                 <CgMlst
                   sistrResults={sistrResults.result}
                   path={`${DEFAULT_URL}/${SISTR.CGMLST}`}
@@ -119,7 +102,6 @@ export default function AnalysisSistr() {
                   sistrResults={sistrResults.result}
                   path={`${DEFAULT_URL}/${SISTR.MASH}`}
                 />
-                <OutputFilePreview path={`${DEFAULT_URL}/${SISTR.FILE_PREVIEW}`} />
                 <Citation
                   sistrResults={sistrResults.result}
                   path={`${DEFAULT_URL}/${SISTR.CITATION}`}

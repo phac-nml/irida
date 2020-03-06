@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
- * Used as a response for encapsulating analysis sample data
+ * Used as a response for encapsulating analysis paired end sample data
  */
 
 

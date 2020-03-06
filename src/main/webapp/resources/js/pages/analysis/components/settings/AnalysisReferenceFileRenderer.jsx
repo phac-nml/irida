@@ -8,6 +8,7 @@ import React, { useContext } from "react";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import { Row, Icon, Button, Typography } from "antd";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const { Title } = Typography;
 
@@ -18,7 +19,7 @@ export function AnalysisReferenceFileRenderer() {
    * the state and methods available to the component
    */
   const { analysisSamplesContext } = useContext(AnalysisSamplesContext);
-
+  const REFERENCE_FILE_BASE_URL = setBaseUrl("referenceFiles");
   const renderReferenceFile = () => {
     const referenceFile = [];
 
@@ -61,7 +62,7 @@ export function AnalysisReferenceFileRenderer() {
   const downloadReferenceFile = () => {
     if (analysisSamplesContext.referenceFile.identifier !== undefined) {
       window.open(
-        `${window.TL.BASE_URL}referenceFiles/download/${analysisSamplesContext.referenceFile.identifier}`,
+        `${REFERENCE_FILE_BASE_URL}/download/${analysisSamplesContext.referenceFile.identifier}`,
         "_blank"
       );
     }

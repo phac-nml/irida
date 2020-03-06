@@ -11,6 +11,7 @@ import { getAnalysisInputFiles } from "../apis/analysis/analysis";
 
 const initialContext = {
   samples: null,
+  singleEndSamples: null,
   referenceFile: [],
   loading: true
 };
@@ -27,11 +28,12 @@ function AnalysisSamplesProvider(props) {
   function getAnalysisInputSamples() {
     updateHeight();
     getAnalysisInputFiles(analysisContext.analysis.identifier).then(
-      ({ samples, referenceFile }) => {
+      ({ pairedEndSamples, singleEndSamples, referenceFile }) => {
         setAnalysisSamplesContext(analysisSamplesContext => {
           return {
             ...analysisSamplesContext,
-            samples: samples,
+            samples: pairedEndSamples,
+            singleEndSamples: singleEndSamples,
             referenceFile: referenceFile,
             loading: false
           };

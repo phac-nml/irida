@@ -22,6 +22,7 @@ import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import "./linker/Linker";
 
@@ -292,7 +293,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         const link = createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${full.id}`,
+          url: setBaseUrl(`projects/${full.projectId}/samples/${full.id}`),
           label: full.sampleName,
           classes: ["t-sample-label"]
         });
@@ -309,8 +310,8 @@ const config = Object.assign({}, tableConfig, {
            */
           const content = `<ul class="popover-list">
               ${full.qcEntries
-                .map(qc => `<li class="error">${qc}</li>`)
-                .join("")}
+            .map(qc => `<li class="error">${qc}</li>`)
+            .join("")}
           </ul>`;
           icon.setAttribute("data-content", content);
           return `<div class="icon-wrapper">${icon.outerHTML}${link}</div>`;
@@ -322,7 +323,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.PROJECT_NAME],
       render(data, type, full) {
         return createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}`,
+          url: setBaseUrl(`projects/${full.projectId}`),
           label: `<div class="label-bar-color" style="background-color: ${PROJECT_COLOURS.get(
             full.projectId
           )}">&nbsp;</div>${data}`,

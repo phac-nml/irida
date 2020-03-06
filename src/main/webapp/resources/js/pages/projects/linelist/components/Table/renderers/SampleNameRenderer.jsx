@@ -4,15 +4,16 @@
  */
 import React from "react";
 import { FIELDS } from "../../../constants";
-
-const { BASE_URL } = window.TL;
+import { setBaseUrl } from "../../../../../../utilities/url-utilities";
 
 export class SampleNameRenderer extends React.Component {
   constructor(props) {
     super(props);
-    this.href = `${BASE_URL}projects/${Number(
-      props.data[FIELDS.projectId]
-    )}/samples/${Number(props.data[FIELDS.sampleId])}`;
+    this.href = setBaseUrl(
+      `projects/${Number(props.data[FIELDS.projectId])}/samples/${Number(
+        props.data[FIELDS.sampleId]
+      )}`
+    );
     this.name = props.data[FIELDS.sampleName];
   }
 

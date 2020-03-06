@@ -20,7 +20,7 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
-    "@ant-design/icons": "^4.0.0-rc.0",
+    "@ant-design/icons": "^4.0.2",
     "@fortawesome/fontawesome-free": "^5.12.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
@@ -57,6 +57,7 @@
     "jquery-validation": "^1.19.0",
     "jszip": "^3.1.3",
     "lodash": "4.17.15",
+    "lodash.keys": "^4.2.0",
     "marked": "^0.7.0",
     "moment": "^2.24.0",
     "ng-file-upload": "^12.2.12",
@@ -68,7 +69,6 @@
     "react": "16.13.0",
     "react-dom": "16.13.0",
     "react-dom-factories": "^1.0.2",
-    "react-phylocanvas": "^0.0.4",
     "react-markdown": "^4.3.1",
     "react-mde": "^8.0.2",
     "react-redux": "^7.1.0",

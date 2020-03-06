@@ -2,11 +2,13 @@
  * @File component renders a preview of output files
  */
 
-import React from "react";
+import React, { useContext } from "react";
 import { Layout } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, OUTPUT } from "../routes";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 
 const OutputFilePreview = React.lazy(() =>
   import("./outputs/OutputFilePreview")
@@ -14,7 +16,8 @@ const OutputFilePreview = React.lazy(() =>
 const { Content } = Layout;
 
 export default function AnalysisOutputFiles() {
-  const BASE_URL = `${window.PAGE.base}/${ANALYSIS.OUTPUT}`;
+  const { analysisContext } = useContext(AnalysisContext);
+  const BASE_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.OUTPUT);
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <Content>

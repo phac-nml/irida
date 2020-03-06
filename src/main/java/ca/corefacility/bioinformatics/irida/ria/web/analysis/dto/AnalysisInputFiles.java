@@ -11,23 +11,33 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
  */
 
 public class AnalysisInputFiles {
-  private List<AnalysisSamples> samples;
+  private List<AnalysisSamples> pairedEndSamples;
+  private List<AnalysisSingleEndSamples> singleEndSamples;
   private ReferenceFile referenceFile;
 
 	public AnalysisInputFiles() {
 	}
 
-	public AnalysisInputFiles(List<AnalysisSamples> samples, ReferenceFile referenceFile) {
-    this.samples = samples;
+	public AnalysisInputFiles(List<AnalysisSamples> pairedEndSamples, List<AnalysisSingleEndSamples> singleEndSamples, ReferenceFile referenceFile) {
+    this.pairedEndSamples = pairedEndSamples;
+    this.singleEndSamples = singleEndSamples;
     this.referenceFile = referenceFile;
   }
 
-	public List<AnalysisSamples> getSamples() {
-		return samples;
+	public List<AnalysisSamples> getPairedEndSamples() {
+		return pairedEndSamples;
 	}
 
-	public void setSamples(List<AnalysisSamples> samples) {
-		this.samples = samples;
+	public void setPairedEndSamples(List<AnalysisSamples> pairedEndSamples) {
+		this.pairedEndSamples = pairedEndSamples;
+	}
+
+	public List<AnalysisSingleEndSamples> getSingleEndSamples() {
+		return singleEndSamples;
+	}
+
+	public void setSingleEndSamples(List<AnalysisSingleEndSamples> singleEndSamples) {
+		this.singleEndSamples = singleEndSamples;
 	}
 
 	public ReferenceFile getReferenceFile() {

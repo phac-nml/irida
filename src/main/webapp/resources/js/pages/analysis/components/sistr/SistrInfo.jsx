@@ -48,6 +48,34 @@ export default function SistrInfo({ sistrResults, sampleName }) {
             />
           </span>
         )
+    },
+    {
+      title: i18n("AnalysisSistr.overallSerovar"),
+      desc: sistrResults.serovar
+    },
+    {
+      title: i18n("AnalysisSistr.antigenSerovar"),
+      desc: sistrResults.serovar_antigen
+    },
+    {
+      title: i18n("AnalysisSistr.cgmlstSerovar"),
+      desc: sistrResults.serovar_cgmlst
+    },
+    {
+      title: i18n("AnalysisSistr.serogroup"),
+      desc: sistrResults.serogroup
+    },
+    {
+      title: i18n("AnalysisSistr.h1"),
+      desc: sistrResults.h1
+    },
+    {
+      title: i18n("AnalysisSistr.h2"),
+      desc: sistrResults.h2
+    },
+    {
+      title: i18n("AnalysisSistr.oAntigen"),
+      desc: sistrResults.o_antigen
     }
   ];
 

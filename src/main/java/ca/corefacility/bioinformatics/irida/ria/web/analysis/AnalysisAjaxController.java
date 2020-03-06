@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jena.rdf.model.Seq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
@@ -259,19 +262,18 @@ public class AnalysisAjaxController {
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
 
-		List<SampleFiles> sampleFiles = inputFilePairs.stream()
-				.map(SampleFiles::new)
-				.sorted((a, b) -> {
-					if (a.sample == null && b.sample == null) {
-						return 0;
-					} else if (a.sample == null) {
-						return -1;
-					} else if (b.sample == null) {
-						return 1;
-					}
-					return a.sample.getLabel()
-							.compareTo(b.sample.getLabel());
-				})
+		List<SampleSequencingObject> sampleFiles = inputFilePairs.stream()
+				.map(SampleSequencingObject::new)
+				.sorted()
+				.collect(Collectors.toList());
+
+
+		// - Single
+		Set<SingleEndSequenceFile> inputFilesSingle = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SingleEndSequenceFile.class);
+		List<SampleSequencingObject> singleFiles = inputFilesSingle.stream()
+				.map(SampleSequencingObject::new)
+				.sorted()
 				.collect(Collectors.toList());
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
@@ -287,19 +289,28 @@ public class AnalysisAjaxController {
 		}
 
 		//List of AnalysisSamples which store the sample info
-		List<AnalysisSamples> sampleList = new ArrayList<>();
+		List<AnalysisSamples> pairedEnd = new ArrayList<>();
+		List<AnalysisSingleEndSamples> singleEnd = new ArrayList<>();
 
-		for (SampleFiles sampleFile : sampleFiles) {
-			if (sampleFile.getSample() != null) {
-				sampleList.add(new AnalysisSamples(sampleFile.getSample()
-						.getSampleName(), sampleFile.getSample()
-						.getId(), sampleFile.getSequenceFilePair()
-						.getId(), sampleFile.getSequenceFilePair()
-						.getForwardSequenceFile(), sampleFile.getSequenceFilePair()
-						.getReverseSequenceFile()));
+		for(SampleSequencingObject sso : sampleFiles) {
+			SequenceFilePair fp = (SequenceFilePair)sso.getSequencingObject();
+			if(fp.getFiles().size() == 2) {
+				pairedEnd.add(new AnalysisSamples(sso.getSample()
+						.getSampleName(), sso.getSample()
+						.getId(), fp.getId(), fp.getForwardSequenceFile(), fp.getReverseSequenceFile()));
 			}
 		}
-		return new AnalysisInputFiles(sampleList, referenceFile);
+
+		for(SampleSequencingObject sso : singleFiles) {
+			SingleEndSequenceFile sesf = (SingleEndSequenceFile)sso.getSequencingObject();
+			if(sesf.getFiles().size() == 1) {
+				singleEnd.add(new AnalysisSingleEndSamples(sso.getSample()
+						.getSampleName(), sso.getSample()
+						.getId(), sesf.getId(), sesf.getSequenceFile()));
+			}
+		}
+
+		return new AnalysisInputFiles(pairedEnd, singleEnd, referenceFile);
 	}
 
 	/**
@@ -1093,35 +1104,49 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * UI Model to return a pair aof Sequence files with its accompanying sample.
+	 * UI Model to return Sequence files with its accompanying sample.
 	 */
-	private class SampleFiles {
+	private class SampleSequencingObject implements Comparable<SampleSequencingObject>{
 		private Sample sample;
-		private SequenceFilePair sequenceFilePair;
+		private SequencingObject sequencingObject;
 
-		SampleFiles(SequenceFilePair sequenceFilePair) {
-			this.sequenceFilePair = sequenceFilePair;
+		SampleSequencingObject(SequencingObject sequencingObject) {
+			this.sequencingObject = sequencingObject;
 			try {
 				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
-						sequenceFilePair);
+						sequencingObject);
 				this.sample = sampleSequencingObjectJoin.getSubject();
 			} catch (Exception e) {
-				logger.debug(
-						"Sequence file pair [" + sequenceFilePair.getIdentifier() + "] does not have a parent sample", e);
+				logger.debug("Sequence file [" + sequencingObject.getIdentifier() + "] does not have a parent sample",
+						e);
 				sample = null;
 			}
 		}
 
 		public Long getId() {
-			return sequenceFilePair.getId();
+			return sequencingObject.getId();
 		}
 
 		public Sample getSample() {
 			return sample;
 		}
 
-		public SequenceFilePair getSequenceFilePair() {
-			return sequenceFilePair;
+		public SequencingObject getSequencingObject() {
+			return sequencingObject;
+		}
+
+		@Override
+		public int compareTo(SampleSequencingObject b) {
+			if (this.sample == null && b.sample == null) {
+				return 0;
+			} else if (this.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return this.sample.getLabel()
+					.compareTo(b.sample.getLabel());
 		}
 	}
+
 }
