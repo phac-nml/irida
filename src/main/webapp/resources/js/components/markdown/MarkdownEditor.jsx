@@ -6,18 +6,18 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import {
-  BoldOutlined,
-  CodeOutlined,
-  ItalicOutlined,
-  LinkOutlined,
-  OrderedListOutlined,
-  StrikethroughOutlined,
-  UnorderedListOutlined
-} from "@ant-design/icons";
 import styled from "styled-components";
 import { markdownConverter } from "./MarkdownViewer";
 import { blue6, grey1, grey4, grey6 } from "../../styles/colors";
+import {
+  IconBold,
+  IconCode,
+  IconItalic,
+  IconLinkOut,
+  IconOrderedList,
+  IconStrikeThrough,
+  IconUnorderedList
+} from "../icons/Icons";
 
 const StyledMde = styled(ReactMde)`
   border-color: ${grey4};
@@ -63,19 +63,19 @@ export const MarkdownEditor = forwardRef(({ markdown }, ref) => {
   function formatIcon(cmd) {
     switch (cmd) {
       case "bold":
-        return <BoldOutlined />;
+        return <IconBold />;
       case "italic":
-        return <ItalicOutlined />;
+        return <IconItalic />;
       case "strikethrough":
-        return <StrikethroughOutlined />;
+        return <IconStrikeThrough />;
       case "link":
-        return <LinkOutlined />;
+        return <IconLinkOut />;
       case "code":
-        return <CodeOutlined />;
+        return <IconCode />;
       case "unordered-list":
-        return <UnorderedListOutlined />;
+        return <IconUnorderedList />;
       case "ordered-list":
-        return <OrderedListOutlined />;
+        return <IconOrderedList />;
     }
   }
 

@@ -2,6 +2,8 @@ import React from "react";
 
 import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
 import { Icon, Popover } from "antd";
+import { IconInfoCircle } from "../../../../../../components/icons/Icons";
+import { grey1 } from "../../../../../../styles/colors";
 
 /**
  * Component to properly display dates in the ag-grid
@@ -26,12 +28,7 @@ export class DateCellRenderer extends React.Component {
               </span>
             }
           >
-            <span>
-              <i
-                style={{ color: "white" }}
-                className="fas fa-info-circle fa-fw"
-              />
-            </span>
+            <IconInfoCircle style={{ color: grey1 }} />
           </Popover>
         </div>
       );
