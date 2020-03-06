@@ -17,7 +17,7 @@ import {
   SampleProjectDropdownButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file.utilities";
+import { download } from "../../../utilities/file-utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";
@@ -310,8 +310,8 @@ const config = Object.assign({}, tableConfig, {
            */
           const content = `<ul class="popover-list">
               ${full.qcEntries
-                .map(qc => `<li class="error">${qc}</li>`)
-                .join("")}
+            .map(qc => `<li class="error">${qc}</li>`)
+            .join("")}
           </ul>`;
           icon.setAttribute("data-content", content);
           return `<div class="icon-wrapper">${icon.outerHTML}${link}</div>`;

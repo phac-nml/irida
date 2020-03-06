@@ -456,9 +456,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
 		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
 				.findSequencingObjectsForAnalysisSubmission(submission);
-
-		Set<Sample> samples = objectsForAnalysisSubmission.stream()
-				.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
+		Set<Sample> samples = null;
+		try {
+			samples = objectsForAnalysisSubmission.stream()
+					.map(s -> ssoRepository.getSampleForSequencingObject(s)
+							.getSubject())
+					.collect(Collectors.toSet());
+		} catch (NullPointerException e) {
+			return null;
+		}
 		return samples;
 	}
 

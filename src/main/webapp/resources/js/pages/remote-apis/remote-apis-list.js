@@ -48,13 +48,19 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.STATUS],
       sortable: false,
       render(data, type, full) {
-        return `<div class="js-status-wrapper"><i class="fa fa-spinner fa-pulse spaced-right__sm fa-fw"></i><span data-api-id='${full.id}' class='connection-status' id=${full.id}>${window.PAGE.lang.statusText}</span></div>`;
+        return `<div class="js-status-wrapper"><i class="fa fa-spinner fa-pulse spaced-right__sm fa-fw"></i><span data-api-id='${
+          full.id
+        }' class='connection-status' id=${full.id}>${
+          window.PAGE.lang.statusText
+        }</span></div>`;
       }
     },
     {
       targets: [COLUMNS.CONNECTION_BUTTON],
       render(data, type, full) {
-        return `<button class='oauth-connect-link btn btn-default pull-right hidden' data-toggle="modal" data-target="#${CONNECT_MODAL_SELECTOR}" data-api-id='${full.id}'>${window.PAGE.lang.connectText}</a>`;
+        return `<button class='oauth-connect-link btn btn-default pull-right hidden' data-toggle="modal" data-target="#${CONNECT_MODAL_SELECTOR}" data-api-id='${
+          full.id
+        }'>${window.PAGE.lang.connectText}</a>`;
       }
     }
   ],

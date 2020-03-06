@@ -51,7 +51,6 @@ export function AnalysesQueue({}) {
             <CloudServerOutlined
               style={{ fontSize: "2em", flex: 1, padding: SPACE_XS }}
             />
-
             <div
               style={{
                 display: "inline-block",

@@ -20,12 +20,16 @@ const template = (keys, entry) => `
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
   <body>
     <script id="${entry.replace(
-      "/",
-      "-"
-    )}-translations" th:inline="javascript" th:fragment="i18n">
+        "/",
+        "-"
+    )}-translations" th:inline="javascript" th:fragment="i18n" th:with="keys = \${ {${keys.map(key => `'${key}'`)}} }">
       window.translations = window.translations || [];
       window.translations.push({
-        ${keys.map(key => `"${key}": /*[[#{${key}}]]*/ ""`)}
+        [# th:each="key : \${keys}"]
+          [# th:if="\${#messages.msgOrNull(key) != null}"]
+            [[\${key}]]: [[#{\${key}}]],
+          [/]
+        [/]
       });
     </script>
   </body>
@@ -142,7 +146,7 @@ class i18nThymeleafWebpackPlugin {
             This adds a file for translations for webpack to write to the file system.
              */
             const html = template(keys, entrypointName);
-            compilation.assets[`../pages/templates/i18n/${entrypointName}.html`] = {
+            compilation.assets[`i18n/${entrypointName}.html`] = {
               source: () => html,
               size: () => html.length
             };

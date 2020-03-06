@@ -8,7 +8,13 @@ import PropTypes from "prop-types";
 import { Col, PageHeader } from "antd";
 
 import { SPACE_MD } from "../../styles/spacing";
+import styled from "styled-components";
 
+const Column = styled(Col)`
+  h2 {
+    font-size: 16px;
+  }
+`;
 /**
  * Stateless UI component for creating vertical tabs
  * @param {string} title - title for tab
@@ -30,24 +36,26 @@ export function TabPaneContent({
   ...props
 }) {
   return (
-    <Col xs={xs} xl={xl} xxl={xxl}>
+    <Column xs={xs} xl={xl} xxl={xxl}>
       <PageHeader
         style={{ padding: 0, paddingBottom: SPACE_MD }}
         title={title}
         {...props}
       />
       {children}
-    </Col>
+    </Column>
   );
 }
 
 TabPaneContent.propTypes = {
   /*title to display in tab*/
   title: PropTypes.string,
-  /*number of columns (width)*/
-  colSpan: PropTypes.number,
+  /*number of columns (width for different screen sizes)*/
+  xs: PropTypes.number,
+  xl: PropTypes.number,
+  xxl: PropTypes.number,
   /*the content to display in the tab*/
-  children: PropTypes.object.isRequired,
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   /*any extra attributes to add to PageHeader*/
   props: PropTypes.object
 };
