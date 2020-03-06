@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -279,7 +278,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SingleEndSequenceFile> sequenceFiles = Sets
 				.newHashSet(databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
 
-		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
+		Map<Sample, SingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		Sample sample1 = sampleRepository.findById(1L).orElse(null);
@@ -345,7 +344,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
 		}
 
-		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
+		Map<Sample, SingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory,

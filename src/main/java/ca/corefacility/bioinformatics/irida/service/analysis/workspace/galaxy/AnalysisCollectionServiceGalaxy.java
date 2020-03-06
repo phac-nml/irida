@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -54,7 +54,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * Galaxy.
 	 * 
 	 * @param sampleSequenceFiles A map between {@link Sample} and
-	 *                            {@link IridaSingleEndSequenceFile}.
+	 *                            {@link SingleEndSequenceFile}.
 	 * @param workflowHistory     The history to upload the sequence files into.
 	 * @param workflowLibrary     A temporary library to upload files into.
 	 * @return A CollectionResponse for the dataset collection constructed from the
@@ -63,7 +63,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws IOException If there was an error reading the sequence file.
 	 */
 	public CollectionResponse uploadSequenceFilesSingleEnd(
-			Map<Sample, ? extends IridaSingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
+			Map<Sample, SingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
 			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
@@ -72,7 +72,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
-			IridaSingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+			SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
 			samplesMap.put(sequenceFile.getSequenceFile().getFile(), sample);
 		}
 
