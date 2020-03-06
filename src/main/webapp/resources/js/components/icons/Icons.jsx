@@ -1,6 +1,7 @@
 import React from "react";
 import {
   BoldOutlined,
+  ClockCircleOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -9,6 +10,8 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  FileExcelOutlined,
+  FileOutlined,
   FilterOutlined,
   FolderOutlined,
   InfoCircleOutlined,
@@ -16,6 +19,8 @@ import {
   LinkOutlined,
   LoadingOutlined,
   LockOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
   QuestionCircleOutlined,
@@ -24,6 +29,7 @@ import {
   ShoppingCartOutlined,
   StopOutlined,
   StrikethroughOutlined,
+  SwapOutlined,
   SyncOutlined,
   TableOutlined,
   UnorderedListOutlined
@@ -38,6 +44,8 @@ import { blue6 } from "../../styles/colors";
  * Passing `props` in and spreading them allows any attribute to be passed
  * along to the icon (e.g. classes, styles, etc...).
  */
+
+export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
 
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
@@ -97,6 +105,8 @@ export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
+export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
+
 /*
 Editor Icons
  */
@@ -120,3 +130,21 @@ export const IconOrderedList = ({ ...props }) => (
 export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
 
 export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
+
+/*
+File Type Icons
+ */
+
+export const IconFileExcel = ({ ...props }) => <FileExcelOutlined {...props} />;
+
+export const IconFile = ({ ...props }) => <FileOutlined {...props} />;
+
+/*
+Menu Icons
+ */
+
+export const IconMenuFold = ({ ...props }) => <MenuFoldOutlined {...props} />;
+
+export const IconMenuUnfold = ({ ...props }) => (
+  <MenuUnfoldOutlined {...props} />
+);
