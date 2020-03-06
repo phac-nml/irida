@@ -205,6 +205,7 @@ export function ProjectsTable() {
           columns={columns}
           dataSource={projects}
           onChange={handleTableChange}
+          tableLayout="auto"
         />
       </div>
     </PageWrapper>
