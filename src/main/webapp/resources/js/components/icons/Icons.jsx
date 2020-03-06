@@ -152,6 +152,10 @@ export const IconMenuUnfold = ({ ...props }) => (
 );
 
 
-export const IconSortAscending = ({ ...props }) => <SortAscendingOutlined {...props} />;
+export const IconSortAscending = ({ ...props }) => (
+  <SortAscendingOutlined {...props} />
+);
 
-export const IconSortDescending = ({ ...props }) => <SortDescendingOutlined {...props} />;
+export const IconSortDescending = ({ ...props }) => (
+  <SortDescendingOutlined {...props} />
+);

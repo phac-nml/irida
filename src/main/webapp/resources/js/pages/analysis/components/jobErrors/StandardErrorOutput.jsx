@@ -30,11 +30,7 @@ export function StandardErrorOutput({ galaxyError }) {
         >
           <Button type="default" onClick={() => setReversed(!reversed)}>
             <span style={{ marginRight: SPACE_XS }}>
-              {reversed ?
-                <IconSortAscending />
-                :
-                <IconSortDescending />
-              }
+              {reversed ? <IconSortAscending /> : <IconSortDescending />}
             </span>
             {i18n("AnalysisError.reverseOutput")}
           </Button>
