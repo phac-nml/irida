@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -17,8 +18,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+/**
+ * Controller for viewing and downloading assemblies for samples
+ */
 @Controller
 public class RESTSampleAssemblyController {
+
+	public static final String REL_SAMPLE = "sample";
+	public static final String REL_SAMPLE_ASSEMBLIES = "sample/assemblies";
 
 	private SampleService sampleService;
 
@@ -27,8 +37,14 @@ public class RESTSampleAssemblyController {
 		this.sampleService = sampleService;
 	}
 
+	/**
+	 * List all the {@link GenomeAssembly}s for a given {@link Sample}
+	 *
+	 * @param sampleId the id of the sample
+	 * @return a list of details about the assemblies
+	 */
 	@RequestMapping("/api/samples/{sampleId}/assemblies")
-	public ModelMap listAssembliesForSample(@PathVariable Long sampleId){
+	public ModelMap listAssembliesForSample(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 
 		Sample sample = sampleService.read(sampleId);
@@ -36,15 +52,31 @@ public class RESTSampleAssemblyController {
 
 		ResourceCollection<GenomeAssembly> assemblyResources = new ResourceCollection<>(assembliesForSample.size());
 
-		for(SampleGenomeAssemblyJoin join : assembliesForSample){
-			assemblyResources.add(join.getObject());
+		for (SampleGenomeAssemblyJoin join : assembliesForSample) {
+			GenomeAssembly genomeAssembly = join.getObject();
+
+			genomeAssembly.add(linkTo(methodOn(RESTSampleAssemblyController.class).readAssemblyForSample(sampleId,
+					genomeAssembly.getId())).withSelfRel());
+			assemblyResources.add(genomeAssembly);
 		}
+
+		assemblyResources.add(
+				linkTo(methodOn(RESTSampleAssemblyController.class).listAssembliesForSample(sampleId)).withSelfRel());
+		assemblyResources.add(
+				linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, assemblyResources);
 
 		return modelMap;
 	}
 
+	/**
+	 * Read an individual {@link GenomeAssembly} for a given {@link Sample}
+	 *
+	 * @param sampleId   the id of the sample
+	 * @param assemblyId the id of the assembly
+	 * @return details about the requested assembly
+	 */
 	@RequestMapping("/api/samples/{sampleId}/assemblies/{assemblyId}")
 	public ModelMap readAssemblyForSample(@PathVariable Long sampleId, @PathVariable Long assemblyId) {
 		ModelMap modelMap = new ModelMap();
@@ -65,6 +97,9 @@ public class RESTSampleAssemblyController {
 		}
 
 		GenomeAssembly genomeAssembly = genomeAssemblyOpt.get();
+
+		genomeAssembly.add(linkTo(methodOn(RESTSampleAssemblyController.class).readAssemblyForSample(sampleId,
+				assemblyId)).withSelfRel());
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, genomeAssembly);
 
