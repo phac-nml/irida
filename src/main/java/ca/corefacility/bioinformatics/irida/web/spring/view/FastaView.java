@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
@@ -38,7 +39,7 @@ public class FastaView extends AbstractView {
      */
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	SequenceFile sfr = (SequenceFile) model.get(RESTGenericController.RESOURCE_NAME);
+    	IridaSequenceFile sfr = (IridaSequenceFile) model.get(RESTGenericController.RESOURCE_NAME);
         Path fileContent = sfr.getFile();
         String filename = fileContent.getFileName().toString();
         logger.trace("Sending file to client [" + filename + "]");
