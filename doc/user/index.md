@@ -30,9 +30,11 @@ The user and administrator guides provide a comprehensive overview of the entire
 You can load sequencing data into IRIDA in two different ways:
 
 1. Using the [web interface][web-upload].
-2. Using the [uploader tool][uploader-tool].
+2. Using the [IRIDA Uploader application](https://github.com/phac-nml/irida-uploader-tutorial).
 
-The web interface upload feature is useful if you only want to add data to IRIDA for one or two samples. If you want to load data into IRIDA in bulk (especially if you're a sequencing facility!) you should use the uploader tool to transfer your data.
+The web interface upload feature is useful if you only want to add data to IRIDA for one or two samples. If you want to load data into IRIDA in bulk (especially if you're a sequencing facility!) you should use the uploader application to transfer your data.
+
+The IRIDA Uploader is also available as a Command Line tool via [bioconda](https://anaconda.org/bioconda/irida-uploader) and source code on [GitHub](https://github.com/phac-nml/irida-uploader)
 
 ### Analyzing your data with IRIDA
 
@@ -73,7 +75,6 @@ If you are a system administrator or lab technician in a sequencing facility, yo
 [user]: user/
 [admin]: administrator/
 [web-upload]: tutorials/web-upload/
-[uploader-tool]: tutorials/uploader-tool/
 [assembly]: tutorials/assembly/
 [snvphyl]: tutorials/snvphyl/
 [sistr]: tutorials/sistr/
