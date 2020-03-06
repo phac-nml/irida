@@ -10,6 +10,8 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  FileExcelOutlined,
+  FileOutlined,
   FilterOutlined,
   FolderOutlined,
   InfoCircleOutlined,
@@ -27,6 +29,7 @@ import {
   ShoppingCartOutlined,
   StopOutlined,
   StrikethroughOutlined,
+  SwapOutlined,
   SyncOutlined,
   TableOutlined,
   UnorderedListOutlined
@@ -102,6 +105,8 @@ export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
+export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
+
 /*
 Editor Icons
  */
@@ -125,6 +130,14 @@ export const IconOrderedList = ({ ...props }) => (
 export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
 
 export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
+
+/*
+File Type Icons
+ */
+
+export const IconFileExcel = ({ ...props }) => <FileExcelOutlined {...props} />;
+
+export const IconFile = ({ ...props }) => <FileOutlined {...props} />;
 
 /*
 Menu Icons
