@@ -354,15 +354,16 @@ public class ExportUploadServiceTest {
 	/**
 	 * Create a fake submission for test uploads
 	 *
+	 * @param sequenceFileExtension {@link String} File extension for sequence file (".fastq" or ".fastq.gz")
 	 * @return a {@link NcbiExportSubmission}
 	 * @throws IOException if the test file couldn't be created
 	 */
-	private NcbiExportSubmission createFakeSubmission() throws IOException {
+	private NcbiExportSubmission createFakeSubmission(String sequenceFileExtension) throws IOException {
 		NcbiExportSubmission submission = new NcbiExportSubmission();
 		submission.setId(1L);
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles();
-		Path tempFile = Files.createTempFile("sequencefile", ".fastq");
+		Path tempFile = Files.createTempFile("sequencefile", sequenceFileExtension);
 		SequenceFile sequenceFile = new SequenceFile(tempFile);
 		sequenceFile.setId(1L);
 		SingleEndSequenceFile singleFile = new SingleEndSequenceFile(sequenceFile);
