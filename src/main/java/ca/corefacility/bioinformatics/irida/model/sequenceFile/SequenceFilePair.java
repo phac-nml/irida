@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
