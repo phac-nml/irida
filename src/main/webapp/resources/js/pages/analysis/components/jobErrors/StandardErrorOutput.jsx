@@ -6,11 +6,12 @@ import React, { useState } from "react";
 import { Button } from "antd";
 import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
 import { SPACE_XS, SPACE_MD } from "../../../../styles/spacing";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
-  faSortAmountUp,
-  faSortAmountDownAlt
-} from "@fortawesome/free-solid-svg-icons";
+  IconSortAscending,
+  IconSortDescending
+} from "../../../../components/icons/Icons";
+
 
 export function StandardErrorOutput({ galaxyError }) {
   const error = galaxyError.trim().split("\n");
@@ -28,10 +29,13 @@ export function StandardErrorOutput({ galaxyError }) {
           }}
         >
           <Button type="default" onClick={() => setReversed(!reversed)}>
-            <FontAwesomeIcon
-              icon={reversed ? faSortAmountUp : faSortAmountDownAlt}
-              style={{ marginRight: SPACE_XS }}
-            />
+            <span style={{ marginRight: SPACE_XS }}>
+              {reversed ?
+                <IconSortAscending />
+                :
+                <IconSortDescending />
+              }
+            </span>
             {i18n("AnalysisError.reverseOutput")}
           </Button>
         </div>
