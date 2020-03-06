@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 /**
  *
  */
@@ -38,12 +41,9 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	}
 
 	/**
-	 * Constructor for {@link RESTProjectsController}, requires a reference to a
-	 * {@link ProjectService}.
+	 * Constructor for {@link RESTProjectsController}, requires a reference to a {@link ProjectService}.
 	 *
-	 * @param service
-	 *            the {@link SequencingRunService} to be used by this
-	 *            controller.
+	 * @param service the {@link SequencingRunService} to be used by this controller.
 	 */
 	@Autowired
 	public RESTSequencingRunController(SequencingRunService service) {
@@ -80,6 +80,12 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Override
 	protected Collection<Link> constructCollectionResourceLinks(ResourceCollection<SequencingRun> list) {
 		Collection<Link> links = super.constructCollectionResourceLinks(list);
+
+		//Legacy for ensuring old uploaders pointing to /miseqrun get a sequencer type of 'miseq'
+		links.add(
+				linkTo(methodOn(RESTSequencingRunController.class).createSequencingRun("miseqrun", null, null)).withRel(
+						MISEQ_REL));
+
 		return links;
 	}
 
