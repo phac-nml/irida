@@ -1,9 +1,13 @@
 import React from "react";
 
 import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
-import { Icon, Popover } from "antd";
-import { IconInfoCircle } from "../../../../../../components/icons/Icons";
+import { Popover } from "antd";
+import {
+  IconExclamationCircle,
+  IconInfoCircle
+} from "../../../../../../components/icons/Icons";
 import { grey1 } from "../../../../../../styles/colors";
+import { SPACE_XS } from "../../../../../../styles/spacing";
 
 /**
  * Component to properly display dates in the ag-grid
@@ -23,7 +27,7 @@ export class DateCellRenderer extends React.Component {
             content={content}
             title={
               <span>
-                <Icon type="exclamation-circle-o" />{" "}
+                <IconExclamationCircle style={{ marginRight: SPACE_XS }} />
                 {i18n("linelist.dateCell.popover.title")}
               </span>
             }
