@@ -13,6 +13,7 @@ import {
 } from "../../../apis/projects/associated-projects";
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
+import { IconFolder } from "../../../components/icons/Icons";
 
 const { Text } = Typography;
 
@@ -71,7 +72,7 @@ export default function ViewAssociatedProjects() {
           key: "icon",
           width: 60,
           render() {
-            return <Avatar icon="folder" />;
+            return <Avatar icon={<IconFolder />} />;
           }
         },
     {

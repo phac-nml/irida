@@ -1,12 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Icon, Menu } from "antd";
+import { Button, Menu } from "antd";
 import { Link } from "@reach/router";
 import { grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+import { IconMenuFold, IconMenuUnfold } from "../../../components/icons/Icons";
+
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -42,11 +44,13 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
         ))}
       </Menu>
       <AnalysesQueue />
-      <Icon
-        style={{ color: grey6, fontSize: 24, margin: SPACE_MD }}
-        type={collapsed ? "menu-fold" : "menu-unfold"}
+      <Button
+        type="link"
         onClick={toggleSidebar}
-      />
+        style={{ color: grey6, fontSize: 24, margin: SPACE_MD }}
+      >
+        {collapsed ? <IconMenuFold /> : <IconMenuUnfold />}
+      </Button>
     </MenuWrapper>
   );
 }
