@@ -55,7 +55,7 @@ public class SequencingRunSequenceFilesControllerTest {
 		when(objectService.read(seqId)).thenReturn(singleEndSequenceFile);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
 
-		ModelMap modelMap = controller.addSequenceFileToMiseqRun(sequencingrunId, representation, response);
+		ModelMap modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId, representation, response);
 
 		verify(objectService).read(seqId);
 		verify(miseqRunService).read(sequencingrunId);

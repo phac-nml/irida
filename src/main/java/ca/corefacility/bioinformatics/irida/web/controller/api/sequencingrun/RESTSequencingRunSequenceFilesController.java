@@ -28,7 +28,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Controller
 public class RESTSequencingRunSequenceFilesController {
 
-	private SequencingRunService miseqRunService;
+	private SequencingRunService sequencingRunService;
 	private SequencingObjectService sequencingObjectService;
 	/**
 	 * key used in map when adding sequencefile to miseqrun.
@@ -38,24 +38,20 @@ public class RESTSequencingRunSequenceFilesController {
 	@Autowired
 	public RESTSequencingRunSequenceFilesController(SequencingRunService service,
 			SequencingObjectService sequencingObjectService) {
-		this.miseqRunService = service;
+		this.sequencingRunService = service;
 		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
 	 * Add a relationship between a {@link SequencingRun} and a {@link SequenceFile}.
 	 *
-	 * @param sequencingrunId
-	 *            the id of the run to add sequence file to.
-	 * @param representation
-	 *            the JSON key-value pair that contains the identifier for the
-	 *            sequenceFile
-	 * @param response
-	 *            a reference to the response.
+	 * @param sequencingrunId the id of the run to add sequence file to.
+	 * @param representation  the JSON key-value pair that contains the identifier for the sequenceFile
+	 * @param response        a reference to the response.
 	 * @return a response indicating that the collection was modified.
 	 */
 	@RequestMapping(value = "/api/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
-	public ModelMap addSequenceFileToMiseqRun(@PathVariable Long sequencingrunId,
+	public ModelMap addSequenceFilesToSequencingRun(@PathVariable Long sequencingrunId,
 			@RequestBody Map<String, String> representation, HttpServletResponse response) {
 		ModelMap modelMap = new ModelMap();
 		String stringId = representation.get(SEQUENCEFILE_ID_KEY);
@@ -63,12 +59,14 @@ public class RESTSequencingRunSequenceFilesController {
 		// first, get the SequenceFile
 		SequencingObject sequencingObject = sequencingObjectService.read(seqId);
 		// then, get the miseq run
-		SequencingRun run = miseqRunService.read(sequencingrunId);
+		SequencingRun run = sequencingRunService.read(sequencingrunId);
 		// then add the user to the project with the specified role.
-		miseqRunService.addSequencingObjectToSequencingRun(run, sequencingObject);
+		sequencingRunService.addSequencingObjectToSequencingRun(run, sequencingObject);
 
-		Link seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles")
-				.slash(seqId).withSelfRel();
+		Link seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId)
+				.slash("sequenceFiles")
+				.slash(seqId)
+				.withSelfRel();
 		run.add(seqFileLocation);
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, run);
 		response.addHeader(HttpHeaders.LOCATION, seqFileLocation.getHref());
