@@ -70,15 +70,15 @@ public class SequenceFilePair extends SequencingObject {
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getForwardSequenceFile() {
-		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		SequenceFile[] pair = getFiles().toArray(new SequenceFile[getFiles().size()]);
 		String[] filenames = { pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString() };
 
 		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
 
 		if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
-			return (SequenceFile) pair[0];
+			return pair[0];
 		} else if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[1].charAt(index)).equals(x))) {
-			return (SequenceFile) pair[1];
+			return pair[1];
 		} else {
 			throw new NoSuchElementException();
 		}
@@ -90,7 +90,7 @@ public class SequenceFilePair extends SequencingObject {
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getReverseSequenceFile() {
-		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		SequenceFile[] pair = getFiles().toArray(new SequenceFile[getFiles().size()]);
 
 		String[] filenames = { pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString() };
 
