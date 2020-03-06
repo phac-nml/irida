@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
@@ -14,16 +16,12 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionEl
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A service for constructing dataset collections of input files for workflows
@@ -115,7 +113,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws IOException If there was an error reading the sequence file.
 	 */
 	public CollectionResponse uploadSequenceFilesPaired(
-			Map<Sample, ? extends IridaSequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
+			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
 			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
@@ -126,7 +124,7 @@ public class AnalysisCollectionServiceGalaxy {
 		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
 		Set<Path> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
-			IridaSequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
+			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
 			IridaSequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
 			IridaSequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
