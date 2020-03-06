@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button } from "antd";
-import { Spinner } from "../../icons";
 import { checkConnectionStatus } from "../../apis/remote-api/remote-api";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { LoginOutlined } from "@ant-design/icons";
+import { IconLoading } from "../../components/icons/Icons";
+import { SPACE_XS } from "../../styles/spacing";
 
 export function RemoteApiStatus({ api, updateTable }) {
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,10 @@ export function RemoteApiStatus({ api, updateTable }) {
   }
 
   return loading ? (
-    <Spinner text={i18n("RemoteApi.checking")} />
+    <span>
+      <IconLoading style={{ marginRight: SPACE_XS }} />
+      {i18n("RemoteApi.checking")}
+    </span>
   ) : (
     <div>
       {validToken ? (
