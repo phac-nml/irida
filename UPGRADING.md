@@ -7,6 +7,7 @@ upgrading IRIDA that cannot be automated.
 20.01 to 20.05
 --------------
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This version changes the endpoint for creating sequencing runs to allow any type of sequencer.  The legacy `sequencingRun/miseq` endpoint is maintained, but deprecated.  See <https://irida.corefacility.ca/documentation/developer/rest/#creating-sequencing-runs> for more info.
 
 19.09 to 20.01
 --------------
