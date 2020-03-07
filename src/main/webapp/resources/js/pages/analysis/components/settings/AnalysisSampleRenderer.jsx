@@ -188,9 +188,7 @@ export function AnalysisSampleRenderer() {
             message={i18n("AnalysisSamples.checkingForSamples")}
           />
         </div>
-      ) : analysisSamplesContext.samples.length > 0 ||
-       
-        analysisSamplesContext.singleEndSamples.length > 0 ? (
+      ) : analysisSamplesContext.samples.length > 0 || analysisSamplesContext.singleEndSamples.length > 0 ? (
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
@@ -199,16 +197,11 @@ export function AnalysisSampleRenderer() {
             allowClear={true}
             id="t-sample-search-input"
           />
-          {analysisSamplesContext.samples.length > 0
-           
-            ? renderPairedEndSamples()
-           
-            : null}
+          {analysisSamplesContext.samples.length > 0 ? renderPairedEndSamples()
+ : null}
           {analysisSamplesContext.singleEndSamples.length > 0
-           
-            ? renderSingleEndSamples()
-
-                       : null}
+ ? renderSingleEndSamples()
+ : null}
         </div>
       ) : (
         <InfoAlert message={i18n("AnalysisSamples.samplesDeleted")} />
