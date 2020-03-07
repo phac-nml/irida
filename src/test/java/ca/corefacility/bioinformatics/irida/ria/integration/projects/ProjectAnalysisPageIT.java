@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -22,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 	private ProjectAnalysesPage projectAnalysesPage;
 
-	@Ignore
 	@Test
 	public void testGetProjectAnalyses() {
 		LoginPage.loginAsManager(driver());
