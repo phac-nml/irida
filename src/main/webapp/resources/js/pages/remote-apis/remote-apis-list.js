@@ -10,6 +10,7 @@ import {
   initConnectRemoteApi,
   updateRemoteConnectionStatus
 } from "./remote-apis";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#remoteapiTable");
@@ -32,9 +33,8 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: COLUMNS.NAME,
       render(data, type, full) {
-        return `<a class="btn btn-link t-api-name" href="${
-          window.TL.BASE_URL
-        }remote_api/${full.id}">${data}</a>`;
+        const url = setBaseUrl(`remote_api/${full.id}`);
+        return `<a class="btn btn-link t-api-name" href="${url}">${data}</a>`;
       }
     },
     {

@@ -9,7 +9,7 @@
  */
 function getApiStatus(apiId) {
   return $.ajax({
-    url: `${window.TL.BASE_URL}remote_api/status/web/${apiId}`,
+    url: `remote_api/status/web/${apiId}`,
     type: "GET",
     dataType: "html"
   });
@@ -86,7 +86,7 @@ export function initConnectRemoteApi(connectedCB) {
     for each remote API.  Here we are loading the content of the modal and then setting the
     src for the embedded iframe to point to the remote API.
      */
-    $modal.load(`${window.TL.BASE_URL}remote_api/modal/${apiId}`, function() {
+    $modal.load(`remote_api/modal/${apiId}`, function() {
       const iframe = document.querySelector("#oauth-connect-frame");
       const url = iframe.dataset.url;
       iframe.src = `${url}${apiId}`;

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { Button, Icon, Modal } from "antd";
+import { Button, Modal } from "antd";
 import { red6 } from "../../styles/colors";
 import { useInterval } from "../../hooks/useInterval";
 import { SPACE_SM } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { IconClock } from "../icons/Icons";
 
 /**
  * Modal displayed when the user has had not server interaction within
@@ -35,7 +37,7 @@ export default function SessionModal({
     setRemainingTime(remainingTime - 1);
   }, 1000);
 
-  const logout = () => (window.location = `${window.TL.BASE_URL}logout`);
+  const logout = () => (window.location = setBaseUrl(`logout`));
 
   const keepSession = () =>
     axios.head(window.location.href).then(() => resetTimeout());
@@ -74,12 +76,7 @@ export default function SessionModal({
             alignItems: "center"
           }}
         >
-          <Icon
-            type="clock-circle"
-            theme="twoTone"
-            style={{ fontSize: 30 }}
-            twoToneColor={red6}
-          />
+          <IconClock style={{ fontSize: 30, color: red6 }} />
           <span style={{ paddingLeft: SPACE_SM }}>
             {i18n("session_modal_intro")}
           </span>
@@ -119,12 +116,7 @@ export default function SessionModal({
           padding: `0 ${SPACE_SM}`
         }}
       >
-        <Icon
-          type="clock-circle"
-          theme="twoTone"
-          style={{ fontSize: 55 }}
-          twoToneColor={red6}
-        />
+        <IconClock style={{ fontSize: 55, color: red6 }} />
         <span style={{ paddingLeft: SPACE_SM }}>
           {i18n("session_timeout_modal_desc")}
         </span>

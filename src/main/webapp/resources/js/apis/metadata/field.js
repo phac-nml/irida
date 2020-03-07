@@ -2,6 +2,9 @@
  * Class responsible for ajax call for project sample metadata fields.
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
+
+const URL = setBaseUrl(`linelist/fields`);
 
 /**
  * Get all the MetadataTemplateFields belonging to the templates withing a
@@ -12,6 +15,6 @@ import axios from "axios";
 export function fetchMetadataFields(projectId) {
   return axios({
     method: "get",
-    url: `${window.TL.BASE_URL}linelist/fields?projectId=${projectId}`
+    url: `${URL}?projectId=${projectId}`
   });
 }

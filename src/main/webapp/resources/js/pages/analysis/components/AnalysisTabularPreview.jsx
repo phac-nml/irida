@@ -52,7 +52,7 @@ export function AnalysisTabularPreview({ output }) {
             layout="auto"
             columns={fileCols}
             dataSource={fileRows}
-            scroll={{ x: "max-content" }}
+            scroll={{ x: 'max-content' }}
             pagination={{ pageSize: MAX_TABLE_ROWS_PER_PAGE }}
           />
         </TabularOutputWrapper>

@@ -41,6 +41,13 @@ You can search for individual samples within the cart use the 'cart search' fiel
 
 Search terms can match partial samples names.
 
+Running and Queued Counts
+------------
+
+You can get a snapshot of the current state of the analysis server in the page menu bar.  Inside the blue box are the counts for the number of running and queued analyses.  The longer the queue, the longer time it will take to start your analysis.
+
+![Queue Counts](images/queue-counts.png)
+
 Selecting a pipeline
 --------------------
 
