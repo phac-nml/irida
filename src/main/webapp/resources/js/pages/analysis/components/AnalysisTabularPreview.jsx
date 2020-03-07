@@ -10,7 +10,7 @@ import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 const TabularOutputWrapper = styled.div`
-  height: 300px;
+  max-height: 300px;
   width: 100%;
   margin-bottom: ${SPACE_XS};
 `;
@@ -53,7 +53,7 @@ export function AnalysisTabularPreview({ output }) {
             columns={fileCols}
             dataSource={fileRows}
             scroll={{ x: 'max-content' }}
-            pagination={{ pageSize: MAX_TABLE_ROWS_PER_PAGE }}
+            pagination={fileRows.length <= MAX_TABLE_ROWS_PER_PAGE ? false : { pageSize: MAX_TABLE_ROWS_PER_PAGE }}
           />
         </TabularOutputWrapper>
         <Divider />
