@@ -249,7 +249,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.comparePageTitle("SISTR Information"));
 		assertTrue("Has vertical tabs for SISTR results and output files", page.hasSideBarTabLinks());
 
-		assertTrue("Has 2 list items for SISTR Information", page.expectedNumberOfListItemsEqualsActual(9));
+		assertTrue("Has 9 list items for SISTR Information", page.expectedNumberOfListItemsEqualsActual(9));
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/cgmlst");
 		assertTrue("Page title should equal", page.comparePageTitle("cgMLST330"));
