@@ -17,10 +17,23 @@
 	</Description>
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
+		<!--/*-->
+		IRIDA sequence files may either be plaintext (.fastq) or gzip compressed (.fastq.gz)
+		NCBI requires that uploaded files should have the appropriate file extension.
+		Determine if the IRIDA sequence file is compressed by looking for .gz extension
+		and add the appropriate extension to the uploaded files.
+		<!--*/-->
 		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
-			<File th:attr="file_path=${file.getId() + '.fastq'}">
-				<DataType>generic-data</DataType>
-			</File>
+			<th:block th:if="${file.getFiles().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${file.getId() + '.fastq.gz'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</th:block>
+			<th:block th:if="${!file.getFiles().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${file.getId() + '.fastq'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</th:block>
 			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
@@ -44,12 +57,26 @@
 			</Identifier>
 		</AddFiles>
 		<AddFiles target_db="SRA" th:each="pair : ${sample.pairs}" th:with="forward=${pair.getForwardSequenceFile()}, reverse=${pair.getReverseSequenceFile()}">
-			<File th:attr="file_path=${forward.getId() + '.fastq'}">
-				<DataType>generic-data</DataType>
-			</File>
-			<File th:attr="file_path=${reverse.getId() + '.fastq'}">
-				<DataType>generic-data</DataType>
-			</File>
+            <th:block th:if="${forward.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${forward.getId() + '.fastq.gz'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</th:block>
+			<th:block th:if="${!forward.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${forward.getId() + '.fastq'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</th:block>
+			<th:block th:if="${reverse.getFile().toString().endsWith(&quot;.gz&quot;)}" >
+				<File th:attr="file_path=${reverse.getId() + '.fastq.gz'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</th:block>
+			<th:block th:if="${!reverse.getFile().toString().endsWith(&quot;.gz&quot;)}">
+				<File th:attr="file_path=${reverse.getId() + '.fastq'}">
+					<DataType>generic-data</DataType>
+				</File>
+			</th:block>
 			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
