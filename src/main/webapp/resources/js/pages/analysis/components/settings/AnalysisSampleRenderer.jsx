@@ -33,9 +33,11 @@ export function AnalysisSampleRenderer() {
   }, []);
 
   const [filteredSamples, setFilteredSamples] = useState(null);
-  const [filteredSingleEndSamples, setSingleEndFilteredSamples] = useState(null);
-  const SEQ_FILES_BASE_URL= setBaseUrl("sequenceFiles");
-  const SAMPLES_BASE_URL= setBaseUrl("samples");
+  const [filteredSingleEndSamples, setSingleEndFilteredSamples] = useState(
+    null
+  );
+  const SEQ_FILES_BASE_URL = setBaseUrl("sequenceFiles");
+  const SAMPLES_BASE_URL = setBaseUrl("samples");
 
   const renderPairedEndSamples = () => {
     return (
@@ -186,7 +188,9 @@ export function AnalysisSampleRenderer() {
             message={i18n("AnalysisSamples.checkingForSamples")}
           />
         </div>
-      ) : analysisSamplesContext.samples.length > 0 || analysisSamplesContext.singleEndSamples.length > 0 ? (
+      ) : analysisSamplesContext.samples.length > 0 ||
+       
+        analysisSamplesContext.singleEndSamples.length > 0 ? (
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
@@ -195,8 +199,16 @@ export function AnalysisSampleRenderer() {
             allowClear={true}
             id="t-sample-search-input"
           />
-          { analysisSamplesContext.samples.length > 0 ? renderPairedEndSamples() : null}
-          { analysisSamplesContext.singleEndSamples.length > 0 ? renderSingleEndSamples() : null}
+          {analysisSamplesContext.samples.length > 0
+           
+            ? renderPairedEndSamples()
+           
+            : null}
+          {analysisSamplesContext.singleEndSamples.length > 0
+           
+            ? renderSingleEndSamples()
+
+                       : null}
         </div>
       ) : (
         <InfoAlert message={i18n("AnalysisSamples.samplesDeleted")} />

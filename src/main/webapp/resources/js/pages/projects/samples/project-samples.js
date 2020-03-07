@@ -310,8 +310,8 @@ const config = Object.assign({}, tableConfig, {
            */
           const content = `<ul class="popover-list">
               ${full.qcEntries
-            .map(qc => `<li class="error">${qc}</li>`)
-            .join("")}
+                .map(qc => `<li class="error">${qc}</li>`)
+                .join("")}
           </ul>`;
           icon.setAttribute("data-content", content);
           return `<div class="icon-wrapper">${icon.outerHTML}${link}</div>`;
