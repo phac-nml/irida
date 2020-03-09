@@ -1,11 +1,13 @@
 import React from "react";
+
 import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
+
 import styled from "styled-components";
-import { grey2, grey9 } from "../../../../../styles/colors";
+import { blue6, grey2, grey5, grey9 } from "../../../../../styles/colors";
 import { GRID_BORDER } from "../../styles";
-import { TableOutlined } from "@ant-design/icons";
+import { IconTable } from "../../../../../components/icons/Icons";
 
 const ControlPanel = styled.div`
   height: 100%;
@@ -13,6 +15,16 @@ const ControlPanel = styled.div`
   overflow: hidden;
   background-color: ${grey2};
   border-left: ${GRID_BORDER};
+`;
+
+const ColumnsButton = styled(Button)`
+  .anticon {
+    color: ${grey5};
+    transition: color 0.5s;
+  }
+  &:hover:hover .anticon {
+    color: ${blue6};
+  }
 `;
 
 const ControlPanelContent = styled.div`
@@ -50,14 +62,14 @@ export default function TableControlPanel(props) {
           title={i18n("linelist.controlPanel.columns.title")}
           placement="left"
         >
-          <Button
+          <ColumnsButton
             tour="tour-columns"
             shape="circle"
             className="t-columns-panel-toggle"
             onClick={props.togglePanel}
           >
-            <TableOutlined />
-          </Button>
+            <IconTable />
+          </ColumnsButton>
         </Tooltip>
       </ControlPanelButtons>
     </ControlPanel>

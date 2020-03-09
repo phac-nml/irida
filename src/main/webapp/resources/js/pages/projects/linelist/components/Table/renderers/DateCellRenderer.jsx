@@ -1,7 +1,12 @@
 import React from "react";
+
 import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
 import { Popover } from "antd";
-import { ExclamationCircleTwoTone, InfoCircleTwoTone } from "@ant-design/icons";
+import {
+  IconExclamationCircle,
+  IconInfoCircle
+} from "../../../../../../components/icons/Icons";
+import { grey1 } from "../../../../../../styles/colors";
 import { SPACE_XS } from "../../../../../../styles/spacing";
 
 /**
@@ -22,14 +27,12 @@ export class DateCellRenderer extends React.Component {
             content={content}
             title={
               <span>
-                <ExclamationCircleTwoTone style={{ marginRight: SPACE_XS }} />
+                <IconExclamationCircle style={{ marginRight: SPACE_XS }} />
                 {i18n("linelist.dateCell.popover.title")}
               </span>
             }
           >
-            <span>
-              <InfoCircleTwoTone style={{ color: "white" }} />
-            </span>
+            <IconInfoCircle style={{ color: grey1 }} />
           </Popover>
         </div>
       );

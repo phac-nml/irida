@@ -1,11 +1,9 @@
 import React from "react";
+
 import PropTypes from "prop-types";
 import { Button, Dropdown, Menu } from "antd";
-import {
-  DownloadOutlined,
-  FileExcelOutlined,
-  FileOutlined
-} from "@ant-design/icons";
+import { SPACE_XS } from "../../../../../styles/spacing";
+import { IconDropDown } from "../../../../../components/icons/Icons";
 
 export function ExportDropDown(props) {
   const onClick = ({ key }) => {
@@ -18,21 +16,15 @@ export function ExportDropDown(props) {
 
   const menu = (
     <Menu onClick={onClick}>
-      <Menu.Item key="excel">
-        <FileExcelOutlined />
-        {i18n("linelist.toolbar.exportExcel")}
-      </Menu.Item>
-      <Menu.Item key="csv">
-        <FileOutlined />
-        {i18n("linelist.toolbar.exportCsv")}
-      </Menu.Item>
+      <Menu.Item key="excel">{i18n("linelist.toolbar.exportExcel")}</Menu.Item>
+      <Menu.Item key="csv">{i18n("linelist.toolbar.exportCsv")}</Menu.Item>
     </Menu>
   );
   return (
     <Dropdown overlay={menu}>
       <Button tour="tour-export">
         {i18n("linelist.toolbar.export")}
-        <DownloadOutlined />
+        <IconDropDown style={{ marginLeft: SPACE_XS }} />
       </Button>
     </Dropdown>
   );

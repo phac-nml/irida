@@ -1,6 +1,6 @@
 import React from "react";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { FilterIcon } from "../Tables/fitlers/FilterIcon";
+import { IconTableFilter } from "../icons/Icons";
 
 export const idColumnFormat = () => ({
   dataIndex: "id",
@@ -13,10 +13,11 @@ export const nameColumnFormat = ({ url }) => {
   return {
     dataIndex: "name",
     key: "name",
+    width: 200,
     sorter: true,
     ellipsis: true,
     filterIcon(filtered) {
-      return <FilterIcon className="t-name-filter-btn" filtered={filtered} />;
+      return <IconTableFilter className="t-name" filtered={filtered} />;
     },
     render(name, data) {
       return (

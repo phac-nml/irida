@@ -5,7 +5,6 @@
 @import "animations/animations";
 
 // COMPONENTS
-@import "components/breadcrumbs";
 @import "components/buttons";
 @import "components/forms";
 @import "components/modals";
@@ -90,131 +89,6 @@ body {
   animation-duration: 0.5s;
   animation-fill-mode: both;
   animation-name: fadeOutUp;
-}
-
-/****************************************************************************************
-* MAIN NAVIGATION
-*****************************************************************************************/
-.top-navigation {
-  margin-bottom: 0;
-  padding-right: 15px !important;
-}
-
-.body-content {
-  flex-grow: 1;
-  width: 100%;
-}
-
-.navbar-collapse {
-  background-color: #222222;
-}
-
-.navbar-brand {
-  padding: 10px 15px 10px 15px !important;
-}
-
-.navbar-logo {
-  height: 30px;
-}
-
-.navbar-collapse-icon {
-  color: white;
-  font-size: 20px;
-}
-
-// Icon links
-.nav-icon-wrapper {
-  padding-top: 14px !important;
-  padding-bottom: 14px !important;
-}
-
-.nav-icon {
-  font-size: 21px;
-}
-
-// Gravatar
-.nav-gravatar-wrapper {
-  padding-right: 15px !important;
-}
-.nav-gravatar {
-  border-radius: 50%;
-  width: 20px;
-  padding: 0 auto;
-}
-
-// Notifications
-.navbar-notification .angular-notifications-icon {
-  background-color: $color-info;
-  border-radius: 10px;
-  top: 3px;
-  right: -3px;
-  height: 20px;
-  width: 20px !important;
-  padding: 0 !important;
-  font-size: 1.3rem;
-  line-height: 2rem;
-}
-
-// Search
-#global-search {
-  margin: 7px 15px 6px 0 !important;
-
-  .search-wrapper {
-    width: 300px;
-    vertical-align: middle;
-    white-space: nowrap;
-    position: relative;
-
-    .icon {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      margin-left: 17px;
-      margin-top: 8px;
-      z-index: 1;
-      color: #c2c2c2;
-      pointer-events: none;
-    }
-
-    .search-dd {
-      button {
-        border: none !important;
-        background: transparent;
-        color: #c2c2c2;
-        height: 35px;
-      }
-      position: absolute;
-      top: 50%;
-      right: 25px;
-    }
-
-    input[type="search"] {
-      width: 300px;
-      height: 37px;
-      border: none;
-      float: left;
-      padding-left: 45px;
-      padding-right: 45px;
-      border-radius: 3px;
-      &::placeholder {
-        color: #c2c2c2;
-      }
-    }
-  }
-}
-
-// Allow for proper styling in collapsed navigation.
-@media (max-width: 768px) {
-  #global-search {
-    .search-wrapper {
-      width: 100%;
-      display: block;
-
-      input[type="search"] {
-        width: 100%;
-      }
-    }
-  }
 }
 
 /****************************************************************************************

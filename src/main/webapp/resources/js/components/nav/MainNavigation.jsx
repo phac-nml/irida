@@ -1,29 +1,62 @@
 import React from "react";
-import { Layout, Menu } from "antd";
-import { FolderOutlined } from "@ant-design/icons";
+import { AutoComplete, Input, Menu } from "antd";
+import { IconFolder } from "../icons/Icons";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const { Divider, Item, ItemGroup, SubMenu } = Menu;
-const { Header } = Layout;
 
 export function MainNavigation({}) {
   return (
-    <Menu theme="light" mode="horizontal" style={{ lineHeight: "64px" }}>
-      <SubMenu
-        title={
-          <>
-            <FolderOutlined />
-            {i18n("nav.main.project")}
-          </>
-        }
-      >
-        <Item key="user:projects">{i18n("nav.main.project-list")}</Item>
-        <Item key={"admin:projects"}>{i18n("nav.main.project-list-all")}</Item>
-        <Divider />
-        <ItemGroup title="Item 1">
-          <Item key="setting:1">Option 1</Item>
-          <Item key="setting:2">Option 2</Item>
-        </ItemGroup>
-      </SubMenu>
-    </Menu>
+    <div
+      style={{
+        backgroundColor: "rgb(5,21,41)",
+        display: "flex",
+        flexDirection: "row",
+        alignContent: "center",
+        justifyContent: "space-between"
+      }}
+    >
+      <Menu mode="horizontal" theme={"dark"}>
+        <Item>
+          <a href={setBaseUrl("")}>
+            <img
+              style={{ height: 30 }}
+              src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
+            />
+          </a>
+        </Item>
+        <SubMenu
+          title={
+            <>
+              <IconFolder />
+              {i18n("nav.main.project")}
+            </>
+          }
+        >
+          <Item key="user:projects">
+            <a href={setBaseUrl(`/projects`)}>
+              {i18n("nav.main.project-list")}
+            </a>
+          </Item>
+          <Item key="user:connect">
+            <a href={setBaseUrl(`/projects/synchronize`)}>
+              {i18n("nav.main.project-sync")}
+            </a>
+          </Item>
+          {window.TL._aa ? (
+            <ItemGroup title="Admin">
+              <Item key={"admin:projects"}>
+                <a href={setBaseUrl(`/projects/all`)}>
+                  {i18n("nav.main.project-list-all")}
+                </a>
+              </Item>
+            </ItemGroup>
+          ) : null}
+        </SubMenu>
+      </Menu>
+      <AutoComplete>
+        <Input.Search />
+      </AutoComplete>
+    </div>
   );
 }

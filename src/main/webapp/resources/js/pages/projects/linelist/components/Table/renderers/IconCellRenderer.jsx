@@ -5,14 +5,13 @@ import React from "react";
 
 import PropTypes from "prop-types";
 import { Tooltip } from "antd";
-import { LockTwoTone } from "@ant-design/icons";
+import { blue6 } from "../../../../../../styles/colors";
+import { IconLocked } from "../../../../../../components/icons/Icons";
 
 function LockedIcon() {
   return (
     <Tooltip title={i18n("project.samples.locked-title")} placement="right">
-      <div>
-        <LockTwoTone />
-      </div>
+      <IconLocked style={{ color: blue6 }} />
     </Tooltip>
   );
 }

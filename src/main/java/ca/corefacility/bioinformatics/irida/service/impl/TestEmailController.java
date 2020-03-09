@@ -14,6 +14,7 @@ import org.thymeleaf.TemplateEngine;
 
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.ConfigurableJavaMailSender;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -68,7 +69,13 @@ public class TestEmailController extends EmailControllerImpl {
 
 	@Override
 	public void sendPipelineStatusEmail(AnalysisSubmission submission) {
-		logger.info("TestEmailController#sendPipelineStatusEmail called for " + submission.getSubmitter().getEmail());
+		logger.info("TestEmailController#sendPipelineStatusEmail called for " + submission.getSubmitter()
+				.getEmail());
+	}
+
+	@Override
+	public void sendProjectSyncUnauthorizedEmail(Project project) {
+		logger.info("TestEmailController#sendProjectSyncUnauthorizedEmail called for project " + project.getId());
 	}
 
 	@Override

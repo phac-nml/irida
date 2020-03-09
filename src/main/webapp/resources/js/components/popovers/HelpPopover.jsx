@@ -1,10 +1,10 @@
 import React from "react";
 import { Popover } from "antd";
-import { QuestionCircleTwoTone } from "@ant-design/icons";
 import PropTypes from "prop-types";
+import { IconQuestionCircle } from "../icons/Icons";
 
 /**
- * This creates a help (?) icon with a popover that will contain the contents passed
+ * This create a help (?) icon with a popover that will contain the contents passed
  * in props
  * @param {object} props
  * @returns {*}
@@ -13,14 +13,12 @@ import PropTypes from "prop-types";
 export function HelpPopover(props) {
   return (
     <Popover content={props.content} title={props.title}>
-      <div style={{ display: "inline-block" }}>
-        <QuestionCircleTwoTone
-          style={{
-            margin: "0 .5rem",
-            cursor: "help"
-          }}
-        />
-      </div>
+      <IconQuestionCircle
+        style={{
+          margin: "0 .5rem",
+          cursor: "help"
+        }}
+      />
     </Popover>
   );
 }

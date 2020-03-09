@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Button } from "antd";
 import { actions as cartActions } from "../../../../../redux/reducers/cart";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import { IconShoppingCart } from "../../../../../components/icons/Icons";
 
 /**
  * UI Button to single that the selected samples should be added to the global cart.
@@ -25,7 +25,7 @@ export function AddSamplesToCartButtonComponent({
       disabled={selected.length === 0}
       onClick={addToCart}
     >
-      <ShoppingCartOutlined />
+      <IconShoppingCart />
       {i18n("linelist.addToCart")}
     </Button>
   );

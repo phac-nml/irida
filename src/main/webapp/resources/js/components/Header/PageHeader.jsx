@@ -5,7 +5,7 @@ import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { MainNavigation } from "../nav/MainNavigation";
-import { grey1 } from "../../styles/colors";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 const { Content, Header } = Layout;
 
@@ -20,12 +20,13 @@ __webpack_public_path__ = `dist/`;
 export function PageHeader({ children }) {
   return (
     <Layout>
-      <Header style={{ backgroundColor: grey1 }}>
-        <MainNavigation style={{ height: 64 }} />
+      <div>
+        <MainNavigation />
+        <Breadcrumbs crumbs={window.breadcrumbs || []} />
         <Session />
         <Notifications />
         <GalaxyAlert />
-      </Header>
+      </div>
       <Content>{children}</Content>
     </Layout>
   );

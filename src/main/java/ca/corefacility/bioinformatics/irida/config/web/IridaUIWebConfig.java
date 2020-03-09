@@ -33,7 +33,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.*;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
@@ -82,6 +85,11 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Bean
+	public BreadCrumbInterceptor breadCrumbInterceptor() {
+		return new BreadCrumbInterceptor();
+	}
+
+	@Bean
 	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
 		StringBuilder analytics = new StringBuilder();
@@ -116,11 +124,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		SessionLocaleResolver slr = new SessionLocaleResolver();
 		slr.setDefaultLocale(defaultLocale);
 		return slr;
-	}
-
-	@Bean
-	public BreadCrumbInterceptor breadCrumbInterceptor() {
-		return new BreadCrumbInterceptor(messageSource);
 	}
 
 	@Override

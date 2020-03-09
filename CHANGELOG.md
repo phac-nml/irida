@@ -3,6 +3,17 @@ Changes
 
 20.01 to 20.05
 --------------
+* [UI/Developer]: Removed webpack progress.
+* [UI]: Updated clients listing table to use `ant.design` tables.
+* [UI]: Sending email to sync user when a remote project's token expires.
+* [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+* [UI]: Updated admin announcements table and creation to use `ant.design`.
+* [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
+* [UI]: Updated breadcrumbs to have cleaner look and feel and include the actual project and sample names.
+* [UI/Developer]: Updated to `react` 16.13.0.
+* [Developer]: Added Apache 2.0 licence information to `package.json`.
+* [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
+* [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
 
 19.09 to 20.01
 --------------
