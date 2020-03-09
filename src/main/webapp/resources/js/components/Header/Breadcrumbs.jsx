@@ -1,9 +1,10 @@
 import React from "react";
 import { Breadcrumb } from "antd";
-import { grey2, grey4, grey8 } from "../../styles/colors";
+import { grey2, grey8 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { HomeTwoTone } from "@ant-design/icons";
+import { BORDERED_LIGHT } from "../../styles/borders";
 
 /**
  * React component to render ant design Breadrumbs to pages that contain
@@ -20,7 +21,7 @@ export function Breadcrumbs({ crumbs = [] }) {
         backgroundColor: grey2,
         padding: `${SPACE_XS} 15px`,
         justifyContent: "flex-start",
-        borderBottom: `1px solid ${grey4}`
+        borderBottom: BORDERED_LIGHT
       }}
     >
       <Breadcrumb.Item>
