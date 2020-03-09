@@ -1,9 +1,9 @@
 import React from "react";
-import { AutoComplete, Input, Menu } from "antd";
+import { Input, Menu } from "antd";
 import { IconFolder } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const { Divider, Item, ItemGroup, SubMenu } = Menu;
+const { Item, ItemGroup, SubMenu } = Menu;
 
 export function MainNavigation({}) {
   return (
@@ -53,10 +53,17 @@ export function MainNavigation({}) {
             </ItemGroup>
           ) : null}
         </SubMenu>
+        <Item
+          style={{
+            border: `1px solid orange`,
+            height: 46,
+            display: "flex",
+            alignItems: "center"
+          }}
+        >
+          <Input.Search />
+        </Item>
       </Menu>
-      <AutoComplete>
-        <Input.Search />
-      </AutoComplete>
     </div>
   );
 }
