@@ -20,7 +20,7 @@ const ControlPanel = styled.div`
 const ColumnsButton = styled(Button)`
   .anticon {
     color: ${grey5};
-    transition: color .5s;
+    transition: color 0.5s;
   }
   &:hover:hover .anticon {
     color: ${blue6};
