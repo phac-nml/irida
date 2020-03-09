@@ -252,11 +252,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.comparePageTitle("SISTR Information"));
 		assertTrue("Has vertical tabs for SISTR results and output files", page.hasSideBarTabLinks());
 
-		assertTrue("Has 2 list items for SISTR Information", page.expectedNumberOfListItemsEqualsActual(2));
-
-		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/serovar_predictions");
-		assertTrue("Page title should equal", page.comparePageTitle("Serovar Predictions"));
-		assertTrue("Has 7 list items for Serovar Predictions", page.expectedNumberOfListItemsEqualsActual(7));
+		assertTrue("Has 9 list items for SISTR Information", page.expectedNumberOfListItemsEqualsActual(9));
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/cgmlst");
 		assertTrue("Page title should equal", page.comparePageTitle("cgMLST330"));
@@ -266,16 +262,16 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.comparePageTitle("Mash"));
 		assertTrue("Has 4 list items for Mash", page.expectedNumberOfListItemsEqualsActual(4));
 
-		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/file_preview");
+		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/citation");
+		assertTrue("Page title should equal", page.comparePageTitle("Citation"));
+		assertTrue("Page has a citation", page.citationVisible());
+
+		page = AnalysisDetailsPage.initPage(driver(), 11L, "output");
 		assertTrue("Page title should equal", page.comparePageTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be a download button for the file that is displayed",
 				page.downloadOutputFileButtonVisible());
-
-		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/citation");
-		assertTrue("Page title should equal", page.comparePageTitle("Citation"));
-		assertTrue("Page has a citation", page.citationVisible());
 	}
 
 	@Test

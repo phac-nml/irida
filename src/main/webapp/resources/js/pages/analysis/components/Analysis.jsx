@@ -111,15 +111,14 @@ export default function Analysis() {
               </Link>
             </Menu.Item>
           );
-        } else {
-          tabLinks.push(
-            <Menu.Item key="output">
-              <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
-                {i18n("Analysis.outputFiles")}
-              </Link>
-            </Menu.Item>
-          );
         }
+        tabLinks.push(
+          <Menu.Item key="output">
+            <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
+              {i18n("Analysis.outputFiles")}
+            </Link>
+          </Menu.Item>
+        );
         tabLinks.push(
           <Menu.Item key="provenance">
             <Link to={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}>

@@ -13,6 +13,9 @@ public class SistrResult {
 	@JsonProperty("qc_status")
 	private String qcStatus;
 
+	@JsonProperty("qc_messages")
+	private String qcMessages;
+
 	private String serovar;
 	@JsonProperty("serovar_antigen")
 	private String serovarAntigen;
@@ -47,11 +50,12 @@ public class SistrResult {
 	public SistrResult() {
 	}
 
-	public SistrResult(String qcStatus, String serovar, String serovarAntigen, String serovarCgmlst, String serogroup,
+	public SistrResult(String qcStatus, String qcMessages, String serovar, String serovarAntigen, String serovarCgmlst, String serogroup,
 			String h1, String h2, String oAntigen, Long cgmlstST, String cgmlstSubspecies, String cgmlstGenomeMatch,
 			Long cgmlstDistance, Long cgmlstMatchingAlleles, String mashSubspecies, String mashSerovar, String mashGenome,
 			Float mashDistance) {
 		this.qcStatus = qcStatus;
+		this.qcMessages = qcMessages;
 		this.serovar = serovar;
 		this.serovarAntigen = serovarAntigen;
 		this.serovarCgmlst = serovarCgmlst;
@@ -76,6 +80,14 @@ public class SistrResult {
 
 	public void setQcStatus(String qcStatus) {
 		this.qcStatus = qcStatus;
+	}
+
+	public String getQcMessages() {
+		return qcMessages;
+	}
+
+	public void setQcMessages(String qcMessages) {
+		this.qcMessages = qcMessages;
 	}
 
 	public String getSerovar() {

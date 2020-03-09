@@ -38,10 +38,8 @@ export const SETTINGS = {
 
 export const SISTR = {
   INFO: "info",
-  SEROVAR_PREDICTIONS: "serovar_predictions",
   CGMLST: "cgmlst",
   MASH: "mash",
-  FILE_PREVIEW: "file_preview",
   CITATION: "citation"
 };
 

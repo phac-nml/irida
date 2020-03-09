@@ -40,10 +40,7 @@ export default function BioHanselInfo({ bioHanselResults }) {
       desc: bioHanselResults ? (
         bioHanselResults.qc_status === "PASS" ? (
           <Success
-            message={formatQcMessage(
-              bioHanselResults.qc_status,
-              bioHanselResults.qc_message
-            )}
+            message={bioHanselResults.qc_status}
           />
         ) : bioHanselResults.qc_status === "FAIL" ? (
           <Error
@@ -55,8 +52,8 @@ export default function BioHanselInfo({ bioHanselResults }) {
         ) : (
           <Warning
             message={formatQcMessage(
-              "WARNING",
-              bioHanselResults.qc_message ? qc_message : ""
+              bioHanselResults.qc_status,
+              bioHanselResults.qc_message
             )}
           />
         )
@@ -66,6 +63,10 @@ export default function BioHanselInfo({ bioHanselResults }) {
     }
   ];
 
+  /*
+   * Formats the QC status and QC messages to display
+   * in a list.
+   */
   function formatQcMessage(qc_status, qc_message) {
     let msgs = [];
     if (qc_message) {
