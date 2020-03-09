@@ -15,7 +15,7 @@ const initialContext = {
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
-const blacklistExtSet = new Set(["zip","pdf"])
+const blacklistExtSet = new Set(["zip","pdf", "html", "xlsx"])
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 

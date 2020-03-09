@@ -2,27 +2,20 @@
  * @File component renders the bio hansel results.
  */
 
-import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Layout, Menu } from "antd";
-import { Link, Location, Router } from "@reach/router";
+import React, { useContext, useEffect, useState } from "react";
+import { Layout } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
-
-import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { grey1 } from "../../../styles/colors";
-import { ANALYSIS, BIOHANSEL } from "../routes";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
-const BioHanselInfo = React.lazy(() => import("./biohansel/BioHanselInfo"));
-const OutputFilePreview = React.lazy(() =>
-  import("./outputs/OutputFilePreview")
-);
+import { TabPaneContent } from "../../../components/tabs";
+import { Error, Success } from "../../../components/icons";
+import { Warning } from "../../../components/icons/Warning";
+import { BasicList } from "../../../components/lists";
 
-const { Content, Sider } = Layout;
 
 export default function AnalysisBioHansel() {
   const { analysisContext } = useContext(AnalysisContext);
@@ -30,9 +23,6 @@ export default function AnalysisBioHansel() {
     AnalysisOutputsContext
   );
   const [bioHanselResults, setBioHanselResults] = useState(null);
-
-  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.BIOHANSEL);
-  const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
   useEffect(() => {
@@ -67,57 +57,88 @@ export default function AnalysisBioHansel() {
     }
   }
 
-  return (
-    <Layout>
-      <Sider width={200} style={{ background: grey1 }}>
-        <Location>
-          {props => {
-            const keyname = props.location.pathname.match(pathRegx);
-            return (
-              <Menu
-                mode="vertical"
-                selectedKeys={[keyname ? keyname[1] : BIOHANSEL.INFO]}
-              >
-                <Menu.Item key="info">
-                  <Link to={`${DEFAULT_URL}/${BIOHANSEL.INFO}`}>
-                    {i18n("AnalysisBioHansel.bioHanselInformation")}
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="file_preview">
-                  <Link to={`${DEFAULT_URL}/${BIOHANSEL.FILE_PREVIEW}`}>
-                    {i18n("AnalysisOutputs.outputFilePreview")}
-                  </Link>
-                </Menu.Item>
-              </Menu>
-            );
-          }}
-        </Location>
-      </Sider>
+  const biohanselResults = [
+    {
+      title: i18n("AnalysisBioHansel.sampleName"),
+      desc: bioHanselResults ? bioHanselResults.sample : ""
+    },
+    {
+      title: `${i18n("AnalysisBioHansel.schemeName")} (v${i18n(
+        "AnalysisBioHansel.schemeVersion"
+      )})`,
+      desc: bioHanselResults
+        ? `${bioHanselResults.scheme} (${bioHanselResults.scheme_version})`
+        : ""
+    },
+    {
+      title: i18n("AnalysisBioHansel.subtype"),
+      desc: bioHanselResults ? bioHanselResults.subtype : ""
+    },
+    {
+      title: i18n("AnalysisBioHansel.averageTileFrequency"),
+      desc:
+        bioHanselResults && bioHanselResults.avg_tile_coverage
+          ? bioHanselResults.avg_tile_coverage.toString()
+          : ""
+    },
+    {
+      title: i18n("AnalysisBioHansel.qualityControlStatus"),
+      desc: bioHanselResults ? (
+        bioHanselResults.qc_status === "PASS" ? (
+          <Success
+            message={bioHanselResults.qc_status}
+          />
+        ) : bioHanselResults.qc_status === "FAIL" ? (
+          <Error
+            message={formatQcMessage(
+              bioHanselResults.qc_status,
+              bioHanselResults.qc_message
+            )}
+          />
+        ) : (
+          <Warning
+            message={formatQcMessage(
+              bioHanselResults.qc_status,
+              bioHanselResults.qc_message
+            )}
+          />
+        )
+      ) : (
+        ""
+      )
+    }
+  ];
 
-      <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-        <Content>
-          {typeof bioHanselResults === "undefined" ? (
-            <WarningAlert
-              message={i18n("AnalysisBioHansel.resultsUnavailable")}
-            />
-          ) : bioHanselResults !== null ? (
-            <Suspense fallback={<ContentLoading />}>
-              <Router>
-                <BioHanselInfo
-                  bioHanselResults={bioHanselResults}
-                  path={`${DEFAULT_URL}/${BIOHANSEL.INFO}`}
-                  default
-                />
-                <OutputFilePreview
-                  path={`${DEFAULT_URL}/${BIOHANSEL.FILE_PREVIEW}`}
-                />
-              </Router>
-            </Suspense>
-          ) : (
-            <ContentLoading />
-          )}
-        </Content>
-      </Layout>
+  /*
+   * Formats the QC status and QC messages to display
+   * in a list.
+   */
+  function formatQcMessage(qc_status, qc_message) {
+    let msgs = [];
+    if (qc_message) {
+      msgs = qc_message.trim().split("|");
+    }
+
+    return (
+      <>
+        <span>{qc_status}</span>
+        <br />
+        {msgs.length > 0 ? (
+          <ul>
+            {msgs.map(msg => {
+              return <li key={msg}>{msg}</li>;
+            })}
+          </ul>
+        ) : null}
+      </>
+    );
+  }
+
+  return (
+    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
+      <TabPaneContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
+        <BasicList dataSource={biohanselResults}></BasicList>
+      </TabPaneContent>
     </Layout>
   );
 }

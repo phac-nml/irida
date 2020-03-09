@@ -109,7 +109,7 @@ export default function Analysis() {
         } else if (analysisContext.analysisType === "BIO_HANSEL") {
           tabLinks.push(
             <Menu.Item key="biohansel">
-              <Link to={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/`}>
+              <Link to={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}`}>
                 {i18n("Analysis.biohansel")}
               </Link>
             </Menu.Item>
@@ -120,20 +120,19 @@ export default function Analysis() {
         ) {
           tabLinks.push(
             <Menu.Item key="tree">
-              <Link to={`${DEFAULT_URL}/${ANALYSIS.TREE}/`}>
+              <Link to={`${DEFAULT_URL}/${ANALYSIS.TREE}`}>
                 {i18n("Analysis.phylogeneticTree")}
               </Link>
             </Menu.Item>
           );
-        } else {
-          tabLinks.push(
-            <Menu.Item key="output">
-              <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
-                {i18n("Analysis.outputFiles")}
-              </Link>
-            </Menu.Item>
-          );
         }
+        tabLinks.push(
+          <Menu.Item key="output">
+            <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
+              {i18n("Analysis.outputFiles")}
+            </Link>
+          </Menu.Item>
+        );
         tabLinks.push(
           <Menu.Item key="provenance">
             <Link to={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}>

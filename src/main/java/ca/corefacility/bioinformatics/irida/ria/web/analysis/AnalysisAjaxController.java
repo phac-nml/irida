@@ -381,7 +381,6 @@ public class AnalysisAjaxController {
 	 */
 	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
-		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("html", "xlsx");
 		// set of file extensions for indicating whether the first line of the file should be read
 		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab",
 				TREE_EXT);
@@ -390,9 +389,6 @@ public class AnalysisAjaxController {
 			String fileExt = FileUtilities.getFileExt(aof.getFile()
 					.getFileName()
 					.toString());
-			if (BLACKLIST_FILE_EXT.contains(fileExt)) {
-				return null;
-			}
 			ToolExecution tool = aof.getCreatedByTool();
 
 			AnalysisOutputFileInfo info = new AnalysisOutputFileInfo(aof.getId(), submission.getId(), analysis.getId(),

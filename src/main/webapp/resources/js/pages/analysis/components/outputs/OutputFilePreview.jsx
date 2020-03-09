@@ -3,7 +3,7 @@
  */
 
 import React, { Suspense, useContext, useEffect } from "react";
-import { Button, Dropdown, Icon, Menu, Tabs } from "antd";
+import { Dropdown, Menu, Tabs } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
 
@@ -13,16 +13,7 @@ import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { downloadFilesAsZip, downloadOutputFile } from "../../../../apis/analysis/analysis";
-import { blue5, grey7 } from "../../../../styles/colors";
-import styled from "styled-components";
-
-const ZipDownloadButton = styled(Button)`
-  color: ${grey7};
-
-  &:hover {
-    color: ${blue5};
-  }
-`;
+import { IconFile } from "../../../../components/icons/Icons";
 
 const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
 const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
@@ -133,12 +124,11 @@ export default function OutputFilePreview() {
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
           <Dropdown.Button id="t-download-all-files-btn" style={{ marginBottom: SPACE_XS }} onClick={() => downloadFilesAsZip(analysisContext.analysis.identifier)} overlay={downloadFilesMenu()}>
-              <i
-                className="fas fa-file-archive"
-                style={{ marginRight: SPACE_XS }}
-              ></i>
-              {i18n("AnalysisOutputs.downloadAllFiles")}
+
+            <IconFile />
+            {i18n("AnalysisOutputs.downloadAllFiles")}
           </Dropdown.Button>
+
           <Tabs defaultActiveKey="1" animated={false}>
             {analysisOutputsContext.fileTypes[0].hasTabularFile ? (
               <TabPane
