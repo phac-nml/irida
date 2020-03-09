@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
-import { Alert, Button, Form, Icon, Input } from "antd";
-import { grey6 } from "../styles/colors";
+import { Alert, Button, Form, Input } from "antd";
+import { blue6, grey1 } from "../styles/colors";
+import { IconLocked, IconUser } from "../components/icons/Icons";
 
 function LoginPage({ form }) {
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,8 @@ function LoginPage({ form }) {
           })(
             <Input
               name="username"
-              prefix={<Icon type="user" style={{ color: grey6 }} />}
+              style={{ backgroundColor: grey1 }}
+              prefix={<IconUser style={{ color: blue6 }} />}
             />
           )}
         </Form.Item>
@@ -66,7 +68,8 @@ function LoginPage({ form }) {
           })(
             <Input
               name="password"
-              prefix={<Icon type="lock" style={{ color: grey6 }} />}
+              style={{ backgroundColor: grey1 }}
+              prefix={<IconLocked style={{ color: blue6 }} />}
               type="password"
             />
           )}

@@ -32,7 +32,8 @@ import {
   SwapOutlined,
   SyncOutlined,
   TableOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -44,6 +45,8 @@ import { blue6 } from "../../styles/colors";
  * Passing `props` in and spreading them allows any attribute to be passed
  * along to the icon (e.g. classes, styles, etc...).
  */
+
+export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
 
