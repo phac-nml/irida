@@ -81,13 +81,11 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 12L, "");
 		assertTrue("Page title should equal", page.comparePageTitle("Bio Hansel Information"));
-		assertTrue("Has vertical tabs for bio_hansel results and output files", page.hasSideBarTabLinks());
 
 		assertTrue("Has 5 list items for Bio Hansel Information", page.expectedNumberOfListItemsEqualsActual(5));
 
-		page = AnalysisDetailsPage.initPage(driver(), 12L, "biohansel/file_preview");
+		page = AnalysisDetailsPage.initPage(driver(), 12L, "output");
 		assertTrue("Page title should equal", page.comparePageTitle("Output File Preview"));
-		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be a download button for the file that is displayed",
@@ -133,7 +131,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		// Has output files
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "tree/file_preview");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
@@ -141,7 +139,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 				page.downloadOutputFileButtonVisible());
 
 		// Has no output files
-		page = AnalysisDetailsPage.initPage(driver(), 10L, "tree/file_preview");
+		page = AnalysisDetailsPage.initPage(driver(), 10L, "output");
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be no output files", 0, page.getNumberOfFilesDisplayed());
 		assertEquals("Has a no output files alert", "No outputs available to display", page.getWarningAlertText());
@@ -155,7 +153,6 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Submissions with trees and not sistr or biohansel
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
 		assertTrue("Page title should equal", page.comparePageTitle("Tree Preview"));
-		assertTrue("Has sidebar tab links", page.hasSideBarTabLinks());
 		assertTrue("Has horizontal tab links", page.hasHorizontalTabLinks());
 
 		// Completed submission should not display steps component
@@ -282,7 +279,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
 		assertTrue("Page title should equal", page.comparePageTitle("Tree Preview"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 4L, "tree/file_preview");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
 		assertTrue("Page title should equal", page.comparePageTitle("Output File Preview"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");

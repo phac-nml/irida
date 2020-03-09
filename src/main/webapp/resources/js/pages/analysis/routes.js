@@ -13,11 +13,6 @@ export const ANALYSIS = {
   ERROR: "error"
 };
 
-export const BIOHANSEL = {
-  INFO: "info",
-  FILE_PREVIEW: "file_preview"
-};
-
 export const ERROR = {
   JOB_ERROR_INFO: "job-error-info",
   GALAXY_PARAMETERS: "galaxy-parameters",
@@ -43,7 +38,3 @@ export const SISTR = {
   CITATION: "citation"
 };
 
-export const TREE = {
-  PREVIEW: "preview",
-  FILE_PREVIEW: "file_preview"
-};
