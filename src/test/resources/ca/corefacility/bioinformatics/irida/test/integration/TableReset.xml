@@ -23,7 +23,7 @@
 	<sample />
 	
 	<sequencing_run />
-	<miseq_run />
+	<sequencing_run_properties />
 	<project />
 	<related_project />
 
@@ -108,7 +108,7 @@
 	<project_sample_AUD />
 	<project_user_AUD />
 	<sequencing_run_AUD />
-	<miseq_run_AUD />
+	<sequencing_run_properties_AUD />
 	<sequence_file_AUD />
 	<sequence_file_properties_AUD />
 	<sample_sequencingobject_AUD />
