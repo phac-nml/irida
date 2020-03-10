@@ -17,7 +17,12 @@
                         <dt class="run-detail-key" th:text="#{sequencingruns.details.description}">_Description_</dt>
                         <dd class="run-detail-value" th:if="${run.description}" th:text="${run.description}">_Description_</dd>
                     </dl>
-                    <div th:replace="sequencingRuns/sequencers :: ${run.sequencerType} (${run})"></div>
+                    <div>
+                      <dl class="run-detail" th:each="kv : ${run.optionalProperties}">
+                        <dt class="run-detail-key" th:text="${kv.key}">_Description_</dt>
+                        <dd class="run-detail-value" th:text="${kv.value}">_Description_</dd>
+                    </dl>
+                    </div>
                 </div>
             </div>
         </div>

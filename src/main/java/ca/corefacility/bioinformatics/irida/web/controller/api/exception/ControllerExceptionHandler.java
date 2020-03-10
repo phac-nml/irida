@@ -201,7 +201,7 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ErrorResponse> handleInvalidJsonException(HttpMessageNotReadableException e) {
-		logger.debug("Client attempted to send invalid JSON.");
+		logger.debug("Client attempted to send invalid JSON.", e);
 		String message = "Your request could not be parsed.";
 		Throwable cause = e.getCause();
 		ErrorResponse errorResponse = new ErrorResponse();
