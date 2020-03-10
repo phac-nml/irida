@@ -111,11 +111,21 @@ public class RESTSampleAssemblyController {
 		return modelMap;
 	}
 
+	/**
+	 * Generate the links for a usual {@link GenomeAssembly}
+	 *
+	 * @param assembly the assembly to get links for
+	 * @param sampleId the sampleid associaed with the assembly
+	 * @return a collection of links
+	 */
 	private Collection<Link> getLinksForAssembly(GenomeAssembly assembly, Long sampleId) {
 		List<Link> links = new ArrayList<>();
+
+		//link to the resource itself
 		links.add(linkTo(methodOn(RESTSampleAssemblyController.class).readAssemblyForSample(sampleId,
 				assembly.getId())).withSelfRel());
 
+		// if this assembly came from an analysis, link to it
 		if (assembly instanceof GenomeAssemblyFromAnalysis) {
 			GenomeAssemblyFromAnalysis analysisAssembly = (GenomeAssemblyFromAnalysis) assembly;
 
