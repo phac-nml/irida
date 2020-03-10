@@ -42,9 +42,6 @@ import com.google.common.collect.ImmutableMap;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunIT {
 
-	// TODO: When more run types are available test that they are represented in
-	// listing and reading
-
 	@Test
 	public void testListRuns() {
 		asAdmin().expect().and().body("resource.resources.description", hasItems("run 1", "run 2", "run 3")).and()
@@ -69,27 +66,37 @@ public class SequencingRunIT {
 	public void testCreateRunAsAdminSucceed() {
 		Map<String, String> run = createRun();
 		asAdmin().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
-				.post("/api/sequencingrun/miseqrun");
+				.post("/api/sequencingrun");
 	}
 
 	@Test
 	public void testCreateRunAsUserSuccess() {
 		Map<String, String> run = createRun();
 		asUser().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
-				.post("/api/sequencingrun/miseqrun");
+				.post("/api/sequencingrun");
 	}
 
 	@Test
 	public void testCreateRunAsSequencerSucceed() {
 		Map<String, String> run = createRun();
 		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
-				.post("/api/sequencingrun/miseqrun");
+				.post("/api/sequencingrun");
 	}
 
 	@Test
-	public void testPostSequencingRunFail() {
+	public void testCreateLegacyRunAsAdminSucceed() {
 		Map<String, String> run = createRun();
-		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED).when()
+		run.remove("sequencerType");
+		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
+				.post("/api/sequencingrun/miseqrun");
+	}
+
+
+	@Test
+	public void testPostSequencingRunBadTypeFail() {
+		Map<String, String> run = createRun();
+		run.replace("sequencerType", "something bad");
+		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_BAD_REQUEST).when()
 				.post("/api/sequencingrun");
 	}
 
@@ -148,6 +155,7 @@ public class SequencingRunIT {
 		run.put("workflow", "a test workflow");
 		run.put("description", "a cool miseq run");
 		run.put("layoutType", "SINGLE_END");
+		run.put("sequencerType", "miseq");
 		return run;
 	}
 }
