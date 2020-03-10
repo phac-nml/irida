@@ -15,7 +15,6 @@ import { SPACE_XS } from "../../../../styles/spacing";
 import { downloadFilesAsZip, downloadOutputFile } from "../../../../apis/analysis/analysis";
 import { IconFile } from "../../../../components/icons/Icons";
 
-
 const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
 const AnalysisJsonPreview = React.lazy(() => import("../AnalysisJsonPreview"));
 
@@ -120,14 +119,20 @@ export default function OutputFilePreview() {
     return textOutput;
   }
 
+  function createDownloadAllButton() {
+    return (
+      <div style={{display: "flex", flexDirection: "row-reverse" }}>
+        <Dropdown.Button id="t-download-all-files-btn"  onClick={() => downloadFilesAsZip(analysisContext.analysis.identifier)} overlay={downloadFilesMenu()}>
+          <IconFile />
+          {i18n("AnalysisOutputs.downloadAllFiles")}
+        </Dropdown.Button>
+      </div>);
+  }
+
   return analysisOutputsContext.outputs !== null ? (
-    <TabPaneContent title={i18n("AnalysisOutputs.outputFilePreview")}>
+    <TabPaneContent actionButton={createDownloadAllButton()} title={i18n("AnalysisOutputs.outputFilePreview")}>
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
-          <Dropdown.Button id="t-download-all-files-btn" style={{ marginBottom: SPACE_XS }} onClick={() => downloadFilesAsZip(analysisContext.analysis.identifier)} overlay={downloadFilesMenu()}>
-            <IconFile />
-            {i18n("AnalysisOutputs.downloadAllFiles")}
-          </Dropdown.Button>
 
           <Tabs defaultActiveKey="1" animated={false}>
             {analysisOutputsContext.fileTypes[0].hasTabularFile ? (

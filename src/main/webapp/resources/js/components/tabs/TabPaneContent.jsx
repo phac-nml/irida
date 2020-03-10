@@ -18,6 +18,7 @@ const Column = styled(Col)`
 /**
  * Stateless UI component for creating vertical tabs
  * @param {string} title - title for tab
+ * @param {Element} actionButton - button lined up horizontally with title
  * @param {number} xs - width of container for screen <576px
  * @param {number} xl - width of container for screen >=1200px
  * @param {number} xxl - width of container for screen >=1600px
@@ -29,6 +30,7 @@ const Column = styled(Col)`
 
 export function TabPaneContent({
   title,
+  actionButton,
   xs = 24,
   xl = 18,
   xxl = 12,
@@ -40,6 +42,7 @@ export function TabPaneContent({
       <PageHeader
         style={{ padding: 0, paddingBottom: SPACE_MD }}
         title={title}
+        extra={actionButton}
         {...props}
       />
       {children}
@@ -50,6 +53,8 @@ export function TabPaneContent({
 TabPaneContent.propTypes = {
   /*title to display in tab*/
   title: PropTypes.string,
+  /*option button to display on header line*/
+  actionButton: PropTypes.object,
   /*number of columns (width for different screen sizes)*/
   xs: PropTypes.number,
   xl: PropTypes.number,
