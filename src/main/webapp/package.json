@@ -1,15 +1,11 @@
 {
   "name": "irida-ui",
   "version": "1.0.0",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "webpack --env.mode production",
     "start": "webpack --env.mode development",
     "clean": "rm -r node* resources/dist/"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "precise-commits --staged"
-    }
   },
   "browserslist": [
     "last 2 Chrome versions",
@@ -19,11 +15,10 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
-    "@ant-design/icons": "^4.0.0-rc.0",
+    "@ant-design/icons": "^4.0.2",
     "@fortawesome/fontawesome-free": "^5.12.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
-    "@fortawesome/react-fontawesome": "^0.1.8",
     "@reach/router": "^1.2.1",
     "ag-grid-community": "^22.1.1",
     "ag-grid-react": "^22.1.1",
@@ -118,13 +113,10 @@
     "eslint-plugin-react-hooks": "^2.3.0",
     "expose-loader": "^0.7.5",
     "file-loader": "^5.0.2",
-    "husky": "^4.2.3",
-    "lint-staged": "^9.5.0",
     "mini-css-extract-plugin": "^0.8.1",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
-    "precise-commits": "^1.0.2",
     "prettier": "^1.19.1",
     "resolve-url-loader": "^3.1.1",
     "sass-loader": "^8.0.0",
