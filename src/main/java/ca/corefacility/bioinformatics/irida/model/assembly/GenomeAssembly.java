@@ -119,6 +119,10 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 		return Objects.hash(id, createdDate);
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
