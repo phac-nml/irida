@@ -30,7 +30,6 @@ function LoginPage() {
             </>
           }
           showIcon
-          closable
         />
       ) : null}
       <LoginFrom />
