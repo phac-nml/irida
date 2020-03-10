@@ -42,6 +42,12 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id="t-download-all-files-btn")
 	private List<WebElement> downloadAllFilesButton;
 
+	@FindBy(className="ant-dropdown-trigger")
+	private List<WebElement> downloadIndividualFilesMenuButton;
+
+	@FindBy(className="ant-dropdown-menu-vertical")
+	private List<WebElement> downloadIndividualFilesMenu;
+
 	@FindBy(className="ant-steps")
 	private List<WebElement> analysisSteps;
 
@@ -247,6 +253,16 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public boolean downloadAllFilesButtonVisible() {
 		return downloadAllFilesButton.size() == 1;
+	}
+
+	public boolean downloadIndividualFilesMenuButtonVisible() {
+		return downloadIndividualFilesMenuButton.size() == 1;
+	}
+
+	public boolean downloadIndividualFilesMenuVisible() {
+		downloadIndividualFilesMenuButton.get(0).click();
+		waitForTime(500);
+		return downloadIndividualFilesMenu.get(0).isDisplayed();
 	}
 
 	/**

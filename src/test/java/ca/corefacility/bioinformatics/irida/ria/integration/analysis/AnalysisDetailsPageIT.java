@@ -135,6 +135,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
+		assertTrue("There should be exactly one download individual files dropdown button", page.downloadIndividualFilesMenuButtonVisible());
+		assertTrue("There should be exactly one download individual files dropdown menu", page.downloadIndividualFilesMenuVisible());
 		assertTrue("There should be a download button for the file that is displayed",
 				page.downloadOutputFileButtonVisible());
 

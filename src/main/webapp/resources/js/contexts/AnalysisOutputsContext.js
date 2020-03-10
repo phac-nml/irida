@@ -15,6 +15,7 @@ const initialContext = {
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
+const blacklistExtSet = new Set(["zip","pdf", "html", "xlsx"])
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 
@@ -46,7 +47,7 @@ function AnalysisOutputsProvider(props) {
 
           if (!hasTextFile) {
             hasTextFile =
-              !tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt);
+              !tabExtSet.has(el.fileExt) && !jsonExtSet.has(el.fileExt) && !blacklistExtSet.has(el.fileExt);
           }
         });
       }
@@ -73,7 +74,8 @@ function AnalysisOutputsProvider(props) {
         analysisOutputsContext,
         getAnalysisOutputs,
         tabExtSet,
-        jsonExtSet
+        jsonExtSet,
+        blacklistExtSet
       }}
     >
       {props.children}
