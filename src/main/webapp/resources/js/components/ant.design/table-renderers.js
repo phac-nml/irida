@@ -29,8 +29,10 @@ export const nameColumnFormat = ({ url }) => {
   };
 };
 
-export const dateColumnFormat = () => ({
+export const dateColumnFormat = ({ className }) => ({
   sorter: true,
   width: 230,
-  render: date => formatInternationalizedDateTime(date)
+  render: date => (
+    <span className={className}>{formatInternationalizedDateTime(date)}</span>
+  )
 });

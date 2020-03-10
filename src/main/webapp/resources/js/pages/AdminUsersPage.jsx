@@ -1,17 +1,17 @@
 import React, { useContext } from "react";
 import { render } from "react-dom";
-import { PageWrapper } from "../../components/page/PageWrapper";
+import { PageWrapper } from "../components/page/PageWrapper";
 import {
   PagedTable,
   PagedTableContext,
   PagedTableProvider
-} from "../../components/ant.design/PagedTable";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { AddNewButton } from "../../components/Buttons/AddNewButton";
-import { dateColumnFormat } from "../../components/ant.design/table-renderers";
+} from "../components/ant.design/PagedTable";
+import { setBaseUrl } from "../utilities/url-utilities";
+import { AddNewButton } from "../components/Buttons/AddNewButton";
+import { dateColumnFormat } from "../components/ant.design/table-renderers";
 import { Button, Checkbox } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { setUsersDisabledStatus } from "../../apis/users/users";
+import { setUsersDisabledStatus } from "../apis/users/users";
 
 function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
@@ -37,13 +37,17 @@ function UsersTable() {
       }
     },
     {
-      title: i18n("users.username"),
+      title: <span className="t-username-col">{i18n("users.username")}</span>,
       key: "username",
       dataIndex: "name",
       sorter: true,
       fixed: "left",
       render(text, full) {
-        return <a href={setBaseUrl(`users/${full.id}`)}>{text}</a>;
+        return (
+          <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
+            {text}
+          </a>
+        );
       }
     },
     {
@@ -87,15 +91,15 @@ function UsersTable() {
       }
     },
     {
-      ...dateColumnFormat(),
+      ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
       title: i18n("users.created"),
       dataIndex: "createdDate"
     },
     {
-      ...dateColumnFormat(),
+      ...dateColumnFormat({ className: "t-modified" }),
       key: "lastLogin",
-      title: i18n("users.last-login"),
+      title: <span className="t-modified-col">{i18n("users.last-login")}</span>,
       dataIndex: "lastLogin"
     },
     {
@@ -119,7 +123,7 @@ function UsersTable() {
   );
 }
 
-function UsersPage() {
+function AdminUsersPage() {
   return (
     <PageWrapper
       title={i18n("UsersPage.title")}
@@ -137,60 +141,4 @@ function UsersPage() {
   );
 }
 
-render(<UsersPage />, document.querySelector("#react-root"));
-
-// import "../../vendor/datatables/datatables";
-// import {
-//   createItemLink,
-//   generateColumnOrderInfo,
-//   tableConfig
-// } from "../../utilities/datatables-utilities";
-// import { formatDate } from "../../utilities/date-utilities";
-//
-// /*
-// Get the table headers and create a look up table for them.
-// This give the row name in snake case and its index.
-//  */
-// let COLUMNS = generateColumnOrderInfo();
-//
-// const config = Object.assign(tableConfig, {
-//   ajax: window.PAGE.urls.table,
-//   order: [[COLUMNS.USERNAME, "desc"]],
-//   columnDefs: [
-//     {
-//       targets: [COLUMNS.USERNAME],
-//       render(data, type, full) {
-//         return createItemLink({
-//           url: `${window.PAGE.urls.link}${full.id}`,
-//           label: data
-//         });
-//       }
-//     },
-//     {
-//       targets: [COLUMNS.EMAIL],
-//       render(data) {
-//         return `<a href="mailto:${data}" class="btn btn-link">${data}</a>`;
-//       }
-//     },
-//     {
-//       targets: [COLUMNS.CREATED_DATE],
-//       render(data) {
-//         const date = formatDate({ date: data });
-//         return `<time>${date}</time>`;
-//       }
-//     },
-//     {
-//       targets: [COLUMNS.LAST_LOGIN],
-//       render(data) {
-//         if (data != null) {
-//           const date = formatDate({ date: data });
-//           return `<time class="last-login">${date}</time>`;
-//         } else {
-//           return "";
-//         }
-//       }
-//     }
-//   ]
-// });
-//
-// $("#usersTable").DataTable(config);
+render(<AdminUsersPage />, document.querySelector("#react-root"));
