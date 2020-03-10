@@ -14,7 +14,8 @@ Changes
 * [Developer]: Added Apache 2.0 licence information to `package.json`.
 * [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
 * [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
-* [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files.
+* [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
+* [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
 * [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
 
 19.09 to 20.01
