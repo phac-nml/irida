@@ -1,15 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UsersPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UsersPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,8 +25,8 @@ public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 	private UsersPage usersPage;
 
 	@Before
-	public void setUpTest() {
-		LoginPage.loginAsManager(driver());
+	public void setUp() {
+		LoginPage.loginAsAdmin(driver());
 		usersPage = new UsersPage(driver());
 	}
 

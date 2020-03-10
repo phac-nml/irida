@@ -62,7 +62,7 @@ public class UsersController {
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
-	private List<Locale> locales;
+	private final List<Locale> locales;
 
 	private final UserService userService;
 	private final ProjectService projectService;
@@ -93,6 +93,7 @@ public class UsersController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String getUsersPage() {
 		return USERS_PAGE;
 	}
@@ -243,11 +244,7 @@ public class UsersController {
 
 		if (isAdmin(principal)) {
 			logger.debug("User is admin");
-			if (!Strings.isNullOrEmpty(enabled)) {
-				updatedValues.put("enabled", true);
-			} else {
-				updatedValues.put("enabled", false);
-			}
+			updatedValues.put("enabled", !Strings.isNullOrEmpty(enabled));
 
 			if (!Strings.isNullOrEmpty(systemRole)) {
 				Role newRole = Role.valueOf(systemRole);
