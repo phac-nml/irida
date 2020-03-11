@@ -90,7 +90,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id="t-phylocanvas-wrapper")
 	private WebElement phylocanvasWrapper;
 
-	@FindBy(id="__canvas")
+	@FindBy(id="phyloCanvasDiv__canvas")
 	private WebElement phyloTree;
 
 	@FindBy(id="t-citation")
