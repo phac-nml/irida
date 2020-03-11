@@ -31,8 +31,14 @@ function UsersTable() {
       fixed: "left",
       sorter: true,
       render(text, full) {
+        // Don't let the current user disabled themselves!
+        const disabled = window.TL._USER.username === full.username;
         return (
-          <Checkbox checked={full.enabled} onChange={() => updateUser(full)} />
+          <Checkbox
+            checked={full.enabled}
+            onChange={() => updateUser(full)}
+            disabled={disabled}
+          />
         );
       }
     },
