@@ -16,6 +16,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.AdminUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
 
+/**
+ * Handles asynchronous requests for the administration users table.
+ */
 @RestController
 @RequestMapping("/ajax/users")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
