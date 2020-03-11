@@ -1,4 +1,5 @@
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * Check the status of a specific Remote API.
@@ -7,6 +8,6 @@ import axios from "axios";
  */
 export function checkConnectionStatus({ id }) {
   return axios
-    .get(`ajax/remote_api/status/${id}`)
+    .get(setBaseUrl(`ajax/remote_api/status/${id}`))
     .then(({ data }) => data === "valid_token");
 }
