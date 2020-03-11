@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	 * @return file size
 	 * @throws IOException if the file cannot be read
 	 */
+	@JsonIgnore
 	public long getFileSizeBytes() throws IOException {
 		return Files.size(getFile());
 	}
@@ -95,6 +97,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	 *
 	 * @return A human-readable file size.
 	 */
+	@JsonIgnore
 	public String getFileSize() {
 		String size = "N/A";
 		try {
