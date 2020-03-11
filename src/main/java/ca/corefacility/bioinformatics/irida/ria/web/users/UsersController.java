@@ -36,8 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -443,34 +441,6 @@ public class UsersController {
 
 		return returnView;
 	}
-
-	/**
-	 * Get a list of users based on search criteria.
-	 *
-	 * @param params {@link DataTablesParams} for the current Users DataTables.
-	 * @param locale {@link Locale}
-	 * @return {@link DataTablesResponse} of the filtered users list.
-	 */
-	//	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	//	public @ResponseBody
-	//	DataTablesResponse getAjaxUserList(@DataTablesRequest DataTablesParams params, Locale locale) {
-	//
-	//		Page<User> userPage = userService.search(UserSpecification.searchUser(params.getSearchValue()),
-	//				PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-	//
-	//		List<DataTablesResponseModel> usersData = new ArrayList<>();
-	//		for (User user : userPage) {
-	//			// getting internationalized system role from the message source
-	//			String roleMessageName = "systemrole." + user.getSystemRole()
-	//					.getName();
-	//			String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-	//
-	//			usersData.add(new DTUser(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(),
-	//					user.getEmail(), systemRole, user.getCreatedDate(), user.getModifiedDate(), user.getLastLogin()));
-	//		}
-	//
-	//		return new DataTablesResponse(params, userPage, usersData);
-	//	}
 
 	/**
 	 * Check that username not already taken
