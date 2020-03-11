@@ -2,6 +2,7 @@ import React from "react";
 import { Input, Menu } from "antd";
 import { IconFolder } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { grey1 } from "../../styles/colors";
 
 const { Item, ItemGroup, SubMenu } = Menu;
 
@@ -9,14 +10,15 @@ export function MainNavigation({}) {
   return (
     <div
       style={{
-        backgroundColor: "rgb(5,21,41)",
         display: "flex",
-        flexDirection: "row",
-        alignContent: "center",
-        justifyContent: "space-between"
+        alignItems: "center",
+        height: 47,
+        justifyContent: "space-between",
+        backgroundColor: grey1,
+        borderBottom: `1px solid rgb(240, 240, 240)`
       }}
     >
-      <Menu mode="horizontal" theme={"dark"}>
+      <Menu mode="horizontal">
         <Item>
           <a href={setBaseUrl("")}>
             <img
@@ -53,15 +55,11 @@ export function MainNavigation({}) {
             </ItemGroup>
           ) : null}
         </SubMenu>
-        <Item
-          style={{
-            border: `1px solid orange`,
-            height: 46,
-            display: "flex",
-            alignItems: "center"
-          }}
-        >
-          <Input.Search />
+      </Menu>
+      <Input.Search style={{ width: 200 }} />
+      <Menu mode="horizontal">
+        <Item>
+          <a href="/logout">LOGOUT</a>
         </Item>
       </Menu>
     </div>

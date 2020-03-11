@@ -20,13 +20,11 @@ __webpack_public_path__ = `dist/`;
 export function PageHeader({ children }) {
   return (
     <Layout>
-      <div>
-        <MainNavigation />
-        <Breadcrumbs crumbs={window.breadcrumbs || []} />
-        <Session />
-        <Notifications />
-        <GalaxyAlert />
-      </div>
+      <MainNavigation />
+      <Breadcrumbs crumbs={window.breadcrumbs || []} />
+      <Session />
+      <Notifications />
+      <GalaxyAlert />
       <Content>{children}</Content>
     </Layout>
   );
