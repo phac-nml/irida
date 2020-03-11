@@ -11,6 +11,7 @@ import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { blue6 } from "../../../../styles/colors";
 
 const { Search } = Input;
 
@@ -65,6 +66,7 @@ export function AnalysisSampleRenderer() {
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-paired-end-sample-name"
+                    style={{color: blue6}}
                   >
                     {item.sampleName}
                   </a>

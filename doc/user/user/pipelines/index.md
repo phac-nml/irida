@@ -159,13 +159,13 @@ You can either click on the ![download-icon](images/download-icon.png) icon to d
 The analysis page shows you more detailed information about your pipeline submission, including the names of the files that were produced by the analysis (on the Output File Preview page), a preview of the outputs (if available), and some tabs to view more details about how the pipeline was submitted and for sharing results:
 
 ![Analysis results page.](images/analysis-results-page.png)
-<figcaption>Example SNVPhyl pipeline phylogenetic tree preview</figcaption>
+<figcaption>Example `SNVPhyl` pipeline phylogenetic tree preview</figcaption>
 <br/><br/>
 
 ![view-results-refseq-masher](images/view-results-refseq-masher.png)
 <figcaption>Example `refseq_masher` tabular results preview</figcaption>
 <br/><br/>
-To download output files, you can use the "Output File Preview" section from this page.  To download an individual file, click on the file name. If the file does not have an available output preview it can be downloaded by clicking the `...` next to the Download All Files button and selecting the file to download.  To download *all* the outputs produced by the pipeline, you can click on the "Download All Files" button.
+To download output files, you can click on the `Output Files` tab. To download an individual file, click on the file name. If the file does not have an available output preview it can be downloaded by clicking the `...` next to the Download All Files button and selecting the file to download.  To download *all* the outputs produced by the pipeline, you can click on the "Download All Files" button.
 
 ![Analysis results download.](images/analysis-results-download.png)
 
@@ -219,7 +219,7 @@ If an analysis output file is small enough like this log file, it will be loaded
 
 <figcaption>Notice that the `3.0 kB / 3.0 kB (100%)` indicates that 100% of the file has been loaded.</figcaption>
 
-If an analysis output file is fairly large like this log file, it will be loaded in chunks as needed for viewing:
+If an analysis output file is fairly large like this log file, it will be loaded as you scroll to the bottom of the file preview:
 
 ![view-results-plain-text-shovill-log]
 <figcaption>Notice that the `8.0 kB / 212.0 kB (3.8%)` indicates that only 3.8% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>

@@ -89,7 +89,7 @@ Once the pipeline is complete, you will see the generated phylogenetic tree with
 
 ![snvphyl-results][]
 
-You can view the `SNVPhyl` analysis output files by selecting the Output File Preview tab. Note that not all files have an available preview and as such are not displayed in the Output File Preview but are downloaded when selecting the `Download All Files` button.
+You can view the `SNVPhyl` analysis output files by selecting the `Output Files` tab. Note that not all files have an available preview and as such are not displayed in the Output File Preview but are downloaded when selecting the `Download All Files` button.
 
 ![snvphyl-output-files][]
 

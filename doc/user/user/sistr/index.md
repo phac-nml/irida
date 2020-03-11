@@ -52,9 +52,9 @@ A successful SISTR run should produce the following page as output. There are th
 
 ![sistr-results.png](images/sistr-results.png)
 
-The results are broken up into four different sections (SISTR Information, Serovar Predictions, cgMLST330, and Mash).
+The results are broken up into three different sections (SISTR Information, cgMLST330, and Mash).
 
-To view the output files and/or download the outputs, click the Output File Preview tab.
+To view the output files and/or download the outputs, click the Output Files tab.
 
 ![sistr-results-outputs.png](images/sistr-results-outputs.png)
 
@@ -70,7 +70,7 @@ Basic information on the sample and quality of the SISTR results.
 * **Quality Control Status**: A value of `PASS`, `FAIL`, or `WARNING` depending on the quality of the input genome as determined by SISTR.
 * **Quality Control Details**: In the case of a status of `WARNING` or `FAIL`, the particular reason why these results did not pass.
 
-#### 2. Serovar Predictions
+Serovar Predictions:
 
 The *in silico* serovar predictions generated from SISTR.
 
@@ -82,7 +82,7 @@ The *in silico* serovar predictions generated from SISTR.
 * **H2**: The H2 antigen based of off the detected *fljB* allele. If absent, a `-` is reported.
 * **O-antigen**: The O-antigen prediction (inferred from the overall serovar prediction).
 
-#### 3. cgMLST330
+#### 2. cgMLST330
 
 The results of additional predictions made using the SISTR cgMLST330 schema.
 
@@ -92,7 +92,7 @@ The results of additional predictions made using the SISTR cgMLST330 schema.
 * **Percent matching**: The percent of alleles perfectly matching the closest genome (e.g., _100% * Alleles matching genome/330_).
 * **cgMLST Sequence Type**: A SISTR Sequence Type number associated with the particular cgMLST profile. A sequence type will only be assigned when the full complement of 330 cgMLST genes are found (whether a perfect match or an imperfect but non-truncated match).
 
-#### 4. Mash
+#### 3. Mash
 
 The results of predictions made through comparisons using the software [Mash][]. Generally, cgMLST results are preferred over Mash.
 
