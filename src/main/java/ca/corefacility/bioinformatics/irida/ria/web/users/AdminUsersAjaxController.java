@@ -47,6 +47,8 @@ public class AdminUsersAjaxController {
 	 *
 	 * @param id        - the identifier for the {@link User} whom status is being updated.
 	 * @param isEnabled - {@link Boolean} value whether the {@link User} should be enabled or not.
+	 * @param locale    - the {@link Locale} of the current user.
+	 * @return {@link ResponseEntity} internationalized response to the update
 	 */
 	@RequestMapping("/edit")
 	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
