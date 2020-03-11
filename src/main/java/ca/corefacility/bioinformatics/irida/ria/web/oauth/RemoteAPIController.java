@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -12,11 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,16 +27,16 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 /**
  * Controller handling basic operations for listing, viewing, adding, and
@@ -58,12 +58,11 @@ public class RemoteAPIController extends BaseController {
 	public static final String INVALID_OAUTH_TOKEN = "invalid_token";
 
 	private final String SORT_BY_ID = "id";
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "name", "clientId", "createdDate");
-	private static final String SORT_ASCENDING = "asc";
 
 	private final RemoteAPIService remoteAPIService;
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteAPITokenService tokenService;
+	private final UserService userService;
 	private final OltuAuthorizationController authController;
 	private final MessageSource messageSource;
 	private final Formatter<Date> dateFormatter;
@@ -71,16 +70,17 @@ public class RemoteAPIController extends BaseController {
 
 	// Map storing the message names for the
 	// getErrorsFromDataIntegrityViolationException method
-	private Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
+	private final Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
 			RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, new ExceptionPropertyAndMessage("serviceURI",
 					"remoteapi.create.serviceURIConflict"));
 
 	@Autowired
-	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
+	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService, UserService userService,
 			RemoteAPITokenService tokenService, OltuAuthorizationController authController, MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
 		this.projectRemoteService = projectRemoteService;
 		this.tokenService = tokenService;
+		this.userService = userService;
 		this.authController = authController;
 		this.messageSource = messageSource;
 		this.dateFormatter = new DateFormatter();
@@ -96,11 +96,16 @@ public class RemoteAPIController extends BaseController {
 
 	/**
 	 * Get the remote apis listing page
-	 * 
+	 *
+	 * @param model     {@link Model}
+	 * @param principal {@link Principal} currently logged in usef
 	 * @return The view name of the remote apis listing page
 	 */
 	@RequestMapping
-	public String list() {
+	public String list(Model model, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		model.addAttribute("isAdmin", user.getSystemRole()
+				.equals(Role.ROLE_ADMIN));
 		return CLIENTS_PAGE;
 	}
 
@@ -209,91 +214,6 @@ public class RemoteAPIController extends BaseController {
 	}
 
 	/**
-	 * Ajax request page for getting a list of all {@link RemoteAPI}s
-	 * 
-	 * @param start
-	 *            The start element of the page
-	 * @param length
-	 *            The page length
-	 * @param draw
-	 *            Whether to draw the table
-	 * @param sortColumn
-	 *            The column to sort on
-	 * @param direction
-	 *            The direction of the sort
-	 * @param searchValue
-	 *            The string search value for the table
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @param locale
-	 *            the locale specified by the browser.
-	 * @return a Map for the table
-	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxAPIList(@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = "0") Integer sortColumn,
-			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "asc") String direction,
-			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue, Principal principal, Locale locale) {
-
-		String sortString;
-
-		try {
-			sortString = SORT_COLUMNS.get(sortColumn);
-		} catch (IndexOutOfBoundsException ex) {
-			sortString = SORT_BY_ID;
-		}
-
-		Sort.Direction sortDirection = direction.equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-
-		int pageNum = start / length;
-
-		Page<RemoteAPI> search = remoteAPIService.search(RemoteAPISpecification.searchRemoteAPI(searchValue), pageNum,
-				length, sortDirection, sortString);
-
-		List<Map<String, String>> apiData = new ArrayList<>();
-		for (RemoteAPI api : search) {
-			Map<String, String> row = new HashMap<>();
-			row.put("id", api.getId().toString());
-			row.put("name", api.getName());
-			row.put("createdDate", dateFormatter.print(api.getCreatedDate(), locale));
-
-			apiData.add(row);
-		}
-
-		Map<String, Object> map = new HashMap<>();
-		map.put(DataTable.RESPONSE_PARAM_DRAW, draw);
-		map.put(DataTable.RESPONSE_PARAM_RECORDS_TOTAL, search.getTotalElements());
-		map.put(DataTable.RESPONSE_PARAM_RECORDS_FILTERED, search.getTotalElements());
-
-		map.put(DataTable.RESPONSE_PARAM_DATA, apiData);
-		return map;
-	}
-
-	/**
-	 * Check the currently logged in user's OAuth2 connection status to a given
-	 * API
-	 * 
-	 * @param apiId
-	 *            The ID of the api
-	 * @return "valid" or "invalid_token" message
-	 */
-	@RequestMapping("/status/{apiId}")
-	@ResponseBody
-	public String checkApiStatus(@PathVariable Long apiId) {
-		RemoteAPI api = remoteAPIService.read(apiId);
-
-		try {
-			projectRemoteService.getServiceStatus(api);
-			return VALID_OAUTH_CONNECTION;
-		} catch (IridaOAuthException ex) {
-			logger.debug("Can't connect to API: " + ex.getMessage());
-			return INVALID_OAUTH_TOKEN;
-		}
-	}
-
-	/**
 	 * Check the currently logged in user's OAuth2 connection status to a given
 	 * API and return the proper html to the user.
 	 *
@@ -302,7 +222,17 @@ public class RemoteAPIController extends BaseController {
 	 */
 	@RequestMapping("/status/web/{apiId}")
 	public String checkWebApiStatus(@PathVariable Long apiId) {
-		String status = checkApiStatus(apiId);
+		// TODO: This is to be removed when remote api details page is refactored
+		//       Use similar functionality in RemoteAPIAjaxController.
+		RemoteAPI api = remoteAPIService.read(apiId);
+		String status;
+		try {
+			projectRemoteService.getServiceStatus(api);
+			status = VALID_OAUTH_CONNECTION;
+		} catch (IridaOAuthException ex) {
+			logger.debug("Can't connect to API: " + ex.getMessage());
+			status = INVALID_OAUTH_TOKEN;
+		}
 		return "remote_apis/fragments.html :: #" + status;
 	}
 

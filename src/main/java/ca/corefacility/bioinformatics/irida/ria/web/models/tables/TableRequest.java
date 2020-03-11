@@ -56,6 +56,14 @@ public class TableRequest {
 		}
 	}
 
+	public Sort.Direction getSortDirection() {
+		return this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
+	}
+
+	public String getSortColumn() {
+		return sortColumn;
+	}
+
 	/**
 	 * Since we he need an actual {@link Sort} object and cannot pass this from the client, we create one from the
 	 * information fathered from the client Direction of sort Column (attribute) of sort
