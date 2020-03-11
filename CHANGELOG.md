@@ -14,6 +14,10 @@ Changes
 * [Developer]: Added Apache 2.0 licence information to `package.json`.
 * [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
 * [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
+* [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
+* [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
+* [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
+* [UI]: Updated Remote API Listing page to use Ant Design.
 
 19.09 to 20.01
 --------------
@@ -36,6 +40,7 @@ Changes
 * [UI/Developer]: Removed `marked`, `angular-marked`, `select2`, `angular-bootstrap` and `ng-file-upload` as bower dependencies.
 * [REST/Developer]: added the `/api/version` route to the REST API that returns the full version string.
 * [UI]: Fixed issue where issue where cart is not rendering to the full height of the page. (19.09.2)
+* [Developer]: `bower` completely removed.
 * [UI]: Updated and simplified associated project page.
 * [UI/Developer]: Removed old bootstrap customization files that are not used.
 * [Developer]: Upgraded Spring to 5.2.2.RELEASE, Spring Security to 5.2.1.RELEASE, Spring Security Oauth2 to 2.3.6.RELEASE, Hibernate to 5.4.7.Final, and Spring Data JPA to 2.2.0.RELEASE.
@@ -57,7 +62,7 @@ Changes
 * [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
 * [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
 * [UI/Developer]: Updated to V5 of styled-components.
-* [UI/Developer]: Update version of `babel` and `eslint`.
+* [UI/Developer]: Update version of babel and eslint.
 * [Documentation]: Fixed documentation link for developer authorization/oauth docs.
 * [Documentation]: Added info about upgrading to Tomcat 8.
 * [Documentation]: Added notice to upgrading guide about mysql 5.5 hibernate dialect.
@@ -103,6 +108,7 @@ Changes
 * [Developer]: Updated to node `v12.8.1`.
 * [Developer]: Updated `eslint` to fix security vulnerability.
 * [Admin]: Added NCBI Upload FTP option to disable/enable passive mode for FTP `ncbi.upload.ftp.passive`.
+* [Developer]: Complete removal of `bower`.
 
 19.01 to 19.05
 ---------------

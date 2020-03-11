@@ -29,7 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
-import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.*;
@@ -323,14 +326,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				ProjectRole.PROJECT_OWNER);
 		final Collection<UserGroupProjectJoin> groups = ugpjRepository.findGroupsByProjectAndProjectRole(project,
 				ProjectRole.PROJECT_OWNER);
-		if (usersForProjectByRole.size() + groups.size() > 1) {
-			// if there's more than one owner, no worries
-			return true;
-		} else {
-			// if there's only 1 owner, they're leaving a projcet without an
-			// owner!
-			return false;
-		}
+		// if there's more than one owner, no worries
+		// if there's only 1 owner, they're leaving a projcet without an
+		// owner!
+		return usersForProjectByRole.size() + groups.size() > 1;
 	}
 
 	/**
@@ -696,13 +695,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 			// get the projects for the samples
 			for (SampleSequencingObjectJoin s : samples) {
-				psjRepository.getProjectForSample(s.getSubject())
-						.forEach(p -> {
-							// p may be null if sample was removed from all projects
-							if (p != null) {
-								projects.add(p.getSubject());
-							}
-						});
+				if(s != null) {
+					psjRepository.getProjectForSample(s.getSubject())
+							.forEach(p -> {
+								// p may be null if sample was removed from all projects
+								if (p != null) {
+									projects.add(p.getSubject());
+								}
+							});
+				}
 			}
 		}
 

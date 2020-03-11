@@ -44,12 +44,12 @@ import com.google.common.base.Strings;
 @RestController
 @RequestMapping("/ajax/analyses")
 public class AnalysesAjaxController {
-	private AnalysisSubmissionService analysisSubmissionService;
-	private AnalysisTypesService analysisTypesService;
-	private ProjectService projectService;
-	private IridaWorkflowsService iridaWorkflowsService;
-	private MessageSource messageSource;
-	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
+	private final AnalysisSubmissionService analysisSubmissionService;
+	private final AnalysisTypesService analysisTypesService;
+	private final ProjectService projectService;
+	private final IridaWorkflowsService iridaWorkflowsService;
+	private final MessageSource messageSource;
+	private final UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
 
 	@Autowired
 	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
@@ -255,4 +255,3 @@ public class AnalysesAjaxController {
 		return analysisSubmissionService.getAnalysisServiceStatus();
 	}
 }
-

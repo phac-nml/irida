@@ -1,6 +1,32 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
-import ca.corefacility.bioinformatics.irida.exceptions.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -32,31 +58,11 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -92,15 +98,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private static final float RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.RUNNING);
 	private static final float FINISHED_RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.FINISHED_RUNNING);
 
-	private UserRepository userRepository;
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisSubmissionTemplateRepository analysisTemplateRepository;
-	private ProjectAnalysisSubmissionJoinRepository pasRepository;
+	private final UserRepository userRepository;
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
+	private final AnalysisSubmissionTemplateRepository analysisTemplateRepository;
+	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
 	private final IridaWorkflowsService iridaWorkflowsService;
-	private JobErrorRepository jobErrorRepository;
+	private final JobErrorRepository jobErrorRepository;
 
 	// required, but not constructor injected because we have circular dependencies :(
 	@Autowired
@@ -338,10 +344,35 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
+		checkNotNull(priority);
 		submission.setPriority(priority);
 
 		return super.update(submission);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updateEmailPipelineResult(AnalysisSubmission submission, boolean emailPipelineResult) {
+		submission.setEmailPipelineResult(emailPipelineResult);
+
+		return super.update(submission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName) {
+		checkNotNull(analysisName);
+		submission.setName(analysisName);
+
+		return super.update(submission);
+	}
+
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
@@ -690,7 +721,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
-			ExecutionManagerException, NoPercentageCompleteException {
+			ExecutionManagerException {
 		AnalysisSubmission analysisSubmission = read(id);
 		AnalysisState analysisState = analysisSubmission.getAnalysisState();
 

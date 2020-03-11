@@ -77,7 +77,7 @@ export function ProjectsTable() {
       search: state.search
     };
     getPagedProjectsForUser(params).then(data => {
-      setProjects(data.projects);
+      setProjects(data.models);
       setTotal(data.total);
       setLoading(false);
     });

@@ -16,7 +16,7 @@ module.exports = {
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
-  analysis: "./resources/js/pages/analysis/analysis.js",
+  analysis: "./resources/js/pages/analysis/index.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
@@ -48,7 +48,7 @@ module.exports = {
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-api-details":
     "./resources/js/pages/remote-apis/remote-api-details.js",
-  "remote-apis": "./resources/js/pages/remote-apis/remote-apis-list.js",
+  "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":

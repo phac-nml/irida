@@ -44,7 +44,9 @@ export function updateRemoteConnectionStatus($container, apiId) {
       try {
         // Update the DOM with an error message.
         $status.html(
-          `<span class="status-label api-error label label-danger"><i class="fa fa-exclamation-triangle spaced-right__sm fa-fw"></i>${window.PAGE.lang.errorText}</span>`
+          `<span class="status-label api-error label label-danger"><i class="fa fa-exclamation-triangle spaced-right__sm fa-fw"></i>${
+            window.PAGE.lang.errorText
+          }</span>`
         );
       } catch (e) {
         // Since this code is loaded onto multiple pages, this error is thrown so the developer

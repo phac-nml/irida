@@ -5,10 +5,8 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -27,13 +25,11 @@ public class SequencingRunControllerTest {
 
 	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
-	private MessageSource messageSource;
 
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
-		messageSource = mock(MessageSource.class);
 		controller = new SequencingRunController(sequencingRunService, objectService);
 	}
 
@@ -45,7 +41,7 @@ public class SequencingRunControllerTest {
 	@Test
 	public void testGetDetailsPage() throws IOException {
 		Long runId = 1L;
-		SequencingRun sequencingRunEntity = new MiseqRun(SequencingRun.LayoutType.PAIRED_END, "");
+		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 		ExtendedModelMap model = new ExtendedModelMap();
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
 
@@ -61,7 +57,7 @@ public class SequencingRunControllerTest {
 	public void testGetFilesPage() throws IOException {
 		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
-		SequencingRun sequencingRunEntity = new MiseqRun(SequencingRun.LayoutType.PAIRED_END, "");
+		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 
 		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 
