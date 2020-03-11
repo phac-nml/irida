@@ -2,10 +2,11 @@
  * Analysis related API functions
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const ANALYSES_URL = `/ajax/analyses`;
+const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
-const ANALYSIS_URL = `/ajax/analysis`;
+const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
 
 /*
  * Get all the data required for the analysis -> details page.
