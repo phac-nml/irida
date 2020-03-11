@@ -1,19 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -25,10 +14,6 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -36,20 +21,25 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.Lists;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
 	private ProjectRemoteService projectRemoteService;
 	private RemoteAPITokenService tokenService;
+	private UserService userService;
 	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
 
@@ -64,7 +54,8 @@ public class RemoteAPIControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
 		tokenService = mock(RemoteAPITokenService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, tokenService,
+		userService = mock(UserService.class);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService, tokenService,
 				authController, messageSource);
 		locale = LocaleContextHolder.getLocale();
 
@@ -72,43 +63,14 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testList() {
-		String list = remoteAPIController.list();
-		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAjaxList() {
-		int page = 0;
-		int size = 10;
-		int draw = 1;
-		int sortColumn = 0;
-		String direction = "asc";
-		String searchValue = "";
+		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
+		User user = new User();
+		user.setSystemRole(Role.ROLE_ADMIN);
 
-		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
-		api1.setId(1L);
-		RemoteAPI api2 = new RemoteAPI("api name 2", "http://nowhere", "another api", "client2", "secret2");
-		api2.setId(2L);
-
-		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
-
-		when(remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-				any(String.class))).thenReturn(apiPage);
-
-		Map<String, Object> ajaxAPIList = remoteAPIController.getAjaxAPIList(page, size, draw, sortColumn, direction,
-				searchValue, principal, locale);
-
-		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-				any(String.class));
-
-		assertNotNull(ajaxAPIList);
-		assertFalse(ajaxAPIList.isEmpty());
-
-		List<List<String>> apiList = (List<List<String>>) ajaxAPIList.get(DataTable.RESPONSE_PARAM_DATA);
-		assertEquals(2, apiList.size());
-
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+		String list = remoteAPIController.list(model, principal);
+		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
 	}
 
 	@Test
@@ -162,41 +124,10 @@ public class RemoteAPIControllerTest {
 
 		assertEquals(RemoteAPIController.ADD_API_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));
-		@SuppressWarnings("unchecked")
-		Map<String, String> errors = (Map<String, String>) model.get("errors");
+		@SuppressWarnings("unchecked") Map<String, String> errors = (Map<String, String>) model.get("errors");
 		assertTrue(errors.containsKey("serviceURI"));
 
 		verify(remoteAPIService).create(client);
-	}
-
-	@Test
-	public void testCheckApiStatusActive() {
-		Long apiId = 1L;
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		when(remoteAPIService.read(apiId)).thenReturn(client);
-		when(projectRemoteService.getServiceStatus(client)).thenReturn(true);
-		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
-
-		assertEquals(RemoteAPIController.VALID_OAUTH_CONNECTION, checkApiStatus);
-
-		verify(remoteAPIService).read(apiId);
-		verify(projectRemoteService).getServiceStatus(client);
-	}
-
-	@Test
-	public void testCheckApiStatusInactive() {
-		Long apiId = 1L;
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-
-		when(remoteAPIService.read(apiId)).thenReturn(client);
-		when(projectRemoteService.getServiceStatus(client)).thenThrow(new IridaOAuthException("invalid token", client));
-
-		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
-
-		assertEquals(RemoteAPIController.INVALID_OAUTH_TOKEN, checkApiStatus);
-
-		verify(remoteAPIService).read(apiId);
-		verify(projectRemoteService).getServiceStatus(client);
 	}
 
 	@Test(expected = IridaOAuthException.class)
