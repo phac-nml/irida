@@ -37,7 +37,11 @@ function UsersTable() {
       }
     },
     {
-      title: <span className="t-username-col">{i18n("users.username")}</span>,
+      title: (
+        <span className="t-username-col">
+          {i18n("AdminUsersTable.username")}
+        </span>
+      ),
       key: "username",
       dataIndex: "name",
       sorter: true,
@@ -51,19 +55,19 @@ function UsersTable() {
       }
     },
     {
-      title: i18n("users.firstName"),
+      title: i18n("AdminUsersTable.firstName"),
       key: "firstName",
       sorter: true,
       dataIndex: "firstName"
     },
     {
-      title: i18n("users.lastName"),
+      title: i18n("AdminUsersTable.lastName"),
       key: "lastName",
       sorter: true,
       dataIndex: "lastName"
     },
     {
-      title: i18n("users.email"),
+      title: i18n("AdminUsersTable.email"),
       key: "email",
       dataIndex: "email",
       render(text, full) {
@@ -71,7 +75,7 @@ function UsersTable() {
       }
     },
     {
-      title: i18n("users.role"),
+      title: i18n("AdminUsersTable.role"),
       key: "role",
       dataIndex: "role",
       sorter: true,
@@ -93,13 +97,17 @@ function UsersTable() {
     {
       ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
-      title: i18n("users.created"),
+      title: i18n("AdminUsersTable.created"),
       dataIndex: "createdDate"
     },
     {
       ...dateColumnFormat({ className: "t-modified" }),
       key: "lastLogin",
-      title: <span className="t-modified-col">{i18n("users.last-login")}</span>,
+      title: (
+        <span className="t-modified-col">
+          {i18n("AdminUsersTable.lastLogin")}
+        </span>
+      ),
       dataIndex: "lastLogin"
     },
     {
@@ -126,11 +134,11 @@ function UsersTable() {
 function AdminUsersPage() {
   return (
     <PageWrapper
-      title={i18n("UsersPage.title")}
+      title={i18n("AdminUsersPage.title")}
       headerExtras={
         <AddNewButton
           href={setBaseUrl(`users/create`)}
-          text={i18n("UsersPage.add")}
+          text={i18n("AdminUsersPage.add")}
         />
       }
     >
