@@ -24,7 +24,7 @@ const template = (keys, entry) => `
       "-"
     )}-translations" th:inline="javascript" th:fragment="i18n">
       window.translations = window.translations || [];
-      window.translations.push({
+      window.translations.unshift({
         ${keys.map(key => `"${key}": /*[[#{${key}}]]*/ ""`)}
       });
     </script>
