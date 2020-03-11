@@ -29,7 +29,7 @@ export const nameColumnFormat = ({ url }) => {
   };
 };
 
-export const dateColumnFormat = ({ className }) => ({
+export const dateColumnFormat = ({ className = "" } = {}) => ({
   sorter: true,
   width: 230,
   render: date => (
