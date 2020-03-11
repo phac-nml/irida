@@ -1,19 +1,11 @@
-import React, { useContext } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
+import React from "react";
+import { PagedTable } from "../../components/ant.design/PagedTable";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { Button, Table } from "antd";
+import { Button } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 export function ClientsTable() {
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange
-  } = useContext(PagedTableContext);
-
   const columnDefs = [
     {
       title: i18n("iridaThing.id"),
@@ -62,13 +54,7 @@ export function ClientsTable() {
         </Button>
       }
     >
-      <Table
-        columns={columnDefs}
-        loading={loading}
-        pagination={{ total, pageSize }}
-        dataSource={dataSource}
-        onChange={handleTableChange}
-      />
+      <PagedTable columns={columnDefs} />
     </PageWrapper>
   );
 }

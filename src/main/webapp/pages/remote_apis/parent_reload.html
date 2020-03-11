@@ -13,6 +13,11 @@
         modal.dataset.result = "success";
         modal.querySelector(".close").click();
       } else {
+        /*
+        Modal was the previous way of handling this.  Now we are opening a new window.
+        To communicate with the parent window (opener), we are posting a message to tell
+        them that the API has been connected.
+         */
         const opener = window.opener;
         if (opener) {
           opener.postMessage("remote_api_connect", /*[[@{/}]]*/ "/");

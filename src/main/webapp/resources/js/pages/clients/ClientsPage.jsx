@@ -2,10 +2,16 @@ import React from "react";
 import { render } from "react-dom";
 import { PagedTableProvider } from "../../contexts/PagedTableContext";
 import { ClientsTable } from "./ClientsTable";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
+/**
+ * React component to render the Remote API Clients page.
+ * @returns {*}
+ * @constructor
+ */
 export function ClientsPage({}) {
   return (
-    <PagedTableProvider url="clients/ajax/list">
+    <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>
       <ClientsTable />
     </PagedTableProvider>
   );

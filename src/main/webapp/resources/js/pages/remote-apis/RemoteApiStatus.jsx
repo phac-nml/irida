@@ -6,6 +6,15 @@ import { LoginOutlined } from "@ant-design/icons";
 import { IconLoading } from "../../components/icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
 
+/**
+ * React component to render the status of a Remote API.
+ * If the API is not connected it will present the user a button allowing
+ * them to connect.
+ * @param {object} api - details about the remote API
+ * @param {function} updateTable - function to update the table once the api has been updated
+ * @returns {*}
+ * @constructor
+ */
 export function RemoteApiStatus({ api, updateTable }) {
   const [loading, setLoading] = useState(true);
   const [validToken, setValidToken] = useState(false);

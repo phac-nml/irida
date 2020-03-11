@@ -70,7 +70,7 @@ public class RemoteAPIController extends BaseController {
 
 	// Map storing the message names for the
 	// getErrorsFromDataIntegrityViolationException method
-	private Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
+	private final Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
 			RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, new ExceptionPropertyAndMessage("serviceURI",
 					"remoteapi.create.serviceURIConflict"));
 
@@ -223,7 +223,7 @@ public class RemoteAPIController extends BaseController {
 	@RequestMapping("/status/web/{apiId}")
 	public String checkWebApiStatus(@PathVariable Long apiId) {
 		// TODO: This is to be removed when remote api details page is refactored
-		//       Use similar functionality in RemoateAPIAjaxController.
+		//       Use similar functionality in RemoteAPIAjaxController.
 		RemoteAPI api = remoteAPIService.read(apiId);
 		String status;
 		try {
