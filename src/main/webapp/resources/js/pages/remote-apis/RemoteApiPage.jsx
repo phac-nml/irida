@@ -6,6 +6,11 @@ import { AddNewButton } from "../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 
+/**
+ * React component to render Remote APIs page.
+ * @returns {*}
+ * @constructor
+ */
 export function RemoteApiPage({}) {
   return (
     <PageWrapper
