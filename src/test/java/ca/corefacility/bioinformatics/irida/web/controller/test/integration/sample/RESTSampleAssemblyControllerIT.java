@@ -21,7 +21,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -30,7 +29,9 @@ import static org.hamcrest.Matchers.hasItem;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sample/RESTSampleAssemblyControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class RESTSampleAssemblyControllerIT {
+/**
+ * IT test for the {@link RESTSampleAssemblyController}
+ */ public class RESTSampleAssemblyControllerIT {
 
 	@Test
 	public void testListAssemblies() {

@@ -25,6 +25,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for {@link RESTSampleAssemblyController}
+ */
 public class RESTSampleAssemblyControllerTest {
 	private RESTSampleAssemblyController controller;
 	private SampleService sampleService;
