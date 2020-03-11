@@ -9,10 +9,10 @@ import {
   updateAnnouncement
 } from "../../apis/announcements/announcements";
 import { CreateNewAnnouncement } from "./CreateNewAnnouncement";
-import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { AnnouncementsTable } from "./AnnouncementsTable";
+import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 
 /**
  * React component to render the administration announcements page.

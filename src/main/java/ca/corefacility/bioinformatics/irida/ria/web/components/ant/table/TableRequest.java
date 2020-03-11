@@ -1,20 +1,22 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.components.ant.table;
 
 import org.springframework.data.domain.Sort;
+
+import com.google.common.base.Strings;
 
 /**
  * Handles the conversion of the HttpRequestBody into an object.
  * This specifically has information need to handle the paging for the
  * Projects listing table in the UI - filter, search, sort.
  */
-public class ProjectsRequest {
+public class TableRequest {
 	private String search;
 	private int current;
 	private int pageSize;
 	private String sortField;
 	String sortDirection;
 
-	public ProjectsRequest() {
+	public TableRequest() {
 	}
 
 	public String getSearch() {
@@ -45,8 +47,18 @@ public class ProjectsRequest {
 		this.sortField = sortField;
 	}
 
+	public String getSortField() {
+		return sortField;
+	}
+
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
+	}
+
+	public Sort.Direction getSortDirection() {
+		return Strings.isNullOrEmpty(this.sortDirection) ?
+				Sort.Direction.ASC :
+				this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
 	}
 
 	/**
@@ -58,7 +70,7 @@ public class ProjectsRequest {
 	 * @return {@link Sort}
 	 */
 	public Sort getSort() {
-		Sort.Direction direction = this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		return Sort.by(new Sort.Order(direction, this.sortField));
+
+		return Sort.by(new Sort.Order(getSortDirection(), this.sortField));
 	}
 }

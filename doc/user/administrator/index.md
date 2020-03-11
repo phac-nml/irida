@@ -201,7 +201,7 @@ After being given the client credentials, go to the "Remote IRIDA Connections" p
 
 ![Remote API page](images/remote-api-dash.png)
 
-The Remote Connections page will display all currently available Remote Connections and their connection status with an IRIDA instance.
+The Remote Connections page will display all currently available Remote Connections, and their connection status with an IRIDA instance.
 
 To add a new connection, click the "Add Remote Connection" button:
 
