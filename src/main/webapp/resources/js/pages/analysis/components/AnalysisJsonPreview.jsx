@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, List, Row } from "antd";
+import { Divider, List } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { isAdmin } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
@@ -64,11 +64,9 @@ export default function AnalysisJsonPreview({ output }) {
 
   return jsonData !== null ? (
     <div>
-      <Row>
-        <OutputFileHeader output={output} />
-      </Row>
+      <OutputFileHeader output={output} />
       {isAdmin ? (
-        <Row>
+        <>
           <OutputWrapper overflowRequired={!Array.isArray(jsonData)}>
             {Array.isArray(jsonData) ? (
               <AutoSizer>
@@ -89,7 +87,7 @@ export default function AnalysisJsonPreview({ output }) {
           </OutputWrapper>
 
           <Divider />
-        </Row>
+        </>
       ) : null}
     </div>
   ) : null;

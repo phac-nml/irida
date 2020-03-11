@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Typography } from "antd";
+import { Divider, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import {
@@ -93,20 +93,16 @@ export default function AnalysisTextPreview({ output }) {
     if (fileRows.length > 0) {
       return (
         <div>
-          <Row>
-            <OutputFileHeader output={output} />
-          </Row>
+          <OutputFileHeader output={output} />
 
-          <Row>
-            <TextOutputWrapper
-              id={`text-${output.filename.replace(".", "-")}`}
-              onScroll={() => loadMoreData()}
-            >
-              <Text>{fileRows}</Text>
-            </TextOutputWrapper>
-            <div id={`${output.filename}-preview-status`}></div>
-            <Divider />
-          </Row>
+          <TextOutputWrapper
+            id={`text-${output.filename.replace(".", "-")}`}
+            onScroll={() => loadMoreData()}
+          >
+            <Text>{fileRows}</Text>
+          </TextOutputWrapper>
+          <div id={`${output.filename}-preview-status`} />
+          <Divider />
         </div>
       );
     }
