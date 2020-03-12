@@ -8,6 +8,16 @@ Changes
 * [UI]: Sending email to sync user when a remote project's token expires.
 * [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
 * [UI]: Updated admin announcements table and creation to use `ant.design`.
+* [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
+* [UI]: Updated breadcrumbs to have cleaner look and feel and include the actual project and sample names.
+* [UI/Developer]: Updated to `react` 16.13.0.
+* [Developer]: Added Apache 2.0 licence information to `package.json`.
+* [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
+* [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
+* [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
+* [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
+* [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
+* [UI]: Updated Remote API Listing page to use Ant Design.
 * [UI/Developer]: Created a Thymeleaf `WebpackerDialect` for dynamically adding front end assets to html pages. See [Webpack Documentation](https://irida.corefacility.ca/documentation/developer/interface/webpack/) for more information.
 
 19.09 to 20.01

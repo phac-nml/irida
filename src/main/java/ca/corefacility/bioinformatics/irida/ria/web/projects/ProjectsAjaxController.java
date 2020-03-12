@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectsRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectsResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -35,25 +35,25 @@ public class ProjectsAjaxController {
 	/**
 	 * Handle request for get a filtered and sorted list of projects for a user or administrator
 	 *
-	 * @param projectsRequest {@link ProjectsRequest} Details about what is needed in the table (sort, filter, and search).
+	 * @param tableRequest {@link TableRequest} Details about what is needed in the table (sort, filter, and search).
 	 * @param admin           {@link Boolean} Is the user on an administration page.
-	 * @return {@link ProjectsResponse}
+	 * @return {@link TableResponse}
 	 */
 	@RequestMapping
-	public ProjectsResponse getPagedProjectsForUser(@RequestBody ProjectsRequest projectsRequest,
+	public TableResponse getPagedProjectsForUser(@RequestBody TableRequest tableRequest,
 			@RequestParam Boolean admin) {
 		final Page<Project> page;
 		if (admin) {
-			page = projectService.findAllProjects(projectsRequest.getSearch(), projectsRequest.getCurrent(),
-					projectsRequest.getPageSize(), projectsRequest.getSort());
+			page = projectService.findAllProjects(tableRequest.getSearch(), tableRequest.getCurrent(),
+					tableRequest.getPageSize(), tableRequest.getSort());
 		} else {
-			page = projectService.findProjectsForUser(projectsRequest.getSearch(), projectsRequest.getCurrent(),
-					projectsRequest.getPageSize(), projectsRequest.getSort());
+			page = projectService.findProjectsForUser(tableRequest.getSearch(), tableRequest.getCurrent(),
+					tableRequest.getPageSize(), tableRequest.getSort());
 		}
 		List<ProjectModel> projects = page.getContent()
 				.stream()
 				.map(p -> new ProjectModel(p, sampleService.getNumberOfSamplesForProject(p)))
 				.collect(Collectors.toList());
-		return new ProjectsResponse(projects, page.getTotalElements());
+		return new TableResponse(projects, page.getTotalElements());
 	}
 }

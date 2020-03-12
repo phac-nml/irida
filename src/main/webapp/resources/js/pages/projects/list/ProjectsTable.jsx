@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Dropdown, Icon, Input, Menu, Table, Typography } from "antd";
+import { Button, Dropdown, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import {
@@ -7,8 +7,14 @@ import {
   idColumnFormat,
   nameColumnFormat
 } from "../../../components/ant.design/table-renderers";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import {
+  IconDropDown,
+  IconFile,
+  IconFileExcel,
+  IconSwap
+} from "../../../components/icons/Icons";
 
 const { Text } = Typography;
 
@@ -71,7 +77,7 @@ export function ProjectsTable() {
       search: state.search
     };
     getPagedProjectsForUser(params).then(data => {
-      setProjects(data.projects);
+      setProjects(data.models);
       setTotal(data.total);
       setLoading(false);
     });
@@ -112,7 +118,7 @@ export function ProjectsTable() {
       width: 50,
       render: remote =>
         remote ? (
-          <Icon type="swap" title="Remote Project" style={{ cursor: "help" }} />
+          <IconSwap title="Remote Project" style={{ cursor: "help" }} />
         ) : null
     },
     {
@@ -154,7 +160,7 @@ export function ProjectsTable() {
           href={setBaseUrl(`projects/ajax/export?dtf=xlsx&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
-          <Icon className="spaced-right__sm" type="file-excel" />
+          <IconFileExcel style={{ marginRight: SPACE_XS }} />
           {i18n("ProjectsTable_export_excel")}
         </a>
       </Menu.Item>
@@ -163,7 +169,7 @@ export function ProjectsTable() {
           href={setBaseUrl(`projects/ajax/export?dtf=csv&admin=${IS_ADMIN}`)}
           download={`IRIDA_projects_${new Date().getTime()}`}
         >
-          <Icon className="spaced-right__sm" type="file" />
+          <IconFile style={{ marginRight: SPACE_XS }} />
           {i18n("ProjectsTable_export_csv")}
         </a>
       </Menu.Item>
@@ -182,7 +188,8 @@ export function ProjectsTable() {
         >
           <Dropdown overlay={exportMenu} key="export">
             <Button>
-              {i18n("ProjectsTable_export")} <Icon type="down" />
+              {i18n("ProjectsTable_export")}
+              <IconDropDown style={{ marginLeft: SPACE_XS }} />
             </Button>
           </Dropdown>
           <Input.Search style={{ width: 300 }} onSearch={onSearch} />
@@ -194,9 +201,11 @@ export function ProjectsTable() {
             total: total,
             pageSize: state.pageSize
           }}
+          scroll={{ x: "max-content" }}
           columns={columns}
           dataSource={projects}
           onChange={handleTableChange}
+          tableLayout="auto"
         />
       </div>
     </PageWrapper>

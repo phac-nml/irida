@@ -26,6 +26,8 @@ import "bootstrap-daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+import "./linker/Linker";
+
 /*
 This is required to use select2 inside a modal.
 This is required to use select2 inside a modal.
@@ -75,6 +77,23 @@ const getSelectedIds = () => {
   }
   return ids;
 };
+
+/*
+Hack to get the sample ids from the Linker react component.
+ */
+document.addEventListener(
+  "sample-ids",
+  function(e) {
+    const event = new CustomEvent("sample-ids-return", {
+      detail: {
+        sampleIds: getSelectedIds(),
+        projectId: window.project.id
+      }
+    });
+    document.dispatchEvent(event);
+  },
+  false
+);
 
 /*
 Initialize the sample export menu.
