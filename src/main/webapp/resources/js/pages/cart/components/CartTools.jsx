@@ -1,7 +1,6 @@
 import React, { Component, lazy, Suspense } from "react";
 
 import { Location, navigate, Router } from "@reach/router";
-import { Row } from "antd";
 import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
 import { grey1 } from "../../../styles/colors";
@@ -21,7 +20,7 @@ const GalaxyComponent = () => (
   </Suspense>
 );
 
-const ToolsWrapper = styled(Row)`
+const ToolsWrapper = styled.div`
   height: 100%;
   width: 100%;
   border-right: ${BORDERED_LIGHT};
@@ -96,10 +95,7 @@ export default class CartTools extends Component {
             link: setBaseUrl(`cart/galaxy`),
             text: i18n("CartTools.menu.galaxy"),
             component: (
-              <GalaxyComponent
-                key="galaxy"
-                path={setBaseUrl(`cart/galaxy`)}
-              />
+              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
             )
           }
         : null,
