@@ -3,11 +3,9 @@ import { PagedTableContext } from "./PagedTableContext";
 import { SPACE_XS } from "../../../styles/spacing";
 import { Input, Table } from "antd";
 import styled from "styled-components";
-import { grey4, grey7 } from "../../../styles/colors";
+import { grey7 } from "../../../styles/colors";
 
 const StyledTable = styled(Table)`
-  border: 1px solid ${grey4};
-  border-radius: 2px;
   tr.disabled,
   tr.disabled a {
     color: ${grey7};
