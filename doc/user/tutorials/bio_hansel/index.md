@@ -167,7 +167,7 @@ To delete an analysis, please select the **Delete Analysis** tab.
 [biohansel-settings]: images/biohansel-settings.png
 [biohansel-settings-delete]: images/biohansel-settings-delete.png
 [biohansel-settings-edit-name]: images/biohansel-settings-edit-name.png
-[biohansel-settings-share]: images/biohansel-share.png
+[biohansel-settings-share]: images/biohansel-settings-share.png
 [biohansel-share-save-results]: images/biohansel-share-save-results.png
 [biohansel-pipeline-page]: images/biohansel-pipeline-page.png
 [biohansel-pipeline-params]: images/biohansel-pipeline-params.png
