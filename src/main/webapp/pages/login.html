@@ -15,18 +15,17 @@
     </script>
     <style>
       body {
+        display: flex;
         height: 100vh;
-        background-color: hsl(116,0%,91%);
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
       }
     </style>
   </head>
   <body>
-    <div
-      style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column"
-    >
-      <div id="login-root">
-        <!-- Contents rendered from LoginPage.jsx -->
-      </div>
+    <div id="login-root">
+      <!-- Contents rendered from LoginPage.jsx -->
     </div>
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
