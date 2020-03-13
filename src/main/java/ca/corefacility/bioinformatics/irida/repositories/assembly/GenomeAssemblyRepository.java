@@ -9,6 +9,10 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public interface GenomeAssemblyRepository
 		extends FilesystemSupplementedRepository<UploadedAssembly>, IridaJpaRepository<GenomeAssembly, Long> {
 
-	@Override
-	<S extends GenomeAssembly> S save(S entity);
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Save is overridden here instead of in FilesystemSupplementedRepository as it would throw a compilation error
+	 */
+	<S extends SequenceFile> S save(S entity);
 }
