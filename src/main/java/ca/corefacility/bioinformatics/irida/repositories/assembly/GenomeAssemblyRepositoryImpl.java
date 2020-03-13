@@ -13,7 +13,7 @@ public class GenomeAssemblyRepositoryImpl extends FilesystemSupplementedReposito
 
 	@Autowired
 	public GenomeAssemblyRepositoryImpl(EntityManager entityManager,
-			@Qualifier("assemblyBaseDirectory") Path baseDirectory) {
+			@Qualifier("assemblyFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
 	}
 
