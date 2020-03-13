@@ -192,8 +192,8 @@ export function AnalysisSampleRenderer() {
             message={i18n("AnalysisSamples.checkingForSamples")}
           />
         </div>
-      ) : analysisSamplesContext.samples.length > 0) ||
-		  analysisSamplesContext.singleEndSamples.length > 0) ? (
+      ) : analysisSamplesContext.samples.length > 0 ||
+		  analysisSamplesContext.singleEndSamples.length > 0 ? (
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
