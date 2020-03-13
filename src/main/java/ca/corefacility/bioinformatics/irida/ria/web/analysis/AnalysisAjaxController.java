@@ -296,7 +296,7 @@ public class AnalysisAjaxController {
 			SequenceFilePair fp = (SequenceFilePair)sso.getSequencingObject();
 			if(fp.getFiles().size() == 2) {
 				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted",
-									new Object[] {}, locale);
+						new Object[] {}, locale);
 				Long sampleId = 0L;
 				if(sso.getSample() != null) {
 					sampleName = sso.getSample().getSampleName();
@@ -310,7 +310,7 @@ public class AnalysisAjaxController {
 			SingleEndSequenceFile sesf = (SingleEndSequenceFile)sso.getSequencingObject();
 			if(sesf.getFiles().size() == 1) {
 				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted",
-									new Object[] {}, locale);
+						new Object[] {}, locale);
 				Long sampleId = 0L;
 				if(sso.getSample() != null) {
 					sampleName = sso.getSample().getSampleName();
