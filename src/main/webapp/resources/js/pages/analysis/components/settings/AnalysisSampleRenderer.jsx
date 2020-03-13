@@ -60,14 +60,14 @@ export function AnalysisSampleRenderer() {
                 }
                 title={
                   item.sampleId == 0 ?
-				  item.sampleName
-				  :
-				  <a
-					href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-					target="_blank"
-					className="t-paired-end-sample-name"
-				  >
-					{item.sampleName}
+		  item.sampleName
+		  :
+		  <a
+			href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+			target="_blank"
+			className="t-paired-end-sample-name"
+		  >
+			{item.sampleName}
                   </a>
                 }
                 description={
@@ -121,9 +121,9 @@ export function AnalysisSampleRenderer() {
                 }
                 title={
                   item.sampleId == 0 ?
-				  item.sampleName
-				  :
-				  <a
+		  item.sampleName
+		  :
+		  <a
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-single-end-sample-name"
