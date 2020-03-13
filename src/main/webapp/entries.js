@@ -79,6 +79,5 @@ module.exports = {
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js"
 };
