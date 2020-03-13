@@ -34,10 +34,11 @@ export function PagedTable({ search = true, buttons, columns, ...props }) {
         ) : null}
       </div>
       <Table
+        tableLayout="auto"
+        scroll={{ x: "max-content" }}
         {...props}
         {...pagedConfig}
         columns={columns}
-        scroll={{ x: "max-content" }}
       />
     </>
   );

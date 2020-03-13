@@ -1,7 +1,9 @@
 import React from "react";
 import {
   BoldOutlined,
+  CheckCircleOutlined,
   ClockCircleOutlined,
+  CloseCircleOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -10,6 +12,7 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  ExperimentOutlined,
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
@@ -27,6 +30,8 @@ import {
   QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
   StopOutlined,
   StrikethroughOutlined,
   SwapOutlined,
@@ -82,6 +87,14 @@ export const IconInfoCircle = ({ ...props }) => (
   <InfoCircleOutlined {...props} />
 );
 
+export const IconCheckCircle = ({ ...props }) => (
+  <CheckCircleOutlined {...props} />
+);
+
+export const IconCloseCircle = ({ ...props }) => (
+  <CloseCircleOutlined {...props} />
+);
+
 export const IconQuestionCircle = ({ ...props }) => (
   <QuestionCircleOutlined {...props} />
 );
@@ -109,6 +122,10 @@ export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
+
+export const IconExperiment = ({ ...props }) => (
+  <ExperimentOutlined {...props} />
+);
 
 /*
 Editor Icons
@@ -150,4 +167,12 @@ export const IconMenuFold = ({ ...props }) => <MenuFoldOutlined {...props} />;
 
 export const IconMenuUnfold = ({ ...props }) => (
   <MenuUnfoldOutlined {...props} />
+);
+
+export const IconSortAscending = ({ ...props }) => (
+  <SortAscendingOutlined {...props} />
+);
+
+export const IconSortDescending = ({ ...props }) => (
+  <SortDescendingOutlined {...props} />
 );

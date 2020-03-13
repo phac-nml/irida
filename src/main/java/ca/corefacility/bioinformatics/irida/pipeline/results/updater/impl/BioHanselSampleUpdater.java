@@ -41,15 +41,15 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	private static final String VERSION_KEY = "scheme_version";
 	private static final String TMPL_NAME_FMT = "bio_hansel/%1$s/v%2$s";
 	// @formatter:off
-	private static Map<String, String> BIO_HANSEL_RESULTS_FIELDS = ImmutableMap.of(
+	private static final Map<String, String> BIO_HANSEL_RESULTS_FIELDS = ImmutableMap.of(
 			"subtype", "Subtype",
 			"qc_status", "QC Status",
 			"qc_message", "QC Message",
 			"avg_tile_coverage", "Average Tile Coverage"
 	);
 	// @formatter:on
-	private MetadataTemplateService metadataTemplateService;
-	private SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
+	private final SampleService sampleService;
 
 	@Autowired
 	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
@@ -96,7 +96,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				final String baseNamespace = getBaseNamespace(scheme, version);
 				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
-					if (result.containsKey(key)) {
+					if ((result.containsKey(key)) && (result.get(key) != null)) {
 						String value = result.get(key)
 								.toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",

@@ -1,12 +1,12 @@
 import React, { Component, lazy, Suspense } from "react";
 
 import { Location, navigate, Router } from "@reach/router";
-import { Row } from "antd";
 import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
-import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
+import { grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
+import { BORDERED_LIGHT } from "../../../styles/borders";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /*
@@ -20,10 +20,10 @@ const GalaxyComponent = () => (
   </Suspense>
 );
 
-const ToolsWrapper = styled(Row)`
+const ToolsWrapper = styled.div`
   height: 100%;
   width: 100%;
-  border-right: 1px solid ${COLOR_BORDER_LIGHT};
+  border-right: ${BORDERED_LIGHT};
   background-color: ${grey1};
   position: relative;
 `;

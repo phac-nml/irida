@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,15 +22,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -47,6 +36,13 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
 
 /**
  * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
@@ -158,7 +154,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
-		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -181,7 +177,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUser() {
-		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun create = miseqRunService.create(mr);
 		assertEquals("user", create.getUser().getUsername());
 	}
@@ -235,8 +231,8 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
-		MiseqRun r = new MiseqRun(LayoutType.PAIRED_END, "workflow");
-		miseqRunService.create(r);
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
+		miseqRunService.create(mr);
 	}
 
 	@Test

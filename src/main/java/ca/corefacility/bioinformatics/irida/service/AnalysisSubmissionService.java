@@ -39,7 +39,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @throws EntityNotFoundException
 	 *             If the corresponding analysis cannot be found.
 	 */
-	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
+	AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
 
 	/**
 	 * Gets a {@link Set} of {@link AnalysisSubmission}s for a {@link User}.
@@ -48,7 +48,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            The {@link User} to find all submissions for.
 	 * @return A {@link Set} of {@link AnalysisSubmission}s for a user.
 	 */
-	public Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user);
+	Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user);
 
 	/**
 	 * Gets a {@link Set} of {@link AnalysisSubmission}s for the current
@@ -57,7 +57,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return A {@link Set} of {@link AnalysisSubmission}s for the current
 	 *         user.
 	 */
-	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser();
+	Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser();
 	
 	/**
 	 * Gets all {@link AnalysisSubmissionService}s accessible by the current
@@ -68,15 +68,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return A list of {@link AnalysisSubmission}s matching one of the
 	 *         workflow ids.
 	 */
-	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
-			Collection<UUID> workflowIds);
+	List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(Collection<UUID> workflowIds);
 
 	/**
 	 * Delete multiple {@link AnalysisSubmission}s
 	 *
 	 * @param ids the collection of IDs to delete
 	 */
-	public void deleteMultiple(Collection<Long> ids);
+	void deleteMultiple(Collection<Long> ids);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
@@ -98,10 +97,11 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *                              completes or if it errors
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
-	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
+	AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResult);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
@@ -124,10 +124,11 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 * the supplied files.
 	 */
-	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
+	Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResult);
 
 	/**
 	 * Create a new {@link AnalysisSubmissionTemplate} for a project with the given settings
@@ -145,7 +146,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param emailPipelineResults  Whether or not to email the pipeline results to the user
 	 * @return the newly created {@link AnalysisSubmissionTemplate}
 	 */
-	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
+	AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
 			String statusMessage, String analysisDescription, Project projectsToShare, boolean writeResultsToSamples,
 			boolean emailPipelineResults);
@@ -156,7 +157,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param project the {@link Project} to get templates for
 	 * @return a list of all {@link AnalysisSubmissionTemplate}s
 	 */
-	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project);
+	List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project);
 
 	/**
 	 * Get an {@link AnalysisSubmissionTemplate} on the given {@link Project}
@@ -165,7 +166,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param project the {@link Project} to get templates for
 	 * @return the found {@link AnalysisSubmissionTemplate}
 	 */
-	public AnalysisSubmissionTemplate readAnalysisSubmissionTemplateForProject(Long id, Project project);
+	AnalysisSubmissionTemplate readAnalysisSubmissionTemplateForProject(Long id, Project project);
 
 	/**
 	 * Delete an {@link AnalysisSubmissionTemplate} from the given {@link Project}
@@ -173,7 +174,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param id      The id of an {@link AnalysisSubmissionTemplate}.
 	 * @param project the {@link Project} to delete from
 	 */
-	public void deleteAnalysisSubmissionTemplateForProject(Long id, Project project);
+	void deleteAnalysisSubmissionTemplateForProject(Long id, Project project);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
@@ -190,7 +191,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @throws EntityNotFoundException
 	 *             If no such corresponding submission exists.
 	 */
-	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
+	float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
 
 	/**
@@ -221,8 +222,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return a {@link ProjectAnalysisSubmissionJoin} describing the
 	 *         relationship
 	 */
-	public ProjectAnalysisSubmissionJoin shareAnalysisSubmissionWithProject(AnalysisSubmission submission,
-			Project project);
+	ProjectAnalysisSubmissionJoin shareAnalysisSubmissionWithProject(AnalysisSubmission submission, Project project);
 
 	/**
 	 * Cancel the share of an {@link AnalysisSubmission} with a given
@@ -233,7 +233,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param project
 	 *            the {@link Project} to stop sharing with
 	 */
-	public void removeAnalysisProjectShare(AnalysisSubmission submission, Project project);
+	void removeAnalysisProjectShare(AnalysisSubmission submission, Project project);
 	
 	/**
 	 * Get a list of all {@link AnalysisSubmission}s with a given
@@ -244,7 +244,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link AnalysisSubmission}s for
 	 * @return a Collection of {@link AnalysisSubmission}
 	 */
-	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states);
+	Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states);
 
 	/**
 	 * Get a collection of all {@link AnalysisSubmission}s shared with a
@@ -254,7 +254,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            The {@link Project} to search.
 	 * @return A collection of {@link AnalysisSubmission}s.
 	 */
-	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project);
+	Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project);
 
 	/**
 	 * Get a page of the {@link AnalysisSubmission}s shared with a project.
@@ -267,7 +267,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
+	Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest);
 
 	/**
@@ -280,7 +280,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
-	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
+	Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
@@ -294,7 +294,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param pageRequest a {@link PageRequest} for the restults to show
 	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
-	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states, User user,
+	Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
@@ -304,7 +304,27 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param priority   the new priority
 	 * @return the updated submission
 	 */
-	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
+	AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
+
+	/**
+	 * Update the emailPipelineResult of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param emailPipelineResult  the new emailPipelineResult
+	 * @return the updated submission
+	 */
+	AnalysisSubmission updateEmailPipelineResult(AnalysisSubmission submission, boolean emailPipelineResult);
+
+
+	/**
+	 * Update the name of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param analysisName   the new name of the analysis
+	 * @return the updated submission
+	 */
+	AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName);
+
 
 	/**
 	 * Get all {@link User} generated {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
@@ -333,14 +353,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * Get the status of the analysis service.  This will be the number of running and queued analyses
 	 * @return An {@link AnalysisServiceStatus} object showing the number of running and queued analyses
 	 */
-	public AnalysisServiceStatus getAnalysisServiceStatus();
+	AnalysisServiceStatus getAnalysisServiceStatus();
 
 	/**
 	 * Class to store the number of running and queued analyses
 	 */
 	class AnalysisServiceStatus {
-		private Long running;
-		private Long queued;
+		private final Long running;
+		private final Long queued;
 
 		public AnalysisServiceStatus(Long running, Long queued) {
 			this.running = running;

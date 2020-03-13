@@ -1,6 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+import java.io.IOException;
+
+import javax.validation.Validator;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -14,11 +20,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequencingObjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.validation.Validator;
-import java.io.IOException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -61,7 +62,7 @@ public class SequencingObjectServiceTest {
 	public void testCreateSequenceFileInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "workflow");
+		SequencingRun run = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 
 		so.setSequencingRun(run);
 
@@ -74,7 +75,7 @@ public class SequencingObjectServiceTest {
 	public void testCreateSequenceFilePairInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 
-		SequencingRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
+		SequencingRun run = new SequencingRun(LayoutType.SINGLE_END, "miseq");
 
 		SequenceFilePair so = TestDataFactory.constructSequenceFilePair();
 		so.setSequencingRun(run);

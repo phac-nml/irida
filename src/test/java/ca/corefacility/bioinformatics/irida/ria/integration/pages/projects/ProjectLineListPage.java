@@ -151,7 +151,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public void goToNextTourStage() {
 		waitForTime(500);
-		driver.findElement(By.cssSelector("button[data-tour-elem=\"right-arrow\"]")).click();
+		tourNextButton.click();
 	}
 
 	public void closeTour() {
@@ -160,6 +160,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public int getTourStep() {
+		waitForTime(500);
 		return Integer.parseInt(tourStepBadge.getText());
 	}
 }

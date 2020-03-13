@@ -72,18 +72,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * Reference to {@link SampleRepository} for managing {@link Sample}.
 	 */
-	private SampleRepository sampleRepository;
+	private final SampleRepository sampleRepository;
 	/**
 	 * Reference to {@link ProjectSampleJoinRepository} for managing
 	 * {@link ProjectSampleJoin}.
 	 */
-	private ProjectSampleJoinRepository psjRepository;
+	private final ProjectSampleJoinRepository psjRepository;
 
-	private SampleSequencingObjectJoinRepository ssoRepository;
+	private final SampleSequencingObjectJoinRepository ssoRepository;
 
-	private QCEntryRepository qcEntryRepository;
+	private final QCEntryRepository qcEntryRepository;
 
-	private SequencingObjectRepository sequencingObjectRepository;
+	private final SequencingObjectRepository sequencingObjectRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
@@ -456,9 +456,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
 		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
 				.findSequencingObjectsForAnalysisSubmission(submission);
-
-		Set<Sample> samples = objectsForAnalysisSubmission.stream()
-				.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
+		Set<Sample> samples = null;
+		try {
+			samples = objectsForAnalysisSubmission.stream()
+					.map(s -> ssoRepository.getSampleForSequencingObject(s)
+							.getSubject())
+					.collect(Collectors.toSet());
+		} catch (NullPointerException e) {
+			return null;
+		}
 		return samples;
 	}
 

@@ -34,7 +34,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *         given state.
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
-	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
+	List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
 	
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given state.
@@ -45,7 +45,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *         given state.
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState in ?1")
-	public List<AnalysisSubmission> findByAnalysisState(Collection<AnalysisState> state);
+	List<AnalysisSubmission> findByAnalysisState(Collection<AnalysisState> state);
 
 	/**
 	 * Get the analysis submissions that are currently in the given list of states
@@ -54,7 +54,8 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return the number of analyses with that state
 	 */
 	@Query("select count(s.id) from AnalysisSubmission s where s.analysisState in ?1")
-	public Long countByAnalysisState(Collection<AnalysisState> state);
+	Long countByAnalysisState(Collection<AnalysisState> state);
+
 
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given states.
@@ -68,8 +69,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *         given states.
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1 and s.analysisCleanedState = ?2")
-	public List<AnalysisSubmission> findByAnalysisState(AnalysisState analysisState,
-			AnalysisCleanedState analysisCleanedState);
+	List<AnalysisSubmission> findByAnalysisState(AnalysisState analysisState, AnalysisCleanedState analysisCleanedState);
 	
 	/**
 	 * Finds all {@link AnalysisSubmission}s corresponding to the given workflow
@@ -81,7 +81,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *         workflow ids.
 	 */
 	@Query("select s from AnalysisSubmission s where s.workflowId in ?1")
-	public List<AnalysisSubmission> findByWorkflowIds(Collection<UUID> workflowIds);
+	List<AnalysisSubmission> findByWorkflowIds(Collection<UUID> workflowIds);
 
 	/**
 	 * Loads up all {@link AnalysisSubmission}s by the submitted {@link User}.
@@ -92,7 +92,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *         .
 	 */
 	@Query("select s from AnalysisSubmission s where s.submitter = ?1")
-	public Set<AnalysisSubmission> findBySubmitter(User submitter);
+	Set<AnalysisSubmission> findBySubmitter(User submitter);
 
 	/**
 	 * Finds the {@link AnalysisSubmission} that caused the passed
@@ -103,7 +103,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return the submission for the analysis
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysis = ?1")
-	public AnalysisSubmission findByAnalysis(final Analysis analysis);
+	AnalysisSubmission findByAnalysis(final Analysis analysis);
 
 	/**
 	 * Get the Set of {@link AnalysisSubmission}s which use a given
@@ -114,7 +114,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return Set of {@link AnalysisSubmission}
 	 */
 	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFiles)")
-	public Set<AnalysisSubmission> findAnalysisSubmissionsForSequecingObject(SequencingObject object);
+	Set<AnalysisSubmission> findAnalysisSubmissionsForSequecingObject(SequencingObject object);
 
 	/**
 	 * Get the Set of {@link AnalysisSubmission}s making use of the given
@@ -125,7 +125,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return A Set of {@link AnalysisSubmission}s.
 	 */
 	@Query("FROM AnalysisSubmission s WHERE ?1 = referenceFile")
-	public Set<AnalysisSubmission> findByReferenceFile(ReferenceFile file);
+	Set<AnalysisSubmission> findByReferenceFile(ReferenceFile file);
 
 	/**
 	 * Get all {@link ca.corefacility.bioinformatics.irida.model.user.User} generated analysis output information.
