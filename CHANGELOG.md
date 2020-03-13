@@ -19,6 +19,7 @@ Changes
 * [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
 * [UI]: Updated Remote API Listing page to use Ant Design.
 * [UI]: Updated Administrator Users page to use Ant Design.
+* [UI]: Removed DataTables from overrepresented sequence file page.
 
 19.09 to 20.01
 --------------
