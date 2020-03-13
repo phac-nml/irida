@@ -23,6 +23,7 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 
 	public UploadedAssembly(Path file) {
 		super();
+		this.fileRevisionNumber=0L;
 		this.file = file;
 	}
 

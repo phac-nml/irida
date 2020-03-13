@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private SequencingObjectRepository sequencingObjectRepository;
 
+	private GenomeAssemblyRepository assemblyRepository;
+
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -111,7 +114,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
-			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository, Validator validator) {
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
+			GenomeAssemblyRepository assemblyRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -120,6 +124,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.userRepository = userRepository;
+		this.assemblyRepository = assemblyRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
 
@@ -383,6 +388,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return totalBases;
+	}
+
+	@Transactional
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
+	public SampleGenomeAssemblyJoin createAssemblyInSample(Sample sample, GenomeAssembly assembly) {
+		assembly = assemblyRepository.save(assembly);
+
+		return null;
 	}
 
 	/**

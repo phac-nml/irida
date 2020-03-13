@@ -180,6 +180,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Long getTotalBasesForSample(Sample sample)
 			throws SequenceFileAnalysisException;
 
+	public SampleGenomeAssemblyJoin createAssemblyInSample(Sample sample, GenomeAssembly assembly);
+
 	/**
 	 * Given the length of a reference file, estimate the total coverage for
 	 * this sample.

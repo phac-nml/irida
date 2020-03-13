@@ -40,7 +40,7 @@ public class RESTSampleAssemblyControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 
-		controller = new RESTSampleAssemblyController(sampleService);
+		controller = new RESTSampleAssemblyController(sampleService, null);
 
 		s1 = new Sample("s1");
 		s1.setId(1L);

@@ -14,5 +14,5 @@ public interface GenomeAssemblyRepository
 	 * <p>
 	 * Save is overridden here instead of in FilesystemSupplementedRepository as it would throw a compilation error
 	 */
-	<S extends SequenceFile> S save(S entity);
+	<S extends GenomeAssembly> S save(S entity);
 }

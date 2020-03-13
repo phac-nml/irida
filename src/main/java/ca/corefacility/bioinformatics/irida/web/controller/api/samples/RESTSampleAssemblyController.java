@@ -3,21 +3,34 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,15 +45,21 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Controller
 public class RESTSampleAssemblyController {
 
+	private static final Logger logger = LoggerFactory.getLogger(RESTSampleAssemblyController.class);
+
 	public static final String REL_SAMPLE = "sample";
 	public static final String REL_SAMPLE_ASSEMBLIES = "sample/assemblies";
 	public static final String REL_ASSEMBLY_ANALYSIS = "assembly/analysis";
 
 	private SampleService sampleService;
 
+	private GenomeAssemblyRepository assemblyRepository;
+
+
 	@Autowired
-	public RESTSampleAssemblyController(SampleService sampleService) {
+	public RESTSampleAssemblyController(SampleService sampleService, GenomeAssemblyRepository assemblyRepository) {
 		this.sampleService = sampleService;
+		this.assemblyRepository = assemblyRepository;
 	}
 
 	/**
@@ -108,6 +127,48 @@ public class RESTSampleAssemblyController {
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, genomeAssembly);
 
+		return modelMap;
+	}
+
+	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ModelMap addNewAssemblyToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
+			HttpServletResponse response) throws IOException {
+		ModelMap modelMap = new ModelMap();
+		logger.debug("Adding assembly file to sample " + sampleId);
+		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
+
+		Sample sample = sampleService.read(sampleId);
+		logger.trace("Read sample " + sampleId);
+
+		// prepare a new sequence file using the multipart file supplied by the
+		// caller
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+
+		try {
+			// Changed to MultipartFile.transerTo(File) because it was truncating
+			// large files to 1039956336 bytes
+			// target = Files.write(target, file.getBytes());
+			file.transferTo(target.toFile());
+			logger.trace("Wrote temp file to " + target);
+
+			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
+
+			//uploadedAssembly = assemblyRepository.save(uploadedAssembly);
+			sampleService.createAssemblyInSample(sample,uploadedAssembly);
+
+			//modelMap.addAttribute("id", uploadedAssembly.getId());
+
+		} catch (IllegalArgumentException e) {
+			logger.debug("Error 400 - Bad Request: " + e.getMessage());
+			throw e;
+		} finally {
+			// clean up the temporary files.
+			logger.trace("Deleted temp files");
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
+		}
+		
 		return modelMap;
 	}
 
