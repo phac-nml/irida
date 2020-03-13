@@ -1,41 +1,63 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
-import org.openqa.selenium.By;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-import java.util.List;
-
 public class PasswordResetPage extends AbstractPage {
-	private final String RELATIVE_URL = "password_reset/";
+	private static final String RELATIVE_URL = "password_reset/";
+
+	@FindBy(id = "password")
+	private WebElement firstPassword;
+
+	@FindBy(id = "confirmPassword")
+	private WebElement secondPassword;
+
+	@FindBy(className = "t-submit-btn")
+	private WebElement submitBtn;
+
+	@FindBy(className = "t-reset-success")
+	private WebElement resetSuccess;
+
+	@FindBy(css = ".error.help-block")
+	private List<WebElement> errors;
 
 	public PasswordResetPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public void getPasswordReset(String key) {
+	public static PasswordResetPage initializePage(WebDriver driver) {
+		return PageFactory.initElements(driver, PasswordResetPage.class);
+	}
+
+	public static PasswordResetPage getPasswordResetPageByKey(WebDriver driver, String key) {
 		get(driver, RELATIVE_URL + key);
+		return PageFactory.initElements(driver, PasswordResetPage.class);
 	}
 
-	public void enterPassword(String password, String confirmPassword) {
-		WebElement passwordElement = driver.findElement(By.id("password"));
-		WebElement confirmElement = driver.findElement(By.id("confirmPassword"));
-		passwordElement.sendKeys(password);
-		confirmElement.sendKeys(confirmPassword);
+	public void updatePassword(WebDriver driver, String password, String confirmPassword) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.elementToBeClickable(firstPassword));
+		firstPassword.sendKeys(password);
+		secondPassword.sendKeys(confirmPassword);
 	}
 
-	public void clickSubmit() {
-		submitAndWait(driver.findElement(By.className("t-submit-btn")));
+	public void submitReset(){
+		submitBtn.click();
+	}
+
+	public boolean isSubmitButtonEnabled() {
+		return submitBtn.isEnabled();
 	}
 
 	public boolean checkSuccess() {
-		try {
-			WebElement el = waitForElementVisible(By.className("t-reset-success"));
-			return el.getText().contains("Password successfully updated.");
-		} catch (Exception e) {
-			return false;
-		}
+		return resetSuccess.isDisplayed();
 	}
 }

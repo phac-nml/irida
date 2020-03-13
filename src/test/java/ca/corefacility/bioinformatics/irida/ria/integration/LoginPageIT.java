@@ -55,10 +55,10 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 	public void testLoginWithChangedCredentials() {
 		String newPassword = "aGoodP@ssW0rD";
 		LoginPage page = LoginPage.to(driver());
-		page.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
-		PasswordResetPage passwordResetPage = new PasswordResetPage(driver());
-		passwordResetPage.enterPassword(newPassword, newPassword);
-		passwordResetPage.clickSubmit();
+		page.login( EXPIRED_USERNAME, EXPIRED_PASSWORD);
+		PasswordResetPage passwordResetPage = PasswordResetPage.initializePage(driver());
+		passwordResetPage.updatePassword(driver(), newPassword, newPassword);
+		passwordResetPage.submitReset();
 		assertTrue("Should have succeeded in changing password.", passwordResetPage.checkSuccess());
 
 		AbstractPage.logout(driver());
