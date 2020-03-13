@@ -59,12 +59,15 @@ export function AnalysisSampleRenderer() {
                   </Avatar>
                 }
                 title={
-                  <a
-                    href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-                    target="_blank"
-                    className="t-paired-end-sample-name"
-                  >
-                    {item.sampleName}
+                  item.sampleId == 0 ?
+				  item.sampleName
+				  :
+				  <a
+					href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+					target="_blank"
+					className="t-paired-end-sample-name"
+				  >
+					{item.sampleName}
                   </a>
                 }
                 description={
@@ -117,7 +120,10 @@ export function AnalysisSampleRenderer() {
                   </Avatar>
                 }
                 title={
-                  <a
+                  item.sampleId == 0 ?
+				  item.sampleName
+				  :
+				  <a
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-single-end-sample-name"
@@ -186,7 +192,8 @@ export function AnalysisSampleRenderer() {
             message={i18n("AnalysisSamples.checkingForSamples")}
           />
         </div>
-      ) : (typeof analysisSamplesContext.samples !== 'undefined' && analysisSamplesContext.samples.length > 0) || (typeof analysisSamplesContext.singleEndSamples !== 'undefined' && analysisSamplesContext.singleEndSamples.length > 0) ? (
+      ) : analysisSamplesContext.samples.length > 0) ||
+		  analysisSamplesContext.singleEndSamples.length > 0) ? (
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
