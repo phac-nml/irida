@@ -13,6 +13,11 @@ import { Button, Checkbox } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { setUsersDisabledStatus } from "../apis/users/users";
 
+/**
+ * React component for displaying paged table of all users in the system
+ * @returns {string|*}
+ * @constructor
+ */
 function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
 
@@ -137,6 +142,11 @@ function UsersTable() {
   );
 }
 
+/**
+ * React component to display the page for administration of users.
+ * @returns {*}
+ * @constructor
+ */
 function AdminUsersPage() {
   return (
     <PageWrapper
