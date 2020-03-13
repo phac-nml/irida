@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +27,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class GenomeAssembly extends IridaResourceSupport implements IridaThing, IridaSequenceFile {
+public abstract class GenomeAssembly extends IridaResourceSupport
+		implements IridaThing, IridaSequenceFile, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
 

@@ -54,6 +54,7 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
 	/**
 	 * Get genome assembly {@link AnalysisOutputFile}.
+	 *
 	 * @return {@link AnalysisOutputFile} for a genome assembly {@link AnalysisSubmission}
 	 */
 	@JsonIgnore
@@ -86,5 +87,15 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 	@Override
 	public Path getFile() {
 		return getAssemblyOutput().getFile();
+	}
+
+	@Override
+	public Long getFileRevisionNumber() {
+		return 1L;
+	}
+
+	@Override
+	public void incrementFileRevisionNumber() {
+
 	}
 }
