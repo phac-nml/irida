@@ -21,6 +21,7 @@ Changes
 * [UI]: Updated Remote API Listing page to use Ant Design.
 * [UI]: Updated Administrator Users page to use Ant Design.
 * [UI]: Removed DataTables from overrepresented sequence file page.
+* [UI]: Removed DataTables from overrepresented sequence file and run files page.
 * [UI/Developer]: Update to Ant Design v4.
 
 19.09 to 20.01
