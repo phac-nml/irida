@@ -350,7 +350,7 @@ public class AnalysisAjaxControllerTest {
 	public void testGetAnalysisInputFiles() {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
-		analysisAjaxController.ajaxGetAnalysisInputFiles(submission.getId());
+		analysisAjaxController.ajaxGetAnalysisInputFiles(submission.getId(), Locale.getDefault());
 		assertNotNull("Submission exists", submission);
 		verify(sequencingObjectService, times(1)).getSequencingObjectsOfTypeForAnalysisSubmission(submission,
 				SequenceFilePair.class);
