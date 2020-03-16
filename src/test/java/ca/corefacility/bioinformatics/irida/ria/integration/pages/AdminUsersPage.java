@@ -26,11 +26,11 @@ public class AdminUsersPage extends AbstractPage {
 	}
 
 	public boolean isTableSortedByUsername() {
-		return table.isColumnSorted("t-username");
+		return table.isColumnSortedAscending("t-username");
 	}
 
 	public boolean isTableSortedByModifiedDate() {
-		return table.isColumnSorted("t-modified");
+		return table.isColumnSortedAscending("t-modified");
 	}
 
 	public void sortTableByUsername() {

@@ -123,7 +123,9 @@ export function ProjectsTable() {
     },
     {
       ...nameColumnFormat({ url: setBaseUrl(`projects`) }),
-      title: i18n("ProjectsTable_th_name")
+      title: (
+        <span className="t-project-name">{i18n("ProjectsTable_th_name")}</span>
+      )
     },
     {
       title: i18n("ProjectsTable_th_organism"),
