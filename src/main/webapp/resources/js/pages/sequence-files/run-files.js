@@ -1,8 +1,5 @@
 import $ from "jquery";
-import "./../../vendor/datatables/datatables";
 import { setBaseUrl } from "../../utilities/url-utilities";
-
-$("#filesTable").DataTable();
 
 $("button.download-file").on("click", function() {
   const that = $(this);
