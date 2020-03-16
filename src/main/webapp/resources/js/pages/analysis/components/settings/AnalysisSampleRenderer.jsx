@@ -117,12 +117,13 @@ export function AnalysisSampleRenderer() {
                 avatar={<Avatar icon={<IconExperiment />} />}
                 title={
                   item.sampleId == 0 ?
-		  item.sampleName
-		  :
-		  <a
+                  item.sampleName
+                  :
+                  <a
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-single-end-sample-name"
+                    style={{color: blue6}}
                   >
                     {item.sampleName}
                   </a>
