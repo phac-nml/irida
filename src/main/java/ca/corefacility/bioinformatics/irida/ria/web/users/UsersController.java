@@ -1,4 +1,27 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.users;
+
+import java.security.Principal;
+import java.security.SecureRandom;
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.MailSendException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -11,44 +34,16 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUser;
+import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
-import org.springframework.mail.MailSendException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.security.SecureRandom;
-import java.util.*;
 
 /**
  * Controller for all {@link User} related views
@@ -65,7 +60,7 @@ public class UsersController {
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
-	private List<Locale> locales;
+	private final List<Locale> locales;
 
 	private final UserService userService;
 	private final ProjectService projectService;
@@ -96,6 +91,7 @@ public class UsersController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String getUsersPage() {
 		return USERS_PAGE;
 	}
@@ -246,11 +242,7 @@ public class UsersController {
 
 		if (isAdmin(principal)) {
 			logger.debug("User is admin");
-			if (!Strings.isNullOrEmpty(enabled)) {
-				updatedValues.put("enabled", true);
-			} else {
-				updatedValues.put("enabled", false);
-			}
+			updatedValues.put("enabled", !Strings.isNullOrEmpty(enabled));
 
 			if (!Strings.isNullOrEmpty(systemRole)) {
 				Role newRole = Role.valueOf(systemRole);
@@ -451,34 +443,8 @@ public class UsersController {
 	}
 
 	/**
-	 * Get a list of users based on search criteria.
-	 * @param params {@link DataTablesParams} for the current Users DataTables.
-	 * @param locale {@link Locale}
-	 * @return {@link DataTablesResponse} of the filtered users list.
-	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	DataTablesResponse getAjaxUserList(@DataTablesRequest DataTablesParams params, Locale locale) {
-
-		Page<User> userPage = userService.search(UserSpecification.searchUser(params.getSearchValue()),
-				PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-
-		List<DataTablesResponseModel> usersData = new ArrayList<>();
-		for (User user : userPage) {
-			// getting internationalized system role from the message source
-			String roleMessageName = "systemrole." + user.getSystemRole().getName();
-			String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-
-			usersData.add(new DTUser(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), systemRole,
-					user.getCreatedDate(), user.getModifiedDate(), user.getLastLogin()));
-		}
-
-		return new DataTablesResponse(params, userPage, usersData);
-	}
-
-
-	/**
 	 * Check that username not already taken
+	 *
 	 * @param username Username to check existence of
 	 * @return true if username not taken
 	 */

@@ -48,7 +48,7 @@ module.exports = {
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-api-details":
     "./resources/js/pages/remote-apis/remote-api-details.js",
-  "remote-apis": "./resources/js/pages/remote-apis/remote-apis-list.js",
+  "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
@@ -66,7 +66,7 @@ module.exports = {
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
-  "users-list": "./resources/js/pages/users/users-list.js",
+  "users-list": "./resources/js/pages/AdminUsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
@@ -79,6 +79,5 @@ module.exports = {
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js"
 };
