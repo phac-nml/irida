@@ -250,10 +250,11 @@ public class AnalysisAjaxController {
 	 * Get analysis input files and their sizes
 	 *
 	 * @param submissionId analysis submission id to get data for
+	 * @param locale User's locale
 	 * @return dto of analysis input files data
 	 */
 	@RequestMapping(value = "/inputs/{submissionId}", method = RequestMethod.GET)
-	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId) {
+	public AnalysisInputFiles ajaxGetAnalysisInputFiles(@PathVariable Long submissionId, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		ReferenceFile referenceFile = null;
@@ -294,18 +295,28 @@ public class AnalysisAjaxController {
 		for(SampleSequencingObject sso : sampleFiles) {
 			SequenceFilePair fp = (SequenceFilePair)sso.getSequencingObject();
 			if(fp.getFiles().size() == 2) {
-				pairedEnd.add(new AnalysisSamples(sso.getSample()
-						.getSampleName(), sso.getSample()
-						.getId(), fp.getId(), fp.getForwardSequenceFile(), fp.getReverseSequenceFile()));
+				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted",
+						new Object[] {}, locale);
+				Long sampleId = 0L;
+				if(sso.getSample() != null) {
+					sampleName = sso.getSample().getSampleName();
+					sampleId = sso.getSample().getId();
+				}
+				pairedEnd.add(new AnalysisSamples(sampleName, sampleId, fp.getId(), fp.getForwardSequenceFile(), fp.getReverseSequenceFile()));
 			}
 		}
 
 		for(SampleSequencingObject sso : singleFiles) {
 			SingleEndSequenceFile sesf = (SingleEndSequenceFile)sso.getSequencingObject();
 			if(sesf.getFiles().size() == 1) {
-				singleEnd.add(new AnalysisSingleEndSamples(sso.getSample()
-						.getSampleName(), sso.getSample()
-						.getId(), sesf.getId(), sesf.getSequenceFile()));
+				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted",
+						new Object[] {}, locale);
+				Long sampleId = 0L;
+				if(sso.getSample() != null) {
+					sampleName = sso.getSample().getSampleName();
+					sampleId = sso.getSample().getId();
+				}
+				singleEnd.add(new AnalysisSingleEndSamples(sampleName, sampleId, sesf.getId(), sesf.getSequenceFile()));
 			}
 		}
 
@@ -1110,7 +1121,9 @@ public class AnalysisAjaxController {
 			try {
 				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
 						sequencingObject);
-				this.sample = sampleSequencingObjectJoin.getSubject();
+				if(sampleSequencingObjectJoin != null) {
+					this.sample = sampleSequencingObjectJoin.getSubject();
+				}
 			} catch (Exception e) {
 				logger.debug("Sequence file [" + sequencingObject.getIdentifier() + "] does not have a parent sample",
 						e);
