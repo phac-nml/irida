@@ -16,7 +16,6 @@ export function SaveTemplateButton({
     e.stopPropagation();
     showTemplateModal();
   };
-  console.log(template);
 
   return (
     <Button
