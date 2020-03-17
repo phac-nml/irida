@@ -98,7 +98,6 @@ function PagedTableProvider({
       search: state.search,
       filters: state.filters
     }).then(({ dataSource, total }) => {
-      console.log(dataSource);
       dispatch({
         type: types.LOADED,
         payload: {

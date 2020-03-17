@@ -21,9 +21,8 @@ const StyledTable = styled(Table)`
  * @returns {*}
  * @constructor
  */
-export function PagedTable({ search = true, buttons, columns, ...props }) {
+export function PagedTable({ search = true, buttons, ...props }) {
   const { onSearch, pagedConfig } = useContext(PagedTableContext);
-
   return (
     <>
       <div
