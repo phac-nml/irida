@@ -551,21 +551,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	@Override
-	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId) {
-		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
-				genomeAssemblyId);
-		if (join == null) {
-			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
-		}
-
-		return join.getObject();
-	}
-
-	/**
 	 * Specification for searching {@link Sample}s
 	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
 	 * @param queryString the query string to search for
