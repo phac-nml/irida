@@ -534,23 +534,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Transactional
-	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
-	@Override
-	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId) {
-		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
-				genomeAssemblyId);
-		if (join != null) {
-			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
-			sampleGenomeAssemblyJoinRepository.deleteById(join.getId());
-		} else {
-			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
-		}
-	}
-
-	/**
 	 * Specification for searching {@link Sample}s
 	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
 	 * @param queryString the query string to search for

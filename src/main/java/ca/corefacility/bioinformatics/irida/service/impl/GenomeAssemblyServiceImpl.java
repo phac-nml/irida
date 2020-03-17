@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import javax.validation.Validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 
 @Service
 public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssembly> implements GenomeAssemblyService {
+
+	private static final Logger logger = LoggerFactory.getLogger(GenomeAssemblyServiceImpl.class);
+
 
 	SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
@@ -60,5 +65,22 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 		}
 
 		return join.getObject();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
+	@Override
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join != null) {
+			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
+			sampleGenomeAssemblyJoinRepository.deleteById(join.getId());
+		} else {
+			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
+		}
 	}
 }

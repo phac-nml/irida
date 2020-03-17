@@ -265,17 +265,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 
 	/**
-	 * Deletes the given genome assembly from the given sample.
-	 * 
-	 * @param sample
-	 *            The sample.
-	 * @param genomeAssemblyId
-	 *            The genome assembly.
-	 */
-	@Deprecated
-	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId);
-
-	/**
 	 * Search all {@link Sample}s in projects the current logged in user has
 	 * access to
 	 * 

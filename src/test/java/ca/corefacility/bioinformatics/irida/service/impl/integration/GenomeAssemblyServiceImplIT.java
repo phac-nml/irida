@@ -103,7 +103,7 @@ public class GenomeAssemblyServiceImplIT {
 		Sample s = sampleService.read(1L);
 		assertNotNull(genomeAssemblyService.getGenomeAssemblyForSample(s, 1L));
 
-		sampleService.removeGenomeAssemblyFromSample(s, 1L);
+		genomeAssemblyService.removeGenomeAssemblyFromSample(s, 1L);
 
 		genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
 
@@ -115,6 +115,6 @@ public class GenomeAssemblyServiceImplIT {
 		Sample s = sampleService.read(1L);
 		assertNotNull(genomeAssemblyService.getGenomeAssemblyForSample(s, 1L));
 
-		sampleService.removeGenomeAssemblyFromSample(s, 1L);
+		genomeAssemblyService.removeGenomeAssemblyFromSample(s, 1L);
 	}
 }

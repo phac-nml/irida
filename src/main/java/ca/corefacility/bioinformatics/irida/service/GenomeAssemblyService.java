@@ -19,4 +19,12 @@ public interface GenomeAssemblyService extends CRUDService<Long, GenomeAssembly>
 	 * @return The {@link GenomeAssembly} with the given information.
 	 */
 	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId);
+
+	/**
+	 * Deletes the given genome assembly from the given sample.
+	 *
+	 * @param sample           The sample.
+	 * @param genomeAssemblyId The genome assembly.
+	 */
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId);
 }

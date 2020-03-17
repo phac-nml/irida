@@ -287,7 +287,7 @@ public class SamplesControllerTest {
 		
 		controller.removeGenomeAssemblyFromSample(attributes, sampleId, assemblyId, request, Locale.US);
 
-		verify(sampleService).removeGenomeAssemblyFromSample(sample, assemblyId);
+		verify(genomeAssemblyService).removeGenomeAssemblyFromSample(sample, assemblyId);
 	}
 
 	// ************************************************************************************************

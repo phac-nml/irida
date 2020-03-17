@@ -469,7 +469,7 @@ public class SamplesController extends BaseController {
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId);
 
 		try {
-			sampleService.removeGenomeAssemblyFromSample(sample, assemblyId);
+			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, assemblyId);
 			attributes.addFlashAttribute("fileDeleted", true);
 			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
 					"samples.files.assembly.removed.message", new Object[] { genomeAssembly.getLabel() }, locale));
