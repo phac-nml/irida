@@ -15,50 +15,65 @@ import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Running } from "../../../components/icons/Running";
 
+import {
+  getHumanizedDuration
+} from "../../../utilities/date-utilities";
+
 const Step = Steps.Step;
 
 export function AnalysisSteps() {
   const { analysisContext } = useContext(AnalysisContext);
+
+  const analysisDuration = getHumanizedDuration({ date: analysisContext.duration });
+  const analysisError = analysisContext.isError;
+  const previousState = analysisContext.previousState;
+  const analysisState = analysisContext.analysisState;
+
   return (
     <Steps
       current={
-        analysisContext.isError
-          ? stateMap[analysisContext.previousState]
-          : stateMap[analysisContext.analysisState]
+        analysisError
+          ? stateMap[previousState]
+          : stateMap[analysisState]
       }
-      status={analysisContext.isError ? "error" : "finish"}
+      status={analysisError ? "error" : "finish"}
       style={{ paddingBottom: SPACE_MD, paddingTop: SPACE_MD }}
     >
       <Step
         title={i18n("AnalysisSteps.new")}
-        icon={analysisContext.analysisState === "NEW" ? <Running /> : null}
+        icon={analysisState === "NEW" ? <Running /> : null}
+        description={analysisState === "NEW" || (previousState === null || stateMap[previousState] === "NEW") && analysisError ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.preparing")}
         icon={
-          analysisContext.analysisState === "PREPARING" ? <Running /> : null
+          analysisState === "PREPARING" ? <Running /> : null
         }
+        description={analysisState === "PREPARING" || (stateMap[previousState] === "PREPARING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.submitting")}
         icon={
-          analysisContext.analysisState === "SUBMITTING" ? <Running /> : null
+          analysisState === "SUBMITTING" ? <Running /> : null
         }
+        description={analysisState === "SUBMITTING" || (stateMap[previousState] === "SUBMITTING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.running")}
-        icon={analysisContext.analysisState === "RUNNING" ? <Running /> : null}
+        icon={analysisState === "RUNNING" ? <Running /> : null}
+        description={analysisState === "RUNNING" || (stateMap[previousState] === "RUNNING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.completing")}
         icon={
-          analysisContext.analysisState === "COMPLETING" ? <Running /> : null
+          analysisState === "COMPLETING" ? <Running /> : null
         }
+        description={analysisState === "COMPLETING" || (stateMap[previousState] === "COMPLETING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.completed")}
         icon={
-          analysisContext.analysisState === "COMPLETED" ? <Success /> : null
+          analysisState === "COMPLETED" ? <Success /> : null
         }
       />
     </Steps>

@@ -155,6 +155,10 @@ public class AnalysisController {
 			model.addAttribute("previousState", analysisAudit.getPreviousStateBeforeError(submissionId));
 		}
 
+		// Get the run time of the analysis runtime using the analysis
+		Long duration = analysisAudit.getAnalysisRunningTime(submission);
+		model.addAttribute("duration", duration);
+
 		return "analysis";
 	}
 
