@@ -1,15 +1,20 @@
 package ca.corefacility.bioinformatics.irida.model.assembly;
 
-import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.nio.file.Path;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.nio.file.Path;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+
+/**
+ * A {@link GenomeAssembly} implementation that was uploaded by a user or service
+ */
 @Entity
 @Table(name = "uploaded_assembly")
 @EntityListeners(AuditingEntityListener.class)
@@ -21,13 +26,13 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 
 	Long fileRevisionNumber;
 
-	protected UploadedAssembly(){
+	protected UploadedAssembly() {
 		super();
 	}
 
 	public UploadedAssembly(Path file) {
 		super();
-		this.fileRevisionNumber=0L;
+		this.fileRevisionNumber = 0L;
 		this.file = file;
 	}
 

@@ -108,6 +108,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
 	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
 	 * @param userRepository                     A {@link UserRepository}
+	 * @param assemblyRepository                 a repository for retreving {@link GenomeAssembly}
 	 * @param validator                          validator.
 	 */
 	@Autowired

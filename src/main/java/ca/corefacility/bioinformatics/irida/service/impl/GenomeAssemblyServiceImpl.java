@@ -19,12 +19,12 @@ import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssembly
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 
+/**
+ * Service implementation for storing and retrieving {@link GenomeAssembly}
+ */
 @Service
 public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssembly> implements GenomeAssemblyService {
-
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssemblyServiceImpl.class);
-
-
 	SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
@@ -32,6 +32,9 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 		super(repository, validator, GenomeAssembly.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	public SampleGenomeAssemblyJoin createAssemblyInSample(Sample sample, GenomeAssembly assembly) {
@@ -61,7 +64,9 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
 				genomeAssemblyId);
 		if (join == null) {
-			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
+			throw new EntityNotFoundException(
+					"No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId
+							+ "]");
 		}
 
 		return join.getObject();
@@ -80,7 +85,8 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
 			sampleGenomeAssemblyJoinRepository.deleteById(join.getId());
 		} else {
-			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
+			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId()
+					+ "]. Ignoring.");
 		}
 	}
 }
