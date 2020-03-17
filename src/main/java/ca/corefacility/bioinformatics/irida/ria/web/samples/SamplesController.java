@@ -54,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -106,6 +107,7 @@ public class SamplesController extends BaseController {
 
 	private final SequencingObjectService sequencingObjectService;
 	private final MetadataTemplateService metadataTemplateService;
+	private final GenomeAssemblyService genomeAssemblyService;
 
 	private final UpdateSamplePermission updateSamplePermission;
 
@@ -114,12 +116,14 @@ public class SamplesController extends BaseController {
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.metadataTemplateService = metadataTemplateService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
 	}
 
@@ -288,7 +292,7 @@ public class SamplesController extends BaseController {
 				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
 				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
-		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleService.getAssembliesForSample(sample);
+		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 		logger.trace("Assembly joins " + genomeAssemblyJoins);
 
 		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject)

@@ -479,24 +479,9 @@ public class SampleServiceImplIT {
 		sampleService.getGenomeAssemblyForSample(s, 1L);
 	}
 	
-	@Test
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testGetAssembliesForSampleSuccess() {
-		Sample s = sampleService.read(1L);
-		Collection<SampleGenomeAssemblyJoin> joins = sampleService.getAssembliesForSample(s);
-		assertEquals("should have same size for assemblies", 1, joins.size());
-		
-		SampleGenomeAssemblyJoin join = joins.iterator().next();
-		assertEquals("Should be same sample", s.getId(), join.getSubject().getId());
-		assertEquals("Should be same assembly", new Long(1L), join.getObject().getId());
-	}
+
 	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles="USER")
-	public void testGetAssembliesForSampleFail() {
-		Sample s = sampleService.read(1L);
-		sampleService.getAssembliesForSample(s);
-	}
+
 	
 	@Test
 	@WithMockUser(username = "fbristow", roles="USER")

@@ -9,7 +9,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
-import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -296,7 +296,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				addSequencingObjectToSample(mergeInto, sequencingObject);
 			}
 
-			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = getAssembliesForSample(s);
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository.findBySample(s);
 			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
 				GenomeAssembly genomeAssembly = join.getObject();
 
@@ -388,17 +388,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return totalBases;
-	}
-
-	@Transactional
-	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
-	public SampleGenomeAssemblyJoin createAssemblyInSample(Sample sample, GenomeAssembly assembly) {
-		assembly = assemblyRepository.save(assembly);
-
-		SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin = new SampleGenomeAssemblyJoin(sample, assembly);
-		sampleGenomeAssemblyJoin = sampleGenomeAssemblyJoinRepository.save(sampleGenomeAssemblyJoin);
-
-		return sampleGenomeAssemblyJoin;
 	}
 
 	/**
@@ -559,15 +548,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		} else {
 			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	@Override
-	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
-		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
 	}
 
 	/**

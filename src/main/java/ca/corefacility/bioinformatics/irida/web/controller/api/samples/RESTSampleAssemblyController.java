@@ -1,36 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +7,35 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.net.HttpHeaders;
 
@@ -58,12 +56,12 @@ public class RESTSampleAssemblyController {
 
 	private SampleService sampleService;
 
-	private GenomeAssemblyRepository assemblyRepository;
+	private GenomeAssemblyService assemblyService;
 
 	@Autowired
-	public RESTSampleAssemblyController(SampleService sampleService, GenomeAssemblyRepository assemblyRepository) {
+	public RESTSampleAssemblyController(SampleService sampleService, GenomeAssemblyService assemblyService) {
 		this.sampleService = sampleService;
-		this.assemblyRepository = assemblyRepository;
+		this.assemblyService = assemblyService;
 	}
 
 	/**
@@ -77,7 +75,7 @@ public class RESTSampleAssemblyController {
 		ModelMap modelMap = new ModelMap();
 
 		Sample sample = sampleService.read(sampleId);
-		Collection<SampleGenomeAssemblyJoin> assembliesForSample = sampleService.getAssembliesForSample(sample);
+		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(sample);
 
 		ResourceCollection<GenomeAssembly> assemblyResources = new ResourceCollection<>(assembliesForSample.size());
 
@@ -111,7 +109,7 @@ public class RESTSampleAssemblyController {
 		ModelMap modelMap = new ModelMap();
 
 		Sample sample = sampleService.read(sampleId);
-		Collection<SampleGenomeAssemblyJoin> assembliesForSample = sampleService.getAssembliesForSample(sample);
+		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(sample);
 
 		Optional<GenomeAssembly> genomeAssemblyOpt = assembliesForSample.stream()
 				.filter(a -> a.getObject()
@@ -164,7 +162,7 @@ public class RESTSampleAssemblyController {
 			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
 
 			//save the new assembly
-			SampleGenomeAssemblyJoin assemblyInSample = sampleService.createAssemblyInSample(sample, uploadedAssembly);
+			SampleGenomeAssemblyJoin assemblyInSample = assemblyService.createAssemblyInSample(sample, uploadedAssembly);
 
 			GenomeAssembly savedAssembly = assemblyInSample.getObject();
 
