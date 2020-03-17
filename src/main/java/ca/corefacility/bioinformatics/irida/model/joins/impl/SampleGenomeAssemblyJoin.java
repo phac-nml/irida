@@ -55,7 +55,7 @@ public class SampleGenomeAssemblyJoin implements Join<Sample, GenomeAssembly> {
 		this.createdDate = new Date();
 		this.sample = subject;
 		this.genomeAssembly = object;
-		object.addSampleGenomeAssemblyJoin(this);
+		//object.addSampleGenomeAssemblyJoin(this);
 	}
 
 	@Override

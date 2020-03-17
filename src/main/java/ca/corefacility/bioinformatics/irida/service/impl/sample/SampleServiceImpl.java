@@ -395,7 +395,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleGenomeAssemblyJoin createAssemblyInSample(Sample sample, GenomeAssembly assembly) {
 		assembly = assemblyRepository.save(assembly);
 
-		return null;
+		SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin = new SampleGenomeAssemblyJoin(sample, assembly);
+		sampleGenomeAssemblyJoin = sampleGenomeAssemblyJoinRepository.save(sampleGenomeAssemblyJoin);
+
+		return sampleGenomeAssemblyJoin;
 	}
 
 	/**
