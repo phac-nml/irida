@@ -13,10 +13,12 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import com.google.common.net.HttpHeaders;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -54,7 +59,6 @@ public class RESTSampleAssemblyController {
 	private SampleService sampleService;
 
 	private GenomeAssemblyRepository assemblyRepository;
-
 
 	@Autowired
 	public RESTSampleAssemblyController(SampleService sampleService, GenomeAssemblyRepository assemblyRepository) {
@@ -130,6 +134,15 @@ public class RESTSampleAssemblyController {
 		return modelMap;
 	}
 
+	/**
+	 * Upload a new {@link GenomeAssembly} and add it to a {@link Sample}
+	 *
+	 * @param sampleId The ID of the sampleto add the assembly to
+	 * @param file     the file content
+	 * @param response A response to send to the user
+	 * @return a model with links to the created assembly
+	 * @throws IOException if the upload fails
+	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewAssemblyToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
 			HttpServletResponse response) throws IOException {
@@ -140,24 +153,30 @@ public class RESTSampleAssemblyController {
 		Sample sample = sampleService.read(sampleId);
 		logger.trace("Read sample " + sampleId);
 
-		// prepare a new sequence file using the multipart file supplied by the
-		// caller
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
 
 		try {
-			// Changed to MultipartFile.transerTo(File) because it was truncating
-			// large files to 1039956336 bytes
-			// target = Files.write(target, file.getBytes());
 			file.transferTo(target.toFile());
 			logger.trace("Wrote temp file to " + target);
 
+			//create the assembly with the temp file
 			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
 
-			//uploadedAssembly = assemblyRepository.save(uploadedAssembly);
-			sampleService.createAssemblyInSample(sample,uploadedAssembly);
+			//save the new assembly
+			SampleGenomeAssemblyJoin assemblyInSample = sampleService.createAssemblyInSample(sample, uploadedAssembly);
 
-			//modelMap.addAttribute("id", uploadedAssembly.getId());
+			GenomeAssembly savedAssembly = assemblyInSample.getObject();
+
+			//get links for the assembly
+			Collection<Link> linksForAssembly = getLinksForAssembly(savedAssembly, sampleId);
+			savedAssembly.add(linksForAssembly);
+			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, savedAssembly);
+			String selfHref = savedAssembly.getSelfHref();
+
+			//set the response headers and status
+			response.addHeader(HttpHeaders.LOCATION, selfHref);
+			response.setStatus(HttpStatus.CREATED.value());
 
 		} catch (IllegalArgumentException e) {
 			logger.debug("Error 400 - Bad Request: " + e.getMessage());
@@ -168,7 +187,7 @@ public class RESTSampleAssemblyController {
 			Files.deleteIfExists(target);
 			Files.deleteIfExists(temp);
 		}
-		
+
 		return modelMap;
 	}
 
