@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -47,5 +45,20 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 	@Override
 	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
 		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join == null) {
+			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
+		}
+
+		return join.getObject();
 	}
 }

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -17,6 +18,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -27,6 +31,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -40,6 +45,8 @@ public class GenomeAssemblyServiceImplIT {
 
 	@Autowired
 	private SampleService sampleService;
+	@Autowired
+	private Path outputFileBaseDirectory;
 
 	@Autowired
 	private GenomeAssemblyService genomeAssemblyService;
@@ -64,5 +71,50 @@ public class GenomeAssemblyServiceImplIT {
 	public void testGetAssembliesForSampleFail() {
 		Sample s = sampleService.read(1L);
 		genomeAssemblyService.getAssembliesForSample(s);
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testGetGenomeAssemblyForSampleSuccess() throws AnalysisAlreadySetException {
+		Path expectedAssemblyPath = outputFileBaseDirectory.resolve("testfile.fasta");
+		Sample s = sampleService.read(1L);
+
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+		assertEquals("should have same path for assembly", expectedAssemblyPath, genomeAssembly.getFile());
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testGetGenomeAssemblyForSampleFailNoAssembly() {
+		Sample s = sampleService.read(1L);
+		genomeAssemblyService.getGenomeAssemblyForSample(s, 2L);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testGetGenomeAssemblyForSampleFailDenied() {
+		Sample s = sampleService.read(1L);
+		genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testRemoveGenomeAssemblyFromSampleSuccess() {
+		Sample s = sampleService.read(1L);
+		assertNotNull(genomeAssemblyService.getGenomeAssemblyForSample(s, 1L));
+
+		sampleService.removeGenomeAssemblyFromSample(s, 1L);
+
+		genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testRemoveGenomeAssemblyFromSampleFail() {
+		Sample s = sampleService.read(1L);
+		assertNotNull(genomeAssemblyService.getGenomeAssemblyForSample(s, 1L));
+
+		sampleService.removeGenomeAssemblyFromSample(s, 1L);
 	}
 }

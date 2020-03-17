@@ -344,7 +344,7 @@ public class SamplesController extends BaseController {
 	public void downloadAssembly(@PathVariable Long sampleId, @PathVariable Long assemblyId,
 			HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
-		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId);
 
 		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition",
@@ -466,7 +466,7 @@ public class SamplesController extends BaseController {
 	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
 			@RequestParam Long assemblyId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId);
 
 		try {
 			sampleService.removeGenomeAssemblyFromSample(sample, assemblyId);

@@ -263,18 +263,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a list of {@link QCEntry}
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
-	
-	/**
-	 * Gets the genome assembly for a sample.
-	 * 
-	 * @param sample
-	 *            The sample.
-	 * @param genomeAssemblyId
-	 *            The id of the genome assembly.
-	 * @return The {@link GenomeAssembly} with the given information.
-	 */
-	@Deprecated
-	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId);
 
 	/**
 	 * Deletes the given genome assembly from the given sample.

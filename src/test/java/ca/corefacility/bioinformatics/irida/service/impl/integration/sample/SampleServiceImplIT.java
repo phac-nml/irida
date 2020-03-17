@@ -455,59 +455,6 @@ public class SampleServiceImplIT {
 		sampleService.getQCEntriesForSample(s);
 	}
 	
-	@Test
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testGetGenomeAssemblyForSampleSuccess() throws AnalysisAlreadySetException {
-		Path expectedAssemblyPath = outputFileBaseDirectory.resolve("testfile.fasta");
-		Sample s = sampleService.read(1L);
-				
-		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(s, 1L);
-		assertEquals("should have same path for assembly", expectedAssemblyPath, genomeAssembly.getFile());
-	}
-	
-	@Test(expected=EntityNotFoundException.class)
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testGetGenomeAssemblyForSampleFailNoAssembly() {
-		Sample s = sampleService.read(1L);
-		sampleService.getGenomeAssemblyForSample(s, 2L);
-	}
-	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles="USER")
-	public void testGetGenomeAssemblyForSampleFailDenied() {
-		Sample s = sampleService.read(1L);
-		sampleService.getGenomeAssemblyForSample(s, 1L);
-	}
-	
-
-	
-
-	
-	@Test
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testRemoveGenomeAssemblyFromSampleSuccess() {	
-		Sample s = sampleService.read(1L);
-		assertNotNull(sampleService.getGenomeAssemblyForSample(s, 1L));
-		
-		sampleService.removeGenomeAssemblyFromSample(s, 1L);
-		
-		try {
-			sampleService.getGenomeAssemblyForSample(s, 1L);
-		} catch (EntityNotFoundException e) {
-			return;
-		}
-		fail("Did not catch " + EntityNotFoundException.class);
-	}
-	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles="USER")
-	public void testRemoveGenomeAssemblyFromSampleFail() {	
-		Sample s = sampleService.read(1L);
-		assertNotNull(sampleService.getGenomeAssemblyForSample(s, 1L));
-		
-		sampleService.removeGenomeAssemblyFromSample(s, 1L);
-	}
-
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);

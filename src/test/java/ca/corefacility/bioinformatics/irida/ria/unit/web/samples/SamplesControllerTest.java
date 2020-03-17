@@ -1,16 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,9 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -54,10 +40,19 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  */
@@ -75,6 +70,7 @@ public class SamplesControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private ReadSamplePermission readSamplePermission;
 	private MetadataTemplateService metadataTemplateService;
+	private GenomeAssemblyService genomeAssemblyService;
 	private MessageSource messageSource;
 
 	@Before
@@ -83,11 +79,12 @@ public class SamplesControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		projectService = mock(ProjectService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
+		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
-				updateSamplePermission, metadataTemplateService, messageSource);
+				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -265,13 +262,13 @@ public class SamplesControllerTest {
 		GenomeAssembly genomeAssembly = TestDataFactory.constructGenomeAssembly();
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sampleService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
+		when(genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
 		when(readSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
 
 		controller.downloadAssembly(sampleId, assemblyId, response);
 
 		verify(sampleService).read(sampleId);
-		verify(sampleService).getGenomeAssemblyForSample(sample, assemblyId);
+		verify(genomeAssemblyService).getGenomeAssemblyForSample(sample, assemblyId);
 	}
 	
 	@Test
@@ -282,7 +279,7 @@ public class SamplesControllerTest {
 		Sample sample = new Sample();
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sampleService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
+		when(genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
 		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
 		
 		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
