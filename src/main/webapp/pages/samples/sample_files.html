@@ -249,9 +249,9 @@
 							th:case="true"
 							th:href="@{/analysis/{sId}(sId=${assembly.analysisSubmission.id})}"
 							th:text="${assembly.label}"></a>
-						<a class="btn btn-default btn-sm file-name" href="#"
+						<div class="file-name td_info--value" 
 							th:case="false"
-							th:text="${assembly.label}"></a>
+							th:text="${assembly.label}"></div>
 					</td>
 					<td>
 						<div class="td_info">
