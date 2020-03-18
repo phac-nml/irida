@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAu
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -222,7 +224,13 @@ public class AnalysisAjaxController {
 				.toString();
 
 		// Get the run time of the analysis runtime using the analysis
-		Long duration = analysisAudit.getAnalysisRunningTime(submission);
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
 
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
 		boolean emailPipelineResult = submission.getEmailPipelineResult();
@@ -711,6 +719,7 @@ public class AnalysisAjaxController {
 			Analysis analysis = submission.getAnalysis();
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
 					.getFile();
+
 			try {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
 						.next();
@@ -982,21 +991,26 @@ public class AnalysisAjaxController {
 			message= messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound",
 					new Object[] {}, locale);
 		} else {
-			List<String> lines = Files.readAllLines(file.getFile());
+			try {
+				List<String> lines = Files.readAllLines(file.getFile());
 
-			if (lines.size() > 0) {
-				tree = lines.get(0);
+				if (lines.size() > 0) {
+					tree = lines.get(0);
 
-				if (lines.size() > 1) {
-					logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
-					message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {}, locale);
+					if (lines.size() > 1) {
+						logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+						message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {},
+								locale);
+					}
+
+					if (EMPTY_TREE.equals(tree)) {
+						logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+						tree = null;
+						message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
+					}
 				}
-
-				if (EMPTY_TREE.equals(tree)) {
-					logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
-					tree = null;
-					message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
-				}
+			} catch (NoSuchFileException e) {
+				logger.debug("File was not found: " + e.toString());
 			}
 		}
 		return new AnalysisTreeResponse(tree, message);
