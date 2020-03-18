@@ -129,7 +129,7 @@ export default function OutputFilePreview() {
   }
 
   return analysisOutputsContext.outputs !== null ? (
-    <TabPaneContent actionButton={createDownloadAllButton()} title={i18n("AnalysisOutputs.outputFilePreview")}>
+    <TabPaneContent actionButton={analysisOutputsContext.outputs.length > 0 ? createDownloadAllButton() : null} title={i18n("AnalysisOutputs.outputFilePreview")}>
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
           <Tabs defaultActiveKey="1" animated={false}>
