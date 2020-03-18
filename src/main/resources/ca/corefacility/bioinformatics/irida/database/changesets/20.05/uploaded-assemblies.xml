@@ -26,7 +26,7 @@
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="analysis_submission_id" type="BIGINT"/.
+            <column name="analysis_submission_id" type="BIGINT"/>
             <column name="REV" type="INT">
                 <constraints primaryKey="true"
                              referencedColumnNames="id"
