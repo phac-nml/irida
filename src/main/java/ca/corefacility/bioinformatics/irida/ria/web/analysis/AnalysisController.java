@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.security.Principal;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -156,7 +158,13 @@ public class AnalysisController {
 		}
 
 		// Get the run time of the analysis runtime using the analysis
-		Long duration = analysisAudit.getAnalysisRunningTime(submission);
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
 		model.addAttribute("duration", duration);
 
 		return "analysis";

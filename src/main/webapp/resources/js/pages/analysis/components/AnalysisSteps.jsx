@@ -42,33 +42,33 @@ export function AnalysisSteps() {
       <Step
         title={i18n("AnalysisSteps.new")}
         icon={analysisState === "NEW" ? <Running /> : null}
-        description={analysisState === "NEW" || (previousState === null || stateMap[previousState] === "NEW") && analysisError ? analysisDuration : null}
+        description={analysisState === "NEW" || (previousState === null || previousState === "NEW") && analysisError ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.preparing")}
         icon={
           analysisState === "PREPARING" ? <Running /> : null
         }
-        description={analysisState === "PREPARING" || (stateMap[previousState] === "PREPARING" && analysisError) ? analysisDuration : null}
+        description={analysisState === "PREPARING" || (previousState === "PREPARING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.submitting")}
         icon={
           analysisState === "SUBMITTING" ? <Running /> : null
         }
-        description={analysisState === "SUBMITTING" || (stateMap[previousState] === "SUBMITTING" && analysisError) ? analysisDuration : null}
+        description={analysisState === "SUBMITTING" || (previousState === "SUBMITTING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.running")}
         icon={analysisState === "RUNNING" ? <Running /> : null}
-        description={analysisState === "RUNNING" || (stateMap[previousState] === "RUNNING" && analysisError) ? analysisDuration : null}
+        description={analysisState === "RUNNING" || (previousState === "RUNNING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.completing")}
         icon={
           analysisState === "COMPLETING" ? <Running /> : null
         }
-        description={analysisState === "COMPLETING" || (stateMap[previousState] === "COMPLETING" && analysisError) ? analysisDuration : null}
+        description={analysisState === "COMPLETING" || (previousState === "COMPLETING" && analysisError) ? analysisDuration : null}
       />
       <Step
         title={i18n("AnalysisSteps.completed")}
