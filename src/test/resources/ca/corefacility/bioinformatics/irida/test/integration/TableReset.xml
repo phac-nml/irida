@@ -114,8 +114,8 @@
 	<sequence_file_properties_AUD />
 	<sample_sequencingobject_AUD />
 	<sample_genome_assembly_AUD />
-	<genome_assembly_analysis_AUD />
 	<genome_assembly_AUD />
+	<genome_assembly_analysis_AUD />
 	<uploaded_assembly_AUD />
 	<analysis_submission_AUD />
 	<analysis_submission_sequencing_object_AUD />
