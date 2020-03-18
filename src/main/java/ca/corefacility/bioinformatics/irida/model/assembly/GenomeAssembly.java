@@ -1,18 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.assembly;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.annotation.CreatedDate;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -21,12 +8,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.CreatedDate;
+
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
+
 /**
  * Defines a genome assembly which can be associated with a sample.
  */
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
+@Audited
 public abstract class GenomeAssembly extends IridaResourceSupport
 		implements IridaThing, IridaSequenceFile, VersionedFileFields<Long> {
 

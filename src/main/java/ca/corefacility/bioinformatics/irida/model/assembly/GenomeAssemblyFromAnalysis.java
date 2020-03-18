@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -20,6 +21,7 @@ import com.google.common.collect.ImmutableSet;
 @Entity
 @Table(name = "genome_assembly_analysis")
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
