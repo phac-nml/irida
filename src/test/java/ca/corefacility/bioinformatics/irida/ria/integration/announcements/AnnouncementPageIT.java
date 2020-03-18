@@ -71,9 +71,9 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
 		int numAnnouncementsBefore = controlPage.getCreatedDates()
 				.size();
-		CreateAnnouncementComoponent createAnnouncementComoponent = CreateAnnouncementComoponent.goTo(driver());
+		CreateAnnouncementComponent createAnnouncementComponent = CreateAnnouncementComponent.goTo(driver());
 		controlPage.clickCreateNewAnnouncementButton();
-		createAnnouncementComoponent.enterMessage(message);
+		createAnnouncementComponent.enterMessage(message);
 
 		// New messages should appear first in the table
 		String newMessage = controlPage.getAnnouncement(0);
