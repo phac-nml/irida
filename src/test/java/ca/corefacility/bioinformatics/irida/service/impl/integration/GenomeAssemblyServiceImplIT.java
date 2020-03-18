@@ -47,7 +47,6 @@ public class GenomeAssemblyServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private Path outputFileBaseDirectory;
-
 	@Autowired
 	private GenomeAssemblyService genomeAssemblyService;
 

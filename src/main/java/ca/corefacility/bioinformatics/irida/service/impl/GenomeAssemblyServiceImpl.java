@@ -25,11 +25,13 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 @Service
 public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssembly> implements GenomeAssemblyService {
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssemblyServiceImpl.class);
-	SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
+	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
-	public GenomeAssemblyServiceImpl(GenomeAssemblyRepository repository, Validator validator) {
+	public GenomeAssemblyServiceImpl(GenomeAssemblyRepository repository,
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, Validator validator) {
 		super(repository, validator, GenomeAssembly.class);
+		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
 
 	/**
