@@ -57,6 +57,7 @@
 	<genome_assembly />
 	<genome_assembly_analysis />
 	<sample_genome_assembly />
+	<uploaded_assembly/>
 
 	<password_reset />
 	
@@ -113,6 +114,8 @@
 	<sequence_file_properties_AUD />
 	<sample_sequencingobject_AUD />
 	<sample_genome_assembly_AUD />
+	<genome_assembly_AUD />
+	<uploaded_assembly_AUD />
 	<analysis_submission_AUD />
 	<analysis_submission_sequencing_object_AUD />
 	<analysis_submission_parameters_AUD />
