@@ -1,5 +1,17 @@
 package ca.corefacility.bioinformatics.irida.model.assembly;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -8,38 +20,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.annotation.CreatedDate;
-
-import com.google.common.collect.Lists;
-
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-
 /**
  * Defines a genome assembly which can be associated with a sample.
  */
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class GenomeAssembly extends IridaResourceSupport implements IridaThing {
+public abstract class GenomeAssembly extends IridaResourceSupport implements IridaThing, IridaSequenceFile {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
 
@@ -69,7 +56,8 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 
 	@Override
 	public String getLabel() {
-		return getFile().getFileName().toString();
+		return getFile().getFileName()
+				.toString();
 	}
 
 	@Override
@@ -84,15 +72,18 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 
 	/**
 	 * Get the size of the genome assembly files
+	 *
 	 * @return file size
 	 * @throws IOException if the file cannot be read
 	 */
-	public long getFileSize() throws IOException {
+	@JsonIgnore
+	public long getFileSizeBytes() throws IOException {
 		return Files.size(getFile());
 	}
 
 	/**
 	 * Add a sample to this assembly
+	 *
 	 * @param join the {@link SampleGenomeAssemblyJoin} to add
 	 */
 	public void addSampleGenomeAssemblyJoin(SampleGenomeAssemblyJoin join) {
@@ -103,13 +94,14 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 
 	/**
 	 * Get human-readable file size.
-	 * 
+	 *
 	 * @return A human-readable file size.
 	 */
-	public String getReadableFileSize()  {
+	@JsonIgnore
+	public String getFileSize() {
 		String size = "N/A";
 		try {
-			size = IridaSequenceFile.humanReadableByteCount(getFileSize(), true);
+			size = IridaSequenceFile.humanReadableByteCount(getFileSizeBytes(), true);
 		} catch (NoSuchFileException e) {
 			logger.error("Could not find file " + getFile());
 		} catch (IOException e) {
@@ -120,7 +112,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 
 	/**
 	 * Gets the assembly file.
-	 * 
+	 *
 	 * @return The assembly file.
 	 */
 	public abstract Path getFile();
@@ -128,6 +120,10 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate);
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
