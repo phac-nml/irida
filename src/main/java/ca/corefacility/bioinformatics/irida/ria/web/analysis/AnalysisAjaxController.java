@@ -582,10 +582,16 @@ public class AnalysisAjaxController {
 	@ResponseBody
 	public List<SharedProjectResponse> getSharedProjectsForAnalysis(@PathVariable Long submissionId) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
 		// Input files
+
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
+
+		// Single End
+		Set<SingleEndSequenceFile> inputFileSingleEnd = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SingleEndSequenceFile.class);
 
 		// get projects already shared with submission
 		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission)
@@ -594,17 +600,24 @@ public class AnalysisAjaxController {
 				.collect(Collectors.toSet());
 
 		// get available projects
-		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
+		Set<Project> projectsInAnalysisPaired = projectService.getProjectsForSequencingObjects(inputFilePairs);
+		Set<Project> projectsInAnalysisSingleEnd = projectService.getProjectsForSequencingObjects(inputFileSingleEnd);
 
+		// Create response for shared projects
 		List<SharedProjectResponse> projectResponses = projectsShared.stream()
 				.map(p -> new SharedProjectResponse(p, true))
 				.collect(Collectors.toList());
 
-		// Create response for shared projects
-		projectResponses.addAll(projectsInAnalysis.stream()
+		projectResponses.addAll(projectsInAnalysisPaired.stream()
 				.filter(p -> !projectsShared.contains(p))
 				.map(p -> new SharedProjectResponse(p, false))
 				.collect(Collectors.toList()));
+
+		projectResponses.addAll(projectsInAnalysisSingleEnd.stream()
+				.filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false))
+				.collect(Collectors.toList()));
+
 
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
