@@ -1,49 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
-<head>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
     <title th:text="#{clients.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/remote-apis.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/remote-apis.bundle.css}" />
     <script th:inline="javascript">
-      var PAGE = {
-        lang: {
-          errorText: /*[[#{remoteapi.status.error}]]*/ 'Error connecting',
-          statusText: /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...",
-          connectText: /*[[#{remoteapi.status.connect.button}]]*/ 'Connect'
-        }
+      window.PAGE = {
+        admin: /*[[${isAdmin}]]*/ false
       };
     </script>
-</head>
-<body>
-<main class="col-md-12" layout:fragment="page">
-    <h1 th:text="#{remoteapi.title}">_Clients_</h1>
+  </head>
+  <body>
+    <main
+      id="remote-api-list"
+      style="height: 100%;"
+      layout:fragment="page"
+    ></main>
 
-    <p class="lead" th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA
-        site._</p>
-
-    <div class="js-connection-toolbar btn-toolbar hidden">
-        <div class="btn-group btn-group-sm" role="group">
-            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/create}"
-               th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
-        </div>
-    </div>
-    <table id="remoteapiTable" class="table table-striped" width="100%" cellspacing="0"
-           data:url="@{/remote_api/ajax/list}">
-        <thead>
-        <tr th:inline="text">
-            <th data-data="name" id="name-header" th:text="#{remoteapi.name}"></th>
-            <th data-data="createdDate" id="created-header" class="dt-date" th:text="#{iridaThing.timestamp}"></th>
-            <th data-data="status" id="status-header" style="width: 150px;" th:text="#{remoteapi.status}"></th>
-            <th data-data="connectionButton" style="width: 80px;"></th>
-        </tr>
-        </thead>
-        <tbody id="remoteapi-table-body"></tbody>
-    </table>
-</main>
-
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/remote-apis.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/remote-apis.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

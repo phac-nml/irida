@@ -16,8 +16,11 @@ Changes
 * [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
 * [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
 * [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
+* [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
+* [UI]: Updated Remote API Listing page to use Ant Design.
+* [UI]: Updated Administrator Users page to use Ant Design.
+* [UI]: Removed DataTables from overrepresented sequence file and run files page.
 * [REST]: Added a REST API endpoint to read assemblies for samples.
-
 
 19.09 to 20.01
 --------------

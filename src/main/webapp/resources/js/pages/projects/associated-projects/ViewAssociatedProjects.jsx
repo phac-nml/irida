@@ -5,7 +5,6 @@
  */
 import React, { useEffect, useState } from "react";
 import { Avatar, Switch, Table, Typography } from "antd";
-import { createProjectLink } from "../../../utilities/link-utilities";
 import {
   addAssociatedProject,
   getAssociatedProjects,
@@ -14,6 +13,7 @@ import {
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
 import { IconFolder } from "../../../components/icons/Icons";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
@@ -78,7 +78,9 @@ export default function ViewAssociatedProjects() {
     {
       key: "project",
       render(project) {
-        return createProjectLink(project);
+        return (
+          <a href={setBaseUrl(`projects/${project.id}`)}>{project.label}</a>
+        );
       },
       title: i18n("ViewAssociatedProjects.ProjectHeader"),
       filterDropdown(props) {
