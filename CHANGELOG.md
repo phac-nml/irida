@@ -17,8 +17,11 @@ Changes
 * [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
 * [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
 * [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
-* [UI]: Updated Remote API Listing page to use Ant Design.
 * [Developer]: `bower` completely removed.
+* [UI]: Updated Remote API Listing page to use Ant Design.
+* [UI]: Updated Administrator Users page to use Ant Design.
+* [UI]: Removed DataTables from overrepresented sequence file page.
+* [UI]: Removed DataTables from overrepresented sequence file and run files page.
 * [UI/Developer]: Update to Ant Design v4.
 * [UI]: New login page with ability to override in properties file.
 

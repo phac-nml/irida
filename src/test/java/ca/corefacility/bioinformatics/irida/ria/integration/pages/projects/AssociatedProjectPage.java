@@ -44,6 +44,6 @@ public class AssociatedProjectPage extends AbstractPage {
 		String value = btn.getAttribute("aria-checked");
 		btn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.attributeContains(btn, "aria-checked", value.equals("true") ? "false" : "true"));
+		wait.until(ExpectedConditions.stalenessOf(btn));
 	}
 }

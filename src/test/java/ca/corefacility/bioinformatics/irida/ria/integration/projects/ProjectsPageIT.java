@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import java.util.List;
-
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -10,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Ordering;
 
 import static org.junit.Assert.*;
 
@@ -29,19 +26,12 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		checkTranslations(page, ImmutableList.of("projects"), "Projects");
 
 		assertEquals("Should be 8 projects", 8, page.getNumberOfProjects());
-		List<String> projectNames = page.getProjectsSortListByColumnName("Project Name");
-		assertFalse("Projects name should not be sorted originally", Ordering.natural()
-				.isOrdered(projectNames));
-		page.sortProjectTableBy("Project Name");
-		projectNames = page.getProjectsSortListByColumnName("Project Name");
-		assertTrue("Project names should now be sorted", Ordering.natural()
-				.isOrdered(projectNames));
+		assertFalse("Projects name should not be sorted originally", page.isTableSortedByProjectNamesAscending());
+		page.sortTableByProjectName();
+		assertTrue("Project names should now be sorted", page.isTableSortedByProjectNamesAscending());
 
-		page.sortProjectTableBy("Project Name");
-		projectNames = page.getProjectsSortListByColumnName("Project Name");
-		assertTrue("Project names should be sorted reverse.", Ordering.natural()
-				.reverse()
-				.isOrdered(projectNames));
+		page.sortTableByProjectName();
+		assertTrue("Project names should be sorted reverse.", page.isTableSortedByProjectNamesDescending());
 
 		page.searchTableForProjectName("project EFGH");
 		assertEquals("Should only be 1 project visible", 1, page.getNumberOfProjects());

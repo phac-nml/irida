@@ -97,15 +97,15 @@ function PagedTableProvider({
       sortDirection: state.order || "descend",
       search: state.search,
       filters: state.filters
-    }).then(({ dataSource, total }) =>
+    }).then(({ dataSource, total }) => {
       dispatch({
         type: types.LOADED,
         payload: {
           dataSource,
           total
         }
-      })
-    );
+      });
+    });
   }
 
   /**

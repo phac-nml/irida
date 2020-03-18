@@ -59,7 +59,9 @@ export function AnalysisSampleRenderer() {
                 className="t-paired-end"
                 avatar={<Avatar icon={<IconExperiment />} />}
                 title={
-                  <a
+                  item.sampleId == 0 ?
+		  item.sampleName
+		  :<a
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-paired-end-sample-name"
@@ -114,10 +116,14 @@ export function AnalysisSampleRenderer() {
                 className="t-single-end"
                 avatar={<Avatar icon={<IconExperiment />} />}
                 title={
+                  item.sampleId == 0 ?
+                  item.sampleName
+                  :
                   <a
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-single-end-sample-name"
+                    style={{color: blue6}}
                   >
                     {item.sampleName}
                   </a>

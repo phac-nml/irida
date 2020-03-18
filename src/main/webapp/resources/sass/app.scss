@@ -114,6 +114,8 @@ label.ant-checkbox-wrapper {
 .body-content {
   flex-grow: 1;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .navbar-collapse {

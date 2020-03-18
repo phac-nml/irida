@@ -7,30 +7,25 @@ import { Button } from "antd";
  * This components is part of the TemplateSelect.  Displays a save button
  * if the "All Field" or no template is selected and columns modified.
  */
-export class SaveTemplateButton extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  showSaveModal = e => {
+export function SaveTemplateButton({
+  showTemplateModal,
+  template,
+  saveTemplate
+}) {
+  const showSaveModal = e => {
     e.stopPropagation();
-    this.props.showSaveModal();
+    showTemplateModal();
   };
 
-  render() {
-    return (
-      <Button
-        className="t-template-save-btn"
-        size="small"
-        type="primary"
-        ghost
-        onClick={this.showSaveModal}
-        disabled={typeof this.props.template === "undefined"}
-      >
-        {i18n("linelist.templates.saveModified")}
-      </Button>
-    );
-  }
+  return (
+    <Button
+      className="t-template-save-btn"
+      onClick={showSaveModal}
+      disabled={!template.modified.length}
+    >
+      {i18n("linelist.templates.saveModified")}
+    </Button>
+  );
 }
 
 SaveTemplateButton.propTypes = {
