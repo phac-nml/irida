@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,15 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -60,6 +51,16 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for all sample related views
@@ -511,6 +512,28 @@ public class SamplesController extends BaseController {
 
 		for (MultipartFile file : singleFiles) {
 			createSequenceFileInSample(file, sample);
+		}
+	}
+
+	/**
+	 * Upload assemblies to the given sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param files    the files that are uploaded
+	 * @throws IOException if there's an error uploading
+	 */
+	@RequestMapping(value = { "/samples/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
+	public void uploadAssemblies(@PathVariable Long sampleId, @RequestParam(value = "files") List<MultipartFile> files)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+
+		for (MultipartFile file : files) {
+			Path temp = Files.createTempDirectory(null);
+			Path target = temp.resolve(file.getOriginalFilename());
+			file.transferTo(target.toFile());
+			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
+
+			genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
 		}
 	}
 
