@@ -86,7 +86,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void toggleMetadataField (int field) {
-		fieldSwitches.get(field).click();
+		fieldSwitches.get(field)
+				.click();
+		waitForTime(200);
 	}
 
 	public void selectTemplate(String template) {
