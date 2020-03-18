@@ -26,6 +26,7 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 
 	Long fileRevisionNumber;
 
+	//default constructor for hibernate
 	protected UploadedAssembly() {
 		super();
 	}
