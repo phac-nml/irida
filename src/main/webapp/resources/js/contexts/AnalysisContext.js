@@ -16,6 +16,7 @@ import { updateAnalysis } from "../apis/analysis/analysis";
 export const stateMap = {
   NEW: 0,
   PREPARING: 1,
+  PREPARED: 1,
   SUBMITTING: 2,
   RUNNING: 3,
   FINISHED_RUNNING: 3,
