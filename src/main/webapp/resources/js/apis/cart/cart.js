@@ -1,5 +1,5 @@
 import axios from "axios";
-import {setBaseUrl} from "../../utilities/url-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const url = setBaseUrl(`cart`);
 
@@ -34,9 +34,9 @@ export const getCartIds = async () =>
   axios.get(`${url}/ids`).then(response => ({ ids: response.data }));
 
 export const getSamplesForProjects = async ids =>
-  axios
-    .get(`${url}?${ids.map(id => `projectId=${id}`).join("&")}`)
-    .then(({ data }) => data);
+         axios
+           .get(`${url}?${ids.map(id => `projectId=${id}`).join("&")}`)
+           .then(({ data }) => data);
 
 
 /**

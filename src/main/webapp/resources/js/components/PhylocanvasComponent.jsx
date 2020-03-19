@@ -33,5 +33,5 @@ PhylocanvasComponent.propTypes = {
     className: PropTypes.string,
     data: PropTypes.string,
     style: PropTypes.object,
-    treeType: PropTypes.oneOf(_keys(treeTypes)),
+    treeType: PropTypes.oneOf(_keys(treeTypes))
 }

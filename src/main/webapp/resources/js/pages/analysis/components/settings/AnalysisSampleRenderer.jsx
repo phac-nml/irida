@@ -11,6 +11,7 @@ import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { blue6 } from "../../../../styles/colors";
 
 const { Search } = Input;
 
@@ -33,9 +34,11 @@ export function AnalysisSampleRenderer() {
   }, []);
 
   const [filteredSamples, setFilteredSamples] = useState(null);
-  const [filteredSingleEndSamples, setSingleEndFilteredSamples] = useState(null);
-  const SEQ_FILES_BASE_URL= setBaseUrl("sequenceFiles");
-  const SAMPLES_BASE_URL= setBaseUrl("samples");
+  const [filteredSingleEndSamples, setSingleEndFilteredSamples] = useState(
+    null
+  );
+  const SEQ_FILES_BASE_URL = setBaseUrl("sequenceFiles");
+  const SAMPLES_BASE_URL = setBaseUrl("samples");
 
   const renderPairedEndSamples = () => {
     return (
@@ -60,14 +63,15 @@ export function AnalysisSampleRenderer() {
                 }
                 title={
                   item.sampleId == 0 ?
-		  item.sampleName
-		  :
-		  <a
-			href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-			target="_blank"
-			className="t-paired-end-sample-name"
-		  >
-			{item.sampleName}
+                    item.sampleName
+                    :
+                  <a
+                    href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+                    target="_blank"
+                    className="t-paired-end-sample-name"
+                    style={{color: blue6}}
+                  >
+                    {item.sampleName}
                   </a>
                 }
                 description={
@@ -121,12 +125,13 @@ export function AnalysisSampleRenderer() {
                 }
                 title={
                   item.sampleId == 0 ?
-		  item.sampleName
-		  :
-		  <a
+                  item.sampleName
+                  :
+                  <a
                     href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
                     target="_blank"
                     className="t-single-end-sample-name"
+                    style={{color: blue6}}
                   >
                     {item.sampleName}
                   </a>
@@ -202,8 +207,11 @@ export function AnalysisSampleRenderer() {
             allowClear={true}
             id="t-sample-search-input"
           />
-          { analysisSamplesContext.samples.length > 0 ? renderPairedEndSamples() : null}
-          { analysisSamplesContext.singleEndSamples.length > 0 ? renderSingleEndSamples() : null}
+          {analysisSamplesContext.samples.length > 0 ? renderPairedEndSamples()
+ : null}
+          {analysisSamplesContext.singleEndSamples.length > 0
+ ? renderSingleEndSamples()
+ : null}
         </div>
       ) : (
         <InfoAlert message={i18n("AnalysisSamples.samplesDeleted")} />

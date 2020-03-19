@@ -142,7 +142,9 @@ class i18nThymeleafWebpackPlugin {
             This adds a file for translations for webpack to write to the file system.
              */
             const html = template(keys, entrypointName);
-            compilation.assets[`../pages/templates/i18n/${entrypointName}.html`] = {
+            compilation.assets[
+              `../pages/templates/i18n/${entrypointName}.html`
+            ] = {
               source: () => html,
               size: () => html.length
             };

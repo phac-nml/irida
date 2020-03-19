@@ -17,7 +17,9 @@ const { Content } = Layout;
 
 export default function AnalysisOutputFiles() {
   const { analysisContext } = useContext(AnalysisContext);
-  const BASE_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.OUTPUT);
+  const BASE_URL =
+    `/analysis/${analysisContext.analysis.identifier}` +
+    setBaseUrl(ANALYSIS.OUTPUT);
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <Content>

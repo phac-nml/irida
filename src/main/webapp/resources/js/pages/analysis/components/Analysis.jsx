@@ -9,7 +9,7 @@
  *required by the components encompassed within
  */
 
-import React, { lazy, Suspense, useContext } from "react";
+import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
@@ -25,6 +25,7 @@ import { SPACE_MD } from "../../../styles/spacing";
 import AnalysisError from "./AnalysisError";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { ANALYSIS } from "../routes";
+import { getNewickTree } from "../../../apis/analysis/analysis";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
@@ -41,6 +42,19 @@ const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
   const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}`;
+  const [treeDefault, setTreeDefault] = useState(null);
+
+  useEffect(() => {
+    if((analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") && analysisContext.isCompleted) {
+      getNewickTree(analysisContext.analysis.identifier).then(data => {
+        if (data.newick !== null) {
+          setTreeDefault(true);
+        } else {
+          setTreeDefault(false);
+        }
+      });
+    }
+  }, []);
 
   const title = (
     <>
@@ -64,7 +78,7 @@ export default function Analysis() {
       ? ANALYSIS.SISTR
       : analysisType === "BIO_HANSEL"
       ? ANALYSIS.BIOHANSEL
-      : analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST"
+      : ((analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") && treeDefault)
       ? ANALYSIS.TREE
       : ANALYSIS.OUTPUT
     : analysisContext.isError
@@ -101,8 +115,8 @@ export default function Analysis() {
             </Menu.Item>
           );
         } else if (
-          analysisContext.analysisType === "PHYLOGENOMICS" ||
-          analysisContext.analysisType === "MLST_MENTALIST"
+          ((analysisContext.analysisType === "PHYLOGENOMICS" ||
+          analysisContext.analysisType === "MLST_MENTALIST") && treeDefault)
         ) {
           tabLinks.push(
             <Menu.Item key="tree">
@@ -131,7 +145,6 @@ export default function Analysis() {
     tabLinks.push(
       <Menu.Item key="settings">
         <Link to={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}>
-
           {i18n("Analysis.settings")}
         </Link>
       </Menu.Item>
@@ -190,8 +203,8 @@ export default function Analysis() {
                   <AnalysisPhylogeneticTree
                     path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
-                      analysisType === "PHYLOGENOMICS" ||
-                      analysisType === "MLST_MENTALIST"
+                      ((analysisType === "PHYLOGENOMICS" ||
+                      analysisType === "MLST_MENTALIST") && treeDefault)
                     }
                     key="tree"
                   />,
@@ -202,10 +215,12 @@ export default function Analysis() {
                   <AnalysisOutputFiles
                     path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
-                      analysisType !== "SISTR_TYPING" &&
+                      (analysisType !== "SISTR_TYPING" &&
                       analysisType !== "BIO_HANSEL" &&
                       analysisType !== "PHYLOGENOMICS" &&
-                      analysisType !== "MLST_MENTALIST"
+                      analysisType !== "MLST_MENTALIST") ||
+                      ((analysisType === "PHYLOGENOMICS" ||
+                      analysisType === "MLST_MENTALIST") && !treeDefault)
                     }
                     key="output"
                   />
