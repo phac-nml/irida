@@ -6,13 +6,8 @@
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 	<link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
 	<script th:inline="javascript">
-		var PAGE = {
-			sample: {
-				id: /*[[${sample.getId()}]]*/ '1'
-			},
-		  	URLS: {
-			  upload: /*[[@{/samples/{id}/sequenceFiles/upload(id=${sample.getId()})}]]*/ ''
-			}
+		window.PAGE = {
+			id: /*[[${sample.getId()}]]*/ '1'
 		};
 	</script>
 </head>
@@ -64,6 +59,11 @@
 </div>
 
 <div layout:fragment="main">
+	<div th:if="${canManageSample}" th:with="url=${#httpServletRequest.requestURI}">
+		<div id="sample-root">
+		<!-- Render from React component located: src/main/webapp/resources/js/pages/SamplePage.jsx -->
+		</div>
+	</div>
 	<div>
 		<div>
 			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
@@ -387,6 +387,7 @@
 		</form>
 	</script>
 
+	<script th:src="@{/dist/js/sample.bundle.js}"></script>
 	<script th:src="@{/dist/js/sample-files.bundle.js}"></script>
 </th:block>
 </body>
