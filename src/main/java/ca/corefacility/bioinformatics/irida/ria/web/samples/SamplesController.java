@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -498,9 +499,14 @@ public class SamplesController extends BaseController {
 	 *             on upload failure
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
-	public void uploadSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(value = "files") List<MultipartFile> files, HttpServletResponse response) throws IOException {
+	public void uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
+
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
 
 		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
 		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);

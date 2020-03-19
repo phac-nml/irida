@@ -20,10 +20,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
@@ -305,7 +307,8 @@ public class SamplesControllerTest {
 				.forClass(SingleEndSequenceFile.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
-		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+		MultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
+		controller.uploadSequenceFiles(sample.getId(), request, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
 		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
@@ -324,7 +327,8 @@ public class SamplesControllerTest {
 		ArgumentCaptor<SequenceFilePair> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
-		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+		MultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
+		controller.uploadSequenceFiles(sample.getId(), request, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
 
@@ -348,7 +352,8 @@ public class SamplesControllerTest {
 		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
-		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+		MultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
+		controller.uploadSequenceFiles(sample.getId(), request, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
 		verify(sequencingObjectService, times(3)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
