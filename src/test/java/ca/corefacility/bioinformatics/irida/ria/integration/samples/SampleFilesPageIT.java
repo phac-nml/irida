@@ -27,7 +27,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	private final Long SAMPLE_ID = 1L;
 	private SampleFilesPage page;
 
-	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
+	private final List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
 			ImmutableMap.of(
 					"href", "/samples",
 					"text", "Samples"
@@ -87,15 +87,10 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGoodFileUploads() throws InterruptedException {
 		page.gotoPage(SAMPLE_ID);
+		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
 		page.selectGoodFastqFiles();
-		assertTrue("Should display progress bar for file uploads", page.isProgressBarDisplayed());
-		
-		/*
-		 * TODO: Modify this test to check for the file successfully uploading
-		 * Note: This sleep is to allow the upload and file processing to
-		 * complete before dbunit tries to clear the database
-		 */
-		Thread.sleep(5000);
+		page.gotoPage(SAMPLE_ID);
+		assertEquals("Displays the correct number of sequence files", 5, page.getSequenceFileCount());
 	}
 
 	@Test
@@ -103,13 +98,6 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		page.selectBadFastaFile();
 		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
-		
-		/*
-		 * TODO: Modify this test to check for the file upload stateNote: This
-		 * sleep is to allow the upload and file processing to complete before
-		 * dbunit tries to clear the database
-		 */
-		Thread.sleep(5000);
 	}
 	
 	@Test

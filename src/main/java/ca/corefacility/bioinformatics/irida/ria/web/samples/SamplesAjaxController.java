@@ -45,7 +45,7 @@ public class SamplesAjaxController {
 	 * @param request  The current request which contains {@link MultipartFile}
 	 * @param locale   The locale for the currently logged in user
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
 	public ResponseEntity<String> uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request,
 			Locale locale) {
 		Sample sample = sampleService.read(sampleId);

@@ -93,14 +93,14 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	private void uploadFile(String filePath) {
-		WebElement uploadBtn = driver.findElement(By.id("file-upload-btn"));
 		Path path = Paths.get(filePath);
-		uploadBtn.sendKeys(path.toAbsolutePath().toString());
+		WebElement inputElm = driver.findElement(By.className("t-file-upload-input"));
+		inputElm.sendKeys(path.toAbsolutePath().toString());
 		waitForTime(500);
 	}
 
 	public boolean isFileTypeWarningDisplayed() {
-		WebElement modalBody = waitForElementVisible(By.className("modal-body"));
-		return modalBody.findElement(By.className("bad-file-name")).getText().equals("test_file.fasta");
+		WebElement notification = waitForElementVisible(By.className("t-file-upload-error"));
+		return notification.findElement(By.className("t-bad-file-name")).getText().equals("test_file.fasta");
 	}
 }

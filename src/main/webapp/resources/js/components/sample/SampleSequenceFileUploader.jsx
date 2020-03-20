@@ -27,13 +27,25 @@ export function SampleSequenceFileUploader() {
     }, 3000);
   };
 
+  const onBadFiles = files => {
+    const names = (
+      <ul>
+        {files.map(f => (
+          <li>{f.name()}</li>
+        ))}
+      </ul>
+    );
+    showErrorNotification({ text: names });
+  };
+
   return (
     <FileUploader
       label={i18n("SampleSequenceFileUploader.button")}
       allowedTypes=".fastq,.fastq.gz"
-      url={setBaseUrl(`samples/${window.PAGE.id}/sequenceFiles/upload`)}
+      url={setBaseUrl(`ajax/samples/${window.PAGE.id}/sequenceFiles/upload`)}
       onSuccess={onSuccess}
       onError={text => showErrorNotification({ text })}
+      onBadFiles={onBadFiles}
     />
   );
 }
