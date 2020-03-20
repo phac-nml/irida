@@ -1,6 +1,6 @@
 import React from "react";
 import { MenuBar } from "../MenuBar";
-import { SampleSequenceFileUploader } from "./SampleSequenceFileUploader";
+import { SampleFileUploader } from "./SampleFileUploader";
 import { Button } from "antd";
 import { IconPlusCircle } from "../icons/Icons";
 
@@ -19,7 +19,7 @@ export default function SampleMenuBar() {
           <IconPlusCircle />
           {i18n("samples.files.concatenate.btn")}
         </Button>
-        <SampleSequenceFileUploader />
+        <SampleFileUploader />
       </div>
     </MenuBar>
   );

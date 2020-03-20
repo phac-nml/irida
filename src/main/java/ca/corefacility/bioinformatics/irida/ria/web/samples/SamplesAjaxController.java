@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -28,13 +30,15 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 public class SamplesAjaxController {
 	private final SampleService sampleService;
 	private final SequencingObjectService sequencingObjectService;
+	private final GenomeAssemblyService genomeAssemblyService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesAjaxController(SampleService sampleService, SequencingObjectService sequencingObjectService,
-			MessageSource messageSource) {
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
 	}
 
@@ -69,11 +73,47 @@ public class SamplesAjaxController {
 				createSequenceFileInSample(file, sample);
 			}
 			return ResponseEntity.ok()
-					.body(messageSource.getMessage("server.SampleSequenceFileUploader.success",
+					.body(messageSource.getMessage("server.SampleFileUploader.success",
 							new Object[] { sample.getSampleName() }, locale));
 		} catch (IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(messageSource.getMessage("server.SampleSequenceFileUploader.error",
+					.body(messageSource.getMessage("server.SampleFileUploader.error",
+							new Object[] { sample.getSampleName() }, locale));
+		}
+	}
+
+	/**
+	 * Upload assemblies to the given sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @param locale   The locale for the currently logged in user
+	 */
+	@RequestMapping(value = { "/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
+	public ResponseEntity<String> uploadAssemblies(@PathVariable Long sampleId, MultipartHttpServletRequest request,
+			Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		try {
+			for (MultipartFile file : files) {
+				Path temp = Files.createTempDirectory(null);
+				Path target = temp.resolve(file.getOriginalFilename());
+				file.transferTo(target.toFile());
+				UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
+
+				genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
+			}
+			return ResponseEntity.ok()
+					.body(messageSource.getMessage("server.SampleFileUploader.success",
+							new Object[] { sample.getSampleName() }, locale));
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(messageSource.getMessage("server.SampleFileUploader.error",
 							new Object[] { sample.getSampleName() }, locale));
 		}
 	}

@@ -205,7 +205,9 @@
 							th:text="${assembly.label}"></a>
 						<div class="file-name td_info--value" 
 							th:case="false"
-							th:text="${assembly.label}"></div>
+							 style="display: flex; align-items: center; height: 35px;>
+							<div th:text="${assembly.label}"></div>
+						</div>
 					</td>
 					<td>
 						<div class="td_info">

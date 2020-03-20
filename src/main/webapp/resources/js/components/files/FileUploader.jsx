@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
-import { Button, notification } from "antd";
+import { notification } from "antd";
 import { uploadFiles } from "../../apis/files/files";
-import { IconCloudUpload } from "../icons/Icons";
 
 /**
  * Generic file uploader.  Handles single and multiple files.
@@ -16,6 +15,7 @@ import { IconCloudUpload } from "../icons/Icons";
  * @constructor
  */
 export function FileUploader({
+  children,
   url,
   label,
   allowedTypes = "",
@@ -87,14 +87,7 @@ export function FileUploader({
   };
 
   return (
-    <>
-      <Button
-        className="t-file-upload-btn"
-        onClick={() => inputRef.current.click()}
-      >
-        <IconCloudUpload />
-        {label}
-      </Button>
+    <div className="t-file-upload-btn" onClick={() => inputRef.current.click()}>
       <input
         className="t-file-upload-input"
         ref={inputRef}
@@ -104,6 +97,7 @@ export function FileUploader({
         onChange={submitFiles}
         accept={allowedTypes}
       />
-    </>
+      {children}
+    </div>
   );
 }

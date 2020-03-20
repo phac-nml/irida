@@ -21,13 +21,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -481,28 +479,6 @@ public class SamplesController extends BaseController {
 		}
 
 		return "redirect:" + request.getHeader("referer");
-	}
-
-	/**
-	 * Upload assemblies to the given sample
-	 *
-	 * @param sampleId the ID of the sample to upload to
-	 * @param files    the files that are uploaded
-	 * @throws IOException if there's an error uploading
-	 */
-	@RequestMapping(value = { "/samples/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
-	public void uploadAssemblies(@PathVariable Long sampleId, @RequestParam(value = "files") List<MultipartFile> files)
-			throws IOException {
-		Sample sample = sampleService.read(sampleId);
-
-		for (MultipartFile file : files) {
-			Path temp = Files.createTempDirectory(null);
-			Path target = temp.resolve(file.getOriginalFilename());
-			file.transferTo(target.toFile());
-			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
-
-			genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
-		}
 	}
 
 	/**
