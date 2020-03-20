@@ -1,10 +1,12 @@
 import React, { useRef } from "react";
-import { notification } from "antd";
+import { notification, Progress } from "antd";
 import { uploadFiles } from "../../apis/files/files";
 
 /**
  * Generic file uploader.  Handles single and multiple files.
  *
+ *
+ * @param {element} children - Button or dropdown element
  * @param {string} url - Url to upload files to
  * @param {string} label - Text to display on the button
  * @param {string} allowedTypes - Input accepts attribute
@@ -25,15 +27,19 @@ export function FileUploader({
 }) {
   const inputRef = useRef();
 
+  const generateFileList = files => (
+    <ul>
+      {files.map(f => (
+        <li className="t-bad-file-name">{f.name}</li>
+      ))}
+    </ul>
+  );
+
   const showBadFilesNotification = (files, types) => {
     const description = (
       <>
         {i18n("FileUploader.badFiles")}
-        <ul>
-          {files.map(f => (
-            <li className="t-bad-file-name">{f.name}</li>
-          ))}
-        </ul>
+        {generateFileList(files)}
         <p>{i18n("FileUploader.continued", types.join(", "))}</p>
       </>
     );
@@ -80,7 +86,26 @@ export function FileUploader({
     if (bad.length) {
       showBadFilesNotification(bad, allowed);
     } else if (good.length) {
-      uploadFiles({ url, files })
+      const key = Date.now();
+      uploadFiles({
+        url,
+        files,
+        onProgressUpdate: progress => {
+          notification.info({
+            key,
+            message: "Uploading Files",
+            description: (
+              <>
+                Files to be uploaded:
+                {generateFileList(good)}
+                <Progress percent={progress} size="small" />
+              </>
+            ),
+            placement: "bottomRight",
+            duration: 0
+          });
+        }
+      })
         .then(onSuccess)
         .catch(onError);
     }
