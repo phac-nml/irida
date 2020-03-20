@@ -5,6 +5,7 @@ import { SampleSequenceFileUploader } from "./SampleSequenceFileUploader";
 /**
  * MenuBar instance for the Samples page.  Used to hold buttons for actions on
  * samples.
+ *
  * @returns {*}
  * @constructor
  */

@@ -5,6 +5,7 @@ import { IconCloudUpload } from "../icons/Icons";
 
 /**
  * Generic file uploader.  Handles single and multiple files.
+ *
  * @param {string} url - Url to upload files to
  * @param {string} label - Text to display on the button
  * @param {string} allowedTypes - Input accepts attribute
@@ -24,7 +25,8 @@ export function FileUploader({
 
   /**
    * Submit the files to the server. Need to first get the files from the event.
-   * @param e
+   *
+   * @param {object} e - React synthetic event
    */
   const submitFiles = e => {
     const files = e.target.files;

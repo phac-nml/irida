@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -488,18 +490,13 @@ public class SamplesController extends BaseController {
 	/**
 	 * Upload {@link SequenceFile}'s to a sample
 	 *
-	 * @param sampleId
-	 *            The {@link Sample} id to upload to
-	 * @param files
-	 *            A list of {@link MultipartFile} sequence files.
-	 * @param response
-	 *            HTTP response object to update response status if there's an
-	 *            error.
-	 * @throws IOException
-	 *             on upload failure
+	 * @param sampleId The {@link Sample} id to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @param locale   The locale for the currently logged in user
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
-	public void uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
+	public ResponseEntity<String> uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request,
+			Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 
 		Iterator<String> fileNames = request.getFileNames();
@@ -511,13 +508,22 @@ public class SamplesController extends BaseController {
 		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
 		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);
 
-		for (String key : pairedFiles.keySet()) {
-			List<MultipartFile> list = pairedFiles.get(key);
-			createSequenceFilePairsInSample(list, sample);
-		}
+		try {
+			for (String key : pairedFiles.keySet()) {
+				List<MultipartFile> list = pairedFiles.get(key);
+				createSequenceFilePairsInSample(list, sample);
+			}
 
-		for (MultipartFile file : singleFiles) {
-			createSequenceFileInSample(file, sample);
+			for (MultipartFile file : singleFiles) {
+				createSequenceFileInSample(file, sample);
+			}
+			return ResponseEntity.ok()
+					.body(messageSource.getMessage("server.SampleSequenceFileUploader.success",
+							new Object[] { sample.getSampleName() }, locale));
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(messageSource.getMessage("server.SampleSequenceFileUploader.error",
+							new Object[] { sample.getSampleName() }, locale));
 		}
 	}
 
