@@ -7,27 +7,16 @@
 	<link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
 	<script th:inline="javascript">
 		window.PAGE = {
-			id: /*[[${sample.getId()}]]*/ '1'
+			id: /*[[${sample.getId()}]]*/ '1',
+			__cm: /*[[${canManageSample}]]*/ false
 		};
 	</script>
 </head>
 <body>
 
-<div th:if="${canManageSample}" th:with="url=${#httpServletRequest.requestURI}" class="panel panel-default panel-file-upload" layout:fragment="sidebar">
-	<div class="panel-body" th:if="${not #lists.isEmpty(single_end) or not #lists.isEmpty(paired_end)}">
-		<a href="concatenate" class="btn btn-default btn-sm btn-block">
-			<th:block th:text="#{samples.files.concatenate.btn}"></th:block>
-			&nbsp;
-			<i class="fa fa-plus-square" aria-hidden="true"></i>
-			</a>
-	</div>
-</div>
-
 <div layout:fragment="main">
-	<div th:if="${canManageSample}" th:with="url=${#httpServletRequest.requestURI}">
-		<div id="sample-root">
+	<div id="sample-root">
 		<!-- Render from React component located: src/main/webapp/resources/js/pages/SamplePage.jsx -->
-		</div>
 	</div>
 	<div>
 		<div>

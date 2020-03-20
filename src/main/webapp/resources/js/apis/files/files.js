@@ -10,9 +10,12 @@ export function uploadFiles({ files, url }) {
   const formData = new FormData();
   files.forEach((f, i) => formData.append(`files[${i}]`, f));
 
-  return axios.post(url, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  });
+  return axios
+    .post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    })
+    .then(({ data }) => data)
+    .catch(({ data }) => data);
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import { MenuBar } from "../MenuBar";
 import { SampleSequenceFileUploader } from "./SampleSequenceFileUploader";
+import { Button } from "antd";
+import { IconPlusCircle } from "../icons/Icons";
 
 /**
  * MenuBar instance for the Samples page.  Used to hold buttons for actions on
@@ -9,10 +11,14 @@ import { SampleSequenceFileUploader } from "./SampleSequenceFileUploader";
  * @returns {*}
  * @constructor
  */
-export function SampleMenuBar() {
+export default function SampleMenuBar() {
   return (
     <MenuBar>
-      <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Button href="concatenate">
+          <IconPlusCircle />
+          {i18n("samples.files.concatenate.btn")}
+        </Button>
         <SampleSequenceFileUploader />
       </div>
     </MenuBar>
