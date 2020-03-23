@@ -25,6 +25,9 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Controller for asynchronous requests for a {@link Sample}
+ */
 @RestController
 @RequestMapping("/ajax/samples")
 public class SamplesAjaxController {
@@ -48,6 +51,7 @@ public class SamplesAjaxController {
 	 * @param sampleId The {@link Sample} id to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
 	 * @param locale   The locale for the currently logged in user
+	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
 	public ResponseEntity<String> uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request,
@@ -88,6 +92,7 @@ public class SamplesAjaxController {
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
 	 * @param locale   The locale for the currently logged in user
+	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
 	public ResponseEntity<String> uploadAssemblies(@PathVariable Long sampleId, MultipartHttpServletRequest request,
