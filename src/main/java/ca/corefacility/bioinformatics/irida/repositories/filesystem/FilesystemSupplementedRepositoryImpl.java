@@ -20,12 +20,15 @@ import javax.persistence.PreUpdate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
 
 /**
  * Custom implementation of a repository that writes the {@link Path} part of an
@@ -40,6 +43,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
+
+	@Autowired
+	private IridaFileStorageServiceImpl iridaFileStorageService;
 
 	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
 		this.entityManager = entityManager;
@@ -169,7 +175,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			entityManager.persist(entity);
 		}
 		logger.trace("About to write files to disk.");
+
 		writeFilesToDisk(baseDirectory, entity);
+
 		logger.trace("Returning merged entity.");
 		return entityManager.merge(entity);
 	}
@@ -238,28 +246,28 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
 				logger.debug("Target is [" + target.toString() + "]");
-				try {
-					if (!Files.exists(sequenceFileDir)) {
-						Files.createDirectory(sequenceFileDir);
-						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
-					}
 
-					if (!Files.exists(sequenceFileDirWithRevision)) {
-						Files.createDirectory(sequenceFileDirWithRevision);
-						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
-					}
+				if(iridaFileStorageService.storageTypeIsLocal()) {
+					try {
+						if (!Files.exists(sequenceFileDir)) {
+							Files.createDirectory(sequenceFileDir);
+							logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
+						}
 
-					Files.move(source, target);
-					logger.trace("Moved file " + source + " to " + target);
-				} catch (IOException e) {
-					logger.error("Unable to move file into new directory", e);
-					throw new StorageException("Failed to move file into new directory.", e);
+						if (!Files.exists(sequenceFileDirWithRevision)) {
+							Files.createDirectory(sequenceFileDirWithRevision);
+							logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+						}
+					} catch (IOException e) {
+						logger.error("Unable to create new directory", e);
+						throw new StorageException("Failed to create new directory.", e);
+					}
 				}
-
+				iridaFileStorageService.writeFile(source, target);
 				ReflectionUtils.setField(field, objectToWrite, target);
 			}
 		}
-
 		return objectToWrite;
 	}
+
 }

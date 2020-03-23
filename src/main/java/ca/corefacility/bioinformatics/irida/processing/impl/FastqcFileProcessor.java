@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final AnalysisOutputFileRepository outputFileRepository;
 	private final MessageSource messageSource;
 
+	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
+
 	/**
 	 * Create a new {@link FastqcFileProcessor}
 	 *
@@ -91,7 +95,7 @@ public class FastqcFileProcessor implements FileProcessor {
 						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					fileToProcess.toFile());
+					fileService.getTemporaryFile(fileToProcess));
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();

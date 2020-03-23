@@ -26,6 +26,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
 
 /**
  * A reference file to be associated with a {@link Project}.
@@ -37,6 +38,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 @Audited
 @EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class})
 public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThing {
+
+	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,7 +94,7 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 
 	@Override
 	public String getLabel() {
-		return file.getFileName().toString();
+		return fileService.getFileName(file);
 	}
 
 	@Override
