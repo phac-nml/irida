@@ -3,6 +3,7 @@ import { MenuBar } from "../MenuBar";
 import { SampleFileUploader } from "./SampleFileUploader";
 import { Button } from "antd";
 import { IconPlusCircle } from "../icons/Icons";
+import { SPACE_XS } from "../../styles/spacing";
 
 /**
  * MenuBar instance for the Samples page.  Used to hold buttons for actions on
@@ -14,13 +15,11 @@ import { IconPlusCircle } from "../icons/Icons";
 export default function SampleMenuBar() {
   return (
     <MenuBar>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Button href="concatenate">
-          <IconPlusCircle />
-          {i18n("samples.files.concatenate.btn")}
-        </Button>
-        <SampleFileUploader />
-      </div>
+      <Button href="concatenate" style={{ marginRight: SPACE_XS }}>
+        <IconPlusCircle />
+        {i18n("samples.files.concatenate.btn")}
+      </Button>
+      <SampleFileUploader />
     </MenuBar>
   );
 }
