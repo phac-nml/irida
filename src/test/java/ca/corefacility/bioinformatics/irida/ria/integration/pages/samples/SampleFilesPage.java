@@ -2,10 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -80,27 +82,33 @@ public class SampleFilesPage extends AbstractPage {
 		return waitForElementsVisible(By.id("file-deleted-success")).size() > 0;
 	}
 
-	public void selectGoodFastqFiles() {
-		uploadFile("src/test/resources/files/test_file.fastq");
+	public void uploadSequenceFile(String fileName) {
+		uploadFile(fileName, 0);
 	}
 
-	public void selectBadFastaFile() {
-		uploadFile("src/test/resources/files/test_file.fasta");
+	public void uploadAssemblyFile(String fileName) {
+		uploadFile(fileName, 1);
 	}
 
 	public boolean isProgressBarDisplayed() {
 		return driver.findElements(By.className("progress")).size() > 0;
 	}
 
-	private void uploadFile(String filePath) {
+	private void uploadFile(String filePath, int input) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebElement dropdown = driver.findElement(By.className("t-download-dropdown"));
+		Actions action = new Actions(driver);
+		action.moveToElement(dropdown).perform();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-upload-menu")));
+		List<WebElement> inputElm = driver.findElements(By.className("t-file-upload-input"));
 		Path path = Paths.get(filePath);
-		WebElement inputElm = driver.findElement(By.className("t-file-upload-input"));
-		inputElm.sendKeys(path.toAbsolutePath().toString());
+		inputElm.get(input).sendKeys(path.toAbsolutePath().toString());
 		waitForTime(500);
 	}
 
 	public boolean isFileTypeWarningDisplayed() {
 		WebElement notification = waitForElementVisible(By.className("t-file-upload-error"));
-		return notification.findElement(By.className("t-bad-file-name")).getText().equals("test_file.fasta");
+		return notification.findElements(By.tagName("li")).size() > 0;
 	}
 }

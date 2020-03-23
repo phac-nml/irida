@@ -29,19 +29,8 @@ export function SampleFileUploader() {
     }, 3000);
   };
 
-  const onBadFiles = files => {
-    const names = (
-      <ul>
-        {files.map(f => (
-          <li>{f.name()}</li>
-        ))}
-      </ul>
-    );
-    showErrorNotification({ text: names });
-  };
-
   const fileMenu = (
-    <Menu>
+    <Menu className="t-upload-menu">
       <Menu.Item>
         <FileUploader
           allowedTypes=".fastq,.fastq.gz"
@@ -50,7 +39,6 @@ export function SampleFileUploader() {
           )}
           onSuccess={onSuccess}
           onError={text => showErrorNotification({ text })}
-          onBadFiles={onBadFiles}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
         </FileUploader>
@@ -61,7 +49,6 @@ export function SampleFileUploader() {
           url={setBaseUrl(`ajax/samples/${window.PAGE.id}/assemblies/upload`)}
           onSuccess={onSuccess}
           onError={text => showErrorNotification({ text })}
-          onBadFiles={onBadFiles}
         >
           {i18n("SampleFileUploader.assembly")}
         </FileUploader>
@@ -70,8 +57,8 @@ export function SampleFileUploader() {
   );
 
   return (
-    <Dropdown overlay={fileMenu} placement="bottomRight">
-      <Button>
+    <Dropdown overlay={fileMenu}>
+      <Button className="t-download-dropdown">
         <IconCloudUpload />
         Upload Files
         <IconDropDown />

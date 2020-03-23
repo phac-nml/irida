@@ -28,9 +28,9 @@ export function FileUploader({
   const inputRef = useRef();
 
   const generateFileList = files => (
-    <ul>
+    <ul className="t-bad-files">
       {files.map(f => (
-        <li className="t-bad-file-name">{f.name}</li>
+        <li>{f.name}</li>
       ))}
     </ul>
   );
