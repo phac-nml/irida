@@ -22,6 +22,7 @@ Changes
 * [UI]: Updated Administrator Users page to use Ant Design.
 * [UI]: Removed DataTables from overrepresented sequence file page.
 * [UI]: Removed DataTables from overrepresented sequence file and run files page.
+* [REST]: Added a REST API endpoint to read assemblies for samples.
 * [UI/Developer]: Update to Ant Design v4.
 * [UI]: New login page with ability to override in properties file.
 
