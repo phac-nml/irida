@@ -186,6 +186,15 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
+	 *  Clicks on the pagination button specified
+	 *
+	 */
+	public void clickPagination(int pageNum) {
+		rootDiv.findElements(By.className("ant-pagination-item-" + pageNum)).get(0).click();
+		waitForTime(500);
+	}
+
+	/**
 	 * Compares the expected page title to the actual
 	 *
 	 * @return {@link Boolean}

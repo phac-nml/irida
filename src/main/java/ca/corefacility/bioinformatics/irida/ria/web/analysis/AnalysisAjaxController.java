@@ -67,7 +67,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Controller for individual Analysis ajax requests (details page,
- * project > analysis outputs)
+ * analysis outputs, project analysis outputs)
  */
 @RestController
 @Scope("session")
