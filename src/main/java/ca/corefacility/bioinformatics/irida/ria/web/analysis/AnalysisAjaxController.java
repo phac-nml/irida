@@ -66,7 +66,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
- * Controller for Analysis ajax requests.
+ * Controller for individual Analysis ajax requests (details page,
+ * project > analysis outputs)
  */
 @RestController
 @Scope("session")
@@ -180,7 +181,8 @@ public class AnalysisAjaxController {
 
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
-			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
+			submission.setEmailPipelineResult(parameters.getEmailPipelineResult());
+			analysisSubmissionService.update(submission);
 			logger.trace("Email pipeline result updated for: " + submission);
 
 			if (parameters.getEmailPipelineResult()) {
@@ -346,11 +348,13 @@ public class AnalysisAjaxController {
 		String message = "";
 
 		if (parameters.getAnalysisName() != null) {
-			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
+			submission.setName(parameters.getAnalysisName());
 			message = messageSource.getMessage("AnalysisDetails.nameUpdated",
 					new Object[] { parameters.getAnalysisName() }, locale);
+			analysisSubmissionService.update(submission);
 		} else if (parameters.getPriority() != null) {
 			if (submission.getAnalysisState() == AnalysisState.NEW) {
+				submission.setPriority(parameters.getPriority());
 				analysisSubmissionService.updatePriority(submission, parameters.getPriority());
 				message = messageSource.getMessage("AnalysisDetails.priorityUpdated",
 						new Object[] { parameters.getPriority(), submission.getName() }, locale);

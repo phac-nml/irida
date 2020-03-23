@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.base.Strings;
 
 /**
- * Controller to handle ajax requests for Analyses
+ * Controller to handle ajax requests for the Analyses table
  */
 @RestController
 @RequestMapping("/ajax/analyses")

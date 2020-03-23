@@ -73,6 +73,18 @@ export default function Analysis() {
 
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
 
+  /*
+   * The following code sets the key which should
+   * be highlighted by default on page load if the
+   * analysis has completed. If an analysis is a type
+   * of sistr, bio_hansel, phylogenomics, or mentalist,
+   * then a special view is add as the default,
+   * otherwise the output files tab key is set.
+   * If the analysis is not completed and not errored
+   * the the settings tab is the default key. If the
+   * job has errored then the error tab key is set as
+   * the default.
+   */
   const defaultKey = analysisContext.isCompleted
     ? analysisType === "SISTR_TYPING"
       ? ANALYSIS.SISTR
@@ -85,6 +97,11 @@ export default function Analysis() {
     ? ANALYSIS.ERROR
     : ANALYSIS.SETTINGS;
 
+  /*
+   * The functions returns a set of tabs which
+   * should be displayed to the user depending
+   * on analysis states and types.
+   */
   function getTabLinks() {
     let tabLinks = [];
 
