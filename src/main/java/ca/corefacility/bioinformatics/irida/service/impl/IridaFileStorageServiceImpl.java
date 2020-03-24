@@ -9,6 +9,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,10 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobStorageException;
 
 @Service
 public class IridaFileStorageServiceImpl implements IridaFileStorageService {
-
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageServiceImpl.class);
 
 	@Value("${irida.storage.type}")
@@ -36,11 +35,11 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	@Value("${azure.account.connection.string}")
 	private String connectStr;
 
-	// Create an Azure BlobServiceClient object
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
 	private BlobClient blobClient;
 
+	@Autowired
 	public IridaFileStorageServiceImpl(){
 		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectStr)
 				.buildClient();
@@ -89,10 +88,10 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	public Long getFileSize(Path file) {
 		Long fileSize = 0L;
 		if(storageType.equalsIgnoreCase("azure")) {
-			// We set the blobClient "path" to which we want to upload our file to
-			blobClient = containerClient.getBlobClient(file.toAbsolutePath()
-					.toString().substring(1));
 			try {
+				// We set the blobClient "path" to which we want to upload our file to
+				blobClient = containerClient.getBlobClient(file.toAbsolutePath()
+						.toString().substring(1));
 				fileSize = blobClient.getProperties().getBlobSize();
 			} catch (BlobStorageException e) {
 				logger.debug("Couldn't calculate size as the file was not found [" + e + "]");
@@ -126,10 +125,8 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 			logger.debug("Uploading file to azure: [" + target.getFileName() + "]");
 			blobClient.uploadFromFile(source.toString(), false);
 			logger.debug("File uploaded to: [" + blobClient.getBlobUrl() + "]");
-
-			BlobProperties properties = blobClient.getProperties();
-			logger.debug("Size of blob:" + Long.toString(properties.getBlobSize()));
 		} else if(storageType.equalsIgnoreCase("aws")){
+			//implement aws code to upload file to s3 bucket
 		} else {
 			try {
 				Files.move(source, target);
@@ -179,11 +176,15 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	public String getFileName(Path file) {
 		String fileName = "";
 
+		logger.debug("STORAGE TYPE IS: " + storageType);
+
 		if(storageType.equalsIgnoreCase("azure")) {
 			blobClient = containerClient.getBlobClient(file.toAbsolutePath()
 					.toString()
 					.substring(1));
 			try {
+				// Since the file system is virtual the full file path is the file name.
+				// We split it on "/" and get the last token which is the actual file name.
 				String[] blobNameTokens = blobClient.getBlobName()
 						.split("/");
 				fileName = blobNameTokens[blobNameTokens.length - 1];
@@ -191,6 +192,7 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 				logger.debug("Couldn't find file [" + e + "]");
 			}
 		} else if(storageType.equalsIgnoreCase("aws")) {
+			//implement aws code to get file name from aws s3 bucket
 		} else {
 			fileName = file.toFile().getName();
 		}
