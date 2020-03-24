@@ -463,7 +463,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 							.getSubject())
 					.collect(Collectors.toSet());
 		} catch (NullPointerException e) {
-			logger.debug("No samples were found for submission " + submission.getId());
+			logger.warn("No samples were found for submission " + submission.getId());
 		}
 		return samples;
 	}

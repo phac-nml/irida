@@ -44,7 +44,7 @@ import com.google.common.base.Strings;
  */
 @RestController
 @RequestMapping("/ajax/analyses")
-public class AnalysesAjaxController {
+public class AnalysesTableAjaxController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
 	private ProjectService projectService;
@@ -54,7 +54,7 @@ public class AnalysesAjaxController {
 	private AnalysisAudit analysisAudit;
 
 	@Autowired
-	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysesTableAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, ProjectService projectService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
 			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit) {
