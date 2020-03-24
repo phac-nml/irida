@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { Button, Modal, Typography } from "antd";
+import { Button, Modal, Typography, Checkbox } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
 import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
@@ -48,6 +48,7 @@ function Linker() {
             >
               {data}
             </CommandText>
+            <FileTypes/>
           </>
         )
       });
@@ -79,6 +80,22 @@ function Linker() {
       <CodeOutlined style={{ marginRight: 2 }} />
       {i18n("project.samples.export.linker")}
     </Button>
+  );
+}
+
+function updateCommand(checkedValues){
+  console.log('checked = ', checkedValues);
+}
+
+function FileTypes() {
+  const options = [
+    {label: "FASTQ", value:"fastq"},
+    {label: "Assembly", value:"assembly"}
+  ];
+  return (
+    <div>
+          <Checkbox.Group options={options} defaultValue={['fastq']} onChange={updateCommand} />
+    </div>
   );
 }
 
