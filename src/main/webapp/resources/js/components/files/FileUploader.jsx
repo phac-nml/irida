@@ -10,6 +10,7 @@ import { uploadFiles } from "../../apis/files/files";
  * @param {string} url - Url to upload files to
  * @param {string} label - Text to display on the button
  * @param {string} allowedTypes - Input accepts attribute
+ * @param {function} onUpload - what the parent component should do during upload
  * @param {function} onSuccess - what to do after successful upload
  * @param {function} onError - what to do if there is an error uploading
  * @param {function} onBadFiles - what to do if there are files not match acceptable types
@@ -21,6 +22,7 @@ export function FileUploader({
   url,
   label,
   allowedTypes = "",
+  onUpload = () => {},
   onSuccess = () => {},
   onError = () => {},
   onBadFiles = () => {}
@@ -82,6 +84,8 @@ export function FileUploader({
       return;
     }
 
+    console.log("GETTING READY FOR UPLOAD");
+    onUpload();
     uploadFiles({
       url,
       files

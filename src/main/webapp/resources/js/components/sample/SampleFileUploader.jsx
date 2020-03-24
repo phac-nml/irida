@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { FileUploader } from "../files/FileUploader";
 import { showNotification } from "../../modules/notifications";
 import { Button, Dropdown, Menu } from "antd";
-import { IconCloudUpload, IconDropDown } from "../icons/Icons";
+import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
+import { SPACE_XS } from "../../styles/spacing";
 
 /**
  * React component to upload sequence files for a sample.
@@ -12,6 +13,13 @@ import { IconCloudUpload, IconDropDown } from "../icons/Icons";
  * @constructor
  */
 export function SampleFileUploader() {
+  const [uploading, setUploading] = useState(false);
+
+  const onUpload = () => {
+    console.log("UPLOADING!!");
+    setUploading(true);
+  };
+
   /**
    * Display successful upload then show notification that page will refresh
    * Need to reload the table after successful upload since the table
@@ -35,6 +43,7 @@ export function SampleFileUploader() {
             `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
           )}
           onSuccess={onSuccess}
+          onUpload={onUpload}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
         </FileUploader>
@@ -44,6 +53,7 @@ export function SampleFileUploader() {
           allowedTypes=".fasta,.fna"
           url={setBaseUrl(`ajax/samples/${window.PAGE.id}/assemblies/upload`)}
           onSuccess={onSuccess}
+          onUpload={onUpload}
         >
           {i18n("SampleFileUploader.assembly")}
         </FileUploader>
@@ -52,11 +62,21 @@ export function SampleFileUploader() {
   );
 
   return (
-    <Dropdown overlay={fileMenu}>
-      <Button className="t-download-dropdown">
-        <IconCloudUpload />
-        Upload Files
-        <IconDropDown />
+    <Dropdown overlay={fileMenu} disabled={uploading}>
+      <Button className="t-download-dropdown" disabled={uploading}>
+        {uploading ? (
+          <>
+            <IconLoading style={{ marginRight: SPACE_XS }} />
+            {i18n("SampleFileUploader.button-uploading")}
+            <IconDropDown />
+          </>
+        ) : (
+          <>
+            <IconCloudUpload style={{ marginRight: SPACE_XS }} />
+            {i18n("SampleFileUploader.button-default")}
+            <IconDropDown />
+          </>
+        )}
       </Button>
     </Dropdown>
   );
