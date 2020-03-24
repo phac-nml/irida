@@ -336,7 +336,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#submission, 'canUpdateAnalysisSubmission')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
 		checkNotNull(priority);
 		submission.setPriority(priority);
