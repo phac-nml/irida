@@ -15,10 +15,11 @@ import { SPACE_XS } from "../../styles/spacing";
 export function SampleFileUploader() {
   const [uploading, setUploading] = useState(false);
 
-  const onUpload = () => {
-    console.log("UPLOADING!!");
-    setUploading(true);
-  };
+  /**
+   * Update the loading state once the upload has begun.
+   * @returns {*}
+   */
+  const onUpload = () => setUploading(true);
 
   /**
    * Display successful upload then show notification that page will refresh
@@ -31,7 +32,7 @@ export function SampleFileUploader() {
     showNotification({ text });
     setTimeout(() => {
       window.location.reload();
-    }, 3000);
+    }, 2000);
   };
 
   const fileMenu = (

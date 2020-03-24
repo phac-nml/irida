@@ -84,7 +84,6 @@ export function FileUploader({
       return;
     }
 
-    console.log("GETTING READY FOR UPLOAD");
     onUpload();
     uploadFiles({
       url,
