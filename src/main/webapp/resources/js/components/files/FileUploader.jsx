@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { notification, Progress } from "antd";
+import { notification } from "antd";
 import { uploadFiles } from "../../apis/files/files";
 
 /**
@@ -27,19 +27,17 @@ export function FileUploader({
 }) {
   const inputRef = useRef();
 
-  const generateFileList = files => (
-    <ul className="t-bad-files">
-      {files.map(f => (
-        <li>{f.name}</li>
-      ))}
-    </ul>
-  );
-
-  const showBadFilesNotification = (files, types) => {
+  const showBadFilesNotification = (names, types) => {
     const description = (
       <>
         {i18n("FileUploader.badFiles")}
-        {generateFileList(files)}
+        {
+          <ul className="t-bad-files">
+            {names.map(name => (
+              <li key={name}>{name}</li>
+            ))}
+          </ul>
+        }
         <p>{i18n("FileUploader.continued", types.join(", "))}</p>
       </>
     );
@@ -64,51 +62,32 @@ export function FileUploader({
    * @param {object} e - React synthetic event
    */
   const submitFiles = e => {
-    const files = e.target.files;
+    const files = Array.from(e.target.files);
     // Check to see if it matches the allowed types
     const allowed = allowedTypes.split(",");
-    const good = [];
     const bad = [];
-    files.forEach(f => {
+    for (let file of files) {
       let found = false;
       for (let type of allowed) {
-        if (f.name.endsWith(type)) {
-          good.push(f);
+        if (file.name.endsWith(type)) {
           found = true;
           break;
         }
       }
-      if (!found) {
-        bad.push(f);
-      }
-    });
+      if (!found) bad.push(file.name);
+    }
 
     if (bad.length) {
       showBadFilesNotification(bad, allowed);
-    } else if (good.length) {
-      const key = Date.now();
-      uploadFiles({
-        url,
-        files,
-        onProgressUpdate: progress => {
-          notification.info({
-            key,
-            message: "Uploading Files",
-            description: (
-              <>
-                Files to be uploaded:
-                {generateFileList(good)}
-                <Progress percent={progress} size="small" />
-              </>
-            ),
-            placement: "bottomRight",
-            duration: 0
-          });
-        }
-      })
-        .then(onSuccess)
-        .catch(onError);
+      return;
     }
+
+    uploadFiles({
+      url,
+      files
+    })
+      .then(onSuccess)
+      .catch(onError);
   };
 
   return (

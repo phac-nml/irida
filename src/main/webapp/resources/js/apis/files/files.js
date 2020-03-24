@@ -1,4 +1,7 @@
 import axios from "axios";
+import { Alert, notification, Progress, Tooltip } from "antd";
+import { IconStop } from "../../components/icons/Icons";
+import React from "react";
 
 /**
  * Upload a list of files to the server.
@@ -9,14 +12,69 @@ import axios from "axios";
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
+  const names = files.map(f => f.name);
   const formData = new FormData();
   files.forEach((f, i) => formData.append(`files[${i}]`, f));
+
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  const key = Date.now();
+
+  const showProgressNotification = ({
+    progress,
+    duration = 0,
+    cancelled = false
+  }) =>
+    notification.info({
+      key,
+      message: i18n("FileUploader.progress.title"),
+      description: (
+        <>
+          {i18n("FileUploader.progress.desc")}
+          {
+            <ul className="t-file-upload">
+              {names.map(name => (
+                <li key={name}>{name}</li>
+              ))}
+            </ul>
+          }
+          {cancelled ? (
+            <Alert
+              message={i18n("FileUploader.progress.cancelled")}
+              type="info"
+            />
+          ) : (
+            <div style={{ display: "flex" }}>
+              <Progress
+                style={{ flexGrow: 1 }}
+                percent={progress}
+                size="small"
+              />
+              <Tooltip
+                title={i18n("FileUploader.progress.tooltip")}
+                placement="topRight"
+              >
+                <IconStop onClick={cancelUpload} />
+              </Tooltip>
+            </div>
+          )}
+        </>
+      ),
+      placement: "bottomRight",
+      duration
+    });
+
+  const cancelUpload = () => {
+    showProgressNotification({ progress: 0, duration: 4, cancelled: true });
+    source.cancel();
+  };
 
   return axios
     .post(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data"
       },
+      cancelToken: source.token,
       onUploadProgress: function(progressEvent) {
         const totalLength = progressEvent.lengthComputable
           ? progressEvent.total
@@ -28,7 +86,7 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
           const progress = Math.round(
             (progressEvent.loaded * 100) / totalLength
           );
-          onProgressUpdate(progress);
+          showProgressNotification({ progress });
         }
       }
     })

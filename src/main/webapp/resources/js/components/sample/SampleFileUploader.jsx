@@ -1,10 +1,7 @@
 import React from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { FileUploader } from "../files/FileUploader";
-import {
-  showErrorNotification,
-  showNotification
-} from "../../modules/notifications";
+import { showNotification } from "../../modules/notifications";
 import { Button, Dropdown, Menu } from "antd";
 import { IconCloudUpload, IconDropDown } from "../icons/Icons";
 
@@ -38,7 +35,6 @@ export function SampleFileUploader() {
             `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
           )}
           onSuccess={onSuccess}
-          onError={text => showErrorNotification({ text })}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
         </FileUploader>
@@ -48,7 +44,6 @@ export function SampleFileUploader() {
           allowedTypes=".fasta,.fna"
           url={setBaseUrl(`ajax/samples/${window.PAGE.id}/assemblies/upload`)}
           onSuccess={onSuccess}
-          onError={text => showErrorNotification({ text })}
         >
           {i18n("SampleFileUploader.assembly")}
         </FileUploader>

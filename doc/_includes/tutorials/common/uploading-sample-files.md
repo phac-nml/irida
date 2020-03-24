@@ -1,4 +1,4 @@
-Sequence files can be uploaded by clicking on the "Upload Sequence Files" button, on the left hand side side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
+Sequence files can be uploaded by hovering over the "Upload Files" above the sequence file table, and select the "Upload Sequence Files" drop down option. Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
 
 ![Upload sequence file.]({{ site.baseurl }}/images/tutorials/common/samples/upload-sample-file-btn.png)
 
