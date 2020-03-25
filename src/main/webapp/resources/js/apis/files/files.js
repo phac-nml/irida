@@ -27,6 +27,7 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
   }) =>
     notification.info({
       key,
+      closeIcon: <span />,
       message: i18n("FileUploader.progress.title"),
       description: (
         <>
