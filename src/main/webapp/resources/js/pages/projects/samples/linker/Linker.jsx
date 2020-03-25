@@ -28,8 +28,8 @@ const CommandText = styled(Paragraph)`
  */
 function Linker() {
   const options = [
-    { label: "FASTQ", value: "fastq" },
-    { label: "Assembly", value: "assembly" }
+    { label: i18n("Linker.fastq"), value: "fastq" },
+    { label: i18n("Linker.assembly"), value: "assembly" }
   ];
 
   let scriptString = undefined;
@@ -41,23 +41,24 @@ function Linker() {
   ) => (
     <>
       {" "}
-      // NOTE: passing in the command not storing as a state object
       <Paragraph>{i18n("Linker.details")}</Paragraph>
       <Text type="secondary">
         <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
       </Text>
-      <CommandText
-        className="t-cmd-text"
-        ellipsis={{ rows: 1 }}
-        copyable={{ text: { command } }}
-      >
-        {command}
-      </CommandText>
-      <Checkbox.Group
+      <br/><br/>
+      <Text strong>{i18n("Linker.types")}</Text> <Checkbox.Group
         options={options}
         defaultValue={["fastq"]}
         onChange={updateCommand}
       />
+      <CommandText
+        className="t-cmd-text"
+        ellipsis={{ rows: 1 }}
+        copyable={ command }
+      >
+        {command}
+      </CommandText>
+      
     </>
   );
 
@@ -70,26 +71,28 @@ function Linker() {
         className: "t-linker-modal",
         width: 500,
         title: i18n("Linker.title"),
-        content: ""// <-- Set the content to an instance of the ModalContents and pas in the command
-      }); //     This allows it to be updatable (see below_
+        content: "..."
+      }); 
 
       updateCommand(["fastq"]);
     });
   }
 
+  /**
+   * Update the command in the modal showing the apporpirate options
+   * @param {*} checkedValues the filetypes selected
+   */
   function updateCommand(checkedValues) {
+    let typeString = "";
 
-    let typeString = undef;
-    if(checkedValues.includes('fastq') && checkedValues.includes('assembly')){
-      typeString = " -t fastq,assembly"
-    }
-    else if(checkedValues.length == 1){
-      typeString = " -t " + checkedValues[0];
+    //join the checked values
+    if(checkedValues.length > 0){
+      typeString = " -t " + checkedValues.join(",");
     }
 
     modal.update({
-      content: <ModalContents command={scriptString + typeString} /> // <-- This is how to update the contents of the modal, create a new instance of the contents and
-    }); //     pass in the updated command
+      content: <ModalContents command={scriptString + typeString} /> 
+    }); 
   }
 
   /*
