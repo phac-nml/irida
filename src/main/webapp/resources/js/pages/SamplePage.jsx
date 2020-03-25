@@ -9,10 +9,9 @@ const SampleMenuBar = lazy(() => import("../components/sample/SampleMenuBar"));
  * @constructor
  */
 function SamplePage() {
-  // window.PAGE.__cm variable is for if the user can manage samples.
   return (
     <div>
-      {window.PAGE.__cm ? (
+      {window.PAGE.canManage ? (
         <Suspense fallback={<div style={{ height: 40 }} />}>
           <SampleMenuBar />
         </Suspense>
