@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 import { render } from "react-dom";
-import { Button, Modal, Typography, Checkbox } from "antd";
+import { Button, Checkbox, Modal, Typography } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
 import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
@@ -27,49 +27,57 @@ const CommandText = styled(Paragraph)`
  * @constructor
  */
 function Linker() {
-
   const options = [
-    {label: "FASTQ", value:"fastq"},
-    {label: "Assembly", value:"assembly"}
+    { label: "FASTQ", value: "fastq" },
+    { label: "Assembly", value: "assembly" }
   ];
 
-  const [command, setCommand] = useState("test");
+  let modal = undefined; // <-- variable to hold a reference to the modal
+
+  const ModalContents = (
+    { command } // <-- A react component holding the contents of the modal
+  ) => (
+    <>
+      {" "}
+      // NOTE: passing in the command not storing as a state object
+      <Paragraph>{i18n("Linker.details")}</Paragraph>
+      <Text type="secondary">
+        <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
+      </Text>
+      <CommandText
+        className="t-cmd-text"
+        ellipsis={{ rows: 1 }}
+        copyable={{ text: { command } }}
+      >
+        {command}
+      </CommandText>
+      <Checkbox.Group
+        options={options}
+        defaultValue={["fastq"]}
+        onChange={updateCommand}
+      />
+    </>
+  );
 
   function handleSampleIds(e) {
     // Post data to get linker command.
     const { detail } = e;
     getNGSLinkerCode(detail).then(({ data }) => {
-
-      setCommand(data);
-      
-      Modal.success({
+      modal = Modal.success({
         className: "t-linker-modal",
         width: 500,
         title: i18n("Linker.title"),
-        content: (
-          <>
-            <Paragraph>{i18n("Linker.details")}</Paragraph>
-            <Text type="secondary">
-              <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
-            </Text>
-            <CommandText
-              className="t-cmd-text"
-              ellipsis={{ rows: 1 }}
-              copyable={{ text: {command} }}
-            >
-              {command}
-            </CommandText>
-            <Checkbox.Group options={options} defaultValue={['fastq']} onChange={updateCommand} />
-          </>
-        )
-      });
+        content: <ModalContents command={data} /> // <-- Set the content to an instance of the ModalContents and pas in the command
+      }); //     This allows it to be updatable (see below_
     });
   }
 
-  function updateCommand(checkedValues){
+  function updateCommand(checkedValues) {
     //at some point here i'm going to add some filetype params.  it just absolutely won't update the state of the command.
-    setCommand("update to something");
     console.log(checkedValues);
+    modal.update({
+      content: <ModalContents command={`UPDATED: ${Date.now()}`} /> // <-- This is how to update the contents of the modal, create a new instance of the contents and
+    }); //     pass in the updated command
   }
 
   /*
