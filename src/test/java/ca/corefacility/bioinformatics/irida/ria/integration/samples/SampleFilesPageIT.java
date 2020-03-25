@@ -48,6 +48,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPageSetup() {
 		page.gotoPage(SAMPLE_ID);
+		checkTranslations(page, ImmutableList.of("sample"), null);
 		checkTranslations(page, ImmutableList.of("sample-files"), null);
 
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
