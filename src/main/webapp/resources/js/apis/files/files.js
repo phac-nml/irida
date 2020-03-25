@@ -76,6 +76,12 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
     source.cancel();
   };
 
+  /**
+   * Function called when window onbeforeunload is called when a file is
+   * uploading, since leaving the page would cause the upload to cancel.
+   * This prompts the user if they want to continue leaving the site.
+   * @param event
+   */
   const listener = event => {
     // Cancel the event as stated by the standard.
     event.preventDefault();
@@ -109,7 +115,6 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
     .then(({ data }) => data)
     .catch(({ data }) => data)
     .finally(() => {
-      console.log("REMOVING LISENER");
       window.removeEventListener("beforeunload", listener);
     });
 }
