@@ -32,6 +32,8 @@ function Linker() {
     { label: "Assembly", value: "assembly" }
   ];
 
+  let scriptString = undefined;
+
   let modal = undefined; // <-- variable to hold a reference to the modal
 
   const ModalContents = (
@@ -63,20 +65,30 @@ function Linker() {
     // Post data to get linker command.
     const { detail } = e;
     getNGSLinkerCode(detail).then(({ data }) => {
+      scriptString = data;
       modal = Modal.success({
         className: "t-linker-modal",
         width: 500,
         title: i18n("Linker.title"),
-        content: <ModalContents command={data} /> // <-- Set the content to an instance of the ModalContents and pas in the command
+        content: ""// <-- Set the content to an instance of the ModalContents and pas in the command
       }); //     This allows it to be updatable (see below_
+
+      updateCommand(["fastq"]);
     });
   }
 
   function updateCommand(checkedValues) {
-    //at some point here i'm going to add some filetype params.  it just absolutely won't update the state of the command.
-    console.log(checkedValues);
+
+    let typeString = undef;
+    if(checkedValues.includes('fastq') && checkedValues.includes('assembly')){
+      typeString = " -t fastq,assembly"
+    }
+    else if(checkedValues.length == 1){
+      typeString = " -t " + checkedValues[0];
+    }
+
     modal.update({
-      content: <ModalContents command={`UPDATED: ${Date.now()}`} /> // <-- This is how to update the contents of the modal, create a new instance of the contents and
+      content: <ModalContents command={scriptString + typeString} /> // <-- This is how to update the contents of the modal, create a new instance of the contents and
     }); //     pass in the updated command
   }
 
