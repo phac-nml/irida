@@ -1,6 +1,6 @@
 const angular = require("angular");
 import "angular-ui-bootstrap";
-import { convertFileSize } from "../../utilities/file.utilities";
+import { convertFileSize } from "../../utilities/file-utilities";
 
 require("../../../sass/pages/sample-files.scss");
 

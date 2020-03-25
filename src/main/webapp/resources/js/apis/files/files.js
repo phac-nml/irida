@@ -45,19 +45,25 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
               type="info"
             />
           ) : (
-            <div style={{ display: "flex" }}>
-              <Progress
-                style={{ flexGrow: 1 }}
-                percent={progress}
-                size="small"
+            <>
+              <div style={{ display: "flex" }}>
+                <Progress
+                  style={{ flexGrow: 1 }}
+                  percent={progress}
+                  size="small"
+                />
+                <Tooltip
+                  title={i18n("FileUploader.progress.tooltip")}
+                  placement="topRight"
+                >
+                  <IconStop onClick={cancelUpload} />
+                </Tooltip>
+              </div>
+              <Alert
+                message={`Don't refresh your page or the download will be cancelled.`}
+                type="warning"
               />
-              <Tooltip
-                title={i18n("FileUploader.progress.tooltip")}
-                placement="topRight"
-              >
-                <IconStop onClick={cancelUpload} />
-              </Tooltip>
-            </div>
+            </>
           )}
         </>
       ),
@@ -69,6 +75,15 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
     showProgressNotification({ progress: 0, duration: 4, cancelled: true });
     source.cancel();
   };
+
+  const listener = event => {
+    // Cancel the event as stated by the standard.
+    event.preventDefault();
+    // Chrome requires returnValue to be set.
+    event.returnValue = window.confirm();
+  };
+
+  window.addEventListener("beforeunload", listener);
 
   return axios
     .post(url, formData, {
@@ -92,5 +107,9 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
       }
     })
     .then(({ data }) => data)
-    .catch(({ data }) => data);
+    .catch(({ data }) => data)
+    .finally(() => {
+      console.log("REMOVING LISENER");
+      window.removeEventListener("beforeunload", listener);
+    });
 }
