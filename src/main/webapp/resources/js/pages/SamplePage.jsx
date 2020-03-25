@@ -3,6 +3,11 @@ import { render } from "react-dom";
 
 const SampleMenuBar = lazy(() => import("../components/sample/SampleMenuBar"));
 
+/**
+ * React component to render the sample details page.
+ * @returns {*}
+ * @constructor
+ */
 function SamplePage() {
   // window.PAGE.__cm variable is for if the user can manage samples.
   return (
