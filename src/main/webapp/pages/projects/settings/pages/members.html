@@ -4,8 +4,9 @@
 <head>
     <title th:text="#{project.settings.page.title.members}">Title</title>
     <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/project-users.bundle.css}">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = {
         urls: {
           'addMember': /*[[@{/projects/{id}/settings/members(id=${project.getId()})}]]*/ '/projects/1/settings/members',
           'usersLink': /*[[@{/users/}]]*/'/users',
@@ -19,6 +20,13 @@
 </head>
 <body>
 <div layout:fragment="settings-content">
+    <div id="users-root">
+        <!-- React component from src/main/webapp/resources/js/pages/projects/ProjectUsers.jsx -->
+    </div>
+
+    <hr>
+    <h3>DELELTE</h3>
+
     <div class="hidden" id="toolbar-wrapper">
         <div id="table-toolbar" class="btn-toolbar spaced-bottom" role="toolbar">
             <div class="btn-group btn-group-sm">
@@ -96,6 +104,7 @@
 
 </div>
 <th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/project-users.bundle.js}"></script>
     <script th:src="@{/dist/js/project-users-groups.bundle.js}"></script>
 </th:block>
 </body>

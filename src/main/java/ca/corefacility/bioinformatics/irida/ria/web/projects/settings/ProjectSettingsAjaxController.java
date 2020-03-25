@@ -12,15 +12,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -32,9 +34,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @Controller
 @RequestMapping("/ajax/projects/{projectId}/settings")
 public class ProjectSettingsAjaxController {
-	private ProjectService projectService;
-	private UserService userService;
-	private ProjectOwnerPermission projectOwnerPermission;
+	private final ProjectService projectService;
+	private final UserService userService;
+	private final ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
 	public ProjectSettingsAjaxController(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
@@ -109,5 +111,18 @@ public class ProjectSettingsAjaxController {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedId);
 		projectService.addRelatedProject(project, associatedProject);
+	}
+
+	@RequestMapping("/members")
+	public TableResponse<ProjectUserTableModel> getProjectMembers(@PathVariable Long projectId, @RequestBody TableRequest tableRequest) {
+		Project project = projectService.read(projectId);
+		Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project,
+				tableRequest.getSearch(), tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort());
+		List<ProjectUserTableModel> members = usersForProject.get().map(join -> {
+			ProjectUserJoin projectUserJoin = (ProjectUserJoin)join;
+			return new ProjectUserTableModel(join.getObject(), projectUserJoin.getProjectRole()
+					.toString(), projectUserJoin.getCreatedDate());
+		}).collect(Collectors.toList());
+		return new TableResponse<>(members, usersForProject.getTotalElements());
 	}
 }

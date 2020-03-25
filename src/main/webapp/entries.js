@@ -55,6 +55,7 @@ module.exports = {
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users-groups":
     "./resources/js/pages/projects/project-users-groups.js",
+  "project-users": "./resources/js/pages/projects/ProjectUsers.jsx",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
