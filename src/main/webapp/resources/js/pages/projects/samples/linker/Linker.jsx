@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { render } from "react-dom";
 import { Button, Modal, Typography, Checkbox } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
@@ -27,10 +27,21 @@ const CommandText = styled(Paragraph)`
  * @constructor
  */
 function Linker() {
+
+  const options = [
+    {label: "FASTQ", value:"fastq"},
+    {label: "Assembly", value:"assembly"}
+  ];
+
+  const [command, setCommand] = useState("test");
+
   function handleSampleIds(e) {
     // Post data to get linker command.
     const { detail } = e;
     getNGSLinkerCode(detail).then(({ data }) => {
+
+      setCommand(data);
+      
       Modal.success({
         className: "t-linker-modal",
         width: 500,
@@ -44,15 +55,21 @@ function Linker() {
             <CommandText
               className="t-cmd-text"
               ellipsis={{ rows: 1 }}
-              copyable={{ text: data }}
+              copyable={{ text: {command} }}
             >
-              {data}
+              {command}
             </CommandText>
-            <FileTypes/>
+            <Checkbox.Group options={options} defaultValue={['fastq']} onChange={updateCommand} />
           </>
         )
       });
     });
+  }
+
+  function updateCommand(checkedValues){
+    //at some point here i'm going to add some filetype params.  it just absolutely won't update the state of the command.
+    setCommand("update to something");
+    console.log(checkedValues);
   }
 
   /*
@@ -80,22 +97,6 @@ function Linker() {
       <CodeOutlined style={{ marginRight: 2 }} />
       {i18n("project.samples.export.linker")}
     </Button>
-  );
-}
-
-function updateCommand(checkedValues){
-  console.log('checked = ', checkedValues);
-}
-
-function FileTypes() {
-  const options = [
-    {label: "FASTQ", value:"fastq"},
-    {label: "Assembly", value:"assembly"}
-  ];
-  return (
-    <div>
-          <Checkbox.Group options={options} defaultValue={['fastq']} onChange={updateCommand} />
-    </div>
   );
 }
 
