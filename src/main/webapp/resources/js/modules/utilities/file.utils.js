@@ -1,5 +1,5 @@
 import find from "lodash/find";
-import { convertFileSize, download } from "../../utilities/file.utilities";
+import { convertFileSize, download } from "../../utilities/file-utilities";
 
 const angular = require("angular");
 require("ng-file-upload");

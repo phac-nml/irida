@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 
 /**
  * Generates test data for unit tests.
@@ -203,6 +204,11 @@ public class TestDataFactory {
 			list.add(project);
 		}
 		return list;
+	}
+
+	public static ProjectAnalysisSubmissionJoin constructProjectAnalysisSubmissionJoin(
+		Project project, AnalysisSubmission submission) {
+		return new ProjectAnalysisSubmissionJoin(project, submission);
 	}
 
 	public static List<Join<Project, Sample>> constructListJoinProjectSample() {

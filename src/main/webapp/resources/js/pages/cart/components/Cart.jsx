@@ -54,4 +54,7 @@ const mapDispatchToProps = dispatch => ({
   loadCart: () => dispatch(actions.loadCart())
 });
 
-export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);
+export const Cart = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CartComponent);

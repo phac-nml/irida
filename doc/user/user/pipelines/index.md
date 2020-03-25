@@ -55,7 +55,7 @@ The default cart page will allow you to choose from the pipelines that are curre
 
 ![Select a pipeline page.](images/pipeline-tab.png)
 
-Click on the "Select" button at the bottom, right-hand side of the pipeline that you'd like to launch.
+Click on the "Select" button at the bottom of the pipeline that you'd like to launch.
 
 Running a pipeline
 ------------------
@@ -64,9 +64,9 @@ Running a pipeline
 
 ![Reference file required.](images/reference-file-required.png)
 
-If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
+If you have the ![](images/manager-icon.png) **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
 
-If you do not have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "{% icon fa-upload %} Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
+If you do not have the ![](images/manager-icon.png) **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "{% icon fa-upload %} Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
 
 When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#reference-files)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
 
@@ -152,31 +152,28 @@ The "State" column will change over time if you leave your browser window open s
 Viewing pipeline results
 ------------------------
 
-You can view or download the outputs of a pipeline execution once a pipeline has completed:
+You can either click on the ![download-icon](images/download-icon.png) icon to download *all* of the outputs produced by the pipeline execution, or you can click on the name of the analysis to view more detailed outputs and, if available, view a preview of the outputs:
 
 ![Completed analysis listing.](images/completed-analysis.png)
 
-You can either click on the <img src="images/download-icon.png" class="inline" alt="Download icon."> icon to download *all* of the outputs produced by the pipeline execution, or you can click on the name of the analysis to view more detailed outputs and, if available, view a preview of the outputs:
+The analysis page shows you more detailed information about your pipeline submission, including the names of the files that were produced by the analysis (on the Output File Preview page), a preview of the outputs (if available), and some tabs to view more details about how the pipeline was submitted and for sharing results:
 
-![View pipeline results button.](images/view-analysis-outputs-button.png)
+![Analysis results page.](images/analysis-results-page.png)
+<figcaption>Example `SNVPhyl` pipeline phylogenetic tree preview</figcaption>
+<br/><br/>
 
-The analysis details page shows you more detailed information about your pipeline submission, including the names of the files that were produced by the analysis (on the left-hand side of the page), a preview of the outputs (if available), and some tabs to view more details about how the pipeline was submitted:
-
-![Analysis details page.](images/analysis-details-page.png)
-<figcaption>Example SNVPhyl pipeline phylogenetic tree preview</figcaption>
-
-![view-results-preview-refseq-masher]
+![view-results-refseq-masher](images/view-results-refseq-masher.png)
 <figcaption>Example `refseq_masher` tabular results preview</figcaption>
+<br/><br/>
+To download output files, you can click on the `Output Files` tab. To download an individual file, click on the file name. If the file does not have an available output preview it can be downloaded by clicking the `...` next to the Download All Files button and selecting the file to download.  To download *all* the outputs produced by the pipeline, you can click on the "Download All Files" button.
 
-To download output files, you can use the "Output Files" section from this page.  To download an individual file, click on the file name.  To download *all* the outputs produced by the pipeline, you can click on the "Download Files" button.
-
-![Analysis download.](images/analysis-details-download.png)
+![Analysis results download.](images/analysis-results-download.png)
 
 ### Previewing analysis output files
 
-All analysis pipelines produce analysis output files. You can preview these output files under the **Preview** tab on the **Analysis Details** page:
+All analysis pipelines produce analysis output files. To view these file, click the `Output Files` tab on the **Analysis** page:
 
-![view-results-preview-refseq-masher]
+![view-results-preview-refseq-masher](images/view-results-preview-refseq-masher.png)
 <figcaption>Example `refseq_masher` tabular results preview</figcaption>
 
 For each analysis output file, you will see a panel and in each panel you will see:
@@ -191,48 +188,38 @@ Some of the output files will be rendered in a table:
 
 
 ![view-results-tabular-snvphyl-snv-table]
-<figcaption>SNVPhyl SNV  results shown in an interactive table.</figcaption>
+<figcaption>SNVPhyl SNV  results shown in a table.</figcaption>
 
 ![view-results-tabular-refseq_masher-contains-default]
-<figcaption>`refseq_masher` results shown in an interactive table.</figcaption>
+<figcaption>`refseq_masher` results shown in a table.</figcaption>
 
-
-
-When you scroll to the bottom row in the table, more lines will be fetched as they are needed. You can also resize the table by clicking and dragging the "resize icon"  in the corner of the panel:
-
-![view-results-resize]
-<figcaption>
-  Click and drag the "resize icon" to resize the table. 
-</figcaption>
-
-![view-results-refseq_masher-contains-resized]
-<figcaption>Resized `refseq_masher` results table</figcaption>
 
 #### Default plain text preview of analysis output
 
 Analysis output files with file extensions like `.log`, `.txt` or `.fasta` can be previewed in the browser as plain text:
 
-![view-results-plain-text-snvphyl-mapping]
+![view-results-plain-text-snvphyl-mapping](images/view-results-plain-text-snvphyl-mapping.png)
 
 If an analysis output file is small enough like this log file, it will be loaded in its entirety:
 
+![view-results-plain-text-quast-log](images/view-results-plain-text-quast-log.png)
+
+<figcaption>Notice that the `3.0 kB / 3.0 kB (100%)` indicates that 100% of the file has been loaded.</figcaption>
+
+If an analysis output file is fairly large like this log file, it will be loaded as you scroll to the bottom of the file preview:
+
 ![view-results-plain-text-shovill-log]
-<figcaption>Notice that the `4.0 kB / 4.0 kB (100%)` indicates that 100% of the file has been loaded.</figcaption>
-
-If an analysis output file is fairly large like this FASTA file, it will be loaded in chunks as needed for viewing:
-
-![view-results-plain-text-shovill-fasta]
-<figcaption>Notice that the `24.0 kB / 693.9 kB (3.5%)` indicates that only 3.5% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>
+<figcaption>Notice that the `8.0 kB / 212.0 kB (3.8%)` indicates that only 3.8% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>
 
 
 
 ### Viewing the sequencing data submitted for analysis
 
-To view the data that was submitted to the pipeline for analysis, start from the [analysis details page](#viewing-pipeline-results) and click on the "Input Files" tab:
+To view the data that was submitted to the pipeline for analysis, start from the [Analysis results page](#viewing-pipeline-results), click on the `Settings` tab and then click on the `Samples` tab:
 
 ![Input files tab.](images/input-files-tab.png)
 
-The pipeline input files page shows all of the files that were submitted for analysis in the pipeline submission:
+The pipeline samples page shows all of the files that were submitted for analysis in the pipeline submission:
 
 ![Pipeline input files.](images/pipeline-input-files.png)
 
@@ -240,13 +227,11 @@ You can view more details about each of the files that were submitted in the pip
 
 ### Viewing pipeline parameters used at runtime
 
-To view the parameters that were used when submitting the pipeline, start from the [analysis details page](#viewing-pipeline-results) and click on the "Provenance" tab:
-
-![Input parameters tab.](images/provenance-tab.png)
+To view the parameters that were used when submitting the pipeline, start from the [Analysis results page](#viewing-pipeline-results) and click on the "Provenance" tab.
 
 The provenance page shows a list of the files that were generated as outputs by the pipeline execution:
+![Input parameters tab.](images/provenance-tab.png)
 
-![Provenance page.](images/provenance-listings.png)
 
 You can click on each of the file names to expand the complete listing of *how* the file was generated behind the scenes:
 
@@ -258,7 +243,7 @@ You can further inspect the parameters of each of the tools that were used to ge
 
 ### Edit analysis name
 
-If you are the user who submitted the pipeline, you are able to change the submission name from the results page.  Click the pencil icon next to the analysis name, enter the new analysis name, and click update.
+If you are the user who submitted the pipeline, you are able to change the submission name from the results page.  To edit an analysis name, click the `Settings` tab and then click the Pencil icon next to the analysis name. Once you have edited the analysis name, pressing the `ENTER` key on your keyboard or clicking anywhere outside of the text box will update the name. To cancel editing a name you can either hit the `ESC` key on your keyboard or if the name has not been changed you can also click anywhere outside of the text box.
 
 ![Edit pipeline name.](images/edit-name.png)
 
@@ -278,7 +263,7 @@ Once the pipeline has been submitted the submission will show up in the analysis
 
 ### Share results after pipeline has been launched
 
-Pipeline results can also be shared anytime after a pipeline has been launched.  To view or modify which projects an analysis has been shared with, click the `Share Results` tab on the pipeline results page.
+Pipeline results can also be shared anytime after a pipeline has been launched.  To view or modify which projects an analysis has been shared with, click the `Settings` tab and then click the `Manage Results` tab on the pipeline results page.
 
 ![Share analysis results with project.](images/analysis-share-results-with-project.png)
 
@@ -294,13 +279,19 @@ To save analysis results back to a sample, on submission of a pipeline please se
 
 ![save-results-to-samples](images/save-results-to-samples.png)
 
-Results can also be saved after a pipeline has completed.  To save analysis results after the pipeline has finished, click the `Share Results` tab on the pipeline results page.  If you are able to save the analysis results back to the sample, a `Save Results` section will be displayed.  Click the button to save the results to the related samples.
+Results can also be saved after a pipeline has completed.  To save analysis results after the pipeline has finished, click the `Settings` tab and then click the `Manage Results` tab on the pipeline results page.  If you are able to save the analysis results back to the sample, a `Save Results` section will be displayed.  Click the button to save the results to the related samples.
 
 ![save-results-to-samples-after](images/save-results-to-samples-after.png)
 
 ## Receive email upon pipeline completion or error
 
 When launching a pipeline you can select the checkbox to receive an email upon pipeline completion or on error.
+
+![analysis-email-upon-completion](images/analysis-email-upon-completion.png)
+
+The option to receive an email upon analysis completion can also be updated as long as the analysis is not in `COMPLETED` or `ERROR` state. To update the email option click the `Settings` tab. To receive an email select the checkbox in the `Receive an email upon analysis completion` section. If you do not want to receive an email then you can unselect the checkbox in this section.
+
+![analysis-email-upon-completion-running](images/analysis-email-upon-completion-running.png)
 
 ## Downloading single sample analysis output files in batch
 
@@ -344,11 +335,8 @@ For example, you may encounter an error when running the "Assembly and Annotatio
 
 ![analyses-table-error](images/analyses-table-error.png)
 
-If you click on the <span class="fa fa-fw fa-question-circle"></span> icon, you can preview the Galaxy job error information:
 
-![analyses-table-error-preview](images/analyses-table-error-preview.png)
-
-If you follow the link to the analysis page, you can view all the job error information for the pipeline in error:
+If you click on the analysis name it will take you to the analysis page. From here you can view all the job error information for the pipeline including the galaxy job information, the galaxy parameters, standard error, and standard output.
 
 ![analysis-job-error](images/analysis-job-error.png)
 
@@ -361,7 +349,6 @@ This information may be helpful for troubleshooting and communicating what went 
 [view-results-plain-text-shovill-log]: images/view-results-plain-text-shovill-log.png
 [view-results-plain-text-snvphyl-mapping]: images/view-results-plain-text-snvphyl-mapping.png
 [view-results-preview-refseq-masher]: images/view-results-preview-refseq-masher.png
-[view-results-refseq_masher-contains-resized]: images/view-results-refseq_masher-contains-resized.png
 [view-results-tabular-refseq_masher-contains-default]: images/view-results-tabular-refseq_masher-contains-default.png
 [view-results-tabular-snvphyl-snv-table]: images/view-results-tabular-snvphyl-snv-table.png
 [view-results-resize]: images/view-results-resize.png
