@@ -104,7 +104,9 @@ public class SampleFilesPage extends AbstractPage {
 		List<WebElement> inputElm = driver.findElements(By.className("t-file-upload-input"));
 		Path path = Paths.get(filePath);
 		inputElm.get(input).sendKeys(path.toAbsolutePath().toString());
-		waitForTime(500);
+		// Setting wait to ensure file gets uploaded
+		// Page blocks refreshes if the file is not completely uploaded
+		waitForTime(1000);
 	}
 
 	public boolean isFileTypeWarningDisplayed() {
