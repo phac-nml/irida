@@ -80,9 +80,7 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
     // Cancel the event as stated by the standard.
     event.preventDefault();
     // Chrome requires returnValue to be set.
-    event.returnValue = window.confirm(
-      "Leaving the page will cancel your upload."
-    );
+    event.returnValue = window.confirm(i18n("FileUploader.listener-warning"));
   };
 
   window.addEventListener("beforeunload", listener);
