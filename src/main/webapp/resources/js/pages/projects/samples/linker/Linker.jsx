@@ -32,12 +32,13 @@ function Linker() {
     { label: i18n("Linker.assembly"), value: "assembly" }
   ];
 
+  //this will hold the base string of the script with the projects & samples.  The filetypes will be appended before displaying.
   let scriptString = undefined;
 
-  let modal = undefined; // <-- variable to hold a reference to the modal
+  let modal = undefined; 
 
   const ModalContents = (
-    { command } // <-- A react component holding the contents of the modal
+    { command } 
   ) => (
     <>
       {" "}
@@ -63,10 +64,12 @@ function Linker() {
   );
 
   function handleSampleIds(e) {
-    // Post data to get linker command.
+    // Post data to the server to get the linker command.
     const { detail } = e;
     getNGSLinkerCode(detail).then(({ data }) => {
       scriptString = data;
+      
+      //initialize the modal
       modal = Modal.success({
         className: "t-linker-modal",
         width: 500,
@@ -74,12 +77,13 @@ function Linker() {
         content: "..."
       }); 
 
+      //set the default modal contents
       updateCommand(["fastq"]);
     });
   }
 
   /**
-   * Update the command in the modal showing the apporpirate options
+   * Update the command in the modal showing the apporpirate file tpes
    * @param {*} checkedValues the filetypes selected
    */
   function updateCommand(checkedValues) {
@@ -90,6 +94,7 @@ function Linker() {
       typeString = " -t " + checkedValues.join(",");
     }
 
+    //update the modal contents with the new info
     modal.update({
       content: <ModalContents command={scriptString + typeString} /> 
     }); 
