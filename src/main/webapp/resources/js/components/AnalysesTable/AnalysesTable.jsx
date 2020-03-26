@@ -63,7 +63,6 @@ export function AnalysesTable() {
       title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
-      width: 170,
       filterMultiple: true,
       filters: pipelineStates,
       filterIcon(filtered) {
@@ -76,7 +75,6 @@ export function AnalysesTable() {
     {
       title: i18n("analyses.type"),
       key: "type",
-      width: 250,
       dataIndex: "type",
       filterMultiple: true,
       filterIcon(filtered) {
@@ -86,7 +84,6 @@ export function AnalysesTable() {
     },
     {
       title: i18n("analyses.submitter"),
-      width: 200,
       key: "submitter",
       sorter: true,
       dataIndex: "submitter"
@@ -100,7 +97,6 @@ export function AnalysesTable() {
     {
       title: i18n("analysis.duration"),
       key: "duration",
-      width: 180,
       dataIndex: "duration",
       render(timestamp) {
         return getHumanizedDuration({ date: timestamp });
@@ -173,7 +169,6 @@ export function AnalysesTable() {
         buttons={buttons}
         columns={columns}
         rowSelection={rowSelection}
-        rowKey={record => record.id}
       />
     </div>
   );

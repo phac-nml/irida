@@ -36,18 +36,20 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.base.Strings;
+
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
 @Controller
 @RequestMapping("/linelist")
 public class LineListController {
-	private ProjectService projectService;
-	private SampleService sampleService;
-	private MetadataTemplateService metadataTemplateService;
-	private MessageSource messages;
-	private UpdateSamplePermission updateSamplePermission;
-	private ProjectOwnerPermission projectOwnerPermission;
+	private final ProjectService projectService;
+	private final SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
+	private final MessageSource messages;
+	private final UpdateSamplePermission updateSamplePermission;
+	private final ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
@@ -254,8 +256,9 @@ public class LineListController {
 				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByKey(
 						field.getField());
 				if (metadataTemplateField == null) {
+					String type = Strings.isNullOrEmpty(field.getType()) ? "text" : field.getType();
 					metadataTemplateField = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(field.getHeaderName(), field.getType()));
+							new MetadataTemplateField(field.getHeaderName(), type));
 				}
 				fields.add(metadataTemplateField);
 			}

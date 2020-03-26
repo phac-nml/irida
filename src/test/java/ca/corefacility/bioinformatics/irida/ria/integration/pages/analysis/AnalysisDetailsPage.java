@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AnalysisDetailsPage extends AbstractPage {
@@ -18,7 +19,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "t-file-name")
 	private List<WebElement> fileNames;
 
-	@FindBy(className = "t-galaxy-parameter")
+	@FindBy(css = "th.t-galaxy-parameter")
 	private List<WebElement> galaxyParameters;
 
 	@FindBy(className = "t-tool-name")
@@ -147,9 +148,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean analysisDetailsEqual(String expectedDetails[]) {
+	public boolean analysisDetailsEqual(String[] expectedDetails) {
 		boolean expectedEqualsActual = true;
-		String actualDetails[] = new String[7];
+		String[] actualDetails = new String[7];
 
 		int index=0;
 		for(WebElement item : listDescriptionValues) {
@@ -194,11 +195,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
 				.size();
 
-		if (titleFound > 0) {
-			return true;
-		}
-
-		return false;
+		return titleFound > 0;
 	}
 
 	/**
@@ -210,11 +207,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
 				.size();
 
-		if (titleFound > 0) {
-			return true;
-		}
-
-		return false;
+		return titleFound > 0;
 	}
 
 	/**
