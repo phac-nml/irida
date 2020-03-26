@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button } from "antd";
 import { checkConnectionStatus } from "../../apis/remote-api/remote-api";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { LoginOutlined } from "@ant-design/icons";
-import { IconLoading } from "../../components/icons/Icons";
+import { IconLoading, IconLogin } from "../../components/icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
 
 /**
@@ -62,8 +61,8 @@ export function RemoteApiStatus({ api, updateTable }) {
       {validToken ? (
         <Alert message={i18n("RemoteApi.connected")} type="success" showIcon />
       ) : (
-        <Button onClick={updateConnectionStatus}>
-          <LoginOutlined /> {i18n("RemoteApi.disconnected")}
+        <Button onClick={updateConnectionStatus} icon={<IconLogin />}>
+          {i18n("RemoteApi.disconnected")}
         </Button>
       )}
     </div>

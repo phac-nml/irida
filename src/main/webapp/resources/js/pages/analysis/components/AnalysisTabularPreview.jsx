@@ -3,12 +3,13 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Table } from "antd";
+import { Divider, Table } from "antd";
 import { getDataViaLines } from "../../../apis/analysis/analysis";
 import { parseHeader, parseRows } from "../tabular-preview";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
+
 const TabularOutputWrapper = styled.div`
   max-height: 300px;
   width: 100%;
@@ -43,21 +44,21 @@ export function AnalysisTabularPreview({ output }) {
 
   return (
     <div>
-      <Row>
-        <OutputFileHeader output={output} />
-      </Row>
-      <Row>
-        <TabularOutputWrapper>
-          <Table
-            layout="auto"
-            columns={fileCols}
-            dataSource={fileRows}
-            scroll={{ x: 'max-content' }}
-            pagination={fileRows.length <= MAX_TABLE_ROWS_PER_PAGE ? false : { pageSize: MAX_TABLE_ROWS_PER_PAGE }}
-          />
-        </TabularOutputWrapper>
-        <Divider />
-      </Row>
+      <OutputFileHeader output={output} />
+      <TabularOutputWrapper>
+        <Table
+          layout="auto"
+          columns={fileCols}
+          dataSource={fileRows}
+          scroll={{ x: "max-content" }}
+          pagination={
+            fileRows.length <= MAX_TABLE_ROWS_PER_PAGE
+              ? false
+              : { pageSize: MAX_TABLE_ROWS_PER_PAGE }
+          }
+        />
+      </TabularOutputWrapper>
+      <Divider />
     </div>
   );
 }
