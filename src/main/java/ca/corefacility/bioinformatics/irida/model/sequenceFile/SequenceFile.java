@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +29,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -107,6 +106,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
+	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
+
 	public SequenceFile() {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
@@ -158,7 +159,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	@Override
 	public String getLabel() {
-		return file.getFileName().toString();
+		return fileService.getFileName(file);
 	}
 
 	@Override
@@ -227,13 +228,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@JsonIgnore
 	public String getFileSize() {
 		String size = "N/A";
-		try {
-			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file);
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
+		size = IridaSequenceFile.humanReadableByteCount(fileService.getFileSize(file), true);
 		return size;
 	}
 
