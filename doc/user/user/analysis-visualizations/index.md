@@ -19,7 +19,7 @@ Phylogenetic trees created by the SNVPhyl Analysis Pipeline can be combined with
 
 Sample metadata can be added to the sample using the sample metadata uploader (see [Sample Metadata](../sample-metadata) for how to import).
 
-To get to the advanced visualization page, there is a button in the left sidebar on the analysis results:
+To get to the advanced visualization page, on the analysis page, click the `View Advanced Visualization` button on the `Phylogenetic Tree` tab:
 
 ![Link to advanced analysis on analysis results page](images/viz_link.png)
 

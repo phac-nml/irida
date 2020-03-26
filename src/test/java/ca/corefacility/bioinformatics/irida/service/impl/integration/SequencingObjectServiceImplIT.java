@@ -362,7 +362,7 @@ public class SequencingObjectServiceImplIT {
 				Thread.sleep(1000);
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
-
+		
 		//one more sleep to make sure everything's settled
 		Thread.sleep(1000);
 

@@ -399,7 +399,7 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute("ajaxURL", "/ajax/analysis/project/" + projectId + "/list");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "shared");
 		return "projects/analyses/pages/outputs.html";
@@ -418,7 +418,7 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute("ajaxURL", "/ajax/analysis/project/" + projectId + "/list");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "automated");
 		return "projects/analyses/pages/outputs.html";

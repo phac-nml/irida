@@ -27,6 +27,8 @@ import {
   QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
   StopOutlined,
   StrikethroughOutlined,
   SwapOutlined,
@@ -147,4 +149,12 @@ export const IconMenuFold = ({ ...props }) => <MenuFoldOutlined {...props} />;
 
 export const IconMenuUnfold = ({ ...props }) => (
   <MenuUnfoldOutlined {...props} />
+);
+
+export const IconSortAscending = ({ ...props }) => (
+  <SortAscendingOutlined {...props} />
+);
+
+export const IconSortDescending = ({ ...props }) => (
+  <SortDescendingOutlined {...props} />
 );
