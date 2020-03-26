@@ -344,30 +344,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return super.update(submission);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public AnalysisSubmission updateEmailPipelineResult(AnalysisSubmission submission, boolean emailPipelineResult) {
-		submission.setEmailPipelineResult(emailPipelineResult);
-
-		return super.update(submission);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public AnalysisSubmission updateAnalysisName(AnalysisSubmission submission, String analysisName) {
-		checkNotNull(analysisName);
-		submission.setName(analysisName);
-
-		return super.update(submission);
-	}
-
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user) {
@@ -387,7 +363,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
 		return infos;
 	}
-
 
 	/**
 	 * {@inheritDoc}

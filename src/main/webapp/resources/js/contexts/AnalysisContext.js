@@ -16,6 +16,7 @@ import { updateAnalysis } from "../apis/analysis/analysis";
 export const stateMap = {
   NEW: 0,
   PREPARING: 1,
+  PREPARED: 1,
   SUBMITTING: 2,
   RUNNING: 3,
   FINISHED_RUNNING: 3,
@@ -34,7 +35,8 @@ const initialContext = {
   analysisType: window.PAGE.analysisType.type,
   isCompleted: window.PAGE.analysisState === "COMPLETED",
   isError: window.PAGE.analysisState.includes("ERROR"),
-  previousState: window.PAGE.previousState
+  previousState: window.PAGE.previousState,
+  duration: window.PAGE.duration
 };
 
 const AnalysisContext = React.createContext(initialContext);

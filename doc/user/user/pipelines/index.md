@@ -171,7 +171,7 @@ To download output files, you can click on the `Output Files` tab. To download a
 
 ### Previewing analysis output files
 
-All analysis pipelines produce analysis output files. Depending on the type of analysis you can view these in one of two places. Either the `Output Files` tab on the **Analysis** page:
+All analysis pipelines produce analysis output files. To view these file, click the `Output Files` tab on the **Analysis** page:
 
 ![view-results-preview-refseq-masher](images/view-results-preview-refseq-masher.png)
 <figcaption>Example `refseq_masher` tabular results preview</figcaption>
@@ -181,19 +181,6 @@ For each analysis output file, you will see a panel and in each panel you will s
 - a panel heading with the Galaxy tool name (e.g. "RefSeq Masher Matches") and version (e.g. "(0.1.1)"), internal IRIDA output name (e.g. "refseq-masher-matches") and output file name (e.g. "refseq-masher-matches.tsv")
 - a file download link
 - a preview of the file contents displayed as plain text or in a table
-
-
-Or on the "Output File Preview" tab:
-
-![view-results-preview-snvphyl](images/view-results-preview-snvphyl.png)
-<figcaption>Example `snvphyl` tabular results preview</figcaption>
-
-For each analysis output file, you will see a panel and in each panel you will see:
-
-- a panel heading with the Galaxy tool name (e.g. "VCF snvalignment") and version (e.g. "(1.8.0)"), internal IRIDA output name (e.g. "core") and output file name (e.g. "vcf2core.tsv")
-- a file download link
-- a preview of the file contents displayed as plain text or in a table
-
 
 #### Previewing tabular analysis output
 

@@ -1,37 +1,18 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * A pair of sequence files in forward/reverse orientation.
@@ -40,10 +21,10 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair extends SequencingObject implements IridaSequenceFilePair {
+public class SequenceFilePair extends SequencingObject {
 
-	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
-	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
+	public static String[] forwardMatches = {"1", "f", "F"};
+	public static String[] reverseMatches = {"2", "r", "R"};
 
 	/**
 	 * This must be a list due to a hibernate bug. See Gitlab issue 376
@@ -84,19 +65,19 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 
 	/**
 	 * Gets the forward {@link SequenceFile} from the pair.
-	 * 
+	 *
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getForwardSequenceFile() {
-		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		SequenceFile[] pair = getFiles().toArray(new SequenceFile[getFiles().size()]);
 		String[] filenames = { pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString() };
 
 		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
 
 		if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
-			return (SequenceFile) pair[0];
+			return pair[0];
 		} else if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[1].charAt(index)).equals(x))) {
-			return (SequenceFile) pair[1];
+			return pair[1];
 		} else {
 			throw new NoSuchElementException();
 		}
@@ -104,11 +85,11 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 
 	/**
 	 * Gets the reverse {@link SequenceFile} from the pair.
-	 * 
+	 *
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getReverseSequenceFile() {
-		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		SequenceFile[] pair = getFiles().toArray(new SequenceFile[getFiles().size()]);
 
 		String[] filenames = { pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString() };
 

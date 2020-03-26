@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import com.sksamuel.diffpatch.DiffMatchPatch;
 import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ public class SamplePairer {
 
 	private static DiffMatchPatch diff = new DiffMatchPatch();
 	
-	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
-	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
+	private static String[] forwardMatches = SequenceFilePair.forwardMatches;
+	private static String[] reverseMatches = SequenceFilePair.reverseMatches;
 
 	/**
 	 * Organize files according to whether they should be paired up

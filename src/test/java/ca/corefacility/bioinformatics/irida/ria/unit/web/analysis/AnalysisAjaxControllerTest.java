@@ -265,7 +265,8 @@ public class AnalysisAjaxControllerTest {
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
 		assertFalse("Email result on pipeline completion", submission.getEmailPipelineResult());
 		analysisAjaxController.ajaxUpdateEmailPipelineResult(res, Locale.getDefault(), httpServletResponseMock);
-		verify(analysisSubmissionServiceMock, times(1)).updateEmailPipelineResult(submission, res.getEmailPipelineResult());
+		submission.setEmailPipelineResult(res.getEmailPipelineResult());
+		verify(analysisSubmissionServiceMock, times(1)).update(submission);
 	}
 
 	@Test
@@ -287,7 +288,8 @@ public class AnalysisAjaxControllerTest {
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
 		assertEquals("Submission name should be", submission.getName(), "submission-"+submission.getId());
 		analysisAjaxController.ajaxUpdateSubmission(info, Locale.getDefault(), httpServletResponseMock);
-		verify(analysisSubmissionServiceMock, times(1)).updateAnalysisName(submission, info.getAnalysisName());
+		submission.setName(info.getAnalysisName());
+		verify(analysisSubmissionServiceMock, times(1)).update(submission);
 	}
 
 	@Test

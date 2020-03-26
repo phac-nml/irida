@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -29,6 +30,7 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "analysis_submission_id", nullable = false)
+	@JsonIgnore
 	private AnalysisSubmission assembly;
 
 	@SuppressWarnings("unused")
@@ -41,6 +43,7 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 		this.assembly = assembly;
 	}
 
+	@JsonIgnore
 	public AnalysisSubmission getAnalysisSubmission() {
 		return assembly;
 	}
@@ -53,6 +56,7 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 	 * Get genome assembly {@link AnalysisOutputFile}.
 	 * @return {@link AnalysisOutputFile} for a genome assembly {@link AnalysisSubmission}
 	 */
+	@JsonIgnore
 	public AnalysisOutputFile getAssemblyOutput() {
 		// Probably need a better way of telling what's the assembly than a hardcoded set of output
 		// file key names. Annotate the workflow output? Wouldn't the GBK file be considered an

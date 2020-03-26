@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -131,8 +132,7 @@ public class RESTProjectSamplesControllerTest {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 
-		@SuppressWarnings("unchecked")
-		List<Sample> relationships = Lists.newArrayList(s);
+		@SuppressWarnings("unchecked") List<Sample> relationships = Lists.newArrayList(s);
 
 		when(sampleService.getSamplesForProjectShallow(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
@@ -144,15 +144,16 @@ public class RESTProjectSamplesControllerTest {
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
-		@SuppressWarnings("unchecked")
-		ResourceCollection<Sample> samples = (ResourceCollection<Sample>) o;
+		@SuppressWarnings("unchecked") ResourceCollection<Sample> samples = (ResourceCollection<Sample>) o;
 		assertEquals(1, samples.size());
 		List<Link> resourceLinks = samples.getLinks();
 		assertEquals(1, resourceLinks.size());
-		Link self = resourceLinks.iterator().next();
+		Link self = resourceLinks.iterator()
+				.next();
 		assertEquals("self", self.getRel());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
-		Sample resource= samples.iterator().next();
+		Sample resource = samples.iterator()
+				.next();
 		assertEquals(s.getSampleName(), resource.getSampleName());
 		//assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
@@ -160,7 +161,7 @@ public class RESTProjectSamplesControllerTest {
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE,
-				RESTSampleMetadataController.METADATA_REL);
+				RESTSampleMetadataController.METADATA_REL, RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
