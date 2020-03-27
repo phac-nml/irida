@@ -30,6 +30,8 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
@@ -54,7 +56,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String LOCALE_CHANGE_PARAMETER = "lang";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
@@ -62,11 +63,11 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	@Value("${locales.default}")
 	private String defaultLocaleValue;
 
-	@Autowired
-	private Environment env;
+	@Value("${ui.templates}")
+	private String extraUITemplates;
 
 	@Autowired
-	private MessageSource messageSource;
+	private Environment env;
 
 	private ApplicationContext applicationContext;
 
@@ -145,29 +146,56 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
-
-	@Bean
-	public SpringResourceTemplateResolver templateResolver(){
-		SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-		templateResolver.setApplicationContext(this.applicationContext);
-		templateResolver.setPrefix(TEMPLATE_LOCATION);
-		templateResolver.setSuffix(TEMPLATE_SUFFIX);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
+	private SpringResourceTemplateResolver internalTemplateResolver(){
+		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+		resolver.setApplicationContext(this.applicationContext);
+		resolver.setPrefix(TEMPLATE_LOCATION);
+		resolver.setSuffix(TEMPLATE_SUFFIX);
+		resolver.setTemplateMode(TemplateMode.HTML);
+		resolver.setOrder(2);
+		resolver.setCheckExistence(true);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			templateResolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 		} else {
-			templateResolver.setCacheable(false);
+			resolver.setCacheable(false);
 		}
-		return templateResolver;
+		return resolver;
+	}
+
+	/**
+	 * This is to handle any templates (usually just the login page) that are overridden
+	 * by and organization.  The location of these files can be modified within the configuration.properties
+	 * file.
+	 *
+	 * @return {@link FileTemplateResolver}
+	 */
+	private FileTemplateResolver externalTemplateResolver() {
+		FileTemplateResolver resolver = new FileTemplateResolver();
+		resolver.setSuffix(TEMPLATE_SUFFIX);
+		resolver.setOrder(1);
+		resolver.setPrefix(extraUITemplates);
+		resolver.setTemplateMode(TemplateMode.HTML);
+		resolver.setCheckExistence(true);
+		resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+
+		// Set template cache timeout if in production
+		// Don't cache at all if in development
+		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+		} else {
+			resolver.setCacheable(false);
+		}
+		return resolver;
 	}
 
 	@Bean
 	public SpringTemplateEngine templateEngine(){
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.addTemplateResolver(internalTemplateResolver());
+		templateEngine.addTemplateResolver(externalTemplateResolver());
 		templateEngine.setEnableSpringELCompiler(false);
 		templateEngine.setAdditionalDialects(additionalDialects());
 		return templateEngine;
