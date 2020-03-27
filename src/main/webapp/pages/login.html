@@ -9,12 +9,11 @@
         emailConfigured: /*[[${emailConfigured}]]*/ false
       };
     </script>
-    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
     <style>
       body {
         display: flex;
         height: 100vh;
-        border: 10px solid chartreuse;
         justify-content: center;
         align-items: center;
         flex-direction: column;
@@ -22,8 +21,10 @@
     </style>
   </head>
   <body>
-  <div id="login-root" style="width: 100%;"></div>
+    <div id="login-root" style="width: 100%;">
+      <!-- Contents rendered from LoginPage.jsx -->
+    </div>
 
-  <script th:src="@{/dist/js/login.bundle.js}"></script>
+    <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>
