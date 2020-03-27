@@ -44,12 +44,12 @@ import com.google.common.base.Strings;
 @Controller
 @RequestMapping("/linelist")
 public class LineListController {
-	private final ProjectService projectService;
-	private final SampleService sampleService;
-	private final MetadataTemplateService metadataTemplateService;
-	private final MessageSource messages;
-	private final UpdateSamplePermission updateSamplePermission;
-	private final ProjectOwnerPermission projectOwnerPermission;
+	private ProjectService projectService;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
+	private MessageSource messages;
+	private UpdateSamplePermission updateSamplePermission;
+	private ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
