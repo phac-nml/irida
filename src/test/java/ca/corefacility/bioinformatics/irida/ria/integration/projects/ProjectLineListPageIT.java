@@ -30,7 +30,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 
-		final String newValue = "FOOBAR";
+		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
 		assertNotEquals("Cell should not have been updated", newValue, page.getCellContents(0, COLUMN_ID));
 	}
@@ -106,7 +106,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		String cellContents = page.getCellContents(0, COLUMN_ID);
 		assertEquals("", cellContents);
 
-		final String newValue = "FOOBAR";
+		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
 		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, COLUMN_ID));
 
@@ -117,7 +117,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, COLUMN_ID));
 
 		// Let's test to make sure that the undo works.
-		final String testValue = "THIS SHOULD BE GONE!";
+		String testValue = "THIS SHOULD BE GONE!";
 		page.editCellContents(0, COLUMN_ID, testValue);
 		page.cancelCellEdit();
 		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, COLUMN_ID));
