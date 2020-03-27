@@ -23,8 +23,10 @@ function LoginForm() {
 function LoginPage() {
   return (
     <Row justify="center">
-      <Col span={12} style={{ border: `1px solid orange` }}>
-        <Typography.Title>IRIDA</Typography.Title>
+      <Col span={12}>
+        <Row justify="center">
+          <Typography.Title>IRIDA</Typography.Title>
+        </Row>
         <LoginForm />
       </Col>
     </Row>
