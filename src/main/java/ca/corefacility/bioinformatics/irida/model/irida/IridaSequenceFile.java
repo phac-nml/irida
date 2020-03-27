@@ -16,6 +16,8 @@ public interface IridaSequenceFile {
 	 */
 	public Path getFile();
 
+	public String getFileName();
+
 	/**
 	 * Get the size of the file.
 	 *

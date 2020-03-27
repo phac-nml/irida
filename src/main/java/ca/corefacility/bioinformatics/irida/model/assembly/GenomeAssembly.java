@@ -118,6 +118,11 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	public abstract Path getFile();
 
 	@Override
+	public String getFileName() {
+		return getFile().getFileName().toString();
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate);
 	}
