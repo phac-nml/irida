@@ -1,9 +1,10 @@
 import React from "react";
 import { render } from "react-dom";
-import { Button, Col, Form, Input, Row, Typography } from "antd";
+import { Alert, Button, Col, Form, Input, Row, Typography } from "antd";
 import { IconLocked, IconUser } from "../components/icons/Icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
+import { blue6 } from "../styles/colors";
 
 const { Item } = Form;
 
@@ -19,6 +20,7 @@ function LoginForm() {
       name="loginForm"
       action={setBaseUrl(`/login`)}
       method="POST"
+      size="large"
     >
       <Item
         rules={[
@@ -28,13 +30,24 @@ function LoginForm() {
           }
         ]}
       >
-        <Input name="username" prefix={<IconUser />} />
+        <Input name="username" prefix={<IconUser style={{ color: blue6 }} />} />
+      </Item>
+      <Item
+        rules={[
+          {
+            required: true,
+            message: i18n("LoginPage.password.required")
+          }
+        ]}
+      >
+        <Input
+          name="password"
+          prefix={<IconLocked style={{ color: blue6 }} />}
+          type="password"
+        />
       </Item>
       <Item>
-        <Input name="password" prefix={<IconLocked />} type="password" />
-      </Item>
-      <Item>
-        <Button type="primary" block htmlType="submit">
+        <Button id="t-submit-btn" type="primary" block htmlType="submit">
           {i18n("LoginPage.submit")}
         </Button>
       </Item>
@@ -63,9 +76,30 @@ function LoginPage() {
           <img
             src={setBaseUrl("/resources/img/irida_logo_light.svg")}
             height={60}
-            alt="IRIDA"
+            alt={i18n("generic.irida.website")}
           />
         </Row>
+        {window.PAGE?.hasErrors ? (
+          <Alert
+            type="error"
+            className="t-login-error"
+            style={{ marginBottom: SPACE_MD }}
+            message={
+              <span className="t-login-error">
+                {i18n("LoginPage.error.message")}
+              </span>
+            }
+            description={
+              <>
+                {i18n("LoginPage.error.description")}{" "}
+                <a href={setBaseUrl("password_reset")}>
+                  {i18n("LoginPage.recover")}
+                </a>
+              </>
+            }
+            showIcon
+          />
+        ) : null}
         <LoginForm />
       </Col>
     </Row>

@@ -4,7 +4,7 @@
     <title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
     <script th:inline="javascript">
       window.PAGE = {
-        BASE_URL: /*[[@{/}]]*/ "/",
+        _BASE_URL: /*[[@{/}]]*/ "/",
         hasErrors: /*[[${error}]]*/ false,
         emailConfigured: /*[[${emailConfigured}]]*/ false
       };
