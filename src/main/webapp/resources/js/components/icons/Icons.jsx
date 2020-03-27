@@ -37,7 +37,8 @@ import {
   SwapOutlined,
   SyncOutlined,
   TableOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -151,6 +152,8 @@ File Type Icons
 export const IconFileExcel = ({ ...props }) => <FileExcelOutlined {...props} />;
 
 export const IconFile = ({ ...props }) => <FileOutlined {...props} />;
+
+export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 
 /*
 Menu Icons
