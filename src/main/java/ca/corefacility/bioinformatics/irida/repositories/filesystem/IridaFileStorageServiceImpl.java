@@ -55,7 +55,7 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	public File getTemporaryFile(Path file) {
 		File fileToProcess = null;
 
-		if(storageType.equalsIgnoreCase("azure")) {
+		if(storageTypeIsAzure()) {
 			// We set the blobClient "path" to which we want to upload our file to
 			blobClient = containerClient.getBlobClient(file.toAbsolutePath()
 					.toString()
@@ -75,7 +75,7 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 			} catch (BlobStorageException e) {
 				logger.debug("Couldn't find file [" + e + "]");
 			}
-		} else if (storageType.equalsIgnoreCase("aws")) {
+		} else if (storageTypeIsAws()) {
 			// Implement aws code to get file
 		} else {
 			fileToProcess = file.toFile();
@@ -89,7 +89,7 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	@Override
 	public Long getFileSize(Path file) {
 		Long fileSize = 0L;
-		if(storageType.equalsIgnoreCase("azure")) {
+		if(storageTypeIsAzure()) {
 			try {
 				// We set the blobClient "path" to which we want to upload our file to
 				blobClient = containerClient.getBlobClient(file.toAbsolutePath()
@@ -98,18 +98,10 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 			} catch (BlobStorageException e) {
 				logger.debug("Couldn't calculate size as the file was not found [" + e + "]");
 			}
-		} else if (storageType.equalsIgnoreCase("aws")) {
+		} else {
 			//implement aws code to get file size
 		}
-		else {
-			try {
-				fileSize = Files.size(file);
-			} catch (NoSuchFileException e) {
-				logger.error("Could not find file " + file);
-			} catch (IOException e) {
-				logger.error("Could not calculate file size: ", e);
-			}
-		}
+
 		return fileSize;
 	}
 
@@ -118,7 +110,7 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	 */
 	@Override
 	public void writeFile(Path source, Path target) {
-		if(storageType.equalsIgnoreCase("azure")) {
+		if(storageTypeIsAzure()) {
 			// We set the blobClient "path" to which we want to upload our file to
 			blobClient = containerClient.getBlobClient(target.toAbsolutePath()
 					.toString()
@@ -127,7 +119,7 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 			logger.debug("Uploading file to azure: [" + target.getFileName() + "]");
 			blobClient.uploadFromFile(source.toString(), false);
 			logger.debug("File uploaded to: [" + blobClient.getBlobUrl() + "]");
-		} else if(storageType.equalsIgnoreCase("aws")){
+		} else if(storageTypeIsAws()){
 			//implement aws code to upload file to s3 bucket
 		} else {
 			try {
@@ -172,12 +164,28 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 		return false;
 	}
 
+
+	public boolean storageTypeIsAzure(){
+		if(storageType.equalsIgnoreCase("azure")){
+			return true;
+		}
+		return false;
+	}
+
+	public boolean storageTypeIsAws(){
+		if(storageType.equalsIgnoreCase("aws")){
+			return true;
+		}
+		return false;
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		if(storageType.equalsIgnoreCase("azure")) {
+		if(storageTypeIsAzure()) {
 			blobClient = containerClient.getBlobClient(file.toAbsolutePath()
 					.toString()
 					.substring(1));
@@ -190,10 +198,8 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 			} catch (BlobStorageException e) {
 				logger.debug("Couldn't find file [" + e + "]");
 			}
-		} else if(storageType.equalsIgnoreCase("aws")) {
-			//implement aws code to get file name from aws s3 bucket
 		} else {
-			fileName = file.toFile().getName();
+			//implement aws code to get file name from aws s3 bucket
 		}
 		return fileName;
 	}

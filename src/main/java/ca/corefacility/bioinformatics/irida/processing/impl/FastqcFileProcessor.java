@@ -56,8 +56,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final MessageSource messageSource;
 	private IridaFileStorageServiceImpl iridaFileStorageService;
 
-	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
-
 	/**
 	 * Create a new {@link FastqcFileProcessor}
 	 *
@@ -98,7 +96,7 @@ public class FastqcFileProcessor implements FileProcessor {
 						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					fileService.getTemporaryFile(fileToProcess));
+					iridaFileStorageService.getTemporaryFile(fileToProcess));
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
