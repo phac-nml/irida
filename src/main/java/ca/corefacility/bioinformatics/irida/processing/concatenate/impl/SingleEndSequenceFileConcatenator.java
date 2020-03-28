@@ -5,16 +5,22 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * {@link SequenceFilePairConcatenator} for {@link SingleEndSequenceFile}s
  */
 public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatenator<SingleEndSequenceFile> {
+
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	public SingleEndSequenceFileConcatenator() {
 	}
@@ -53,7 +59,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 		}
 
 		// create the new sequencefile and object
-		SequenceFile forward = new SequenceFile(tempFile);
+		SequenceFile forward = iridaFileStorageFactory.createSequenceFile(tempFile);
 
 		SingleEndSequenceFile seqObject = new SingleEndSequenceFile(forward);
 

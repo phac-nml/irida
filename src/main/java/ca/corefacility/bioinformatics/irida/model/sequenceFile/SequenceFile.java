@@ -29,7 +29,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -58,7 +57,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
-public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
+public abstract class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
@@ -105,8 +104,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
-
-	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -155,11 +152,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	public void setFile(Path file) {
 		this.file = file;
-	}
-
-	@Override
-	public String getLabel() {
-		return fileService.getFileName(file);
 	}
 
 	@Override
@@ -220,17 +212,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		return optionalProperties.get(key);
 	}
 
-	/**
-	 * Get the size of the file.
-	 *
-	 * @return The String representation of the file size
-	 */
-	@JsonIgnore
-	public String getFileSize() {
-		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(fileService.getFileSize(file), true);
-		return size;
-	}
 
 	/**
 	 * Set the Map of optional properties

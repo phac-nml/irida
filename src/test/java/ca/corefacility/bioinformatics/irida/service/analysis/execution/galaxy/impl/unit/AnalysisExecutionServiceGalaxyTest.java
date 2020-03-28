@@ -33,7 +33,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -130,7 +130,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
-		Set<SequencingObject> submissionInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
+		Set<SequencingObject> submissionInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new LocalSequenceFile()));
 
 		analysisSubmission = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "intial").inputFiles(submissionInputFiles).build();
 		analysisPreparing = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "preparing").inputFiles(submissionInputFiles).build();

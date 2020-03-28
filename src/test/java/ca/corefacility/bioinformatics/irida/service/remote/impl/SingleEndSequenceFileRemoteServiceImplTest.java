@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
@@ -45,7 +45,7 @@ public class SingleEndSequenceFileRemoteServiceImplTest {
 
 		sample.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 
-		List<SingleEndSequenceFile> filesList = Lists.newArrayList(new SingleEndSequenceFile(new SequenceFile()));
+		List<SingleEndSequenceFile> filesList = Lists.newArrayList(new SingleEndSequenceFile(new LocalSequenceFile()));
 
 		when(apiRepo.getRemoteAPIForUrl(seqFilesHref)).thenReturn(api);
 		when(repository.list(seqFilesHref, api)).thenReturn(filesList);

@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.matlux.NreplServerSpring;
@@ -125,6 +127,17 @@ public class IridaApiServicesConfig {
 	private int analysisTaskThreads;
 	@Value("${locales.enabled}")
 	private String availableLocales;
+
+	@Value("${irida.storage.type}")
+	private String storageType;
+
+	@Value("${azure.container.name}")
+	private String containerName;
+
+	@Value("${azure.account.connection.string}")
+	private String connectionStr;
+
+
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 
@@ -280,6 +293,12 @@ public class IridaApiServicesConfig {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Bean(name = "iridaFileStorageService")
+	public IridaFileStorageServiceImpl iridaFileStorageService() {
+		IridaFileStorageServiceImpl iridaFileStorageService = new IridaFileStorageServiceImpl(storageType, connectionStr, containerName);
+		return iridaFileStorageService;
 	}
 
 	@Bean(name = "uploadFileProcessingChain")

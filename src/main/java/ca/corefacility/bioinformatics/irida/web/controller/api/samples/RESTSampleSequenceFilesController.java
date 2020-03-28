@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -134,6 +135,9 @@ public class RESTSampleSequenceFilesController {
 
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
+
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	protected RESTSampleSequenceFilesController() {
 	}
@@ -414,7 +418,7 @@ public class RESTSampleSequenceFilesController {
 					logger.trace("Read miseq run " + miseqRunId);
 				}
 			} else {
-				sf = new SequenceFile();
+				sf = iridaFileStorageFactory.createEmptySequenceFile();
 			}
 
 			sf.setFile(target);

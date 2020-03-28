@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -17,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  */
 public final class TestDataFactory {
 
-    /**
+	/**
      * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.User}.
      *
      * @return a {@link ca.corefacility.bioinformatics.irida.model.User} with identifier.
@@ -51,7 +52,7 @@ public final class TestDataFactory {
      */
     public static SequenceFile constructSequenceFile() throws IOException {
         Path f = Files.createTempFile(null, null);
-        SequenceFile sf = new SequenceFile();
+        SequenceFile sf = new LocalSequenceFile();
         sf.setId(1L);
         sf.setFile(f);
         return sf;

@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
@@ -364,7 +365,7 @@ public class ExportUploadServiceTest {
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles();
 		Path tempFile = Files.createTempFile("sequencefile", sequenceFileExtension);
-		SequenceFile sequenceFile = new SequenceFile(tempFile);
+		SequenceFile sequenceFile = new LocalSequenceFile(tempFile);
 		sequenceFile.setId(1L);
 		SingleEndSequenceFile singleFile = new SingleEndSequenceFile(sequenceFile);
 		singleFile.setId(1L);

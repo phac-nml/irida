@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -23,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
  */
 public class AnalysisSubmissionTest {
 
-	private static final SequenceFile sequenceFile = new SequenceFile();
+	private static final SequenceFile sequenceFile = new LocalSequenceFile();
 	private static final SingleEndSequenceFile singleEndFile = new SingleEndSequenceFile(sequenceFile);
 	private static final ReferenceFile referenceFile = new ReferenceFile();
 	private static final Map<String, String> inputParameters = ImmutableMap.of("test", "test");

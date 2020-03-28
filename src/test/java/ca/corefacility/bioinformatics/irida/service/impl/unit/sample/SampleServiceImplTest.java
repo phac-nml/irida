@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -103,7 +104,7 @@ public class SampleServiceImplTest {
 	public void testRemoveSequenceFileFromSample() {
 		Sample s = new Sample();
 		s.setId(1111L);
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		sf.setId(2222L);
 		SingleEndSequenceFile obj = new SingleEndSequenceFile(sf);
 		obj.setId(2L);
@@ -248,7 +249,7 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		SequenceFile sf1 = new SequenceFile();
+		SequenceFile sf1 = new LocalSequenceFile();
 		sf1.setId(2222L);
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
@@ -304,7 +305,7 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		SequenceFile sf1 = new SequenceFile();
+		SequenceFile sf1 = new LocalSequenceFile();
 		sf1.setId(2222L);
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
@@ -333,9 +334,9 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		SequenceFile sf1 = new SequenceFile();
+		SequenceFile sf1 = new LocalSequenceFile();
 		sf1.setId(2222L);
-		SequenceFile sf2 = new SequenceFile();
+		SequenceFile sf2 = new LocalSequenceFile();
 		sf1.setId(3333L);
 
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
@@ -368,7 +369,7 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		SequenceFile sf1 = new SequenceFile();
+		SequenceFile sf1 = new LocalSequenceFile();
 		sf1.setId(2222L);
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
@@ -389,7 +390,7 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		SequenceFile sf1 = new SequenceFile();
+		SequenceFile sf1 = new LocalSequenceFile();
 		sf1.setId(2222L);
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
@@ -406,7 +407,7 @@ public class SampleServiceImplTest {
 	}
 
 	private SequenceFile sf(Long id) {
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		sf.setId(id);
 		try {
 			sf.setFile(Files.createTempFile(null, null));

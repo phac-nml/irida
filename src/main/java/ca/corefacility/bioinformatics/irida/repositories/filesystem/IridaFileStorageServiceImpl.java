@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,22 +26,24 @@ import com.azure.storage.blob.models.BlobStorageException;
 public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageServiceImpl.class);
 
-	@Value("${irida.storage.type}")
 	private String storageType;
 
-	@Value("${azure.container.name}")
+	//Azure Specific Variables
 	private String containerName;
-
-	@Value("${azure.account.connection.string}")
-	private String connectStr;
-
+	private String connectionStr;
 	private BlobServiceClient blobServiceClient;
-	private BlobContainerClient containerClient;
+	private BlobContainerClient containerClient ;
 	private BlobClient blobClient;
 
+	//AWS Specific Variables
+
 	@Autowired
-	public IridaFileStorageServiceImpl(){
-		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectStr)
+	public IridaFileStorageServiceImpl(String storageType, String connectionStr, String containerName){
+		this.storageType = storageType;
+		this.containerName = containerName;
+		this.connectionStr = connectionStr;
+
+		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionStr)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
 	}
@@ -175,9 +177,6 @@ public class IridaFileStorageServiceImpl implements IridaFileStorageService {
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-
-		logger.debug("STORAGE TYPE IS: " + storageType);
-
 		if(storageType.equalsIgnoreCase("azure")) {
 			blobClient = containerClient.getBlobClient(file.toAbsolutePath()
 					.toString()

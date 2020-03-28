@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.Before;
@@ -32,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -43,6 +45,7 @@ public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private AnalysisOutputFileRepository outputFileRepository;
+	private IridaFileStorageServiceImpl iridaFileStorageService;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
@@ -56,7 +59,7 @@ public class FastqcFileProcessorTest {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
-		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository);
+		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageService);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -65,7 +68,7 @@ public class FastqcFileProcessorTest {
 		// dummy), but that's A-OK.
 		Path fasta = Files.createTempFile(null, null);
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
-		SequenceFile sf = new SequenceFile(fasta);
+		SequenceFile sf = new LocalSequenceFile(fasta);
 		sf.setId(1L);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
@@ -82,7 +85,7 @@ public class FastqcFileProcessorTest {
 
 		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 
-		SequenceFile sf = new SequenceFile(fastq);
+		SequenceFile sf = new LocalSequenceFile(fastq);
 		sf.setId(1L);
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		try {

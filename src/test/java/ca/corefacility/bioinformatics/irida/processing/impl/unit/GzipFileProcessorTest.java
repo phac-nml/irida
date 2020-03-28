@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -34,6 +35,7 @@ public class GzipFileProcessorTest {
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
+
 
 	@Before
 	public void setUp() {
@@ -101,7 +103,7 @@ public class GzipFileProcessorTest {
 		// the file processor should decompress the file, then update the
 		// sequence file in the database.
 		SequenceFile sf = constructSequenceFile();
-		SequenceFile sfUpdated = new SequenceFile();
+		SequenceFile sfUpdated = new LocalSequenceFile();
 		sfUpdated.setFile(sf.getFile());
 		final Long id = 1L;
 		sf.setId(id);
@@ -138,7 +140,7 @@ public class GzipFileProcessorTest {
 		// the file processor should decompress the file, then update the
 		// sequence file in the database.
 		SequenceFile sf = constructSequenceFile();
-		SequenceFile sfUpdated = new SequenceFile();
+		SequenceFile sfUpdated = new LocalSequenceFile();
 		sfUpdated.setFile(sf.getFile());
 		final Long id = 1L;
 		sf.setId(id);
@@ -170,7 +172,7 @@ public class GzipFileProcessorTest {
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FILE_CONTENTS.getBytes());
 		sf.setFile(sequenceFile);

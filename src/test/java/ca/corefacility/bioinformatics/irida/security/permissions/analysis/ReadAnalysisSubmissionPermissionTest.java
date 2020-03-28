@@ -20,10 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -85,7 +82,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
 				userRepository, sequencingObjectRepository, seqObjectPermission, pasRepository, readProjectPermission);
 
-		inputSingleFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
+		inputSingleFiles = Sets.newHashSet(new SingleEndSequenceFile(new LocalSequenceFile()));
 	}
 
 	/**

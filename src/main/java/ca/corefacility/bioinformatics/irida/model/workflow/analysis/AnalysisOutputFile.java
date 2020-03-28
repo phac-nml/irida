@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -64,8 +64,6 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	
 	@Column(name = "label_prefix")
 	private final String labelPrefix;
-
-	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
 
 	/**
 	 * for hibernate
@@ -133,7 +131,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 
 	@Override
 	public String getLabel() {
-		return Strings.isNullOrEmpty(labelPrefix) ? fileService.getFileName(file) : labelPrefix + '-' + fileService.getFileName(file);
+		return Strings.isNullOrEmpty(labelPrefix) ? file.toFile().getName() : labelPrefix + '-' + file.toFile().getName();
 	}
 
 	@Override

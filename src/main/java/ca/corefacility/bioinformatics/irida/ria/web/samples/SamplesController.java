@@ -54,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -110,6 +111,9 @@ public class SamplesController extends BaseController {
 	private final UpdateSamplePermission updateSamplePermission;
 
 	private final MessageSource messageSource;
+
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
@@ -658,7 +662,7 @@ public class SamplesController extends BaseController {
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
 		file.transferTo(target.toFile());
-		return new SequenceFile(target);
+		return iridaFileStorageFactory.createSequenceFile(target);
 	}
 
 	/**

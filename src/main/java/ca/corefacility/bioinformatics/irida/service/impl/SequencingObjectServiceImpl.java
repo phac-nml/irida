@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Service
 public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject> implements
 		SequencingObjectService {
-	
+
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 

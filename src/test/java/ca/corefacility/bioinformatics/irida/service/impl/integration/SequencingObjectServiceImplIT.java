@@ -60,19 +60,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -175,7 +168,7 @@ public class SequencingObjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateSequenceFileInSample() throws IOException, InterruptedException {
 		Sample s = sampleService.read(1L);
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
 		gzOut.write(FASTQ_FILE_CONTENTS);
@@ -207,7 +200,7 @@ public class SequencingObjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCorruptSequenceFileInSample() throws IOException, InterruptedException {
 		Sample s = sampleService.read(1L);
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = Files.newOutputStream(sequenceFile);
 		gzOut.write("not a file".getBytes());
@@ -331,7 +324,7 @@ public class SequencingObjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
 		final Long expectedRevisionNumber = 2L;
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
 		gzOut.write(FASTQ_FILE_CONTENTS);
@@ -429,7 +422,7 @@ public class SequencingObjectServiceImplIT {
 		project = projectService.update(project);
 
 		Sample s = sampleService.read(1L);
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
 		gzOut.write(FASTQ_FILE_CONTENTS);
@@ -572,6 +565,6 @@ public class SequencingObjectServiceImplIT {
 		Path sequenceFile = Files.createTempFile(name, ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		return new SequenceFile(sequenceFile);
+		return new LocalSequenceFile(sequenceFile);
 	}
 }

@@ -10,7 +10,8 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.IridaFileStorageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private final AnalysisOutputFileRepository outputFileRepository;
 	private final MessageSource messageSource;
+	private IridaFileStorageServiceImpl iridaFileStorageService;
 
 	private static final IridaFileStorageServiceImpl fileService = new IridaFileStorageServiceImpl();
 
@@ -66,10 +68,11 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
-			AnalysisOutputFileRepository outputFileRepository) {
+			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageServiceImpl iridaFileStorageService) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.outputFileRepository = outputFileRepository;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	@Override

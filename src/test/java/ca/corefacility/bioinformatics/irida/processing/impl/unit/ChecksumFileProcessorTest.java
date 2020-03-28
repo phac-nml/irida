@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -49,7 +50,7 @@ public class ChecksumFileProcessorTest {
 
 	@Test(expected = FileProcessorException.class)
 	public void testFileNotExists() throws IOException {
-		final SequenceFile sf = new SequenceFile(Paths.get("/reallyfakefile"));
+		final SequenceFile sf = new LocalSequenceFile(Paths.get("/reallyfakefile"));
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
@@ -57,7 +58,7 @@ public class ChecksumFileProcessorTest {
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {
-		SequenceFile sf = new SequenceFile();
+		SequenceFile sf = new LocalSequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FILE_CONTENTS.getBytes());
 		sf.setFile(sequenceFile);

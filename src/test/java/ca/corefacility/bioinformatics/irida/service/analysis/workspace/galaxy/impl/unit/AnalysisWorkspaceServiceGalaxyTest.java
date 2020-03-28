@@ -5,10 +5,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
@@ -154,9 +151,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	public void setup() throws IOException, UploadException, GalaxyDatasetException {
 		MockitoAnnotations.initMocks(this);
 
-		sFileA = new SequenceFile(createTempFile("fileA", "fastq"));
-		sFileB = new SequenceFile(createTempFile("fileB", "fastq"));
-		sFileC = new SequenceFile(createTempFile("fileC", "fastq"));
+		sFileA = new LocalSequenceFile(createTempFile("fileA", "fastq"));
+		sFileB = new LocalSequenceFile(createTempFile("fileB", "fastq"));
+		sFileC = new LocalSequenceFile(createTempFile("fileC", "fastq"));
 
 		sObjA = new SingleEndSequenceFile(sFileA);
 		sObjB = new SingleEndSequenceFile(sFileB);

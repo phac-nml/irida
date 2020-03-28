@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -44,7 +45,7 @@ public class CoverageFileProcessorTest {
 		Project p = new Project();
 		p.setGenomeSize(100L);
 		p.setMinimumCoverage(2);
-		SequenceFile file = new SequenceFile();
+		SequenceFile file = new LocalSequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
 		AnalysisFastQC fqc = mock(AnalysisFastQC.class);
 		Long baseCount = 300L;
@@ -71,7 +72,7 @@ public class CoverageFileProcessorTest {
 		Project p = new Project();
 		p.setGenomeSize(100L);
 		p.setMinimumCoverage(5);
-		SequenceFile file = new SequenceFile();
+		SequenceFile file = new LocalSequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
 		AnalysisFastQC fqc = mock(AnalysisFastQC.class);
 		Long baseCount = 300L;
@@ -98,7 +99,7 @@ public class CoverageFileProcessorTest {
 		Project p = new Project();
 		p.setGenomeSize(100L);
 		p.setMinimumCoverage(2);
-		SequenceFile file = new SequenceFile();
+		SequenceFile file = new LocalSequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
 		AnalysisFastQC fqc = mock(AnalysisFastQC.class);
 		Long baseCount = 300L;

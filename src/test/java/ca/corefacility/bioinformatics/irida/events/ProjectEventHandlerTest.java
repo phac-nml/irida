@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -121,7 +122,7 @@ public class ProjectEventHandlerTest {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project();
 		Sample sample = new Sample();
-		SequenceFile file = new SequenceFile();
+		SequenceFile file = new LocalSequenceFile();
 		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
@@ -151,7 +152,7 @@ public class ProjectEventHandlerTest {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project();
 		Sample sample = new Sample();
-		SequenceFile file = new SequenceFile();
+		SequenceFile file = new LocalSequenceFile();
 		SingleEndSequenceFile seqObj1 = new SingleEndSequenceFile(file);
 		SingleEndSequenceFile seqObj2 = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(sample, seqObj1);
@@ -184,7 +185,7 @@ public class ProjectEventHandlerTest {
 		Project project = new Project("p1");
 		Project project2 = new Project("p2");
 		Sample sample = new Sample();
-		SequenceFile file = new SequenceFile();
+		SequenceFile file = new LocalSequenceFile();
 		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 

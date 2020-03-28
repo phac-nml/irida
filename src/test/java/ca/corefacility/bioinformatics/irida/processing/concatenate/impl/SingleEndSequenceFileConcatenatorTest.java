@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import com.google.common.collect.Lists;
@@ -110,6 +111,6 @@ public class SingleEndSequenceFileConcatenatorTest {
 		Path sequenceFile = Files.createTempFile(name, extension);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		return new SequenceFile(sequenceFile);
+		return new LocalSequenceFile(sequenceFile);
 	}
 }

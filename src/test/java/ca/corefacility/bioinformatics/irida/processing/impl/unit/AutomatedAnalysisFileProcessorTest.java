@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -111,8 +111,8 @@ public class AutomatedAnalysisFileProcessorTest {
 	@Test
 	public void testAssembleFile() {
 		Long sequenceFileId = 1L;
-		SequenceFilePair pair = new SequenceFilePair(new SequenceFile(Paths.get("file_R1_1.fastq.gz")),
-				new SequenceFile(Paths.get("file_R2_1.fastq.gz")));
+		SequenceFilePair pair = new SequenceFilePair(new LocalSequenceFile(Paths.get("file_R1_1.fastq.gz")),
+				new LocalSequenceFile(Paths.get("file_R2_1.fastq.gz")));
 		Sample sample = new Sample();
 		Project project = new Project();
 
@@ -152,8 +152,8 @@ public class AutomatedAnalysisFileProcessorTest {
 	@Test
 	public void testOtherWorkflow() {
 		Long sequenceFileId = 1L;
-		SequenceFilePair pair = new SequenceFilePair(new SequenceFile(Paths.get("file_R1_1.fastq.gz")),
-				new SequenceFile(Paths.get("file_R2_1.fastq.gz")));
+		SequenceFilePair pair = new SequenceFilePair(new LocalSequenceFile(Paths.get("file_R1_1.fastq.gz")),
+				new LocalSequenceFile(Paths.get("file_R2_1.fastq.gz")));
 		Sample sample = new Sample();
 		Project project = new Project();
 
@@ -203,8 +203,8 @@ public class AutomatedAnalysisFileProcessorTest {
 
 	@Test
 	public void testOneProjectEnabled() {
-		SequenceFilePair pair = new SequenceFilePair(new SequenceFile(Paths.get("file_R1_1.fastq.gz")),
-				new SequenceFile(Paths.get("file_R2_1.fastq.gz")));
+		SequenceFilePair pair = new SequenceFilePair(new LocalSequenceFile(Paths.get("file_R1_1.fastq.gz")),
+				new LocalSequenceFile(Paths.get("file_R2_1.fastq.gz")));
 		Sample sample = new Sample();
 		Project project = new Project("assemble me");
 
