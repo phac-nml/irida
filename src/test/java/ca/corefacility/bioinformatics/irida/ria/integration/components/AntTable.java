@@ -15,10 +15,10 @@ import com.google.common.collect.Ordering;
  * Generic class to handle all instances of Ant Design Tables.
  */
 public class AntTable {
-	@FindBy(className = "ant-table")
+	@FindBy(css = ".ant-table-content table")
 	WebElement table;
 
-	@FindBy(css = ".ant-table-body .ant-table-fixed .ant-table-row")
+	@FindBy(className = "ant-table-row")
 	List<WebElement> rows;
 
 	public static AntTable getTable(WebDriver driver) {
@@ -49,18 +49,6 @@ public class AntTable {
 				.collect(Collectors.toList());
 		return Ordering.natural()
 				.isOrdered(labels);
-	}
-
-	/**
-	 * Do to the complexities of fixes columns there is actually 2 columns rendered.
-	 * Column one is the actual column displayed to the user.
-	 *
-	 * @param className The class name for the column label.
-	 */
-	public void sortFixedColumn(String className) {
-		table.findElements(By.className(className))
-				.get(1)
-				.click();
 	}
 
 	/**

@@ -5,12 +5,13 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Col, Typography } from "antd";
+import { Button, Typography } from "antd";
 import { convertFileSize } from "../../utilities/file-utilities";
 import { downloadOutputFile } from "../../apis/analysis/analysis";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { FONT_SIZE_DEFAULT } from "../../styles/fonts";
 import styled from "styled-components";
+import { IconDownloadFile } from "../icons/Icons";
 
 const { Text } = Typography;
 
@@ -31,7 +32,7 @@ const OutputFileHeaderWrapper = styled.div`
 export function OutputFileHeader({ output }) {
   return (
     <OutputFileHeaderWrapper>
-      <Col>
+      <div>
         <Text
           style={{
             fontSize: FONT_SIZE_DEFAULT
@@ -40,8 +41,8 @@ export function OutputFileHeader({ output }) {
         >
           {`${output.toolName} ${output.toolVersion} - ${output.outputName} - ${output.filename}`}
         </Text>
-      </Col>
-      <Col>
+      </div>
+      <div>
         <Button
           style={{
             marginLeft: SPACE_XS
@@ -52,12 +53,12 @@ export function OutputFileHeader({ output }) {
               fileId: output.id
             })
           }
-          icon="download"
+          icon={<IconDownloadFile />}
           className="t-download-output-file-btn"
         >
           {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
         </Button>
-      </Col>
+      </div>
     </OutputFileHeaderWrapper>
   );
 }

@@ -34,7 +34,7 @@ public class AdminUsersPage extends AbstractPage {
 	}
 
 	public void sortTableByUsername() {
-		table.sortFixedColumn("t-username-col");
+		table.sortColumn("t-username-col");
 	}
 
 	public void sortTableByModifiedDate() { table.sortColumn("t-modified-col");}
