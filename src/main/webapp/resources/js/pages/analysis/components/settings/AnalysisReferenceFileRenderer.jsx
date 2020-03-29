@@ -30,7 +30,7 @@ export function AnalysisReferenceFileRenderer() {
       referenceFile.push(
         <div style={{ marginBottom: SPACE_LG }} key="samplesDiv-1">
           <Title level={4}>{i18n("AnalysisSamples.referenceFile")}</Title>
-          <dive
+          <div
             key="row-reference-file-1"
             style={{
               display: "flex",
@@ -51,7 +51,7 @@ export function AnalysisReferenceFileRenderer() {
               <IconDownloadFile style={{ marginRight: SPACE_XS }} />
               {i18n("AnalysisSamples.downloadReferenceFile")}
             </Button>
-          </dive>
+          </div>
         </div>
       );
       return referenceFile;
