@@ -112,17 +112,4 @@ public class ProjectSettingsAjaxController {
 		Project associatedProject = projectService.read(associatedId);
 		projectService.addRelatedProject(project, associatedProject);
 	}
-
-	@RequestMapping("/members")
-	public TableResponse<ProjectUserTableModel> getProjectMembers(@PathVariable Long projectId, @RequestBody TableRequest tableRequest) {
-		Project project = projectService.read(projectId);
-		Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project,
-				tableRequest.getSearch(), tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort());
-		List<ProjectUserTableModel> members = usersForProject.get().map(join -> {
-			ProjectUserJoin projectUserJoin = (ProjectUserJoin)join;
-			return new ProjectUserTableModel(join.getObject(), projectUserJoin.getProjectRole()
-					.toString(), projectUserJoin.getCreatedDate());
-		}).collect(Collectors.toList());
-		return new TableResponse<>(members, usersForProject.getTotalElements());
-	}
 }

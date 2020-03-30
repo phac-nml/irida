@@ -21,7 +21,7 @@ function ProjectUsersPage() {
 function ProjectUsersApp() {
   return (
     <PagedTableProvider
-      url={setBaseUrl(`/ajax/projects/${window.project.id}/settings/members`)}
+      url={setBaseUrl(`/ajax/projects/${window.project.id}/members`)}
     >
       <ProjectUsersPage />
     </PagedTableProvider>
