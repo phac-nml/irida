@@ -30,4 +30,7 @@ const mapDispatchToProps = dispatch => ({
   selectionChange: count => dispatch(entryActions.selection(count))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LineList);

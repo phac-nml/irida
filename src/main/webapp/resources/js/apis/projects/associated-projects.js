@@ -2,8 +2,9 @@
  * @file API the ProjectSettingsAssociatedProjectsController
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = `ajax/projects`;
+const URL = setBaseUrl(`ajax/projects`);
 
 /**
  * Returns a list of associated projects for the current project.  If the user
