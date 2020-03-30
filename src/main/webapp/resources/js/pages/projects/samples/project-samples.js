@@ -17,7 +17,7 @@ import {
   SampleProjectDropdownButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file.utilities";
+import { download } from "../../../utilities/file-utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";

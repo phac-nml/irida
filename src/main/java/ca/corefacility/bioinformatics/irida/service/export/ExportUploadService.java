@@ -306,6 +306,7 @@ public class ExportUploadService {
 					} else {
 						filename = file.getSequenceFile().getId() + ".fastq";
 					}
+
 					uploadPath(client, filename, file.getSequenceFile().getFile());
 				}
 

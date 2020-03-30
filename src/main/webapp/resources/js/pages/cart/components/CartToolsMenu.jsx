@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Button, Menu } from "antd";
 import { Link } from "@reach/router";
-import { COLOR_BORDER_LIGHT, grey1, grey6 } from "../../../styles/colors";
+import { grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
+import { BORDERED_LIGHT } from "../../../styles/borders";
 import { IconMenuFold, IconMenuUnfold } from "../../../components/icons/Icons";
 
 const MenuWrapper = styled.div`
@@ -13,8 +14,9 @@ const MenuWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 65px;
-  border-bottom: 1px solid ${COLOR_BORDER_LIGHT};
+  border-bottom: ${BORDERED_LIGHT};
   background-color: ${grey1};
+  width: 100%;
 
   .ant-menu {
     line-height: 65px;
@@ -33,7 +35,7 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
       <Menu
         mode="horizontal"
         selectedKeys={[pathname]}
-        style={{ borderBottom: `1px solid ${COLOR_BORDER_LIGHT}` }}
+        style={{ borderBottom: BORDERED_LIGHT }}
       >
         {paths.map(path => (
           <Menu.Item key={path.link}>

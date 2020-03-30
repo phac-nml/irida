@@ -16,7 +16,7 @@ module.exports = {
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
-  analysis: "./resources/js/pages/analysis/analysis.js",
+  analysis: "./resources/js/pages/analysis/index.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
@@ -64,7 +64,7 @@ module.exports = {
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
-  "users-list": "./resources/js/pages/users/users-list.js",
+  "users-list": "./resources/js/pages/AdminUsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
@@ -79,6 +79,5 @@ module.exports = {
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js"
 };

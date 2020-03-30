@@ -667,6 +667,11 @@
 			<artifactId>jvm-breakglass</artifactId>
 			<version>${jvm-breakglass.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${com.google.code.gson.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -1077,15 +1082,6 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>bower install</id>
-						<goals>
-							<goal>bower</goal>
-						</goals>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
 						<id>yarn build production</id>
 						<goals>
 							<goal>yarn</goal>
@@ -1181,6 +1177,7 @@
 		<node.version>v12.13.0</node.version>
 		<yarn.version>v1.21.1</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
+		<com.google.code.gson.version>2.8.6</com.google.code.gson.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,21 +1,18 @@
 package ca.corefacility.bioinformatics.irida.web.spring.view;
 
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-
-import com.google.common.net.HttpHeaders;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Write out FASTA formatted sequence files to the client.
@@ -38,7 +35,7 @@ public class FastaView extends AbstractView {
      */
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	SequenceFile sfr = (SequenceFile) model.get(RESTGenericController.RESOURCE_NAME);
+    	IridaSequenceFile sfr = (IridaSequenceFile) model.get(RESTGenericController.RESOURCE_NAME);
         Path fileContent = sfr.getFile();
         String filename = fileContent.getFileName().toString();
         logger.trace("Sending file to client [" + filename + "]");

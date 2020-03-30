@@ -18,6 +18,11 @@ Changes
 * [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
 * [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
 * [UI]: Updated Remote API Listing page to use Ant Design.
+* [UI]: Updated Administrator Users page to use Ant Design.
+* [UI]: Removed DataTables from overrepresented sequence file and run files page.
+* [REST]: Added a REST API endpoint to read assemblies for samples.
+* [Developer]: `bower` completely removed.
+* [UI/Developer]: Updated analysis results page with Ant Design and React.
 * [UI/Developer]: Created a Thymeleaf `WebpackerDialect` for dynamically adding front end assets to html pages. See [Webpack Documentation](https://irida.corefacility.ca/documentation/developer/interface/webpack/) for more information.
 
 19.09 to 20.01

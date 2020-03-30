@@ -126,8 +126,8 @@
           base: /*[[@{/}]]*/ '/',
           analyses: /*[[@{${ajaxURL}}]]*/ "",
           analysis: /*[[@{/analysis/}]]*/ "",
-          download: /*[[@{/analysis/ajax/download/}]]*/ "",
-          deleteUrl: /*[[@{/analysis/ajax/delete/}]]*/ ""
+          download: /*[[@{/ajax/analysis/download/}]]*/ "",
+          deleteUrl: /*[[@{/ajax/analysis/delete/}]]*/ ""
         },
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
       });
@@ -142,8 +142,8 @@
         URLS: {
           base: /*[[@{/}]]*/ '/',
           analyses: /*[[@{${ajaxURL}}]]*/ "",
-          sharedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/shared-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ "",
-          automatedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/automated-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ ""
+          sharedAnalyses: /*[[@{/ajax/analysis/project/{projectId}/shared-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ "",
+          automatedAnalyses: /*[[@{/ajax/analysis/project/{projectId}/automated-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ ""
         },
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
         page: /*[[${ page }]]*/ 'shared',
