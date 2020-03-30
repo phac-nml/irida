@@ -128,15 +128,6 @@ export class SaveTemplateModal extends React.Component {
   }
 
   /**
-   * Handle hiding the current modal.
-   */
-  hideModal = () => {
-    this.setState({
-      visible: false
-    });
-  };
-
-  /**
    * What to do when searching the templates.
    * @param {string} value - Value user searched in the select
    */
@@ -153,9 +144,11 @@ export class SaveTemplateModal extends React.Component {
     for (const validation of this.validations) {
       if (validation.fn(value)) {
         this.setState({ value, options, ...validation.state });
-        break;
+        return;
       }
     }
+
+    this.setState({ value });
   };
 
   /**
@@ -231,7 +224,6 @@ export class SaveTemplateModal extends React.Component {
               filterOption={this.filterOption}
               onSearch={this.onSearch}
               onChange={this.onSearch}
-              onBlur={this.onSearch}
             >
               {options.map(template => (
                 <Option
