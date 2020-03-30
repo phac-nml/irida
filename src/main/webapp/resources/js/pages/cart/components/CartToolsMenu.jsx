@@ -9,7 +9,6 @@ import { AnalysesQueue } from "../../../components/AnalysesQueue";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { IconMenuFold, IconMenuUnfold } from "../../../components/icons/Icons";
 
-
 const MenuWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -17,6 +16,7 @@ const MenuWrapper = styled.div`
   height: 65px;
   border-bottom: ${BORDERED_LIGHT};
   background-color: ${grey1};
+  width: 100%;
 
   .ant-menu {
     line-height: 65px;

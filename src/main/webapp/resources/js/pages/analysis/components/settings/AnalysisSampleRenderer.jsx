@@ -3,15 +3,16 @@
  * required by the component
  */
 
-import React, { useContext, useState, useLayoutEffect } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
-import { Avatar, Icon, Input, List } from "antd";
+import { Avatar, Input, List } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { blue6 } from "../../../../styles/colors";
+import { IconExperiment } from "../../../../components/icons/Icons";
 
 const { Search } = Input;
 
@@ -58,21 +59,22 @@ export function AnalysisSampleRenderer() {
                 className="t-paired-end"
                 avatar={
                   <Avatar>
-                    <Icon type="experiment" />
+                    <IconExperiment />
                   </Avatar>
                 }
                 title={
-                  item.sampleId == 0 ?
+                  item.sampleId == 0 ? (
                     item.sampleName
-                    :
-                  <a
-                    href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-                    target="_blank"
-                    className="t-paired-end-sample-name"
-                    style={{color: blue6}}
-                  >
-                    {item.sampleName}
-                  </a>
+                  ) : (
+                    <a
+                      href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+                      target="_blank"
+                      className="t-paired-end-sample-name"
+                      style={{ color: blue6 }}
+                    >
+                      {item.sampleName}
+                    </a>
+                  )
                 }
                 description={
                   <div>
@@ -120,21 +122,22 @@ export function AnalysisSampleRenderer() {
                 className="t-single-end"
                 avatar={
                   <Avatar>
-                    <Icon type="experiment" />
+                    <IconExperiment />
                   </Avatar>
                 }
                 title={
-                  item.sampleId == 0 ?
-                  item.sampleName
-                  :
-                  <a
-                    href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-                    target="_blank"
-                    className="t-single-end-sample-name"
-                    style={{color: blue6}}
-                  >
-                    {item.sampleName}
-                  </a>
+                  item.sampleId == 0 ? (
+                    item.sampleName
+                  ) : (
+                    <a
+                      href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+                      target="_blank"
+                      className="t-single-end-sample-name"
+                      style={{ color: blue6 }}
+                    >
+                      {item.sampleName}
+                    </a>
+                  )
                 }
                 description={
                   <div>
@@ -198,7 +201,7 @@ export function AnalysisSampleRenderer() {
           />
         </div>
       ) : analysisSamplesContext.samples.length > 0 ||
-		  analysisSamplesContext.singleEndSamples.length > 0 ? (
+        analysisSamplesContext.singleEndSamples.length > 0 ? (
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
@@ -207,11 +210,12 @@ export function AnalysisSampleRenderer() {
             allowClear={true}
             id="t-sample-search-input"
           />
-          {analysisSamplesContext.samples.length > 0 ? renderPairedEndSamples()
- : null}
+          {analysisSamplesContext.samples.length > 0
+            ? renderPairedEndSamples()
+            : null}
           {analysisSamplesContext.singleEndSamples.length > 0
- ? renderSingleEndSamples()
- : null}
+            ? renderSingleEndSamples()
+            : null}
         </div>
       ) : (
         <InfoAlert message={i18n("AnalysisSamples.samplesDeleted")} />
