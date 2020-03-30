@@ -1,7 +1,9 @@
 import axios from "axios";
 import { Alert, notification, Progress, Tooltip } from "antd";
-import { IconStop } from "../../components/icons/Icons";
+import { IconCloseCircle } from "../../components/icons/Icons";
 import React from "react";
+import { SPACE_XS } from "../../styles/spacing";
+import { blue6 } from "../../styles/colors";
 
 /**
  * Upload a list of files to the server.
@@ -27,6 +29,7 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
   }) =>
     notification.info({
       key,
+      style: { width: 400 },
       closeIcon: <span />,
       message: i18n("FileUploader.progress.title"),
       description: (
@@ -46,7 +49,13 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
             />
           ) : (
             <>
-              <div style={{ display: "flex" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: SPACE_XS
+                }}
+              >
                 <Progress
                   style={{ flexGrow: 1 }}
                   percent={progress}
@@ -56,7 +65,10 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
                   title={i18n("FileUploader.progress.tooltip")}
                   placement="topRight"
                 >
-                  <IconStop onClick={cancelUpload} />
+                  <IconCloseCircle
+                    style={{ marginLeft: 5, color: blue6 }}
+                    onClick={cancelUpload}
+                  />
                 </Tooltip>
               </div>
               <Alert
