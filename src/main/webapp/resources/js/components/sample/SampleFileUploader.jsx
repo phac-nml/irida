@@ -35,6 +35,8 @@ export function SampleFileUploader() {
     }, 2000);
   };
 
+  const onError = () => setUploading(false);
+
   const fileMenu = (
     <Menu className="t-upload-menu">
       <Menu.Item>
@@ -45,6 +47,7 @@ export function SampleFileUploader() {
           )}
           onSuccess={onSuccess}
           onUpload={onUpload}
+          onError={onError}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
         </FileUploader>
@@ -55,6 +58,7 @@ export function SampleFileUploader() {
           url={setBaseUrl(`ajax/samples/${window.PAGE.id}/assemblies/upload`)}
           onSuccess={onSuccess}
           onUpload={onUpload}
+          onError={onError}
         >
           {i18n("SampleFileUploader.assembly")}
         </FileUploader>
