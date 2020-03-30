@@ -6,8 +6,7 @@
 >
   <head>
     <title th:text="test">ANALYSIS RESULTS</title>
-    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
-
+    <webpacker:css entry="analysis" />
     <script th:inline="javascript">
       window.PAGE = {
         analysis: [[${analysisSubmission}]],
@@ -37,7 +36,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/analysis.bundle.js}"></script>
+      <webpacker:js  entry="analysis" />
     </th:block>
   </body>
 </html>
