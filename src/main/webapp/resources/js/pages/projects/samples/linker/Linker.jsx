@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
-import { Button, Checkbox, Modal, Typography } from "antd";
+import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
 import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
@@ -27,76 +27,29 @@ const CommandText = styled(Paragraph)`
  * @constructor
  */
 function Linker() {
+  const [visible, setVisible] = useState(false);
+  const [types, setTypes] = useState(["fasta"]);
+  const [scriptString, setScriptString] = useState();
+  const [command, setCommand] = useState();
+
   const options = [
     { label: i18n("Linker.fastq"), value: "fastq" },
     { label: i18n("Linker.assembly"), value: "assembly" }
   ];
 
-  //this will hold the base string of the script with the projects & samples.  The filetypes will be appended before displaying.
-  let scriptString = undefined;
-
-  let modal = undefined; 
-
-  const ModalContents = (
-    { command } 
-  ) => (
-    <>
-      <Paragraph>{i18n("Linker.details")}</Paragraph>
-      <Text type="secondary">
-        <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
-      </Text>
-      <br/><br/>
-      <Text strong>{i18n("Linker.types")}</Text> <Checkbox.Group
-        options={options}
-        defaultValue={["fastq"]}
-        onChange={updateCommand}
-      />
-      <CommandText
-        className="t-cmd-text"
-        ellipsis={{ rows: 1 }}
-        copyable={ command }
-      >
-        {command}
-      </CommandText>
-    </>
-  );
-
-  function handleSampleIds(e) {
-    // Post data to the server to get the linker command.
-    const { detail } = e;
+  function handleSampleIds({ detail }) {
     getNGSLinkerCode(detail).then(({ data }) => {
-      scriptString = data;
-      
-      //initialize the modal
-      modal = Modal.success({
-        className: "t-linker-modal",
-        width: 500,
-        title: i18n("Linker.title"),
-        content: "..."
-      }); 
-
-      //set the default modal contents
-      updateCommand(["fastq"]);
+      // Post data to the server to get the linker command.
+      setScriptString(data);
+      setVisible(true);
     });
   }
 
-  /**
-   * Update the command in the modal showing the apporpirate file tpes
-   * @param {*} checkedValues the filetypes selected
-   */
-  function updateCommand(checkedValues) {
-    let typeString = "";
-
-    //join the checked values
-    if(checkedValues.length > 0){
-      typeString = " -t " + checkedValues.join(",");
-    }
-
-    //update the modal contents with the new info
-    modal.update({
-      content: <ModalContents command={scriptString + typeString} /> 
-    }); 
-  }
+  useEffect(() => {
+    setCommand(
+      types.length ? `${scriptString} -t ${types.join(",")}` : scriptString
+    );
+  }, [scriptString, types]);
 
   /*
   These Listeners and Dispatchers are a way to get around the separation between react
@@ -104,25 +57,55 @@ function Linker() {
   */
   document.addEventListener("sample-ids-return", handleSampleIds, false);
 
-  function showModal() {
+  function getIds() {
     document.dispatchEvent(new Event("sample-ids"));
   }
 
   return (
-    <Button
-      type="link"
-      style={{
-        margin: `0 inherit`,
-        padding: 0,
-        color: grey9
-      }}
-      className="t-linker-btn"
-      onClick={showModal}
-    >
-      {/* constant marginRight here to match old styles */}
-      <CodeOutlined style={{ marginRight: 2 }} />
-      {i18n("project.samples.export.linker")}
-    </Button>
+    <>
+      <Button
+        type="link"
+        style={{
+          margin: `0 inherit`,
+          padding: 0,
+          color: grey9
+        }}
+        className="t-linker-btn"
+        onClick={getIds}
+      >
+        {/* constant marginRight here to match old styles */}
+        <CodeOutlined style={{ marginRight: 2 }} />
+        {i18n("project.samples.export.linker")}
+      </Button>
+      <Modal
+        title={i18n("Linker.title")}
+        className="t-linker-modal"
+        visible={visible}
+        footer={null}
+        onCancel={() => setVisible(false)}
+      >
+        <Paragraph>{i18n("Linker.details")}</Paragraph>
+        <Text type="secondary">
+          <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
+        </Text>
+        <Form layout="inline">
+          <Form.Item label={i18n("Linker.types")}>
+            <Checkbox.Group
+              options={options}
+              defaultValue={["fastq"]}
+              onChange={setTypes}
+            />
+          </Form.Item>
+        </Form>
+        <CommandText
+          className="t-cmd-text"
+          ellipsis={{ rows: 1 }}
+          copyable={command}
+        >
+          {command}
+        </CommandText>
+      </Modal>
+    </>
   );
 }
 
