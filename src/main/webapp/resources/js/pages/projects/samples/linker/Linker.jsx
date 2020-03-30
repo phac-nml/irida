@@ -28,7 +28,7 @@ const CommandText = styled(Paragraph)`
  */
 function Linker() {
   const [visible, setVisible] = useState(false);
-  const [types, setTypes] = useState(["fasta"]);
+  const [types, setTypes] = useState(["fastq"]);
   const [scriptString, setScriptString] = useState();
   const [command, setCommand] = useState();
 
