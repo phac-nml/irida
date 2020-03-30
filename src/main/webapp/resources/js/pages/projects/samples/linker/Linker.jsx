@@ -41,7 +41,6 @@ function Linker() {
     { command } 
   ) => (
     <>
-      {" "}
       <Paragraph>{i18n("Linker.details")}</Paragraph>
       <Text type="secondary">
         <span dangerouslySetInnerHTML={{ __html: i18n("Linker.note") }} />
@@ -59,7 +58,6 @@ function Linker() {
       >
         {command}
       </CommandText>
-      
     </>
   );
 
