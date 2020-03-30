@@ -2,8 +2,9 @@
  * Pipeline and workflow related API functions
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = `pipelines/ajax`;
+const URL = setBaseUrl(`pipelines/ajax`);
 
 /**
  * Get the IRIDA workflow description info for a workflow

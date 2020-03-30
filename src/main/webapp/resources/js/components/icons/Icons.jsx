@@ -10,15 +10,18 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  ExperimentOutlined,
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
   FolderOutlined,
+  HomeOutlined,
   InfoCircleOutlined,
   ItalicOutlined,
   LinkOutlined,
   LoadingOutlined,
   LockOutlined,
+  LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   OrderedListOutlined,
@@ -27,6 +30,8 @@ import {
   QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
   StopOutlined,
   StrikethroughOutlined,
   SwapOutlined,
@@ -131,6 +136,14 @@ export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
 
 export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
 
+export const IconExperiment = ({ ...props }) => (
+  <ExperimentOutlined {...props} />
+);
+
+export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
+
+export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
+
 /*
 File Type Icons
  */
@@ -147,4 +160,12 @@ export const IconMenuFold = ({ ...props }) => <MenuFoldOutlined {...props} />;
 
 export const IconMenuUnfold = ({ ...props }) => (
   <MenuUnfoldOutlined {...props} />
+);
+
+export const IconSortAscending = ({ ...props }) => (
+  <SortAscendingOutlined {...props} />
+);
+
+export const IconSortDescending = ({ ...props }) => (
+  <SortDescendingOutlined {...props} />
 );
