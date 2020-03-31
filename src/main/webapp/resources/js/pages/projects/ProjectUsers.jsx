@@ -4,7 +4,7 @@ import { PageHeader } from "antd";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectUsersTable } from "../../components/Tables/ProjectUsersTable";
+import { ProjectMembersTable } from "../../components/Tables/ProjectMembersTable";
 
 function ProjectUsersPage() {
   return (
@@ -13,7 +13,7 @@ function ProjectUsersPage() {
         title={i18n("project.settings.page.title.members")}
         extra={<AddNewButton text={i18n("project.members.edit.add")} />}
       />
-      <ProjectUsersTable />
+      <ProjectMembersTable />
     </>
   );
 }

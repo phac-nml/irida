@@ -205,31 +205,6 @@ public class ProjectMembersController {
 	}
 
 	/**
-	 * Remove a user from a project
-	 *
-	 * @param projectId The project to remove from
-	 * @param userId    The user to remove
-	 * @param locale    The locale of the logged in user
-	 * @return Success or failure message if user was removed
-	 */
-	@RequestMapping(path = "{projectId}/settings/members/{userId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final Locale locale) {
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
-
-		try {
-			projectService.removeUserFromProject(project, user);
-			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.remove.success",
-					new Object[] { user.getLabel() }, locale));
-		} catch (final ProjectWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.remove.nomanager",
-					new Object[] { user.getLabel() }, locale));
-		}
-	}
-
-	/**
 	 * Remove a user group from a project
 	 *
 	 * @param projectId The project to remove from

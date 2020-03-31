@@ -1,15 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -22,14 +27,19 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @RestController
 @RequestMapping("/ajax/projects/{projectId}/members")
-public class ProjectMembersGroupsAjaxController {
+public class ProjectMembersAjaxController {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersAjaxController.class);
+
 	private final ProjectService projectService;
 	private final UserService userService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public ProjectMembersGroupsAjaxController(ProjectService projectService, UserService userService) {
+	public ProjectMembersAjaxController(ProjectService projectService, UserService userService,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	@RequestMapping("")
@@ -46,5 +56,23 @@ public class ProjectMembersGroupsAjaxController {
 				})
 				.collect(Collectors.toList());
 		return new TableResponse<>(members, usersForProject.getTotalElements());
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	public ResponseEntity<String> removeUserFromProject(@PathVariable Long projectId, @RequestParam Long id,
+			Locale locale) {
+		try {
+			Project project = projectService.read(projectId);
+			User user = userService.read(id);
+			projectService.removeUserFromProject(project, user);
+			return ResponseEntity.ok(messageSource.getMessage("server.ProjectMembers.remove-success",
+					new Object[] { user.getUsername() }, locale));
+		} catch (EntityNotFoundException | ProjectWithoutOwnerException e) {
+			logger.error("Error removing user id " + id + " from project " + projectId + ": " + e.getMessage());
+			// Cannot actually get the response body from an error
+			// Just let the UI handle it.
+			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+					.body("");
+		}
 	}
 }

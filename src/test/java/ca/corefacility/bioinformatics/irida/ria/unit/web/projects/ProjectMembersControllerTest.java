@@ -105,25 +105,6 @@ public class ProjectMembersControllerTest {
 	}
 
 	@Test
-	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
-		Long projectId = 1L;
-		Long userId = 2L;
-		User user = new User(userId, "tom", null, null, null, null, null);
-		Project project = new Project("test");
-		project.setId(projectId);
-
-		when(userService.read(userId)).thenReturn(user);
-		when(projectService.read(projectId)).thenReturn(project);
-		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
-
-		controller.removeUser(projectId, userId, null);
-
-		verify(userService).read(userId);
-		verify(projectService).read(projectId);
-		verify(projectService).removeUserFromProject(project, user);
-	}
-
-	@Test
 	public void testUdateUserRole() throws ProjectWithoutOwnerException {
 		Long projectId = 1L;
 		Long userId = 2L;
