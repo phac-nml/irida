@@ -9,9 +9,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.IridaFileStorageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private final AnalysisOutputFileRepository outputFileRepository;
 	private final MessageSource messageSource;
-	private IridaFileStorageServiceImpl iridaFileStorageService;
+	private IridaFileStorageService iridaFileStorageService;
 
 	/**
 	 * Create a new {@link FastqcFileProcessor}
@@ -66,7 +65,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
-			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageServiceImpl iridaFileStorageService) {
+			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageService iridaFileStorageService) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.outputFileRepository = outputFileRepository;

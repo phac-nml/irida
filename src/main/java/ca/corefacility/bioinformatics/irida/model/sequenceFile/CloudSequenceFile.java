@@ -2,35 +2,37 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.nio.file.Path;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Entity
+@DiscriminatorValue("cloud")
 public class CloudSequenceFile extends SequenceFile implements IridaSequenceFile, IridaThing {
 	private static final Logger logger = LoggerFactory.getLogger(CloudSequenceFile.class);
 
-	@Autowired
-	public IridaFileStorageServiceImpl iridaFileStorageService;
 
-	private Path file;
 	public CloudSequenceFile() {
 		super();
 	}
 
 	public CloudSequenceFile(Path sampleFile) {
 		super(sampleFile);
-		this.file = sampleFile;
 	}
 
 	@Override
 	public String getLabel() {
-		return "testnewfile.txt";
+		// Since the filesystem is virtual the path and filename are just one string
+		// so we split on the "/" and take the last token which is the file name
+		String [] cloudFileNameTokens = super.getFile().toString().split("/");
+		return cloudFileNameTokens[cloudFileNameTokens.length-1];
 	}
 	/**
 	 * Get the size of the file.
@@ -41,7 +43,8 @@ public class CloudSequenceFile extends SequenceFile implements IridaSequenceFile
 	@Override
 	public String getFileSize() {
 		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageService.getFileSize(file), true);
+		// Need to implement cloud code to get file size
+		// size = IridaSequenceFile.humanReadableByteCount(6000, true);
 		return size;
 	}
 

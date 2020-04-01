@@ -7,18 +7,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 @Service
 public class IridaFileStorageFactoryImpl {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageFactoryImpl.class);
 
 	@Autowired
-	private IridaFileStorageServiceImpl iridaFileStorageService;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
 	public IridaFileStorageFactoryImpl(){
@@ -35,6 +34,7 @@ public class IridaFileStorageFactoryImpl {
 	public SequenceFile createEmptySequenceFile(){
 		if(iridaFileStorageService.storageTypeIsLocal()) {
 			return new LocalSequenceFile();
+
 		} else {
 			return new CloudSequenceFile();
 		}

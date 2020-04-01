@@ -33,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -45,7 +45,7 @@ public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private AnalysisOutputFileRepository outputFileRepository;
-	private IridaFileStorageServiceImpl iridaFileStorageService;
+	private IridaFileStorageService iridaFileStorageService;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 

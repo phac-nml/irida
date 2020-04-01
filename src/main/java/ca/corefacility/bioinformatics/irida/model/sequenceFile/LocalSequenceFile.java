@@ -5,29 +5,33 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Entity
+@DiscriminatorValue("local")
 public class LocalSequenceFile extends SequenceFile implements IridaSequenceFile, IridaThing {
 	private static final Logger logger = LoggerFactory.getLogger(LocalSequenceFile.class);
 
-	private Path file;
 	public LocalSequenceFile() {
 		super();
 	}
 
 	public LocalSequenceFile(Path sampleFile) {
 		super(sampleFile);
-		this.file = sampleFile;
 	}
 
 	@Override
 	public String getLabel() {
-		return file.getFileName().toString();
+		return super.getFile().getFileName().toString();
 	}
 	/**
 	 * Get the size of the file.
@@ -39,9 +43,9 @@ public class LocalSequenceFile extends SequenceFile implements IridaSequenceFile
 	public String getFileSize() {
 		String size = "N/A";
 		try {
-			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
+			size = IridaSequenceFile.humanReadableByteCount(Files.size(super.getFile()), true);
 		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file);
+			logger.error("Could not find file " + super.getFile());
 		} catch (IOException e) {
 			logger.error("Could not calculate file size: ", e);
 		}

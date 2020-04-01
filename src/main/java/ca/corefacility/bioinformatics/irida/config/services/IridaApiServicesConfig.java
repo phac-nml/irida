@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
@@ -296,9 +296,14 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean(name = "iridaFileStorageService")
-	public IridaFileStorageServiceImpl iridaFileStorageService() {
-		IridaFileStorageServiceImpl iridaFileStorageService = new IridaFileStorageServiceImpl(storageType, connectionStr, containerName);
-		return iridaFileStorageService;
+	public IridaFileStorageService iridaFileStorageService() {
+		if(storageType.equalsIgnoreCase("azure")) {
+			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
+		} else if (storageType.equalsIgnoreCase("aws")) {
+			return new IridaFileStorageAwsServiceImpl();
+		} else {
+			return new IridaFileStorageLocalServiceImpl();
+		}
 	}
 
 	@Bean(name = "uploadFileProcessingChain")

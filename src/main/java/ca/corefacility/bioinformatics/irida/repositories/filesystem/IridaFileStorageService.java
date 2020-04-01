@@ -1,9 +1,12 @@
-package ca.corefacility.bioinformatics.irida.service;
+package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
 import com.azure.storage.blob.models.BlobStorageException;
 
 /**
@@ -69,4 +72,9 @@ public interface IridaFileStorageService {
 	 *
 	 */
 	public void downloadFiles();
+
+	public boolean fileExists(Path file);
+
+	public InputStream getFileInputStream(SequenceFile file);
+
 }

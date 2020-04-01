@@ -35,7 +35,7 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final String GZIP_EXTENSION = ".gz";
 
 	private final SequenceFileRepository sequenceFileRepository;
-	private boolean disableFileProcessor = false;
+	private boolean disableFileProcessor = true;
 	private boolean removeCompressedFile;
 
 	@Autowired

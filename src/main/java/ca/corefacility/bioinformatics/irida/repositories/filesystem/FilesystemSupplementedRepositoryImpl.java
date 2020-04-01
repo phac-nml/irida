@@ -43,7 +43,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	private final EntityManager entityManager;
 
 	@Autowired
-	private IridaFileStorageServiceImpl iridaFileStorageService;
+	private IridaFileStorageService iridaFileStorageService;
 
 	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
 		this.entityManager = entityManager;
@@ -221,8 +221,13 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 		Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
 		// now find any members that are of type Path and shuffle them around:
-		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields()).filter(pathFilter)
+		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getSuperclass().getDeclaredFields()).filter(pathFilter)
 				.collect(Collectors.toSet());
+
+		if(pathFields.size() == 0) {
+			pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields()).filter(pathFilter)
+					.collect(Collectors.toSet());
+		}
 
 		Set<Field> fieldsToUpdate = new HashSet<>();
 		for (Field field : pathFields) {

@@ -6,23 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -43,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceImpl;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -54,6 +37,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * particular {@link Sample}.
  */
 @Entity
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+		name="sequence_file_type",
+		discriminatorType=DiscriminatorType.STRING
+)
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
@@ -87,6 +75,8 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
 
+
+
 	// Key/value map of additional properties you could set on a sequence file.
 	// This may contain optional sequencer specific properties.
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -105,11 +95,15 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
+
 	public SequenceFile() {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
 		optionalProperties = new HashMap<>();
 	}
+
+	public abstract String getLabel();
+	public abstract String getFileSize();
 
 	/**
 	 * Create a new {@link SequenceFile} with the given file Path

@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
@@ -13,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
@@ -36,6 +38,9 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private QCEntryRepository qcRepository;
+
+	@Autowired
+	private IridaFileStorageService iridaFileStorageService;
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, FileProcessor... fileProcessors) {
@@ -176,7 +181,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			if(sequencingObject.isPresent()) {
 				Set<SequenceFile> files = sequencingObject.get().getFiles();
 				filesNotSettled = files.stream().anyMatch(f -> {
-					return !Files.exists(f.getFile());
+					return iridaFileStorageService.fileExists(f.getFile());
 				});
 			}
 		} while (filesNotSettled);
