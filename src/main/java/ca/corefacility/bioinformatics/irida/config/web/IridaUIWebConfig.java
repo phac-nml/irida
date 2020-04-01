@@ -52,8 +52,8 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
-	private static final String TEMPLATE_LOCATION = "/pages/";
-	private static final String TEMPLATE_SUFFIX = ".html";
+	private static final String INTERNAL_TEMPLATE_PREFIX = "/pages/";
+	private static final String HTML_TEMPLATE_SUFFIX = ".html";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
@@ -147,8 +147,8 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	private SpringResourceTemplateResolver internalTemplateResolver(){
 		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setApplicationContext(this.applicationContext);
-		resolver.setPrefix(TEMPLATE_LOCATION);
-		resolver.setSuffix(TEMPLATE_SUFFIX);
+		resolver.setPrefix(INTERNAL_TEMPLATE_PREFIX);
+		resolver.setSuffix(HTML_TEMPLATE_SUFFIX);
 		resolver.setTemplateMode(TemplateMode.HTML);
 		resolver.setOrder(2);
 		resolver.setCheckExistence(true);
@@ -172,7 +172,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	 */
 	private FileTemplateResolver externalTemplateResolver() {
 		FileTemplateResolver resolver = new FileTemplateResolver();
-		resolver.setSuffix(TEMPLATE_SUFFIX);
+		resolver.setSuffix(HTML_TEMPLATE_SUFFIX);
 		resolver.setOrder(1);
 		resolver.setPrefix(extraUITemplates);
 		resolver.setTemplateMode(TemplateMode.HTML);
@@ -192,8 +192,8 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	@Bean
 	public SpringTemplateEngine templateEngine(){
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.addTemplateResolver(internalTemplateResolver());
 		templateEngine.addTemplateResolver(externalTemplateResolver());
+		templateEngine.addTemplateResolver(internalTemplateResolver());
 		templateEngine.setEnableSpringELCompiler(false);
 		templateEngine.setAdditionalDialects(additionalDialects());
 		return templateEngine;

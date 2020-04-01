@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { Alert, Button, Col, Form, Input, Row, Typography } from "antd";
+import { Alert, Button, Col, Form, Input, Row } from "antd";
 import { IconLocked, IconUser } from "../components/icons/Icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
