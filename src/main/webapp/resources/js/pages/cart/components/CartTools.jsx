@@ -96,10 +96,7 @@ export default class CartTools extends Component {
             link: setBaseUrl(`cart/galaxy`),
             text: i18n("CartTools.menu.galaxy"),
             component: (
-              <GalaxyComponent
-                key="galaxy"
-                path={setBaseUrl(`cart/galaxy`)}
-              />
+              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
             )
           }
         : null,

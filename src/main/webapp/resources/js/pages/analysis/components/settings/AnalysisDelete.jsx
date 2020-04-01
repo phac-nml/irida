@@ -58,7 +58,7 @@ export default function AnalysisDelete() {
         >
           <Button
             type="danger"
-            style={{marginTop: SPACE_LG}}
+            style={{ marginTop: SPACE_LG }}
             id="t-delete-analysis-btn"
           >
             {i18n("AnalysisDelete.delete")}

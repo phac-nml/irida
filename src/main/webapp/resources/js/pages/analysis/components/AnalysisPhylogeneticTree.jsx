@@ -5,7 +5,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { PhylocanvasComponent } from "../../../components/PhylocanvasComponent"
+import { PhylocanvasComponent } from "../../../components/PhylocanvasComponent";
 import { Button, Radio, Layout } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getNewickTree } from "../../../apis/analysis/analysis";
@@ -74,56 +74,59 @@ export default function Tree() {
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <TabPaneContent title={i18n("AnalysisPhylogeneticTree.tree")}>
-      {serverMsg !== null ? (
-        <WarningAlert message={serverMsg} style={{ marginBottom: SPACE_XS }} />
-      ) : null}
-      {newickString !== null ? (
-        newickString === "" ? (
+        {serverMsg !== null ? (
           <WarningAlert
-            message={i18n("AnalysisPhylogeneticTree.noPreviewAvailable")}
+            message={serverMsg}
+            style={{ marginBottom: SPACE_XS }}
           />
+        ) : null}
+        {newickString !== null ? (
+          newickString === "" ? (
+            <WarningAlert
+              message={i18n("AnalysisPhylogeneticTree.noPreviewAvailable")}
+            />
+          ) : (
+            <div>
+              <ButtonGroupWrapper>
+                <Radio.Group
+                  value={currTreeShape}
+                  onChange={handleClick}
+                  id="t-tree-shape-tools"
+                >
+                  <Radio.Button value="rectangular">
+                    {i18n("AnalysisPhylogeneticTree.rectangular")}
+                  </Radio.Button>
+                  <Radio.Button value="circular">
+                    {i18n("AnalysisPhylogeneticTree.circular")}
+                  </Radio.Button>
+                  <Radio.Button value="radial">
+                    {i18n("AnalysisPhylogeneticTree.radial")}
+                  </Radio.Button>
+                  <Radio.Button value="diagonal">
+                    {i18n("AnalysisPhylogeneticTree.diagonal")}
+                  </Radio.Button>
+                  <Radio.Button value="hierarchical">
+                    {i18n("AnalysisPhylogeneticTree.hierarchical")}
+                  </Radio.Button>
+                </Radio.Group>
+                <Button
+                  type="primary"
+                  href={`${URL}/${analysisContext.analysis.identifier}/advanced-phylo`}
+                  target="_blank"
+                  key="advphylo"
+                  id="t-advanced-phylo-btn"
+                >
+                  {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
+                </Button>
+              </ButtonGroupWrapper>
+              <VisualizationWrapper id="t-phylocanvas-wrapper">
+                {getTree()}
+              </VisualizationWrapper>
+            </div>
+          )
         ) : (
-          <div>
-            <ButtonGroupWrapper>
-              <Radio.Group
-                value={currTreeShape}
-                onChange={handleClick}
-                id="t-tree-shape-tools"
-              >
-                <Radio.Button value="rectangular">
-                  {i18n("AnalysisPhylogeneticTree.rectangular")}
-                </Radio.Button>
-                <Radio.Button value="circular">
-                  {i18n("AnalysisPhylogeneticTree.circular")}
-                </Radio.Button>
-                <Radio.Button value="radial">
-                  {i18n("AnalysisPhylogeneticTree.radial")}
-                </Radio.Button>
-                <Radio.Button value="diagonal">
-                  {i18n("AnalysisPhylogeneticTree.diagonal")}
-                </Radio.Button>
-                <Radio.Button value="hierarchical">
-                  {i18n("AnalysisPhylogeneticTree.hierarchical")}
-                </Radio.Button>
-              </Radio.Group>
-              <Button
-                type="primary"
-                href={`${URL}/${analysisContext.analysis.identifier}/advanced-phylo`}
-                target="_blank"
-                key="advphylo"
-                id="t-advanced-phylo-btn"
-              >
-                {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
-              </Button>
-            </ButtonGroupWrapper>
-            <VisualizationWrapper id="t-phylocanvas-wrapper">
-              {getTree()}
-            </VisualizationWrapper>
-          </div>
-        )
-      ) : (
-        <ContentLoading />
-      )}
+          <ContentLoading />
+        )}
       </TabPaneContent>
     </Layout>
   );
