@@ -10,8 +10,8 @@ import { setBaseUrl } from "../utilities/url-utilities";
 import { AddNewButton } from "../components/Buttons/AddNewButton";
 import { dateColumnFormat } from "../components/ant.design/table-renderers";
 import { Button, Checkbox } from "antd";
-import { EditOutlined } from "@ant-design/icons";
 import { setUsersDisabledStatus } from "../apis/users/users";
+import { IconEdit } from "../components/icons/Icons";
 
 /**
  * React component for displaying paged table of all users in the system
@@ -127,7 +127,7 @@ function UsersTable() {
       render(text, item) {
         return (
           <Button shape="circle" href={setBaseUrl(`users/${item.id}/edit`)}>
-            <EditOutlined />
+            <IconEdit />
           </Button>
         );
       }

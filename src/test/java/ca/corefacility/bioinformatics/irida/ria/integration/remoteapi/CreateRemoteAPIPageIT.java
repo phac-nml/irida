@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  * IT for the client details page
  *
  */
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/RemoteApisIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/CreateRemoteApisIT.xml")
 public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateRemoteAPIPage page;
 	private CreateClientPage createClientPage;

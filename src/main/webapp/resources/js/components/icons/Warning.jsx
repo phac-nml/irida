@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { Icon } from "antd";
 import { yellow6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
+import { IconInfoCircle } from "./Icons";
 
 /**
  * Stateless UI component for displaying a 'Warning' icon
@@ -19,10 +19,7 @@ import { SPACE_XS } from "../../styles/spacing";
 export function Warning({ message }) {
   return (
     <span>
-      <Icon
-        type="info-circle"
-        style={{ marginRight: SPACE_XS, color: yellow6 }}
-      />
+      <IconInfoCircle style={{ marginRight: SPACE_XS, color: yellow6 }} />
       {message}
     </span>
   );

@@ -10,15 +10,18 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  ExperimentOutlined,
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
   FolderOutlined,
+  HomeOutlined,
   InfoCircleOutlined,
   ItalicOutlined,
   LinkOutlined,
   LoadingOutlined,
   LockOutlined,
+  LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   OrderedListOutlined,
@@ -132,6 +135,14 @@ export const IconOrderedList = ({ ...props }) => (
 export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
 
 export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
+
+export const IconExperiment = ({ ...props }) => (
+  <ExperimentOutlined {...props} />
+);
+
+export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
+
+export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
 
 /*
 File Type Icons

@@ -16,6 +16,7 @@ export const nameColumnFormat = ({ url }) => {
     width: 200,
     sorter: true,
     ellipsis: true,
+    className: "t-name-col",
     filterIcon(filtered) {
       return <IconTableFilter className="t-name" filtered={filtered} />;
     },
