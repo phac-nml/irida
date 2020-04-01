@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysesAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysesTableAjaxController;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AnalysesAjaxControllerTest {
+public class AnalysesTableAjaxControllerTest {
 
 	@Mock
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -45,7 +45,7 @@ public class AnalysesAjaxControllerTest {
 	private MessageSource messageSource;
 
 	@InjectMocks
-	private AnalysesAjaxController controller;
+	private AnalysesTableAjaxController controller;
 
 	private MockMvc mockMvc;
 

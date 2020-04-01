@@ -97,7 +97,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysesUserPage analysesPage = AnalysesUserPage.initializeAdminPage(driver());
-		assertEquals("Should have 10 analyses displayed originally", 10, analysesPage.getNumberOfAnalysesDisplayed());
+		analysesPage.clickPagination(2);
+		assertEquals("Should have 4 analyses displayed originally", 4, analysesPage.getNumberOfAnalysesDisplayed());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
@@ -105,8 +106,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteAnalysis();
 
 		analysesPage = AnalysesUserPage.initializeAdminPage(driver());
-		// Still 10 analyses left after deleting as there is 13 in the db (10 displayed per page of table)
-		assertEquals("Should have 10 analyses displayed", 10, analysesPage.getNumberOfAnalysesDisplayed());
+		page.clickPagination(2);
+		assertEquals("Should have 3 analyses displayed", 3, analysesPage.getNumberOfAnalysesDisplayed());
 	}
 
 	@Test

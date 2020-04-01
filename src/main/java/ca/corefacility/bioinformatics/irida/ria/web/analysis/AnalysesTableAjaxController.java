@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
@@ -39,29 +40,31 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.base.Strings;
 
 /**
- * Controller to handle ajax requests for Analyses
+ * Controller to handle ajax requests for the Analyses table
  */
 @RestController
 @RequestMapping("/ajax/analyses")
-public class AnalysesAjaxController {
+public class AnalysesTableAjaxController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisTypesService analysisTypesService;
 	private ProjectService projectService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
+	private AnalysisAudit analysisAudit;
 
 	@Autowired
-	public AnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysesTableAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, ProjectService projectService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission) {
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.projectService = projectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
+		this.analysisAudit = analysisAudit;
 	}
 
 	/**
@@ -215,10 +218,12 @@ public class AnalysesAjaxController {
 		String stateString = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
 		AnalysisStateModel state = new AnalysisStateModel(stateString, analysisState.toString());
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
-		Long duration = 0L;
-		if (analysisState.equals(AnalysisState.COMPLETED)) {
-			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis()
-					.getCreatedDate());
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
 		}
 
 		/*

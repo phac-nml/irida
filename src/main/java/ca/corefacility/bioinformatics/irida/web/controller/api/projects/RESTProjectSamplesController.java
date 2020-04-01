@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelat
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.net.HttpHeaders;
@@ -278,21 +279,26 @@ public class RESTProjectSamplesController {
 	 */
 	private void addLinksForSample(final Optional<Project> p, final Sample s) {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId()))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId())).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class)))
-						.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+				RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class)))
-						.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
-		s.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId()))
-				.withRel(RESTSampleMetadataController.METADATA_REL));
+				RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+		s.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withRel(
+				RESTSampleMetadataController.METADATA_REL));
+		s.add(linkTo(methodOn(RESTSampleAssemblyController.class).listAssembliesForSample(s.getId())).withRel(
+				RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES));
+		
 		if (p.isPresent()) {
 			final Project project = p.get();
-			s.add(linkTo(RESTProjectsController.class).slash(project.getId()).withRel(REL_PROJECT));
-			s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(project.getId(), s.getId()))
-					.withRel(REL_PROJECT_SAMPLE));
+			s.add(linkTo(RESTProjectsController.class).slash(project.getId())
+					.withRel(REL_PROJECT));
+			s.add(linkTo(
+					methodOn(RESTProjectSamplesController.class).getProjectSample(project.getId(), s.getId())).withRel(
+					REL_PROJECT_SAMPLE));
 		}
 	}
 

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAu
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -64,7 +66,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
- * Controller for Analysis ajax requests.
+ * Controller for individual Analysis ajax requests (details page,
+ * analysis outputs, project analysis outputs)
  */
 @RestController
 @Scope("session")
@@ -178,7 +181,8 @@ public class AnalysisAjaxController {
 
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
-			analysisSubmissionService.updateEmailPipelineResult(submission, parameters.getEmailPipelineResult());
+			submission.setEmailPipelineResult(parameters.getEmailPipelineResult());
+			analysisSubmissionService.update(submission);
 			logger.trace("Email pipeline result updated for: " + submission);
 
 			if (parameters.getEmailPipelineResult()) {
@@ -222,7 +226,13 @@ public class AnalysisAjaxController {
 				.toString();
 
 		// Get the run time of the analysis runtime using the analysis
-		Long duration = analysisAudit.getAnalysisRunningTime(submission);
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
 
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
 		boolean emailPipelineResult = submission.getEmailPipelineResult();
@@ -338,11 +348,13 @@ public class AnalysisAjaxController {
 		String message = "";
 
 		if (parameters.getAnalysisName() != null) {
-			analysisSubmissionService.updateAnalysisName(submission, parameters.getAnalysisName());
+			submission.setName(parameters.getAnalysisName());
 			message = messageSource.getMessage("AnalysisDetails.nameUpdated",
 					new Object[] { parameters.getAnalysisName() }, locale);
+			analysisSubmissionService.update(submission);
 		} else if (parameters.getPriority() != null) {
 			if (submission.getAnalysisState() == AnalysisState.NEW) {
+				submission.setPriority(parameters.getPriority());
 				analysisSubmissionService.updatePriority(submission, parameters.getPriority());
 				message = messageSource.getMessage("AnalysisDetails.priorityUpdated",
 						new Object[] { parameters.getPriority(), submission.getName() }, locale);
@@ -574,10 +586,16 @@ public class AnalysisAjaxController {
 	@ResponseBody
 	public List<SharedProjectResponse> getSharedProjectsForAnalysis(@PathVariable Long submissionId) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
 		// Input files
+
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
+
+		// Single End
+		Set<SingleEndSequenceFile> inputFileSingleEnd = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SingleEndSequenceFile.class);
 
 		// get projects already shared with submission
 		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission)
@@ -586,17 +604,24 @@ public class AnalysisAjaxController {
 				.collect(Collectors.toSet());
 
 		// get available projects
-		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
+		Set<Project> projectsInAnalysisPaired = projectService.getProjectsForSequencingObjects(inputFilePairs);
+		Set<Project> projectsInAnalysisSingleEnd = projectService.getProjectsForSequencingObjects(inputFileSingleEnd);
 
+		// Create response for shared projects
 		List<SharedProjectResponse> projectResponses = projectsShared.stream()
 				.map(p -> new SharedProjectResponse(p, true))
 				.collect(Collectors.toList());
 
-		// Create response for shared projects
-		projectResponses.addAll(projectsInAnalysis.stream()
+		projectResponses.addAll(projectsInAnalysisPaired.stream()
 				.filter(p -> !projectsShared.contains(p))
 				.map(p -> new SharedProjectResponse(p, false))
 				.collect(Collectors.toList()));
+
+		projectResponses.addAll(projectsInAnalysisSingleEnd.stream()
+				.filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false))
+				.collect(Collectors.toList()));
+
 
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
@@ -711,6 +736,7 @@ public class AnalysisAjaxController {
 			Analysis analysis = submission.getAnalysis();
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
 					.getFile();
+
 			try {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
 						.next();
@@ -982,21 +1008,26 @@ public class AnalysisAjaxController {
 			message= messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound",
 					new Object[] {}, locale);
 		} else {
-			List<String> lines = Files.readAllLines(file.getFile());
+			try {
+				List<String> lines = Files.readAllLines(file.getFile());
 
-			if (lines.size() > 0) {
-				tree = lines.get(0);
+				if (lines.size() > 0) {
+					tree = lines.get(0);
 
-				if (lines.size() > 1) {
-					logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
-					message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {}, locale);
+					if (lines.size() > 1) {
+						logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+						message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {},
+								locale);
+					}
+
+					if (EMPTY_TREE.equals(tree)) {
+						logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+						tree = null;
+						message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
+					}
 				}
-
-				if (EMPTY_TREE.equals(tree)) {
-					logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
-					tree = null;
-					message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
-				}
+			} catch (NoSuchFileException e) {
+				logger.debug("File was not found: " + e.toString());
 			}
 		}
 		return new AnalysisTreeResponse(tree, message);
