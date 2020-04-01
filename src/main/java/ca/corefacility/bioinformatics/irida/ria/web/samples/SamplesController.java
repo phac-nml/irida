@@ -21,13 +21,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -37,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -485,59 +482,6 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Upload {@link SequenceFile}'s to a sample
-	 *
-	 * @param sampleId
-	 *            The {@link Sample} id to upload to
-	 * @param files
-	 *            A list of {@link MultipartFile} sequence files.
-	 * @param response
-	 *            HTTP response object to update response status if there's an
-	 *            error.
-	 * @throws IOException
-	 *             on upload failure
-	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
-	public void uploadSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(value = "files") List<MultipartFile> files, HttpServletResponse response) throws IOException {
-		Sample sample = sampleService.read(sampleId);
-
-		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
-		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);
-
-		for (String key : pairedFiles.keySet()) {
-			List<MultipartFile> list = pairedFiles.get(key);
-			createSequenceFilePairsInSample(list, sample);
-		}
-
-		for (MultipartFile file : singleFiles) {
-			createSequenceFileInSample(file, sample);
-		}
-	}
-
-	/**
-	 * Upload assemblies to the given sample
-	 *
-	 * @param sampleId the ID of the sample to upload to
-	 * @param files    the files that are uploaded
-	 * @throws IOException if there's an error uploading
-	 */
-	@RequestMapping(value = { "/samples/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
-	public void uploadAssemblies(@PathVariable Long sampleId, @RequestParam(value = "files") List<MultipartFile> files)
-			throws IOException {
-		Sample sample = sampleService.read(sampleId);
-
-		for (MultipartFile file : files) {
-			Path temp = Files.createTempDirectory(null);
-			Path target = temp.resolve(file.getOriginalFilename());
-			file.transferTo(target.toFile());
-			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
-
-			genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
-		}
-	}
-
-	/**
 	 * Utility method to get a l{@link List} of {@link Sample}s based on their
 	 * ids.
 	 *
@@ -638,54 +582,6 @@ public class SamplesController extends BaseController {
 		final String url = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
 		return "redirect:" + redirectUrl;
-	}
-
-	/**
-	 * Create a {@link SequenceFile} and add it to a {@link Sample}
-	 *
-	 * @param file
-	 *            {@link MultipartFile}
-	 * @param sample
-	 *            {@link Sample} to add the file to.
-	 * @throws IOException
-	 */
-	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
-		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
-	}
-
-	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
-	 * to a {@link Sample}
-	 * 
-	 * @param pair
-	 *            {@link List} of {@link MultipartFile}
-	 * @param sample
-	 *            {@link Sample} to add the pair to.
-	 * @throws IOException
-	 */
-	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = createSequenceFile(pair.get(0));
-		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
-	}
-
-	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
-	 *
-	 * @param file
-	 *            {@link MultipartFile} sequence file uploaded.
-	 *
-	 * @return {@link SequenceFile}
-	 * @throws IOException
-	 *             Exception thrown if there is an error handling the file.
-	 */
-	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		file.transferTo(target.toFile());
-		return new SequenceFile(target);
 	}
 
 	/**
