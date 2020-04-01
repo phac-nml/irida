@@ -30,6 +30,7 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
@@ -144,7 +145,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
-	private SpringResourceTemplateResolver internalTemplateResolver(){
+	private ITemplateResolver internalTemplateResolver(){
 		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setApplicationContext(this.applicationContext);
 		resolver.setPrefix(INTERNAL_TEMPLATE_PREFIX);
@@ -170,7 +171,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	 *
 	 * @return {@link FileTemplateResolver}
 	 */
-	private FileTemplateResolver externalTemplateResolver() {
+	private ITemplateResolver externalTemplateResolver() {
 		FileTemplateResolver resolver = new FileTemplateResolver();
 		resolver.setSuffix(HTML_TEMPLATE_SUFFIX);
 		resolver.setOrder(1);
