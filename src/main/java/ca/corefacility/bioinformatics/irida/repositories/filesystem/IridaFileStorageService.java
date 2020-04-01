@@ -1,8 +1,12 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.zip.GZIPInputStream;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -75,6 +79,8 @@ public interface IridaFileStorageService {
 
 	public boolean fileExists(Path file);
 
-	public InputStream getFileInputStream(SequenceFile file);
+	public InputStream getFileInputStream(Path file);
+
+	public boolean isGzipped(Path file) throws IOException;
 
 }

@@ -52,7 +52,7 @@ public class ChecksumFileProcessor implements FileProcessor {
 
 		for (SequenceFile file : files) {
 
-			try (InputStream is = iridaFileStorageService.getFileInputStream(file)) {
+			try (InputStream is = iridaFileStorageService.getFileInputStream(file.getFile())) {
 				String shaDigest = DigestUtils.sha256Hex(is);
 				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
 				file.setUploadSha256(shaDigest);

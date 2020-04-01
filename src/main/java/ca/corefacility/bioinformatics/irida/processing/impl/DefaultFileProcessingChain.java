@@ -38,20 +38,19 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private QCEntryRepository qcRepository;
-
-	@Autowired
 	private IridaFileStorageService iridaFileStorageService;
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, FileProcessor... fileProcessors) {
-		this(sequencingObjectRepository, qcRepository, Arrays.asList(fileProcessors));
+			QCEntryRepository qcRepository, IridaFileStorageService iridaFileStorageService, FileProcessor... fileProcessors) {
+		this(sequencingObjectRepository, qcRepository, iridaFileStorageService, Arrays.asList(fileProcessors));
 	}
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, List<FileProcessor> fileProcessors) {
+			QCEntryRepository qcRepository, IridaFileStorageService iridaFileStorageService, List<FileProcessor> fileProcessors) {
 		this.fileProcessors = fileProcessors;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.qcRepository = qcRepository;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -181,7 +180,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			if(sequencingObject.isPresent()) {
 				Set<SequenceFile> files = sequencingObject.get().getFiles();
 				filesNotSettled = files.stream().anyMatch(f -> {
-					return iridaFileStorageService.fileExists(f.getFile());
+					return !iridaFileStorageService.fileExists(f.getFile());
 				});
 			}
 		} while (filesNotSettled);

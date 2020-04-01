@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
@@ -38,6 +39,7 @@ public class DefaultFileProcessingChainTest {
 
 	private SequencingObjectRepository objectRepository;
 	private QCEntryRepository qcRepository;
+	private IridaFileStorageService iridaFileStorageService;
 
 	private SequencingObject seqObject;
 	private Long objectId = 1L;
@@ -46,6 +48,7 @@ public class DefaultFileProcessingChainTest {
 	public void setUp() {
 		this.objectRepository = mock(SequencingObjectRepository.class);
 		this.qcRepository = mock(QCEntryRepository.class);
+		this.iridaFileStorageService = mock(IridaFileStorageService.class);
 
 		seqObject = new NoFileSequencingObject();
 		when(objectRepository.findById(objectId)).thenReturn(Optional.of(seqObject));
@@ -53,7 +56,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorTimeoutException.class)
 	public void testExceedsTimeout() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageService);
 		fileProcessingChain.setTimeout(1);
 		fileProcessingChain.setSleepDuration(0);
 
@@ -62,7 +65,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testProcessEmptyChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageService);
 		when(objectRepository.existsById(objectId)).thenReturn(true);
 
 		fileProcessingChain.launchChain(objectId);
@@ -70,7 +73,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailWithContinueChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageService,
 				new FailingFileProcessor());
 		when(objectRepository.existsById(objectId)).thenReturn(true);
 
@@ -84,7 +87,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorException.class)
 	public void testFastFailProcessorChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageService,
 				new FailingFileProcessor());
 		when(objectRepository.existsById(objectId)).thenReturn(true);
 
@@ -96,7 +99,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorException.class)
 	public void testFailOnProcessorChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageService,
 				new FailingFileProcessorNoContinue());
 
 		when(objectRepository.existsById(objectId)).thenReturn(true);
@@ -106,7 +109,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailWriteQCEntry() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageService,
 				new FailingFileProcessorNoContinue());
 		when(objectRepository.existsById(objectId)).thenReturn(true);
 

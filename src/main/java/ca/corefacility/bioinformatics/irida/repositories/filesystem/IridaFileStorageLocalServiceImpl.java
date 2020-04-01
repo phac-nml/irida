@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +30,7 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 	@Override
 	public File getTemporaryFile(Path file) {
 		File fileToProcess = null;
-
 		fileToProcess = file.toFile();
-
 		return fileToProcess;
 	}
 
@@ -105,15 +105,25 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 
 	@Override
 	public boolean fileExists(Path file) {
-		return !Files.exists(file);
+		return Files.exists(file);
 	}
 
 	@Override
-	public InputStream getFileInputStream(SequenceFile file) {
+	public InputStream getFileInputStream(Path file) {
 		try {
-			return Files.newInputStream(file.getFile());
+			return Files.newInputStream(file, StandardOpenOption.READ);
 		} catch(IOException e) {
-			throw new FileProcessorException("could not calculate checksum", e);
+			throw new FileProcessorException("could not read file", e);
+		}
+	}
+
+	@Override
+	public boolean isGzipped(Path file) throws IOException {
+		try (InputStream is = getFileInputStream(file)) {
+			byte[] bytes = new byte[2];
+			is.read(bytes);
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
 	}
 }

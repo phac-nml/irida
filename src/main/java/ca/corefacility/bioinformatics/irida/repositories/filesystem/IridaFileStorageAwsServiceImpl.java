@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,10 +95,10 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	}
 
 	@Override
-	public InputStream getFileInputStream(SequenceFile file) {
+	public InputStream getFileInputStream(Path file) {
 		InputStream inputstream = null;
 		try {
-			inputstream = new FileInputStream(file.getFile().toString());
+			inputstream = new FileInputStream(file.toString());
 
 		} catch(IOException e) {
 
@@ -105,4 +106,13 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		return inputstream;
 	}
 
+	@Override
+	public boolean isGzipped(Path file) throws IOException {
+		try (InputStream is = getFileInputStream(file)) {
+			byte[] bytes = new byte[2];
+			is.read(bytes);
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+		}
+	}
 }

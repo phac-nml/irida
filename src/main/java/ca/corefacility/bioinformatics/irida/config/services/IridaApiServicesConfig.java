@@ -308,7 +308,7 @@ public class IridaApiServicesConfig {
 
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
+			QCEntryRepository qcRepository, IridaFileStorageService iridaFileStorageService, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
 			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
@@ -322,7 +322,7 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, iridaFileStorageService, fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")

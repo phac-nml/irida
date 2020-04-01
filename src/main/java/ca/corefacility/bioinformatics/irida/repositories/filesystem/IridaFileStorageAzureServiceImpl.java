@@ -1,16 +1,17 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -147,17 +148,27 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		blobClient = containerClient.getBlobClient(file.toAbsolutePath()
 				.toString()
 				.substring(1));
-		if(blobClient.exists()) {
-			return false;
+		if(blobClient.getProperties().getBlobSize() > 0) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
-	public InputStream getFileInputStream(SequenceFile file) {
-		blobClient = containerClient.getBlobClient(file.getFile().toAbsolutePath()
+	public InputStream getFileInputStream(Path file) {
+		blobClient = containerClient.getBlobClient(file.toAbsolutePath()
 				.toString()
 				.substring(1));
 		return blobClient.openInputStream();
+	}
+
+	@Override
+	public boolean isGzipped(Path file) throws IOException {
+		try (InputStream is = getFileInputStream(file)) {
+			byte[] bytes = new byte[2];
+			is.read(bytes);
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+		}
 	}
 }
