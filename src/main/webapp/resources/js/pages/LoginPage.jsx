@@ -66,12 +66,7 @@ function LoginForm() {
 function LoginPage() {
   return (
     <Row justify="center">
-      <Col
-        lg={{ span: 6 }}
-        md={{ span: 12 }}
-        sm={{ span: 16 }}
-        xs={{ span: 20 }}
-      >
+      <Col>
         <Row justify="center" style={{ marginBottom: SPACE_MD }}>
           <img
             src={setBaseUrl("/resources/img/irida_logo_light.svg")}

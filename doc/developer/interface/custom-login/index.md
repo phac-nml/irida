@@ -12,29 +12,59 @@ Create a html file called `login.html` on your files system.  The default path I
 
 ```properties
 # Overwritten UI templates
-ui.templates=/etc/irida/templates
+ui.templates=/etc/irida/templates/
 ```
 
-The most minimal required code all login pages is:
+### Use IRIDA base login form.
+
+IRIDA uses a React component as its login form and can be easily rendered on and DOM node.  The basic layout can be found in the code snippet below:
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
     <script th:inline="javascript">
-        window.PAGE = {
-          BASE_URL: /*[[@{"/"}]]*/ "/",
-        };
+      window.PAGE = {
+        BASE_URL: /*[[@{"/"}]]*/ "/"
+      };
     </script>
-</head>
-<body style="background-color: #1c2833">
-    <div>
-        <div id="login-root"></div>
-        <script th:src="@{/dist/js/login.bundle.js}"></script>
-    </div>
-</body>
+  </head>
+  <body>
+    <div id="login-root"></div>
+    <script th:src="@{/dist/js/login.bundle.js}"></script>
+  </body>
 </html>
-
-
 ```
+
+ * CSS and JS links are required.  This will include all `React` and styles required.  the `th:` is for our server templating language Thymeleaf to set the url's properly.
+ * `BASE_URL` is required by the script file in order to properly set the servlet context for the current installation.
+ * The div with id `login-root` should be placed on the dom element that you want React to render the login form.
+
+#### Example of Custom login page
+
+![Custom Login Page](images/irida-custom-login.png)
+
+### Create a custom login form
+
+Login form basic skeleton:
+
+```html
+<form method="post" th:action="@{/login}">
+    <div>
+      <label for="name" th:text="#{LoginPage.username}">Username</label>
+      <input id="name" name="username" type="text">
+    </div>
+    <div>
+      <label for="password" th:text="#{LoginPage.password}">Password</label>
+      <input id="password" name="password" type="password" >
+    </div>
+    <button type="submit" th:text="#{LoginPage.submit}">Login</button>
+    <div>
+      <a th:href="@{/password_reset}" th:text="#{LoginPage.forgot}">Forgot Password</a>
+      <a th:href="@{/password_reset/activate}" th:text="#{LoginPage.activate}">Activate Account</a>
+    </div>
+  </form>
+```
+
+This will successfully log an authorized user into the IRIDA instance.  If the credentials are incorrect, the url will redirect to `/login?error=true` which can be captured with JavaScript and disply an error message to the user.

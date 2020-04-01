@@ -178,7 +178,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		resolver.setPrefix(extraUITemplates);
 		resolver.setTemplateMode(TemplateMode.HTML);
 		resolver.setCheckExistence(true);
-		resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
