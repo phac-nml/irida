@@ -23,29 +23,15 @@ export default function SistrInfo({ sistrResults, sampleName }) {
       desc:
         qc_status === "PASS" ? (
           <span>
-            <Success
-              message={qc_status}
-            />
+            <Success message={qc_status} />
           </span>
         ) : qc_status === "FAIL" ? (
           <span>
-            <Error
-              message={
-                formatQcMessage(
-                  qc_status,
-                  qc_messages
-                )}
-            />
+            <Error message={formatQcMessage(qc_status, qc_messages)} />
           </span>
         ) : (
           <span>
-            <Warning
-              message={
-                formatQcMessage(
-                  qc_status,
-                  qc_messages
-                )}
-            />
+            <Warning message={formatQcMessage(qc_status, qc_messages)} />
           </span>
         )
     },

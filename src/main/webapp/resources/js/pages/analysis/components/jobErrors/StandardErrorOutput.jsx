@@ -12,7 +12,6 @@ import {
   IconSortDescending
 } from "../../../../components/icons/Icons";
 
-
 export function StandardErrorOutput({ galaxyError }) {
   const error = galaxyError.trim().split("\n");
 
