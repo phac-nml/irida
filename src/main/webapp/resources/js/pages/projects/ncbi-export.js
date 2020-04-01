@@ -28,9 +28,7 @@ const CONFIG = Object.assign({}, tableConfig, {
       targets: [COLUMNS.ID],
       render(data, type, full) {
         // Create a link back to the submission.
-        const url = `${window.PAGE.URLS.projectBase}${
-          full.project.identifier
-        }/export/${data}`;
+        const url = `${window.PAGE.URLS.projectBase}${full.project.identifier}/export/${data}`;
         return createItemLink({
           url,
           label: data,
