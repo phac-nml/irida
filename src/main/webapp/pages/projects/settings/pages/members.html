@@ -9,20 +9,8 @@
     <link rel="stylesheet" th:href="@{/dist/css/project-users.bundle.css}" />
     <script th:inline="javascript">
       window.PAGE = {
-        canManage: /*[[${manageMembers}]]*/ false,
-        urls: {
-          addMember:
-            /*[[@{/projects/{id}/settings/members(id=${project.getId()})}]]*/ "/projects/1/settings/members",
-          usersLink: /*[[@{/users/}]]*/ "/users",
-          deleteModal:
-            /*[[@{/projects/settings/removeUserModal}]]*/ "/projects/settings/removeUserModal",
-          removeMember:
-            /*[[@{/projects/{id}/settings/members/(id=${project.getId()})}]]*/ "/projects/1/settings/members/2",
-          usersSelection:
-            /*[[@{/projects/{id}/settings/ajax/availablemembers(id=${project.getId()})}]]*/ "/projects/1/settings/ajax/availablemembers",
-          updateRole:
-            /*[[@{/projects/{id}/settings/members/editrole/(id=${project.getId()})}]]*/ "/projects/1/settings/members"
-        }
+        user: /*[[${session.user.getId()}]]*/ 1,
+        canManage: /*[[${manageMembers}]]*/ false
       };
     </script>
   </head>

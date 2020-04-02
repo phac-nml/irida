@@ -42,7 +42,7 @@ function ProjectRoleSelect({ user }) {
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
-      disabled={loading}
+      disabled={loading || user.id !== window.PAGE.user}
     >
       {Object.keys(ROLES).map(key => (
         <Select.Option value={key} key={key}>
@@ -73,7 +73,7 @@ function RemoveMemberButton({ user, updateTable }) {
       .finally(() => setLoading(false));
   };
 
-  return (
+  return user.id !== window.PAGE.user ? (
     <Popconfirm
       onConfirm={onConfirm}
       placement="topLeft"
@@ -87,7 +87,7 @@ function RemoveMemberButton({ user, updateTable }) {
         />
       </Tooltip>
     </Popconfirm>
-  );
+  ) : null;
 }
 
 export function ProjectMembersTable() {
