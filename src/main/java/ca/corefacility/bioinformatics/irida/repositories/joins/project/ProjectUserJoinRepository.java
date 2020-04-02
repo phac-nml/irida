@@ -43,7 +43,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 *            the page request
 	 * @return a page of users.
 	 */
-	@Query("from ProjectUserJoin j where j.project = ?1 and j.user.username like %?2%")
+	@Query("from ProjectUserJoin j where j.project = ?1 and (j.user.username like %?2% or j.user.firstName like %?2% or j.user.lastName like %?2%)")
 	public Page<Join<Project, User>> getUsersForProject(final Project project, final String search,
 			final Pageable page);
 	
