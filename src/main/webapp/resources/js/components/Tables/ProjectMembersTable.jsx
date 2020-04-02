@@ -42,7 +42,7 @@ function ProjectRoleSelect({ user }) {
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
-      disabled={loading || user.id !== window.PAGE.user}
+      disabled={loading || user.id === window.PAGE.user}
     >
       {Object.keys(ROLES).map(key => (
         <Select.Option value={key} key={key}>
@@ -57,8 +57,15 @@ function RemoveMemberButton({ user, updateTable }) {
   const [loading, setLoading] = useState(false);
 
   const removeSuccess = message => {
-    notification.success({ message });
-    updateTable();
+    if (user.id !== window.PAGE.user) {
+      notification.success({ message });
+      updateTable();
+    } else {
+      // If the user can remove themselves from the project, then when they
+      // are removed redirect them to their project page since they cannot
+      // use this project anymore.
+      window.location.href = setBaseUrl(`/projects`);
+    }
   };
 
   const onConfirm = () => {
@@ -73,7 +80,7 @@ function RemoveMemberButton({ user, updateTable }) {
       .finally(() => setLoading(false));
   };
 
-  return user.id !== window.PAGE.user ? (
+  return (
     <Popconfirm
       onConfirm={onConfirm}
       placement="topLeft"
@@ -87,7 +94,7 @@ function RemoveMemberButton({ user, updateTable }) {
         />
       </Tooltip>
     </Popconfirm>
-  ) : null;
+  );
 }
 
 export function ProjectMembersTable() {

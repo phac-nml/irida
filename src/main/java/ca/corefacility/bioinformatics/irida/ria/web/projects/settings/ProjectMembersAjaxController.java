@@ -87,7 +87,7 @@ public class ProjectMembersAjaxController {
 
 		try {
 			projectService.updateUserProjectRole(project, user, projectRole);
-			return ResponseEntity.ok(messageSource.getMessage("project.members.edit.role.success",
+			return ResponseEntity.ok(messageSource.getMessage("server.ProjectRoleSelect.success",
 					new Object[] { user.getLabel(), roleString }, locale));
 		} catch (ProjectWithoutOwnerException e) {
 			logger.error("Error changing user id " + id + " in project " + projectId + " to " + roleString + ": " + e.getMessage());
