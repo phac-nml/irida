@@ -4,17 +4,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -71,7 +72,28 @@ public class ProjectMembersAjaxController {
 			logger.error("Error removing user id " + id + " from project " + projectId + ": " + e.getMessage());
 			// Cannot actually get the response body from an error
 			// Just let the UI handle it.
-			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("");
+		}
+	}
+
+	@RequestMapping(value = "/role", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateUserRoleOnProject(@PathVariable Long projectId, @RequestParam Long id,
+			String role, Locale locale) {
+		Project project = projectService.read(projectId);
+		User user = userService.read(id);
+		ProjectRole projectRole = ProjectRole.fromString(role);
+		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+
+		try {
+			projectService.updateUserProjectRole(project, user, projectRole);
+			return ResponseEntity.ok(messageSource.getMessage("project.members.edit.role.success",
+					new Object[] { user.getLabel(), roleString }, locale));
+		} catch (ProjectWithoutOwnerException e) {
+			logger.error("Error changing user id " + id + " in project " + projectId + " to " + roleString + ": " + e.getMessage());
+			// Cannot actually get the response body from an error
+			// Just let the UI handle it.
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("");
 		}
 	}

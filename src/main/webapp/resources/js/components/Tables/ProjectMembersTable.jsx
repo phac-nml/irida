@@ -2,9 +2,12 @@ import React, { useContext, useState } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { Button, notification, Popconfirm, Select } from "antd";
-import { IconTrash } from "../icons/Icons";
+import { IconRemove } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { removeUserFromProject } from "../../apis/projects/members";
+import {
+  removeUserFromProject,
+  updateUserRoleOnProject
+} from "../../apis/projects/members";
 
 function ProjectRoleSelect({ user }) {
   const [role, setRole] = useState(user.role);
@@ -17,15 +20,29 @@ function ProjectRoleSelect({ user }) {
 
   const onChange = value => {
     setLoading(true);
-    setRole(value);
+    updateUserRoleOnProject({
+      id: user.id,
+      role: value
+    })
+      .then(message => {
+        notification.success({ message });
+        setRole(value);
+      })
+      .catch(() => {
+        notification.error({
+          message: i18n("ProjectRoleSelect.error", user.name, ROLES[value])
+        });
+      })
+      .then(() => setLoading(false));
   };
 
   return (
     <Select
-      defaultValue={role}
+      value={role}
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
+      disabled={loading}
     >
       {Object.keys(ROLES).map(key => (
         <Select.Option value={key} key={key}>
@@ -48,7 +65,7 @@ function RemoveMemberButton({ user, updateTable }) {
     setLoading(true);
     removeUserFromProject(user.id)
       .then(removeSuccess)
-      .catch(response =>
+      .catch(() =>
         notification.error({ message: i18n("RemoveMemberButton.error") })
       )
       .finally(() => setLoading(false));
@@ -60,7 +77,7 @@ function RemoveMemberButton({ user, updateTable }) {
       placement="topLeft"
       title={i18n("RemoveMemberButton.confirm")}
     >
-      <Button icon={<IconTrash />} shape="circle-outline" loading={loading} />
+      <Button icon={<IconRemove />} shape="circle-outline" loading={loading} />
     </Popconfirm>
   );
 }

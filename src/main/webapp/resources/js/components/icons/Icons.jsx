@@ -2,6 +2,7 @@ import React from "react";
 import {
   BoldOutlined,
   ClockCircleOutlined,
+  CloseOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -36,7 +37,8 @@ import {
   StrikethroughOutlined,
   SwapOutlined,
   SyncOutlined,
-  TableOutlined, TeamOutlined,
+  TableOutlined,
+  TeamOutlined,
   UnorderedListOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
@@ -144,7 +146,7 @@ export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
 
 export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
 
-export const IconMembers = ({...props}) => <TeamOutlined {...props} />;
+export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
 /*
 File Type Icons
@@ -153,6 +155,8 @@ File Type Icons
 export const IconFileExcel = ({ ...props }) => <FileExcelOutlined {...props} />;
 
 export const IconFile = ({ ...props }) => <FileOutlined {...props} />;
+
+export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
 
 /*
 Menu Icons
