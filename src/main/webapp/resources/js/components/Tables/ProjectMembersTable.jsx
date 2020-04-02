@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { Button, notification, Popconfirm, Select } from "antd";
+import { Button, notification, Popconfirm, Select, Tooltip } from "antd";
 import { IconRemove } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import {
@@ -66,7 +66,9 @@ function RemoveMemberButton({ user, updateTable }) {
     removeUserFromProject(user.id)
       .then(removeSuccess)
       .catch(() =>
-        notification.error({ message: i18n("RemoveMemberButton.error") })
+        notification.error({
+          message: i18n("RemoveMemberButton.error", user.name)
+        })
       )
       .finally(() => setLoading(false));
   };
@@ -77,7 +79,13 @@ function RemoveMemberButton({ user, updateTable }) {
       placement="topLeft"
       title={i18n("RemoveMemberButton.confirm")}
     >
-      <Button icon={<IconRemove />} shape="circle-outline" loading={loading} />
+      <Tooltip title={i18n("RemoveMemberButton.tooltip")} placement="left">
+        <Button
+          icon={<IconRemove />}
+          shape="circle-outline"
+          loading={loading}
+        />
+      </Tooltip>
     </Popconfirm>
   );
 }
@@ -87,7 +95,7 @@ export function ProjectMembersTable() {
 
   const columns = [
     {
-      title: i18n("project.table.collaborator.name"),
+      title: i18n("ProjectMembersTable.name"),
       dataIndex: "name",
       render(text, item) {
         return <a href={setBaseUrl(`/users/${item.id}`)}>{text}</a>;
@@ -101,7 +109,7 @@ export function ProjectMembersTable() {
       }
     },
     {
-      title: i18n("project.table.collaborator.since"),
+      title: i18n("ProjectMembersTable.since"),
       dataIndex: "createdDate",
       render(text) {
         return formatInternationalizedDateTime(text);
