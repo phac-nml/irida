@@ -103,38 +103,4 @@ public class ProjectMembersControllerTest {
 		verify(projectService).read(projectId);
 		verify(userService).getUsersAvailableForProject(project, term);
 	}
-
-	@Test
-	public void testUdateUserRole() throws ProjectWithoutOwnerException {
-		Long projectId = 1L;
-		Long userId = 2L;
-		Project project = new Project();
-		User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
-		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-
-		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.read(userId)).thenReturn(user);
-		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
-
-		controller.updateUserRole(projectId, userId, projectRole.toString(), null);
-
-		verify(projectService).read(projectId);
-		verify(userService).read(userId);
-		verify(projectService).updateUserProjectRole(project, user, projectRole);
-	}
-
-	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException {
-		Long projectId = 1L;
-		Long userId = 2L;
-		Project project = new Project();
-		User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
-		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-
-		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.read(userId)).thenReturn(user);
-		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
-
-		final Map<String, String> result = controller.updateUserRole(projectId, userId, projectRole.toString(), null);
-		assertTrue("should have failure message.", result.containsKey("failure"));
-	}
 }

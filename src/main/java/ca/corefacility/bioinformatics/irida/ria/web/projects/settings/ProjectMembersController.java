@@ -230,34 +230,6 @@ public class ProjectMembersController {
 	}
 
 	/**
-	 * Update a user's role on a project
-	 *
-	 * @param projectId   The ID of the project
-	 * @param userId      The ID of the user
-	 * @param projectRole The role to set
-	 * @param locale      Locale of the logged in user
-	 * @return Success or error message
-	 */
-	@RequestMapping(path = "{projectId}/settings/members/editrole/{userId}", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final @RequestParam String projectRole, final Locale locale) {
-		final Project project = projectService.read(projectId);
-		final User user = userService.read(userId);
-		final ProjectRole role = ProjectRole.fromString(projectRole);
-		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
-
-		try {
-			projectService.updateUserProjectRole(project, user, role);
-			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
-					new Object[] { user.getLabel(), roleName }, locale));
-		} catch (final ProjectWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
-					new Object[] { user.getLabel(), roleName }, locale));
-		}
-	}
-
-	/**
 	 * Update a user group's role on a project
 	 *
 	 * @param projectId   The ID of the project
@@ -332,22 +304,6 @@ public class ProjectMembersController {
 		}
 
 		return new DataTablesResponse(params, userGroupsForProject, responseModels);
-	}
-
-	/**
-	 * Get a string to tell the user which group they're going to delete.
-	 * 
-	 * @param memberId
-	 *            the user group that's about to be deleted.
-	 * @param model
-	 *            model for rendering the view
-	 * @return name of the user removal modal
-	 */
-	@RequestMapping(path = "/settings/removeUserModal", method = RequestMethod.POST)
-	public String getRemoveUserModal(final @RequestParam Long memberId, final Model model) {
-		final User user = userService.read(memberId);
-		model.addAttribute("member", user);
-		return REMOVE_USER_MODAL;
 	}
 
 	/**
