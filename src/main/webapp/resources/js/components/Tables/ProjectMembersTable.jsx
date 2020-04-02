@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { Button, notification, Popconfirm, Select } from "antd";
 import { IconTrash } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { removeUserFromProject } from "../../apis/projects/members";
-import { showNotification } from "../../modules/notifications";
 
 function ProjectRoleSelect({ user }) {
   const [role, setRole] = useState(user.role);

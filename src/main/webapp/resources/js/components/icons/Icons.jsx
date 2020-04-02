@@ -36,7 +36,7 @@ import {
   StrikethroughOutlined,
   SwapOutlined,
   SyncOutlined,
-  TableOutlined,
+  TableOutlined, TeamOutlined,
   UnorderedListOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
@@ -143,6 +143,8 @@ export const IconExperiment = ({ ...props }) => (
 export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
 
 export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
+
+export const IconMembers = ({...props}) => <TeamOutlined {...props} />;
 
 /*
 File Type Icons
