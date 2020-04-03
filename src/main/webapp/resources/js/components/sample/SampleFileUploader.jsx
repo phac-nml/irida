@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { FileUploader } from "../files/FileUploader";
 import { showNotification } from "../../modules/notifications";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, notification } from "antd";
 import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -29,13 +29,16 @@ export function SampleFileUploader() {
    * @returns {*}
    */
   const onSuccess = text => {
-    showNotification({ text });
+    notification.success({ message: text });
     setTimeout(() => {
       window.location.reload();
     }, 2000);
   };
 
-  const onError = () => setUploading(false);
+  const onError = () =>
+    notification.error({ message: i18n("SampleFileUploader.error") });
+
+  const onComplete = () => setUploading(false);
 
   const fileMenu = (
     <Menu className="t-upload-menu">
@@ -48,6 +51,7 @@ export function SampleFileUploader() {
           onSuccess={onSuccess}
           onUpload={onUpload}
           onError={onError}
+          onComplete={onComplete}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
         </FileUploader>
@@ -59,6 +63,7 @@ export function SampleFileUploader() {
           onSuccess={onSuccess}
           onUpload={onUpload}
           onError={onError}
+          onComplete={onComplete}
         >
           {i18n("SampleFileUploader.assembly")}
         </FileUploader>

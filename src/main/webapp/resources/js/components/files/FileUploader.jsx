@@ -1,6 +1,9 @@
 import React, { useRef } from "react";
-import { notification } from "antd";
 import { uploadFiles } from "../../apis/files/files";
+import {
+  checkForBadFileTypes,
+  showBadFilesNotification
+} from "./file-upload-utilities";
 
 /**
  * Generic file uploader.  Handles single and multiple files.
@@ -20,43 +23,13 @@ import { uploadFiles } from "../../apis/files/files";
 export function FileUploader({
   children,
   url,
-  label,
   allowedTypes = "",
   onUpload = () => {},
   onSuccess = () => {},
   onError = () => {},
-  onBadFiles = () => {}
+  onComplete = () => {}
 }) {
   const inputRef = useRef();
-
-  const showBadFilesNotification = (names, types) => {
-    const description = (
-      <>
-        {i18n("FileUploader.badFiles")}
-        {
-          <ul className="t-bad-files">
-            {names.map(name => (
-              <li key={name}>{name}</li>
-            ))}
-          </ul>
-        }
-        <p>{i18n("FileUploader.continued", types.join(", "))}</p>
-      </>
-    );
-
-    /*
-     This notification is different the the standard global notifications.
-     It will persist to the screen so the user can see and copy the file
-     names that are not uploaded.
-     */
-    notification.error({
-      className: "t-file-upload-error",
-      message: i18n("FileUploader.message"),
-      description,
-      placement: "bottomRight",
-      duration: 0
-    });
-  };
 
   /**
    * Submit the files to the server. Need to first get the files from the event.
@@ -65,19 +38,8 @@ export function FileUploader({
    */
   const submitFiles = e => {
     const files = Array.from(e.target.files);
-    // Check to see if it matches the allowed types
     const allowed = allowedTypes.split(",");
-    const bad = [];
-    for (let file of files) {
-      let found = false;
-      for (let type of allowed) {
-        if (file.name.endsWith(type)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) bad.push(file.name);
-    }
+    const bad = checkForBadFileTypes(files, allowed);
 
     if (bad.length) {
       showBadFilesNotification(bad, allowed);
@@ -87,14 +49,18 @@ export function FileUploader({
     onUpload();
     uploadFiles({
       url,
-      files
-    })
-      .then(onSuccess)
-      .catch(onError);
+      files,
+      onSuccess,
+      onError
+    }).finally(onComplete);
   };
 
   return (
-    <div className="t-file-upload-btn" onClick={() => inputRef.current.click()}>
+    <button
+      style={{ border: "none", backgroundColor: "transparent" }}
+      className="t-file-upload-btn"
+      onClick={() => inputRef.current.click()}
+    >
       <input
         className="t-file-upload-input"
         ref={inputRef}
@@ -105,6 +71,6 @@ export function FileUploader({
         accept={allowedTypes}
       />
       {children}
-    </div>
+    </button>
   );
 }
