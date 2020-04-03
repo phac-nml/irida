@@ -4,12 +4,21 @@ import { IconCloseCircle } from "../icons/Icons";
 import { blue6 } from "../../styles/colors";
 import React from "react";
 
+/**
+ * Display a notification during file uploads to indicate percentage.
+ * @param {object} request - axios cancel token
+ * @param {array} names - List of file names being uploaded
+ * @constructor
+ */
 export function UploadProgressNotification({ request, names }) {
   this.key = Date.now();
   this.names = names;
   this.request = request;
 }
 
+/**
+ * Cancel the upload and inform the user through the notification
+ */
 UploadProgressNotification.prototype.cancelUpload = function() {
   this.request.cancel();
   this.showUploadPercentageNotification({
@@ -19,12 +28,22 @@ UploadProgressNotification.prototype.cancelUpload = function() {
   });
 };
 
+/**
+ * Update the current progress, this will update the notification
+ * @param {number} progress - current percentage complete
+ */
 UploadProgressNotification.prototype.show = function(progress) {
   this.showUploadPercentageNotification({
     progress
   });
 };
 
+/**
+ * Show the notification
+ * @param {number} progress - current percentage complete
+ * @param {number} duration - length of time to display the notification
+ * @param {object} cancelled - whether the upload has been cancelled.
+ */
 UploadProgressNotification.prototype.showUploadPercentageNotification = function({
   progress,
   duration = 0,

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UploadProgressNotification } from "../../components/files/file-upload-utilities";
+import { UploadProgressNotification } from "../../components/files/UploadProgressNotification";
 
 /**
  * Upload a list of files to the server.
