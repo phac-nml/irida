@@ -62,18 +62,17 @@ public class ProjectMembersAjaxController {
 	@RequestMapping(value = "", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeUserFromProject(@PathVariable Long projectId, @RequestParam Long id,
 			Locale locale) {
+		Project project = projectService.read(projectId);
+		User user = userService.read(id);
 		try {
-			Project project = projectService.read(projectId);
-			User user = userService.read(id);
 			projectService.removeUserFromProject(project, user);
-			return ResponseEntity.ok(messageSource.getMessage("server.ProjectRoleSelect.success",
+			return ResponseEntity.ok(messageSource.getMessage("server.RemoveMemberButton.success",
 					new Object[] { user.getUsername() }, locale));
 		} catch (EntityNotFoundException | ProjectWithoutOwnerException e) {
 			logger.error("Error removing user id " + id + " from project " + projectId + ": " + e.getMessage());
-			// Cannot actually get the response body from an error
-			// Just let the UI handle it.
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("");
+					.body(messageSource.getMessage("server.RemoveMemberButton.error",
+							new Object[] { user.getUsername() }, locale));
 		}
 	}
 

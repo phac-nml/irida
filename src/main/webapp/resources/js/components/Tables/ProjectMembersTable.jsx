@@ -72,9 +72,9 @@ function RemoveMemberButton({ user, updateTable }) {
     setLoading(true);
     removeUserFromProject(user.id)
       .then(removeSuccess)
-      .catch(() =>
+      .catch(error =>
         notification.error({
-          message: i18n("RemoveMemberButton.error", user.name)
+          message: error.response.data
         })
       )
       .finally(() => setLoading(false));
