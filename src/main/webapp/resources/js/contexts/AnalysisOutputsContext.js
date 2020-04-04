@@ -15,9 +15,10 @@ const initialContext = {
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
-const blacklistExtSet = new Set(["zip", "pdf", "html", "xlsx"]);
+const blacklistExtSet = new Set(["zip", "pdf", "html"]);
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
+const excelFileExtSet = new Set(["xls", "xlsx"]);
 
 function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
@@ -29,6 +30,7 @@ function AnalysisOutputsProvider(props) {
     let hasJsonFile = false;
     let hasTabularFile = false;
     let hasTextFile = false;
+    let hasExcelFile = false;
 
     getOutputInfo(analysisContext.analysis.identifier).then(data => {
       // Check if json, tab, and/or text files exist
@@ -49,8 +51,14 @@ function AnalysisOutputsProvider(props) {
             hasTextFile =
               !tabExtSet.has(el.fileExt) &&
               !jsonExtSet.has(el.fileExt) &&
-              !blacklistExtSet.has(el.fileExt);
+              !blacklistExtSet.has(el.fileExt) &&
+              !excelFileExtSet.has(el.fileExt);
           }
+
+          if(!hasExcelFile) {
+            hasExcelFile = excelFileExtSet.has(el.fileExt);
+          }
+
         });
       }
 
@@ -62,7 +70,8 @@ function AnalysisOutputsProvider(props) {
             {
               hasJsonFile: hasJsonFile,
               hasTabularFile: hasTabularFile,
-              hasTextFile: hasTextFile
+              hasTextFile: hasTextFile,
+              hasExcelFile: hasExcelFile
             }
           ]
         };
@@ -77,7 +86,8 @@ function AnalysisOutputsProvider(props) {
         getAnalysisOutputs,
         tabExtSet,
         jsonExtSet,
-        blacklistExtSet
+        blacklistExtSet,
+        excelFileExtSet
       }}
     >
       {props.children}

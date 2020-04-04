@@ -279,6 +279,23 @@ export async function getAnalysisProvenanceByFile(submissionId, filename) {
     return { error };
   }
 }
+
+export async function parseExcel(submissionId, filename) {
+  try {
+    const { data } = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/parseExcel`,
+      {
+        params: {
+          filename
+        }
+      }
+    );
+    return { data };
+  } catch (error) {
+    return { error };
+  }
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.

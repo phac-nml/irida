@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -1031,6 +1032,31 @@ public class AnalysisAjaxController {
 			}
 		}
 		return new AnalysisTreeResponse(tree, message);
+	}
+
+	/**
+	 * Parse excel file
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param filename     The name of the excel file to parse
+	 * @return dto which contains the headers and rows of the excel file
+	 */
+	@RequestMapping(value = "/{submissionId}/parseExcel")
+	@ResponseBody
+	public ExcelData parseExcelFile(@PathVariable Long submissionId, String filename) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Set<AnalysisOutputFile> files = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+		AnalysisOutputFile outputFile = null;
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile().toFile().getName()
+					.contains(filename)) {
+				outputFile = file;
+				break;
+			}
+		}
+
+		return FileUtilities.parseExcelFile(outputFile);
 	}
 
 	/**

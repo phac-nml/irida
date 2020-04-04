@@ -1,15 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -19,6 +13,8 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +22,11 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelCol;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelHeader;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelRow;
+
 
 /**
  * Download a zip archive of all output files within an
@@ -310,5 +311,72 @@ public class FileUtilities {
 			lines.add(line);
 		}
 		return lines;
+	}
+
+	/**
+	 * Read lines from an {@link AnalysisOutputFile} excel file.
+	 *
+	 * @param outputFile {@link AnalysisOutputFile} The excel file to parse
+	 * @return parsed excel file data
+	 * @throws IOException if error enountered while reading file
+	 */
+	public static ExcelData parseExcelFile(AnalysisOutputFile outputFile) {
+		try {
+			XSSFWorkbook workbook = new XSSFWorkbook(outputFile.getFile().toAbsolutePath().toString());
+			Sheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator();
+			List<ExcelRow> excelRows = new ArrayList<>();
+			List<ExcelHeader> headers = getWorkbookHeaders(rowIterator.next());
+
+			while (rowIterator.hasNext()) {
+				Map<String, String> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				List<ExcelCol> excelCols = new ArrayList<>();
+				while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					int columnIndex = cell.getColumnIndex();
+					if (columnIndex < headers.size()) {
+						ExcelCol excelColumn = new ExcelCol(columnIndex, cell.getStringCellValue());
+						excelCols.add(excelColumn);
+					}
+				}
+				ExcelRow excelRow = new ExcelRow(excelCols, row.getRowNum(), row.getRowNum());
+				excelRows.add(excelRow);
+			}
+			return new ExcelData(headers, excelRows);
+		} catch(IOException e){
+		}
+		return new ExcelData(null, null);
+	}
+
+	/**
+	 * Extract the headers from an excel file.
+	 *
+	 * @param row {@link Row} First row from the excel file.
+	 * @return {@link List} of {@link ExcelHeader} header values.
+	 */
+	public static List<ExcelHeader> getWorkbookHeaders(Row row) {
+		// We want to return a list of excel headers back to the UI.
+		List<ExcelHeader> headers = new ArrayList<>();
+		// Get the column headers
+		Iterator<Cell> headerIterator = row.cellIterator();
+		while (headerIterator.hasNext()) {
+			Cell headerCell = headerIterator.next();
+			CellType cellType = headerCell.getCellTypeEnum();
+			int columnIndex = headerCell.getColumnIndex();
+
+			String headerValue;
+			if (cellType.equals(CellType.STRING)) {
+				headerValue = headerCell.getStringCellValue()
+						.trim();
+			} else {
+				headerValue = String.valueOf(headerCell.getNumericCellValue())
+						.trim();
+			}
+			ExcelHeader excelHeader = new ExcelHeader(headerValue, columnIndex, Integer.toString(columnIndex));
+			headers.add(excelHeader);
+		}
+		return headers;
 	}
 }
