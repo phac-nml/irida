@@ -329,7 +329,6 @@ public class FileUtilities {
 			List<ExcelHeader> headers = getWorkbookHeaders(rowIterator.next());
 
 			while (rowIterator.hasNext()) {
-				Map<String, String> rowMap = new HashMap<>();
 				Row row = rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();
 				List<ExcelCol> excelCols = new ArrayList<>();
@@ -346,6 +345,7 @@ public class FileUtilities {
 			}
 			return new ExcelData(headers, excelRows);
 		} catch(IOException e){
+			logger.error("Error opening file" + outputFile.getLabel());
 		}
 		return new ExcelData(null, null);
 	}
