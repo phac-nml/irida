@@ -1,93 +1,14 @@
 import axios from "axios";
-import { Alert, notification, Progress, Tooltip } from "antd";
-import { IconCloseCircle } from "../../components/icons/Icons";
-import React from "react";
-import { SPACE_XS } from "../../styles/spacing";
-import { blue6 } from "../../styles/colors";
+import { UploadProgressNotification } from "../../components/files/UploadProgressNotification";
 
 /**
  * Upload a list of files to the server.
  *
  * @param {array} files - List of files to upload
  * @param {string} url - Url to upload to
- * @param {function} onProgressUpdate - allows caller to tap into the upload progress.
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
-  const names = files.map(f => f.name);
-  const formData = new FormData();
-  files.forEach((f, i) => formData.append(`files[${i}]`, f));
-
-  const CancelToken = axios.CancelToken;
-  const source = CancelToken.source();
-  const key = Date.now();
-
-  const showProgressNotification = ({
-    progress,
-    duration = 0,
-    cancelled = false
-  }) =>
-    notification.info({
-      key,
-      style: { width: 400 },
-      closeIcon: <span />,
-      message: i18n("FileUploader.progress.title"),
-      description: (
-        <>
-          {i18n("FileUploader.progress.desc")}
-          {
-            <ul className="t-file-upload">
-              {names.map(name => (
-                <li key={name}>{name}</li>
-              ))}
-            </ul>
-          }
-          {cancelled ? (
-            <Alert
-              message={i18n("FileUploader.progress.cancelled")}
-              type="info"
-            />
-          ) : (
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: SPACE_XS
-                }}
-              >
-                <Progress
-                  style={{ flexGrow: 1 }}
-                  percent={progress}
-                  size="small"
-                />
-                <Tooltip
-                  title={i18n("FileUploader.progress.tooltip")}
-                  placement="topRight"
-                >
-                  <IconCloseCircle
-                    style={{ marginLeft: 5, color: blue6 }}
-                    onClick={cancelUpload}
-                  />
-                </Tooltip>
-              </div>
-              <Alert
-                message={`Don't refresh your page or the download will be cancelled.`}
-                type="warning"
-              />
-            </>
-          )}
-        </>
-      ),
-      placement: "bottomRight",
-      duration
-    });
-
-  const cancelUpload = () => {
-    showProgressNotification({ progress: 0, duration: 4, cancelled: true });
-    source.cancel();
-  };
-
+export function uploadFiles({ files, url, onSuccess, onError }) {
   /**
    * Function called when window onbeforeunload is called when a file is
    * uploading, since leaving the page would cause the upload to cancel.
@@ -100,8 +21,19 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
     // Chrome requires returnValue to be set.
     event.returnValue = window.confirm(i18n("FileUploader.listener-warning"));
   };
-
   window.addEventListener("beforeunload", listener);
+
+  const names = files.map(f => f.name);
+  const formData = new FormData();
+  files.forEach((f, i) => formData.append(`files[${i}]`, f));
+
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+
+  const notification = new UploadProgressNotification({
+    names,
+    request: source
+  });
 
   return axios
     .post(url, formData, {
@@ -120,13 +52,17 @@ export function uploadFiles({ files, url, onProgressUpdate = () => {} }) {
           const progress = Math.round(
             (progressEvent.loaded * 100) / totalLength
           );
-          showProgressNotification({ progress });
+          notification.show(progress);
         }
       }
     })
-    .then(({ data }) => data)
-    .catch(({ data }) => data)
-    .finally(() => {
+    .then(({ data }) => onSuccess(data))
+    .catch(error => {
+      if (!axios.isCancel(error)) {
+        onError();
+      }
+    })
+    .then(() => {
       window.removeEventListener("beforeunload", listener);
     });
 }

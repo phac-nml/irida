@@ -76,13 +76,11 @@ public class SamplesAjaxController {
 			for (MultipartFile file : singleFiles) {
 				createSequenceFileInSample(file, sample);
 			}
-			return ResponseEntity.ok()
-					.body(messageSource.getMessage("server.SampleFileUploader.success",
-							new Object[] { sample.getSampleName() }, locale));
+			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
+					new Object[] { sample.getSampleName() }, locale));
 		} catch (IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(messageSource.getMessage("server.SampleFileUploader.error",
-							new Object[] { sample.getSampleName() }, locale));
+					.body("");
 		}
 	}
 

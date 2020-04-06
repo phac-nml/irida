@@ -44,14 +44,16 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
+			<h2 th:if="${!#lists.isEmpty(single_end) or !#lists.isEmpty(paired_end)}"
+				th:text="#{samples.files.sequencefiles.title}">Sequence Files</h2>
 			<table class="table"
-				th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
-				ng-controller="FileController as fileCtrl">
+				   th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
+				   ng-controller="FileController as fileCtrl">
 				<th:block th:each="pair : ${paired_end}">
 					<tr class="paired_end paired_end__forward sequence-file-row"
 						th:with="file=${pair.getForwardSequenceFile()}">
 						<td
-							th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
+								th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
 						<td>
 							<div class="btn-group-sm pull-right" role="group">
 								<button th:if="${canManageSample}"
