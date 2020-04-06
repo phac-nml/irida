@@ -17,7 +17,13 @@ ui.templates=/etc/irida/templates/
 
 ### Use IRIDA base login form.
 
-IRIDA uses a React component as its login form and can be easily rendered on and DOM node.  The basic layout can be found in the code snippet below:
+IRIDA uses a React component as its login form and can be added to any template by adding:
+
+ * CSS (`/dist/css/login.bundle.css`) and JS (`/dist/js/login.bundle.js`) files.
+ * A `head` > `script` tag with a global `PAGE` variable containing: `BASE_URL: /*[[@{"/"}]]*/ "/"` as an attribute.
+ * The div with id `login-root` should be placed on the dom element that you want React to render the login form.
+
+#### Example
 
 ```html
 <!DOCTYPE html>
@@ -36,10 +42,6 @@ IRIDA uses a React component as its login form and can be easily rendered on and
   </body>
 </html>
 ```
-
- * CSS and JS links are required.  This will include all `React` and styles required.  the `th:` is for our server templating language Thymeleaf to set the url's properly.
- * `BASE_URL` is required by the script file in order to properly set the servlet context for the current installation.
- * The div with id `login-root` should be placed on the dom element that you want React to render the login form.
 
 #### Example of Custom login page
 
