@@ -9,8 +9,9 @@
   ],
   "rules": {
     "react/prop-types": 0,
+    "no-console": "warn",
     "react-hooks/rules-of-hooks": "error",
-    "no-console": "warn"
+    "react-hooks/exhaustive-deps": "warn"
   },
   "globals": {
     "i18n": "readonly"
