@@ -3,11 +3,15 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Table } from "antd";
+import { Divider, Radio, Table, Typography } from "antd";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles";
 import { parseExcel } from "../../../apis/analysis/analysis";
+import { WarningAlert } from "../../../components/alerts";
+import { ContentLoading } from "../../../components/loader";
+
+const { Text } = Typography;
 
 const ExcelOutputWrapper = styled.div`
   max-height: 300px;
@@ -16,57 +20,109 @@ const ExcelOutputWrapper = styled.div`
 `;
 
 export default function AnalysisExcelPreview({ output }) {
-  const [excelCols, setExcelCols] = useState([]);
+  const [excelHeaders, setExcelHeaders] = useState([]);
   const [excelRows, setExcelRows] = useState([]);
+  const [excelSheetNames, setExcelSheetNames] = useState([]);
+  const MAX_TABLE_ROWS_PER_PAGE = 5;
+  const [currSheetIndex, setCurrSheetIndex] = useState("0");
+  const [parseError, setParseError] = useState(null);
 
   useEffect(() => {
-    parseExcel(output.analysisSubmissionId, output.filename).then(data => {
-      setExcelCols(data["data"].excelHeaders);
-      setExcelRows(data["data"].excelRows);
+    parseExcel(output.analysisSubmissionId, output.filename, currSheetIndex).then(data => {
+      if(!data["data"].parseError) {
+        setExcelHeaders(data["data"].excelHeaders);
+        setExcelRows(data["data"].excelRows);
+        setExcelSheetNames(data["data"].excelSheetNames);
+        setParseError(data["data"].parseError);
+      } else {
+        setParseError(false);
+      }
     });
-  }, []);
+  }, [currSheetIndex]);
 
   /* This function is used to format row data
    * to the appropriate format that the antd
    * table is expecting.
    */
-  function formatRowData() {
+  function getFormattedRowData() {
     let rowData = [];
     if(excelRows.length > 0) {
-      for(let i = 0; i<excelRows.length; i++) {
-        let excelColumns = excelRows[i].excelCols;
-        let columnData = {};
-        for(let j = 0; j<excelColumns.length; j++) {
-          columnData[j] = excelColumns[j].value;
+      for (const [i, row] of excelRows.entries()) {
+        const excelHeaderColumns = row.excelCols;
+        let columnData = {}
+        for (const [j, col] of excelHeaderColumns.entries()) {
+          columnData[j] = col.value;
         }
-        columnData["index"] = i+1;
-        columnData["key"] = i+1;
+        columnData["index"] = i + 1;
+        columnData["key"] = i + 1;
         rowData.push(columnData);
       }
     }
     return rowData;
   }
 
+  // Set the index of the excel sheet selected
+  function changeExcelSheet(e) {
+    setCurrSheetIndex(e.target.value);
+  }
+
+  // Displays the sheets as radio group buttons
+  function displaySheetNames() {
+    const sheetNames = [];
+
+    for(const [i, sheetName] of excelSheetNames.entries()) {
+      sheetNames.push(
+        <Radio.Button value={`${i}`} key={`sheet-button-${i+1}`}>
+          {sheetName}
+        </Radio.Button>
+      )
+    }
+
+    return (
+      <Radio.Group
+        value={currSheetIndex}
+        onChange={changeExcelSheet}
+        style={{marginBottom: SPACE_XS}}
+      >
+        <div>
+          <Text strong>Sheets:</Text>
+          <span style={{marginLeft: SPACE_XS}}>{sheetNames}</span>
+        </div>
+      </Radio.Group>
+    );
+  }
+
   /*
-   * Displays the excel output in an antd table component
+   * Displays the excel output in an antd table component if there
+   * was no error while parsing the excel file
    */
   function displayExcelOutput() {
       return (
         <div>
           <OutputFileHeader output={output} />
-          <ExcelOutputWrapper>
-            <Table
-              layout="auto"
-              columns={excelCols}
-              dataSource={formatRowData()}
-              scroll={{ x: "max-content" }}
-              pagination={false}
-            />
-          </ExcelOutputWrapper>
+            {displaySheetNames()}
+              <ExcelOutputWrapper>
+                <Table
+                  layout="auto"
+                  columns={excelHeaders}
+                  dataSource={getFormattedRowData()}
+                  scroll={{x: "max-content"}}
+                  pagination={excelRows.length > MAX_TABLE_ROWS_PER_PAGE ? {pageSize: MAX_TABLE_ROWS_PER_PAGE} : false}
+                />
+              </ExcelOutputWrapper>
           <Divider />
         </div>
       );
   }
 
-  return <>{displayExcelOutput()}</>;
+  return <>
+    { parseError != null ?
+      !parseError ?
+        displayExcelOutput()
+        :
+        <WarningAlert message={i18n("AnalysisOutputs.excelParsingError")}/>
+      :
+      <ContentLoading />
+    }
+  </>;
 }

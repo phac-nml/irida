@@ -280,13 +280,18 @@ export async function getAnalysisProvenanceByFile(submissionId, filename) {
   }
 }
 
-export async function parseExcel(submissionId, filename) {
+/**
+ * Gets the parsed excel data
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function parseExcel(submissionId, filename, sheetIndex) {
   try {
     const { data } = await axios.get(
       `${ANALYSIS_URL}/${submissionId}/parseExcel`,
       {
         params: {
-          filename
+          filename,
+          sheetIndex
         }
       }
     );

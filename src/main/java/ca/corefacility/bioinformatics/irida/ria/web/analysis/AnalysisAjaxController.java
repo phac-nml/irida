@@ -1035,28 +1035,37 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Parse excel file
+	 * Parse excel file and return an ExcelData dto which
+	 * contains the row data as well as the headers.
 	 *
 	 * @param submissionId The analysis submission id
 	 * @param filename     The name of the excel file to parse
+	 * @param sheetIndex   The index of the sheet in the excel workbook to parse
 	 * @return dto which contains the headers and rows of the excel file
 	 */
 	@RequestMapping(value = "/{submissionId}/parseExcel")
 	@ResponseBody
-	public ExcelData parseExcelFile(@PathVariable Long submissionId, String filename) {
+	public ExcelData parseExcelFile(@PathVariable Long submissionId, String filename, Integer sheetIndex) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
+
 		for (AnalysisOutputFile file : files) {
-			if (file.getFile().toFile().getName()
+			if (file.getFile()
+					.toFile()
+					.getName()
 					.contains(filename)) {
 				outputFile = file;
 				break;
 			}
 		}
-
-		return FileUtilities.parseExcelFile(outputFile);
+		// If the index of the sheet is not
+		// supplied then we set it to 0
+		if (sheetIndex == null) {
+			sheetIndex = 0;
+		}
+		return FileUtilities.parseExcelFile(outputFile, sheetIndex);
 	}
 
 	/**

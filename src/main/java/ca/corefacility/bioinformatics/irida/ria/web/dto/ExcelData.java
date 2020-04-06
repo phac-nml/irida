@@ -10,10 +10,14 @@ import java.util.List;
 public class ExcelData {
 	private List<ExcelHeader> excelHeaders;
 	private List<ExcelRow> excelRows;
+	private List<String> excelSheetNames;
+	private boolean parseError;
 
-	public ExcelData(List<ExcelHeader> excelHeaders, List<ExcelRow> excelRows) {
+	public ExcelData(List<ExcelHeader> excelHeaders, List<ExcelRow> excelRows, List<String> excelSheetNames, boolean parseError) {
 		this.excelHeaders = excelHeaders;
 		this.excelRows = excelRows;
+		this.excelSheetNames = excelSheetNames;
+		this.parseError = parseError;
 	}
 
 	public List<ExcelHeader> getExcelHeaders() {
@@ -30,5 +34,21 @@ public class ExcelData {
 
 	public void setExcelRows(List<ExcelRow> excelRows) {
 		this.excelRows = excelRows;
+	}
+
+	public List<String> getExcelSheetNames() {
+		return excelSheetNames;
+	}
+
+	public void setExcelSheetNames(List<String> excelSheetNames) {
+		this.excelSheetNames = excelSheetNames;
+	}
+
+	public boolean isParseError() {
+		return parseError;
+	}
+
+	public void setParseError(boolean parseError) {
+		this.parseError = parseError;
 	}
 }
