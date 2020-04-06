@@ -53,6 +53,7 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
+	private final static String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
 	private static final String INTERNAL_TEMPLATE_PREFIX = "/pages/";
 	private static final String HTML_TEMPLATE_SUFFIX = ".html";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
@@ -61,9 +62,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 	@Value("${locales.default}")
 	private String defaultLocaleValue;
-
-	@Value("${ui.templates}")
-	private String extraUITemplates;
 
 	@Autowired
 	private Environment env;
@@ -175,7 +173,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		FileTemplateResolver resolver = new FileTemplateResolver();
 		resolver.setSuffix(HTML_TEMPLATE_SUFFIX);
 		resolver.setOrder(1);
-		resolver.setPrefix(extraUITemplates);
+		resolver.setPrefix(EXTERNAL_TEMPLATE_DIRECTORY);
 		resolver.setTemplateMode(TemplateMode.HTML);
 		resolver.setCheckExistence(true);
 

@@ -8,7 +8,7 @@ Custom Login Page
 
 The default landing / login page for IRIDA can be replaced by an institution without modifying the existing one.
 
-Create a html file called `login.html` on your files system.  The default path IRIDA will check is `/etc/irida/templates`, but can be configured in the configuration file `src/main/resources/configuration.properties` by updating the `ui.templates` property,
+Create a html file called `login.html` on your files system, and save it to the path `/etc/irida/templates/`;
 
 ```properties
 # Overwritten UI templates
