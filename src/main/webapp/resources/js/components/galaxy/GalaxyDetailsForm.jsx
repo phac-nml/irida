@@ -43,13 +43,13 @@ export function GalaxyDetailsForm() {
           help={i18n("ExportToGalaxyForm.email.help")}
         >
           <Input onChange={emailModified} value={email} />
-        </Form.Item>
-        <Form.Item help={"Include assemblies in Galaxy export"}>
+        </Form.Item>  
+        <Form.Item help={i18n("ExportToGalaxyForm.assemblies.help")}>
           <Checkbox
             onChange={includeAssembliesModified}
             checked={includeAssemblies}
           >
-            {"Include assemblies"}
+            {i18n("ExportToGalaxyForm.assemblies")}
           </Checkbox>
         </Form.Item>
         <Form.Item help={i18n("ExportToGalaxyForm.makepairedcollection.help")}>
