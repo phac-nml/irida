@@ -25,6 +25,7 @@ Changes
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
 * [UI/Developer]: Updated to `Prettier` 2.0.2
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
+* [UI/Developer]: Added excel file viewer to analysis outputs view.
 
 19.09 to 20.01
 --------------
