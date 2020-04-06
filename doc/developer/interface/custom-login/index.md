@@ -45,6 +45,8 @@ IRIDA uses a React component as its login form and can be added to any template 
 
 #### Example of Custom login page
 
+[Source code can be found here.](./custom-login.html.md)
+
 ![Custom Login Page](images/irida-custom-login.png)
 
 ### Create a custom login form
