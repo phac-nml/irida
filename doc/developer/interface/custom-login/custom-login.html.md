@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>IRIDA Login</title>
+    <!--
+    Must include this link to the css for the login form.
+    `th:href` is interpreted by our server sided processor and replaces it with
+    the full link including any servlet contexts.
+     -->
     <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+
+    <!-- Default CSS not required just for this layout -->
     <script th:inline="javascript">
       window.PAGE = {
         BASE_URL: /*[[@{"/"}]]*/ "/"
@@ -61,7 +69,7 @@
 
       .main {
         background-color: #379683;
-        color: #edf5e1;
+        color: #EDF5E1
       }
 
       .sidebar h2 {
@@ -120,10 +128,17 @@
           in.
         </p>
       </div>
-      <div class="box sidebar2" id="login-root"></div>
+      <div class="box sidebar2" id="login-root">
+        <!-- This is where React will mount the login form -->
+      </div>
     </div>
     <div class="box footer"><h2>Footer</h2></div>
 
+    <!--
+    Must include this link to the js for the login form.
+    `th:src` is interpreted by our server sided processor and replaces it with
+    the full link including any servlet contexts.
+     -->
     <script th:src="@{/dist/js/login.bundle.js}"></script>
   </body>
 </html>
