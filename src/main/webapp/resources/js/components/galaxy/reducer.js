@@ -16,7 +16,7 @@ export const initialState = {
   makepairedcollection: true,
   fetchingSamples: false,
   submitted: false,
-  assemblies: false,
+  includeAssemblies: false,
   submittable: true,
   errored: false
 };
@@ -37,7 +37,7 @@ export const reducer = (state, action) => {
     case types.ASSEMBLIES_UPDATED:
       return {
         ...state,
-        assemblies: action.payload.assemblies
+        includeAssemblies: action.payload.includeAssemblies
       };
     case types.OAUTH_WINDOW_CLOSED:
       return { ...state, submittable: true, submitted: false };
@@ -62,9 +62,9 @@ export const actions = {
     type: types.MAKE_PAIRED_COLLECTION_UPDATED,
     payload: { makepairedcollection }
   }),
-  setIncludeAssemblies: assemblies => ({
+  setIncludeAssemblies: includeAssemblies => ({
     type: types.ASSEMBLIES_UPDATED,
-    payload: { assemblies }
+    payload: { includeAssemblies }
   }),
   submit: () => ({
     type: types.SUBMIT
