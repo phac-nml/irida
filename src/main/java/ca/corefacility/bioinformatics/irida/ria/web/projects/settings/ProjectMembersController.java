@@ -76,7 +76,7 @@ public class ProjectMembersController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping("/{projectId}/settings/members")
+	@RequestMapping(value = { "/{projectId}/settings/members", "/{projectId}/settings/members/edit" })
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 
 		Project project = projectService.read(projectId);
