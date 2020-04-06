@@ -37,4 +37,3 @@ export const SISTR = {
   MASH: "mash",
   CITATION: "citation"
 };
-

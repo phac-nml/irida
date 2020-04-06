@@ -20,7 +20,7 @@ import { SPACE_MD } from "../../../styles/spacing";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, SETTINGS } from "../routes";
-import {setBaseUrl} from "../../../utilities/url-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const AnalysisDetails = lazy(() => import("./settings/AnalysisDetails"));
 const AnalysisSamples = lazy(() => import("./settings/AnalysisSamples"));
@@ -34,7 +34,9 @@ export default function AnalysisSettings() {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
   const { analysisContext } = useContext(AnalysisContext);
 
-  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}` + setBaseUrl(ANALYSIS.SETTINGS);
+  const DEFAULT_URL =
+    `/analysis/${analysisContext.analysis.identifier}` +
+    setBaseUrl(ANALYSIS.SETTINGS);
 
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   const analysisRunning =
