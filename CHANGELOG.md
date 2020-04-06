@@ -24,6 +24,7 @@ Changes
 * [Developer]: `bower` completely removed.
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
 * [UI]: Assemblies can now be uploaded through the sample files page.
+* [UI/Developer]: Updated to `Prettier` 2.0.2
 
 19.09 to 20.01
 --------------
