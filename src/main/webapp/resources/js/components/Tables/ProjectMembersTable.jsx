@@ -28,9 +28,10 @@ function ProjectRoleSelect({ user }) {
         notification.success({ message });
         setRole(value);
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error);
         notification.error({
-          message: i18n("ProjectRoleSelect.error", user.name, ROLES[value])
+          message: error.response.data
         });
       })
       .then(() => setLoading(false));

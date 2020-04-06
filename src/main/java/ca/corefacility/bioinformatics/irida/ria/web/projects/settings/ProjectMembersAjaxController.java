@@ -90,10 +90,9 @@ public class ProjectMembersAjaxController {
 					new Object[] { user.getLabel(), roleString }, locale));
 		} catch (ProjectWithoutOwnerException e) {
 			logger.error("Error changing user id " + id + " in project " + projectId + " to " + roleString + ": " + e.getMessage());
-			// Cannot actually get the response body from an error
-			// Just let the UI handle it.
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("");
+					.body(messageSource.getMessage("server.ProjectRoleSelect.error",
+							new Object[] { user.getLabel(), roleString }, locale));
 		}
 	}
 }
