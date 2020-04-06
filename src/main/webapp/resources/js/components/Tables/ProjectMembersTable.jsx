@@ -28,13 +28,12 @@ function ProjectRoleSelect({ user }) {
         notification.success({ message });
         setRole(value);
       })
-      .catch(error => {
-        console.log(error);
+      .catch(error =>
         notification.error({
           message: error.response.data
-        });
-      })
-      .then(() => setLoading(false));
+        })
+      )
+      .finally(() => setLoading(false));
   };
 
   return (
