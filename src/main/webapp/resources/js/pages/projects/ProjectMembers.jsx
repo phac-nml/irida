@@ -6,6 +6,7 @@ import { AddNewButton } from "../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ProjectMembersTable } from "../../components/project-members";
 import { IconMembers } from "../../components/icons/Icons";
+import { AddMembersButton } from "../../components/project-members/AddMemberButton";
 
 const { Content } = Layout;
 
@@ -14,7 +15,7 @@ function ProjectMembersPage({ children }) {
     <PageHeader
       avatar={{ icon: <IconMembers /> }}
       title={i18n("project.settings.page.title.members")}
-      extra={<AddNewButton text={i18n("project.members.edit.add")} />}
+      extra={<AddMembersButton />}
     >
       <Content>{children}</Content>
     </PageHeader>
