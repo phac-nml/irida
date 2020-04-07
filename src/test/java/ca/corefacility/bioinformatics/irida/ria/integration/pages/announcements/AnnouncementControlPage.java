@@ -62,7 +62,7 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public String getAnnouncement(int position) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a span"));
         return messages.get(position).getText();
     }
 

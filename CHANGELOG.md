@@ -26,6 +26,7 @@ Changes
 * [UI]: Assemblies can now be uploaded through the sample files page.
 * [UI/Developer]: Updated to `Prettier` 2.0.2
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
+* [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
 
 19.09 to 20.01
 --------------
