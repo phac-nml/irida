@@ -143,6 +143,12 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
+	/**
+	 * Default template resolver for IRIDA.  Templates can be overridden using the external template
+	 * resolver below.  This will look for templates in `/src/main/webapp/pages/*`
+	 *
+	 * @return {@link SpringResourceTemplateResolver}
+	 */
 	private ITemplateResolver internalTemplateResolver(){
 		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setApplicationContext(this.applicationContext);
