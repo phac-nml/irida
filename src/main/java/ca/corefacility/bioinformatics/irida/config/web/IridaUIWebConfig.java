@@ -129,8 +129,13 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		logger.debug("Configuring Resource Handlers");
 		// CSS: default location "/static/styles" during development and
 		// production.
-		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-		registry.addResourceHandler("/dist/**").addResourceLocations("/dist/");
+		registry.addResourceHandler("/resources/**")
+				.addResourceLocations("/resources/");
+		registry.addResourceHandler("/dist/**")
+				.addResourceLocations("/dist/");
+		//serve static resources for customizing pages from /etc/irida/static
+		registry.addResourceHandler("/static/**")
+				.addResourceLocations("file:/etc/irida/static/");
 	}
 
 	@Override
