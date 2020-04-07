@@ -3,7 +3,7 @@ import React from "react";
 import { render } from "react-dom";
 import Analysis from "./components/Analysis";
 import { AnalysisProvider } from "../../contexts/AnalysisContext";
-import { setBaseUrl} from "../../utilities/url-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /*
 WEBPACK PUBLIC PATH:
