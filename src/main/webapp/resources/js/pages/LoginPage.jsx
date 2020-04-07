@@ -42,29 +42,29 @@ function LoginForm() {
       size="large"
     >
       <Item
+        name="username"
         rules={[
           {
             required: true,
-            message: i18n("LoginPage.username.required")
-          }
+            message: i18n("LoginPage.username.required"),
+          },
         ]}
       >
         <Input
           ref={usernameRef}
-          name="username"
           prefix={<IconUser style={{ color: blue6 }} />}
         />
       </Item>
       <Item
+        name="password"
         rules={[
           {
             required: true,
-            message: i18n("LoginPage.password.required")
-          }
+            message: i18n("LoginPage.password.required"),
+          },
         ]}
       >
         <Input
-          name="password"
           prefix={<IconLocked style={{ color: blue6 }} />}
           type="password"
         />
@@ -93,9 +93,10 @@ function LoginForm() {
  * @constructor
  */
 function LoginPage() {
+  const urlParams = new URLSearchParams(window.location.search);
   return (
     <Row justify="center">
-      <Col>
+      <Col style={{ width: 300 }}>
         <Row justify="center" style={{ marginBottom: SPACE_MD }}>
           <img
             src={setBaseUrl("/resources/img/irida_logo_light.svg")}
@@ -103,7 +104,7 @@ function LoginPage() {
             alt={i18n("generic.irida.website")}
           />
         </Row>
-        {window.PAGE?.hasErrors ? (
+        {urlParams.has("error") ? (
           <Alert
             type="error"
             className="t-login-error"
