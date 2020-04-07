@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.sequencingRuns;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertFalse;
 public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private SequencingRunDetailsPage page;
 
+	@Override
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
@@ -38,9 +40,13 @@ public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		String sequencerType = page.getSequencerType();
 		assertEquals("miseq", sequencerType);
 	}
-	
+
+	/**
+	 * TODO: This should be deleted after merging analysis branch.
+	 */
 	@Test
-	public void testDeleteRun(){
+	@Ignore
+	public void testDeleteRun() {
 		page.deleteRun();
 		SequencingRunsListPage listPage = SequencingRunsListPage.goToPage(driver());
 		assertFalse("run should have been deleted", listPage.idDisplayIdInList("1"));
