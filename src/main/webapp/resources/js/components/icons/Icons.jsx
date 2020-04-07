@@ -2,6 +2,7 @@ import React from "react";
 import {
   BoldOutlined,
   ClockCircleOutlined,
+  CloseCircleOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -51,6 +52,10 @@ import { blue6 } from "../../styles/colors";
  */
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
+
+export const IconCloseCircle = ({ ...props }) => (
+  <CloseCircleOutlined {...props} />
+);
 
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
