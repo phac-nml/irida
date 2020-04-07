@@ -320,7 +320,6 @@ public class FileUtilities {
 	 * @param outputFile {@link AnalysisOutputFile} The excel file to parse
 	 * @param sheetIndex The index of the sheet to parse
 	 * @return parsed excel file data
-	 * @throws IOException if error enountered while reading file
 	 */
 	public static ExcelData parseExcelFile(AnalysisOutputFile outputFile, int sheetIndex) {
 		try {
