@@ -4,8 +4,7 @@
     <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
     <script th:inline="javascript">
       window.PAGE = {
-        BASE_URL: /*[[@{"/"}]]*/ "/",
-        hasErrors: /*[[${error}]]*/ false
+        BASE_URL: /*[[@{"/"}]]*/ "/"
       };
     </script>
   </head>
