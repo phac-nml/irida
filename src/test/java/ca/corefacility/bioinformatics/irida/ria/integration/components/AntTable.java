@@ -1,6 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -9,12 +14,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Ordering;
 
 /**
  * Generic class to handle all instances of Ant Design Tables.
  */
 public class AntTable {
+	//Dec 31, 1969, 6:00:00 PM || Apr 1, 2020, 5:23:41 AM || Dec 31, 1969, 6:00:00 PM
+	public static String LONG_DATE_FORMAT = "MMM d, yyyy, h:mm:ss aaa";
+
 	@FindBy(css = ".ant-table-content table")
 	WebElement table;
 
@@ -36,8 +45,9 @@ public class AntTable {
 		return rows;
 	}
 
-	public boolean isColumnSorted(String className) {
+	public boolean isColumnSorted(String className, String dateFormat) {
 		List<WebElement> elements = table.findElements(By.className(className));
+
 		/*
 		Needed to add the filter to this step because if you are using the Ant Design
 		fixed columns on the table it renders multiple copies of the cell, but only one
@@ -45,10 +55,21 @@ public class AntTable {
 		 */
 		List<String> labels = elements.stream()
 				.map(WebElement::getText)
-				.filter(i -> i.length() != 0)
+				.filter(i -> !Strings.isNullOrEmpty(i))
 				.collect(Collectors.toList());
-		return Ordering.natural()
-				.isOrdered(labels);
+		if (Strings.isNullOrEmpty(dateFormat)) {
+			return Ordering.natural()
+					.isOrdered(labels);
+		} else {
+			DateFormat sdf = new SimpleDateFormat(dateFormat);
+			sdf.setLenient(false);
+			List<Long> dates = labels.stream()
+					.map(s -> getMillisecondsFromDate(s, sdf))
+					.filter(Objects::nonNull)
+					.collect(Collectors.toList());
+			return Ordering.natural()
+					.isOrdered(dates);
+		}
 	}
 
 	/**
@@ -60,4 +81,13 @@ public class AntTable {
 		table.findElement(By.className(className))
 				.click();
 	}
+
+	private Long getMillisecondsFromDate(String dateStr, DateFormat dateFormat) {
+		try {
+			return (dateFormat.parse(dateStr)).getTime();
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
 }

@@ -1,4 +1,5 @@
 import angular from "angular";
+import "angular-ui-bootstrap";
 import "../../vendor/plugins/jquery/select2";
 
 $("#new-organism-warning").hide();

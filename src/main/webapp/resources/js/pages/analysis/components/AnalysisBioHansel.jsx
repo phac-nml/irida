@@ -10,12 +10,10 @@ import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { grey1 } from "../../../styles/colors";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 
-
 import { TabPaneContent } from "../../../components/tabs";
 import { Error, Success } from "../../../components/icons";
 import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
-
 
 export default function AnalysisBioHansel() {
   const { analysisContext } = useContext(AnalysisContext);
@@ -85,9 +83,7 @@ export default function AnalysisBioHansel() {
       title: i18n("AnalysisBioHansel.qualityControlStatus"),
       desc: bioHanselResults ? (
         bioHanselResults.qc_status === "PASS" ? (
-          <Success
-            message={bioHanselResults.qc_status}
-          />
+          <Success message={bioHanselResults.qc_status} />
         ) : bioHanselResults.qc_status === "FAIL" ? (
           <Error
             message={formatQcMessage(

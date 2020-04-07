@@ -45,7 +45,10 @@ export default function Analysis() {
   const [treeDefault, setTreeDefault] = useState(null);
 
   useEffect(() => {
-    if((analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") && analysisContext.isCompleted) {
+    if (
+      (analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") &&
+      analysisContext.isCompleted
+    ) {
       getNewickTree(analysisContext.analysis.identifier).then(data => {
         if (data.newick !== null) {
           setTreeDefault(true);
@@ -90,7 +93,9 @@ export default function Analysis() {
       ? ANALYSIS.SISTR
       : analysisType === "BIO_HANSEL"
       ? ANALYSIS.BIOHANSEL
-      : ((analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") && treeDefault)
+      : (analysisType === "PHYLOGENOMICS" ||
+          analysisType === "MLST_MENTALIST") &&
+        treeDefault
       ? ANALYSIS.TREE
       : ANALYSIS.OUTPUT
     : analysisContext.isError
@@ -132,8 +137,9 @@ export default function Analysis() {
             </Menu.Item>
           );
         } else if (
-          ((analysisContext.analysisType === "PHYLOGENOMICS" ||
-          analysisContext.analysisType === "MLST_MENTALIST") && treeDefault)
+          (analysisContext.analysisType === "PHYLOGENOMICS" ||
+            analysisContext.analysisType === "MLST_MENTALIST") &&
+          treeDefault
         ) {
           tabLinks.push(
             <Menu.Item key="tree">
@@ -220,8 +226,9 @@ export default function Analysis() {
                   <AnalysisPhylogeneticTree
                     path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
-                      ((analysisType === "PHYLOGENOMICS" ||
-                      analysisType === "MLST_MENTALIST") && treeDefault)
+                      (analysisType === "PHYLOGENOMICS" ||
+                        analysisType === "MLST_MENTALIST") &&
+                      treeDefault
                     }
                     key="tree"
                   />,
@@ -233,11 +240,12 @@ export default function Analysis() {
                     path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
                       (analysisType !== "SISTR_TYPING" &&
-                      analysisType !== "BIO_HANSEL" &&
-                      analysisType !== "PHYLOGENOMICS" &&
-                      analysisType !== "MLST_MENTALIST") ||
+                        analysisType !== "BIO_HANSEL" &&
+                        analysisType !== "PHYLOGENOMICS" &&
+                        analysisType !== "MLST_MENTALIST") ||
                       ((analysisType === "PHYLOGENOMICS" ||
-                      analysisType === "MLST_MENTALIST") && !treeDefault)
+                        analysisType === "MLST_MENTALIST") &&
+                        !treeDefault)
                     }
                     key="output"
                   />
