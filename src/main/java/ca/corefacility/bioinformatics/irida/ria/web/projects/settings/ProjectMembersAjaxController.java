@@ -95,4 +95,10 @@ public class ProjectMembersAjaxController {
 							new Object[] { user.getLabel(), roleString }, locale));
 		}
 	}
+
+	@RequestMapping("/available")
+	public ResponseEntity<List<User>> getAvailableMembersForProject(@PathVariable Long projectId, @RequestParam String query) {
+		Project project = projectService.read(projectId);
+		return ResponseEntity.ok(userService.getUsersAvailableForProject(project, query));
+	}
 }
