@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, Row } from "antd";
 import { IconLocked, IconUser } from "../components/icons/Icons";
@@ -8,9 +8,28 @@ import { blue6 } from "../styles/colors";
 
 const { Item } = Form;
 
+/**
+ * React component to render the login form
+ * @returns {*}
+ * @constructor
+ */
 function LoginForm() {
   const [form] = Form.useForm();
+  const usernameRef = useRef();
 
+  /**
+   * When the component gets added to the page,
+   * focus on the username input.
+   */
+  useEffect(() => {
+    usernameRef.current.focus();
+    usernameRef.current.select();
+  }, []);
+
+  /**
+   * Handler for submitting the login form once all fields are correctly filled out
+   * @returns {*}
+   */
   const onFinish = () => document.getElementById("loginForm").submit();
 
   return (
@@ -30,7 +49,11 @@ function LoginForm() {
           }
         ]}
       >
-        <Input name="username" prefix={<IconUser style={{ color: blue6 }} />} />
+        <Input
+          ref={usernameRef}
+          name="username"
+          prefix={<IconUser style={{ color: blue6 }} />}
+        />
       </Item>
       <Item
         rules={[
@@ -63,6 +86,12 @@ function LoginForm() {
   );
 }
 
+/**
+ * React component to layout the Login Page.
+ * Responsible for displaying any errors that are returned from the server.
+ * @returns {*}
+ * @constructor
+ */
 function LoginPage() {
   return (
     <Row justify="center">
