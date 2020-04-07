@@ -133,7 +133,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 				.addResourceLocations("/resources/");
 		registry.addResourceHandler("/dist/**")
 				.addResourceLocations("/dist/");
-		//service static resources for custom installations
+		//serve static resources for customizing pages from /etc/irida/static
 		registry.addResourceHandler("/static/**")
 				.addResourceLocations("file:/etc/irida/static/");
 	}
