@@ -51,7 +51,18 @@ IRIDA uses a React component as its login form and can be added to any template 
 
 ### Create a custom login form
 
-Login form basic skeleton:
+To create a fully custom login page, you need to include a form that `POST`s to the url `/login`, with two elements:
+1. `username` input
+1. `password` input
+
+If the authorization attempt fails, the server will redirect the `/login?error=true` which can be captured with JavaScript and display an error message to the user.
+
+Please note in the example below the `th:` attributes on the form and other elements, this is from the server templating laguage Thymeleaf and will do the follow:
+* `th:action="@{/login}"` will update the url to use what ever base url the servlet context is using.
+    * For example if the context is `/foobar` the form's action will be updated to be `/foobar/login`
+* `th:text="#{LoginPage.username}"` this is a call the internationalization function of Thymeleaf. The value between the braces is the key to a value in the file `messages_[language].resources`.
+
+For more information of the [Thymeleaf please see their online documentation](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html).
 
 ```html
 <form method="post" th:action="@{/login}">
@@ -70,5 +81,3 @@ Login form basic skeleton:
     </div>
   </form>
 ```
-
-This will successfully log an authorized user into the IRIDA instance.  If the credentials are incorrect, the url will redirect to `/login?error=true` which can be captured with JavaScript and disply an error message to the user.
