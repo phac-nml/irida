@@ -28,14 +28,14 @@ export default function AnalysisExcelPreview({ output }) {
   const [parseError, setParseError] = useState(null);
 
   useEffect(() => {
-    parseExcel(output.analysisSubmissionId, output.filename, currSheetIndex).then(data => {
-      if(!data["data"].parseError) {
-        setExcelHeaders(data["data"].excelHeaders);
-        setExcelRows(data["data"].excelRows);
-        setExcelSheetNames(data["data"].excelSheetNames);
-        setParseError(data["data"].parseError);
+    parseExcel(output.analysisSubmissionId, output.filename, currSheetIndex).then(({data}) => {
+      if(!data.parseError) {
+        setExcelHeaders(data.excelHeaders);
+        setExcelRows(data.excelRows);
+        setExcelSheetNames(data.excelSheetNames);
+        setParseError(data.parseError);
       } else {
-        setParseError(false);
+        setParseError(true);
       }
     });
   }, [currSheetIndex]);
