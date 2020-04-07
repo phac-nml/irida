@@ -55,7 +55,11 @@ Examples:
 
 #### Example of Custom login page
 
-[Source code can be found here.](./custom-login.html.md)
+[Code for a basic custom login page.](./basic-login.html.md)
+
+![Custom Login Page](images/irida-basic-login.png)
+
+[Code for a more involved login page with added CSS.](./custom-login.html.md)
 
 ![Custom Login Page](images/irida-custom-login.png)
 
