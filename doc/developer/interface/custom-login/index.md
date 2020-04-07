@@ -22,6 +22,10 @@ IRIDA uses a React component as its login form and can be added to any template 
  * CSS (`/dist/css/login.bundle.css`) and JS (`/dist/js/login.bundle.js`) files.
  * A `head` > `script` tag with a global `PAGE` variable containing: `BASE_URL: /*[[@{"/"}]]*/ "/"` as an attribute.
  * The div with id `login-root` should be placed on the dom element that you want React to render the login form.
+ 
+#### Adding custom script
+
+Currently, IRIDA only serve's static files (JS and CSS) from the `src/main/webapp/dist/` directory.  If you want to add custom scripting, you can load library resources using a CDN and inline custom scripts and styles directly on the login page.
 
 #### Example
 
