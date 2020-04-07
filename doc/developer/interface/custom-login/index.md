@@ -25,11 +25,11 @@ IRIDA uses a React component as its login form and can be added to any template 
  
 #### Adding custom resources
 
-If you want to add custom images, styles or scripts, you can load library resources using a CDN, or you can add your CSS and JS files into `/etc/irida/static`.  Make sure you add the Thymeleaf tags to the page.
+Images, CSS and JS files can be added into `/etc/irida/static` and then loaded onto the custom login page.  Ensure that the Thymeleaf attributes are added, for example:
 
 Examples:
 
-    * Image: `<img`
+    * Image: `<img th:src="/static/myImage.png" alt="A great picture or logo" >`
     * JS: `<script th:src="/static/myFile.js"></script>`
     * CSS: `<link th:href="/static/myFile.css" />`
 
