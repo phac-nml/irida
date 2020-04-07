@@ -29,9 +29,9 @@ Images, CSS and JS files can be added into `/etc/irida/static` and then loaded o
 
 Examples:
 
-    * Image: `<img th:src="/static/myImage.png" alt="A great picture or logo" >`
-    * JS: `<script th:src="/static/myFile.js"></script>`
-    * CSS: `<link th:href="/static/myFile.css" />`
+    * Image: `<img th:src="@{/static/myImage.png}" alt="A great picture or logo" >`
+    * JS: `<script th:src="@{/static/myFile.js}"></script>`
+    * CSS: `<link th:href="@{/static/myFile.css}" />`
 
 #### Example
 
