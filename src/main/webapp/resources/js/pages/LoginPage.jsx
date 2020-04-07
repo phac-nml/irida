@@ -51,6 +51,7 @@ function LoginForm() {
         ]}
       >
         <Input
+          name="username"
           ref={usernameRef}
           prefix={<IconUser style={{ color: blue6 }} />}
         />
@@ -65,6 +66,7 @@ function LoginForm() {
         ]}
       >
         <Input
+          name="password"
           prefix={<IconLocked style={{ color: blue6 }} />}
           type="password"
         />
