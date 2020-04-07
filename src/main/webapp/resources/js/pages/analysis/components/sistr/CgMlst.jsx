@@ -24,7 +24,10 @@ export default function CgMlst({ sistrResults }) {
       },
       {
         title: i18n("AnalysisSistr.percentMatching"),
-        desc: sistrResults.cgmlst_distance !== null ?`${getPercentage(sistrResults.cgmlst_distance) + ""}%` : ""
+        desc:
+          sistrResults.cgmlst_distance !== null
+            ? `${getPercentage(sistrResults.cgmlst_distance) + ""}%`
+            : ""
       },
       {
         title: i18n("AnalysisSistr.cgmlstSequenceType"),

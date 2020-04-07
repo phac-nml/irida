@@ -1,5 +1,4 @@
 import angular from "angular";
-import "angular-ui-bootstrap";
 import "./modules/cart/irida.cart";
 import "./pages/search/irida.search";
 // Import css
@@ -18,7 +17,7 @@ import { getCartCount } from "./apis/cart/cart";
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";
 
-const deps = ["ui.bootstrap", "irida.cart"];
+const deps = ["irida.cart"];
 
 const app = angular.module("irida", deps);
 

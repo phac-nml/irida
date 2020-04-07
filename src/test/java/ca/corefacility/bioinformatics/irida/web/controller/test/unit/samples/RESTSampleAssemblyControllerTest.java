@@ -1,25 +1,24 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.ui.ModelMap;
+
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
-import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.List;
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 public class RESTSampleAssemblyControllerTest {
 	private RESTSampleAssemblyController controller;
 	private SampleService sampleService;
+	private GenomeAssemblyService genomeAssemblyService;
 
 	GenomeAssemblyFromAnalysis assemblyFromAnalysis;
 	List<SampleGenomeAssemblyJoin> assemblies;
@@ -39,8 +39,9 @@ public class RESTSampleAssemblyControllerTest {
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
+		genomeAssemblyService = mock(GenomeAssemblyService.class);
 
-		controller = new RESTSampleAssemblyController(sampleService);
+		controller = new RESTSampleAssemblyController(sampleService, genomeAssemblyService);
 
 		s1 = new Sample("s1");
 		s1.setId(1L);
@@ -54,7 +55,7 @@ public class RESTSampleAssemblyControllerTest {
 		assemblyFromAnalysis.setId(3L);
 
 		assemblies = Lists.newArrayList(new SampleGenomeAssemblyJoin(s1, assemblyFromAnalysis));
-		when(sampleService.getAssembliesForSample(s1)).thenReturn(assemblies);
+		when(genomeAssemblyService.getAssembliesForSample(s1)).thenReturn(assemblies);
 	}
 
 	@Test
