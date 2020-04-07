@@ -6,6 +6,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="add-generic-sequencing-runs.xml"
              relativeToChangelogFile="true"/>
+    <include file="uploaded-assemblies.xml"
+             relativeToChangelogFile="true"/>
     <include file="add-sequence-file-type.xml"
              relativeToChangelogFile="true"/>
 </databaseChangeLog>
