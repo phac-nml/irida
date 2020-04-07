@@ -23,12 +23,13 @@ IRIDA uses a React component as its login form and can be added to any template 
  * A `head` > `script` tag with a global `PAGE` variable containing: `BASE_URL: /*[[@{"/"}]]*/ "/"` as an attribute.
  * The div with id `login-root` should be placed on the dom element that you want React to render the login form.
  
-#### Adding custom script
+#### Adding custom resources
 
-If you want to add custom styles or scripts, you can load library resources using a CDN, or you can add your CSS and JS files into `/etc/irida/static`.  Make sure you add the Thymeleaf tags to the page.
+If you want to add custom images, styles or scripts, you can load library resources using a CDN, or you can add your CSS and JS files into `/etc/irida/static`.  Make sure you add the Thymeleaf tags to the page.
 
 Examples:
 
+    * Image: `<img`
     * JS: `<script th:src="/static/myFile.js"></script>`
     * CSS: `<link th:href="/static/myFile.css" />`
 
