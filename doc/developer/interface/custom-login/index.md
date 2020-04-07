@@ -25,7 +25,12 @@ IRIDA uses a React component as its login form and can be added to any template 
  
 #### Adding custom script
 
-Currently, IRIDA only serve's static files (JS and CSS) from the `src/main/webapp/dist/` directory.  If you want to add custom scripting, you can load library resources using a CDN and inline custom scripts and styles directly on the login page.
+If you want to add custom styles or scripts, you can load library resources using a CDN, or you can add your CSS and JS files into `/etc/irida/static`.  Make sure you add the Thymeleaf tags to the page.
+
+Examples:
+
+    * JS: `<script th:src="/static/myFile.js"></script>`
+    * CSS: `<link th:href="/static/myFile.css" />`
 
 #### Example
 
