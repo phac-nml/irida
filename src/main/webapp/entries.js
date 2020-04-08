@@ -11,6 +11,7 @@ module.exports = {
     "expose-loader?angular!angular",
     "./resources/js/vendors"
   ],
+  login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
@@ -57,6 +58,7 @@ module.exports = {
     "./resources/js/pages/projects/project-users-groups.js",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
+  sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
@@ -79,5 +81,6 @@ module.exports = {
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  "run-files": "./resources/js/pages/sequence-files/run-files.js"
+  "run-files": "./resources/js/pages/sequence-files/run-files.js",
+  "user-details": "./resources/js/pages/user-details.js"
 };

@@ -24,6 +24,11 @@ Changes
 * [UI]: Added selection for linker script to get assemblies in project/samples page.
 * [Developer]: `bower` completely removed.
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
+* [UI]: Assemblies can now be uploaded through the sample files page.
+* [UI/Developer]: Updated to `Prettier` 2.0.2
+* [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
+* [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
+* [UI/Developer]: New login page with developer ability to override template.
 
 19.09 to 20.01
 --------------
