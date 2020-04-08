@@ -42,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -111,13 +110,12 @@ public class SamplesController extends BaseController {
 	private final UpdateSamplePermission updateSamplePermission;
 
 	private final MessageSource messageSource;
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
 			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
-			MessageSource messageSource, IridaFileStorageFactoryImpl iridaFileStorageFactory) {
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -125,7 +123,6 @@ public class SamplesController extends BaseController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
-		this.iridaFileStorageFactory = iridaFileStorageFactory;
 	}
 
 	/************************************************************************************************
