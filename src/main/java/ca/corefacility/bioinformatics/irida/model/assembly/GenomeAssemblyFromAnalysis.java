@@ -3,21 +3,16 @@ package ca.corefacility.bioinformatics.irida.model.assembly;
 import java.nio.file.Path;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -26,6 +21,7 @@ import com.google.common.collect.ImmutableSet;
 @Entity
 @Table(name = "genome_assembly_analysis")
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -54,6 +50,7 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
 	/**
 	 * Get genome assembly {@link AnalysisOutputFile}.
+	 *
 	 * @return {@link AnalysisOutputFile} for a genome assembly {@link AnalysisSubmission}
 	 */
 	@JsonIgnore
@@ -86,5 +83,16 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 	@Override
 	public Path getFile() {
 		return getAssemblyOutput().getFile();
+	}
+
+	@Override
+	public Long getFileRevisionNumber() {
+		//nothing to change in this type of file, so no revisions
+		return 1L;
+	}
+
+	@Override
+	public void incrementFileRevisionNumber() {
+		//we can't update this file so nothing to increment
 	}
 }

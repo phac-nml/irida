@@ -1,12 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
-import { Button, Checkbox, Modal, Typography } from "antd";
-import { CodeOutlined } from "@ant-design/icons";
+import { Button, Modal, Typography } from "antd";
 import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { BORDER_RADIUS, BORDERED_LIGHT } from "../../../../styles/borders";
 import styled from "styled-components";
+import { IconCode } from "../../../../components/icons/Icons";
 
 const { Paragraph, Text } = Typography;
 
@@ -122,7 +122,7 @@ function Linker() {
       onClick={showModal}
     >
       {/* constant marginRight here to match old styles */}
-      <CodeOutlined style={{ marginRight: 2 }} />
+      <IconCode style={{ marginRight: 2 }} />
       {i18n("project.samples.export.linker")}
     </Button>
   );

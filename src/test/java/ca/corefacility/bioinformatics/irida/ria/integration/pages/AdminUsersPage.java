@@ -26,15 +26,15 @@ public class AdminUsersPage extends AbstractPage {
 	}
 
 	public boolean isTableSortedByUsername() {
-		return table.isColumnSorted("t-username");
+		return table.isColumnSorted("t-username", null);
 	}
 
 	public boolean isTableSortedByModifiedDate() {
-		return table.isColumnSorted("t-modified");
+		return table.isColumnSorted("t-modified", AntTable.LONG_DATE_FORMAT);
 	}
 
 	public void sortTableByUsername() {
-		table.sortFixedColumn("t-username-col");
+		table.sortColumn("t-username-col");
 	}
 
 	public void sortTableByModifiedDate() { table.sortColumn("t-modified-col");}

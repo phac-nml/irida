@@ -31,7 +31,7 @@ public class AdminUsersPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test sorting
 		assertTrue("Table should be sorted by the modified date initially", adminUsersPage.isTableSortedByModifiedDate());
-		assertFalse("Table should not be sorted by username initially", adminUsersPage.isTableSortedByUsername());
+		assertFalse("Table should not be sorted by username", adminUsersPage.isTableSortedByUsername());
 		adminUsersPage.sortTableByUsername();
 		assertTrue("Table should be sorted by username", adminUsersPage.isTableSortedByUsername());
 		adminUsersPage.sortTableByModifiedDate();

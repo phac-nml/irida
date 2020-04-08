@@ -2,13 +2,13 @@
  * This file renders a phylocanvas react component.
  */
 
-import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import PhyloCanvas from 'phylocanvas';
-import {treeTypes} from 'phylocanvas';
-import _keys from 'lodash.keys';
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import PhyloCanvas from "phylocanvas";
+import { treeTypes } from "phylocanvas";
+import _keys from "lodash.keys";
 
-export function PhylocanvasComponent({data, className, style, treeType}) {
+export function PhylocanvasComponent({ data, className, style, treeType }) {
   const [currentTree, setCurrentTree] = useState(null);
 
   /* Creates the (phylocanvas div, loads the tree data, and sets the tree type)
@@ -17,21 +17,22 @@ export function PhylocanvasComponent({data, className, style, treeType}) {
    * selected shape.
    */
   useEffect(() => {
-    let tree = currentTree != null ? currentTree : PhyloCanvas.createTree("phyloCanvasDiv");
+    let tree =
+      currentTree != null
+        ? currentTree
+        : PhyloCanvas.createTree("phyloCanvasDiv");
     tree.load(data);
     tree.setTreeType(treeType);
     setCurrentTree(tree);
   }, [treeType]);
 
   // Renders the phylocanvas tree
-  return (
-    <div id="phyloCanvasDiv" style={style} className={className} />
-  );
+  return <div id="phyloCanvasDiv" style={style} className={className} />;
 }
 
 PhylocanvasComponent.propTypes = {
-    className: PropTypes.string,
-    data: PropTypes.string,
-    style: PropTypes.object,
-    treeType: PropTypes.oneOf(_keys(treeTypes))
-}
+  className: PropTypes.string,
+  data: PropTypes.string,
+  style: PropTypes.object,
+  treeType: PropTypes.oneOf(_keys(treeTypes))
+};

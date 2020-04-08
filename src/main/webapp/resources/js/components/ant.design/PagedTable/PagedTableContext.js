@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import { fetchPageTableUpdate } from "../../../apis/paged-table/paged-table";
 import debounce from "lodash/debounce";
+import pickBy from "lodash/pickBy";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
@@ -96,15 +97,15 @@ function PagedTableProvider({
       sortDirection: state.order || "descend",
       search: state.search,
       filters: state.filters
-    }).then(({ dataSource, total }) =>
+    }).then(({ dataSource, total }) => {
       dispatch({
         type: types.LOADED,
         payload: {
           dataSource,
           total
         }
-      })
-    );
+      });
+    });
   }
 
   /**
@@ -133,7 +134,7 @@ function PagedTableProvider({
         current,
         order,
         column: field,
-        filters
+        filters: pickBy(filters)
       }
     });
   };

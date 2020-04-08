@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { Icon } from "antd";
 import { grey6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
+import { IconLoading } from "./Icons";
 
 /**
  * Stateless UI component for displaying a 'Running' icon
@@ -18,7 +18,7 @@ import { SPACE_XS } from "../../styles/spacing";
 export function Running({ message }) {
   return (
     <span>
-      <Icon type="loading" style={{ marginRight: SPACE_XS, color: grey6 }} />
+      <IconLoading style={{ marginRight: SPACE_XS, color: grey6 }} />
       {message}
     </span>
   );
