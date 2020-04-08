@@ -87,7 +87,7 @@ export function AddMembersButton() {
               {options}
             </Select>
           </Form.Item>
-          <Form.Item label={"Project Role"}>
+          <Form.Item label={i18n("AddMemberButton.modal.role")}>
             <Radio.Group
               style={{ display: "flex" }}
               defaultValue={role}
