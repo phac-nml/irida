@@ -10,9 +10,12 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-
+/**
+ * Component implementation of file utitlities for aws storage
+ */
+@Component
 public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
 

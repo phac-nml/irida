@@ -3,15 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.zip.GZIPInputStream;
-
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-
-import com.azure.storage.blob.models.BlobStorageException;
 
 /**
  * Interface describing methods for performing storage actions

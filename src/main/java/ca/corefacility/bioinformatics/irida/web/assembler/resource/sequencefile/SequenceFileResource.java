@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

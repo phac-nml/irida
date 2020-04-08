@@ -10,9 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * A file that may be stored somewhere on a cloud file system and belongs to a
+ * particular {@link Sample}.
+ */
 @Entity
 @DiscriminatorValue("cloud")
 public class CloudSequenceFile extends SequenceFile implements IridaSequenceFile, IridaThing {

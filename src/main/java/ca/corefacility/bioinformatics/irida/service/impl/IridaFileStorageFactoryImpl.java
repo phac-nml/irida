@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile;
@@ -13,7 +12,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
-@Component
+/**
+ * Service implementation for creating SequenceFiles {@link LocalSequenceFile} and {@link CloudSequenceFile}
+ */
+@Service
 public class IridaFileStorageFactoryImpl {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageFactoryImpl.class);
 	private IridaFileStorageService iridaFileStorageService;

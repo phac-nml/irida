@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip

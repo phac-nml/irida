@@ -10,8 +10,7 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import org.springframework.stereotype.Component;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -19,7 +18,10 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
 
-@Service
+/**
+ * Component implementation of file utitlities for azure storage
+ */
+@Component
 public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
 

@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;

@@ -4,15 +4,11 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SequenceFilePairConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SingleEndSequenceFileConcatenator;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 
 /**
@@ -26,6 +22,7 @@ public class SequencingObjectConcatenatorFactory {
 	 *
 	 * @param type the class to get a concatenator for
 	 * @param <T>  The type this concatenator should act on
+	 * @param iridaFileStorageFactory The file storage factory component
 	 * @return the new {@link SequencingObjectConcatenator}
 	 */
 	@SuppressWarnings("unchecked")
@@ -46,6 +43,7 @@ public class SequencingObjectConcatenatorFactory {
 	 * {@link SequencingObject}s
 	 *
 	 * @param objects the {@link SequencingObject}s to get the concatenator for
+	 * @param iridaFileStorageFactory The file storage factory component
 	 * @return the new {@link SequencingObjectConcatenator}
 	 */
 	public static SequencingObjectConcatenator<? extends SequencingObject> getConcatenator(

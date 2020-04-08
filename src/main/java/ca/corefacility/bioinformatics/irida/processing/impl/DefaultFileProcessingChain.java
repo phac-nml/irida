@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
-import java.nio.file.Files;
 import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;

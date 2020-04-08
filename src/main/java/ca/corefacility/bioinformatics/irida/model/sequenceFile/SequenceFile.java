@@ -102,7 +102,18 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 		optionalProperties = new HashMap<>();
 	}
 
+	/**
+	 * Get the implementation-specific file label.
+	 *
+	 * @return the file label.
+	 */
 	public abstract String getLabel();
+
+	/**
+	 * Get the implementation-specific file size.
+	 *
+	 * @return the file size.
+	 */
 	public abstract String getFileSize();
 
 	/**

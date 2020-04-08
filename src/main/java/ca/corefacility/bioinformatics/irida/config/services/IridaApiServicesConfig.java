@@ -14,8 +14,6 @@ import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SequenceFilePairConcatenator;
-import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SingleEndSequenceFileConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.*;
