@@ -132,10 +132,10 @@ public class IridaApiServicesConfig {
 	@Value("${irida.storage.type}")
 	private String storageType;
 
-	@Value("${azure.container.name}")
+	@Value("${azure.container.name:#{null}}")
 	private String containerName;
 
-	@Value("${azure.account.connection.string}")
+	@Value("${azure.account.connection.string:#{null}}")
 	private String connectionStr;
 
 
