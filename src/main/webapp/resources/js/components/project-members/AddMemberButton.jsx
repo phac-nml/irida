@@ -63,12 +63,12 @@ export function AddMembersButton() {
     <>
       <AddNewButton
         onClick={() => setVisible(true)}
-        text={i18n("project.members.edit.add")}
+        text={i18n("AddMemberButton.label")}
       />
       <Modal
         visible={visible}
         onCancel={() => setVisible(false)}
-        title={">> Add Member to Project"}
+        title={i18n("AddMemberButton.modal.title")}
         onOk={addUserToProject}
       >
         <Form layout="vertical" form={form}>

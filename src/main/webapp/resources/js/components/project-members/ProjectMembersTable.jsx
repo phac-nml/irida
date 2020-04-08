@@ -14,22 +14,22 @@ export function ProjectMembersTable() {
       dataIndex: "name",
       render(text, item) {
         return <a href={setBaseUrl(`/users/${item.id}`)}>{text}</a>;
-      }
+      },
     },
     {
-      title: i18n("project.table.collaborator.role"),
+      title: i18n("ProjectMembersTable.role"),
       dataIndex: "role",
       render(text, item) {
         return <ProjectRoleSelect user={item} />;
-      }
+      },
     },
     {
       title: i18n("ProjectMembersTable.since"),
       dataIndex: "createdDate",
       render(text) {
         return formatInternationalizedDateTime(text);
-      }
-    }
+      },
+    },
   ];
 
   if (window.PAGE.canManage) {
@@ -37,7 +37,7 @@ export function ProjectMembersTable() {
       align: "right",
       render(text, item) {
         return <RemoveMemberButton user={item} updateTable={updateTable} />;
-      }
+      },
     });
   }
 
