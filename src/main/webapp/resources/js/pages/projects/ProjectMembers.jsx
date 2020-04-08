@@ -12,31 +12,20 @@ const { Content } = Layout;
 
 function ProjectMembersPage({ children }) {
   return (
-    <PageHeader
-      avatar={{ icon: <IconMembers /> }}
-      title={i18n("project.settings.page.title.members")}
-      extra={<AddMembersButton />}
-    >
-      <Content>{children}</Content>
-    </PageHeader>
-  );
-}
-
-function WrappedMembersTable() {
-  return (
     <PagedTableProvider
       url={setBaseUrl(`/ajax/projects/${window.project.id}/members`)}
     >
-      <ProjectMembersTable />
+      <PageHeader
+        avatar={{ icon: <IconMembers /> }}
+        title={i18n("project.settings.page.title.members")}
+        extra={<AddMembersButton />}
+      >
+        <Content>
+          <ProjectMembersTable />
+        </Content>
+      </PageHeader>
     </PagedTableProvider>
   );
 }
 
-render(
-  <ProjectMembersPage
-    path={setBaseUrl(`projects/${window.project.id}/settings/members`)}
-  >
-    <WrappedMembersTable />
-  </ProjectMembersPage>,
-  document.querySelector("#users-root")
-);
+render(<ProjectMembersPage />, document.querySelector("#users-root"));

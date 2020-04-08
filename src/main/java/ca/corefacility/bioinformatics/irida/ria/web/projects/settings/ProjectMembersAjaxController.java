@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectUserTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.NewProjectMemberRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -100,5 +101,16 @@ public class ProjectMembersAjaxController {
 	public ResponseEntity<List<User>> getAvailableMembersForProject(@PathVariable Long projectId, @RequestParam String query) {
 		Project project = projectService.read(projectId);
 		return ResponseEntity.ok(userService.getUsersAvailableForProject(project, query));
+	}
+
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public ResponseEntity<String> addMemberToProject(@PathVariable Long projectId,
+			@RequestBody NewProjectMemberRequest request, Locale locale) {
+		Project project = projectService.read(projectId);
+		User user = userService.read(request.getId());
+		ProjectRole role = ProjectRole.fromString(request.getRole());
+		projectService.addUserToProject(project, user, role);
+		return ResponseEntity.ok(messageSource.getMessage("project.members.add.success",
+				new Object[] { user.getLabel(), project.getLabel() }, locale));
 	}
 }

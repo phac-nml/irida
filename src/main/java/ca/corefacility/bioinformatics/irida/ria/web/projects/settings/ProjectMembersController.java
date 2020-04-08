@@ -115,33 +115,6 @@ public class ProjectMembersController {
 	}
 
 	/**
-	 * Add a member to a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param memberId
-	 *            The ID of the user
-	 * @param projectRole
-	 *            The role for the user on the project
-	 * @param locale
-	 *            the reported locale of the browser
-	 * @return map for showing success message.
-	 */
-	@RequestMapping(value = "/{projectId}/settings/members", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long memberId,
-			@RequestParam String projectRole, Locale locale) {
-		logger.trace("Adding user " + memberId + " to project " + projectId);
-		Project project = projectService.read(projectId);
-		User user = userService.read(memberId);
-		ProjectRole role = ProjectRole.fromString(projectRole);
-
-		projectService.addUserToProject(project, user, role);
-		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
-				new Object[] { user.getLabel(), project.getLabel() }, locale));
-	}
-
-	/**
 	 * Add a group to a project
 	 * 
 	 * @param projectId
@@ -166,24 +139,6 @@ public class ProjectMembersController {
 		projectService.addUserGroupToProject(project, userGroup, role);
 		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
 				new Object[] { userGroup.getLabel(), project.getLabel() }, locale));
-	}
-
-	/**
-	 * Search the list of users who could be added to a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param term
-	 *            A search term
-	 * @return A {@code Map<Long,String>} of the userID and user label
-	 */
-	@RequestMapping("/{projectId}/settings/ajax/availablemembers")
-	@ResponseBody
-	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
-		final Project project = projectService.read(projectId);
-		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project, term);
-
-		return usersAvailableForProject;
 	}
 
 	/**
@@ -255,30 +210,6 @@ public class ProjectMembersController {
 			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
 					new Object[] { userGroup.getLabel(), roleName }, locale));
 		}
-	}
-
-	/**
-	 * Get a page of users on the project for display in a DataTable.
-	 *
-	 * @param params
-	 *            the datatables parameters for this DataTable
-	 * @param projectId
-	 *            the id of the project we're looking at
-	 * @return a {@link DataTablesResponseModel} of users on the project
-	 */
-	@RequestMapping(value = "/{projectId}/settings/ajax/members")
-	@ResponseBody
-	public DataTablesResponse getProjectUserMembers(@DataTablesRequest DataTablesParams params,
-			final @PathVariable Long projectId) {
-		final Project project = projectService.read(projectId);
-
-		final Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project,
-				params.getSearchValue(), params.getCurrentPage(), params.getLength(), params.getSort());
-		List<DataTablesResponseModel> modelList = new ArrayList<>();
-		for (Join<Project, User> join : usersForProject) {
-			modelList.add(new DTProjectMember((ProjectUserJoin) join));
-		}
-		return new DataTablesResponse(params, usersForProject, modelList);
 	}
 
 	/**

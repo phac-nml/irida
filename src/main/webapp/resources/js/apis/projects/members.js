@@ -16,5 +16,14 @@ export async function updateUserRoleOnProject({ id, role }) {
 export async function getAvailableUsersForProject(query) {
   return await axios
     .get(`${BASE}/available?query=${query}`)
-    .then(({ data }) => console.log(data));
+    .then(({ data }) => data || []);
+}
+
+export async function addMemberToProject({ id, role }) {
+  return await axios
+    .post(`${BASE}/add`, {
+      id,
+      role,
+    })
+    .then(({ data }) => data);
 }

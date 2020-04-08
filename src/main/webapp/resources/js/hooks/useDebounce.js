@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Simple debounce function to be used to slow ajax requests from inputs.
+ * @param value
+ * @param delay
+ * @returns {*}
+ */
 export function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
 

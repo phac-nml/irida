@@ -62,45 +62,4 @@ public class ProjectMembersControllerTest {
 		
 		assertEquals("Should be the memebers subpage", model.get("page"), "members");
 	}
-
-	@Test
-	public void testAddProjectMember() {
-		Long projectId = 1L;
-		Long userId = 2L;
-		Project project = new Project();
-		User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
-		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-
-		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.read(userId)).thenReturn(user);
-		when(messageSource.getMessage(any(), any(), any())).thenReturn("My random string");
-
-		controller.addProjectMember(projectId, userId, projectRole.toString(), Locale.US);
-
-		verify(projectService).read(projectId);
-		verify(userService).read(userId);
-		verify(projectService).addUserToProject(project, user, projectRole);
-	}
-
-	@Test
-	public void testGetUsersAvailableForProject() {
-		String term = "tom";
-		Long projectId = 1L;
-		Long userId = 2L;
-		Project project = new Project();
-		project.setId(projectId);
-		List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
-
-		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.getUsersAvailableForProject(project, term)).thenReturn(users);
-
-		Collection<User> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
-
-		assertFalse(usersAvailableForProject.isEmpty());
-		assertEquals("should only have 1 user.", 1, usersAvailableForProject.size());
-		assertEquals("should have the specified user on project.", userId, usersAvailableForProject.iterator().next().getId());
-
-		verify(projectService).read(projectId);
-		verify(userService).getUsersAvailableForProject(project, term);
-	}
 }
