@@ -1,5 +1,5 @@
 import { AddNewButton } from "../Buttons/AddNewButton";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Form, Modal, notification, Radio, Select, Typography } from "antd";
 import {
   addMemberToProject,
@@ -13,6 +13,7 @@ const { Option } = Select;
 const { Text } = Typography;
 
 export function AddMembersButton() {
+  const userRef = useRef();
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
     PROJECT_OWNER: i18n("projectRole.PROJECT_OWNER"),
@@ -31,6 +32,12 @@ export function AddMembersButton() {
     form,
     visible,
   });
+
+  useEffect(() => {
+    if (visible) {
+      setTimeout(() => userRef.current.focus(), 100);
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (debouncedQuery) {
@@ -67,15 +74,18 @@ export function AddMembersButton() {
       />
       <Modal
         visible={visible}
+        okButtonProps={{ disabled: typeof userId === "undefined" }}
         onCancel={() => setVisible(false)}
         title={i18n("AddMemberButton.modal.title")}
         onOk={addUserToProject}
       >
         <Form layout="vertical" form={form}>
           <Form.Item
-            label={"Search user by first name, last name, or username"}
+            label={i18n("AddMemberButton.modal.user-label")}
+            help={i18n("AddMemberButton.modal.user-help")}
           >
             <Select
+              ref={userRef}
               showSearch
               notFoundContent={null}
               onSearch={setQuery}

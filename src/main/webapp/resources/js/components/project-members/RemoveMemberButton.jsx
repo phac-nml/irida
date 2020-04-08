@@ -7,7 +7,7 @@ import { IconRemove } from "../icons/Icons";
 export function RemoveMemberButton({ user, updateTable }) {
   const [loading, setLoading] = useState(false);
 
-  const removeSuccess = message => {
+  const removeSuccess = (message) => {
     if (user.id !== window.PAGE.user) {
       notification.success({ message });
       updateTable();
@@ -23,9 +23,9 @@ export function RemoveMemberButton({ user, updateTable }) {
     setLoading(true);
     removeUserFromProject(user.id)
       .then(removeSuccess)
-      .catch(error =>
+      .catch((error) =>
         notification.error({
-          message: error.response.data
+          message: error.response.data,
         })
       )
       .finally(() => setLoading(false));
@@ -40,6 +40,7 @@ export function RemoveMemberButton({ user, updateTable }) {
       <Tooltip title={i18n("RemoveMemberButton.tooltip")} placement="left">
         <Button
           icon={<IconRemove />}
+          size="small"
           shape="circle-outline"
           loading={loading}
         />
