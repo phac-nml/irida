@@ -21,20 +21,35 @@ public class IridaFileStorageFactoryImpl {
 	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
-	public IridaFileStorageFactoryImpl(IridaFileStorageService iridaFileStorageService){
+	public IridaFileStorageFactoryImpl(IridaFileStorageService iridaFileStorageService) {
 		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
+	/**
+	 * Creates a {@link LocalSequenceFile} or {@link CloudSequenceFile} depending
+	 * on the storage type.
+	 *
+	 * @param file The path to the file for which to create an object for
+	 * @return a {@link LocalSequenceFile} or {@link CloudSequenceFile} as
+	 * a {@link SequenceFile}
+	 */
 	public SequenceFile createSequenceFile(Path file) {
-		if(iridaFileStorageService.storageTypeIsLocal()) {
+		if (iridaFileStorageService.storageTypeIsLocal()) {
 			return new LocalSequenceFile(file);
 		} else {
 			return new CloudSequenceFile(file);
 		}
 	}
 
-	public SequenceFile createEmptySequenceFile(){
-		if(iridaFileStorageService.storageTypeIsLocal()) {
+	/**
+	 * Creates an empty {@link LocalSequenceFile} or {@link CloudSequenceFile} depending
+	 * on the storage type.
+	 *
+	 * @return an empty {@link LocalSequenceFile} or {@link CloudSequenceFile} object as
+	 * a {@link SequenceFile}
+	 */
+	public SequenceFile createEmptySequenceFile() {
+		if (iridaFileStorageService.storageTypeIsLocal()) {
 			return new LocalSequenceFile();
 
 		} else {

@@ -69,10 +69,31 @@ public interface IridaFileStorageService {
 	 */
 	public void downloadFiles();
 
+	/**
+	 * Checks if file exists
+	 *
+	 * @param file The path to the file
+	 * @return true if file exists otherwise false
+	 *
+	 */
 	public boolean fileExists(Path file);
 
+	/**
+	 * Gets the file inputstream
+	 *
+	 * @param file The path to the file
+	 * @return file inputstream
+	 *
+	 */
 	public InputStream getFileInputStream(Path file);
 
+	/**
+	 * Checks if file is gzipped
+	 *
+	 * @param file The path to the file
+	 * @return true if file is gzipped otherwise false
+	 *
+	 */
 	public boolean isGzipped(Path file) throws IOException;
 
 }
