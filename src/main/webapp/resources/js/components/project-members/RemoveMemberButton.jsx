@@ -40,7 +40,6 @@ export function RemoveMemberButton({ user, updateTable }) {
       <Tooltip title={i18n("RemoveMemberButton.tooltip")} placement="left">
         <Button
           icon={<IconRemove />}
-          size="small"
           shape="circle-outline"
           loading={loading}
         />

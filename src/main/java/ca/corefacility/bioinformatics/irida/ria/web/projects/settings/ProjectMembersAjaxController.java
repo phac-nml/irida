@@ -67,8 +67,9 @@ public class ProjectMembersAjaxController {
 		User user = userService.read(id);
 		try {
 			projectService.removeUserFromProject(project, user);
-			return ResponseEntity.ok(messageSource.getMessage("server.RemoveMemberButton.success",
-					new Object[] { user.getUsername() }, locale));
+			return ResponseEntity.ok(
+					messageSource.getMessage("server.RemoveMemberButton.success", new Object[] { user.getUsername() },
+							locale));
 		} catch (EntityNotFoundException | ProjectWithoutOwnerException e) {
 			logger.error("Error removing user id " + id + " from project " + projectId + ": " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

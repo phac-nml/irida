@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +17,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Controller for handling all ajax requests on the Projects listing page.
@@ -23,13 +29,17 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @RestController
 @RequestMapping("/ajax/projects")
 public class ProjectsAjaxController {
-	private ProjectService projectService;
-	private SampleService sampleService;
+	private final ProjectService projectService;
+	private final SampleService sampleService;
+	private final MessageSource messageSource;
+
+	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
 
 	@Autowired
-	public ProjectsAjaxController(ProjectService projectService, SampleService sampleService) {
+	public ProjectsAjaxController(ProjectService projectService, SampleService sampleService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -55,5 +65,12 @@ public class ProjectsAjaxController {
 				.map(p -> new ProjectModel(p, sampleService.getNumberOfSamplesForProject(p)))
 				.collect(Collectors.toList());
 		return new TableResponse(projects, page.getTotalElements());
+	}
+
+	@RequestMapping("/roles")
+	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
+		return ResponseEntity.ok(PROJECT_ROLES.stream()
+				.map(role -> new Role(role, messageSource.getMessage("projectRole." + role, new Object[] {}, locale)))
+				.collect(Collectors.toList()));
 	}
 }

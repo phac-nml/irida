@@ -15,6 +15,7 @@ import {
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 import { PagedTableContext } from "../ant.design/PagedTable";
+import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -32,15 +33,11 @@ export function AddMembersButton() {
   to it when the window opens.
    */
   const userRef = useRef();
-  const ROLES = {
-    PROJECT_USER: i18n("projectRole.PROJECT_USER"),
-    PROJECT_OWNER: i18n("projectRole.PROJECT_OWNER"),
-  };
-
+  const { roles } = useContext(ProjectRolesContext);
   const { updateTable } = useContext(PagedTableContext);
 
   const [userId, setUserId] = useState();
-  const [role, setRole] = useState(Object.keys(ROLES)[0]);
+  const [role, setRole] = useState("PROJECT_USER");
   const [visible, setVisible] = useState(false);
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 350);
@@ -100,6 +97,7 @@ export function AddMembersButton() {
           <Form.Item
             label={i18n("AddMemberButton.modal.user-label")}
             help={i18n("AddMemberButton.modal.user-help")}
+            name="user"
           >
             <Select
               ref={userRef}
@@ -114,15 +112,15 @@ export function AddMembersButton() {
               {options}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("AddMemberButton.modal.role")}>
+          <Form.Item label={i18n("AddMemberButton.modal.role")} name="role">
             <Radio.Group
               style={{ display: "flex" }}
               defaultValue={role}
               onChange={(e) => setRole(e.target.value)}
             >
-              {Object.keys(ROLES).map((role) => (
-                <Radio.Button key={role} value={role}>
-                  {ROLES[role]}
+              {roles.map((role) => (
+                <Radio.Button key={role.value} value={role.value}>
+                  {role.label}
                 </Radio.Button>
               ))}
             </Radio.Group>
