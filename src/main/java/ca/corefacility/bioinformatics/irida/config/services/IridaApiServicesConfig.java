@@ -131,7 +131,7 @@ public class IridaApiServicesConfig {
 	@Value("${locales.enabled}")
 	private String availableLocales;
 
-	@Value("${irida.storage.type}")
+	@Value("${irida.storage.type:local}")
 	private String storageType;
 
 	@Value("${azure.container.name}")

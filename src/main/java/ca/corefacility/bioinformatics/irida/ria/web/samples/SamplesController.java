@@ -589,53 +589,6 @@ public class SamplesController extends BaseController {
 		return "redirect:" + redirectUrl;
 	}
 
-	/**
-	 * Create a {@link SequenceFile} and add it to a {@link Sample}
-	 *
-	 * @param file
-	 *            {@link MultipartFile}
-	 * @param sample
-	 *            {@link Sample} to add the file to.
-	 * @throws IOException
-	 */
-	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
-		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
-	}
-
-	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
-	 * to a {@link Sample}
-	 * 
-	 * @param pair
-	 *            {@link List} of {@link MultipartFile}
-	 * @param sample
-	 *            {@link Sample} to add the pair to.
-	 * @throws IOException
-	 */
-	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = createSequenceFile(pair.get(0));
-		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
-	}
-
-	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
-	 *
-	 * @param file
-	 *            {@link MultipartFile} sequence file uploaded.
-	 *
-	 * @return {@link SequenceFile}
-	 * @throws IOException
-	 *             Exception thrown if there is an error handling the file.
-	 */
-	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		file.transferTo(target.toFile());
-		return iridaFileStorageFactory.createSequenceFile(target);
-	}
 
 	/**
 	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the
