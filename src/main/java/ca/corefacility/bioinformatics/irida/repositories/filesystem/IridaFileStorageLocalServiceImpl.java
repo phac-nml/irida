@@ -93,7 +93,6 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 	/**
 	 * {@inheritDoc}
 	 */
-
 	public boolean storageTypeIsLocal(){
 		return true;
 	}
