@@ -1,5 +1,5 @@
 import { AddNewButton } from "../Buttons/AddNewButton";
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Form, Modal, notification, Radio, Select, Typography } from "antd";
 import {
   addMemberToProject,
@@ -12,7 +12,18 @@ import { PagedTableContext } from "../ant.design/PagedTable";
 const { Option } = Select;
 const { Text } = Typography;
 
+/**
+ * React component that adds a button to open a modal to add a new member
+ * to a project.  User can search for a user but first name, last name or
+ * username, and select the project role for the user.
+ * @returns {*}
+ * @constructor
+ */
 export function AddMembersButton() {
+  /*
+  Required a reference to the user select input so that focus can be set
+  to it when the window opens.
+   */
   const userRef = useRef();
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
