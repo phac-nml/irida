@@ -27,6 +27,7 @@ Changes
 * [UI/Developer]: Updated to `Prettier` 2.0.2
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
 * [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
+* [UI/Developer]: New login page with developer ability to override template.
 
 19.09 to 20.01
 --------------

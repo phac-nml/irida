@@ -40,7 +40,8 @@ import {
   SyncOutlined,
   TableOutlined,
   TeamOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -113,6 +114,8 @@ export const IconPlusCircle = ({ ...props }) => (
 
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
 
+export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
+
 export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
@@ -153,6 +156,8 @@ export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
 
 export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
+export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
+
 /*
 File Type Icons
  */
@@ -160,8 +165,6 @@ File Type Icons
 export const IconFileExcel = ({ ...props }) => <FileExcelOutlined {...props} />;
 
 export const IconFile = ({ ...props }) => <FileOutlined {...props} />;
-
-export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
 
 /*
 Menu Icons
