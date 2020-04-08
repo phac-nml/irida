@@ -21,11 +21,8 @@ public class SequenceFileResource {
 
 	private SequenceFile resource;
 
-	@Autowired
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	public SequenceFileResource() {
-		resource = iridaFileStorageFactory.createEmptySequenceFile();
 	}
 
 	public SequenceFileResource(SequenceFile sequenceFile) {

@@ -1,13 +1,20 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,6 +23,9 @@ import java.nio.file.Path;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { IridaApiServicesConfig.class })
+@ActiveProfiles("it")
 public class SequenceFilePairConcatenatorTest {
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
@@ -23,9 +33,12 @@ public class SequenceFilePairConcatenatorTest {
 
 	private SequenceFilePairConcatenator concat;
 
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+
 	@Before
 	public void setUp() {
-		concat = new SequenceFilePairConcatenator();
+		concat = new SequenceFilePairConcatenator(iridaFileStorageFactory);
 	}
 
 	@Test

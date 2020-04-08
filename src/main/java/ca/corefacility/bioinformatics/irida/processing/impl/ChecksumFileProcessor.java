@@ -27,13 +27,12 @@ public class ChecksumFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(ChecksumFileProcessor.class);
 
 	private SequenceFileRepository fileRepository;
-
-	@Autowired
 	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
-	public ChecksumFileProcessor(SequenceFileRepository fileRepository) {
+	public ChecksumFileProcessor(SequenceFileRepository fileRepository, IridaFileStorageService iridaFileStorageService) {
 		this.fileRepository = fileRepository;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**

@@ -11,15 +11,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -33,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSa
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -46,6 +53,9 @@ import static org.mockito.Mockito.*;
 
 /**
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { IridaApiServicesConfig.class })
+@ActiveProfiles("it")
 public class SamplesControllerTest {
 
 	// Services
@@ -59,6 +69,9 @@ public class SamplesControllerTest {
 	private GenomeAssemblyService genomeAssemblyService;
 	private MessageSource messageSource;
 
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
@@ -70,7 +83,7 @@ public class SamplesControllerTest {
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
-				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource);
+				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource, iridaFileStorageFactory);
 	}
 
 	// ************************************************************************************************

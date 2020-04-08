@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -11,10 +12,16 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceCo
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.SequencingObjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.validation.Validator;
 import java.io.IOException;
@@ -22,6 +29,9 @@ import java.io.IOException;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { IridaApiServicesConfig.class })
+@ActiveProfiles("it")
 public class SequencingObjectServiceTest {
 
 	SequencingObjectService service;
@@ -30,6 +40,9 @@ public class SequencingObjectServiceTest {
 	SampleSequencingObjectJoinRepository ssoRepository;
 	SequenceConcatenationRepository concatenationRepository;
 	Validator validator;
+
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	@Before
 	public void setUp() {
@@ -40,7 +53,7 @@ public class SequencingObjectServiceTest {
 		concatenationRepository = mock(SequenceConcatenationRepository.class);
 
 		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository,
-				concatenationRepository, validator);
+				concatenationRepository, validator, iridaFileStorageFactory);
 	}
 
 	@Test

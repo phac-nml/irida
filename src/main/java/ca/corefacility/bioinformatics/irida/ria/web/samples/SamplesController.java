@@ -113,15 +113,13 @@ public class SamplesController extends BaseController {
 	private final UpdateSamplePermission updateSamplePermission;
 
 	private final MessageSource messageSource;
-
-	@Autowired
 	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
 			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
-			MessageSource messageSource) {
+			MessageSource messageSource, IridaFileStorageFactoryImpl iridaFileStorageFactory) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -129,6 +127,7 @@ public class SamplesController extends BaseController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
+		this.iridaFileStorageFactory = iridaFileStorageFactory;
 	}
 
 	/************************************************************************************************

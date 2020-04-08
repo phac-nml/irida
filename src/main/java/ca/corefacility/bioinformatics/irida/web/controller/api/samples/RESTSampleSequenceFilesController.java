@@ -135,8 +135,6 @@ public class RESTSampleSequenceFilesController {
 
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
-
-	@Autowired
 	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	protected RESTSampleSequenceFilesController() {
@@ -144,11 +142,12 @@ public class RESTSampleSequenceFilesController {
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
-			SequencingObjectService sequencingObjectService, AnalysisService analysisService) {
+			SequencingObjectService sequencingObjectService, AnalysisService analysisService, IridaFileStorageFactoryImpl iridaFileStorageFactory) {
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysisService = analysisService;
+		this.iridaFileStorageFactory = iridaFileStorageFactory;
 	}
 
 	/**

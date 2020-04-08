@@ -13,16 +13,19 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link SequencingObjectConcatenator} for {@link SequenceFilePair}s
  */
+@Component
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
-	@Autowired
 	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
-	public SequenceFilePairConcatenator() {
+	@Autowired
+	public SequenceFilePairConcatenator(IridaFileStorageFactoryImpl iridaFileStorageFactory) {
+		this.iridaFileStorageFactory = iridaFileStorageFactory;
 	}
 
 	/**

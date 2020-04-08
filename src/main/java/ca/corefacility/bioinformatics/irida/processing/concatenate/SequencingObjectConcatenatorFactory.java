@@ -4,11 +4,16 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SequenceFilePairConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SingleEndSequenceFileConcatenator;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 
 /**
  * Factory class for returning an instance of
@@ -24,13 +29,13 @@ public class SequencingObjectConcatenatorFactory {
 	 * @return the new {@link SequencingObjectConcatenator}
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends SequencingObject> SequencingObjectConcatenator<T> getConcatenator(Class<T> type) {
+	public static <T extends SequencingObject> SequencingObjectConcatenator<T> getConcatenator(Class<T> type, IridaFileStorageFactoryImpl iridaFileStorageFactory) {
 
 		// return the concatenator for the class
 		if (type.equals(SingleEndSequenceFile.class)) {
-			return (SequencingObjectConcatenator<T>) new SingleEndSequenceFileConcatenator();
+			return (SequencingObjectConcatenator<T>) new SingleEndSequenceFileConcatenator(iridaFileStorageFactory);
 		} else if (type.equals(SequenceFilePair.class)) {
-			return (SequencingObjectConcatenator<T>) new SequenceFilePairConcatenator();
+			return (SequencingObjectConcatenator<T>) new SequenceFilePairConcatenator(iridaFileStorageFactory);
 		} else {
 			throw new IllegalArgumentException("No concatenator exists for type " + type);
 		}
@@ -44,7 +49,7 @@ public class SequencingObjectConcatenatorFactory {
 	 * @return the new {@link SequencingObjectConcatenator}
 	 */
 	public static SequencingObjectConcatenator<? extends SequencingObject> getConcatenator(
-			Collection<? extends SequencingObject> objects) {
+			Collection<? extends SequencingObject> objects, IridaFileStorageFactoryImpl iridaFileStorageFactory) {
 
 		// get all the classes for the objects
 		Set<?> types = objects.stream().map(Object::getClass).collect(Collectors.toSet());
@@ -58,6 +63,6 @@ public class SequencingObjectConcatenatorFactory {
 		@SuppressWarnings("unchecked")
 		Class<? extends SequencingObject> type = (Class<? extends SequencingObject>) types.iterator().next();
 
-		return getConcatenator(type);
+		return getConcatenator(type, iridaFileStorageFactory);
 	}
 }

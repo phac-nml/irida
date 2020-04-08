@@ -16,15 +16,21 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
@@ -43,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -54,6 +61,9 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFac
 /**
  * Unit tests for {@link RESTSampleSequenceFilesController}.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { IridaApiServicesConfig.class })
+@ActiveProfiles("it")
 public class SampleSequenceFilesControllerTest {
 	private RESTSampleSequenceFilesController controller;
 	private SampleService sampleService;
@@ -61,6 +71,9 @@ public class SampleSequenceFilesControllerTest {
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
 	private SequencingRun sequencingRun;
+
+	@Autowired
+	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
 
 	@Before
 	public void setUp() {
@@ -70,7 +83,7 @@ public class SampleSequenceFilesControllerTest {
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
 
-		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
+		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService, iridaFileStorageFactory);
 	}
 
 	@Test
@@ -232,7 +245,9 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFileResource resource = new SequenceFileResource();
+		SequenceFile emptySequenceFile = iridaFileStorageFactory.createEmptySequenceFile();
+
+		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
 		resource.setMiseqRunId(6L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -282,7 +297,9 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFileResource resource = new SequenceFileResource();
+		SequenceFile emptySequenceFile = iridaFileStorageFactory.createEmptySequenceFile();
+
+		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -306,7 +323,8 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFileResource resource = new SequenceFileResource();
+		SequenceFile emptySequenceFile = iridaFileStorageFactory.createEmptySequenceFile();
+		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -342,8 +360,11 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFileResource resource1 = new SequenceFileResource();
-		SequenceFileResource resource2 = new SequenceFileResource();
+		SequenceFile emptySequenceFile1 = iridaFileStorageFactory.createEmptySequenceFile();
+		SequenceFile emptySequenceFile2 = iridaFileStorageFactory.createEmptySequenceFile();
+
+		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
+		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
 		resource1.setMiseqRunId(7L);
 		resource2.setMiseqRunId(7L);
 		Path f1 = Files.createTempFile(null, null);
@@ -416,8 +437,11 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFileResource resource1 = new SequenceFileResource();
-		SequenceFileResource resource2 = new SequenceFileResource();
+		SequenceFile emptySequenceFile1 = iridaFileStorageFactory.createEmptySequenceFile();
+		SequenceFile emptySequenceFile2 = iridaFileStorageFactory.createEmptySequenceFile();
+
+		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
+		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
 		resource1.setMiseqRunId(1L);
 		resource2.setMiseqRunId(2L);
 		Path f1 = Files.createTempFile(null, null);
@@ -442,8 +466,11 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFileResource resource1 = new SequenceFileResource();
-		SequenceFileResource resource2 = new SequenceFileResource();
+		SequenceFile emptySequenceFile1 = iridaFileStorageFactory.createEmptySequenceFile();
+		SequenceFile emptySequenceFile2 = iridaFileStorageFactory.createEmptySequenceFile();
+
+		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
+		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
 		resource1.setMiseqRunId(4L);
 		resource2.setMiseqRunId(4L);
 		Path f1 = Files.createTempFile(null, null);
@@ -472,8 +499,11 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFileResource resource1 = new SequenceFileResource();
-		SequenceFileResource resource2 = new SequenceFileResource();
+		SequenceFile emptySequenceFile1 = iridaFileStorageFactory.createEmptySequenceFile();
+		SequenceFile emptySequenceFile2 = iridaFileStorageFactory.createEmptySequenceFile();
+
+		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
+		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
 		resource1.setMiseqRunId(4L);
 		resource2.setMiseqRunId(4L);
 		Path f1 = Files.createTempFile(null, null);

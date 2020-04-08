@@ -42,12 +42,12 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
 
-	@Autowired
 	private IridaFileStorageService iridaFileStorageService;
 
-	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
+	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory, final IridaFileStorageService iridaFileStorageService) {
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
