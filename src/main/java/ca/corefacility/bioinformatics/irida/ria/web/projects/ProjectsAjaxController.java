@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
-import ca.corefacility.bioinformatics.irida.ria.web.services.ProjectsService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 
 /**
  * Controller for handling all ajax requests on the Projects listing page.
@@ -21,12 +21,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.ProjectsService;
 @RestController
 @RequestMapping("/ajax/projects")
 public class ProjectsAjaxController {
-	private final ProjectsService projectsService;
+	private final UIProjectsService UIProjectsService;
 
 
 	@Autowired
-	public ProjectsAjaxController(ProjectsService projectsService) {
-		this.projectsService = projectsService;
+	public ProjectsAjaxController(UIProjectsService UIProjectsService) {
+		this.UIProjectsService = UIProjectsService;
 	}
 
 	/**
@@ -39,11 +39,17 @@ public class ProjectsAjaxController {
 	@RequestMapping
 	public ResponseEntity<TableResponse> getPagedProjectsForUser(@RequestBody TableRequest tableRequest,
 			@RequestParam Boolean admin) {
-		return ResponseEntity.ok(projectsService.getPagedProjects(tableRequest, admin));
+		return ResponseEntity.ok(UIProjectsService.getPagedProjects(tableRequest, admin));
 	}
 
+	/**
+	 * Get a list of all roles available on a project
+	 *
+	 * @param locale - {@link Locale} of the current user
+	 * @return list of roles and their internationalized strings
+	 */
 	@RequestMapping("/roles")
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
-		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
+		return ResponseEntity.ok(UIProjectsService.getProjectRoles(locale));
 	}
 }
