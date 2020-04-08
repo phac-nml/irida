@@ -1,8 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto;
 
+/**
+ * Represents a {@link ca.corefacility.bioinformatics.irida.model.enums.ProjectRole} in the interface,
+ * including it's translation.
+ */
 public class Role {
-	private String value;
-	private String label;
+	/*
+	The enum value of the ProjectRole
+	 */
+	private final String value;
+
+	/*
+	The internationalized label
+	 */
+	private final String label;
 
 	public Role(String value, String label) {
 		this.value = value;
