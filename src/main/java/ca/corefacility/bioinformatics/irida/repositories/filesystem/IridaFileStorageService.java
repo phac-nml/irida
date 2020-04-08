@@ -92,6 +92,7 @@ public interface IridaFileStorageService {
 	 *
 	 * @param file The path to the file
 	 * @return true if file is gzipped otherwise false
+	 * @throws {@link IOException} if file can't be read
 	 *
 	 */
 	public boolean isGzipped(Path file) throws IOException;

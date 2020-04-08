@@ -62,6 +62,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *                               analysis).
 	 * @param sequenceFileRepository Repository for storing sequence files
 	 * @param outputFileRepository   Repository for storing analysis output files
+	 * @param iridaFileStorageService The irida file storage service
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
