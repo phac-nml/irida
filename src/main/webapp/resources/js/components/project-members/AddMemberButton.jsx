@@ -1,6 +1,13 @@
-import { AddNewButton } from "../Buttons/AddNewButton";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Form, Modal, notification, Radio, Select, Typography } from "antd";
+import {
+  Button,
+  Form,
+  Modal,
+  notification,
+  Radio,
+  Select,
+  Typography,
+} from "antd";
 import {
   addMemberToProject,
   getAvailableUsersForProject,
@@ -79,10 +86,9 @@ export function AddMembersButton() {
 
   return (
     <>
-      <AddNewButton
-        onClick={() => setVisible(true)}
-        text={i18n("AddMemberButton.label")}
-      />
+      <Button onClick={() => setVisible(true)}>
+        {i18n("AddMemberButton.label")}
+      </Button>
       <Modal
         visible={visible}
         okButtonProps={{ disabled: typeof userId === "undefined" }}

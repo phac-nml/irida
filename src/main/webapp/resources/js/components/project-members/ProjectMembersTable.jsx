@@ -4,6 +4,7 @@ import { formatInternationalizedDateTime } from "../../utilities/date-utilities"
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ProjectRoleSelect } from "./ProjectRoleSelect";
 import { RemoveMemberButton } from "./RemoveMemberButton";
+import { AddMembersButton } from "./AddMemberButton";
 
 export function ProjectMembersTable() {
   const { updateTable } = useContext(PagedTableContext);
@@ -41,5 +42,10 @@ export function ProjectMembersTable() {
     });
   }
 
-  return <PagedTable columns={columns} />;
+  return (
+    <PagedTable
+      buttons={[<AddMembersButton key="add-members-btn" />]}
+      columns={columns}
+    />
+  );
 }
