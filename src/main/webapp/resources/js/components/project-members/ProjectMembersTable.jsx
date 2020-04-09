@@ -1,14 +1,17 @@
-import React, { useContext } from "react";
-import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import React from "react";
+import { PagedTable } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ProjectRole } from "./ProjectRole";
 import { RemoveMemberButton } from "./RemoveMemberButton";
 import { AddMembersButton } from "./AddMemberButton";
 
+/**
+ * React component to display a table of project users.
+ * @returns {string|*}
+ * @constructor
+ */
 export function ProjectMembersTable() {
-  const { updateTable } = useContext(PagedTableContext);
-
   const columns = [
     {
       title: i18n("ProjectMembersTable.name"),
@@ -37,7 +40,7 @@ export function ProjectMembersTable() {
     columns.push({
       align: "right",
       render(text, item) {
-        return <RemoveMemberButton user={item} updateTable={updateTable} />;
+        return <RemoveMemberButton user={item} />;
       },
     });
   }

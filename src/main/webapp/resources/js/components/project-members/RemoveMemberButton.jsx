@@ -1,12 +1,24 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, notification, Popconfirm, Tooltip } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { removeUserFromProject } from "../../apis/projects/members";
 import { IconRemove } from "../icons/Icons";
+import { PagedTableContext } from "../ant.design/PagedTable";
 
-export function RemoveMemberButton({ user, updateTable }) {
+/**
+ * React component to remove a member from a project
+ * @param {object} user - details about the current user
+ * @returns {*}
+ * @constructor
+ */
+export function RemoveMemberButton({ user }) {
+  const { updateTable } = useContext(PagedTableContext);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handle the successful removal of the current user
+   * @param message
+   */
   const removeSuccess = (message) => {
     if (user.id !== window.PAGE.user) {
       notification.success({ message });
@@ -19,7 +31,10 @@ export function RemoveMemberButton({ user, updateTable }) {
     }
   };
 
-  const onConfirm = () => {
+  /**
+   * Make the request to remove the user from the project.
+   */
+  const removeUser = () => {
     setLoading(true);
     removeUserFromProject(user.id)
       .then(removeSuccess)
@@ -33,7 +48,7 @@ export function RemoveMemberButton({ user, updateTable }) {
 
   return (
     <Popconfirm
-      onConfirm={onConfirm}
+      onConfirm={removeUser}
       placement="topLeft"
       title={i18n("RemoveMemberButton.confirm")}
     >
