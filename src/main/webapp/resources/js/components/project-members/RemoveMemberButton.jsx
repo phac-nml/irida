@@ -21,7 +21,7 @@ export function RemoveMemberButton({ user }) {
    */
   const removeSuccess = (message) => {
     if (user.id !== window.PAGE.user) {
-      notification.success({ message });
+      notification.success({ message, className: "t-remove-success" });
       updateTable();
     } else {
       // If the user can remove themselves from the project, then when they
@@ -41,6 +41,7 @@ export function RemoveMemberButton({ user }) {
       .catch((error) =>
         notification.error({
           message: error.response.data,
+          className: "t-remove-error",
         })
       )
       .finally(() => setLoading(false));
@@ -48,12 +49,15 @@ export function RemoveMemberButton({ user }) {
 
   return (
     <Popconfirm
+      className="t-remove-popover"
+      okButtonProps={{ className: "t-remove-confirm" }}
       onConfirm={removeUser}
       placement="topLeft"
       title={i18n("RemoveMemberButton.confirm")}
     >
       <Tooltip title={i18n("RemoveMemberButton.tooltip")} placement="left">
         <Button
+          className="t-remove-member-btn"
           icon={<IconRemove />}
           shape="circle-outline"
           loading={loading}

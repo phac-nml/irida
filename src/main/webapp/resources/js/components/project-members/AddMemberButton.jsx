@@ -126,10 +126,11 @@ export function AddMembersButton() {
 
   return (
     <>
-      <Button onClick={() => setVisible(true)}>
+      <Button className="t-add-member-btn" onClick={() => setVisible(true)}>
         {i18n("AddMemberButton.label")}
       </Button>
       <Modal
+        className="t-add-member-modal"
         visible={visible}
         okButtonProps={{ disabled: typeof userId === "undefined" }}
         onCancel={() => setVisible(false)}
