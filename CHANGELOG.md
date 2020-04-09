@@ -21,6 +21,7 @@ Changes
 * [UI]: Updated Administrator Users page to use Ant Design.
 * [UI]: Removed DataTables from overrepresented sequence file and run files page.
 * [REST]: Added a REST API endpoint to read assemblies for samples.
+* [UI]: Added selection for linker script to get assemblies in project/samples page.
 * [Developer]: `bower` completely removed.
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
 * [UI]: Assemblies can now be uploaded through the sample files page.
