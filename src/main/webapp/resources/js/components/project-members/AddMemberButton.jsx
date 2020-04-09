@@ -137,7 +137,7 @@ export function AddMembersButton() {
         onOk={addUserToProject}
         okText={i18n("AddMemberButton.modal.okText")}
       >
-        <Form layout="vertical" form={form}>
+        <Form layout="vertical" form={form} initialValues={{ role }}>
           <Form.Item
             label={i18n("AddMemberButton.modal.user-label")}
             help={i18n("AddMemberButton.modal.user-help")}
@@ -159,7 +159,6 @@ export function AddMembersButton() {
           <Form.Item label={i18n("AddMemberButton.modal.role")} name="role">
             <Radio.Group
               style={{ display: "flex" }}
-              defaultValue={role}
               onChange={(e) => setRole(e.target.value)}
             >
               {roles.map((role) => (
