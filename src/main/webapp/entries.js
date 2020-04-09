@@ -11,6 +11,7 @@ module.exports = {
     "expose-loader?angular!angular",
     "./resources/js/vendors"
   ],
+  login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
