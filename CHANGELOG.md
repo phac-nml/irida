@@ -29,6 +29,7 @@ Changes
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
 * [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
 * [UI/Developer]: New login page with developer ability to override template.
+* [UI/Developer]: Added excel file viewer to analysis outputs view.
 
 19.09 to 20.01
 --------------
