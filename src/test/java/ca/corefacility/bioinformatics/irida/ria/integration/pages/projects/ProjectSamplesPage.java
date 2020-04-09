@@ -452,15 +452,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getLinkerText() {
-		openExportDropdown();
-		linkerBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(linkerModal));
 		String cmd = linkerCmd.getAttribute("aria-label");
 		if (Strings.isNullOrEmpty(cmd)) {
 			cmd = linkerCmd.getText();
 		}
 		return cmd;
+	}
+
+	public void openLinkerModal(){
+		openExportDropdown();
+		linkerBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(linkerModal));
+	}
+
+	public void clickLinkerFileType(String type){
+		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
+		fileTypeCheckbox.click();
 	}
 	
 	public List<String> getLockedSampleNames(){
