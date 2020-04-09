@@ -37,6 +37,35 @@ public class UIProjectMembersService {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get a paged listing of project members passed on parameters set in the table request.
+	 *
+	 * @param projectId    - identifier for the current project
+	 * @param tableRequest - details about the current page of the table
+	 * @return sorted and filtered list of project members
+	 */
+	public TableResponse<ProjectMemberTableModel> getProjectMembers(Long projectId, TableRequest tableRequest) {
+		Project project = projectService.read(projectId);
+		Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project, tableRequest.getSearch(),
+				tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort());
+		List<ProjectMemberTableModel> members = usersForProject.get()
+				.map(join -> {
+					ProjectUserJoin projectUserJoin = (ProjectUserJoin) join;
+					return new ProjectMemberTableModel(join.getObject(), projectUserJoin.getProjectRole()
+							.toString(), projectUserJoin.getCreatedDate());
+				})
+				.collect(Collectors.toList());
+		return new TableResponse<>(members, usersForProject.getTotalElements());
+	}
+
+	/**
+	 * Remove a user from the project
+	 *
+	 * @param projectId - identifier for the current project
+	 * @param userId    - identifier for the user to remove from the project
+	 * @param locale    - of the currently logged in user
+	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manage
+	 */
 	public String removeUserFromProject(Long projectId, Long userId, Locale locale)
 			throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
@@ -53,20 +82,15 @@ public class UIProjectMembersService {
 
 	}
 
-	public TableResponse<ProjectMemberTableModel> getProjectMembers(Long projectId, TableRequest tableRequest) {
-		Project project = projectService.read(projectId);
-		Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project, tableRequest.getSearch(),
-				tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort());
-		List<ProjectMemberTableModel> members = usersForProject.get()
-				.map(join -> {
-					ProjectUserJoin projectUserJoin = (ProjectUserJoin) join;
-					return new ProjectMemberTableModel(join.getObject(), projectUserJoin.getProjectRole()
-							.toString(), projectUserJoin.getCreatedDate());
-				})
-				.collect(Collectors.toList());
-		return new TableResponse<>(members, usersForProject.getTotalElements());
-	}
-
+	/**
+	 * Update a users role on a project
+	 *
+	 * @param projectId - identifier for the current project
+	 * @param userId    - identifier for the user to remove from the project
+	 * @param role      - to update the user to
+	 * @param locale    - of the currently logged in user
+	 * @return message to display to the user about the outcome of the change in role.
+	 */
 	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale)
 			throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
@@ -84,11 +108,26 @@ public class UIProjectMembersService {
 		}
 	}
 
+	/**
+	 * Get a filtered list of available IRIDA instance users for this project
+	 *
+	 * @param projectId@param projectId - identifier for the current project
+	 * @param query           - search query to filter the users by
+	 * @return List of filtered users.
+	 */
 	public List<User> getAvailableUsersForProject(Long projectId, String query) {
 		Project project = projectService.read(projectId);
 		return userService.getUsersAvailableForProject(project, query);
 	}
 
+	/**
+	 * Add a user to a project
+	 *
+	 * @param projectId - identifier for the current project
+	 * @param request   - details about the user to add to the project (id and role)
+	 * @param locale    - of the currently logged in user
+	 * @return message to display to the user about the outcome of adding the user to the project
+	 */
 	public String addMemberToProject(Long projectId, NewProjectMemberRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(request.getId());

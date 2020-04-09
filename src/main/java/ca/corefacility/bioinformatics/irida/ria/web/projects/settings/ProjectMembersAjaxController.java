@@ -86,7 +86,7 @@ public class ProjectMembersAjaxController {
 	 *
 	 * @param projectId@param projectId - identifier for the current project
 	 * @param query           - search query to filter the users by
-	 * @return List of filtered usrs.
+	 * @return List of filtered users.
 	 */
 	@RequestMapping("/available")
 	public ResponseEntity<List<User>> getAvailableMembersForProject(@PathVariable Long projectId,

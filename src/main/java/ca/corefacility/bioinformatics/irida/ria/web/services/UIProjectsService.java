@@ -20,6 +20,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * A utility class for formatting responses for the project members page UI.
+ */
 @Component
 public class UIProjectsService {
 	private final ProjectService projectService;
