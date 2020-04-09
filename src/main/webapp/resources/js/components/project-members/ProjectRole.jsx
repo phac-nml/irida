@@ -3,6 +3,16 @@ import { updateUserRoleOnProject } from "../../apis/projects/members";
 import { notification, Select } from "antd";
 import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
 
+/**
+ * React component to render the project role.  If the user can manage members,
+ * then a select component will be rendered allowing the user to change the role
+ * any member.  If the user cannot manage, just the label for the project role
+ * will be rendered
+ *
+ * @param {object} user - the current user to be rendered
+ * @returns {*}
+ * @constructor
+ */
 export function ProjectRole({ user }) {
   const [role, setRole] = useState(user.role);
   const [loading, setLoading] = useState(false);

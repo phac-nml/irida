@@ -36,24 +36,61 @@ export function AddMembersButton() {
   const { roles } = useContext(ProjectRolesContext);
   const { updateTable } = useContext(PagedTableContext);
 
-  const [userId, setUserId] = useState();
-  const [role, setRole] = useState("PROJECT_USER");
+  /*
+  Whether the modal to add a user is visible
+   */
   const [visible, setVisible] = useState(false);
+
+  /*
+  The identifier for the currently selected user from the user input
+   */
+  const [userId, setUserId] = useState();
+
+  /*
+  The value of the currently selected role from the role input
+   */
+  const [role, setRole] = useState("PROJECT_USER");
+
+  /*
+  Value to send to the server to query for a list of potential users.
+   */
   const [query, setQuery] = useState("");
+
+  /*
+  Since we don't want a post being send until the user is done typing, set a
+  delay when to send the request based on the last typed letter.
+   */
   const debouncedQuery = useDebounce(query, 350);
+
+  /*
+  List of users to display to the user to select from.  Values returned from
+  server from the debouncedQuery search.
+   */
   const [results, setResults] = useState([]);
+
+  /*
+  Ant Design form
+   */
   const [form] = Form.useForm();
   useResetFormOnCloseModal({
     form,
     visible,
   });
 
+  /*
+  Watch for changes to the forms visibility, when it becomes visible
+  set keyboard focus onto the user name input.
+   */
   useEffect(() => {
     if (visible) {
       setTimeout(() => userRef.current.focus(), 100);
     }
   }, [visible]);
 
+  /*
+  Watch for changes to the debounced entered value for the user search.
+  Once it changes send a request for filtered users.
+   */
   useEffect(() => {
     if (debouncedQuery) {
       getAvailableUsersForProject(debouncedQuery).then((data) =>
@@ -64,6 +101,9 @@ export function AddMembersButton() {
     }
   }, [debouncedQuery]);
 
+  /*
+  Before rendering format the results into Select.Option
+   */
   const options = results.map((u) => (
     <Option key={u.identifier}>
       <Text style={{ marginRight: SPACE_XS }}>{u.label}</Text>
@@ -71,6 +111,9 @@ export function AddMembersButton() {
     </Option>
   ));
 
+  /**
+   * Called when the user clicks the ok button.
+   */
   const addUserToProject = () => {
     addMemberToProject({ id: userId, role })
       .then((message) => {
@@ -92,6 +135,7 @@ export function AddMembersButton() {
         onCancel={() => setVisible(false)}
         title={i18n("AddMemberButton.modal.title")}
         onOk={addUserToProject}
+        okText={i18n("AddMemberButton.modal.okText")}
       >
         <Form layout="vertical" form={form}>
           <Form.Item
