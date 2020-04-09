@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectRoleSelect } from "./ProjectRoleSelect";
+import { ProjectRole } from "./ProjectRole";
 import { RemoveMemberButton } from "./RemoveMemberButton";
 import { AddMembersButton } from "./AddMemberButton";
 
@@ -21,7 +21,7 @@ export function ProjectMembersTable() {
       title: i18n("ProjectMembersTable.role"),
       dataIndex: "role",
       render(text, item) {
-        return <ProjectRoleSelect user={item} />;
+        return <ProjectRole user={item} />;
       },
     },
     {

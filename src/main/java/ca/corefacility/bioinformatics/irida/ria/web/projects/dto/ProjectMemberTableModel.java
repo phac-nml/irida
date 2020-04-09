@@ -5,10 +5,13 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
-public class ProjectUserTableModel extends TableModel {
+/**
+ * Represents a Project member in the UI.
+ */
+public class ProjectMemberTableModel extends TableModel {
 	private final String role;
 
-	public ProjectUserTableModel(User user, String role, Date joinedDate) {
+	public ProjectMemberTableModel(User user, String role, Date joinedDate) {
 		super(user.getId(), user.getLabel(), joinedDate, null);
 		this.role = role;
 	}

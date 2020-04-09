@@ -14,15 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;

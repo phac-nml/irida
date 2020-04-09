@@ -3,10 +3,10 @@ import { updateUserRoleOnProject } from "../../apis/projects/members";
 import { notification, Select } from "antd";
 import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
 
-export function ProjectRoleSelect({ user }) {
+export function ProjectRole({ user }) {
   const [role, setRole] = useState(user.role);
   const [loading, setLoading] = useState(false);
-  const { roles } = useContext(ProjectRolesContext);
+  const { roles, getRoleFromKey } = useContext(ProjectRolesContext);
 
   const onChange = (value) => {
     setLoading(true);
@@ -26,13 +26,13 @@ export function ProjectRoleSelect({ user }) {
       .finally(() => setLoading(false));
   };
 
-  return (
+  return window.PAGE.canManage ? (
     <Select
       value={role}
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
-      disabled={loading || user.id === window.PAGE.user}
+      disabled={loading}
     >
       {roles.map((role) => (
         <Select.Option value={role.value} key={role.value}>
@@ -40,5 +40,7 @@ export function ProjectRoleSelect({ user }) {
         </Select.Option>
       ))}
     </Select>
+  ) : (
+    getRoleFromKey(user.role)
   );
 }

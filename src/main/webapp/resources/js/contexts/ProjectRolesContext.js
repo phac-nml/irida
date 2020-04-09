@@ -11,7 +11,9 @@ function ProjectRolesProvider({ children }) {
     getProjectRoles().then((data) => setRoles(data));
   }, []);
 
-  return <Provider value={{ roles }}>{children}</Provider>;
+  const getRoleFromKey = (key) => roles.find((r) => r.value === key)?.label;
+
+  return <Provider value={{ roles, getRoleFromKey }}>{children}</Provider>;
 }
 
 export { ProjectRolesContext, ProjectRolesProvider };
