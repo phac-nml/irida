@@ -21,6 +21,7 @@ Changes
 * [UI]: Updated Administrator Users page to use Ant Design.
 * [UI]: Removed DataTables from overrepresented sequence file and run files page.
 * [REST]: Added a REST API endpoint to read assemblies for samples.
+* [UI]: Added selection for linker script to get assemblies in project/samples page.
 * [Developer]: `bower` completely removed.
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
 * [UI]: Assemblies can now be uploaded through the sample files page.
@@ -28,6 +29,7 @@ Changes
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
 * [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
 * [UI/Developer]: New login page with developer ability to override template.
+* [UI/Developer]: Added excel file viewer to analysis outputs view.
 
 19.09 to 20.01
 --------------
