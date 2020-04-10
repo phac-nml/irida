@@ -27,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceListener;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -44,11 +46,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 )
 @Table(name = "sequence_file")
 @Audited
-@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
+@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, IridaFileStorageServiceListener.class })
 public abstract class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
+
+	private static IridaFileStorageService iridaFileStorageService;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -287,4 +291,13 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 	public void setUploadSha256(String uploadSha256) {
 		this.uploadSha256 = uploadSha256;
 	}
+
+	public IridaFileStorageService getIridaFileStorageService() {
+		return iridaFileStorageService;
+	}
+
+	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
+		this.iridaFileStorageService = iridaFileStorageService;
+	}
+
 }

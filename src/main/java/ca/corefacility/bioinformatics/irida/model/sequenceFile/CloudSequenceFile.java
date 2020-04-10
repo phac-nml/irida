@@ -48,8 +48,9 @@ public class CloudSequenceFile extends SequenceFile implements IridaSequenceFile
 	@Override
 	public String getFileSize() {
 		String size = "N/A";
+		super.getIridaFileStorageService().getFileSize(super.getFile());
 		// Need to implement cloud code to get file size
-		// size = IridaSequenceFile.humanReadableByteCount(6000, true);
+		 size = IridaSequenceFile.humanReadableByteCount(super.getIridaFileStorageService().getFileSize(super.getFile()), true);
 		return size;
 	}
 

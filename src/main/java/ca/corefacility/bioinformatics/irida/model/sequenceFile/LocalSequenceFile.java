@@ -47,13 +47,7 @@ public class LocalSequenceFile extends SequenceFile implements IridaSequenceFile
 	@Override
 	public String getFileSize() {
 		String size = "N/A";
-		try {
-			size = IridaSequenceFile.humanReadableByteCount(Files.size(super.getFile()), true);
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + super.getFile());
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
+		size = IridaSequenceFile.humanReadableByteCount(super.getIridaFileStorageService().getFileSize(super.getFile()), true);
 		return size;
 	}
 
