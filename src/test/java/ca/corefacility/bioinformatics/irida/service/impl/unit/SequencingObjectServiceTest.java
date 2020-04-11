@@ -7,12 +7,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.SequencingObjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class SequencingObjectServiceTest {
 	Validator validator;
 
 	@Autowired
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
 	public void setUp() {
@@ -53,7 +53,7 @@ public class SequencingObjectServiceTest {
 		concatenationRepository = mock(SequenceConcatenationRepository.class);
 
 		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository,
-				concatenationRepository, validator, iridaFileStorageFactory);
+				concatenationRepository, validator, iridaFileStorageService);
 	}
 
 	@Test

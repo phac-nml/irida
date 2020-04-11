@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
@@ -305,11 +304,6 @@ public class IridaApiServicesConfig {
 		} else {
 			return new IridaFileStorageLocalServiceImpl();
 		}
-	}
-
-	@Bean(name = "iridaFileStorageFactory")
-	public IridaFileStorageFactoryImpl iridaFileStorageFactory(IridaFileStorageService iridaFileStorageService) {
-		return new IridaFileStorageFactoryImpl(iridaFileStorageService);
 	}
 
 	@Bean(name = "uploadFileProcessingChain")

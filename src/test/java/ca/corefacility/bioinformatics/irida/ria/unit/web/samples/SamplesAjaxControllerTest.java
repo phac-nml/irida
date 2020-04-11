@@ -25,11 +25,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
@@ -47,7 +47,7 @@ public class SamplesAjaxControllerTest {
 	private GenomeAssemblyService genomeAssemblyService;
 
 	@Autowired
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+	private IridaFileStorageService iridaFileStorageService;
 
 	/*
 	TEST DATA
@@ -71,7 +71,7 @@ public class SamplesAjaxControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource, iridaFileStorageFactory);
+		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource, iridaFileStorageService);
 
 		// Set up mocks
 		when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);

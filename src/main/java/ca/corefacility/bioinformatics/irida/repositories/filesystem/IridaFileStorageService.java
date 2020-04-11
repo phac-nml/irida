@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
 /**
  * Interface describing methods for performing storage actions
  */
@@ -96,4 +98,25 @@ public interface IridaFileStorageService {
 	 *
 	 */
 	public boolean isGzipped(Path file) throws IOException;
+
+	/**
+	 * Creates an empty SequenceFile depending on
+	 * storage type
+	 *
+	 * @return Local or Cloud {@link SequenceFile} object
+	 * @throws IOException if file can't be read
+	 *
+	 */
+	public SequenceFile createEmptySequenceFile();
+
+	/**
+	 * Creates a SequenceFile depending on
+	 * storage type
+	 *
+	 * @param file The path to the file
+	 * @return Local or Cloud {@link SequenceFile} object
+	 * @throws IOException if file can't be read
+	 *
+	 */
+	public SequenceFile createSequenceFile(Path file);
 }

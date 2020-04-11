@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -119,6 +122,9 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	public void downloadFiles() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean storageTypeIsLocal(){
 		return false;
@@ -145,6 +151,9 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		return fileName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean fileExists(Path file) {
 		blobClient = containerClient.getBlobClient(file.toAbsolutePath()
@@ -156,6 +165,9 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
 		blobClient = containerClient.getBlobClient(file.toAbsolutePath()
@@ -164,6 +176,9 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		return blobClient.openInputStream();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isGzipped(Path file) throws IOException {
 		try (InputStream is = getFileInputStream(file)) {
@@ -172,5 +187,21 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile createEmptySequenceFile() {
+		return new CloudSequenceFile();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile createSequenceFile(Path file) {
+		return new CloudSequenceFile(file);
 	}
 }

@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
 /**
  * Component implementation of file utitlities for aws storage
  */
 @Component
 public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
-
-	//Aws Specific Variables
-
 
 	@Autowired
 	public IridaFileStorageAwsServiceImpl(){
@@ -78,6 +78,9 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	public void downloadFiles() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean storageTypeIsLocal(){
 		return false;
@@ -92,11 +95,17 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		return fileName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean fileExists(Path file) {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
 		InputStream inputstream = null;
@@ -109,6 +118,9 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		return inputstream;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isGzipped(Path file) throws IOException {
 		try (InputStream is = getFileInputStream(file)) {
@@ -117,5 +129,21 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile createEmptySequenceFile() {
+		return new CloudSequenceFile();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile createSequenceFile(Path file) {
+		return new CloudSequenceFile(file);
 	}
 }

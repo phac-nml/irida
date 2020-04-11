@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import com.google.common.collect.Lists;
 import org.junit.Before;
@@ -34,11 +34,11 @@ public class SingleEndSequenceFileConcatenatorTest {
 	SingleEndSequenceFileConcatenator concat;
 
 	@Autowired
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
 	public void setUp() {
-		concat = new SingleEndSequenceFileConcatenator(iridaFileStorageFactory);
+		concat = new SingleEndSequenceFileConcatenator(iridaFileStorageService);
 	}
 
 	@Test

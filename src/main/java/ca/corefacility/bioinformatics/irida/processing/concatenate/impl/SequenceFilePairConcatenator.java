@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +21,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
-	public SequenceFilePairConcatenator(IridaFileStorageFactoryImpl iridaFileStorageFactory) {
-		this.iridaFileStorageFactory = iridaFileStorageFactory;
+	public SequenceFilePairConcatenator(IridaFileStorageService iridaFileStorageService) {
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 		}
 
 		// create new SequenceFiles
-		SequenceFile forward = iridaFileStorageFactory.createSequenceFile(forwardFile);
-		SequenceFile reverse = iridaFileStorageFactory.createSequenceFile(reverseFile);
+		SequenceFile forward = iridaFileStorageService.createSequenceFile(forwardFile);
+		SequenceFile reverse = iridaFileStorageService.createSequenceFile(reverseFile);
 
 		// create the new pair
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(forward, reverse);

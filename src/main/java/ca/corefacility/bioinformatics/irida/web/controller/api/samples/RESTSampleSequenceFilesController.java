@@ -36,8 +36,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.impl.IridaFileStorageFactoryImpl;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -135,19 +135,19 @@ public class RESTSampleSequenceFilesController {
 
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
-	private IridaFileStorageFactoryImpl iridaFileStorageFactory;
+	private IridaFileStorageService iridaFileStorageService;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
-			SequencingObjectService sequencingObjectService, AnalysisService analysisService, IridaFileStorageFactoryImpl iridaFileStorageFactory) {
+			SequencingObjectService sequencingObjectService, AnalysisService analysisService, IridaFileStorageService iridaFileStorageService) {
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysisService = analysisService;
-		this.iridaFileStorageFactory = iridaFileStorageFactory;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -417,7 +417,7 @@ public class RESTSampleSequenceFilesController {
 					logger.trace("Read miseq run " + miseqRunId);
 				}
 			} else {
-				sf = iridaFileStorageFactory.createEmptySequenceFile();
+				sf = iridaFileStorageService.createEmptySequenceFile();
 			}
 
 			sf.setFile(target);
