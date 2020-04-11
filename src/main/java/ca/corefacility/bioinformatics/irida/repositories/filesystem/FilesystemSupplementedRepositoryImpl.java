@@ -207,7 +207,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * works using reflection to automagically find and update any internal
 	 * {@link Path} members on the {@link VersionedFileFields}. This class
 	 * **does not** update the object in the database
-	 * 
+	 *
 	 * @param baseDirectory
 	 * @param iridaThing
 	 */
@@ -248,24 +248,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
 				logger.debug("Target is [" + target.toString() + "]");
-
-				if(iridaFileStorageService.storageTypeIsLocal()) {
-					try {
-						if (!Files.exists(sequenceFileDir)) {
-							Files.createDirectory(sequenceFileDir);
-							logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
-						}
-
-						if (!Files.exists(sequenceFileDirWithRevision)) {
-							Files.createDirectory(sequenceFileDirWithRevision);
-							logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
-						}
-					} catch (IOException e) {
-						logger.error("Unable to create new directory", e);
-						throw new StorageException("Failed to create new directory.", e);
-					}
-				}
-				iridaFileStorageService.writeFile(source, target);
+				iridaFileStorageService.writeFile(source, target, sequenceFileDir, sequenceFileDirWithRevision);
 				ReflectionUtils.setField(field, objectToWrite, target);
 			}
 		}

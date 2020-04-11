@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * particular {@link Sample}.
  */
 @Entity
-@DiscriminatorValue("cloud")
 public class CloudSequenceFile extends SequenceFile implements IridaSequenceFile, IridaThing {
 	private static final Logger logger = LoggerFactory.getLogger(CloudSequenceFile.class);
 

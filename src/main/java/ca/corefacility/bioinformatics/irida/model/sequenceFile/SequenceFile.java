@@ -26,9 +26,10 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageServiceListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageServiceListener;
+
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -40,10 +41,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(
-		name="sequence_file_type",
-		discriminatorType=DiscriminatorType.STRING
-)
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, IridaFileStorageServiceListener.class })

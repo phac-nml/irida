@@ -8,6 +8,7 @@
              relativeToChangelogFile="true"/>
     <include file="uploaded-assemblies.xml"
              relativeToChangelogFile="true"/>
-    <include file="add-sequence-file-type.xml"
+    <include file="add-dtype-to-sequence-file.xml"
              relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

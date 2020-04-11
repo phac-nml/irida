@@ -59,7 +59,22 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void writeFile(Path source, Path target) {
+	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
+		try {
+			if (!Files.exists(sequenceFileDir)) {
+				Files.createDirectory(sequenceFileDir);
+				logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
+			}
+
+			if (!Files.exists(sequenceFileDirWithRevision)) {
+				Files.createDirectory(sequenceFileDirWithRevision);
+				logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+			}
+		} catch (IOException e) {
+			logger.error("Unable to create new directory", e);
+			throw new StorageException("Failed to create new directory.", e);
+		}
+
 		try {
 			Files.move(source, target);
 			logger.trace("Moved file " + source + " to " + target);

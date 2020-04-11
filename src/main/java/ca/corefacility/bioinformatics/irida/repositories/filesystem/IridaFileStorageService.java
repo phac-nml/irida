@@ -32,7 +32,7 @@ public interface IridaFileStorageService {
 	 * @param source The {@link Path} to the file
 	 * @param target The {@link Path} to where file should be moved
 	 */
-	public void writeFile(Path source, Path target);
+	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
 
 	/**
 	 * Returns if the storage type is local or not
@@ -96,5 +96,4 @@ public interface IridaFileStorageService {
 	 *
 	 */
 	public boolean isGzipped(Path file) throws IOException;
-
 }

@@ -87,7 +87,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void writeFile(Path source, Path target) {
+	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// We set the blobClient "path" to which we want to upload our file to
 		blobClient = containerClient.getBlobClient(target.toAbsolutePath()
 				.toString()

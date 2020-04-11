@@ -53,7 +53,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void writeFile(Path source, Path target) {
+	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// Implement AWS code to upload file to bucket
 	}
 

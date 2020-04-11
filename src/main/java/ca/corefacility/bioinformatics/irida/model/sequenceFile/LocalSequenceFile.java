@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * particular {@link Sample}.
  */
 @Entity
-@DiscriminatorValue("local")
 public class LocalSequenceFile extends SequenceFile implements IridaSequenceFile, IridaThing {
 	private static final Logger logger = LoggerFactory.getLogger(LocalSequenceFile.class);
 
