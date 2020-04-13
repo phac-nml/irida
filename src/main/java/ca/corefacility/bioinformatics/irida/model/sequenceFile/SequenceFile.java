@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageServiceListener;
+import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.SequenceFileListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
@@ -43,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Table(name = "sequence_file")
 @Audited
-@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, IridaFileStorageServiceListener.class })
+@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, SequenceFileListener.class })
 public abstract class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
