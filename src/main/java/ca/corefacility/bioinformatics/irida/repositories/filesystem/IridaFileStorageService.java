@@ -4,14 +4,21 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+
+import com.google.common.collect.Lists;
 
 /**
  * Interface describing methods for performing storage actions
  */
 
 public interface IridaFileStorageService {
+	//Valid extensions to try to concatenate with this tool
+	public static final List<String> VALID_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
 	 * Get a temporarry file from storage
 	 *
@@ -119,4 +126,22 @@ public interface IridaFileStorageService {
 	 *
 	 */
 	public SequenceFile createSequenceFile(Path file);
+
+	/**
+	 * Append a {@link SequenceFile} to a {@link Path} on the filesystem
+	 *
+	 * @param target the {@link Path} to append to
+	 * @param file   the {@link SequenceFile} to append to the path
+	 * @throws ConcatenateException if there is an error appending the file
+	 */
+	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException;
+
+	/**
+	 * Get the extension of the files to concatenate
+	 *
+	 * @param toConcatenate The list of {@link SequencingObject} to concatenate
+	 * @return The common extension of the files
+	 * @throws ConcatenateException if the files have different or invalid extensions
+	 */
+	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException;
 }

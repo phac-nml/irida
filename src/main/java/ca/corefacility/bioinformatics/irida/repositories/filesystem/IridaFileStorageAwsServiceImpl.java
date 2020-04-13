@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
@@ -12,8 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+
+import com.google.common.collect.Lists;
 
 /**
  * Component implementation of file utitlities for aws storage
@@ -24,7 +32,6 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 
 	@Autowired
 	public IridaFileStorageAwsServiceImpl(){
-
 	}
 
 	/**
@@ -145,5 +152,33 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	@Override
 	public SequenceFile createSequenceFile(Path file) {
 		return new CloudSequenceFile(file);
+	}
+
+	/**
+	 * Removes the leading "/" from the absolute path
+	 * returns the rest of the path.
+	 *
+	 * @param file
+	 * @return
+	 */
+	private String getAwsFileAbsolutePath(Path file) {
+		String absolutePath = file.toAbsolutePath().toString();
+		return absolutePath;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException {
+		String selectedExtension = null;
+		return selectedExtension;
 	}
 }

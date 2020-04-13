@@ -36,7 +36,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 			throws ConcatenateException {
 		Path tempFile;
 
-		String extension = getFileExtension(toConcatenate);
+		String extension = iridaFileStorageService.getFileExtension(toConcatenate);
 
 		// create the filename with extension
 		filename = filename + "." + extension;
@@ -58,7 +58,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 
 			SequenceFile forwardSequenceFile = single.getSequenceFile();
 
-			appendToFile(tempFile, forwardSequenceFile);
+			iridaFileStorageService.appendToFile(tempFile, forwardSequenceFile);
 		}
 
 		// create the new sequencefile and object

@@ -35,7 +35,7 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 
-		String extension = getFileExtension(toConcatenate);
+		String extension = iridaFileStorageService.getFileExtension(toConcatenate);
 
 		// create the filenames with F/R for the forward and reverse files
 		String forwardName = filename + "_R1." + extension;
@@ -65,8 +65,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
-			appendToFile(forwardFile, forwardSequenceFile);
-			appendToFile(reverseFile, reverseSequenceFile);
+			iridaFileStorageService.appendToFile(forwardFile, forwardSequenceFile);
+			iridaFileStorageService.appendToFile(reverseFile, reverseSequenceFile);
 		}
 
 		// create new SequenceFiles
