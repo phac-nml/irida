@@ -24,7 +24,7 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 
 	@NotNull
 	@Column(name = "file_path", unique = true)
-	private Path file;
+	protected Path file;
 
 	@Column(name = "file_revision_number")
 	Long fileRevisionNumber;

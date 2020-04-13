@@ -57,7 +57,7 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 
 	@NotNull(message = "{sequencefile.file.notnull}")
 	@Column(name = "file_path", unique = true)
-	private Path file;
+	protected Path file;
 
 	@CreatedDate
 	@NotNull

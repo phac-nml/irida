@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,14 +16,15 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreUpdate;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+
 
 /**
  * Custom implementation of a repository that writes the {@link Path} part of an
@@ -220,13 +219,8 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 		Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
 		// now find any members that are of type Path and shuffle them around:
-		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getSuperclass().getDeclaredFields()).filter(pathFilter)
+		Set<Field> pathFields = Arrays.stream(FieldUtils.getAllFields(objectToWrite.getClass())).filter(pathFilter)
 				.collect(Collectors.toSet());
-
-		if(pathFields.size() == 0) {
-			pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields()).filter(pathFilter)
-					.collect(Collectors.toSet());
-		}
 
 		Set<Field> fieldsToUpdate = new HashSet<>();
 		for (Field field : pathFields) {

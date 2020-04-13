@@ -27,7 +27,6 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
-import com.google.common.collect.Lists;
 
 /**
  * Component implementation of file utitlities for azure storage
@@ -69,7 +68,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			blobClient.downloadToFile(filePath);
 			fileToProcess = new File(filePath);
 		} catch (BlobStorageException e) {
-			logger.debug("Couldn't find file [" + e + "]");
+			logger.trace("Couldn't find file [" + e + "]");
 		}
 
 		return fileToProcess;
@@ -86,7 +85,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			fileSize = blobClient.getProperties().getBlobSize();
 		} catch (BlobStorageException e) {
-			logger.debug("Couldn't calculate size as the file was not found [" + e + "]");
+			logger.trace("Couldn't calculate size as the file was not found [" + e + "]");
 		}
 		return fileSize;
 	}
@@ -99,9 +98,9 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		// We set the blobClient "path" to which we want to upload our file to
 		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
 
-		logger.debug("Uploading file to azure: [" + target.getFileName() + "]");
+		logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
 		blobClient.uploadFromFile(source.toString(), false);
-		logger.debug("File uploaded to: [" + blobClient.getBlobUrl() + "]");
+		logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
 	}
 
 	/**
@@ -146,7 +145,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 					.split("/");
 			fileName = blobNameTokens[blobNameTokens.length - 1];
 		} catch (BlobStorageException e) {
-			logger.debug("Couldn't find file [" + e + "]");
+			logger.trace("Couldn't find file [" + e + "]");
 		}
 
 		return fileName;

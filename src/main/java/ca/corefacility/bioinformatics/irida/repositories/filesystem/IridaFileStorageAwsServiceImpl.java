@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
@@ -21,14 +18,13 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
-import com.google.common.collect.Lists;
 
 /**
  * Component implementation of file utitlities for aws storage
  */
 @Component
 public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsServiceImpl.class);
 
 	@Autowired
 	public IridaFileStorageAwsServiceImpl(){

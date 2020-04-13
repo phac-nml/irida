@@ -24,8 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 
-import com.google.common.collect.Lists;
-
 /**
  * Component implementation of file utitlities for local storage
  */

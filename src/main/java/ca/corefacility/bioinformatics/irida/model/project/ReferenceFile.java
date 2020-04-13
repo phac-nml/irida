@@ -44,7 +44,7 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 
 	@Column(name = "filePath", unique = true)
 	@NotNull(message = "{reference.file.file.notnull}")
-	private Path file;
+	protected Path file;
 
 	@CreatedDate
 	@NotNull

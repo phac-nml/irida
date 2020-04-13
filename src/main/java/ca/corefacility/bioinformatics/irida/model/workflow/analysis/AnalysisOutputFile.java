@@ -46,7 +46,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	@NotNull(message = "{analysis.output.file.file.notnull}")
 	@com.fasterxml.jackson.annotation.JsonIgnore
 	@org.codehaus.jackson.annotate.JsonIgnore
-	private final Path file;
+	protected final Path file;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
