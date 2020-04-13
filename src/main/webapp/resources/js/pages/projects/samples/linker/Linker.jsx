@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
-import { CodeOutlined } from "@ant-design/icons";
 
 import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
@@ -76,7 +75,7 @@ function Linker() {
         onClick={getIds}
       >
         {/* constant marginRight here to match old styles */}
-        <CodeOutlined style={{ marginRight: 2 }} />
+        <IconCode style={{ marginRight: 2 }} />
         {i18n("project.samples.export.linker")}
       </Button>
       <Modal
