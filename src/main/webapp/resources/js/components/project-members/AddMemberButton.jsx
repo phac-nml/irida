@@ -105,7 +105,7 @@ export function AddMembersButton() {
   Before rendering format the results into Select.Option
    */
   const options = results.map((u) => (
-    <Option key={u.identifier}>
+    <Option className="t-new-member" key={u.identifier}>
       <Text style={{ marginRight: SPACE_XS }}>{u.label}</Text>
       <Text type="secondary">{u.username}</Text>
     </Option>

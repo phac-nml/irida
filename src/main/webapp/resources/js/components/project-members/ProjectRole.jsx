@@ -38,6 +38,7 @@ export function ProjectRole({ user }) {
 
   return window.PAGE.canManage ? (
     <Select
+      className="t-role-select"
       value={role}
       style={{ width: "100%" }}
       onChange={onChange}
@@ -45,7 +46,11 @@ export function ProjectRole({ user }) {
       disabled={loading}
     >
       {roles.map((role) => (
-        <Select.Option value={role.value} key={role.value}>
+        <Select.Option
+          className={`t-${role.value}`}
+          value={role.value}
+          key={role.value}
+        >
           {role.label}
         </Select.Option>
       ))}
