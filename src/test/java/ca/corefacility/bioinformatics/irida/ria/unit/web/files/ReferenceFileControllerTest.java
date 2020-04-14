@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.ReferenceFileController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -55,19 +56,21 @@ public class ReferenceFileControllerTest {
 	private ProjectService projectService;
 	private ReferenceFileService referenceFileService;
 	private MessageSource messageSource;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		messageSource = mock(MessageSource.class);
+		iridaFileStorageService = mock(IridaFileStorageService.class);
 
 		// Set up the reference file
 		Path path = Paths.get(FILE_PATH);
 		ReferenceFile file = new ReferenceFile(path);
 		when(referenceFileService.read(FILE_ID)).thenReturn(file);
 
-		controller = new ReferenceFileController(projectService, referenceFileService, messageSource);
+		controller = new ReferenceFileController(projectService, referenceFileService, messageSource, iridaFileStorageService);
 	}
 
 	@Test

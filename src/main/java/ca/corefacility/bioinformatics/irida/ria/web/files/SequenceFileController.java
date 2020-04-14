@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -63,13 +64,15 @@ public class SequenceFileController {
 	 */
 	private SequencingObjectService sequencingObjectService;
 	private final AnalysisService analysisService;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
 	public SequenceFileController(SequencingObjectService sequencingObjectService, SequencingRunService sequencingRunService,
-			final AnalysisService analysisService) {
+			final AnalysisService analysisService, IridaFileStorageService iridaFileStorageService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.dateFormatter = new DateFormatter();
 		this.analysisService = analysisService;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -130,7 +133,7 @@ public class SequenceFileController {
 		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
 		Path path = sequenceFile.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
+		iridaFileStorageService.getFileInputStream(path).transferTo(response.getOutputStream());
 		response.flushBuffer();
 	}
 

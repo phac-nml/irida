@@ -152,4 +152,5 @@ public interface IridaFileStorageService {
 	 * @return the bytes for the file
 	 */
 	public byte[] readAllBytes(Path file);
+
 }

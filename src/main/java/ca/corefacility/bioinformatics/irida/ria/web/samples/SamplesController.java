@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -111,11 +112,13 @@ public class SamplesController extends BaseController {
 
 	private final MessageSource messageSource;
 
+	private final IridaFileStorageService iridaFileStorageService;
+
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
 			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
-			MessageSource messageSource) {
+			MessageSource messageSource, IridaFileStorageService iridaFileStorageService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -123,6 +126,7 @@ public class SamplesController extends BaseController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/************************************************************************************************
@@ -347,7 +351,7 @@ public class SamplesController extends BaseController {
 		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition",
 				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
+		iridaFileStorageService.getFileInputStream(path).transferTo(response.getOutputStream());
 		response.flushBuffer();
 	}
 

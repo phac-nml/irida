@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -48,13 +49,16 @@ public class ReferenceFileController {
 	private final ReferenceFileService referenceFileService;
 	private final MessageSource messageSource;
 
+	private final IridaFileStorageService iridaFileStorageService;
+
 	@Autowired
 	public ReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService,
-			MessageSource messageSource) {
+			MessageSource messageSource, IridaFileStorageService iridaFileStorageService) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.messageSource = messageSource;
 		this.dateFormatter = new DateFormatter();
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -74,7 +78,7 @@ public class ReferenceFileController {
 		ReferenceFile file = referenceFileService.read(fileId);
 		Path path = file.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
+		iridaFileStorageService.getFileInputStream(path).transferTo(response.getOutputStream());
 		response.flushBuffer();
 	}
 
