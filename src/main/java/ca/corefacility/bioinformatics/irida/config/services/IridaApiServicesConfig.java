@@ -137,6 +137,19 @@ public class IridaApiServicesConfig {
 	@Value("${azure.account.connection.string:#{null}}")
 	private String connectionStr;
 
+	@Value("${aws.bucket.name:#{null}}")
+	private String awsBucketName;
+
+	@Value("${aws.bucket.region:#{null}}")
+	private String awsBucketRegion;
+
+	@Value("${aws.access.key:#{null}}")
+	private String awsAccessKey;
+
+	@Value("${aws.secret.key:#{null}}")
+	private String awsSecretKey;
+
+
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -300,7 +313,7 @@ public class IridaApiServicesConfig {
 		if(storageType.equalsIgnoreCase("azure")) {
 			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
 		} else if (storageType.equalsIgnoreCase("aws")) {
-			return new IridaFileStorageAwsServiceImpl();
+			return new IridaFileStorageAwsServiceImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey);
 		} else {
 			return new IridaFileStorageLocalServiceImpl();
 		}
