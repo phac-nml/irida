@@ -7,6 +7,11 @@ public class NewProjectMemberRequest {
 	public NewProjectMemberRequest() {
 	}
 
+	public NewProjectMemberRequest(Long id, String role) {
+		this.id = id;
+		this.role = role;
+	}
+
 	public Long getId() {
 		return id;
 	}
