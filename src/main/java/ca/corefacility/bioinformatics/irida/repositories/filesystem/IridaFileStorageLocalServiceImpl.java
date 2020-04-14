@@ -231,4 +231,19 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 
 		return selectedExtension;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] readAllBytes(Path file) {
+		byte[] bytes = new byte[0];
+		try {
+			bytes = Files.readAllBytes(file);
+		} catch (IOException e)
+		{
+			logger.error("Unable to read file");
+		}
+		return bytes;
+	}
 }

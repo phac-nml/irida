@@ -282,6 +282,20 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] readAllBytes(Path file) {
+		byte[] bytes = new byte[0];
+		try {
+			bytes = getFileInputStream(file).readAllBytes();
+		} catch (IOException e) {
+			logger.error("Unable to read file " + e);
+		}
+		return bytes;
+	}
+
+	/**
 	 * Removes the leading "/" from the absolute path
 	 * returns the rest of the path.
 	 *
@@ -297,4 +311,5 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		}
 		return absolutePath;
 	}
+
 }

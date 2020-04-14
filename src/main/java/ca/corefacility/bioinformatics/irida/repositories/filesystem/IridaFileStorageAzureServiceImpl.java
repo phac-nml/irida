@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Date;
@@ -68,7 +69,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			blobClient.downloadToFile(filePath);
 			fileToProcess = new File(filePath);
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't find file [" + e + "]");
+			logger.error("Couldn't find file [" + e + "]");
 		}
 
 		return fileToProcess;
@@ -85,7 +86,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			fileSize = blobClient.getProperties().getBlobSize();
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't calculate size as the file was not found [" + e + "]");
+			logger.error("Couldn't calculate size as the file was not found [" + e + "]");
 		}
 		return fileSize;
 	}
@@ -201,22 +202,6 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		return new CloudSequenceFile(file);
 	}
 
-	/**
-	 * Removes the leading "/" from the absolute path
-	 * returns the rest of the path.
-	 *
-	 * @param file
-	 * @return
-	 */
-	private String getAzureFileAbsolutePath(Path file) {
-		String absolutePath = file.toAbsolutePath().toString();
-		if(absolutePath.charAt(0) == '/') {
-			absolutePath = file.toAbsolutePath()
-					.toString()
-					.substring(1);
-		}
-		return absolutePath;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -270,5 +255,37 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		}
 
 		return selectedExtension;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] readAllBytes(Path file) {
+		byte[] bytes = new byte[0];
+		try {
+			bytes = getFileInputStream(file).readAllBytes();
+		} catch (IOException e)
+		{
+			logger.error("Unable to read file");
+		}
+		return bytes;
+	}
+
+	/**
+	 * Removes the leading "/" from the absolute path
+	 * returns the rest of the path.
+	 *
+	 * @param file
+	 * @return
+	 */
+	private String getAzureFileAbsolutePath(Path file) {
+		String absolutePath = file.toAbsolutePath().toString();
+		if(absolutePath.charAt(0) == '/') {
+			absolutePath = file.toAbsolutePath()
+					.toString()
+					.substring(1);
+		}
+		return absolutePath;
 	}
 }

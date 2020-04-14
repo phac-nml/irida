@@ -2,22 +2,26 @@ package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
+import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.AnalysisFastQCListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * Specific implementation of {@link Analysis} for storing properties created by FastQC.
  */
 @Entity
 @Table(name = "analysis_fastqc")
+@EntityListeners({ AnalysisFastQCListener.class })
 public class AnalysisFastQC extends Analysis {
 
 	@NotNull
@@ -42,6 +46,8 @@ public class AnalysisFastQC extends Analysis {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(joinColumns = @JoinColumn(name = "analysis_fastqc_id"))
 	private final Set<OverrepresentedSequence> overrepresentedSequences;
+
+	private static IridaFileStorageService iridaFileStorageService;
 
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
@@ -382,6 +388,10 @@ public class AnalysisFastQC extends Analysis {
 		return ImmutableSet.copyOf(overrepresentedSequences);
 	}
 
+	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
+		this.iridaFileStorageService = iridaFileStorageService;
+	}
+
 	/**
 	 * Read the bytes for a fastqc image
 	 *
@@ -389,9 +399,9 @@ public class AnalysisFastQC extends Analysis {
 	 * @return the bytes for the file
 	 * @throws IOException if the file couldn't be read
 	 */
-	private byte[] getBytesForFile(String key) throws IOException {
+	private byte[] getBytesForFile(String key) {
 		AnalysisOutputFile chart = getAnalysisOutputFile(key);
-		byte[] bytes = Files.readAllBytes(chart.getFile());
+		byte[] bytes = iridaFileStorageService.readAllBytes(chart.getFile());
 		return bytes;
 	}
 }

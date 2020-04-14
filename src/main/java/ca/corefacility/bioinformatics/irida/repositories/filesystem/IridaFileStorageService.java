@@ -144,4 +144,12 @@ public interface IridaFileStorageService {
 	 * @throws ConcatenateException if the files have different or invalid extensions
 	 */
 	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException;
+
+	/**
+	 * Read the bytes for an image
+	 *
+	 * @param file path to file which to read
+	 * @return the bytes for the file
+	 */
+	public byte[] readAllBytes(Path file);
 }
