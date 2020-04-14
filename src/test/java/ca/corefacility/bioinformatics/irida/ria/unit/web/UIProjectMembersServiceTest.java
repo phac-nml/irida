@@ -69,9 +69,7 @@ public class UIProjectMembersServiceTest {
 		when(userService.read(USER_1.getId())).thenReturn(USER_1);
 		when(userService.read(USER_2.getId())).thenReturn(USER_2);
 		when(userService.read(USER_3.getId())).thenReturn(USER_3);
-		Sort SORT = Sort.by(Sort.Direction.ASC, "label");
-		String search = "";
-		int page = 0;
+
 		when(userService.searchUsersForProject(PROJECT, TABLE_REQUEST.getSearch(), TABLE_REQUEST.getCurrent(),
 				TABLE_REQUEST.getPageSize(), TABLE_REQUEST.getSort())).thenReturn(getPagedUsersForProject());
 
@@ -99,7 +97,7 @@ public class UIProjectMembersServiceTest {
 
 	@Test
 	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
-		String response = service.removeUserFromProject(PROJECT_ID, USER_2.getId(), LOCALE);
+		service.removeUserFromProject(PROJECT_ID, USER_2.getId(), LOCALE);
 		verify(projectService, times(1)).removeUserFromProject(PROJECT, USER_2);
 	}
 
@@ -110,8 +108,7 @@ public class UIProjectMembersServiceTest {
 
 	@Test
 	public void testUpdateUserRoleOnProject() throws ProjectWithoutOwnerException {
-		String response = service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(),
-				ProjectRole.PROJECT_OWNER.toString(), LOCALE);
+		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
 		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER);
 	}
 
@@ -124,7 +121,7 @@ public class UIProjectMembersServiceTest {
 	public void testAddMemberToProject() {
 		NewProjectMemberRequest request = new NewProjectMemberRequest(USER_3.getId(),
 				ProjectRole.PROJECT_USER.toString());
-		String response = service.addMemberToProject(PROJECT_ID, request, LOCALE);
+		service.addMemberToProject(PROJECT_ID, request, LOCALE);
 		verify(projectService, times(1)).addUserToProject(PROJECT, USER_3, ProjectRole.PROJECT_USER);
 	}
 
