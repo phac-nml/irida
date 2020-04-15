@@ -84,7 +84,7 @@ public class ProjectMembersAjaxController {
 	/**
 	 * Get a filtered list of available IRIDA instance users for this project
 	 *
-	 * @param projectId@param projectId - identifier for the current project
+	 * @param projectId - identifier for the current project
 	 * @param query           - search query to filter the users by
 	 * @return List of filtered users.
 	 */
