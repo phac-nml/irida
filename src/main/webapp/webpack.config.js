@@ -16,30 +16,30 @@ const BUILD_PATH = path.resolve(__dirname, "dist");
 const config = {
   externals: {
     jquery: "jQuery",
-    angular: "angular"
+    angular: "angular",
   },
   stats: {
     children: false,
-    cached: false
+    cached: false,
   },
   resolve: {
     extensions: [".js", ".jsx"],
     alias: {
-      "./dist/cpexcel.js": ""
-    }
+      "./dist/cpexcel.js": "",
+    },
   },
   entry: entries,
   output: {
     path: BUILD_PATH,
     publicPath: `/dist/`,
-    filename: "js/[name].bundle.js"
+    filename: "js/[name].bundle.js",
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
-        use: "babel-loader?cacheDirectory"
+        exclude: /(node_modules)/,
+        use: "babel-loader?cacheDirectory",
       },
       {
         test: /\.(css|sass|scss)$/,
@@ -50,51 +50,51 @@ const config = {
             loader: "postcss-loader",
             options: {
               plugins: () => [require("autoprefixer")],
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
-          "sass-loader"
-        ]
+          "sass-loader",
+        ],
       },
       {
         test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
-          loader: "url-loader"
-        }
+          loader: "url-loader",
+        },
       },
       {
         test: /\.(ttf|eot|svg|otf|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
-          loader: "file-loader"
-        }
+          loader: "file-loader",
+        },
       },
       {
         test: require.resolve("jquery"),
         use: [
           {
             loader: "expose-loader",
-            options: "$"
+            options: "$",
           },
           {
             loader: "expose-loader",
-            options: "jQuery"
-          }
-        ]
+            options: "jQuery",
+          },
+        ],
       },
       {
         test: require.resolve("angular"),
         use: [
           {
             loader: "expose-loader",
-            options: "angular"
-          }
-        ]
-      }
-    ]
+            options: "angular",
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "css/[name].bundle.css"
+      filename: "css/[name].bundle.css",
     }),
     new OptimizeCSSAssetsPlugin({
       cssProcessor: cssnano,
@@ -103,25 +103,25 @@ const config = {
           "default",
           {
             discardComments: { removeAll: true },
-            normalizeCharset: { add: true }
-          }
-        ]
+            normalizeCharset: { add: true },
+          },
+        ],
       },
       cssProcessorOptions: {
         // Run cssnano in safe mode to avoid
         // potentially unsafe transformations.
         safe: true,
         canPrint: false,
-        map: this.mode === "development" ? { inline: false } : null
-      }
+        map: this.mode === "development" ? { inline: false } : null,
+      },
     }),
     new i18nThymeleafWebpackPlugin({
-      functionName: "i18n"
+      functionName: "i18n",
     }),
     new webpack.ProvidePlugin({
-      i18n: path.resolve(path.join(__dirname, "resources/js/i18n"))
-    })
-  ]
+      i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
+    }),
+  ],
 };
 
 module.exports = ({ mode = "development" }) => {
