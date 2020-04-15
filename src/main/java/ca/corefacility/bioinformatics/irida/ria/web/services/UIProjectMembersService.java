@@ -23,6 +23,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.NewPro
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Service class for the UI for handling project members actions.
+ */
 @Component
 public class UIProjectMembersService {
 	private final ProjectService projectService;
@@ -30,8 +33,7 @@ public class UIProjectMembersService {
 	private final MessageSource messageSource;
 
 	@Autowired
-	public UIProjectMembersService(ProjectService projectService, UserService userService,
-			MessageSource messageSource) {
+	public UIProjectMembersService(ProjectService projectService, UserService userService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.userService = userService;
 		this.messageSource = messageSource;
@@ -66,8 +68,7 @@ public class UIProjectMembersService {
 	 * @param locale    - of the currently logged in user
 	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manage
 	 */
-	public String removeUserFromProject(Long projectId, Long userId, Locale locale)
-			throws UIProjectWithoutOwnerException {
+	public String removeUserFromProject(Long projectId, Long userId, Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		try {
@@ -91,8 +92,7 @@ public class UIProjectMembersService {
 	 * @param locale    - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 */
-	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale)
-			throws UIProjectWithoutOwnerException {
+	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectRole projectRole = ProjectRole.fromString(role);
@@ -100,19 +100,17 @@ public class UIProjectMembersService {
 
 		try {
 			projectService.updateUserProjectRole(project, user, projectRole);
-			return messageSource.getMessage("server.ProjectRoleSelect.success",
-					new Object[] { user.getLabel(), roleString }, locale);
+			return messageSource.getMessage("server.ProjectRoleSelect.success", new Object[] { user.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {
-			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
-					new Object[] { user.getLabel(), roleString }, locale));
+			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error", new Object[] { user.getLabel(), roleString }, locale));
 		}
 	}
 
 	/**
 	 * Get a filtered list of available IRIDA instance users for this project
 	 *
-	 * @param projectId@param projectId - identifier for the current project
-	 * @param query           - search query to filter the users by
+	 * @param projectId - identifier for the current project
+	 * @param query     - search query to filter the users by
 	 * @return List of filtered users.
 	 */
 	public List<User> getAvailableUsersForProject(Long projectId, String query) {
@@ -133,7 +131,6 @@ public class UIProjectMembersService {
 		User user = userService.read(request.getId());
 		ProjectRole role = ProjectRole.fromString(request.getRole());
 		projectService.addUserToProject(project, user, role);
-		return messageSource.getMessage("project.members.add.success",
-				new Object[] { user.getLabel(), project.getLabel() }, locale);
+		return messageSource.getMessage("project.members.add.success", new Object[] { user.getLabel(), project.getLabel() }, locale);
 	}
 }
