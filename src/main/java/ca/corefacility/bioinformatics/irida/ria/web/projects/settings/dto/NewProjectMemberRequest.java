@@ -1,7 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto;
 
+/**
+ * Used to send information to the server about a user to be added as a project member
+ */
 public class NewProjectMemberRequest {
+	/*
+	User Identifier
+	 */
 	private Long id;
+
+	/*
+	Role to add the user to the project as
+	 */
 	private String role;
 
 	public NewProjectMemberRequest() {
