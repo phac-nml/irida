@@ -92,6 +92,7 @@ public class UIProjectMembersService {
 	 * @param role      - to update the user to
 	 * @param locale    - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
+	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manage
 	 */
 	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
