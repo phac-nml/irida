@@ -66,6 +66,7 @@ public class UIProjectMembersService {
 	 * @param projectId - identifier for the current project
 	 * @param userId    - identifier for the user to remove from the project
 	 * @param locale    - of the currently logged in user
+	 * @return Message to display to the user about the outcome of removing a user from the project.
 	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manage
 	 */
 	public String removeUserFromProject(Long projectId, Long userId, Locale locale) throws UIProjectWithoutOwnerException {
