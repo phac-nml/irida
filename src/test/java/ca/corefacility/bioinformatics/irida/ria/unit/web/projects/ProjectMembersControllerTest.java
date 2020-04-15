@@ -1,31 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
 import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectMembersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.Lists;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class ProjectMembersControllerTest {
 	// Services
@@ -46,7 +35,7 @@ public class ProjectMembersControllerTest {
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 		userGroupService = mock(UserGroupService.class);
-		controller = new ProjectMembersController(projectUtils, projectService, userService, userGroupService, messageSource);
+		controller = new ProjectMembersController(projectUtils, projectService, userGroupService, messageSource);
 		projectTestUtils = new ProjectTestUtils(projectService, userService);
 
 		projectTestUtils.mockSidebarInfo();
