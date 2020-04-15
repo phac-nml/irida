@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
