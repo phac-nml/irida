@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -43,7 +42,6 @@ public class ProjectMembersController {
 
 	private final ProjectControllerUtils projectUtils;
 	private final ProjectService projectService;
-	private final UserService userService;
 	private final MessageSource messageSource;
 	private final UserGroupService userGroupService;
 
@@ -52,10 +50,9 @@ public class ProjectMembersController {
 
 	@Autowired
 	public ProjectMembersController(final ProjectControllerUtils projectUtils, final ProjectService projectService,
-			final UserService userService, final UserGroupService userGroupService, final MessageSource messageSource) {
+			final UserGroupService userGroupService, final MessageSource messageSource) {
 		this.projectUtils = projectUtils;
 		this.projectService = projectService;
-		this.userService = userService;
 		this.messageSource = messageSource;
 		this.userGroupService = userGroupService;
 	}
