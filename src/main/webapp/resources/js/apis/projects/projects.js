@@ -23,3 +23,7 @@ export async function getPagedProjectsForUser(params) {
     return {};
   }
 }
+
+export async function getProjectRoles() {
+  return await axios.get(`${URL}/roles`).then(({ data }) => data);
+}
