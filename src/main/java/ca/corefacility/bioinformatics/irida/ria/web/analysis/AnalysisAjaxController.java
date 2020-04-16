@@ -883,6 +883,35 @@ public class AnalysisAjaxController {
 	}
 
 	/**
+	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
+	 *
+	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
+	 * @param filename {@link String} filename for an {@link AnalysisOutputFile}
+	 *
+	 * @return {@link String} containing the image file contents as a base64 encoded string.
+	 * @throws IOException {@link IOException} if the newick file is not found
+	 */
+	@RequestMapping("{submissionId}/image")
+	@ResponseBody
+	public String getImageFile(@PathVariable Long submissionId, String filename) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Set<AnalysisOutputFile> files = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+		AnalysisOutputFile outputFile = null;
+
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename)) {
+				outputFile = file;
+				break;
+			}
+		}
+		return Base64.getEncoder().encodeToString(outputFile.getBytesForFile());
+	}
+
+	/**
 	 * Get the metadata associated with a template for an analysis.
 	 *
 	 * @param submissionId {@link Long} identifier for the {@link AnalysisSubmission}

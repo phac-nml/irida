@@ -19,6 +19,7 @@ const blacklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 const excelFileExtSet = new Set(["xlsx"]);
+const imageFileExtSet = new Set(["png", "jpeg", "jpg"]);
 
 function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
@@ -31,6 +32,7 @@ function AnalysisOutputsProvider(props) {
     let hasTabularFile = false;
     let hasTextFile = false;
     let hasExcelFile = false;
+    let hasImageFile = false;
 
     getOutputInfo(analysisContext.analysis.identifier).then(data => {
       // Check if json, tab, and/or text files exist
@@ -52,11 +54,16 @@ function AnalysisOutputsProvider(props) {
               !tabExtSet.has(el.fileExt) &&
               !jsonExtSet.has(el.fileExt) &&
               !blacklistExtSet.has(el.fileExt) &&
-              !excelFileExtSet.has(el.fileExt);
+              !excelFileExtSet.has(el.fileExt) &&
+              !imageFileExtSet.has(el.fileExt);
           }
 
           if(!hasExcelFile) {
             hasExcelFile = excelFileExtSet.has(el.fileExt);
+          }
+
+          if(!hasImageFile) {
+            hasImageFile = imageFileExtSet.has(el.fileExt);
           }
 
         });
@@ -71,7 +78,8 @@ function AnalysisOutputsProvider(props) {
               hasJsonFile: hasJsonFile,
               hasTabularFile: hasTabularFile,
               hasTextFile: hasTextFile,
-              hasExcelFile: hasExcelFile
+              hasExcelFile: hasExcelFile,
+              hasImageFile: hasImageFile
             }
           ]
         };
@@ -87,7 +95,8 @@ function AnalysisOutputsProvider(props) {
         tabExtSet,
         jsonExtSet,
         blacklistExtSet,
-        excelFileExtSet
+        excelFileExtSet,
+        imageFileExtSet
       }}
     >
       {props.children}

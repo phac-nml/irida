@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -174,5 +176,16 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		}
 
 		return false;
+	}
+
+	public byte[] getBytesForFile() {
+		byte[] bytes = new byte[0];
+
+		try {
+			bytes = Files.readAllBytes(getFile());
+		} catch (IOException e) {
+
+		}
+		return bytes;
 	}
 }

@@ -64,11 +64,9 @@ export default function AnalysisJsonPreview({ output }) {
 
   return jsonData !== null ? (
     <div>
-      <Row>
         <OutputFileHeader output={output} />
-      </Row>
       {isAdmin ? (
-        <Row>
+        <div>
           <OutputWrapper overflowRequired={!Array.isArray(jsonData)}>
             {Array.isArray(jsonData) ? (
               <AutoSizer>
@@ -87,9 +85,8 @@ export default function AnalysisJsonPreview({ output }) {
               JSON.stringify(jsonData, null, 2)
             )}
           </OutputWrapper>
-
           <Divider />
-        </Row>
+        </div>
       ) : null}
     </div>
   ) : null;
