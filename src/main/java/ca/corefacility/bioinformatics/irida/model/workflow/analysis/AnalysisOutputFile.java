@@ -185,8 +185,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	 * @throws IOException if the file couldn't be read
 	 */
 	public byte[] getBytesForFile() throws IOException  {
-		byte[] bytes = new byte[0];
-		bytes = Files.readAllBytes(getFile());
+		byte[] bytes = Files.readAllBytes(getFile());
 		return bytes;
 	}
 }

@@ -889,11 +889,11 @@ public class AnalysisAjaxController {
 	 * @param filename {@link String} filename for an {@link AnalysisOutputFile}
 	 *
 	 * @return {@link String} containing the image file contents as a base64 encoded string.
-	 * @throws IOException {@link IOException} if the newick file is not found
+	 * @throws IOException {@link IOException} if the image file is not found
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public String getImageFile(@PathVariable Long submissionId, String filename) {
+	public String getImageFile(@PathVariable Long submissionId, String filename) throws IOException {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
