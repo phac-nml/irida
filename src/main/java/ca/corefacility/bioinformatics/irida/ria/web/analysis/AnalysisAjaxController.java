@@ -893,22 +893,27 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public String getImageFile(@PathVariable Long submissionId, String filename) throws IOException {
+	public String getImageFile(@PathVariable Long submissionId, String filename){
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 
-		for (AnalysisOutputFile file : files) {
-			if (file.getFile()
-					.toFile()
-					.getName()
-					.contains(filename)) {
-				outputFile = file;
-				break;
+		try {
+			for (AnalysisOutputFile file : files) {
+				if (file.getFile()
+						.toFile()
+						.getName()
+						.contains(filename)) {
+					outputFile = file;
+					break;
+				}
 			}
+			return Base64.getEncoder().encodeToString(outputFile.getBytesForFile());
+		} catch(IOException e) {
+			logger.error("Unable to open image file");
 		}
-		return Base64.getEncoder().encodeToString(outputFile.getBytesForFile());
+		return "";
 	}
 
 	/**
