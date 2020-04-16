@@ -7,7 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 public class ProjectDetailsResponse {
 	private Long id;
 	private String label;
-	private Date createDate;
+	private Date createdDate;
 	private Date modifiedDate;
 	private String organism;
 	private String description;
@@ -15,7 +15,7 @@ public class ProjectDetailsResponse {
 	public ProjectDetailsResponse(Project project) {
 		this.id = project.getId();
 		this.label = project.getLabel();
-		this.createDate = project.getCreatedDate();
+		this.createdDate = project.getCreatedDate();
 		this.modifiedDate = project.getModifiedDate();
 		this.organism = project.getOrganism();
 		this.description = project.getProjectDescription();
@@ -29,8 +29,8 @@ public class ProjectDetailsResponse {
 		return label;
 	}
 
-	public Date getCreateDate() {
-		return createDate;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
 	public Date getModifiedDate() {

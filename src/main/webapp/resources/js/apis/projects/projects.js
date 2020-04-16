@@ -31,3 +31,10 @@ export async function getProjectRoles() {
 export async function getProjectDetails(projectId) {
   return axios.get(`${URL}/${projectId}/details`).then(({ data }) => data);
 }
+
+export async function updateProjectAttribute({ projectId, field, value }) {
+  return axios
+    .put(`${URL}/${projectId}/details/edit`, { field, value })
+    .then(({ data }) => data)
+    .catch(({ data }) => data);
+}
