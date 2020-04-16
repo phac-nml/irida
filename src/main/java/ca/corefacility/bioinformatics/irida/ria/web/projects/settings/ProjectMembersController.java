@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 import java.security.Principal;
 import java.util.*;
 
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -27,10 +22,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectGroup;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectMember;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -47,7 +42,6 @@ public class ProjectMembersController {
 
 	private final ProjectControllerUtils projectUtils;
 	private final ProjectService projectService;
-	private final UserService userService;
 	private final MessageSource messageSource;
 	private final UserGroupService userGroupService;
 
@@ -56,10 +50,9 @@ public class ProjectMembersController {
 
 	@Autowired
 	public ProjectMembersController(final ProjectControllerUtils projectUtils, final ProjectService projectService,
-			final UserService userService, final UserGroupService userGroupService, final MessageSource messageSource) {
+			final UserGroupService userGroupService, final MessageSource messageSource) {
 		this.projectUtils = projectUtils;
 		this.projectService = projectService;
-		this.userService = userService;
 		this.messageSource = messageSource;
 		this.userGroupService = userGroupService;
 	}
@@ -76,7 +69,7 @@ public class ProjectMembersController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping("/{projectId}/settings/members")
+	@RequestMapping(value = { "/{projectId}/settings/members", "/{projectId}/settings/members/edit" })
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 
 		Project project = projectService.read(projectId);
@@ -115,33 +108,6 @@ public class ProjectMembersController {
 	}
 
 	/**
-	 * Add a member to a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param memberId
-	 *            The ID of the user
-	 * @param projectRole
-	 *            The role for the user on the project
-	 * @param locale
-	 *            the reported locale of the browser
-	 * @return map for showing success message.
-	 */
-	@RequestMapping(value = "/{projectId}/settings/members", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long memberId,
-			@RequestParam String projectRole, Locale locale) {
-		logger.trace("Adding user " + memberId + " to project " + projectId);
-		Project project = projectService.read(projectId);
-		User user = userService.read(memberId);
-		ProjectRole role = ProjectRole.fromString(projectRole);
-
-		projectService.addUserToProject(project, user, role);
-		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
-				new Object[] { user.getLabel(), project.getLabel() }, locale));
-	}
-
-	/**
 	 * Add a group to a project
 	 * 
 	 * @param projectId
@@ -177,24 +143,6 @@ public class ProjectMembersController {
 	 *            A search term
 	 * @return A {@code Map<Long,String>} of the userID and user label
 	 */
-	@RequestMapping("/{projectId}/settings/ajax/availablemembers")
-	@ResponseBody
-	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
-		final Project project = projectService.read(projectId);
-		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project, term);
-
-		return usersAvailableForProject;
-	}
-
-	/**
-	 * Search the list of users who could be added to a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param term
-	 *            A search term
-	 * @return A {@code Map<Long,String>} of the userID and user label
-	 */
 	@RequestMapping("/{projectId}/settings/ajax/availablegroupmembers")
 	@ResponseBody
 	public Collection<UserGroup> getGroupsAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
@@ -202,31 +150,6 @@ public class ProjectMembersController {
 		final List<UserGroup> groupsAvailableForProject = userGroupService.getUserGroupsNotOnProject(project, term);
 
 		return groupsAvailableForProject;
-	}
-
-	/**
-	 * Remove a user from a project
-	 *
-	 * @param projectId The project to remove from
-	 * @param userId    The user to remove
-	 * @param locale    The locale of the logged in user
-	 * @return Success or failure message if user was removed
-	 */
-	@RequestMapping(path = "{projectId}/settings/members/{userId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final Locale locale) {
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
-
-		try {
-			projectService.removeUserFromProject(project, user);
-			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.remove.success",
-					new Object[] { user.getLabel() }, locale));
-		} catch (final ProjectWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.remove.nomanager",
-					new Object[] { user.getLabel() }, locale));
-		}
 	}
 
 	/**
@@ -251,34 +174,6 @@ public class ProjectMembersController {
 		} catch (final ProjectWithoutOwnerException e) {
 			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.remove.nomanager",
 					new Object[] { userGroup.getLabel() }, locale));
-		}
-	}
-
-	/**
-	 * Update a user's role on a project
-	 *
-	 * @param projectId   The ID of the project
-	 * @param userId      The ID of the user
-	 * @param projectRole The role to set
-	 * @param locale      Locale of the logged in user
-	 * @return Success or error message
-	 */
-	@RequestMapping(path = "{projectId}/settings/members/editrole/{userId}", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final @RequestParam String projectRole, final Locale locale) {
-		final Project project = projectService.read(projectId);
-		final User user = userService.read(userId);
-		final ProjectRole role = ProjectRole.fromString(projectRole);
-		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
-
-		try {
-			projectService.updateUserProjectRole(project, user, role);
-			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
-					new Object[] { user.getLabel(), roleName }, locale));
-		} catch (final ProjectWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
-					new Object[] { user.getLabel(), roleName }, locale));
 		}
 	}
 
@@ -311,30 +206,6 @@ public class ProjectMembersController {
 	}
 
 	/**
-	 * Get a page of users on the project for display in a DataTable.
-	 *
-	 * @param params
-	 *            the datatables parameters for this DataTable
-	 * @param projectId
-	 *            the id of the project we're looking at
-	 * @return a {@link DataTablesResponseModel} of users on the project
-	 */
-	@RequestMapping(value = "/{projectId}/settings/ajax/members")
-	@ResponseBody
-	public DataTablesResponse getProjectUserMembers(@DataTablesRequest DataTablesParams params,
-			final @PathVariable Long projectId) {
-		final Project project = projectService.read(projectId);
-
-		final Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project,
-				params.getSearchValue(), params.getCurrentPage(), params.getLength(), params.getSort());
-		List<DataTablesResponseModel> modelList = new ArrayList<>();
-		for (Join<Project, User> join : usersForProject) {
-			modelList.add(new DTProjectMember((ProjectUserJoin) join));
-		}
-		return new DataTablesResponse(params, usersForProject, modelList);
-	}
-
-	/**
 	 * Get a page of groups on the project for display in a DataTable.
 	 *
 	 * @param params
@@ -357,22 +228,6 @@ public class ProjectMembersController {
 		}
 
 		return new DataTablesResponse(params, userGroupsForProject, responseModels);
-	}
-
-	/**
-	 * Get a string to tell the user which group they're going to delete.
-	 * 
-	 * @param memberId
-	 *            the user group that's about to be deleted.
-	 * @param model
-	 *            model for rendering the view
-	 * @return name of the user removal modal
-	 */
-	@RequestMapping(path = "/settings/removeUserModal", method = RequestMethod.POST)
-	public String getRemoveUserModal(final @RequestParam Long memberId, final Model model) {
-		final User user = userService.read(memberId);
-		model.addAttribute("member", user);
-		return REMOVE_USER_MODAL;
 	}
 
 	/**
