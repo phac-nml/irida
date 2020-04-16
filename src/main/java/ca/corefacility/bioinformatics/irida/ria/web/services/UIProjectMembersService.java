@@ -67,7 +67,7 @@ public class UIProjectMembersService {
 	 * @param userId    - identifier for the user to remove from the project
 	 * @param locale    - of the currently logged in user
 	 * @return Message to display to the user about the outcome of removing a user from the project.
-	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manage
+	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manager
 	 */
 	public String removeUserFromProject(Long projectId, Long userId, Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
@@ -92,7 +92,7 @@ public class UIProjectMembersService {
 	 * @param role      - to update the user to
 	 * @param locale    - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
-	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manage
+	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manager
 	 */
 	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);

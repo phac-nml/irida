@@ -22,7 +22,7 @@ const { Text } = Typography;
 
 /**
  * React component that adds a button to open a modal to add a new member
- * to a project.  User can search for a user but first name, last name or
+ * to a project.  User can search for a user by first name, last name or
  * username, and select the project role for the user.
  * @returns {*}
  * @constructor
