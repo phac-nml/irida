@@ -888,13 +888,13 @@ public class AnalysisAjaxController {
 	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
-	 * @param filename {@link String} filename for an {@link AnalysisOutputFile}
-	 *
+	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
+	 * @param locale       locale of the logged in user
 	 * @return {@link String} containing the image file contents as a base64 encoded string.
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale){
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
@@ -910,8 +910,9 @@ public class AnalysisAjaxController {
 					break;
 				}
 			}
-			return ResponseEntity.ok(Base64.getEncoder().encodeToString(outputFile.getBytesForFile()));
-		} catch(IOException e) {
+			return ResponseEntity.ok(Base64.getEncoder()
+					.encodeToString(outputFile.getBytesForFile()));
+		} catch (IOException e) {
 			logger.error("Unable to open image file");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(messageSource.getMessage("AnalysisOutputs.unableToReadImageFile", null, locale));
