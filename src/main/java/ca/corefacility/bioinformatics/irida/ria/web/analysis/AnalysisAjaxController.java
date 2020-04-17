@@ -894,7 +894,7 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename){
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale){
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
@@ -914,7 +914,7 @@ public class AnalysisAjaxController {
 		} catch(IOException e) {
 			logger.error("Unable to open image file");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(e.getMessage());
+					.body(messageSource.getMessage("AnalysisOutputs.unableToReadImageFile", null, locale));
 		}
 	}
 
