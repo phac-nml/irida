@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Select } from "antd";
 import { searchTaxonomy } from "../../apis/taxonomy/taxonomy";
 import { useDebounce } from "../../hooks";
@@ -8,6 +8,11 @@ const { Option } = Select;
 export function OntoSelect({ organism, setOrganism }) {
   const [options, setOptions] = useState([]);
   const [query, setQuery] = useState("");
+  const selectRef = useRef();
+
+  useEffect(() => {
+    selectRef.current.focus();
+  }, []);
 
   function optionsReducer(accumulator, current) {
     accumulator.push(
@@ -35,6 +40,7 @@ export function OntoSelect({ organism, setOrganism }) {
 
   return (
     <Select
+      ref={selectRef}
       showSearch
       defaultValue={organism || ""}
       notFoundContent={null}
