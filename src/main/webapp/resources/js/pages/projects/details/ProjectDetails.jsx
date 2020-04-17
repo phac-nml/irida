@@ -3,7 +3,7 @@ import {
   getProjectDetails,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
-import { PageHeader, Tooltip, Typography } from "antd";
+import { notification, PageHeader, Tooltip, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import {
   IconEdit,
@@ -20,6 +20,8 @@ function reducer(state, action) {
   switch (action.type) {
     case "LOADED":
       return { ...state, ...action.payload, loading: false };
+    case "UPDATE":
+      return { ...state, ...action.payload };
   }
 }
 
@@ -42,8 +44,13 @@ export function ProjectDetails() {
       field,
       value,
     })
-      .then((data) => console.log(data))
-      .catch((data) => console.error(data));
+      .then((message) => {
+        notification.success({ message });
+        dispatch({ type: "UPDATE", payload: { [field]: value } });
+      })
+      .catch((message) => {
+        notification.error({ message });
+      });
   };
 
   const details = state.loading
@@ -63,7 +70,9 @@ export function ProjectDetails() {
           title: i18n("ProjectDetails.description"),
           desc: (
             <Paragraph
-              editable={{ onChange: (value) => updateField("desc", value) }}
+              editable={{
+                onChange: (value) => updateField("description", value),
+              }}
             >
               {state.description}
             </Paragraph>

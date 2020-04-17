@@ -34,7 +34,7 @@ public class ProjectDetailsAjaxController {
 		case "label":
 			project.setName(request.getValue());
 			break;
-		case "desc":
+		case "description":
 			project.setProjectDescription(request.getValue());
 			break;
 		default:
