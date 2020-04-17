@@ -889,7 +889,6 @@ public class AnalysisAjaxController {
 	 * @param filename {@link String} filename for an {@link AnalysisOutputFile}
 	 *
 	 * @return {@link String} containing the image file contents as a base64 encoded string.
-	 * @throws IOException {@link IOException} if the image file is not found
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
