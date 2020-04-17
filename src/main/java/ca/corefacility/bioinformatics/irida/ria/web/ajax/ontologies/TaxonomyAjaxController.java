@@ -14,6 +14,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.TaxonomyEntry;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
+/**
+ * Handle asynchronous request related to the taxonomy ontology.
+ */
 @RestController
 @RequestMapping("/ajax/taxonomy")
 public class TaxonomyAjaxController {
@@ -24,10 +27,18 @@ public class TaxonomyAjaxController {
 		this.taxonomyService = taxonomyService;
 	}
 
+	/**
+	 * Query the taxonomy ontology and return a list of taxonomy with their children
+	 *
+	 * @param q {@link String} - term to query the ontology by.
+	 * @return {@link ResponseEntity}
+	 */
 	@RequestMapping("")
 	public ResponseEntity<List<TaxonomyEntry>> searchTaxonomy(@RequestParam String q) {
 		Collection<TreeNode<String>> results = taxonomyService.search(q);
-		List<TaxonomyEntry> entries = results.stream().map(TaxonomyEntry::new).collect(Collectors.toList());
+		List<TaxonomyEntry> entries = results.stream()
+				.map(TaxonomyEntry::new)
+				.collect(Collectors.toList());
 		return ResponseEntity.ok(entries);
 	}
 }
