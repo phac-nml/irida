@@ -13,6 +13,7 @@ import {
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { blue6 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
+import { OrganismDescription } from "./OrganismDescription";
 
 const { Paragraph } = Typography;
 
@@ -85,22 +86,10 @@ export function ProjectDetails() {
         {
           title: i18n("ProjectDetails.organism"),
           desc: (
-            <span>
-              {state.organism}
-              <Tooltip title={"Edit"}>
-                <button
-                  style={{
-                    border: "none",
-                    margin: 0,
-                    padding: 0,
-                    backgroundColor: "transparent",
-                    marginLeft: SPACE_XS,
-                  }}
-                >
-                  <IconEdit style={{ color: blue6 }} />
-                </button>
-              </Tooltip>
-            </span>
+            <OrganismDescription
+              organism={state.organism}
+              setOrganism={(organism) => updateField("organism", organism)}
+            />
           ),
         },
         {

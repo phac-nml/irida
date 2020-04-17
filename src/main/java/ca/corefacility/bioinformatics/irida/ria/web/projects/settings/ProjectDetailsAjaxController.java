@@ -37,6 +37,9 @@ public class ProjectDetailsAjaxController {
 		case "description":
 			project.setProjectDescription(request.getValue());
 			break;
+		case "organism":
+			project.setOrganism(request.getValue());
+			break;
 		default:
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("ERROR");
