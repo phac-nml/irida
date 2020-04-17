@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { OntoSelect } from "../../../components/ontology/OntoSelect";
+import { OntologySelect } from "../../../components/ontology/OntologySelect";
 import { Tooltip } from "antd";
 import { SPACE_XS } from "../../../styles/spacing";
 import { IconEdit } from "../../../components/icons/Icons";
 import { blue6 } from "../../../styles/colors";
+import { TAXONOMY } from "../../../apis/ontology/query";
 
 /**
  * Show the organism along with an edit button.  Allow the user to enter
@@ -45,7 +46,11 @@ export function OrganismDescription({ organism, setOrganism }) {
   useEffect(() => {}, [editing]);
 
   return editing ? (
-    <OntoSelect organism={organism} setOrganism={setUpdatedOrganism} />
+    <OntologySelect
+      term={organism}
+      onTermSelected={setUpdatedOrganism}
+      ontology={TAXONOMY}
+    />
   ) : (
     <OrganismTextDescription organism={organism} setEditing={setEditing} />
   );

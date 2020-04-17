@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.ontologies;
 
 import java.util.Collection;
 import java.util.List;

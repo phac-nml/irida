@@ -1,19 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Select } from "antd";
-import { searchTaxonomy } from "../../apis/taxonomy/taxonomy";
+import searchOntology from "../../apis/ontology/query";
 import { useDebounce } from "../../hooks";
 
 const { Option } = Select;
 
-export function OntoSelect({ organism, setOrganism }) {
+/**
+ * Component to render a select input to search for a term in an ontology.
+ *
+ * @param {string} term - initial value
+ * @param {function} onTermSelected - callback for when a term is selected
+ * @param {string} ontology - which ontology to query
+ * @returns {*}
+ * @constructor
+ */
+export function OntologySelect({ term, onTermSelected, ontology }) {
   const [options, setOptions] = useState([]);
   const [query, setQuery] = useState("");
   const selectRef = useRef();
 
-  useEffect(() => {
-    selectRef.current.focus();
-  }, []);
-
+  /**
+   * Reducer: Create the dropdown contents from the taxonomy.
+   *
+   * @param {array} accumulator
+   * @param {object} current
+   * @returns {*}
+   */
   function optionsReducer(accumulator, current) {
     accumulator.push(
       <Option key={current.value} value={current.value}>
@@ -33,19 +45,30 @@ export function OntoSelect({ organism, setOrganism }) {
   const debouncedQuery = useDebounce(query, 350);
 
   useEffect(() => {
-    searchTaxonomy(debouncedQuery).then((data) => {
+    /*
+    Accessed only when the value of debouncedQuery changes.  This will
+    trigger a server call & updated the list.
+     */
+    searchOntology({ query: debouncedQuery, ontology }).then((data) => {
       setOptions(data.reduce(optionsReducer, []));
     });
   }, [debouncedQuery]);
+
+  useEffect(() => {
+    /*
+    Focus on the select input when the component is mounted.
+     */
+    selectRef.current.focus();
+  }, []);
 
   return (
     <Select
       ref={selectRef}
       showSearch
-      defaultValue={organism || ""}
+      defaultValue={term || ""}
       notFoundContent={null}
       onSearch={setQuery}
-      onSelect={setOrganism}
+      onSelect={onTermSelected}
       style={{ width: "100%" }}
     >
       {options}
