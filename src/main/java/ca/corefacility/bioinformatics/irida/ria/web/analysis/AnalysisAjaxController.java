@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -892,7 +894,7 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public String getImageFile(@PathVariable Long submissionId, String filename){
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename){
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
@@ -908,11 +910,12 @@ public class AnalysisAjaxController {
 					break;
 				}
 			}
-			return Base64.getEncoder().encodeToString(outputFile.getBytesForFile());
+			return ResponseEntity.ok(Base64.getEncoder().encodeToString(outputFile.getBytesForFile()));
 		} catch(IOException e) {
 			logger.error("Unable to open image file");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(e.getMessage());
 		}
-		return "";
 	}
 
 	/**

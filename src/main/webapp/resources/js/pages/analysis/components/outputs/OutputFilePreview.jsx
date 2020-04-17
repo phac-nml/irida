@@ -28,11 +28,7 @@ export default function OutputFilePreview() {
   const {
     analysisOutputsContext,
     getAnalysisOutputs,
-    jsonExtSet,
-    tabExtSet,
-    blacklistExtSet,
-    excelFileExtSet,
-    imageFileExtSet
+    getPreviewForFileType
   } = useContext(AnalysisOutputsContext);
 
   const { analysisContext } = useContext(AnalysisContext);
@@ -81,7 +77,7 @@ export default function OutputFilePreview() {
 
       // If the output file ext is not json, tabular, pdf. zip, then we create a preview
       // for it and add it to the textOutput array
-      if (excelFileExtSet.has(output.fileExt))
+      if (getPreviewForFileType(output.fileExt, "excel"))
       {
         excelOutput.unshift(
           <AnalysisExcelPreview output={output} key={output.filename} />
@@ -104,7 +100,7 @@ export default function OutputFilePreview() {
       }
 
       // If the output file ext an image file then we create a preview for it
-      if (imageFileExtSet.has(output.fileExt))
+      if (getPreviewForFileType(output.fileExt, "image"))
       {
         imageOutput.unshift(
           <AnalysisImagePreview output={output} key={output.filename} />
@@ -128,7 +124,7 @@ export default function OutputFilePreview() {
 
       // If the output file ext is json then we create a preview for it
       // and add it to the jsonOutput array
-      if (jsonExtSet.has(output.fileExt)) {
+      if (getPreviewForFileType(output.fileExt, "json")) {
         jsonOutput.unshift(
           <AnalysisJsonPreview output={output} key={output.filename} />
         );
@@ -151,7 +147,7 @@ export default function OutputFilePreview() {
 
       // If the output file ext is a tabular type then we create a preview for it
       // and add it to the tabularOutput array
-      if (tabExtSet.has(output.fileExt)) {
+      if (getPreviewForFileType(output.fileExt, "tab")) {
         tabularOutput.unshift(
           <AnalysisTabularPreview output={output} key={output.filename} />
         );
@@ -174,13 +170,7 @@ export default function OutputFilePreview() {
 
       // If the output file ext is not json, tabular, pdf. zip, then we create a preview
       // for it and add it to the textOutput array
-      if (
-        !jsonExtSet.has(output.fileExt) &&
-        !tabExtSet.has(output.fileExt) &&
-        !blacklistExtSet.has(output.fileExt) &&
-        !excelFileExtSet.has(output.fileExt) &&
-        !imageFileExtSet.has(output.fileExt)
-      ) {
+      if (getPreviewForFileType(output.fileExt, "text")) {
         textOutput.unshift(
           <AnalysisTextPreview output={output} key={output.filename} />
         );
