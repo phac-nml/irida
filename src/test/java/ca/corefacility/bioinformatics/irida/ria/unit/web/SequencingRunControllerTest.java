@@ -24,7 +24,6 @@ public class SequencingRunControllerTest {
 	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
 
-
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);

@@ -34,8 +34,6 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-
 /**
  * Tests for {@link FastqcFileProcessor}.
  * 
@@ -46,7 +44,6 @@ public class FastqcFileProcessorTest {
 	private SequenceFileRepository sequenceFileRepository;
 	private AnalysisOutputFileRepository outputFileRepository;
 	private MessageSource messageSource;
-
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";

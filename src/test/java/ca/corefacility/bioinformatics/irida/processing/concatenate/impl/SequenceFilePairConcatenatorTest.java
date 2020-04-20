@@ -6,11 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.nio.file.Files;

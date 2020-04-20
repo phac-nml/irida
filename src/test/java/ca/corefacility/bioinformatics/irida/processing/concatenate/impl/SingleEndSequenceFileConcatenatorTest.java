@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
