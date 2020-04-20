@@ -11,7 +11,9 @@ import { getOutputInfo } from "../apis/analysis/analysis";
 
 const initialContext = {
   outputs: null,
-  fileTypes: [{ hasJsonFile: false, hasTabularFile: false, hasTextFile: false }]
+  fileTypes: [
+    { hasJsonFile: false, hasTabularFile: false, hasTextFile: false },
+  ],
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
@@ -19,6 +21,7 @@ const blacklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 const excelFileExtSet = new Set(["xlsx"]);
+const imageFileExtSet = new Set(["png", "jpeg", "jpg"]);
 
 function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
@@ -26,54 +29,75 @@ function AnalysisOutputsProvider(props) {
   );
   const { analysisContext } = useContext(AnalysisContext);
 
+  function getPreviewForFileType(fileExt, type) {
+    if (type === "text") {
+      return (
+        !tabExtSet.has(fileExt) &&
+        !jsonExtSet.has(fileExt) &&
+        !blacklistExtSet.has(fileExt) &&
+        !excelFileExtSet.has(fileExt) &&
+        !imageFileExtSet.has(fileExt)
+      );
+    } else if (type === "excel") {
+      return excelFileExtSet.has(fileExt);
+    } else if (type === "image") {
+      return imageFileExtSet.has(fileExt);
+    } else if (type === "json") {
+      return jsonExtSet.has(fileExt);
+    } else if (type === "tab") {
+      return tabExtSet.has(fileExt);
+    }
+  }
+
   function getAnalysisOutputs() {
     let hasJsonFile = false;
     let hasTabularFile = false;
     let hasTextFile = false;
     let hasExcelFile = false;
+    let hasImageFile = false;
 
-    getOutputInfo(analysisContext.analysis.identifier).then(data => {
+    getOutputInfo(analysisContext.analysis.identifier).then((data) => {
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required
 
       if (data !== "") {
-        data.find(function(el) {
+        data.find(function (el) {
           if (!hasJsonFile) {
-            hasJsonFile = jsonExtSet.has(el.fileExt);
+            hasJsonFile = getPreviewForFileType(el.fileExt, "json");
           }
 
           if (!hasTabularFile) {
-            hasTabularFile = tabExtSet.has(el.fileExt);
+            hasTabularFile = getPreviewForFileType(el.fileExt, "tab");
           }
 
           if (!hasTextFile) {
-            hasTextFile =
-              !tabExtSet.has(el.fileExt) &&
-              !jsonExtSet.has(el.fileExt) &&
-              !blacklistExtSet.has(el.fileExt) &&
-              !excelFileExtSet.has(el.fileExt);
+            hasTextFile = getPreviewForFileType(el.fileExt, "text");
           }
 
-          if(!hasExcelFile) {
-            hasExcelFile = excelFileExtSet.has(el.fileExt);
+          if (!hasExcelFile) {
+            hasExcelFile = getPreviewForFileType(el.fileExt, "excel");
           }
 
+          if (!hasImageFile) {
+            hasImageFile = getPreviewForFileType(el.fileExt, "image");
+          }
         });
       }
 
-      setAnalysisOutputsContext(analysisOutputsContext => {
+      setAnalysisOutputsContext((analysisOutputsContext) => {
         return {
           ...analysisOutputsContext,
           outputs: data,
           fileTypes: [
             {
-              hasJsonFile: hasJsonFile,
-              hasTabularFile: hasTabularFile,
-              hasTextFile: hasTextFile,
-              hasExcelFile: hasExcelFile
-            }
-          ]
+              hasJsonFile,
+              hasTabularFile,
+              hasTextFile,
+              hasExcelFile,
+              hasImageFile,
+            },
+          ],
         };
       });
     });
@@ -84,10 +108,7 @@ function AnalysisOutputsProvider(props) {
       value={{
         analysisOutputsContext,
         getAnalysisOutputs,
-        tabExtSet,
-        jsonExtSet,
-        blacklistExtSet,
-        excelFileExtSet
+        getPreviewForFileType,
       }}
     >
       {props.children}
