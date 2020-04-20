@@ -694,18 +694,6 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<version>1.11.376</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/com.monitorjbl/xlsx-streamer -->
 		<dependency>
 			<groupId>com.monitorjbl</groupId>
