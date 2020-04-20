@@ -93,20 +93,15 @@ export default function AnalysisTextPreview({ output }) {
     if (fileRows.length > 0) {
       return (
         <div>
-          <Row>
-            <OutputFileHeader output={output} />
-          </Row>
-
-          <Row>
-            <TextOutputWrapper
-              id={`text-${output.filename.replace(".", "-")}`}
-              onScroll={() => loadMoreData()}
-            >
-              <Text>{fileRows}</Text>
-            </TextOutputWrapper>
-            <div id={`${output.filename}-preview-status`}></div>
-            <Divider />
-          </Row>
+          <OutputFileHeader output={output} />
+          <TextOutputWrapper
+            id={`text-${output.filename.replace(".", "-")}`}
+            onScroll={() => loadMoreData()}
+          >
+            <Text>{fileRows}</Text>
+          </TextOutputWrapper>
+          <div id={`${output.filename}-preview-status`}></div>
+          <Divider />
         </div>
       );
     }
