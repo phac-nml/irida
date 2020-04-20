@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
+/**
+ * Used by the UI to generate a select input based on a search within the taxonomy.
+ */
 public class TaxonomyEntry {
 	private String value;
 	private String text;
