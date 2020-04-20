@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto;
 
+/**
+ * Used to handle requests from the UI to update a specific attribute on a project.
+ * The field is the attribute to be update, and the value is the value to set to that field.
+ */
 public class UpdateProjectAttributeRequest {
 	private String field;
 	private String value;
