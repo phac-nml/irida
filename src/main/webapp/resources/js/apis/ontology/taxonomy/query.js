@@ -11,7 +11,7 @@ const ONTOLOGY_URLS = { [TAXONOMY]: setBaseUrl("ajax/taxonomy") };
  * @param {string} ontology - which ontology to search
  * @returns {Promise<void|AxiosResponse<any>>}
  */
-export default async function searchOntology({ query, ontology }) {
+async function searchOntology({ query, ontology }) {
   // Make sure the ontology we are searching actually exits.
   if (ONTOLOGY_URLS[ontology]) {
     return axios
@@ -28,4 +28,4 @@ export default async function searchOntology({ query, ontology }) {
   );
 }
 
-export { TAXONOMY };
+export { searchOntology, TAXONOMY };
