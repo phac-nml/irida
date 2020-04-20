@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Select } from "antd";
-import searchOntology from "../../apis/ontology/query";
+import { searchOntology } from "../../apis/ontology/taxonomy";
 import { useDebounce } from "../../hooks";
 
 const { Option } = Select;
