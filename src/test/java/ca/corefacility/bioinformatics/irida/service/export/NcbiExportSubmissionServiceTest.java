@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.export;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -38,7 +37,7 @@ public class NcbiExportSubmissionServiceTest {
 
 	@Test
 	public void testCreate() {
-		SingleEndSequenceFile sequenceFile = new SingleEndSequenceFile(new LocalSequenceFile());
+		SingleEndSequenceFile sequenceFile = new SingleEndSequenceFile(new SequenceFile());
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(sequenceFile),
 				Sets.newHashSet(), null, "library_name", null, null, null, "library_construction_protocol",
@@ -53,7 +52,7 @@ public class NcbiExportSubmissionServiceTest {
 
 	@Test
 	public void testCreatePairs() {
-		SequenceFile sequenceFile = new LocalSequenceFile();
+		SequenceFile sequenceFile = new SequenceFile();
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(),
 				Sets.newHashSet(new SequenceFilePair(sequenceFile, sequenceFile)), null, "library_name", null, null,

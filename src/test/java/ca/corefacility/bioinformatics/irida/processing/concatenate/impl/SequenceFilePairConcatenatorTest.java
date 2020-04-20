@@ -1,12 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
-
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,22 +19,16 @@ import java.nio.file.Path;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class SequenceFilePairConcatenatorTest {
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
-	private SequenceFilePairConcatenator concat;
-
-	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
+	SequenceFilePairConcatenator concat;
 
 	@Before
 	public void setUp() {
-		concat = new SequenceFilePairConcatenator(iridaFileStorageService);
+		concat = new SequenceFilePairConcatenator();
 	}
 
 	@Test
@@ -78,6 +68,6 @@ public class SequenceFilePairConcatenatorTest {
 		Path sequenceFile = Files.createTempFile(name, ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		return new LocalSequenceFile(sequenceFile);
+		return new SequenceFile(sequenceFile);
 	}
 }

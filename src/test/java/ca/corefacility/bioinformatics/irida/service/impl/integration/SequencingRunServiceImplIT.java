@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -77,7 +76,6 @@ public class SequencingRunServiceImplIT {
 	@Autowired
 	private AnalysisService analysisService;
 
-
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
 	public void testAddSequenceFileToMiseqRunAsSequencer() throws IOException, InterruptedException {
@@ -112,7 +110,7 @@ public class SequencingRunServiceImplIT {
 		// that we can link to.
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		SequenceFile sf = new LocalSequenceFile(sequenceFile);
+		SequenceFile sf = new SequenceFile(sequenceFile);
 		SequencingObject so = new SingleEndSequenceFile(sf);
 		so = objectService.create(so);
 
@@ -304,7 +302,7 @@ public class SequencingRunServiceImplIT {
 		Path p = Files.createTempFile(null, null);
 		Files.write(p, FASTQ_FILE_CONTENTS);
 
-		SequenceFile sf = new LocalSequenceFile();
+		SequenceFile sf = new SequenceFile();
 		sf.setFile(p);
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		Sample sample = sampleService.read(1L);

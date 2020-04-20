@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.SequencingRunController;
@@ -58,7 +58,7 @@ public class SequencingRunControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		SequencingRun sequencingRunEntity = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 
-		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new LocalSequenceFile()));
+		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
 		when(objectService.getSequencingObjectsForSequencingRun(sequencingRunEntity)).thenReturn(files);

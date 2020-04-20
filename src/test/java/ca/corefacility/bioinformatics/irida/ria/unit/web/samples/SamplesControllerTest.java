@@ -25,7 +25,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
@@ -134,7 +137,7 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Long sampleId = 1L;
 		Sample sample = new Sample();
-		SequenceFile file = new LocalSequenceFile(Paths.get("/tmp"));
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
 		file.setId(2L);
 		Project project = new Project();
 
@@ -163,7 +166,7 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Long sampleId = 1L;
 		Sample sample = new Sample();
-		SequenceFile file = new LocalSequenceFile(Paths.get("/tmp"));
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
 		file.setId(2L);
 
 		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
@@ -193,7 +196,7 @@ public class SamplesControllerTest {
 
 		Long sampleId = 1L;
 		Sample sample = new Sample();
-		SequenceFile file = new LocalSequenceFile(Paths.get("/tmp"));
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
 		file.setId(2L);
 		Project project = new Project();
 
@@ -224,7 +227,7 @@ public class SamplesControllerTest {
 		Long sampleId = 1L;
 		Long fileId = 2L;
 		Sample sample = new Sample();
-		SequencingObject file = new SingleEndSequenceFile(new LocalSequenceFile(Paths.get("/tmp")));
+		SequencingObject file = new SingleEndSequenceFile(new SequenceFile(Paths.get("/tmp")));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequencingObjectService.readSequencingObjectForSample(sample, fileId)).thenReturn(file);
@@ -242,7 +245,7 @@ public class SamplesControllerTest {
 
 		Long sampleId = 1L;
 		Long assemblyId = 3L;
-		SequenceFile file = new LocalSequenceFile(Paths.get("/tmp"));
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
 		file.setId(2L);
 
 		Sample sample = new Sample();
