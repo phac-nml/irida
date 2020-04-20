@@ -345,11 +345,6 @@
 			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 			<version>${jackson.dataformat.yaml.version}</version>
@@ -676,22 +671,6 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${com.google.code.gson.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.azure</groupId>
-			<artifactId>azure-storage-blob</artifactId>
-			<version>${azure-storage-blob.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>jakarta.xml.bind</groupId>
-					<artifactId>jakarta.xml.bind-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jakarta.activation</groupId>
-					<artifactId>jakarta.activation-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -1182,7 +1161,7 @@
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
-		<jackson.version>2.10.3</jackson.version>
+		<jackson.version>2.9.10</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
 		<commons.fileupload.version>1.3.1</commons.fileupload.version>
 		<javax.el-api.version>3.0.0</javax.el-api.version>
