@@ -32,6 +32,9 @@ export function OntologySelect({ term, onTermSelected, ontology }) {
         {current.text}
       </Option>
     );
+    /*
+    Recursively check to see if there are any children to add
+     */
     if (current.children) {
       accumulator.push(...current.children.reduce(optionsReducer, []));
     }
@@ -49,9 +52,11 @@ export function OntologySelect({ term, onTermSelected, ontology }) {
     Accessed only when the value of debouncedQuery changes.  This will
     trigger a server call & updated the list.
      */
-    searchOntology({ query: debouncedQuery, ontology }).then((data) => {
-      setOptions(data.reduce(optionsReducer, []));
-    });
+    if (query.length >= 2) {
+      searchOntology({ query: debouncedQuery, ontology }).then((data) => {
+        setOptions(data.reduce(optionsReducer, []));
+      });
+    }
   }, [debouncedQuery]);
 
   useEffect(() => {

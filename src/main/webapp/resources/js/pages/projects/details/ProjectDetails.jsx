@@ -3,17 +3,13 @@ import {
   getProjectDetails,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
-import { notification, PageHeader, Tooltip, Typography } from "antd";
+import { notification, PageHeader, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
-import {
-  IconEdit,
-  IconFolder,
-  IconLoading,
-} from "../../../components/icons/Icons";
+import { IconFolder, IconLoading } from "../../../components/icons/Icons";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { blue6 } from "../../../styles/colors";
-import { SPACE_XS } from "../../../styles/spacing";
-import { OrganismDescription } from "./OrganismDescription";
+import { EditableParagraph } from "../../../components/ant.design/EditableParagraph";
+import { OntologySelect } from "../../../components/ontology/OntologySelect";
+import { TAXONOMY } from "../../../apis/ontology/query";
 
 const { Paragraph } = Typography;
 
@@ -86,10 +82,13 @@ export function ProjectDetails() {
         {
           title: i18n("ProjectDetails.organism"),
           desc: (
-            <OrganismDescription
-              organism={state.organism}
-              setOrganism={(organism) => updateField("organism", organism)}
-            />
+            <EditableParagraph value={state.organism}>
+              <OntologySelect
+                term={state.organism}
+                ontology={TAXONOMY}
+                onTermSelected={(term) => updateField("organism", term)}
+              />
+            </EditableParagraph>
           ),
         },
         {
