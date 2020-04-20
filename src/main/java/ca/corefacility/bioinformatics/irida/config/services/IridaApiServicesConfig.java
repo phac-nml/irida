@@ -128,15 +128,6 @@ public class IridaApiServicesConfig {
 	@Value("${locales.enabled}")
 	private String availableLocales;
 
-	@Value("${irida.storage.type}")
-	private String storageType;
-
-	@Value("${azure.container.name:#{null}}")
-	private String containerName;
-
-	@Value("${azure.account.connection.string:#{null}}")
-	private String connectionStr;
-
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -297,13 +288,7 @@ public class IridaApiServicesConfig {
 
 	@Bean(name = "iridaFileStorageService")
 	public IridaFileStorageService iridaFileStorageService() {
-		if(storageType.equalsIgnoreCase("azure")) {
-			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
-		} else if (storageType.equalsIgnoreCase("aws")) {
-			return new IridaFileStorageAwsServiceImpl();
-		} else {
-			return new IridaFileStorageLocalServiceImpl();
-		}
+		return new IridaFileStorageLocalServiceImpl();
 	}
 
 	@Bean(name = "uploadFileProcessingChain")
