@@ -14,7 +14,7 @@ You're required to install a few different pieces of software on your machine be
 
 1. DB: A MySQL or MariaDB server,
 2. Languages: Java 8 (we have a hard requirement on Java 8), Python, Node
-3. Build: Apache Maven, Bower
+3. Build: Apache Maven
 4. SCM: Git
 5. IDE: Eclipse, Netbeans, IntelliJ, vim... (whatever you want, really).
 
