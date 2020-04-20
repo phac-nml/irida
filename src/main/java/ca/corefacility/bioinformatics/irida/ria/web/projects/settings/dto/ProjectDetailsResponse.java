@@ -4,6 +4,10 @@ import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+/**
+ * Consumed by the UI on the project details page.
+ * Returns default information about a project.
+ */
 public class ProjectDetailsResponse {
 	private Long id;
 	private String label;
