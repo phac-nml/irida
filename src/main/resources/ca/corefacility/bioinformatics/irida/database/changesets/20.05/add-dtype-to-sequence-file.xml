@@ -7,13 +7,16 @@
 
     <changeSet id="add-dtype-to-sequence-file" author="deep">
         <addColumn tableName="sequence_file">
-            <column name="DTYPE" type="varchar(31)">
-                <constraints nullable="false" />
-            </column>
+            <column name="DTYPE" type="varchar(31)" />
         </addColumn>
+
+        <sql>UPDATE sequence_file SET DTYPE="LocalSequenceFile"</sql>
 
         <addColumn tableName="sequence_file_AUD">
             <column name="DTYPE" type="varchar(31)" />
         </addColumn>
+
+        <sql>UPDATE sequence_file_AUD SET DTYPE="LocalSequenceFile"</sql>
+
     </changeSet>
 </databaseChangeLog>
