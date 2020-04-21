@@ -4,10 +4,14 @@
 <head>
 	<title th:text="${project.label}">Project</title>
 	<script th:inline="javascript">
-		window.project = {
-			id: /*[[${project.getId()}]]*/ 1
-		};
+      window.project = {
+        page: /*[[${activeNav}]]*/ "settings",
+        label: /*[[${project.getLabel()}]]*/ 1,
+        id: /*[[${project.getId()}]]*/ 1,
+        // remote: /*[[${project.isRemote()}]]*/ true
+      };
 	</script>
+    <link rel="stylesheet" th:href="@{/dist/css/project.bundle.css}">
 </head>
 <body>
 
@@ -20,14 +24,7 @@
             <span><i class="fa fa-heartbeat fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
         </div>
 
-        <ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
-            <li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
-            <li th:classappend="${activeNav} == 'linelist' ? 'active'"><a th:href="@{${baseLink} + '/linelist'}" th:text="#{project.nav.linelist}">[Line List]</a></li>
-            <li th:classappend="${activeNav} == 'analyses' ? 'active'"><a href="" th:href="@{${baseLink} + '/analyses'}" th:text="#{project.nav.analysis}">[Analyses]</a></li>
-            <li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>
-            <li th:classappend="${activeNav} == 'activity' ? 'active'"><a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">[Recent]</a></li>
-            <li th:classappend="${activeNav} == 'settings' ? 'active'"><a href="" th:href="@{${baseLink} + '/settings'}" th:text="#{project.nav.settings}">[Settings]</a></li>
-        </ul>
+        <div id="project-root"></div>
 
         <main layout:fragment="main">
             <!--/*/
@@ -37,5 +34,8 @@
     </div>
 </div>
 
+<th:block layout:fragment="base-scripts">
+    <script th:src="@{/dist/js/project.bundle.js}"></script>
+</th:block>
 </body>
 </html>
