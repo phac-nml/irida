@@ -88,8 +88,6 @@ public class ProjectsController {
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
-	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
-	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
@@ -346,25 +344,7 @@ public class ProjectsController {
 			return getCreateProjectPage(useCartSamples, model, owner);
 		}
 
-		return "redirect:/projects/" + project.getId() + "/metadata";
-	}
-
-	/**
-	 * Returns the name of a page to add users to a *new* project.
-	 *
-	 * @param model     {@link Model}
-	 * @param principal a reference to the logged in user.
-	 * @param projectId the id of the project to find the metadata for.
-	 * @return The name of the add users to new project page.
-	 */
-	@RequestMapping("/projects/{projectId}/metadata")
-	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
-		Project project = projectService.read(projectId);
-
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
-		return PROJECT_METADATA_PAGE;
+		return "redirect:/projects/" + project.getId() + "/settings";
 	}
 
 	/**
@@ -422,85 +402,6 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "automated");
 		return "projects/analyses/pages/outputs.html";
-	}
-
-	/**
-	 * Get the project edit page
-	 *
-	 * @param model     model for the view
-	 * @param principal currently logged in user
-	 * @param projectId id of the project to get
-	 * @return name of the project edit view
-	 */
-	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
-	public String getProjectMetadataEditPage(final Model model, final Principal principal,
-			@PathVariable long projectId) {
-		Project project = projectService.read(projectId);
-		User user = userService.getUserByUsername(principal.getName());
-		if (user.getSystemRole()
-				.equals(Role.ROLE_ADMIN) || projectService.userHasProjectRole(user, project,
-				ProjectRole.PROJECT_OWNER)) {
-			if (!model.containsAttribute("errors")) {
-				model.addAttribute("errors", new HashMap<>());
-			}
-			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-
-			model.addAttribute("project", project);
-			model.addAttribute("maxFileSize", MAX_UPLOAD_SIZE);
-			if (MAX_UPLOAD_SIZE > 0) {
-				model.addAttribute("maxFileSizeString", fileSizeConverter.convert(MAX_UPLOAD_SIZE));
-			} else {
-				model.addAttribute("maxFileSizeString", "∞");
-			}
-			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
-			return PROJECT_METADATA_EDIT_PAGE;
-		} else {
-			throw new AccessDeniedException("Do not have permissions to modify this project.");
-		}
-	}
-
-	/**
-	 * Submit a project metadata edit
-	 *
-	 * @param model              Model for the view
-	 * @param principal          currently logged in user
-	 * @param projectId          id of the project
-	 * @param name               new name of the project
-	 * @param organism           new organism for the project
-	 * @param projectDescription new description for the project
-	 * @param remoteURL          new remote URL for the project
-	 * @return Project view name
-	 */
-	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.POST)
-	public String postProjectMetadataEditPage(final Model model, final Principal principal,
-			@PathVariable long projectId, @RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL) {
-
-		Project project = projectService.read(projectId);
-
-		if (!Strings.isNullOrEmpty(name)) {
-			project.setName(name);
-		}
-		if (!Strings.isNullOrEmpty(organism)) {
-			project.setOrganism(organism);
-		}
-		if (!Strings.isNullOrEmpty(projectDescription)) {
-			project.setProjectDescription(projectDescription);
-		}
-		if (!Strings.isNullOrEmpty(remoteURL)) {
-			project.setRemoteURL(remoteURL);
-		}
-
-		try {
-			projectService.update(project);
-		} catch (ConstraintViolationException ex) {
-			model.addAttribute("errors", getErrorsFromViolationException(ex));
-			return getProjectMetadataEditPage(model, principal, projectId);
-		}
-
-		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
 	/**

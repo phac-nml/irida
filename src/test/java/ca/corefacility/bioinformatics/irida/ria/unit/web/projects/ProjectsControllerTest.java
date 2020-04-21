@@ -134,32 +134,6 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
-	public void testGetProjectMetadataPage() throws IOException {
-		Model model = new ExtendedModelMap();
-		Principal principal = () -> USER_NAME;
-		String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
-		assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
-		assertTrue("Model should contain a project", model.containsAttribute("project"));
-	}
-
-	@Test
-	public void testPostProjectMetadataEditPage() throws IOException {
-		Model model = new ExtendedModelMap();
-		Principal principal = () -> USER_NAME;
-
-		String newName = "My Project";
-		String newOrganism = "Bad Buggy";
-		String newDescritption = "Another new description.";
-		String newRemoteURL = "http://ghosturl.ca";
-
-		when(projectService.update(any(Project.class))).thenReturn(getProject());
-
-		String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism,
-				newDescritption, newRemoteURL);
-		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
-	}
-
-	@Test
 	public void testSearchTaxonomy() {
 		String searchTerm = "bac";
 		TreeNode<String> root = new TreeNode<>("Bacteria");
