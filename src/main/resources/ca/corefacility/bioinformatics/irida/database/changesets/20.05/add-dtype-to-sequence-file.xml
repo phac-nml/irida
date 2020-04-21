@@ -7,7 +7,7 @@
 
     <changeSet id="add-dtype-to-sequence-file" author="deep">
         <addColumn tableName="sequence_file">
-            <column name="DTYPE" type="varchar(31)" />
+            <column name="DTYPE" type="varchar(31)" default="LocalSequenceFile" />
         </addColumn>
 
         <sql>UPDATE sequence_file SET DTYPE="LocalSequenceFile"</sql>
