@@ -16,6 +16,10 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  *
  */
 public final class TestDataFactory {
+	public static final long TEST_PROJECT_ID = 1L;
+	public static final String TEST_PROJECT_LABEL = "Test Project";
+	public static final String TEST_PROJECT_ORGANISM = "Escherichia";
+	public static final String TEST_PROJECT_DESCRIPTION = "This is a fascinating project";
 
     /**
      * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.User}.
@@ -95,8 +99,10 @@ public final class TestDataFactory {
      * @return a project with a name and identifier.
      */
     public static Project constructProject() {
-        Project p = new Project();
-        p.setId(1L);
+        Project p = new Project(TEST_PROJECT_LABEL);
+		p.setId(TEST_PROJECT_ID);
+		p.setOrganism(TEST_PROJECT_ORGANISM);
+		p.setProjectDescription(TEST_PROJECT_DESCRIPTION);
         return p;
     }
 }
