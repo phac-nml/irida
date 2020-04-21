@@ -27,7 +27,7 @@ Important links
 Languages and Libraries
 -----------------------
 
-IRIDA is a Java application developed using Java 8.
+IRIDA is a Java application developed using Java 11.
 
 #### Spring framework
 {:.no_toc}
@@ -97,7 +97,7 @@ An (incomplete) set of instructions for getting the IRIDA service layer and web 
 * Clone IRIDA from the IRIDA [GitHub][].
 * Install the following dependencies from your chosen package manager:
   * MariaDB
-  * Java 8 JDK
+  * Java 11 JDK
   * Apache Maven
 * Run the library installation script in the `lib/` directory:
 

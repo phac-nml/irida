@@ -12,7 +12,7 @@ Installing Software with `apt`
 ------------------------------
 You can install the latest OpenJDK JDK on Ubuntu. The `apt` repositories also contain an up-to-date version of Tomcat 8, so no complex configuration needs to take place for Ubuntu.
 
-    #### Install OpenJDK Java 8 
+    #### Install OpenJDK Java 11 
     apt-get install openjdk-11-jdk
 
     #### Install tomcat8 and mariadb-server
