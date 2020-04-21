@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -49,6 +50,7 @@ public class ProjectDetailsAjaxController {
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public ResponseEntity<String> updateProjectDetails(@PathVariable Long projectId,
 			@RequestBody UpdateProjectAttributeRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
