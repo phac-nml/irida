@@ -5,8 +5,9 @@
 	<title th:text="${project.label}">Project</title>
 	<script th:inline="javascript">
 		window.project = {
-			id: /*[[${project.getId()}]]*/ 1
-		};
+          canManage: /*[[${isOwner or isAdmin}]]*/ false,
+          id: /*[[${project.getId()}]]*/ 1
+        };
 	</script>
 </head>
 <body>

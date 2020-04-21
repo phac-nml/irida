@@ -77,17 +77,19 @@ export function ProjectDetails() {
     : [
         {
           title: i18n("ProjectDetails.label"),
-          desc: (
+          desc: window.project.canManage ? (
             <Paragraph
               editable={{ onChange: (value) => updateField("label", value) }}
             >
               {state.label}
             </Paragraph>
+          ) : (
+            state.label
           ),
         },
         {
           title: i18n("ProjectDetails.description"),
-          desc: (
+          desc: window.project.canManage ? (
             <Paragraph
               editable={{
                 onChange: (value) => updateField("description", value),
@@ -95,6 +97,8 @@ export function ProjectDetails() {
             >
               {state.description}
             </Paragraph>
+          ) : (
+            state.description
           ),
         },
         {
@@ -103,7 +107,7 @@ export function ProjectDetails() {
         },
         {
           title: i18n("ProjectDetails.organism"),
-          desc: (
+          desc: window.project.canManage ? (
             <EditableParagraph value={state.organism}>
               <OntologySelect
                 term={state.organism}
@@ -111,6 +115,8 @@ export function ProjectDetails() {
                 onTermSelected={(term) => updateField("organism", term)}
               />
             </EditableParagraph>
+          ) : (
+            state.organism
           ),
         },
         {
