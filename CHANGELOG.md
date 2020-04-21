@@ -32,6 +32,7 @@ Changes
 * [UI/Developer]: Added excel file viewer to analysis outputs view.
 * [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
 * [UI/Developer]: Added image file viewer to analysis outputs view.
+* [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 
 19.09 to 20.01
 --------------
