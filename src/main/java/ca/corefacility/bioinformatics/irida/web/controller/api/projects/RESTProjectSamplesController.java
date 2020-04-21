@@ -1,5 +1,27 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -14,24 +36,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-import com.google.common.net.HttpHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.google.common.net.HttpHeaders;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -43,6 +49,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @Controller
 public class RESTProjectSamplesController {
+
+	private static final Logger logger = LoggerFactory.getLogger(RESTProjectSamplesController.class);
 	
 	/**
 	 * Rel to get to the project that this sample belongs to.
@@ -97,28 +105,36 @@ public class RESTProjectSamplesController {
 				sampleIds.size());
 		for (final long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
-			Join<Project, Sample> r = projectService.addSampleToProject(p, sample, false);
+			Join<Project, Sample> join;
+			try {
+				join = projectService.addSampleToProject(p, sample, false);
+			} catch (EntityExistsException e) {
+				logger.warn("User tried to add a sample to a project where it already existed. project: " + projectId
+						+ " sample: " + sampleId);
+
+				join = sampleService.getSampleForProject(p, sampleId);
+			}
 			LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource<Project, Sample>(
-					r.getLabel(), r);
+					join.getLabel(), join);
 			// add a labeled relationship resource to the resource collection
 			// that will fill the body of the response.
-			resource.add(linkTo(
-					methodOn(RESTProjectSamplesController.class).getSample(sample.getId()))
-					.withSelfRel());
-			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId())).withRel(REL_PROJECT_SAMPLE));
-			resource.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sample.getId()))
-					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-			resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sample.getId())).withSelfRel());
+			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId,
+					sample.getId())).withRel(REL_PROJECT_SAMPLE));
+			resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(
+					sample.getId())).withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+			resource.add(linkTo(RESTProjectsController.class).slash(projectId)
+					.withRel(REL_PROJECT));
 			labeledProjectSampleResources.add(resource);
 			final String location = linkTo(
-					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId,sampleId)).withSelfRel()
+					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
 					.getHref();
 			response.addHeader(HttpHeaders.LOCATION, location);
+
 		}
 		// add a link to the project that was copied to.
-		labeledProjectSampleResources.add(linkTo(
-				methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+		labeledProjectSampleResources.add(
+				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
 		response.setStatus(HttpStatus.CREATED.value());
 
