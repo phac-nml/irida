@@ -10,7 +10,6 @@ import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
@@ -50,11 +49,11 @@ public class SequenceFilePairTest {
 		reversePathGood = tempDir.resolve("Test_R2_001.fastq");
 		reversePathBad = tempDir.resolve("Test_B.fastq");
 
-		sequenceFileForwardGood = new LocalSequenceFile(forwardPathGood);
-		sequenceFileForwardBad = new LocalSequenceFile(forwardPathBad);
+		sequenceFileForwardGood = new SequenceFile(forwardPathGood);
+		sequenceFileForwardBad = new SequenceFile(forwardPathBad);
 
-		sequenceFileReverseGood = new LocalSequenceFile(reversePathGood);
-		sequenceFileReverseBad = new LocalSequenceFile(reversePathBad);
+		sequenceFileReverseGood = new SequenceFile(reversePathGood);
+		sequenceFileReverseBad = new SequenceFile(reversePathBad);
 
 		sequenceFilePairGood = new SequenceFilePair(sequenceFileForwardGood, sequenceFileReverseGood);
 		sequenceFilePairBad = new SequenceFilePair(sequenceFileForwardBad, sequenceFileReverseBad);

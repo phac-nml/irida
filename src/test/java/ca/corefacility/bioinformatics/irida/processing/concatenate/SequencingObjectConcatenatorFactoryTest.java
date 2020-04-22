@@ -1,36 +1,34 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SequenceFilePairConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SingleEndSequenceFileConcatenator;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import com.google.common.collect.Sets;
+
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit test for {@link SequencingObjectConcatenatorFactory}
  */
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class SequencingObjectConcatenatorFactoryTest {
 
-	@Autowired
 	private IridaFileStorageService iridaFileStorageService;
+
+	@Before
+	public void setUp() {
+		iridaFileStorageService = mock(IridaFileStorageLocalServiceImpl.class);
+	}
 
 	@Test
 	public void testGetConcatenatorSingle() {

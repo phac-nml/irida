@@ -312,9 +312,7 @@ public class IridaApiServicesConfig {
 	public IridaFileStorageService iridaFileStorageService() {
 		if(storageType.equalsIgnoreCase("azure")) {
 			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
-		} else if (storageType.equalsIgnoreCase("aws")) {
-			return new IridaFileStorageAwsServiceImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey);
-		} else {
+		}  else {
 			return new IridaFileStorageLocalServiceImpl();
 		}
 	}

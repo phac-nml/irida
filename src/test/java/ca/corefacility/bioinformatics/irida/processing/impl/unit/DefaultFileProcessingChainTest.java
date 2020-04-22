@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -48,7 +49,7 @@ public class DefaultFileProcessingChainTest {
 	public void setUp() {
 		this.objectRepository = mock(SequencingObjectRepository.class);
 		this.qcRepository = mock(QCEntryRepository.class);
-		this.iridaFileStorageService = mock(IridaFileStorageService.class);
+		this.iridaFileStorageService = mock(IridaFileStorageLocalServiceImpl.class);
 
 		seqObject = new NoFileSequencingObject();
 		when(objectRepository.findById(objectId)).thenReturn(Optional.of(seqObject));

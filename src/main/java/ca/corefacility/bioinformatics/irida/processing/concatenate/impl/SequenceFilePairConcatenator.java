@@ -70,8 +70,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 		}
 
 		// create new SequenceFiles
-		SequenceFile forward = iridaFileStorageService.createSequenceFile(forwardFile);
-		SequenceFile reverse = iridaFileStorageService.createSequenceFile(reverseFile);
+		SequenceFile forward = new SequenceFile(forwardFile);
+		SequenceFile reverse = new SequenceFile(reverseFile);
 
 		// create the new pair
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(forward, reverse);

@@ -19,14 +19,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -465,7 +466,7 @@ public class DatabaseSetupGalaxyITService {
 		List<SingleEndSequenceFile> returnedSequenceFiles = new ArrayList<>();
 
 		for (Path sequenceFilePath : sequenceFilePaths) {
-			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(new LocalSequenceFile(sequenceFilePath));
+			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(new SequenceFile(sequenceFilePath));
 			sequencingObjectService.createSequencingObjectInSample(singleEndSequenceFile, sample);
 			waitForFilesToSettle(singleEndSequenceFile);
 
@@ -495,8 +496,8 @@ public class DatabaseSetupGalaxyITService {
 		Sample sample = sampleService.read(sampleId);
 		List<SequenceFilePair> returnedSequenceFilePairs = new ArrayList<>();
 		for (int i = 0; i < sequenceFiles1.size(); i++) {
-			SequenceFile sf1 = new LocalSequenceFile(sequenceFiles1.get(i));
-			SequenceFile sf2 = new LocalSequenceFile(sequenceFiles2.get(i));
+			SequenceFile sf1 = new SequenceFile(sequenceFiles1.get(i));
+			SequenceFile sf2 = new SequenceFile(sequenceFiles2.get(i));
 			SequenceFilePair pair = new SequenceFilePair(sf1, sf2);
 			sequencingObjectService.createSequencingObjectInSample(pair, sample);
 			waitForFilesToSettle(pair);

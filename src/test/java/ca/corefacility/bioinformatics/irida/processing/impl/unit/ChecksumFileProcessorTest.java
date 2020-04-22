@@ -11,37 +11,27 @@ import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class ChecksumFileProcessorTest {
 	private ChecksumFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 	private static final String CHECKSUM = "aeaa0755dc44b393ffe12f02e9bd42b0169b12ca9c15708085db6a4ac9110ee0";
-
-	@Autowired
 	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository, iridaFileStorageService);
 	}
 
@@ -63,7 +53,7 @@ public class ChecksumFileProcessorTest {
 
 	@Test(expected = FileProcessorException.class)
 	public void testFileNotExists() throws IOException {
-		final SequenceFile sf = new LocalSequenceFile(Paths.get("/reallyfakefile"));
+		final SequenceFile sf = new SequenceFile(Paths.get("/reallyfakefile"));
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
@@ -71,7 +61,7 @@ public class ChecksumFileProcessorTest {
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {
-		SequenceFile sf = new LocalSequenceFile();
+		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FILE_CONTENTS.getBytes());
 		sf.setFile(sequenceFile);

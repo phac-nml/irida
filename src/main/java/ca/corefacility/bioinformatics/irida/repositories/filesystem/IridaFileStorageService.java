@@ -40,6 +40,8 @@ public interface IridaFileStorageService {
 	 *
 	 * @param source The {@link Path} to the file
 	 * @param target The {@link Path} to where file should be moved
+	 * @param sequenceFileDir The {@link Path} to sequence file directory
+	 * @param sequenceFileDirWithRevision The {@link Path} to sequence file revision directory
 	 */
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
 
@@ -105,27 +107,6 @@ public interface IridaFileStorageService {
 	 *
 	 */
 	public boolean isGzipped(Path file) throws IOException;
-
-	/**
-	 * Creates an empty SequenceFile depending on
-	 * storage type
-	 *
-	 * @return Local or Cloud {@link SequenceFile} object
-	 * @throws IOException if file can't be read
-	 *
-	 */
-	public SequenceFile createEmptySequenceFile();
-
-	/**
-	 * Creates a SequenceFile depending on
-	 * storage type
-	 *
-	 * @param file The path to the file
-	 * @return Local or Cloud {@link SequenceFile} object
-	 * @throws IOException if file can't be read
-	 *
-	 */
-	public SequenceFile createSequenceFile(Path file);
 
 	/**
 	 * Append a {@link SequenceFile} to a {@link Path} on the filesystem

@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
@@ -55,7 +54,7 @@ public class SequenceFileControllerTest {
 		controller = new SequenceFileController(objectService, sequencingRunService, analysisService, iridaFileStorageService);
 
 		Path path = Paths.get(FILE_PATH);
-		SequenceFile file = new LocalSequenceFile(path);
+		SequenceFile file = new SequenceFile(path);
 		file.setId(FILE_ID);
 		SingleEndSequenceFile seqObject = new SingleEndSequenceFile(file);
 		when(objectService.read(anyLong())).thenReturn(seqObject);
