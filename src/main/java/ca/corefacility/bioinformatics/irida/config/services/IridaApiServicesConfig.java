@@ -150,7 +150,6 @@ public class IridaApiServicesConfig {
 	private String awsSecretKey;
 
 
-
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 
@@ -312,7 +311,9 @@ public class IridaApiServicesConfig {
 	public IridaFileStorageService iridaFileStorageService() {
 		if(storageType.equalsIgnoreCase("azure")) {
 			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
-		}  else {
+		}  else if (storageType.equalsIgnoreCase("aws")) {
+			return new IridaFileStorageAwsServiceImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey);
+		} else {
 			return new IridaFileStorageLocalServiceImpl();
 		}
 	}
