@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -36,16 +35,14 @@ public class SamplesAjaxController {
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
 	private final MessageSource messageSource;
-	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
 	public SamplesAjaxController(SampleService sampleService, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, IridaFileStorageService iridaFileStorageService) {
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
-		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -162,6 +159,6 @@ public class SamplesAjaxController {
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
 		file.transferTo(target.toFile());
-		return iridaFileStorageService.createSequenceFile(target);
+		return new SequenceFile(target);
 	}
 }

@@ -107,27 +107,6 @@ public interface IridaFileStorageService {
 	public boolean isGzipped(Path file) throws IOException;
 
 	/**
-	 * Creates an empty SequenceFile depending on
-	 * storage type
-	 *
-	 * @return Local or Cloud {@link SequenceFile} object
-	 * @throws IOException if file can't be read
-	 *
-	 */
-	public SequenceFile createEmptySequenceFile();
-
-	/**
-	 * Creates a SequenceFile depending on
-	 * storage type
-	 *
-	 * @param file The path to the file
-	 * @return Local or Cloud {@link SequenceFile} object
-	 * @throws IOException if file can't be read
-	 *
-	 */
-	public SequenceFile createSequenceFile(Path file);
-
-	/**
 	 * Append a {@link SequenceFile} to a {@link Path} on the filesystem
 	 *
 	 * @param target the {@link Path} to append to

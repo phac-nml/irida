@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -159,22 +158,6 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SequenceFile createEmptySequenceFile() {
-		return new LocalSequenceFile();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SequenceFile createSequenceFile(Path file) {
-		return new LocalSequenceFile(file);
 	}
 
 	/**

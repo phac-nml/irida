@@ -40,11 +40,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * particular {@link Sample}.
  */
 @Entity
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, SequenceFileListener.class })
-public abstract class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
+public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
@@ -57,7 +56,7 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 
 	@NotNull(message = "{sequencefile.file.notnull}")
 	@Column(name = "file_path", unique = true)
-	protected Path file;
+	private Path file;
 
 	@CreatedDate
 	@NotNull
@@ -108,14 +107,23 @@ public abstract class SequenceFile extends IridaResourceSupport implements Mutab
 	 *
 	 * @return the file label.
 	 */
-	public abstract String getLabel();
+	@Override
+	public String getLabel() {
+		return file.getFileName().toString();
+	}
 
 	/**
 	 * Get the implementation-specific file size.
 	 *
 	 * @return the file size.
 	 */
-	public abstract String getFileSize();
+	@Override
+	@JsonIgnore
+	public String getFileSize() {
+		String size = "N/A";
+		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageService.getFileSize(getFile()), true);
+		return size;
+	}
 
 	/**
 	 * Create a new {@link SequenceFile} with the given file Path
