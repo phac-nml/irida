@@ -16,26 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
@@ -48,37 +36,30 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-
 /**
  * Tests for {@link FastqcFileProcessor}.
  * 
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private AnalysisOutputFileRepository outputFileRepository;
 	private MessageSource messageSource;
-
-	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
-
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????";
 	private static final String FASTA_FILE_CONTENTS = ">test read\n" + SEQUENCE;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageService);
 	}
 
@@ -88,7 +69,7 @@ public class FastqcFileProcessorTest {
 		// dummy), but that's A-OK.
 		Path fasta = Files.createTempFile(null, null);
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
-		SequenceFile sf = new LocalSequenceFile(fasta);
+		SequenceFile sf = new SequenceFile(fasta);
 		sf.setId(1L);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
@@ -105,7 +86,7 @@ public class FastqcFileProcessorTest {
 
 		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 
-		SequenceFile sf = new LocalSequenceFile(fastq);
+		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		try {

@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -328,7 +327,7 @@ public class ProjectSamplesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		Path path = Paths.get(FILE_PATH);
-		SequenceFile file = new LocalSequenceFile(path);
+		SequenceFile file = new SequenceFile(path);
 
 		ImmutableList<SampleSequencingObjectJoin> filejoin = ImmutableList.of(new SampleSequencingObjectJoin(sample,
 				new SingleEndSequenceFile(file)));
@@ -362,7 +361,7 @@ public class ProjectSamplesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		Path path = Paths.get(FILE_PATH);
-		SequenceFile file = new LocalSequenceFile(path);
+		SequenceFile file = new SequenceFile(path);
 
 		ImmutableList<SampleSequencingObjectJoin> filejoin = ImmutableList.of(new SampleSequencingObjectJoin(sample,
 				new SingleEndSequenceFile(file)), new SampleSequencingObjectJoin(sample,

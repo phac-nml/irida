@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.GenomeAssemblyListener;
+import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners({ GenomeAssemblyListener.class })
+@EntityListeners({ IridaFileStorageListener.class })
 @Audited
 public abstract class GenomeAssembly extends IridaResourceSupport
 		implements IridaThing, IridaSequenceFile, VersionedFileFields<Long> {
@@ -81,6 +81,17 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	}
 
 	/**
+	 * Get the size of the genome assembly files
+	 *
+	 * @return file size
+	 * @throws IOException if the file cannot be read
+	 */
+	@JsonIgnore
+	public long getFileSizeBytes() throws IOException {
+		return Files.size(getFile());
+	}
+
+	/**
 	 * Add a sample to this assembly
 	 *
 	 * @param join the {@link SampleGenomeAssemblyJoin} to add
@@ -109,6 +120,11 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	 * @return The assembly file.
 	 */
 	public abstract Path getFile();
+
+	@Override
+	public String getFileName() {
+		return getFile().getFileName().toString();
+	}
 
 	@Override
 	public int hashCode() {

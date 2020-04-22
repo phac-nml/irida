@@ -698,13 +698,13 @@
 			</exclusions>
 		</dependency>
 
-
 		<!-- https://mvnrepository.com/artifact/com.monitorjbl/xlsx-streamer -->
 		<dependency>
 			<groupId>com.monitorjbl</groupId>
 			<artifactId>xlsx-streamer</artifactId>
 			<version>${com.monitorjbl.xml.streamer.version}</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

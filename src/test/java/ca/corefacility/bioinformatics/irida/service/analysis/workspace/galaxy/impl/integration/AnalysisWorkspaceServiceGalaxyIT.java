@@ -66,7 +66,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateEx
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
@@ -218,7 +221,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Files.delete(referenceFilePath);
 		Files.copy(referenceFilePathReal, referenceFilePath);
 
-		singleFileSet = Sets.newHashSet(new SingleEndSequenceFile(new LocalSequenceFile(sequenceFilePathA)));
+		singleFileSet = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile(sequenceFilePathA)));
 
 		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();

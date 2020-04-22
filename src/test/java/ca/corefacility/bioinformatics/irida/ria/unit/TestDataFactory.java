@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import org.springframework.beans.DirectFieldAccessor;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.LocalSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -80,7 +78,7 @@ public class TestDataFactory {
 	
 	public static SingleEndSequenceFile constructSingleEndSequenceFile(){
 		Path path = Paths.get("/tmp/sequence-files/fake-file1.fast");
-		return new SingleEndSequenceFile(new LocalSequenceFile(path));
+		return new SingleEndSequenceFile(new SequenceFile(path));
 	}
 
 	/**
@@ -146,7 +144,7 @@ public class TestDataFactory {
 		List<SampleSequencingObjectJoin> join = new ArrayList<>();
 		for (long i = 0; i < 5; i++) {
 			Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
-			SequenceFile file = new LocalSequenceFile(path);
+			SequenceFile file = new SequenceFile(path);
 			file.setId(i);
 			SingleEndSequenceFile obj = new SingleEndSequenceFile(file);
 			obj.setId(i);

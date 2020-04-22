@@ -128,6 +128,9 @@ public class IridaApiServicesConfig {
 	@Value("${locales.enabled}")
 	private String availableLocales;
 
+	@Value("${irida.storage.type}")
+	private String storageType;
+
 
 	@Value("${aws.bucket.name:#{null}}")
 	private String awsBucketName;
@@ -140,7 +143,6 @@ public class IridaApiServicesConfig {
 
 	@Value("${aws.secret.key:#{null}}")
 	private String awsSecretKey;
-
 
 
 	@Autowired
