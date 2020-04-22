@@ -81,6 +81,17 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	}
 
 	/**
+	 * Get the size of the genome assembly files
+	 *
+	 * @return file size
+	 * @throws IOException if the file cannot be read
+	 */
+	@JsonIgnore
+	public long getFileSizeBytes() throws IOException {
+		return Files.size(getFile());
+	}
+
+	/**
 	 * Add a sample to this assembly
 	 *
 	 * @param join the {@link SampleGenomeAssemblyJoin} to add

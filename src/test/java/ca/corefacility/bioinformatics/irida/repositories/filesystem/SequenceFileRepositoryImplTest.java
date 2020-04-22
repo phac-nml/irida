@@ -18,7 +18,13 @@ import javax.persistence.EntityManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepositoryImpl;
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
@@ -27,6 +33,9 @@ import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
  * Tests for {@link FilesystemSupplementedRepositoryImpl}.
  * 
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { IridaApiServicesConfig.class })
+@ActiveProfiles("it")
 public class SequenceFileRepositoryImplTest {
 
 	private static final String TEMP_FILE_PREFIX = UUID.randomUUID().toString().replaceAll("-", "");
@@ -34,11 +43,15 @@ public class SequenceFileRepositoryImplTest {
 	private Path baseDirectory;
 	private EntityManager entityManager;
 
+	@Autowired
+	private IridaFileStorageService iridaFileStorageService;
+
+
 	@Before
 	public void setUp() throws IOException {
 		baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
 		entityManager = mock(EntityManager.class);
-		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory);
+		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory, iridaFileStorageService);
 	}
 
 	@After

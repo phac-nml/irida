@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -45,9 +43,6 @@ public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
 	private SequencingObjectService sequencingObjectService;
 	private GenomeAssemblyService genomeAssemblyService;
-
-	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
 
 	/*
 	TEST DATA
@@ -71,7 +66,7 @@ public class SamplesAjaxControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource, iridaFileStorageService);
+		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource);
 
 		// Set up mocks
 		when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);

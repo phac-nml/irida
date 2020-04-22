@@ -16,12 +16,19 @@ import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -29,16 +36,21 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  * 
  * 
  */
-public class GzipFileProcessorTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { IridaApiServicesConfig.class })
+@ActiveProfiles("it")public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 
+	@Autowired
+	private IridaFileStorageService iridaFileStorageService;
+
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE, iridaFileStorageService);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -60,7 +72,7 @@ public class GzipFileProcessorTest {
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE, iridaFileStorageService);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference

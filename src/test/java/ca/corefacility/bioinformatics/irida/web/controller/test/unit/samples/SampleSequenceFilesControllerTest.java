@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -72,9 +71,6 @@ public class SampleSequenceFilesControllerTest {
 	private AnalysisService analysisService;
 	private SequencingRun sequencingRun;
 
-	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
-
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
@@ -83,7 +79,7 @@ public class SampleSequenceFilesControllerTest {
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
 
-		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService, iridaFileStorageService);
+		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
 	}
 
 	@Test
@@ -245,7 +241,7 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFile emptySequenceFile = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile = new SequenceFile();
 
 		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
 		resource.setMiseqRunId(6L);
@@ -297,7 +293,7 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFile emptySequenceFile = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile = new SequenceFile();
 
 		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
 		resource.setMiseqRunId(8L);
@@ -323,7 +319,7 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFile emptySequenceFile = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile = new SequenceFile();
 		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
@@ -360,8 +356,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = iridaFileStorageService.createEmptySequenceFile();
-		SequenceFile emptySequenceFile2 = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile1 = new SequenceFile();
+		SequenceFile emptySequenceFile2 = new SequenceFile();
 
 		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
 		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
@@ -437,8 +433,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = iridaFileStorageService.createEmptySequenceFile();
-		SequenceFile emptySequenceFile2 = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile1 = new SequenceFile();
+		SequenceFile emptySequenceFile2 = new SequenceFile();
 
 		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
 		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
@@ -466,8 +462,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = iridaFileStorageService.createEmptySequenceFile();
-		SequenceFile emptySequenceFile2 = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile1 = new SequenceFile();
+		SequenceFile emptySequenceFile2 = new SequenceFile();
 
 		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
 		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
@@ -499,8 +495,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = iridaFileStorageService.createEmptySequenceFile();
-		SequenceFile emptySequenceFile2 = iridaFileStorageService.createEmptySequenceFile();
+		SequenceFile emptySequenceFile1 = new SequenceFile();
+		SequenceFile emptySequenceFile2 = new SequenceFile();
 
 		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
 		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
