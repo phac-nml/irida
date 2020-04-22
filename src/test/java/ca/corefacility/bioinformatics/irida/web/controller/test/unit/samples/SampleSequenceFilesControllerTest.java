@@ -16,21 +16,15 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
@@ -60,9 +54,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFac
 /**
  * Unit tests for {@link RESTSampleSequenceFilesController}.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class SampleSequenceFilesControllerTest {
 	private RESTSampleSequenceFilesController controller;
 	private SampleService sampleService;
