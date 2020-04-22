@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -72,9 +71,6 @@ public class SampleSequenceFilesControllerTest {
 	private AnalysisService analysisService;
 	private SequencingRun sequencingRun;
 
-	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
-
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
@@ -83,7 +79,7 @@ public class SampleSequenceFilesControllerTest {
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
 
-		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService, iridaFileStorageService);
+		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
 	}
 
 	@Test
