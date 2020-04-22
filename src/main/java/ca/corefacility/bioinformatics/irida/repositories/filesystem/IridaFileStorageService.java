@@ -40,6 +40,8 @@ public interface IridaFileStorageService {
 	 *
 	 * @param source The {@link Path} to the file
 	 * @param target The {@link Path} to where file should be moved
+	 * @param sequenceFileDir The {@link Path} to sequence file directory
+	 * @param sequenceFileDirWithRevision The {@link Path} to sequence file revision directory
 	 */
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
 
