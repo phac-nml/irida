@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;

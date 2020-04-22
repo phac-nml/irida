@@ -20,6 +20,7 @@ public class SequenceFileResource {
 
 
 	public SequenceFileResource() {
+		resource = new SequenceFile();
 	}
 
 	public SequenceFileResource(SequenceFile sequenceFile) {

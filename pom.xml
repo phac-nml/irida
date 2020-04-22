@@ -700,6 +700,7 @@
 			<artifactId>xlsx-streamer</artifactId>
 			<version>${com.monitorjbl.xml.streamer.version}</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

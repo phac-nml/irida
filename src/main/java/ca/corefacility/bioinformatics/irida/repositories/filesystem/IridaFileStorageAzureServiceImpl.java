@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.CloudSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
@@ -183,22 +182,6 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SequenceFile createEmptySequenceFile() {
-		return new CloudSequenceFile();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SequenceFile createSequenceFile(Path file) {
-		return new CloudSequenceFile(file);
 	}
 
 	/**

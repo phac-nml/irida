@@ -62,7 +62,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 		}
 
 		// create the new sequencefile and object
-		SequenceFile forward = iridaFileStorageService.createSequenceFile(tempFile);
+		SequenceFile forward = new SequenceFile(tempFile);
 
 		SingleEndSequenceFile seqObject = new SingleEndSequenceFile(forward);
 

@@ -8,24 +8,17 @@ import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -38,16 +31,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
 	private SequencingObjectService sequencingObjectService;
 	private GenomeAssemblyService genomeAssemblyService;
-
-	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
 
 	/*
 	TEST DATA
@@ -71,7 +58,7 @@ public class SamplesAjaxControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource, iridaFileStorageService);
+		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource);
 
 		// Set up mocks
 		when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);
