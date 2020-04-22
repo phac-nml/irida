@@ -82,8 +82,15 @@ public class ProjectSamplesIT {
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
-		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
-				.expect().response().statusCode(HttpStatus.CONFLICT.value()).when().post(samplesUri);
+		//this used to return CONFLICT, but ended up in errors where samples were partially added.  Now it accepts the POST but doesn't change anything since the sample is already there
+		asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
 	}
 
 	@Test
