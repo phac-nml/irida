@@ -28,7 +28,7 @@ public class SequenceFilePairConcatenatorTest {
 
 	@Before
 	public void setUp() {
-		iridaFileStorageService = mock(IridaFileStorageLocalServiceImpl.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 		concat = new SequenceFilePairConcatenator(iridaFileStorageService);
 	}
 

@@ -16,20 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
@@ -65,7 +59,7 @@ public class FastqcFileProcessorTest {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
-		iridaFileStorageService = mock(IridaFileStorageLocalServiceImpl.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageService);
 	}
 

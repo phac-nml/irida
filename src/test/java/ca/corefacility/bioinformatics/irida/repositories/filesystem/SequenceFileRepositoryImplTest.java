@@ -39,7 +39,7 @@ public class SequenceFileRepositoryImplTest {
 	public void setUp() throws IOException {
 		baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
 		entityManager = mock(EntityManager.class);
-		iridaFileStorageService = mock(IridaFileStorageLocalServiceImpl.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory, iridaFileStorageService);
 	}
 
