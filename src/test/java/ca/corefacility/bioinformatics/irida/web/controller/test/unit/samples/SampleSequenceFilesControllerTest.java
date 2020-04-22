@@ -241,9 +241,7 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFile emptySequenceFile = new SequenceFile();
-
-		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
+		SequenceFileResource resource = new SequenceFileResource();
 		resource.setMiseqRunId(6L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -293,9 +291,7 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFile emptySequenceFile = new SequenceFile();
-
-		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
+		SequenceFileResource resource = new SequenceFileResource();
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -319,8 +315,7 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
-		SequenceFile emptySequenceFile = new SequenceFile();
-		SequenceFileResource resource = new SequenceFileResource(emptySequenceFile);
+		SequenceFileResource resource = new SequenceFileResource();
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -356,11 +351,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = new SequenceFile();
-		SequenceFile emptySequenceFile2 = new SequenceFile();
-
-		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
-		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
+		SequenceFileResource resource1 = new SequenceFileResource();
+		SequenceFileResource resource2 = new SequenceFileResource();
 		resource1.setMiseqRunId(7L);
 		resource2.setMiseqRunId(7L);
 		Path f1 = Files.createTempFile(null, null);
@@ -433,11 +425,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = new SequenceFile();
-		SequenceFile emptySequenceFile2 = new SequenceFile();
-
-		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
-		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
+		SequenceFileResource resource1 = new SequenceFileResource();
+		SequenceFileResource resource2 = new SequenceFileResource();
 		resource1.setMiseqRunId(1L);
 		resource2.setMiseqRunId(2L);
 		Path f1 = Files.createTempFile(null, null);
@@ -462,11 +451,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = new SequenceFile();
-		SequenceFile emptySequenceFile2 = new SequenceFile();
-
-		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
-		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
+		SequenceFileResource resource1 = new SequenceFileResource();
+		SequenceFileResource resource2 = new SequenceFileResource();
 		resource1.setMiseqRunId(4L);
 		resource2.setMiseqRunId(4L);
 		Path f1 = Files.createTempFile(null, null);
@@ -495,11 +481,8 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		SequenceFile emptySequenceFile1 = new SequenceFile();
-		SequenceFile emptySequenceFile2 = new SequenceFile();
-
-		SequenceFileResource resource1 = new SequenceFileResource(emptySequenceFile1);
-		SequenceFileResource resource2 = new SequenceFileResource(emptySequenceFile2);
+		SequenceFileResource resource1 = new SequenceFileResource();
+		SequenceFileResource resource2 = new SequenceFileResource();
 		resource1.setMiseqRunId(4L);
 		resource2.setMiseqRunId(4L);
 		Path f1 = Files.createTempFile(null, null);
