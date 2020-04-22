@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
@@ -46,9 +47,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  * 
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { IridaApiServicesConfig.class })
-@ActiveProfiles("it")
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
@@ -60,8 +58,6 @@ public class FastqcFileProcessorTest {
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????";
 	private static final String FASTA_FILE_CONTENTS = ">test read\n" + SEQUENCE;
-
-	@Autowired
 	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
@@ -69,6 +65,7 @@ public class FastqcFileProcessorTest {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
+		iridaFileStorageService = mock(IridaFileStorageLocalServiceImpl.class);
 		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageService);
 	}
 
