@@ -3,15 +3,14 @@ import {
   getProjectDetails,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
-import { notification, PageHeader, Typography } from "antd";
+import { notification, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
-import { IconFolder, IconLoading } from "../../../components/icons/Icons";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { EditableParagraph } from "../../../components/ant.design";
 import { OntologySelect } from "../../../components/ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 
 /**
  * Reducer for the state of the project details.
@@ -135,11 +134,9 @@ export function ProjectDetails() {
       ];
 
   return (
-    <PageHeader
-      title={i18n("ProjectDetails.header")}
-      avatar={{ icon: state.loading ? <IconLoading /> : <IconFolder /> }}
-    >
+    <>
+      <Title level={2}>{i18n("ProjectDetails.header")}</Title>
       <BasicList dataSource={details} />
-    </PageHeader>
+    </>
   );
 }
