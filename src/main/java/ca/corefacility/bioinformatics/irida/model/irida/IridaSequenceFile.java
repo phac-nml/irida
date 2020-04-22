@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.nio.file.Path;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Describes fields that must be made available for a Sequence File in IRIDA
@@ -15,6 +15,13 @@ public interface IridaSequenceFile {
 	 * @return the physical location of the file.
 	 */
 	public Path getFile();
+
+	/**
+	 * The base name of the file
+	 *
+	 * @return a string base name of the file
+	 */
+	public String getFileName();
 
 	/**
 	 * Get the size of the file.
