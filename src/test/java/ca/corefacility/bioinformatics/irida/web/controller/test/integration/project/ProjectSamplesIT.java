@@ -76,9 +76,9 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testShareSampleToProjectWithSameId() {
-		final List<String> samples = Lists.newArrayList("3");
+		final List<String> samples = Lists.newArrayList("1");
 
-		final String projectUri = "/api/projects/4";
+		final String projectUri = "/api/projects/1";
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
