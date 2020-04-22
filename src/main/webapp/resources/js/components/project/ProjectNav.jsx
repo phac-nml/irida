@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
-import { Menu, Layout, PageHeader, Tag } from "antd";
+import { Layout, Menu, PageHeader, Tag, Tooltip } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { SPACE_MD } from "../../styles/spacing";
-import { IconFolder } from "../icons/Icons";
+import { IconFolder, IconSwap } from "../icons/Icons";
+import { blue6, red6 } from "../../styles/colors";
+import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
 const { Item } = Menu;
 const { Content } = Layout;
@@ -18,8 +19,7 @@ export function ProjectNav() {
     <PageHeader
       title={window.project.label}
       avatar={{ icon: <IconFolder /> }}
-      subTitle={`ID: ${window.project.id}`}
-      tags={window.project.remote ? <Tag color="blue">REMOTE</Tag> : null}
+      tags={[<RemoteProjectStatus key="remote" />].filter((f) => f !== null)}
     >
       <Content>
         <Menu mode="horizontal" selectedKeys={[current]}>
