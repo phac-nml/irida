@@ -79,18 +79,20 @@ export function ProjectDetails() {
           title: i18n("ProjectDetails.label"),
           desc: window.project.canManage ? (
             <Paragraph
+              className="t-project-name"
               editable={{ onChange: (value) => updateField("label", value) }}
             >
               {state.label}
             </Paragraph>
           ) : (
-            state.label
+            <span className="t-project-name">{state.label}</span>
           ),
         },
         {
           title: i18n("ProjectDetails.description"),
           desc: window.project.canManage ? (
             <Paragraph
+              className="t-project-desc"
               editable={{
                 onChange: (value) => updateField("description", value),
               }}
@@ -98,17 +100,20 @@ export function ProjectDetails() {
               {state.description}
             </Paragraph>
           ) : (
-            state.description
+            <span className="t-project-desc">{state.description}</span>
           ),
         },
         {
           title: i18n("ProjectDetails.id"),
-          desc: state.id,
+          desc: <span className="t-project-id">{state.id}</span>,
         },
         {
           title: i18n("ProjectDetails.organism"),
           desc: window.project.canManage ? (
-            <EditableParagraph value={state.organism}>
+            <EditableParagraph
+              value={state.organism}
+              valueClassName="t-project-organism"
+            >
               <OntologySelect
                 term={state.organism}
                 ontology={TAXONOMY}
@@ -116,7 +121,7 @@ export function ProjectDetails() {
               />
             </EditableParagraph>
           ) : (
-            state.organism
+            <span className="t-project-organism">{state.organism}</span>
           ),
         },
         {

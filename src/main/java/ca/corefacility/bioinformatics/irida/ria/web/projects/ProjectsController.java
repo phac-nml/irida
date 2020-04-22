@@ -269,7 +269,7 @@ public class ProjectsController {
 
 			read = projectService.create(read);
 
-			return "redirect:/projects/" + read.getId() + "/metadata";
+			return "redirect:/projects/" + read.getId() + "/settings";
 		} catch (IridaOAuthException ex) {
 			Map<String, String> errors = new HashMap<>();
 			errors.put("oauthError", ex.getMessage());
