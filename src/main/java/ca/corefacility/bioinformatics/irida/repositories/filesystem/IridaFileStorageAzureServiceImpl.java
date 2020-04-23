@@ -27,6 +27,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.specialized.BlobInputStream;
 
 /**
  * Component implementation of file utitlities for azure storage
@@ -68,7 +69,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			blobClient.downloadToFile(filePath);
 			fileToProcess = new File(filePath);
 		} catch (BlobStorageException e) {
-			logger.error("Couldn't find file [" + e + "]");
+			logger.trace("Couldn't find file on azure [" + e + "]");
 		}
 
 		return fileToProcess;
@@ -85,7 +86,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			fileSize = blobClient.getProperties().getBlobSize();
 		} catch (BlobStorageException e) {
-			logger.error("Couldn't calculate size as the file was not found [" + e + "]");
+			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
 		}
 		return fileSize;
 	}
@@ -97,10 +98,13 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// We set the blobClient "path" to which we want to upload our file to
 		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
-
-		logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
-		blobClient.uploadFromFile(source.toString(), false);
-		logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
+		try {
+			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
+			blobClient.uploadFromFile(source.toString(), false);
+			logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
+		} catch (BlobStorageException e) {
+			logger.trace("Unable to upload file to azure [" + e + "]");
+		}
 	}
 
 	/**
@@ -145,7 +149,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 					.split("/");
 			fileName = blobNameTokens[blobNameTokens.length - 1];
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't find file [" + e + "]");
+			logger.trace("Couldn't find file on azure [" + e + "]");
 		}
 
 		return fileName;
@@ -157,7 +161,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	@Override
 	public boolean fileExists(Path file) {
 		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-		if(blobClient.getProperties().getBlobSize() > 0) {
+		if(blobClient.exists()) {
 			return true;
 		}
 		return false;
@@ -168,7 +172,11 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		try {
+			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		} catch (BlobStorageException e) {
+			logger.trace("Couldn't read file from azure [" + e + "]");
+		}
 		return blobClient.openInputStream();
 	}
 
@@ -244,12 +252,19 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	 */
 	@Override
 	public byte[] readAllBytes(Path file) {
-		byte[] bytes = new byte[0];
+		BlobInputStream blobInputStream = null;
+		byte [] bytes = new byte[0];
 		try {
-			bytes = getFileInputStream(file).readAllBytes();
-		} catch (IOException e)
-		{
-			logger.error("Unable to read file");
+			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			blobInputStream = blobClient.openInputStream();
+			bytes = blobInputStream.readAllBytes();
+		} catch (IOException e) {
+			logger.error("Couldn't get bytes from file [" + e + "]");
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't read file from azure [" + e + "]");
+		}
+		if(blobInputStream != null) {
+			blobInputStream.close();
 		}
 		return bytes;
 	}

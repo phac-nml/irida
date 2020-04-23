@@ -15,7 +15,7 @@ public class AnalysisFastQCListener {
 	private IridaFileStorageService iridaFileStorageService;
 
 	/**
-	 * After the SequenceFile entity is loaded this method will provide
+	 * After the AnalysisFastQc entity is loaded this method will provide
 	 * the entity access to the iridaFileStorageService
 	 *
 	 * @param analysisFastQC The entity to provide the iridaFileStorageService to

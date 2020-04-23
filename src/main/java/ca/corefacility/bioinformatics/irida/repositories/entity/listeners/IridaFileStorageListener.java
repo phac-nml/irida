@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 /**
- * Component implementation to run on an entity after it is has been accessed from the db.
+ * Component implementation to run on a versioned entity after it is has been accessed from the db.
  */
 @Component
 public class IridaFileStorageListener {
