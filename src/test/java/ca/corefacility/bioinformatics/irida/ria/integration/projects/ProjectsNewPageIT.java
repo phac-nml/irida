@@ -61,7 +61,7 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 		page.submitForm("test project name", "", "", "");
 		page.clickSubmit();
-		assertEquals("Should be redirected to the project details page", "", driver().getTitle());
+		assertEquals("Should be redirected to the project details page", "IRIDA Platform - test project nametest project name - Settings", driver().getTitle());
 	}
 
 	@Test
