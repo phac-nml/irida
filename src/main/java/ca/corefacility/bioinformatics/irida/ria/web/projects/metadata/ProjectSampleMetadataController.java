@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -28,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -49,14 +51,17 @@ public class ProjectSampleMetadataController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
+	private final ProjectControllerUtils projectControllerUtils;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
-			SampleService sampleService, MetadataTemplateService metadataTemplateService) {
+			SampleService sampleService, MetadataTemplateService metadataTemplateService,
+			ProjectControllerUtils projectControllerUtils) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.projectControllerUtils = projectControllerUtils;
 	}
 
 	/**
@@ -64,11 +69,13 @@ public class ProjectSampleMetadataController {
 	 *
 	 * @param model     {@link Model}
 	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param principal {@link Principal} currently logged in use
 	 * @return {@link String} the path to the metadata import page
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.GET)
-	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId) {
-		model.addAttribute("project", projectService.read(projectId));
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId,
+			Principal principal) {
+		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
 		return "projects/project_samples_metadata_upload";
 	}
 
