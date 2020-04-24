@@ -3,6 +3,7 @@ import { Input, Menu } from "antd";
 import { IconFolder } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { grey1 } from "../../styles/colors";
+import { SPACE_MD } from "../../styles/spacing";
 
 const { Item, ItemGroup, SubMenu } = Menu;
 
@@ -13,20 +14,18 @@ export function MainNavigation({}) {
         display: "flex",
         alignItems: "center",
         height: 47,
-        justifyContent: "space-between",
         backgroundColor: grey1,
-        borderBottom: `1px solid rgb(240, 240, 240)`
+        borderBottom: `1px solid rgb(240, 240, 240)`,
       }}
     >
-      <Menu mode="horizontal">
-        <Item>
-          <a href={setBaseUrl("")}>
-            <img
-              style={{ height: 30 }}
-              src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
-            />
-          </a>
-        </Item>
+      <a href={setBaseUrl("")}>
+        <img
+          style={{ height: 30, padding: `0 ${SPACE_MD}` }}
+          src={setBaseUrl("/resources/img/irida_logo_light.svg")}
+        />
+      </a>
+      <Input.Search style={{ width: 400 }} />
+      <Menu mode="horizontal" style={{ flexGrow: 1 }}>
         <SubMenu
           title={
             <>
@@ -56,7 +55,6 @@ export function MainNavigation({}) {
           ) : null}
         </SubMenu>
       </Menu>
-      <Input.Search style={{ width: 200 }} />
       <Menu mode="horizontal">
         <Item>
           <a href="/logout">LOGOUT</a>
