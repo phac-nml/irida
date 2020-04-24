@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -89,6 +90,9 @@ public class ExecutionManagerConfig {
 
 	@Autowired
 	private Validator validator;
+
+	@Autowired
+	private IridaFileStorageService iridaFileStorageService;
 	
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
@@ -285,7 +289,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() throws ExecutionManagerConfigurationException {
-		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads);
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads, iridaFileStorageService);
 	}
 
 	/**

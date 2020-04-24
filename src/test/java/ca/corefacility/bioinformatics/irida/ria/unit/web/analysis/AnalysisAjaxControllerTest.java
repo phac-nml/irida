@@ -28,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
@@ -74,6 +76,7 @@ public class AnalysisAjaxControllerTest {
 	private EmailController emailControllerMock;
 	private AnalysisAudit analysisAuditMock;
 	private HttpServletResponse httpServletResponseMock;
+	private IridaFileStorageService iridaFileStorageService;
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
@@ -95,11 +98,12 @@ public class AnalysisAjaxControllerTest {
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisAuditMock = mock(AnalysisAudit.class);
 		httpServletResponseMock = mock(HttpServletResponse.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock);
+				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock, iridaFileStorageService);
 
 	}
 

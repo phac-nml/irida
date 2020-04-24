@@ -43,6 +43,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
@@ -83,7 +85,8 @@ public class GalaxyHistoriesServiceIT {
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyLibrariesService galaxyLibrariesService;
 	private HistoriesClient historiesClient;
-	
+	private IridaFileStorageService iridaFileStorageService;
+
 	private Path dataFile;
 	private Path dataFile2;
 	private Path dataFileCompressed;
@@ -118,7 +121,9 @@ public class GalaxyHistoriesServiceIT {
 		historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
+
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);

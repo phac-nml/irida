@@ -8,17 +8,20 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.AsyncResult;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -57,10 +60,13 @@ import com.sun.jersey.api.client.ClientResponse;
  *
  */
 @Configuration
-@Import({ IridaWorkflowsTestConfig.class })
+@Import({ IridaWorkflowsTestConfig.class, IridaApiServicesConfig.class })
 @Profile("test")
 public class IridaApiNoGalaxyTestConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiNoGalaxyTestConfig.class);
+
+	@Autowired
+	private IridaFileStorageService iridaFileStorageService;
 
 	/**
 	 * @return An ExecutorService executing code in the same thread for testing
@@ -92,7 +98,7 @@ public class IridaApiNoGalaxyTestConfig {
 
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService(LibrariesClient librariesClient) {
-		return new GalaxyLibrariesService(librariesClient, 5, 60, 1);
+		return new GalaxyLibrariesService(librariesClient, 5, 60, 1, iridaFileStorageService);
 	}
 
 	@Bean

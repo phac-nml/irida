@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
@@ -75,6 +76,8 @@ public class SamplesControllerTest {
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
+		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
+
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
 				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource, iridaFileStorageService);
 	}

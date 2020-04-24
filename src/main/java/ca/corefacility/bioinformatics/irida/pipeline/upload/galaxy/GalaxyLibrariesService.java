@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -58,6 +60,8 @@ public class GalaxyLibrariesService {
 	private final int libraryPollingTime;
 	private final int libraryUploadTimeout;
 
+	private IridaFileStorageService iridaFileStorageService;
+
 	/**
 	 * State a library dataset should be in on proper upload.
 	 */
@@ -83,7 +87,7 @@ public class GalaxyLibrariesService {
 	 *            The thread pool size for parallel polling of Galaxy to check if uploads are finished.
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
-			final int libraryUploadTimeout, final int threadPoolSize) {
+			final int libraryUploadTimeout, final int threadPoolSize, IridaFileStorageService iridaFileStorageService) {
 		checkNotNull(librariesClient, "librariesClient is null");
 		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
@@ -97,6 +101,7 @@ public class GalaxyLibrariesService {
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
 		this.libraryUploadTimeout = libraryUploadTimeout;
+		this.iridaFileStorageService = iridaFileStorageService;
 		
 		executor = Executors.newFixedThreadPool(threadPoolSize);
 	}
@@ -151,9 +156,9 @@ public class GalaxyLibrariesService {
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(library, "library is null");
 		checkNotNull(library.getId(), "library id is null");
-		checkState(path.toFile().exists(), "path " + path + " does not exist");
+		checkState(iridaFileStorageService.fileExists(path), "path " + path + " does not exist");
 
-		File file = path.toFile();
+		File file = iridaFileStorageService.getTemporaryFile(path);
 
 		try {
 			LibraryContent rootContent = librariesClient.getRootFolder(library
@@ -263,9 +268,9 @@ public class GalaxyLibrariesService {
 	 * @throws IOException If there was an error reading the file to determine the file type.
 	 */
 	private InputFileType getFileType(Path path) throws IOException {
-		checkArgument(path.toFile().exists(), "path=[" + path + "] does not exist");
+		checkArgument(iridaFileStorageService.fileExists(path), "path=[" + path + "] does not exist");
 		
-		return (FileUtils.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER); 
+		return (iridaFileStorageService.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER);
 	}
 
 	/**
