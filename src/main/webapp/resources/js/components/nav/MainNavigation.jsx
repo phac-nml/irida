@@ -1,9 +1,9 @@
 import React from "react";
-import { Input, Menu } from "antd";
-import { IconFolder } from "../icons/Icons";
+import { Avatar, Input, Menu } from "antd";
+import { IconFolder, IconLogout, IconUser } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { grey1 } from "../../styles/colors";
-import { SPACE_MD } from "../../styles/spacing";
+import { grey1, grey4 } from "../../styles/colors";
+import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 
 const { Item, ItemGroup, SubMenu } = Menu;
 
@@ -44,7 +44,7 @@ export function MainNavigation({}) {
               {i18n("nav.main.project-sync")}
             </a>
           </Item>
-          {window.TL._aa ? (
+          {window.TL._USER.systemRole === "ROLE_ADMIN" ? (
             <ItemGroup title="Admin">
               <Item key={"admin:projects"}>
                 <a href={setBaseUrl(`/projects/all`)}>
@@ -56,9 +56,25 @@ export function MainNavigation({}) {
         </SubMenu>
       </Menu>
       <Menu mode="horizontal">
-        <Item>
-          <a href="/logout">LOGOUT</a>
-        </Item>
+        <SubMenu
+          title={
+            <>
+              <Avatar
+                size="small"
+                style={{ backgroundColor: grey4, marginRight: SPACE_XS }}
+                icon={<IconUser />}
+              />
+              {`${window.TL._USER.firstName} ${window.TL._USER.lastName}`}
+            </>
+          }
+        >
+          <Item>
+            <>
+              <IconLogout style={{ marginRight: SPACE_XS }} />
+              <a href="/logout">LOGOUT</a>
+            </>
+          </Item>
+        </SubMenu>
       </Menu>
     </div>
   );

@@ -41,7 +41,8 @@ import {
   TableOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined
+  UserOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -153,6 +154,8 @@ export const IconExperiment = ({ ...props }) => (
 export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
 
 export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
+
+export const IconLogout = ({ ...props }) => <LogoutOutlined {...props} />;
 
 export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
