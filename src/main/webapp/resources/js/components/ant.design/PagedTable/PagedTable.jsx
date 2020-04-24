@@ -2,6 +2,15 @@ import React, { useContext } from "react";
 import { PagedTableContext } from "./PagedTableContext";
 import { SPACE_XS } from "../../../styles/spacing";
 import { Input, Table } from "antd";
+import styled from "styled-components";
+import { grey7 } from "../../../styles/colors";
+
+const StyledTable = styled(Table)`
+  tr.disabled,
+  tr.disabled a {
+    color: ${grey7};
+  }
+`;
 
 /**
  * Table component to standardize paged tables with ant.design.
@@ -12,9 +21,8 @@ import { Input, Table } from "antd";
  * @returns {*}
  * @constructor
  */
-export function PagedTable({ search = true, buttons, columns, ...props }) {
+export function PagedTable({ search = true, buttons, ...props }) {
   const { onSearch, pagedConfig } = useContext(PagedTableContext);
-
   return (
     <>
       <div
@@ -33,11 +41,11 @@ export function PagedTable({ search = true, buttons, columns, ...props }) {
           </div>
         ) : null}
       </div>
-      <Table
+      <StyledTable
+        tableLayout="auto"
+        scroll={{ x: "max-content" }}
         {...props}
         {...pagedConfig}
-        columns={columns}
-        scroll={{ x: "max-content" }}
       />
     </>
   );

@@ -2,6 +2,8 @@ import React from "react";
 import {
   BoldOutlined,
   ClockCircleOutlined,
+  CloseOutlined,
+  CloseCircleOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -10,15 +12,18 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  ExperimentOutlined,
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
   FolderOutlined,
+  HomeOutlined,
   InfoCircleOutlined,
   ItalicOutlined,
   LinkOutlined,
   LoadingOutlined,
   LockOutlined,
+  LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   OrderedListOutlined,
@@ -27,12 +32,16 @@ import {
   QuestionOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
   StopOutlined,
   StrikethroughOutlined,
   SwapOutlined,
   SyncOutlined,
   TableOutlined,
-  UnorderedListOutlined
+  TeamOutlined,
+  UnorderedListOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -46,6 +55,10 @@ import { blue6 } from "../../styles/colors";
  */
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
+
+export const IconCloseCircle = ({ ...props }) => (
+  <CloseCircleOutlined {...props} />
+);
 
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
@@ -101,6 +114,8 @@ export const IconPlusCircle = ({ ...props }) => (
 
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
 
+export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
+
 export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
@@ -131,6 +146,18 @@ export const IconCode = ({ ...props }) => <CodeOutlined {...props} />;
 
 export const IconLinkOut = ({ ...props }) => <LinkOutlined {...props} />;
 
+export const IconExperiment = ({ ...props }) => (
+  <ExperimentOutlined {...props} />
+);
+
+export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
+
+export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
+
+export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
+
+export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
+
 /*
 File Type Icons
  */
@@ -147,4 +174,12 @@ export const IconMenuFold = ({ ...props }) => <MenuFoldOutlined {...props} />;
 
 export const IconMenuUnfold = ({ ...props }) => (
   <MenuUnfoldOutlined {...props} />
+);
+
+export const IconSortAscending = ({ ...props }) => (
+  <SortAscendingOutlined {...props} />
+);
+
+export const IconSortDescending = ({ ...props }) => (
+  <SortDescendingOutlined {...props} />
 );

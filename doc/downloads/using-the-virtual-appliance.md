@@ -46,4 +46,3 @@ Virtual Appliance Configuration Scripts
 The IRIDA Virtual Appliance is created using a tool called [packer](https://packer.io). You can download the scripts that were used to create the virtual appliance from our `git` repository:
 
 <https://github.com/phac-nml/irida/tree/development/packer>
-
