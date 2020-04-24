@@ -1,14 +1,13 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExistingSampleNameException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -72,13 +72,17 @@ public class RESTProjectSamplesController {
 	 */
 	private SampleService sampleService;
 
+	private MessageSource messageSource;
+
 	protected RESTProjectSamplesController() {
 	}
 
 	@Autowired
-	public RESTProjectSamplesController(ProjectService projectService, SampleService sampleService) {
+	public RESTProjectSamplesController(ProjectService projectService, SampleService sampleService,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -95,47 +99,62 @@ public class RESTProjectSamplesController {
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
-			HttpServletResponse response) {
+			HttpServletResponse response, Locale locale) {
 
 		ModelMap modelMap = new ModelMap();
 
 		Project p = projectService.read(projectId);
 
+		List<String> errors = new ArrayList<>();
+
 		ResourceCollection<LabelledRelationshipResource<Project, Sample>> labeledProjectSampleResources = new ResourceCollection<>(
 				sampleIds.size());
 		for (final long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
-			Join<Project, Sample> join;
+			Join<Project, Sample> join = null;
 			try {
 				join = projectService.addSampleToProject(p, sample, false);
+			} catch (ExistingSampleNameException e) {
+				logger.error(
+						"Could not add sample to project because another sample exists with this name :" + e.getSample()
+								.getSampleName());
+				errors.add(messageSource.getMessage("rest.api.project.samples.warning.duplicate",
+						new Object[] { sample.getId(), sample.getSampleName() }, locale));
 			} catch (EntityExistsException e) {
 				logger.warn("User tried to add a sample to a project where it already existed. project: " + projectId
 						+ " sample: " + sampleId);
+				errors.add(messageSource.getMessage("rest.api.project.samples.warning.exists",
+						new Object[] { sample.getId(), sample.getSampleName() }, locale));
 
 				join = sampleService.getSampleForProject(p, sampleId);
 			}
-			LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource<Project, Sample>(
-					join.getLabel(), join);
-			// add a labeled relationship resource to the resource collection
-			// that will fill the body of the response.
-			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sample.getId())).withSelfRel());
-			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId,
-					sample.getId())).withRel(REL_PROJECT_SAMPLE));
-			resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(
-					sample.getId())).withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-			resource.add(linkTo(RESTProjectsController.class).slash(projectId)
-					.withRel(REL_PROJECT));
-			labeledProjectSampleResources.add(resource);
-			final String location = linkTo(
-					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
-					.getHref();
-			response.addHeader(HttpHeaders.LOCATION, location);
+
+			if (join != null) {
+				LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource<Project, Sample>(
+						join.getLabel(), join);
+				// add a labeled relationship resource to the resource collection
+				// that will fill the body of the response.
+				resource.add(
+						linkTo(methodOn(RESTProjectSamplesController.class).getSample(sample.getId())).withSelfRel());
+				resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId,
+						sample.getId())).withRel(REL_PROJECT_SAMPLE));
+				resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(
+						sample.getId())).withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+				resource.add(linkTo(RESTProjectsController.class).slash(projectId)
+						.withRel(REL_PROJECT));
+				labeledProjectSampleResources.add(resource);
+				final String location = linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId,
+						sampleId)).withSelfRel()
+						.getHref();
+				response.addHeader(HttpHeaders.LOCATION, location);
+			}
 
 		}
 		// add a link to the project that was copied to.
 		labeledProjectSampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
+		modelMap.addAttribute("warnings", errors);
 		response.setStatus(HttpStatus.CREATED.value());
 
 		return modelMap;

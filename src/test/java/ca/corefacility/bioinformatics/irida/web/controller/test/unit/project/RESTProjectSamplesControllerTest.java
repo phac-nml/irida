@@ -9,14 +9,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,12 +49,14 @@ public class RESTProjectSamplesControllerTest {
 	private RESTProjectSamplesController controller;
 	private ProjectService projectService;
 	private SampleService sampleService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
-		controller = new RESTProjectSamplesController(projectService, sampleService);
+		messageSource= mock(MessageSource.class);
+		controller = new RESTProjectSamplesController(projectService, sampleService, messageSource);
 	}
 
 	@Test
@@ -238,7 +238,7 @@ public class RESTProjectSamplesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(projectService.addSampleToProject(p, s, false)).thenReturn(r);
 		ModelMap modelMap = controller
-				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
+				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response, Locale.ENGLISH);
 		
 		verify(projectService).addSampleToProject(p, s, false);
 		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
@@ -287,7 +287,7 @@ public class RESTProjectSamplesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(r);
 
 		ModelMap modelMap = controller
-				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
+				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response, Locale.ENGLISH);
 
 		verify(projectService).addSampleToProject(p, s, false);
 		verify(sampleService).getSampleForProject(p,s.getId());
