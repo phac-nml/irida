@@ -32,6 +32,7 @@ Changes
 * [UI/Developer]: Added excel file viewer to analysis outputs view.
 * [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
 * [UI/Developer]: Added image file viewer to analysis outputs view.
+* [UI]: Moved project > details into the project > settings panel.
 
 19.09 to 20.01
 --------------
