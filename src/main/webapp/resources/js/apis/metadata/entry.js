@@ -2,8 +2,9 @@
  * Class responsible for ajax call for project sample metadata entries.
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = `linelist/entries`;
+const URL = setBaseUrl(`linelist/entries`);
 
 /**
  * Get all metadata belonging to samples in the current project.

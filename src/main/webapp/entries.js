@@ -11,12 +11,13 @@ module.exports = {
     "expose-loader?angular!angular",
     "./resources/js/vendors"
   ],
+  login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
-  analysis: "./resources/js/pages/analysis/analysis.js",
+  analysis: "./resources/js/pages/analysis/index.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
@@ -48,15 +49,17 @@ module.exports = {
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-api-details":
     "./resources/js/pages/remote-apis/remote-api-details.js",
-  "remote-apis": "./resources/js/pages/remote-apis/remote-apis-list.js",
+  "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users-groups":
     "./resources/js/pages/projects/project-users-groups.js",
+  "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
+  sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
@@ -65,13 +68,13 @@ module.exports = {
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
-  "clients-list": "./resources/js/pages/clients/clients-list.js",
-  "users-list": "./resources/js/pages/users/users-list.js",
+  "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
+  "users-list": "./resources/js/pages/AdminUsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
-    "./resources/js/pages/announcement/announcement-admin.js",
+    "./resources/js/pages/announcement/AnnouncementAdminPage.jsx",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
@@ -79,6 +82,6 @@ module.exports = {
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  overrepresented: "./resources/js/pages/sequence-files/overrepresented.js",
-  "run-files": "./resources/js/pages/sequence-files/run-files.js"
+  "run-files": "./resources/js/pages/sequence-files/run-files.js",
+  "user-details": "./resources/js/pages/user-details.js"
 };

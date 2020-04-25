@@ -1,8 +1,9 @@
 import React from "react";
 
 import { useStateValue } from "./GalaxyState";
-import { Alert, Icon } from "antd";
+import { Alert } from "antd";
 import { SPACE_SM } from "../../styles/spacing";
+import { IconLoading } from "../icons/Icons";
 
 /**
  * Component to display the status of fetching samples in the proper Galaxy format.
@@ -16,7 +17,7 @@ export function GalaxySamples() {
       {fetchingSamples ? (
         <Alert
           message={i18n("GalaxySamples.processing")}
-          icon={<Icon type="loading" />}
+          icon={<IconLoading />}
           showIcon
           type="info"
         />

@@ -35,8 +35,7 @@
 		property_key="sampleWell" property_value="10" />
 
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0"
-        upload_status="COMPLETE" layout_type="PAIRED_END" />
-	<miseq_run id="1" workflow="notnull" />
+        upload_status="COMPLETE" layout_type="PAIRED_END" sequencer_type="miseq" />
 
 	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
 		executionManagerAnalysisId="execution-manager" analysis_type="PHYLOGENOMICS" />

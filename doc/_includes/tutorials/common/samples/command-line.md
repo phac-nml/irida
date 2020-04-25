@@ -4,7 +4,7 @@ Start by [selecting the samples]({{ site.baseurl }}/user/user/samples/#selecting
 
 ![Command-line linker button.]({{ site.baseurl }}/images/tutorials/common/samples/command-line-linker-button.png)
 
-The dialog that appears will provide you with a command that you can **copy** and **paste** into a terminal window:
+The dialog that appears will provide you with a command that you can **copy** and **paste** into a terminal window.  You may select "Sequence Files" to get raw sequencing data, or "Assemblies" to get assembled data, or both.
 
 ![Command-line linker dialog.]({{ site.baseurl }}/images/tutorials/common/samples/command-line-linker-dialog.png)
 

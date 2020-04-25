@@ -23,7 +23,7 @@ Prerequisites
 The following prerequisites are required for running the IRIDA web interfaces:
 
 * [Java](http://www.oracle.com/technetwork/java/index.html) 11 or higher.
-* A working servlet container supporting Servlet 3.0 ([Tomcat](https://tomcat.apache.org/), version 7 or higher, for example)
+* A working servlet container supporting Servlet 3.1 ([Tomcat](https://tomcat.apache.org/), version 8 or higher, for example)
 * A working database server (the application is tested on [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/)).
 * A working install of Galaxy (we recommend that you run Galaxy and the IRIDA web interface on separate machines).
 The install guide assumes that you are using [Bash](https://www.gnu.org/software/bash/manual/bashref.html)
@@ -73,6 +73,7 @@ The main configuration parameters you will need to change are:
   * `sequence.file.base.directory=/opt/irida/data/sequence` - Sequence files managed by IRIDA.
   * `reference.file.base.directory=/opt/irida/data/reference` - Reference files assigned to projects in IRIDA.
   * `output.file.base.directory=/opt/irida/data/output` - Results of analysis pipelines.
+  * `assembly.file.base.directory=/opt/irida/data/assembly` - Assemblies uploaded into IRIDA.
 2. **Threads used for file processing (FastQC, GZip, etc):**
   * `file.processing.core.size=4` - The initial number of threads available for file processing.
   * `file.processing.max.size=8` - The maximum number of available threads for file processing.  This number should not exceed the configured maximum number of JDBC threads.

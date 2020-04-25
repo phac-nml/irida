@@ -1,6 +1,13 @@
 import "jquery";
 import angular from "angular";
+import "angular-ui-bootstrap";
 import "ng-file-upload";
+
+import React from "react";
+import { render } from "react-dom";
+import { AnalysesQueue } from "../../components/AnalysesQueue";
+
+render(<AnalysesQueue />, document.querySelector("#queue-root"));
 
 /**
  * Main controller for the pipeline launch page.
@@ -650,7 +657,7 @@ function FileUploadCtrl($rootScope, Upload) {
 }
 
 const pipelineModule = angular
-  .module("irida.pipelines", ["irida.cart", "ngFileUpload"])
+  .module("irida.pipelines", ["ui.bootstrap", "irida.cart", "ngFileUpload"])
   .controller("PipelineController", [
     "$rootScope",
     "$http",

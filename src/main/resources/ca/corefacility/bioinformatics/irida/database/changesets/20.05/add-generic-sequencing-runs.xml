@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="add-generic-sequencing-runs" author="tom">
+
+        <addColumn tableName="sequencing_run">
+            <column name="sequencer_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="sequencing_run_AUD">
+            <column name="sequencer_type" type="varchar(255)"/>
+        </addColumn>
+
+        <sql>UPDATE sequencing_run SET sequencer_type="miseq"</sql>
+        <sql>UPDATE sequencing_run_AUD SET sequencer_type="miseq"</sql>
+
+        <!-- Create the new props tables -->
+        <createTable tableName="sequencing_run_properties">
+            <column name="sequencing_run_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_SEQUENCING_RUN_PROPERTIES" referencedColumnNames="id"
+                             referencedTableName="sequencing_run" primaryKey="true" nullable="false"/>
+            </column>
+            <column name="property_value" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="property_key" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="sequencing_run_properties_AUD">
+            <column name="sequencing_run_id" type="bigint(20)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="property_value" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="property_key" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints primaryKey="true" referencedColumnNames="id"
+                             referencedTableName="Revisions" foreignKeyName="FK_SEQUENCING_RUN_PROPERTY_AUD"/>
+            </column>
+            <column name="REVTYPE" type="tinyint(4)"/>
+        </createTable>
+
+        <!-- Translate the old static properties from miseq_run into the props table -->
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
+            'application', application FROM miseq_run WHERE application != null;
+        </sql>
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id, 'assay',
+            assay FROM miseq_run WHERE assay != null;
+        </sql>
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
+            'chemistry', chemistry FROM miseq_run WHERE chemistry != null;
+        </sql>
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
+            'experimentName', experimentName FROM miseq_run WHERE experimentName != null;
+        </sql>
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
+            'investigatorName', investigatorName FROM miseq_run WHERE investigatorName != null;
+        </sql>
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
+            'projectName', projectName FROM miseq_run WHERE projectName != null;
+        </sql>
+        <sql>
+            INSERT INTO sequencing_run_properties (sequencing_run_id, property_key, property_value) SELECT id,
+            'readLengths', read_lengths FROM miseq_run WHERE read_lengths != null;
+        </sql>
+
+        <!-- Drop the old miseq run table -->
+        <dropTable tableName="miseq_run_AUD"/>
+        <dropTable tableName="miseq_run"/>
+
+    </changeSet>
+</databaseChangeLog>

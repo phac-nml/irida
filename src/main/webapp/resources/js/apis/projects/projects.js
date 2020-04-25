@@ -2,8 +2,9 @@
  * @file API the ProjectAjaxController
  */
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = `ajax/projects`;
+const URL = setBaseUrl(`ajax/projects`);
 
 /**
  * Returns the projects on the current page of the projects table.
@@ -21,4 +22,8 @@ export async function getPagedProjectsForUser(params) {
   } catch (e) {
     return {};
   }
+}
+
+export async function getProjectRoles() {
+  return await axios.get(`${URL}/roles`).then(({ data }) => data);
 }

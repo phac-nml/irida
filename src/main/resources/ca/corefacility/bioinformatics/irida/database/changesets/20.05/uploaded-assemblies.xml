@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="uploaded-assemblies" author="tom">
+
+        <!--Create the existing table AUD tables-->
+        <createTable tableName="genome_assembly_AUD">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime"/>
+            <column name="REV" type="INT">
+                <constraints primaryKey="true"
+                             referencedColumnNames="id"
+                             referencedTableName="Revisions"
+                             foreignKeyName="FK_GENOME_ASSEMBLY_AUD"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT"/>
+        </createTable>
+
+        <createTable tableName="genome_assembly_analysis_AUD">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="analysis_submission_id" type="BIGINT"/>
+            <column name="REV" type="INT">
+                <constraints primaryKey="true"
+                             referencedColumnNames="id"
+                             referencedTableName="Revisions"
+                             foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS_AUD"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="genome_assembly_analysis_AUD" baseColumnNames="id, REV"
+                                 constraintName="FK_ASSEMBLY_ANALYSIS_AUD" referencedTableName="genome_assembly_AUD"
+                                 referencedColumnNames="id, REV"/>
+
+        <!-- Add the new uploaded_assembly table -->
+        <createTable tableName="uploaded_assembly">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" referencedColumnNames="id"
+                             referencedTableName="genome_assembly"
+                             foreignKeyName="FK_UPLOADED_GENOME_ASSEMBLY"/>
+            </column>
+            <column name="file_path" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="UK_UPLOADED_ASSEMBLY_FILE_PATH"/>
+            </column>
+            <column name="file_revision_number" type="BIGINT"/>
+        </createTable>
+
+        <createTable tableName="uploaded_assembly_AUD">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="file_path" type="varchar(255)"/>
+            <column name="file_revision_number" type="BIGINT"/>
+            <column name="REV" type="INT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="uploaded_assembly_AUD" baseColumnNames="id, REV"
+                                 constraintName="FK_UPLOADED_ASSEMBLY_AUD" referencedTableName="genome_assembly_AUD"
+                                 referencedColumnNames="id, REV"/>
+
+    </changeSet>
+</databaseChangeLog>

@@ -1,6 +1,7 @@
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const url = `cart`;
+const url = setBaseUrl(`cart`);
 
 /**
  * Add samples for a project to the cart.
