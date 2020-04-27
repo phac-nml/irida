@@ -581,11 +581,25 @@
 			<artifactId>commons-cli</artifactId>
 			<version>${commons.cli.version}</version>
 		</dependency>
+
+		<!--FASTQC and requirements-->
 		<dependency>
 			<groupId>uk.ac.babraham</groupId>
 			<artifactId>fastqc</artifactId>
 			<version>${fastqc.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>ch.systems.cisd</groupId>
+			<artifactId>jhdf5</artifactId>
+			<version>${jhdf5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -1125,7 +1139,8 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
-		<fastqc.version>0.11.7-nml-custom</fastqc.version>
+		<fastqc.version>0.11.9-nml-custom</fastqc.version>
+		<jhdf5.version>13.06.2</jhdf5.version>
 		<aspectj.version>1.8.2</aspectj.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
