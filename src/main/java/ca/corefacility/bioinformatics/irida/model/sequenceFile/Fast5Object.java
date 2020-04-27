@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableSet;
  * {@link SequencingObject} implementation for storing .fast5 files.
  */
 @Entity
-@Table(name = "fast5_object")
+@Table(name = "sequence_file_fast5")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 public class Fast5Object extends SequencingObject {
