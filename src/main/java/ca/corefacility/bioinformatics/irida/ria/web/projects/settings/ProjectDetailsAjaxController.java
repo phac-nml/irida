@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.Locale;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -53,24 +55,29 @@ public class ProjectDetailsAjaxController {
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public ResponseEntity<String> updateProjectDetails(@PathVariable Long projectId,
 			@RequestBody UpdateProjectAttributeRequest request, Locale locale) {
-		Project project = projectService.read(projectId);
-		switch (request.getField()) {
-		case "label":
-			project.setName(request.getValue());
-			break;
-		case "description":
-			project.setProjectDescription(request.getValue());
-			break;
-		case "organism":
-			project.setOrganism(request.getValue());
-			break;
-		default:
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(messageSource.getMessage("server.ProjectDetails.error", new Object[] { request.getField() },
-							locale));
+		try {
+			Project project = projectService.read(projectId);
+			switch (request.getField()) {
+			case "label":
+				project.setName(request.getValue());
+				break;
+			case "description":
+				project.setProjectDescription(request.getValue());
+				break;
+			case "organism":
+				project.setOrganism(request.getValue());
+				break;
+			default:
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(messageSource.getMessage("server.ProjectDetails.error",
+								new Object[] { request.getField() }, locale));
+			}
+			projectService.update(project);
+			return ResponseEntity.ok(messageSource.getMessage("server.ProjectDetails.success",
+					new Object[] { request.getField(), request.getValue() }, locale));
+		} catch (ConstraintViolationException e) {
+			return ResponseEntity.badRequest()
+					.body(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
 		}
-		projectService.update(project);
-		return ResponseEntity.ok(messageSource.getMessage("server.ProjectDetails.success",
-				new Object[] { request.getField(), request.getValue() }, locale));
 	}
 }
