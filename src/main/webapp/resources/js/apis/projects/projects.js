@@ -49,8 +49,5 @@ export async function getProjectDetails(projectId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateProjectAttribute({ projectId, field, value }) {
-  return axios
-    .put(`${URL}/${projectId}/details/edit`, { field, value })
-    .then(({ data }) => data)
-    .catch(({ data }) => data);
+  return axios.put(`${URL}/${projectId}/details/edit`, { field, value });
 }
