@@ -34,6 +34,7 @@ Changes
 * [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
 * [UI/Developer]: Added image file viewer to analysis outputs view.
 * [UI]: Moved project > details into the project > settings panel.
+* [Developer/UI]: Upgraded to FastQC 0.11.9.
 
 19.09 to 20.01
 --------------
