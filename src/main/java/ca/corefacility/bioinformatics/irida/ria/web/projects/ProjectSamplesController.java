@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectBaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -60,10 +61,12 @@ import com.google.common.collect.Lists;
  * Controller for handling interactions with samples in a project
  */
 @Controller
-public class ProjectSamplesController {
+public class ProjectSamplesController extends ProjectBaseController {
 	// From configuration.properties
-	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
-	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
+	private @Value("${ngsarchive.linker.available}")
+	Boolean LINKER_AVAILABLE;
+	private @Value("${ngsarchive.linker.script}")
+	String LINKER_SCRIPT;
 
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
@@ -80,17 +83,15 @@ public class ProjectSamplesController {
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final ProjectControllerUtils projectControllerUtils;
 	private final SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
-			MessageSource messageSource) {
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
+			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
-		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;
 	}
 

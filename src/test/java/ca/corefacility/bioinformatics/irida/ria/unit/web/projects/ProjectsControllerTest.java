@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,7 +14,6 @@ import org.springframework.ui.Model;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -26,15 +24,12 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,48 +47,27 @@ public class ProjectsControllerTest {
 	// Services
 	private ProjectService projectService;
 	private ProjectsController controller;
-	private SampleService sampleService;
-	private UserService userService;
 	private ProjectRemoteService projectRemoteService;
 	private RemoteAPIService remoteApiService;
 	private TaxonomyService taxonomyService;
 	private CartController cartController;
 	private UpdateSamplePermission updateSamplePermission;
-	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
-		sampleService = mock(SampleService.class);
-		userService = mock(UserService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		cartController = mock(CartController.class);
 		taxonomyService = mock(TaxonomyService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
-		messageSource = mock(MessageSource.class);
-		controller = new ProjectsController(projectService, sampleService, userService, projectRemoteService,
-				taxonomyService, remoteApiService, cartController, updateSamplePermission, messageSource);
+		controller = new ProjectsController(projectService, projectRemoteService,
+				taxonomyService, remoteApiService, cartController, updateSamplePermission);
 		user.setId(1L);
-
-		mockSidebarInfo();
-	}
-
-	@Test
-	public void showAllProjects() {
-		Model model = new ExtendedModelMap();
-		String page = controller.getProjectsPage(model);
-		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
 	@Test
 	public void testGetSpecificProjectPage() {
 		Model model = new ExtendedModelMap();
-		List<Join<Project, User>> projects = getProjectsForUser();
-		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
-				getUsersForProjectByRole());
-		when(projectService.getProjectsForUser(user)).thenReturn(projects);
-		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
-
 		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
 				controller.getProjectSpecificPage(model));
 
@@ -149,44 +123,6 @@ public class ProjectsControllerTest {
 			assertTrue(results.contains(element.get("text")));
 		}
 
-	}
-
-	/**
-	 * Mocks the information found within the project sidebar.
-	 */
-	private void mockSidebarInfo() {
-		Project project = getProject();
-		Collection<Join<Project, User>> ownerList = new ArrayList<>();
-		ownerList.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
-		when(userService.getUsersForProjectByRole(any(Project.class), any(ProjectRole.class))).thenReturn(ownerList);
-		when(projectService.read(PROJECT_ID)).thenReturn(project);
-		when(userService.getUserByUsername(anyString())).thenReturn(user);
-	}
-
-	private List<Join<Project, User>> getProjectsForUser() {
-		List<Join<Project, User>> projects = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			Project p = new Project("project" + i);
-			p.setId(1L + i);
-			projects.add(new ProjectUserJoin(p, user, ProjectRole.PROJECT_USER));
-		}
-		return projects;
-	}
-
-	private List<RelatedProjectJoin> getRelatedProjectJoin(List<Join<Project, User>> projects) {
-		List<RelatedProjectJoin> join = new ArrayList<>();
-		Project objectProject = getProject();
-		for (Join<Project, User> j : projects) {
-			Project p = j.getSubject();
-			join.add(new RelatedProjectJoin(objectProject, p));
-		}
-		// Add a couple that do not have authorization
-		for (int i = 10; i < 15; i++) {
-			Project p = new Project("project" + i);
-			p.setId(1L + i);
-			join.add(new RelatedProjectJoin(objectProject, p));
-		}
-		return join;
 	}
 
 	private Project getProject() {
