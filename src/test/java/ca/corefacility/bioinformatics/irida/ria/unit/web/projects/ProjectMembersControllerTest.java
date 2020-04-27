@@ -1,13 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import java.security.Principal;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectMembersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
@@ -21,7 +18,6 @@ public class ProjectMembersControllerTest {
 	private ProjectService projectService;
 	private UserService userService;
 	private UserGroupService userGroupService;
-	private ProjectControllerUtils projectUtils;
 	private ProjectTestUtils projectTestUtils;
 	private MessageSource messageSource;
 	private static final String USER_NAME = "testme";
@@ -32,10 +28,9 @@ public class ProjectMembersControllerTest {
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
-		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 		userGroupService = mock(UserGroupService.class);
-		controller = new ProjectMembersController(projectUtils, projectService, userGroupService, messageSource);
+		controller = new ProjectMembersController(projectService, userGroupService, messageSource);
 		projectTestUtils = new ProjectTestUtils(projectService, userService);
 
 		projectTestUtils.mockSidebarInfo();
@@ -44,10 +39,8 @@ public class ProjectMembersControllerTest {
 	@Test
 	public void testGetProjectUsersPage() {
 		ExtendedModelMap model = new ExtendedModelMap();
-		Long projectId = 1L;
-		Principal principal = () -> USER_NAME;
 		assertEquals("Gets the correct project members page", "projects/settings/pages/members",
-				controller.getProjectUsersPage(model, principal, projectId));
+				controller.getProjectUsersPage(model));
 		
 		assertEquals("Should be the memebers subpage", model.get("page"), "members");
 	}

@@ -1,14 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -32,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.Lists;
@@ -60,10 +55,8 @@ public class ProjectsControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private ProjectRemoteService projectRemoteService;
-	private ProjectControllerUtils projectUtils;
 	private RemoteAPIService remoteApiService;
 	private TaxonomyService taxonomyService;
-	private IridaWorkflowsService workflowsService;
 	private CartController cartController;
 	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
@@ -76,12 +69,10 @@ public class ProjectsControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		cartController = mock(CartController.class);
 		taxonomyService = mock(TaxonomyService.class);
-		projectUtils = mock(ProjectControllerUtils.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectRemoteService,
-				projectUtils, taxonomyService, remoteApiService, workflowsService, cartController,
-				updateSamplePermission, messageSource);
+				taxonomyService, remoteApiService, cartController, updateSamplePermission, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -97,8 +88,6 @@ public class ProjectsControllerTest {
 	@Test
 	public void testGetSpecificProjectPage() {
 		Model model = new ExtendedModelMap();
-		Long projectId = 1L;
-		Principal principal = () -> USER_NAME;
 		List<Join<Project, User>> projects = getProjectsForUser();
 		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
 				getUsersForProjectByRole());
@@ -106,7 +95,7 @@ public class ProjectsControllerTest {
 		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
 
 		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
-				controller.getProjectSpecificPage(projectId, model, principal));
+				controller.getProjectSpecificPage(model));
 
 	}
 

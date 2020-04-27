@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTExportSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectBaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
@@ -42,7 +43,7 @@ import com.google.common.collect.ImmutableMap;
  * Controller managing requests to export project data to external sources.
  */
 @Controller
-public class ProjectExportController {
+public class ProjectExportController extends ProjectBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectExportController.class);
 
 	public static final String NCBI_EXPORT_VIEW = "projects/export/ncbi";
@@ -53,7 +54,6 @@ public class ProjectExportController {
 	@Value("${ncbi.upload.namespace}")
 	private String namespace = "";
 
-	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final SequencingObjectService sequencingObjectService;
@@ -62,12 +62,10 @@ public class ProjectExportController {
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
-			ProjectControllerUtils projectControllerUtils,
 			SequencingObjectService sequencingObjectService, NcbiExportSubmissionService exportSubmissionService,
 			UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.projectControllerUtils = projectControllerUtils;
 		this.sequencingObjectService = sequencingObjectService;
 		this.exportSubmissionService = exportSubmissionService;
 		this.userService = userService;
@@ -77,18 +75,12 @@ public class ProjectExportController {
 	 * Get the page for exporting a given {@link Project} and selected
 	 * {@link Sample}s
 	 *
-	 * @param projectId The ID of the project to export
 	 * @param sampleIds A List of sample ids to export
 	 * @param model     model for the view to render
-	 * @param principal {@link Principal} currently logged in user
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids[]") List<Long> sampleIds,
-			Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-
+	public String getUploadNcbiPage(@RequestParam("ids[]") List<Long> sampleIds, Model model) {
 		logger.trace("Reading " + sampleIds.size() + " samples");
 		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
 
@@ -155,7 +147,6 @@ public class ProjectExportController {
 			}
 		});
 
-		model.addAttribute("project", project);
 		model.addAttribute("samples", sampleList);
 
 		model.addAttribute("newestSingles", checkedSingles);
@@ -224,18 +215,13 @@ public class ProjectExportController {
 	/**
 	 * Get the details view of a given {@link NcbiExportSubmission}
 	 *
-	 * @param projectId    ID of the {@link Project} the export is for
 	 * @param submissionId the {@link NcbiExportSubmission} id
 	 * @param model        model for the view
-	 * @param principal    {@link Principal} currently logged in user
 	 * @return name of the details view
 	 */
 	@RequestMapping("/projects/{projectId}/export/{submissionId}")
-	public String getDetailsView(@PathVariable Long projectId, @PathVariable Long submissionId, Model model,
-			Principal principal) {
+	public String getDetailsView(@PathVariable Long submissionId, Model model) {
 		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("submission", submission);
 		model.addAttribute("activeNav", "export");
 		return EXPORT_DETAILS_VIEW;
@@ -244,17 +230,11 @@ public class ProjectExportController {
 	/**
 	 * Get the project export list view
 	 *
-	 * @param projectId which {@link Project} to get exports for
 	 * @param model     model for the view
-	 * @param principal The currently logged in user
 	 * @return name of the exports list view
 	 */
 	@RequestMapping("/projects/{projectId}/export")
-	public String getExportsPage(@PathVariable Long projectId, Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-		// Set up the template information
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("project", project);
+	public String getExportsPage(Model model) {
 		model.addAttribute("activeNav", "export");
 		return EXPORT_LIST_VIEW;
 	}
@@ -268,7 +248,7 @@ public class ProjectExportController {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/export/ncbi")
-	public String getExportsPage(Model model) {
+	public String getExportsPageForAdmin(Model model) {
 		return EXPORT_ADMIN_VIEW;
 	}
 
@@ -287,7 +267,7 @@ public class ProjectExportController {
 		Project project = projectService.read(projectId);
 		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
 
-		List<DataTablesResponseModel> dtExportSubmissions = submissions.stream().map(s -> new DTExportSubmission(s))
+		List<DataTablesResponseModel> dtExportSubmissions = submissions.stream().map(DTExportSubmission::new)
 				.collect(Collectors.toList());
 		return new DataTablesResponse(params, submissions.size(), dtExportSubmissions);
 

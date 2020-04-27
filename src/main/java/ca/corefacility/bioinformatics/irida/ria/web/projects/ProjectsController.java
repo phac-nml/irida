@@ -59,7 +59,6 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.ImmutableList;
@@ -92,12 +91,10 @@ public class ProjectsController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
-	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteAPIService remoteApiService;
-	private final IridaWorkflowsService workflowsService;
 	private final CartController cartController;
 	private final UpdateSamplePermission updateSamplePermission;
 
@@ -116,19 +113,17 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectRemoteService projectRemoteService, ProjectControllerUtils projectControllerUtils,
-			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService,
-			CartController cartController, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
+			ProjectRemoteService projectRemoteService, TaxonomyService taxonomyService,
+			RemoteAPIService remoteApiService, CartController cartController,
+			UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectRemoteService = projectRemoteService;
-		this.projectControllerUtils = projectControllerUtils;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
 		this.remoteApiService = remoteApiService;
-		this.workflowsService = workflowsService;
 		this.cartController = cartController;
 		this.fileSizeConverter = new FileSizeConverter();
 		this.updateSamplePermission = updateSamplePermission;
@@ -167,17 +162,11 @@ public class ProjectsController {
 	/**
 	 * Request for a specific project details page.
 	 *
-	 * @param projectId The id for the project to show details for.
-	 * @param model     Spring model to populate the html page.
-	 * @param principal a reference to the logged in user.
+	 * @param model Spring model to populate the html page.
 	 * @return The name of the project details page.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/activity")
-	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
-		logger.debug("Getting project information for [Project " + projectId + "]");
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	public String getProjectSpecificPage(final Model model) {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
 	}
@@ -346,17 +335,11 @@ public class ProjectsController {
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
-	 * @param projectId the ID of the {@link Project}
-	 * @param principal the logged in user
-	 * @param model     model for view variables
+	 * @param model model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses")
-	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	public String getProjectAnalysisList(Model model) {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "analyses");
 		return "projects/analyses/pages/analyses_table.html";
@@ -366,15 +349,11 @@ public class ProjectsController {
 	 * Get the page for analysis output files shared with a given {@link Project}
 	 *
 	 * @param projectId the ID of the {@link Project}
-	 * @param principal the logged in user
 	 * @param model     model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses/shared-outputs")
-	public String getProjectSharedOutputFilesPage(@PathVariable Long projectId, Principal principal, Model model) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	public String getProjectSharedOutputFilesPage(@PathVariable Long projectId, Model model) {
 		model.addAttribute("ajaxURL", "/ajax/analysis/project/" + projectId + "/list");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "shared");
@@ -385,15 +364,11 @@ public class ProjectsController {
 	 * Get the page for automated analysis output files shared with a given {@link Project}
 	 *
 	 * @param projectId the ID of the {@link Project}
-	 * @param principal the logged in user
 	 * @param model     model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses/automated-outputs")
-	public String getProjectAutomatedOutputFilesPage(@PathVariable Long projectId, Principal principal, Model model) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	public String getProjectAutomatedOutputFilesPage(@PathVariable Long projectId, Model model) {
 		model.addAttribute("ajaxURL", "/ajax/analysis/project/" + projectId + "/list");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "automated");

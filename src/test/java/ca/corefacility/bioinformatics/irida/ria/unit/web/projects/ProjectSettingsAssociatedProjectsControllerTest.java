@@ -7,11 +7,16 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -21,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectSettingsAssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -39,17 +43,25 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 	private ProjectService projectService;
 	private ProjectSettingsAssociatedProjectsController controller;
 	private UserService userService;
-	private ProjectControllerUtils projectUtils;
 	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
-		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
-		controller = new ProjectSettingsAssociatedProjectsController(projectService, projectUtils, userService,
+		controller = new ProjectSettingsAssociatedProjectsController(projectService, userService,
 				messageSource);
+
+		// Mock the security context holder
+		Authentication authentication = Mockito.mock(Authentication.class);
+		// Mockito.whens() for your authorization object
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		User user = new User(USER_NAME, "", "", "", "", "");
+		user.setSystemRole(Role.ROLE_ADMIN);
+		Mockito.when(securityContext.getAuthentication().getPrincipal()).thenReturn(user);
+		SecurityContextHolder.setContext(securityContext);
 		
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -57,6 +69,7 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "admin", authorities = { "ADMIN", "USER" })
 	public void testGetAssociatedProjectsPage() {
 
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -71,18 +84,17 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 		List<RelatedProjectJoin> relatedProjects = Lists.newArrayList(new RelatedProjectJoin(p, o));
 
 
-		when(projectService.read(projectId)).thenReturn(p);
+		when(projectService.read(any())).thenReturn(p);
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
 		when(projectService.getRelatedProjects(p)).thenReturn(relatedProjects);
 
 		controller.getAssociatedProjectsPage(projectId, model, principal);
 
-		assertTrue(model.containsAttribute("isAdmin"));
 		assertTrue(model.containsAttribute("associatedProjects"));
 
 		verify(projectService).read(projectId);
-		verify(userService, times(2)).getUserByUsername(USER_NAME);
+		verify(userService, times(1)).getUserByUsername(USER_NAME);
 		verify(projectService).getRelatedProjects(p);
 	}
 
@@ -221,8 +233,7 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 
-		String editAssociatedProjectsForProject = controller.editAssociatedProjectsForProject(projectId, model,
-				principal);
+		String editAssociatedProjectsForProject = controller.editAssociatedProjectsForProject(projectId, model);
 
 		assertEquals("projects/settings/pages/associated_edit", editAssociatedProjectsForProject);
 	}

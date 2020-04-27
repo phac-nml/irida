@@ -1,18 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponse;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.google.common.collect.ImmutableMap;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,18 +11,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponse;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Handles basic settings pages for a project
  */
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
-public class ProjectSettingsController {
+public class ProjectSettingsController extends ProjectBaseController {
 	private final MessageSource messageSource;
-	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
@@ -39,11 +39,9 @@ public class ProjectSettingsController {
 	public static final String ACTIVE_NAV_SETTINGS = "settings";
 
 	@Autowired
-	public ProjectSettingsController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService workflowsService) {
+	public ProjectSettingsController(MessageSource messageSource, ProjectService projectService,
+			AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService workflowsService) {
 		this.messageSource = messageSource;
-		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = workflowsService;
@@ -61,11 +59,8 @@ public class ProjectSettingsController {
 	@RequestMapping("")
 	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
 			final Principal principal, Locale locale) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "details");
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/details";
 	}
 
@@ -88,11 +83,9 @@ public class ProjectSettingsController {
 				.map(t -> templatesToResponse(t, locale))
 				.collect(Collectors.toList());
 
-		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "processing");
 		model.addAttribute("analysisTemplates", templateResponseTypes);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/processing";
 	}
 
@@ -171,11 +164,8 @@ public class ProjectSettingsController {
 	@RequestMapping("/delete")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String getProjectDeletionPage(@PathVariable Long projectId, final Model model, final Principal principal) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "delete");
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/delete";
 	}
 

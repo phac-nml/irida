@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -18,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectBaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -28,8 +28,8 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
-public class ProjectLineListController {
-	
+public class ProjectLineListController extends ProjectBaseController {
+
 	private final ProjectService projectService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
@@ -47,23 +47,16 @@ public class ProjectLineListController {
 	/**
 	 * Get the page to display the project samples linelist.
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
 	 * @param templateId
-	 * 		{@link Long} id for the current template
+	 *        {@link Long} id for the current template
 	 * @param model
-	 * 		{@link Model}
-	 * @param principal
-	 * 		{@link Principal} currently logged in user.
+	 *        {@link Model}
 	 *
 	 * @return {@link String} path to the current page.
 	 */
 	@RequestMapping("")
-	public String getLineListPage(@PathVariable Long projectId, @RequestParam(required = false) Long templateId,
-			Model model, Principal principal) {
+	public String getLineListPage(@RequestParam(required = false) Long templateId, Model model) {
 		// Set up the template information
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
 
 		// templateId usually comes into play when a user just uploaded a metadata
@@ -78,23 +71,14 @@ public class ProjectLineListController {
 	/**
 	 * Get the page to create new linelist templates
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param model
-	 * 		{@link Model}
-	 * @param locale
-	 * 		{@link Locale}
-	 * @param principal
-	 * 		{@link Principal}
-	 *
+	 * @param projectId Identifier for the current project
+	 * @param model     {@link Model}
+	 * @param locale    {@link Locale}
 	 * @return {@link String} path to the page.
 	 */
 	@RequestMapping("/linelist-templates")
-	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Locale locale,
-			Principal principal) {
-		// Set up the template information
+	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Locale locale) {
 		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
 		return "projects/project_linelist_template";
 	}

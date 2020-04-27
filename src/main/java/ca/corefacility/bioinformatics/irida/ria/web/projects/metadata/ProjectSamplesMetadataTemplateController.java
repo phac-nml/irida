@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectBaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -32,53 +31,41 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
  */
 @Controller
 @RequestMapping("/projects/{projectId}/metadata-templates")
-public class ProjectSamplesMetadataTemplateController {
+public class ProjectSamplesMetadataTemplateController extends ProjectBaseController {
 	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
-	private ProjectControllerUtils projectControllerUtils;
 
 	@Autowired
 	public ProjectSamplesMetadataTemplateController(ProjectService projectService,
-			ProjectControllerUtils projectControllerUtils, MetadataTemplateService metadataTemplateService) {
+			MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
-		this.projectControllerUtils = projectControllerUtils;
 		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
 	 * Get the page to create a new {@link MetadataTemplate}
 	 *
-	 * @param projectId {@link Long} identifier for a {@link Project}
-	 * @param model     {@link Model} spring page model
-	 * @param principal {@link Principal} currently logged in user
+	 * @param model {@link Model} spring page model
 	 * @return {@link String} path to the new template page
 	 */
 	@RequestMapping("/new")
-	public String getMetadataTemplateListPage(@PathVariable Long projectId, Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-
+	public String getMetadataTemplateListPage(Model model) {
 		// Add an empty MetadataTemplate. This facilitates code reuse for this page
 		// since it is used for both creation and updating a template, and the html
 		// is looking for a template object.
 		model.addAttribute("template", new UIMetadataTemplate());
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/project_samples_metadata_template";
 	}
 
 	/**
 	 * Get a the page for a specific {@link MetadataTemplate}
 	 *
-	 * @param projectId  {@link Long} identifier for a {@link Project}
 	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
-	 * @param principal  {@link Principal} currently logged in user
 	 * @param model      {@link Model} spring page model
 	 * @return {@link String} path to template page
 	 */
 	@RequestMapping("/{templateId}")
-	public String getMetadataTemplatePage(@PathVariable Long projectId, @PathVariable Long templateId,
-			Principal principal, Model model) {
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	public String getMetadataTemplatePage(@PathVariable Long templateId, Model model) {
 		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
 		model.addAttribute("template", metadataTemplate);
 		return "projects/project_samples_metadata_template";

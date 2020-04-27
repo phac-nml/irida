@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import java.security.Principal;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectGroup;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
@@ -35,12 +33,11 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping("/projects")
-public class ProjectMembersController {
+public class ProjectMembersController extends ProjectBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersController.class);
 
 	private static final String REMOVE_USER_MODAL = "projects/templates/remove-user-modal";
 
-	private final ProjectControllerUtils projectUtils;
 	private final ProjectService projectService;
 	private final MessageSource messageSource;
 	private final UserGroupService userGroupService;
@@ -49,9 +46,8 @@ public class ProjectMembersController {
 			ProjectRole.PROJECT_OWNER);
 
 	@Autowired
-	public ProjectMembersController(final ProjectControllerUtils projectUtils, final ProjectService projectService,
-			final UserGroupService userGroupService, final MessageSource messageSource) {
-		this.projectUtils = projectUtils;
+	public ProjectMembersController(final ProjectService projectService, final UserGroupService userGroupService,
+			final MessageSource messageSource) {
 		this.projectService = projectService;
 		this.messageSource = messageSource;
 		this.userGroupService = userGroupService;
@@ -61,22 +57,11 @@ public class ProjectMembersController {
 	 * Gets the name of the template for the project members page. Populates the
 	 * template with standard info.
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param principal
-	 *            {@link Principal}
-	 * @param projectId
-	 *            Id for the project to show the users for
+	 * @param model {@link Model}
 	 * @return The name of the project members page.
 	 */
 	@RequestMapping(value = { "/{projectId}/settings/members", "/{projectId}/settings/members/edit" })
-	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
-
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-
-		projectUtils.getProjectTemplateDetails(model, principal, project);
-
+	public String getProjectUsersPage(final Model model) {
 		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "members");
@@ -87,20 +72,11 @@ public class ProjectMembersController {
 	 * Gets the name of the template for the project members page. Populates the
 	 * template with standard info.
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param principal
-	 *            {@link Principal}
-	 * @param projectId
-	 *            Id for the project to show the users for
+	 * @param model {@link Model}
 	 * @return The name of the project members page.
 	 */
 	@RequestMapping(value = "/{projectId}/settings/groups", method = RequestMethod.GET)
-	public String getProjectGroupsPage(final Model model, final Principal principal, @PathVariable Long projectId) {
-		logger.trace("Getting project members for project " + projectId);
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectUtils.getProjectTemplateDetails(model, principal, project);
+	public String getProjectGroupsPage(final Model model) {
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute("page", "groups");

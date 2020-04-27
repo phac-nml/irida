@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -100,27 +99,22 @@ public class ProjectSamplesController {
 	 *
 	 * @param model
 	 * 		A model for the sample list view
-	 * @param principal
-	 * 		The user reading the project
 	 * @param projectId
 	 * 		The ID of the project
 	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping(value = { "/projects/{projectId}", "/projects/{projectId}/samples" })
-	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
+	public String getProjectSamplesPage(final Model model, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-
-		// Set up the template information
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
 
 		// Add the associated projects
 		List<RelatedProjectJoin> associatedJoin = projectService.getRelatedProjects(project);
-		List<Project> associated = associatedJoin.stream().map(RelatedProjectJoin::getObject)
+		List<Project> associated = associatedJoin.stream()
+				.map(RelatedProjectJoin::getObject)
 				.collect(Collectors.toList());
 		model.addAttribute("associatedProjects", associated);
 

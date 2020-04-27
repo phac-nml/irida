@@ -23,9 +23,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -38,25 +36,23 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/projects/{projectId}/settings/associated")
 @Scope("session")
-public class ProjectSettingsAssociatedProjectsController {
+public class ProjectSettingsAssociatedProjectsController extends ProjectBaseController {
 
 	public static final String ASSOCIATED_PROJECTS_PAGE = ProjectsController.PROJECTS_DIR + "associated_projects";
 	public static final String EDIT_ASSOCIATED_PROJECTS_PAGE =
 			ProjectsController.PROJECTS_DIR + "associated_projects_edit";
 
 	private final ProjectService projectService;
-	private final ProjectControllerUtils projectControllerUtils;
 	private final UserService userService;
 	private final MessageSource messageSource;
 
 	private final Formatter<Date> dateFormatter;
 
 	@Autowired
-	public ProjectSettingsAssociatedProjectsController(ProjectService projectService,
-			ProjectControllerUtils projectControllerUtils, UserService userService, MessageSource messageSource) {
+	public ProjectSettingsAssociatedProjectsController(ProjectService projectService, UserService userService,
+			MessageSource messageSource) {
 
 		this.projectService = projectService;
-		this.projectControllerUtils = projectControllerUtils;
 		this.userService = userService;
 		this.messageSource = messageSource;
 		dateFormatter = new DateFormatter();
@@ -77,17 +73,11 @@ public class ProjectSettingsAssociatedProjectsController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getAssociatedProjectsPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-
-		User loggedInUser = userService.getUserByUsername(principal.getName());
-
-		// Determine if the user is an owner or admin.
-		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
-		model.addAttribute("isAdmin", isAdmin);
 
 		// Add any associated projects
 		User currentUser = userService.getUserByUsername(principal.getName());
-		List<Map<String, String>> associatedProjects = getAssociatedProjectsForProject(project, currentUser, isAdmin);
+		List<Map<String, String>> associatedProjects = getAssociatedProjectsForProject(project, currentUser,
+				this.getIsAdmin());
 		model.addAttribute("associatedProjects", associatedProjects);
 
 		model.addAttribute("noAssociated", associatedProjects.isEmpty());
@@ -95,7 +85,6 @@ public class ProjectSettingsAssociatedProjectsController {
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "associated");
 
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/associated";
 	}
 
@@ -164,20 +153,13 @@ public class ProjectSettingsAssociatedProjectsController {
 	 * 		The ID of the current project
 	 * @param model
 	 * 		Model object to be passed to the view
-	 * @param principal
-	 * 		The logged in user
 	 *
 	 * @return The name of the edit associated projects view
 	 */
 	@RequestMapping("/edit")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
-	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model) {
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
-
 		return "projects/settings/pages/associated_edit";
 	}
 

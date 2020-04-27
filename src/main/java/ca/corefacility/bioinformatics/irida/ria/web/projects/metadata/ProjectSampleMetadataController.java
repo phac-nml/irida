@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectBaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -45,37 +43,29 @@ import com.google.common.io.Files;
  */
 @Controller
 @RequestMapping("/projects/{projectId}/sample-metadata")
-public class ProjectSampleMetadataController {
+public class ProjectSampleMetadataController extends ProjectBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
 	private final MessageSource messageSource;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
-	private final ProjectControllerUtils projectControllerUtils;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
-			SampleService sampleService, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils) {
+			SampleService sampleService, MetadataTemplateService metadataTemplateService) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-		this.projectControllerUtils = projectControllerUtils;
 	}
 
 	/**
 	 * Handle the page request to upload {@link Sample} metadata
 	 *
-	 * @param model     {@link Model}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param principal {@link Principal} currently logged in use
 	 * @return {@link String} the path to the metadata import page
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.GET)
-	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId,
-			Principal principal) {
-		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
+	public String getProjectSamplesMetadataUploadPage() {
 		return "projects/project_samples_metadata_upload";
 	}
 
