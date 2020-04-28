@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { updateUserRoleOnProject } from "../../apis/projects/members";
 import { notification, Select } from "antd";
 import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
 
@@ -10,17 +9,18 @@ import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
  * will be rendered
  *
  * @param {object} user - the current user to be rendered
+ * @param updateFn
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ user }) {
+export function ProjectRole({ user, updateFn }) {
   const [role, setRole] = useState(user.role);
   const [loading, setLoading] = useState(false);
   const { roles, getRoleFromKey } = useContext(ProjectRolesContext);
 
   const onChange = (value) => {
     setLoading(true);
-    updateUserRoleOnProject({
+    updateFn({
       id: user.id,
       role: value,
     })
@@ -36,7 +36,7 @@ export function ProjectRole({ user }) {
       .finally(() => setLoading(false));
   };
 
-  return window.PAGE.canManage ? (
+  return window.project.canManage ? (
     <Select
       className="t-role-select"
       value={role}

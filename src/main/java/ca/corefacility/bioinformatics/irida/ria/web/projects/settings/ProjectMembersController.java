@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
@@ -68,32 +67,6 @@ public class ProjectMembersController extends ProjectBaseController {
 	}
 
 	/**
-	 * Add a group to a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param memberId
-	 *            The ID of the user
-	 * @param projectRole
-	 *            The role for the user on the project
-	 * @param locale
-	 *            the reported locale of the browser
-	 * @return map for showing success message.
-	 */
-	@RequestMapping(value = "/{projectId}/settings/groups", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> addProjectGroupMember(@PathVariable Long projectId, @RequestParam Long memberId,
-			@RequestParam String projectRole, Locale locale) {
-		final Project project = projectService.read(projectId);
-		final UserGroup userGroup = userGroupService.read(memberId);
-		final ProjectRole role = ProjectRole.fromString(projectRole);
-
-		projectService.addUserGroupToProject(project, userGroup, role);
-		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
-				new Object[] { userGroup.getLabel(), project.getLabel() }, locale));
-	}
-
-	/**
 	 * Remove a user group from a project
 	 *
 	 * @param projectId The project to remove from
@@ -115,34 +88,6 @@ public class ProjectMembersController extends ProjectBaseController {
 		} catch (final ProjectWithoutOwnerException e) {
 			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.remove.nomanager",
 					new Object[] { userGroup.getLabel() }, locale));
-		}
-	}
-
-	/**
-	 * Update a user group's role on a project
-	 *
-	 * @param projectId   The ID of the project
-	 * @param userId      The ID of the user
-	 * @param projectRole The role to set
-	 * @param locale      Locale of the logged in user
-	 * @return Success or failure message
-	 */
-	@RequestMapping(path = "{projectId}/settings/groups/editrole/{userId}", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateUserGroupRole(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final @RequestParam String projectRole, final Locale locale) {
-		final Project project = projectService.read(projectId);
-		final UserGroup userGroup = userGroupService.read(userId);
-		final ProjectRole role = ProjectRole.fromString(projectRole);
-		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
-
-		try {
-			projectService.updateUserGroupProjectRole(project, userGroup, role);
-			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
-					new Object[] { userGroup.getLabel(), roleName }, locale));
-		} catch (final ProjectWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
-					new Object[] { userGroup.getLabel(), roleName }, locale));
 		}
 	}
 

@@ -5,6 +5,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { ProjectRole } from "./ProjectRole";
 import { RemoveMemberButton } from "./RemoveMemberButton";
 import { AddMembersButton } from "./AddMemberButton";
+import { updateUserRoleOnProject } from "../../apis/projects/members";
 
 /**
  * React component to display a table of project users.
@@ -24,7 +25,7 @@ export function ProjectMembersTable() {
       title: i18n("ProjectMembersTable.role"),
       dataIndex: "role",
       render(text, item) {
-        return <ProjectRole user={item} />;
+        return <ProjectRole updateFn={updateUserRoleOnProject} user={item} />;
       },
     },
     {
@@ -36,7 +37,7 @@ export function ProjectMembersTable() {
     },
   ];
 
-  if (window.PAGE.canManage) {
+  if (window.project.canManage) {
     columns.push({
       align: "right",
       render(text, item) {

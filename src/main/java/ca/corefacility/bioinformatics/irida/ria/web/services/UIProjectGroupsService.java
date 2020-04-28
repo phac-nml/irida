@@ -9,10 +9,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectGroupTableModel;
@@ -59,7 +61,24 @@ public class UIProjectGroupsService {
 		UserGroup group = userGroupService.read(request.getId());
 		ProjectRole role = ProjectRole.fromString(request.getRole());
 		projectService.addUserGroupToProject(project, group, role);
-		return messageSource.getMessage("project.members.add.success", new Object[] { group.getLabel(), project.getLabel() },
-				locale);
+		return messageSource.getMessage("server.AddGroup.success",
+				new Object[] { group.getLabel(), project.getLabel() }, locale);
+	}
+
+	public String updateGroupRoleOnProject(Long projectId, Long groupId, String role, Locale locale)
+			throws UIProjectWithoutOwnerException {
+		Project project = projectService.read(projectId);
+		UserGroup userGroup = userGroupService.read(groupId);
+		ProjectRole projectRole = ProjectRole.valueOf(role);
+		String roleName = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+		try {
+			projectService.updateUserGroupProjectRole(project, userGroup, projectRole);
+			return messageSource.getMessage("server.ProjectRoleSelect.success",
+					new Object[] { userGroup.getLabel(), roleName }, locale);
+		} catch (ProjectWithoutOwnerException e) {
+			throw new UIProjectWithoutOwnerException(
+					messageSource.getMessage("server.ProjectRoleSelect.error",
+							new Object[] { userGroup.getLabel(), roleName }, locale));
+		}
 	}
 }
