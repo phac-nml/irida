@@ -152,7 +152,11 @@ public class RESTProjectSamplesController {
 		labeledProjectSampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
-		modelMap.addAttribute("warnings", errors);
+
+		if (!errors.isEmpty()) {
+			modelMap.addAttribute("warnings", errors);
+		}
+
 		response.setStatus(HttpStatus.CREATED.value());
 
 		return modelMap;

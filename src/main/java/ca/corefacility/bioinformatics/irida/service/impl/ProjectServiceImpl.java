@@ -343,9 +343,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample, boolean owner) {
 		logger.trace("Adding sample to project.");
 
-		if (psjRepository.readSampleForProject(project, sample) != null) {
-			throw new EntityExistsException(
-					"Sample [" + sample.getId() + "] has already been added to project [" + project.getId() + "]");
+		//if the sample exists, ensure it isn't already on the project
+		if (sample.getId() != null) {
+			if (psjRepository.readSampleForProject(project, sample) != null) {
+				throw new EntityExistsException(
+						"Sample [" + sample.getId() + "] has already been added to project [" + project.getId() + "]");
+			}
 		}
 
 		// Check to ensure a sample with this sequencer id doesn't exist in this
