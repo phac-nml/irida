@@ -87,15 +87,13 @@ public class RESTProjectSamplesController {
 
 	/**
 	 * Copy an existing sample to a project.
-	 * 
-	 * @param projectId
-	 *            the project to copy the sample to.
-	 * @param sampleIds
-	 *            the collection of sample IDs to copy.
-	 * @param response
-	 *            a reference to the servlet response.
+	 *
+	 * @param projectId the project to copy the sample to.
+	 * @param sampleIds the collection of sample IDs to copy.
+	 * @param response  a reference to the servlet response.
+	 * @param locale    The requesting user's locale for any warning messages
 	 * @return the response indicating that the sample was joined to the
-	 *         project.
+	 * project.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
