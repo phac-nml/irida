@@ -79,6 +79,7 @@ public class RESTSampleSequenceFilesController {
 	 * rel for the unpaired sequence files for a given sample
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILE_UNPAIRED = "sample/sequenceFiles/unpaired";
+	public static final String REL_SAMPLE_SEQUENCE_FILE_FAST5 = "sample/sequenceFiles/fast5";
 
 	public static final String REL_SEQUENCEFILE_SAMPLE = "sequenceFile/sample";
 	public static final String REL_PAIR_SAMPLE = "sequenceFilePair/sample";
