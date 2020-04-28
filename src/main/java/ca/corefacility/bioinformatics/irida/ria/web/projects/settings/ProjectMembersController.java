@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -34,8 +32,6 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/projects")
 public class ProjectMembersController extends ProjectBaseController {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersController.class);
-
 	private static final String REMOVE_USER_MODAL = "projects/templates/remove-user-modal";
 
 	private final ProjectService projectService;
@@ -60,7 +56,7 @@ public class ProjectMembersController extends ProjectBaseController {
 	 * @param model {@link Model}
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping(value = { "/{projectId}/settings/members", "/{projectId}/settings/members/edit" })
+	@RequestMapping("/{projectId}/settings/members")
 	public String getProjectUsersPage(final Model model) {
 		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
@@ -100,7 +96,6 @@ public class ProjectMembersController extends ProjectBaseController {
 	@ResponseBody
 	public Map<String, String> addProjectGroupMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
-		logger.trace("Adding user " + memberId + " to project " + projectId);
 		final Project project = projectService.read(projectId);
 		final UserGroup userGroup = userGroupService.read(memberId);
 		final ProjectRole role = ProjectRole.fromString(projectRole);
