@@ -51,3 +51,18 @@ export async function getProjectDetails(projectId) {
 export async function updateProjectAttribute({ projectId, field, value }) {
   return axios.put(`${URL}/${projectId}/details/edit`, { field, value });
 }
+
+export async function searchAvailableUserGroups({ projectId, query }) {
+  return axios
+    .get(`${URL}/${projectId}/groups/search?query=${query}`)
+    .then(({ data }) => data);
+}
+
+export async function addUserGroupToProject({ projectId, groupId, role }) {
+  return axios
+    .post(`${URL}/${projectId}/groups/add`, {
+      id: groupId,
+      role,
+    })
+    .then(({ data }) => data);
+}

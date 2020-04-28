@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +13,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerExcept
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -37,9 +30,6 @@ public class ProjectMembersController extends ProjectBaseController {
 	private final ProjectService projectService;
 	private final MessageSource messageSource;
 	private final UserGroupService userGroupService;
-
-	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
-			ProjectRole.PROJECT_OWNER);
 
 	@Autowired
 	public ProjectMembersController(final ProjectService projectService, final UserGroupService userGroupService,
@@ -58,7 +48,6 @@ public class ProjectMembersController extends ProjectBaseController {
 	 */
 	@RequestMapping("/{projectId}/settings/members")
 	public String getProjectUsersPage(final Model model) {
-		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "members");
 		return "projects/settings/pages/members";
@@ -74,7 +63,6 @@ public class ProjectMembersController extends ProjectBaseController {
 	@RequestMapping(value = "/{projectId}/settings/groups", method = RequestMethod.GET)
 	public String getProjectGroupsPage(final Model model) {
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
-		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute("page", "groups");
 		return "projects/settings/pages/groups";
 	}
@@ -103,24 +91,6 @@ public class ProjectMembersController extends ProjectBaseController {
 		projectService.addUserGroupToProject(project, userGroup, role);
 		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
 				new Object[] { userGroup.getLabel(), project.getLabel() }, locale));
-	}
-
-	/**
-	 * Search the list of users who could be added to a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param term
-	 *            A search term
-	 * @return A {@code Map<Long,String>} of the userID and user label
-	 */
-	@RequestMapping("/{projectId}/settings/ajax/availablegroupmembers")
-	@ResponseBody
-	public Collection<UserGroup> getGroupsAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
-		final Project project = projectService.read(projectId);
-		final List<UserGroup> groupsAvailableForProject = userGroupService.getUserGroupsNotOnProject(project, term);
-
-		return groupsAvailableForProject;
 	}
 
 	/**
@@ -174,31 +144,6 @@ public class ProjectMembersController extends ProjectBaseController {
 			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
 					new Object[] { userGroup.getLabel(), roleName }, locale));
 		}
-	}
-
-	/**
-	 * Get a page of groups on the project for display in a DataTable.
-	 *
-	 * @param params
-	 *            the datatables criteria for filtering/sorting groups
-	 * @param projectId
-	 *            the id of the project we're looking at
-	 * @return a {@link DataTablesResponseModel} of groups on the project
-	 */
-	@RequestMapping(value = "/{projectId}/settings/ajax/groups")
-	@ResponseBody
-	public DataTablesResponse getProjectGroupMembers(@DataTablesRequest DataTablesParams params,
-			final @PathVariable Long projectId) {
-		final Project project = projectService.read(projectId);
-
-		final Page<UserGroupProjectJoin> userGroupsForProject = userGroupService.getUserGroupsForProject(
-				params.getSearchValue(), project, params.getCurrentPage(), params.getLength(), params.getSort());
-		List<DataTablesResponseModel> responseModels = new ArrayList<>();
-		for (UserGroupProjectJoin userGroupProjectJoin : userGroupsForProject) {
-			responseModels.add(new DTProjectGroup(userGroupProjectJoin));
-		}
-
-		return new DataTablesResponse(params, userGroupsForProject, responseModels);
 	}
 
 	/**
