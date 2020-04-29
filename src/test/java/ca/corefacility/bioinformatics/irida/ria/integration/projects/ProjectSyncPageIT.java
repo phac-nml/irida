@@ -13,7 +13,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
@@ -54,8 +54,8 @@ public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("URL should not be empty", url.isEmpty());
 		page.submitProject();
 
-		ProjectMetadataPage projectMetadataPage = new ProjectMetadataPage(driver());
-		String dataProjectName = projectMetadataPage.getDataProjectName();
+		ProjectDetailsPage projectDetailsPage = ProjectDetailsPage.initElements(driver());
+		String dataProjectName = projectDetailsPage.getProjectName();
 
 		assertEquals("Project names should be equal", selectedProjectName, dataProjectName);
 	}
