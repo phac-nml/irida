@@ -9,6 +9,9 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
+/**
+ * Component implementation to run on a AnalysisFastQC entity after it is has been accessed from the db.
+ */
 @Component
 public class AnalysisFastQCListener {
 	@Autowired
