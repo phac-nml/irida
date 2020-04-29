@@ -9,6 +9,8 @@ import {
   updateGroupsRoleOnProject,
 } from "../../apis/projects/groups";
 import { RemoveItemButton } from "../Buttons/RemoveItemButton";
+import { IconMembers } from "../icons/Icons";
+import { grey6 } from "../../styles/colors";
 
 export function ProjectGroupsTable() {
   const columns = [
@@ -50,5 +52,30 @@ export function ProjectGroupsTable() {
     });
   }
 
-  return <PagedTable buttons={<AddGroupButton />} columns={columns} />;
+  return (
+    <PagedTable
+      buttons={<AddGroupButton />}
+      columns={columns}
+      locale={{
+        emptyText: (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              color: grey6,
+              height: 300,
+              justifyContent: "space-around",
+            }}
+          >
+            <div>
+              <div>
+                <IconMembers style={{ fontSize: 50 }} />
+              </div>
+              <div>{i18n("ProjectGroupsTable.empty")}</div>
+            </div>
+          </div>
+        ),
+      }}
+    />
+  );
 }
