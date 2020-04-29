@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -79,6 +76,7 @@ public class RESTProjectUsersController {
 	 *                                      thrown in this method, but needs to be listed.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
+	@ResponseBody
 	public ModelMap getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
 		ResourceCollection<User> resources = new ResourceCollection<>();
 
@@ -121,6 +119,7 @@ public class RESTProjectUsersController {
 	 *                                      {@code linkTo} and {@code methodOn}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
+	@ResponseBody
 	public ModelMap addUserToProject(@PathVariable Long projectId, @RequestBody Map<String, String> representation,
 			HttpServletResponse response) throws ProjectWithoutOwnerException {
 		// first, get the project
@@ -177,6 +176,7 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException if removing this user will leave the project without an owner
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
+	@ResponseBody
 	public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId)
 			throws ProjectWithoutOwnerException {
 		// Read the project and user from the database

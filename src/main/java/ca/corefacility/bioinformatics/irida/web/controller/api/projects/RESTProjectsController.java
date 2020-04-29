@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -23,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
  *
  */
 @Controller
+@ResponseBody
 @RequestMapping(value = "/api/projects")
 public class RESTProjectsController extends RESTGenericController<Project> {
 	
