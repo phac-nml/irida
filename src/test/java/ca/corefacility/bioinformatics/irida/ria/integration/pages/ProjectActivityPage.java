@@ -14,11 +14,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.ProjectEve
  * </p>
  * 
  */
-public class ProjectDetailsPage extends AbstractPage {
+public class ProjectActivityPage extends AbstractPage {
 
 	ProjectEventsUtilities projectEventsSection;
 
-	public ProjectDetailsPage(WebDriver driver) {
+	public ProjectActivityPage(WebDriver driver) {
 		super(driver);
 		projectEventsSection = new ProjectEventsUtilities(driver);
 	}

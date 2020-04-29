@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 public class ProjectMembersPage extends AbstractPage {
 	private static AntTable table;
 
-	@FindBy(className = "ant-page-header-heading-title")
+	@FindBy(tagName = "h2")
 	private WebElement title;
 
 	@FindBy(className = "t-remove-member-btn")
