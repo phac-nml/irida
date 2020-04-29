@@ -29,7 +29,7 @@ public class UIProjectGroupsService {
 	private final MessageSource messageSource;
 
 	@Autowired
-	private UIProjectGroupsService(ProjectService projectService, UserGroupService userGroupService,
+	public UIProjectGroupsService(ProjectService projectService, UserGroupService userGroupService,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.userGroupService = userGroupService;
