@@ -166,7 +166,7 @@ public class GalaxyWorkflowsIT {
 		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
 
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}

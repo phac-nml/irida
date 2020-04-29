@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -63,7 +64,9 @@ public class GalaxyHistoriesService {
 	private ToolsClient toolsClient;
 	
 	private GalaxyLibrariesService librariesService;
-	
+
+	private IridaFileStorageService iridaFileStorageService;
+
 	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
@@ -71,7 +74,7 @@ public class GalaxyHistoriesService {
 	 * @param librariesService  A service for dealing with Galaxy libraries.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, GalaxyLibrariesService librariesService) {
+			ToolsClient toolsClient, GalaxyLibrariesService librariesService, IridaFileStorageService iridaFileStorageService) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
 		checkNotNull(librariesService, "librariesService is null");
@@ -79,6 +82,7 @@ public class GalaxyHistoriesService {
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
 		this.librariesService = librariesService;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -148,9 +152,9 @@ public class GalaxyHistoriesService {
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
 		checkNotNull(history.getId(), "history id is null");
-		checkState(path.toFile().exists(), "path " + path + " does not exist");
+		checkState(iridaFileStorageService.fileExists(path), "path " + path + " does not exist");
 		
-		File file = path.toFile();
+		File file = iridaFileStorageService.getTemporaryFile(path);
 				
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType(fileType.toString());

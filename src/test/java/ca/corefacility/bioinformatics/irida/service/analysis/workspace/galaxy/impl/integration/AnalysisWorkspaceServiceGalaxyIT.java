@@ -235,7 +235,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
 
-		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
+		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageService);
 
 		pairSequenceFiles1A = new ArrayList<>();
 		pairSequenceFiles1A.add(sequenceFilePathA);

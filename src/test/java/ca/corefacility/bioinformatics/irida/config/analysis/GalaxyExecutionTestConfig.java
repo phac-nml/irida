@@ -55,7 +55,7 @@ public class GalaxyExecutionTestConfig {
 	public GalaxyHistoriesService galaxyHistoriesService() {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService());
+		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService(), iridaFileStorageService);
 	}
 
 	@Lazy

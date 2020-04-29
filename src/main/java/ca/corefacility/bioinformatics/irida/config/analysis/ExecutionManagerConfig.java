@@ -279,7 +279,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() throws ExecutionManagerConfigurationException {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient(), galaxyLibrariesService());
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(), galaxyLibrariesService(), iridaFileStorageService);
 	}
 
 	/**

@@ -126,7 +126,7 @@ public class GalaxyHistoriesServiceIT {
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
-				galaxyLibrariesService);
+				galaxyLibrariesService, iridaFileStorageService);
 	}
 	
 	/**

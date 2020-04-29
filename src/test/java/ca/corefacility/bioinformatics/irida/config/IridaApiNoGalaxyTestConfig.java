@@ -93,7 +93,7 @@ public class IridaApiNoGalaxyTestConfig {
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService(HistoriesClient historiesClient, ToolsClient toolsClient,
 			GalaxyLibrariesService librariesService) {
-		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService);
+		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService, iridaFileStorageService);
 	}
 
 	@Bean
