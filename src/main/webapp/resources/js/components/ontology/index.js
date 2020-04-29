@@ -1,0 +1,1 @@
+export { OntologySelect } from "./OntologySelect";
