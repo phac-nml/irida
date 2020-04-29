@@ -85,6 +85,7 @@ public class RESTRootController {
 	 * @return a response to the client.
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/api")
+	@ResponseBody
 	public ModelMap getLinks(final HttpServletRequest request) {
 		logger.debug("Discovering application");
 		RootResource resource = new RootResource();
