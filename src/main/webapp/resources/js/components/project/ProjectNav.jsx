@@ -18,6 +18,7 @@ export function ProjectNav() {
   Get the current page from the global project object
    */
   const [current, setCurrent] = useState(window.project.page);
+  const BASE_URL = setBaseUrl(`projects/${window.project.id}/`);
 
   return (
     <PageHeader
@@ -28,34 +29,22 @@ export function ProjectNav() {
       <Content>
         <Menu mode="horizontal" selectedKeys={[current]}>
           <Item key="samples">
-            <a href={setBaseUrl(`projects/${window.project.id}/samples`)}>
-              {i18n("project.nav.samples")}
-            </a>
+            <a href={`${BASE_URL}samples`}>{i18n("project.nav.samples")}</a>
           </Item>
           <Item key="linelist">
-            <a href={setBaseUrl(`projects/${window.project.id}/linelist`)}>
-              {i18n("project.nav.linelist")}
-            </a>
+            <a href={`${BASE_URL}linelist`}>{i18n("project.nav.linelist")}</a>
           </Item>
           <Item key="analyses">
-            <a href={setBaseUrl(`projects/${window.project.id}/analyses`)}>
-              {i18n("project.nav.analysis")}
-            </a>
+            <a href={`${BASE_URL}analyses`}>{i18n("project.nav.analysis")}</a>
           </Item>
           <Item key="export">
-            <a href={setBaseUrl(`projects/${window.project.id}/export`)}>
-              {i18n("project.nav.exports")}
-            </a>
+            <a href={`${BASE_URL}export`}>{i18n("project.nav.exports")}</a>
           </Item>
           <Item key="activity">
-            <a href={setBaseUrl(`projects/${window.project.id}/activity`)}>
-              {i18n("project.nav.activity")}
-            </a>
+            <a href={`${BASE_URL}activity`}>{i18n("project.nav.activity")}</a>
           </Item>
           <Item key="settings">
-            <a href={setBaseUrl(`projects/${window.project.id}/settings`)}>
-              {i18n("project.nav.settings")}
-            </a>
+            <a href={`${BASE_URL}settings`}>{i18n("project.nav.settings")}</a>
           </Item>
         </Menu>
       </Content>
