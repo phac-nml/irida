@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   Button,
   Form,
@@ -23,6 +23,7 @@ const { Text } = Typography;
 export function AddGroupButton() {
   const { roles } = useContext(ProjectRolesContext);
   const { updateTable } = useContext(PagedTableContext);
+  const groupRef = useRef();
 
   const [visible, setVisible] = useState(false);
   const [groupId, setGroupId] = useState();
@@ -57,6 +58,16 @@ export function AddGroupButton() {
     form,
     visible,
   });
+
+  /*
+  Watch for changes to the forms visibility, when it becomes visible
+  set keyboard focus onto the user name input.
+   */
+  useEffect(() => {
+    if (visible) {
+      setTimeout(() => groupRef.current.focus(), 100);
+    }
+  }, [visible]);
 
   /*
  Watch for changes to the debounced entered value for the user search.
@@ -95,8 +106,11 @@ export function AddGroupButton() {
 
   return (
     <>
-      <Button onClick={() => setVisible(true)}>ADD NEW GROUP</Button>
+      <Button className="t-add-btn" onClick={() => setVisible(true)}>
+        {i18n("AddGroupButton.label")}
+      </Button>
       <Modal
+        className="t-add-group-modal"
         title={i18n("AddGroupButton.label")}
         okButtonProps={{ disabled: typeof groupId === "undefined" }}
         visible={visible}
@@ -111,6 +125,7 @@ export function AddGroupButton() {
             name="user"
           >
             <Select
+              ref={groupRef}
               showSearch
               notFoundContent={null}
               onSearch={setQuery}

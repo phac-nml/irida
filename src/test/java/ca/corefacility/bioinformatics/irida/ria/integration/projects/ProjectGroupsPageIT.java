@@ -23,7 +23,16 @@ public class ProjectGroupsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("Should have one existing group", 1, page.getNumberOfGroups());
 
+		/*
+		 Test remove a group
+		 */
 		page.removeGroup();
 		assertEquals("Should have no groups", 0, page.getNumberOfGroups());
+
+		/*
+		Test adding a group.
+		 */
+		page.addGroup("group");
+		assertEquals("Should have one existing group", 1, page.getNumberOfGroups());
 	}
 }

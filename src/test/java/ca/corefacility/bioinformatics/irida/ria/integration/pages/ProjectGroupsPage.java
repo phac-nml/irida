@@ -21,8 +21,14 @@ public class ProjectGroupsPage extends AbstractPage {
 	@FindBy(className = "t-remove-success")
 	private WebElement removeSuccessNotification;
 
-	@FindBy(className = "t-remove-error")
-	private WebElement removeErrorNotification;
+	@FindBy(className = "t-add-btn")
+	private WebElement addGroupBtn;
+
+	@FindBy(className = "t-add-group-modal")
+	private WebElement addGroupModal;
+
+	@FindBy(className = "t-new-group")
+	private List<WebElement> newGroupList;
 
 	public ProjectGroupsPage(WebDriver driver) {
 		super(driver);
@@ -43,5 +49,18 @@ public class ProjectGroupsPage extends AbstractPage {
 		driver.findElement(By.className("t-remove-confirm")).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.visibilityOf(removeSuccessNotification));
+	}
+
+	public void addGroup(String groupName) {
+		addGroupBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOf(addGroupModal));
+		WebElement input = driver.switchTo().activeElement();
+		input.sendKeys(groupName);
+		newGroupList.get(0).click();
+		WebElement modalOkBtn = addGroupModal.findElement(By.cssSelector(".ant-btn.ant-btn-primary"));
+		wait.until(ExpectedConditions.elementToBeClickable(modalOkBtn));
+		modalOkBtn.click();
+		wait.until(ExpectedConditions.invisibilityOf(addGroupModal));
 	}
 }
