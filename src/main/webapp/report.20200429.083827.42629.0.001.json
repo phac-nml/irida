@@ -1,0 +1,1014 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20200429.083827.42629.0.001.json",
+    "dumpEventTime": "2020-04-29T08:38:27Z",
+    "dumpEventTimeStamp": "1588167507293",
+    "processId": 42629,
+    "cwd": "/home/CSCScience.ca/jadam/Development/irida/src/main/webapp",
+    "commandLine": [
+      "/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node",
+      "/home/CSCScience.ca/jadam/Development/irida/src/main/webapp/node_modules/.bin/webpack",
+      "--env.mode",
+      "development"
+    ],
+    "nodejsVersion": "v12.13.0",
+    "glibcVersionRuntime": "2.27",
+    "glibcVersionCompiler": "2.17",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "linux",
+    "componentVersions": {
+      "node": "12.13.0",
+      "v8": "7.7.299.13-node.12",
+      "uv": "1.32.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.39.2",
+      "napi": "5",
+      "llhttp": "1.1.4",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1d",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019a",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "lts": "Erbium",
+      "headersUrl": "https://nodejs.org/download/release/v12.13.0/node-v12.13.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.13.0/node-v12.13.0.tar.gz"
+    },
+    "osName": "Linux",
+    "osRelease": "4.15.0-96-generic",
+    "osVersion": "#97-Ubuntu SMP Wed Apr 1 03:25:46 UTC 2020",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1177,
+        "user": 85900100,
+        "nice": 34100,
+        "sys": 9514800,
+        "idle": 5143229100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1056,
+        "user": 65021400,
+        "nice": 19100,
+        "sys": 7776500,
+        "idle": 5209428500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1191,
+        "user": 58250800,
+        "nice": 20600,
+        "sys": 7269000,
+        "idle": 5222384100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 55677000,
+        "nice": 15900,
+        "sys": 7094600,
+        "idle": 5226270200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1061,
+        "user": 52398900,
+        "nice": 30300,
+        "sys": 6911100,
+        "idle": 5229941200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 2532,
+        "user": 50108400,
+        "nice": 28300,
+        "sys": 6814800,
+        "idle": 5232516900,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 50537800,
+        "nice": 14200,
+        "sys": 6921300,
+        "idle": 5232036300,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 53913800,
+        "nice": 31900,
+        "sys": 11328400,
+        "idle": 5212062900,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 48155500,
+        "nice": 19100,
+        "sys": 8525400,
+        "idle": 5229762100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 48987400,
+        "nice": 13500,
+        "sys": 7960200,
+        "idle": 5230808600,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 48541800,
+        "nice": 23200,
+        "sys": 8056800,
+        "idle": 5231278300,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1025,
+        "user": 49728000,
+        "nice": 27900,
+        "sys": 8216100,
+        "idle": 5230189000,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1053,
+        "user": 48607200,
+        "nice": 29600,
+        "sys": 7364400,
+        "idle": 5232563200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 49008100,
+        "nice": 12800,
+        "sys": 7084000,
+        "idle": 5233137800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1006,
+        "user": 100554400,
+        "nice": 39000,
+        "sys": 14912200,
+        "idle": 5178906100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 74592200,
+        "nice": 7500,
+        "sys": 11552400,
+        "idle": 5208935700,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 72903000,
+        "nice": 41600,
+        "sys": 12672000,
+        "idle": 5184723900,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 63713400,
+        "nice": 41600,
+        "sys": 11369400,
+        "idle": 5210844300,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 59252700,
+        "nice": 25000,
+        "sys": 9587700,
+        "idle": 5223359000,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 53935200,
+        "nice": 25400,
+        "sys": 8987800,
+        "idle": 5228872100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 51290800,
+        "nice": 24000,
+        "sys": 8551500,
+        "idle": 5231797900,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 49527700,
+        "nice": 36600,
+        "sys": 8223100,
+        "idle": 5233343500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 46754100,
+        "nice": 28900,
+        "sys": 7949600,
+        "idle": 5236082800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 45716100,
+        "nice": 27300,
+        "sys": 7684100,
+        "idle": 5237046600,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 44350500,
+        "nice": 26200,
+        "sys": 7398100,
+        "idle": 5238583400,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 42880000,
+        "nice": 22000,
+        "sys": 7363100,
+        "idle": 5239674800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 64840200,
+        "nice": 26900,
+        "sys": 40822300,
+        "idle": 5169539800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 61251100,
+        "nice": 28800,
+        "sys": 20033400,
+        "idle": 5205445600,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1263,
+        "user": 45479100,
+        "nice": 23800,
+        "sys": 6990500,
+        "idle": 5236669100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1153,
+        "user": 47427500,
+        "nice": 53400,
+        "sys": 7228300,
+        "idle": 5234589200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1101,
+        "user": 46617600,
+        "nice": 18500,
+        "sys": 7330400,
+        "idle": 5235479800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 45245300,
+        "nice": 52000,
+        "sys": 6972900,
+        "idle": 5237193500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1045,
+        "user": 43612500,
+        "nice": 53500,
+        "sys": 6785000,
+        "idle": 5239102800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 3043,
+        "user": 43721300,
+        "nice": 51400,
+        "sys": 6545500,
+        "idle": 5239175800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 43216600,
+        "nice": 18600,
+        "sys": 6458500,
+        "idle": 5239919600,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 44582800,
+        "nice": 44700,
+        "sys": 6537900,
+        "idle": 5238570100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 45602100,
+        "nice": 26100,
+        "sys": 6953200,
+        "idle": 5237154800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 48496400,
+        "nice": 41600,
+        "sys": 6788600,
+        "idle": 5234539400,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 47114100,
+        "nice": 13500,
+        "sys": 6528000,
+        "idle": 5232830200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1034,
+        "user": 43883500,
+        "nice": 53000,
+        "sys": 6287800,
+        "idle": 5239478300,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1006,
+        "user": 42712600,
+        "nice": 31400,
+        "sys": 6272100,
+        "idle": 5240823700,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 43167000,
+        "nice": 39100,
+        "sys": 6347200,
+        "idle": 5240327500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1033,
+        "user": 61352400,
+        "nice": 18100,
+        "sys": 18307800,
+        "idle": 5207855800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 999,
+        "user": 55289500,
+        "nice": 15100,
+        "sys": 15661100,
+        "idle": 5217341500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 52187400,
+        "nice": 12200,
+        "sys": 11699500,
+        "idle": 5224645400,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 48619000,
+        "nice": 33700,
+        "sys": 10371800,
+        "idle": 5230154200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 49424400,
+        "nice": 60100,
+        "sys": 9317000,
+        "idle": 5230464800,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 46127800,
+        "nice": 25500,
+        "sys": 8699000,
+        "idle": 5234479700,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 41915600,
+        "nice": 21300,
+        "sys": 8157700,
+        "idle": 5239220900,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 41753600,
+        "nice": 59500,
+        "sys": 8156200,
+        "idle": 5239336500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 41377300,
+        "nice": 33800,
+        "sys": 7827800,
+        "idle": 5240141100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1001,
+        "user": 40197100,
+        "nice": 39100,
+        "sys": 7484000,
+        "idle": 5241553000,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 38701500,
+        "nice": 26700,
+        "sys": 7048400,
+        "idle": 5243726100,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 38185700,
+        "nice": 17400,
+        "sys": 6853400,
+        "idle": 5244313600,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 36967200,
+        "nice": 13600,
+        "sys": 6498400,
+        "idle": 5245916900,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz",
+        "speed": 1000,
+        "user": 37121200,
+        "nice": 30600,
+        "sys": 6657300,
+        "idle": 5245454700,
+        "irq": 0
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "lo",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "enp0s31f6",
+        "internal": false,
+        "mac": "54:bf:64:97:12:d0",
+        "address": "192.168.86.34",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "lo",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "enp0s31f6",
+        "internal": false,
+        "mac": "54:bf:64:97:12:d0",
+        "address": "fe80::56bf:64ff:fe97:12d0",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 3
+      }
+    ],
+    "host": "phac5010438"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x0000000000b027f5",
+      "symbol": "report::TriggerNodeReport(v8::Isolate*, node::Environment*, char const*, char const*, std::string const&, v8::Local<v8::String>) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x00000000009d9fc3",
+      "symbol": "node::OnFatalError(char const*, char const*) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000b37dbe",
+      "symbol": "v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000b38139",
+      "symbol": "v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000ce34f5",
+      "symbol": " [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000ce3b86",
+      "symbol": "v8::internal::Heap::RecomputeLimits(v8::internal::GarbageCollector) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000cefa1a",
+      "symbol": "v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000cf0925",
+      "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000cf3338",
+      "symbol": "v8::internal::Heap::AllocateRawWithRetryOrFail(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000cc0f86",
+      "symbol": "v8::internal::Factory::NewRawOneByteString(int, v8::internal::AllocationType) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000e51901",
+      "symbol": "v8::internal::Intl::ConvertToLower(v8::internal::Isolate*, v8::internal::Handle<v8::internal::String>) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000000ff39a6",
+      "symbol": "v8::internal::Runtime_StringToLowerCaseIntl(int, unsigned long*, v8::internal::Isolate*) [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    },
+    {
+      "pc": "0x00000000013725d9",
+      "symbol": " [/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node]"
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2169720832,
+    "totalCommittedMemory": 2165821616,
+    "usedMemory": 2130004992,
+    "availableMemory": 63612728,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 32568,
+        "capacity": 261872,
+        "used": 32296,
+        "available": 229576
+      },
+      "new_space": {
+        "memorySize": 20971520,
+        "committedMemory": 17565088,
+        "capacity": 10474880,
+        "used": 1779712,
+        "available": 8695168
+      },
+      "old_space": {
+        "memorySize": 579973120,
+        "committedMemory": 579881224,
+        "capacity": 578418360,
+        "used": 562299720,
+        "available": 16118640
+      },
+      "code_space": {
+        "memorySize": 2785280,
+        "committedMemory": 2728320,
+        "capacity": 2463904,
+        "used": 2463904,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 4984832,
+        "committedMemory": 4870480,
+        "capacity": 3540240,
+        "used": 3540240,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 1560121344,
+        "committedMemory": 1560121344,
+        "capacity": 1559338464,
+        "used": 1559338464,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 622592,
+        "committedMemory": 622592,
+        "capacity": 550656,
+        "used": 550656,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 10474880,
+        "used": 0,
+        "available": 10474880
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 1634.64,
+    "kernelCpuSeconds": 60.7592,
+    "cpuConsumptionPercent": 2.24431,
+    "maxRss": 2603905024,
+    "pageFaults": {
+      "IORequired": 0,
+      "IONotRequired": 18479170
+    },
+    "fsActivity": {
+      "reads": 3392,
+      "writes": 3891576
+    }
+  },
+  "uvthreadResourceUsage": {
+    "userCpuSeconds": 802.015,
+    "kernelCpuSeconds": 24.1427,
+    "cpuConsumptionPercent": 1.09364,
+    "fsActivity": {
+      "reads": 264,
+      "writes": 32
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "GJS_DEBUG_TOPICS": "JS ERROR;JS LOG",
+    "LESSOPEN": "| /usr/bin/lesspipe %s",
+    "npm_package_dependencies_ui_select": "^0.19.6",
+    "npm_package_dependencies_regenerator_runtime": "^0.13.3",
+    "npm_package_dependencies_ng_file_upload": "^12.2.12",
+    "npm_package_devDependencies__babel_plugin_syntax_import_meta": "^7.8.3",
+    "npm_package_dependencies_phylocanvas_plugin_export_svg": "^1.0.0",
+    "npm_package_dependencies_phylocanvas": "^2.8.1",
+    "npm_package_dependencies_datatables_net_colreorder": "^1.5.1",
+    "npm_package_dependencies_angular_bootstrap_lightbox": "^0.12.0",
+    "USER": "jadam",
+    "npm_package_devDependencies_webpack_cli": "^3.3.11",
+    "npm_package_dependencies_phylocanvas_plugin_metadata": "^2.2.0",
+    "npm_config_version_commit_hooks": "true",
+    "npm_config_user_agent": "yarn/1.22.4 npm/? node/v12.13.0 linux x64",
+    "TEXTDOMAIN": "im-config",
+    "XDG_SEAT": "seat0",
+    "npm_package_devDependencies_optimize_css_assets_webpack_plugin": "^5.0.3",
+    "npm_package_dependencies_datatables_net": "^1.10.19",
+    "npm_config_bin_links": "true",
+    "SSH_AGENT_PID": "3689",
+    "XDG_SESSION_TYPE": "x11",
+    "npm_node_execpath": "/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node",
+    "npm_package_devDependencies_file_loader": "^5.0.2",
+    "npm_config_init_version": "1.0.0",
+    "SHLVL": "2",
+    "npm_package_devDependencies_url_loader": "^4.1.0",
+    "npm_package_devDependencies__babel_plugin_proposal_export_default_from": "^7.8.3",
+    "npm_package_dependencies_angular_marked": "^1.2.2",
+    "CHROME_DESKTOP": "Hyper.desktop",
+    "QT4_IM_MODULE": "xim",
+    "HOME": "/home/CSCScience.ca/jadam",
+    "OLDPWD": "/home/CSCScience.ca/jadam/Development/irida/doc",
+    "LESS": "-R",
+    "npm_package_devDependencies__babel_plugin_proposal_class_properties": "^7.8.3",
+    "npm_package_dependencies_select2": "^3.5.1",
+    "npm_package_dependencies_bootstrap_switch": "^3.3.4",
+    "npm_package_dependencies__ant_design_icons": "^4.0.6",
+    "DESKTOP_SESSION": "ubuntu",
+    "TERM_PROGRAM_VERSION": "3.0.2",
+    "NVM_BIN": "/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin",
+    "npm_package_devDependencies_eslint_config_prettier": "^6.10.1",
+    "npm_package_devDependencies__babel_plugin_syntax_dynamic_import": "^7.8.3",
+    "npm_package_dependencies_sortablejs": "^1.5.1",
+    "GIO_LAUNCHED_DESKTOP_FILE": "/usr/share/applications/hyper.desktop",
+    "ZSH": "/home/CSCScience.ca/jadam/.oh-my-zsh",
+    "LSCOLORS": "Gxfxcxdxbxegedabagacad",
+    "npm_config_init_license": "MIT",
+    "GNOME_SHELL_SESSION_MODE": "ubuntu",
+    "GTK_MODULES": "gail:atk-bridge",
+    "PAGER": "less",
+    "YARN_WRAP_OUTPUT": "false",
+    "npm_package_devDependencies_terser_webpack_plugin": "^2.3.5",
+    "npm_package_devDependencies_eslint_loader": "4.0.0",
+    "npm_package_devDependencies_cssnano": "^4.1.10",
+    "npm_config_version_tag_prefix": "v",
+    "npm_package_devDependencies_resolve_url_loader": "^3.1.1",
+    "npm_package_devDependencies__babel_plugin_proposal_export_namespace_from": "^7.8.3",
+    "npm_package_dependencies_showdown": "^1.9.1",
+    "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/101439/bus",
+    "npm_package_devDependencies_eslint_plugin_react_hooks": "^3.0.0",
+    "npm_package_dependencies_moment": "^2.24.0",
+    "COLORTERM": "truecolor",
+    "GIO_LAUNCHED_DESKTOP_FILE_PID": "10322",
+    "npm_package_devDependencies_babel_loader": "^8.1.0",
+    "npm_package_dependencies_qs": "^6.5.2",
+    "npm_package_dependencies_antd": "^4.1.3",
+    "npm_package_dependencies_angular_aside": "^1.3.2",
+    "npm_package_dependencies__fortawesome_free_solid_svg_icons": "^5.12.0",
+    "NVM_DIR": "/home/CSCScience.ca/jadam/.nvm",
+    "npm_package_devDependencies__babel_preset_env": "^7.9.5",
+    "npm_package_dependencies_xlsx": "^0.13.0",
+    "MANDATORY_PATH": "/usr/share/gconf/ubuntu.mandatory.path",
+    "IM_CONFIG_PHASE": "2",
+    "npm_package_devDependencies_prettier": "^2.0.4",
+    "npm_package_devDependencies_expose_loader": "^0.7.5",
+    "npm_package_dependencies_react_mde": "^8.0.2",
+    "LOGNAME": "jadam",
+    "GTK_IM_MODULE": "ibus",
+    "npm_package_devDependencies_eslint_plugin_import": "^2.20.2",
+    "npm_package_scripts_clean": "rm -r node* resources/dist/",
+    "_": "/usr/bin/yarn",
+    "npm_package_devDependencies_node_sass": "^4.12.0",
+    "npm_package_devDependencies_autoprefixer": "^9.7.6",
+    "npm_package_devDependencies__babel_preset_react": "^7.9.4",
+    "npm_package_dependencies_angular_ui_router": "1.0.0-alpha.4",
+    "DEFAULTS_PATH": "/usr/share/gconf/ubuntu.default.path",
+    "npm_package_devDependencies__babel_plugin_proposal_decorators": "^7.8.3",
+    "npm_package_dependencies_react_window": "^1.8.1",
+    "npm_config_registry": "https://registry.yarnpkg.com",
+    "USERNAME": "jadam",
+    "XDG_SESSION_ID": "2",
+    "TERM": "xterm-256color",
+    "npm_package_devDependencies_babel_plugin_import": "^1.13.0",
+    "npm_package_devDependencies__babel_core": "^7.9.0",
+    "npm_package_dependencies_core_js": "^3.2.1",
+    "GNOME_DESKTOP_SESSION_ID": "this-is-deprecated",
+    "npm_package_devDependencies_clean_webpack_plugin": "^3.0.0",
+    "npm_package_dependencies_jquery_validation": "^1.19.0",
+    "npm_package_dependencies_datatables_net_buttons_bs": "^1.5.4",
+    "npm_package_scripts_start": "webpack --env.mode development",
+    "npm_config_ignore_scripts": "",
+    "WINDOWPATH": "2",
+    "npm_package_devDependencies_postcss_loader": "^3.0.0",
+    "npm_package_devDependencies__babel_plugin_proposal_json_strings": "^7.8.3",
+    "npm_package_dependencies_axios": "^0.19.2",
+    "PATH": "/tmp/yarn--1588091965304-0.9558435907580116:/home/CSCScience.ca/jadam/Development/irida/src/main/webapp/node_modules/.bin:/home/CSCScience.ca/jadam/.config/yarn/link/node_modules/.bin:/home/CSCScience.ca/jadam/.yarn/bin:/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/lib/node_modules/npm/bin/node-gyp-bin:/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node_modules/npm/bin/node-gyp-bin:/home/CSCScience.ca/jadam/bin:/usr/local/bin:/opt/firefox/firefox:/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/puppetlabs/bin",
+    "NODE": "/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/bin/node",
+    "SESSION_MANAGER": "local/phac5010438:@/tmp/.ICE-unix/3544,unix/phac5010438:/tmp/.ICE-unix/3544",
+    "npm_package_dependencies_angular_ui_bootstrap": "^2.5.6",
+    "npm_package_name": "irida-ui",
+    "XDG_MENU_PREFIX": "gnome-",
+    "XDG_RUNTIME_DIR": "/run/user/101439",
+    "npm_package_devDependencies_eslint_plugin_jsx_a11y": "^6.2.3",
+    "npm_package_dependencies_react_redux": "^7.1.0",
+    "npm_package_dependencies_marked": "^0.7.0",
+    "npm_package_dependencies_lodash_keys": "^4.2.0",
+    "DISPLAY": ":0",
+    "npm_package_devDependencies_webpack_merge": "^4.2.2",
+    "npm_package_dependencies_datatables_net_buttons": "^1.5.4",
+    "npm_package_dependencies_angular": "1.7.9",
+    "LANG": "en_US.UTF-8",
+    "XDG_CURRENT_DESKTOP": "Unity",
+    "npm_package_devDependencies_webpack": "^4.42.1",
+    "npm_package_devDependencies_eslint": "6.8.0",
+    "npm_package_dependencies_redux_saga": "^1.0.2",
+    "npm_package_dependencies_redux": "4.0.1",
+    "npm_package_dependencies_react_dom": "16.13.0",
+    "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:",
+    "TERM_PROGRAM": "Hyper",
+    "XDG_SESSION_DESKTOP": "ubuntu",
+    "XMODIFIERS": "@im=ibus",
+    "XAUTHORITY": "/run/user/101439/gdm/Xauthority",
+    "npm_lifecycle_script": "webpack --env.mode development",
+    "npm_package_devDependencies__babel_plugin_proposal_numeric_separator": "^7.8.3",
+    "npm_package_dependencies_react_markdown": "^4.3.1",
+    "npm_package_browserslist_0": "last 2 Chrome versions",
+    "SSH_AUTH_SOCK": "/run/user/101439/keyring/ssh",
+    "npm_package_devDependencies_webpack_dev_server": "^3.10.3",
+    "npm_package_dependencies_react_dom_factories": "^1.0.2",
+    "npm_package_dependencies_datatables_net_fixedcolumns_bs": "^3.2.6",
+    "npm_package_dependencies_clipboard": "^1.7.1",
+    "npm_package_browserslist_1": "last 2 Firefox versions",
+    "npm_config_version_git_message": "v%s",
+    "KRB5CCNAME": "FILE:/tmp/krb5cc_101439_QuDsWj",
+    "SHELL": "/bin/bash",
+    "npm_lifecycle_event": "start",
+    "npm_package_dependencies_jquery": "3.4.0",
+    "npm_package_browserslist_2": "last 2 Safari versions",
+    "npm_package_version": "1.0.0",
+    "NO_AT_BRIDGE": "1",
+    "QT_ACCESSIBILITY": "1",
+    "GDMSESSION": "ubuntu",
+    "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"start\"],\"original\":[\"start\"]}",
+    "npm_package_dependencies_react_virtualized_auto_sizer": "^1.0.2",
+    "npm_package_dependencies_datatables_net_scroller_bs": "^1.5.1",
+    "npm_package_dependencies_bootstrap_daterangepicker": "^3.0.3",
+    "npm_package_dependencies_angular_bootstrap_switch": "^0.5.2",
+    "npm_package_dependencies__fortawesome_fontawesome_free": "^5.12.0",
+    "npm_package_browserslist_3": "last 2 Edge versions",
+    "npm_package_scripts_build": "webpack --env.mode production",
+    "LESSCLOSE": "/usr/bin/lesspipe %s %s",
+    "npm_package_dependencies_reactour": "^1.9.1",
+    "npm_package_dependencies_lodash": "4.17.15",
+    "npm_package_browserslist_4": "last 2 Opera versions",
+    "npm_package_devDependencies_sass_loader": "^8.0.2",
+    "npm_package_dependencies_datatables_net_fixedcolumns": "^3.2.6",
+    "npm_config_version_git_tag": "true",
+    "npm_config_version_git_sign": "",
+    "TEXTDOMAINDIR": "/usr/share/locale/",
+    "GJS_DEBUG_OUTPUT": "stderr",
+    "GPG_AGENT_INFO": "/run/user/101439/gnupg/S.gpg-agent:0:1",
+    "npm_package_devDependencies_eslint_plugin_react": "^7.19.0",
+    "npm_package_dependencies_ag_grid_react": "^22.1.1",
+    "npm_package_dependencies__reach_router": "^1.2.1",
+    "npm_package_license": "Apache-2.0",
+    "npm_config_strict_ssl": "true",
+    "XDG_VTNR": "2",
+    "QT_IM_MODULE": "ibus",
+    "npm_package_devDependencies_style_loader": "^1.1.3",
+    "npm_package_devDependencies_eslint_plugin_prettier": "3.1.3",
+    "npm_package_dependencies_jszip": "^3.1.3",
+    "npm_package_dependencies_datatables_net_scroller": "^1.5.1",
+    "npm_package_dependencies_chroma_js": "^1.3.4",
+    "PWD": "/home/CSCScience.ca/jadam/Development/irida/src/main/webapp",
+    "npm_execpath": "/usr/share/yarn/bin/yarn.js",
+    "npm_package_dependencies_bootstrap": "3.4.1",
+    "npm_package_dependencies_ag_grid_community": "^22.1.1",
+    "CLUTTER_IM_MODULE": "xim",
+    "NVM_CD_FLAGS": "",
+    "XDG_DATA_DIRS": "/usr/share/ubuntu:/home/CSCScience.ca/jadam/.local/share/flatpak/exports/share/:/var/lib/flatpak/exports/share/:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop",
+    "XDG_CONFIG_DIRS": "/etc/xdg/xdg-ubuntu:/etc/xdg",
+    "npm_package_resolutions_jquery": "3.4.0",
+    "npm_package_devDependencies_source_map_loader": "^0.2.4",
+    "npm_package_devDependencies_css_loader": "^3.5.2",
+    "npm_package_devDependencies__babel_plugin_proposal_function_sent": "^7.8.3",
+    "npm_package_devDependencies_chromedriver": "^79.0.0",
+    "npm_package_devDependencies__babel_plugin_proposal_optional_chaining": "^7.9.0",
+    "npm_package_dependencies_styled_components": "^4.3.2",
+    "npm_package_dependencies_prop_types": "^15.7.2",
+    "npm_config_save_prefix": "^",
+    "npm_config_ignore_optional": "",
+    "npm_package_devDependencies_mini_css_extract_plugin": "^0.9.0",
+    "npm_package_devDependencies_babel_eslint": "^10.1.0",
+    "npm_package_dependencies_datatables_net_colreorder_bs": "^1.5.1",
+    "MANPATH": "/home/CSCScience.ca/jadam/.nvm/versions/node/v12.13.0/share/man::/opt/puppetlabs/puppet/share/man",
+    "npm_package_devDependencies__babel_plugin_proposal_throw_expressions": "^7.8.3",
+    "npm_package_dependencies__fortawesome_fontawesome_svg_core": "^1.2.26",
+    "INIT_CWD": "/home/CSCScience.ca/jadam/Development/irida/src/main/webapp",
+    "npm_package_resolutions_fstream": "1.0.12",
+    "npm_package_devDependencies_bootstrap_sass": "^3.3.7",
+    "npm_package_dependencies_react": "16.13.0",
+    "npm_package_dependencies_datatables_net_bs": "^1.10.19"
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": 0,
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": 16777216,
+      "hard": 16777216
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 1048576,
+      "hard": 1048576
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": "unlimited"
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": 256069,
+      "hard": 256069
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "linux-vdso.so.1",
+    "/lib/x86_64-linux-gnu/libdl.so.2",
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6",
+    "/lib/x86_64-linux-gnu/libm.so.6",
+    "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "/lib/x86_64-linux-gnu/libpthread.so.0",
+    "/lib/x86_64-linux-gnu/libc.so.6",
+    "/lib64/ld-linux-x86-64.so.2",
+    "/home/CSCScience.ca/jadam/Development/irida/src/main/webapp/node_modules/node-sass/vendor/linux-x64-72/binding.node"
+  ]
+}

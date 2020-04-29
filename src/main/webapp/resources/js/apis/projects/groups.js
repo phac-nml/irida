@@ -8,3 +8,7 @@ export async function updateGroupsRoleOnProject({ id, role }) {
     .put(`${BASE}/role?id=${id}&role=${role}`)
     .then(({ data }) => data);
 }
+
+export async function removeGroupFromProject(id) {
+  return await axios.delete(`${BASE}?id=${id}`).then(({ data }) => data);
+}

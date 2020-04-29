@@ -30,7 +30,7 @@ public class ProjectMembersAjaxController {
 	}
 
 	/**
-	 * Get a paged listing of project members passed on parameters set in the table request.
+	 * Get a paged listing of project members based on parameters set in the table request.
 	 *
 	 * @param projectId    - identifier for the current project
 	 * @param tableRequest - details about the current page of the table

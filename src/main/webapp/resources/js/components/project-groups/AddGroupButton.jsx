@@ -97,12 +97,19 @@ export function AddGroupButton() {
     <>
       <Button onClick={() => setVisible(true)}>ADD NEW GROUP</Button>
       <Modal
+        title={i18n("AddGroupButton.label")}
+        okButtonProps={{ disabled: typeof groupId === "undefined" }}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={addGroupToProject}
+        okText={i18n("AddGroupButton.modal.okText")}
       >
         <Form form={form} layout="vertical" initialValues={{ role }}>
-          <Form.Item label={"__Search for a group"}>
+          <Form.Item
+            label={i18n("AddGroupButton.modal.group-label")}
+            help={i18n("AddGroupButton.modal.group-help")}
+            name="user"
+          >
             <Select
               showSearch
               notFoundContent={null}
@@ -115,7 +122,7 @@ export function AddGroupButton() {
               {options}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("AddMemberButton.modal.role")} name="role">
+          <Form.Item label={i18n("AddGroupButton.modal.role")} name="role">
             <Radio.Group
               style={{ display: "flex" }}
               onChange={(e) => setRole(e.target.value)}
