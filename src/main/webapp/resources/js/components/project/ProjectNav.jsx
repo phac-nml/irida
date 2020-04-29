@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
-import { Layout, Menu, PageHeader, Tag, Tooltip } from "antd";
+import { Layout, Menu, PageHeader } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { IconFolder, IconSwap } from "../icons/Icons";
-import { blue6, red6 } from "../../styles/colors";
+import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
 const { Item } = Menu;
 const { Content } = Layout;
 
+/**
+ * React component to render a navigation menu for projects.
+ * @returns {*}
+ * @constructor
+ */
 export function ProjectNav() {
   /*
   Get the current page from the global project object
