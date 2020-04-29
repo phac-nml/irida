@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -65,6 +66,7 @@ public class RESTProjectAnalysisController {
 	 *         {@link Project}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/analyses", method = RequestMethod.GET)
+	@ResponseBody
 	public ModelMap getProjectAnalyses(@PathVariable Long projectId) {
 		logger.debug("Loading analyses for project [" + projectId + "]");
 
@@ -107,6 +109,7 @@ public class RESTProjectAnalysisController {
 	 *             found in IRIDA.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/analyses/{type}", method = RequestMethod.GET)
+	@ResponseBody
 	public ModelMap getProjectAnalysesByType(@PathVariable Long projectId, @PathVariable String type)
 			throws IridaWorkflowNotFoundException {
 		logger.debug("Loading analyses for project [" + projectId + "] by type [" + type + "]");
