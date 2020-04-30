@@ -36,6 +36,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Controller to handle listing of projects
+ */
 @Controller
 @RequestMapping("/projects")
 public class ProjectListingController {
