@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
@@ -52,12 +53,13 @@ public class AnalysesTableAjaxController {
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
 	private AnalysisAudit analysisAudit;
+	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
 	public AnalysesTableAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, ProjectService projectService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit) {
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit, IridaFileStorageService iridaFileStorageService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.projectService = projectService;
@@ -65,6 +67,7 @@ public class AnalysesTableAjaxController {
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
 		this.analysisAudit = analysisAudit;
+		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -248,7 +251,7 @@ public class AnalysesTableAjaxController {
 
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
-		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files, iridaFileStorageService);
 	}
 
 	/**

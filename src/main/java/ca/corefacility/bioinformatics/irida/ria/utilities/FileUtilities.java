@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +12,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelCol;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelHeader;
@@ -47,15 +48,13 @@ public class FileUtilities {
 	 * Utility method for download a zip file containing all output files from
 	 * an analysis.
 	 *
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param fileName
-	 *            Name fo the file to create
-	 * @param files
-	 *            Set of {@link AnalysisOutputFile}
+	 * @param response                {@link HttpServletResponse}
+	 * @param fileName                Name fo the file to create
+	 * @param files                   Set of {@link AnalysisOutputFile}
+	 * @param iridaFileStorageService file storage implementation
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
-			Set<AnalysisOutputFile> files) {
+			Set<AnalysisOutputFile> files, IridaFileStorageService iridaFileStorageService) {
 		/*
 		 * Replacing spaces and commas as they cause issues with
 		 * Content-disposition response header.
@@ -74,7 +73,7 @@ public class FileUtilities {
 				ZipOutputStream outputStream = new ZipOutputStream(responseStream)) {
 
 			for (AnalysisOutputFile file : files) {
-				if (!Files.exists(file.getFile())) {
+				if (!iridaFileStorageService.fileExists(file.getFile())) {
 					response.setStatus(404);
 					throw new FileNotFoundException();
 				}
@@ -87,8 +86,7 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				Files.copy(file.getFile(), outputStream);
-
+				IOUtils.copy(iridaFileStorageService.getFileInputStream(file.getFile()),outputStream);
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
@@ -116,15 +114,14 @@ public class FileUtilities {
 	/**
 	 * Utility method for download a zip file containing all output files from
 	 * an analysis.
-	 *  @param response
-	 *            {@link HttpServletResponse}
-	 * @param fileName
-	 *            Name fo the file to create
-	 * @param files
- *            Set of {@link AnalysisOutputFile}
+	 *
+	 * @param response                {@link HttpServletResponse}
+	 * @param fileName                Name fo the file to create
+	 * @param files                   Set of {@link AnalysisOutputFile}
+	 * @param iridaFileStorageService file storage implementation
 	 */
 	public static void createBatchAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
-			Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files) {
+			Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files, IridaFileStorageService iridaFileStorageService) {
 		/*
 		 * Replacing spaces and commas as they cause issues with
 		 * Content-disposition response header.
@@ -142,9 +139,9 @@ public class FileUtilities {
 			for (Map.Entry<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> entry : files.entrySet()) {
 				final AnalysisOutputFile file = entry.getValue();
 				final ProjectSampleAnalysisOutputInfo outputInfo = entry.getKey();
-				if (!Files.exists(file.getFile())) {
+				if (!iridaFileStorageService.fileExists(file.getFile())) {
 					response.setStatus(404);
-					throw new FileNotFoundException("File '" + file.getFile().toFile().getAbsolutePath() + "' does not exist!");
+					throw new FileNotFoundException("File '" + file.getFile().toAbsolutePath() + "' does not exist!");
 				}
 				// 1) Build a folder/file name
 				// building similar filename for each analysis output file as:
@@ -159,7 +156,7 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				Files.copy(file.getFile(), outputStream);
+				IOUtils.copy(iridaFileStorageService.getFileInputStream(file.getFile()),outputStream);
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
@@ -182,13 +179,12 @@ public class FileUtilities {
 	/**
 	 * Utility method for download single file from an analysis.
 	 *
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param file
-	 *            Set of {@link AnalysisOutputFile}
-	 * @param fileName Filename
+	 * @param response                {@link HttpServletResponse}
+	 * @param file                    Set of {@link AnalysisOutputFile}
+	 * @param fileName                Filename
+	 * @param iridaFileStorageService file storage implementation
 	 */
-	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, String fileName) {
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, String fileName, IridaFileStorageService iridaFileStorageService) {
 		fileName = formatName(fileName);
 
 		// set the response headers before we do *ANYTHING* so that the filename
@@ -197,7 +193,7 @@ public class FileUtilities {
 		response.setContentType(CONTENT_TYPE_TEXT);
 
 		try (ServletOutputStream outputStream = response.getOutputStream()) {
-			Files.copy(file.getFile(), response.getOutputStream());
+			IOUtils.copy(iridaFileStorageService.getFileInputStream(file.getFile()), response.getOutputStream());
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this
@@ -208,18 +204,16 @@ public class FileUtilities {
 		}
 	}
 
-
 	/**
 	 * Utility method for download single file from an analysis.
 	 *
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param file
-	 *            Set of {@link AnalysisOutputFile}
+	 * @param response                {@link HttpServletResponse}
+	 * @param file                    Set of {@link AnalysisOutputFile}
+	 * @param iridaFileStorageService file storage implementation
 	 */
-	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, IridaFileStorageService iridaFileStorageService) {
 		String fileName = file.getLabel();
-		FileUtilities.createSingleFileResponse(response, file, fileName);
+		FileUtilities.createSingleFileResponse(response, file, fileName, iridaFileStorageService);
 	}
 
 

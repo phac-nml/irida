@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -803,7 +804,7 @@ public class AnalysisAjaxController {
 
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
-		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files, iridaFileStorageService);
 	}
 
 	/**
@@ -831,7 +832,7 @@ public class AnalysisAjaxController {
 	@RequestMapping(value = "/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void downloadSelection(@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String  filename, HttpServletResponse response) {
 		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
-		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
+		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files, iridaFileStorageService);
 	}
 
 	/**
@@ -859,9 +860,9 @@ public class AnalysisAjaxController {
 		}
 
 		if (!Strings.isNullOrEmpty(filename)) {
-			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
+			FileUtilities.createSingleFileResponse(response, optFile.get(), filename, iridaFileStorageService);
 		} else {
-			FileUtilities.createSingleFileResponse(response, optFile.get());
+			FileUtilities.createSingleFileResponse(response, optFile.get(), iridaFileStorageService);
 		}
 	}
 
@@ -880,7 +881,7 @@ public class AnalysisAjaxController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
-		List<String> lines = Files.readAllLines(file.getFile());
+		List<String> lines = IOUtils.readLines(iridaFileStorageService.getFileInputStream(file.getFile()));
 		return ImmutableMap.of("newick", lines.get(0));
 	}
 
@@ -1047,7 +1048,7 @@ public class AnalysisAjaxController {
 					new Object[] {}, locale);
 		} else {
 			try {
-				List<String> lines = Files.readAllLines(file.getFile());
+				List<String> lines = IOUtils.readLines(iridaFileStorageService.getFileInputStream(file.getFile()));
 
 				if (lines.size() > 0) {
 					tree = lines.get(0);
