@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Date;
@@ -57,18 +58,21 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
-			// Create a file that will be unique in the /tmp/ folder. We append the current date/time
-			// to the file name
-			String tmpDir = "/tmp/" + new Date().toString().replaceAll("\\W", "");
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
+
 			String [] blobNameTokens = blobClient.getBlobName().split("/");
 			String fileName = blobNameTokens[blobNameTokens.length-1];
-			String filePath = tmpDir + fileName;
-			blobClient.downloadToFile(filePath);
-			fileToProcess = new File(filePath);
+
+			Path targetDirectory = Files.createTempDirectory(null);
+			Path target = targetDirectory.resolve(fileName);
+
+			blobClient.downloadToFile(target.toAbsolutePath().toString());
+			fileToProcess = new File(target.toAbsolutePath().toString());
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't find file on azure [" + e + "]");
+		} catch (IOException e) {
+			logger.trace("Couldn't create temp directory [" + e + "]");
 		}
 
 		return fileToProcess;

@@ -26,8 +26,10 @@ import com.google.common.base.Strings;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.AnalysisOutputListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -37,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 @Entity
 @Table(name = "analysis_output_file")
-@EntityListeners(RelativePathTranslatorListener.class)
+@EntityListeners({RelativePathTranslatorListener.class, AnalysisOutputListener.class })
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
@@ -65,6 +67,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	
 	@Column(name = "label_prefix")
 	private final String labelPrefix;
+
+	private static IridaFileStorageService iridaFileStorageService;
 
 	/**
 	 * for hibernate
@@ -178,6 +182,10 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		return false;
 	}
 
+	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
+		this.iridaFileStorageService = iridaFileStorageService;
+	}
+
 	/**
 	 * Read the bytes for an image output file
 	 *
@@ -185,7 +193,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	 * @throws IOException if the file couldn't be read
 	 */
 	public byte[] getBytesForFile() throws IOException  {
-		byte[] bytes = Files.readAllBytes(getFile());
+		byte[] bytes = iridaFileStorageService.readAllBytes(getFile());
 		return bytes;
 	}
 }
