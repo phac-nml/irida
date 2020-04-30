@@ -2,15 +2,19 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.service;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -19,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectGroupTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.NewProjectGroupRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectGroupsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
@@ -42,10 +47,14 @@ public class UIProjectGroupServiceTest {
 	private final UserGroup USER_GROUP_1 = new UserGroup("GROUP_1");
 	private final List<UserGroupProjectJoin> userGroupJoin = ImmutableList.of(
 			new UserGroupProjectJoin(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER));
+	private final Locale LOCALE = Locale.CANADA;
 
 	private UIProjectGroupsService groupsService;
 	private ProjectService projectService;
 	private UserGroupService userGroupService;
+
+	@Rule
+	public ExpectedException noManagerException = ExpectedException.none();
 
 	@Before
 	public void setUp() {
@@ -54,10 +63,15 @@ public class UIProjectGroupServiceTest {
 		MessageSource messageSource = mock(MessageSource.class);
 		groupsService = new UIProjectGroupsService(projectService, userGroupService, messageSource);
 
+		USER_GROUP_1.setId(1L);
+
 		when(projectService.read(PROJECT_ID)).thenReturn(PROJECT);
 		when(userGroupService.getUserGroupsForProject(TABLE_REQUEST.getSearch(), PROJECT, TABLE_REQUEST.getCurrent(),
 				TABLE_REQUEST.getPageSize(), TABLE_REQUEST.getSort())).thenReturn(getPagesUserGroupsForProject());
+		when(userGroupService.read(USER_GROUP_1.getId())).thenReturn(USER_GROUP_1);
 		when(userGroupService.getUserGroupsNotOnProject(PROJECT, "GR")).thenReturn(ImmutableList.of(USER_GROUP_1));
+		when(messageSource.getMessage("server.AddGroup.success",
+				new Object[] { USER_GROUP_1.getLabel(), PROJECT.getLabel() }, LOCALE)).thenReturn("SUCCESS");
 	}
 
 	@Test
@@ -75,7 +89,32 @@ public class UIProjectGroupServiceTest {
 		assertEquals("Should return 1 project", 1, response.size());
 	}
 
-	// TODO: FINISH TESTS HERE!
+	@Test
+	public void testAddUserToProject() {
+		NewProjectGroupRequest request = new NewProjectGroupRequest(USER_GROUP_1.getId(),
+				ProjectRole.PROJECT_USER.toString());
+		String response = groupsService.addUserGroupToProject(PROJECT_ID, request, LOCALE);
+		verify(projectService, times(1)).read(PROJECT.getId());
+		verify(userGroupService, times(1)).read(USER_GROUP_1.getId());
+		verify(projectService, times(1)).addUserGroupToProject(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER);
+	}
+
+	@Test
+	public void testUpdateGroupRoleOnProject() throws ProjectWithoutOwnerException {
+		String response = groupsService.updateGroupRoleOnProject(PROJECT.getId(), USER_GROUP_1.getId(),
+				ProjectRole.PROJECT_OWNER.toString(), LOCALE);
+		verify(projectService, times(1)).read(PROJECT.getId());
+		verify(userGroupService, times(1)).read(USER_GROUP_1.getId());
+		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_OWNER);
+	}
+
+	@Test
+	public void testRemoveUserGroupFromProject() throws ProjectWithoutOwnerException {
+		String response = groupsService.removeUserGroupFromProject(PROJECT.getId(), USER_GROUP_1.getId(), LOCALE);
+		verify(projectService, times(1)).read(PROJECT.getId());
+		verify(userGroupService, times(1)).read(USER_GROUP_1.getId());
+		verify(projectService, times(1)).removeUserGroupFromProject(PROJECT, USER_GROUP_1);
+	}
 
 	private Page<UserGroupProjectJoin> getPagesUserGroupsForProject() {
 		return new Page<UserGroupProjectJoin>() {
