@@ -62,6 +62,26 @@ public class ProjectSettingsController {
 	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
 			final Principal principal, Locale locale) {
 		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "details");
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/settings/pages/details";
+	}
+
+	/**
+	 * Request for a {@link Project} basic settings page
+	 *
+	 * @param projectId the ID of the {@link Project} to read
+	 * @param model     Model for the view
+	 * @param principal Logged in user
+	 * @param locale    Locale of the logged in user
+	 * @return name of the project settings page
+	 */
+	@RequestMapping("/processing")
+	public String getProjectSettingsProcessingPage(@PathVariable Long projectId, final Model model,
+			final Principal principal, Locale locale) {
+		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
 
 		List<TemplateResponse> templateResponseTypes = templates.stream()
@@ -70,10 +90,10 @@ public class ProjectSettingsController {
 
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "basic");
+		model.addAttribute("page", "processing");
 		model.addAttribute("analysisTemplates", templateResponseTypes);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/settings/pages/basic";
+		return "projects/settings/pages/processing";
 	}
 
 	/**

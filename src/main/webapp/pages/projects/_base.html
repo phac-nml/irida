@@ -4,9 +4,10 @@
 <head>
 	<title th:text="${project.label}">Project</title>
 	<script th:inline="javascript">
-		var project = {
-			id: /*[[${project.getId()}]]*/ 1
-		};
+		window.project = {
+          canManage: /*[[${isOwner or isAdmin}]]*/ false,
+          id: /*[[${project.getId()}]]*/ 1
+        };
 	</script>
 </head>
 <body>
@@ -24,7 +25,6 @@
             <li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
             <li th:classappend="${activeNav} == 'linelist' ? 'active'"><a th:href="@{${baseLink} + '/linelist'}" th:text="#{project.nav.linelist}">[Line List]</a></li>
             <li th:classappend="${activeNav} == 'analyses' ? 'active'"><a href="" th:href="@{${baseLink} + '/analyses'}" th:text="#{project.nav.analysis}">[Analyses]</a></li>
-            <li th:classappend="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}" th:text="#{project.nav.metadata}">[Metadata]</a></li>
             <li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>
             <li th:classappend="${activeNav} == 'activity' ? 'active'"><a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">[Recent]</a></li>
             <li th:classappend="${activeNav} == 'settings' ? 'active'"><a href="" th:href="@{${baseLink} + '/settings'}" th:text="#{project.nav.settings}">[Settings]</a></li>

@@ -253,6 +253,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.fileRevisionNumber++;
 	}
 
+	@Override
 	public String getFileName() {
 		return getFile().getFileName().toString();
 	}
