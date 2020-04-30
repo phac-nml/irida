@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -29,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
 import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -50,18 +48,16 @@ public class ProjectsControllerTest {
 	private ProjectRemoteService projectRemoteService;
 	private RemoteAPIService remoteApiService;
 	private TaxonomyService taxonomyService;
-	private CartController cartController;
 	private UpdateSamplePermission updateSamplePermission;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
-		cartController = mock(CartController.class);
 		taxonomyService = mock(TaxonomyService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		controller = new ProjectsController(projectService, projectRemoteService,
-				taxonomyService, remoteApiService, cartController, updateSamplePermission);
+				taxonomyService, remoteApiService, updateSamplePermission);
 		user.setId(1L);
 	}
 
@@ -71,29 +67,6 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
 				controller.getProjectSpecificPage(model));
 
-	}
-
-	@Test
-	public void testGetCreateProjectPage() {
-		Model model = new ExtendedModelMap();
-		String page = controller.getCreateProjectPage(false, model, false);
-		assertEquals("Reruns the correct New Project Page", "projects/project_new", page);
-		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
-	}
-
-	@Test
-	public void testCreateNewProject() {
-		Model model = new ExtendedModelMap();
-		String projectName = "Test Project";
-		Long projectId = 1002L;
-		Project project = new Project(projectName);
-		project.setId(projectId);
-		// Test creating project
-		when(projectService.create(any(Project.class))).thenReturn(project);
-		when(projectService.update(any(Project.class))).thenReturn(project);
-		String page = controller.createNewProject(model, new Project(projectName), false, false);
-		assertEquals("Returns the correct redirect to the collaborators page",
-				"redirect:/projects/" + projectId + "/settings", page);
 	}
 
 	@Test

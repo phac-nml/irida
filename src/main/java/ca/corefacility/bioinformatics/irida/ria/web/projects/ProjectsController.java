@@ -4,11 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -29,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectBaseController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -42,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
  * Controller for project related views
  */
 @Controller
-@Scope("session")
 public class ProjectsController extends ProjectBaseController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
@@ -52,7 +46,6 @@ public class ProjectsController extends ProjectBaseController {
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
-	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
 
 	// Services
@@ -60,7 +53,6 @@ public class ProjectsController extends ProjectBaseController {
 	private final TaxonomyService taxonomyService;
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteAPIService remoteApiService;
-	private final CartController cartController;
 	private final UpdateSamplePermission updateSamplePermission;
 
 	/*
@@ -71,14 +63,13 @@ public class ProjectsController extends ProjectBaseController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, ProjectRemoteService projectRemoteService,
-			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, CartController cartController,
+			TaxonomyService taxonomyService, RemoteAPIService remoteApiService,
 			UpdateSamplePermission updateSamplePermission) {
 		this.projectService = projectService;
 		this.projectRemoteService = projectRemoteService;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.remoteApiService = remoteApiService;
-		this.cartController = cartController;
 		this.fileSizeConverter = new FileSizeConverter();
 		this.updateSamplePermission = updateSamplePermission;
 	}
@@ -93,50 +84,6 @@ public class ProjectsController extends ProjectBaseController {
 	public String getProjectSpecificPage(final Model model) {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
-	}
-
-	/**
-	 * Gets the name of the template for the new project page
-	 *
-	 * @param useCartSamples Whether or not to use the samples in the cart when creating
-	 *                       the project
-	 * @param model          {@link Model}
-	 * @param owner          whether or not to lock the sample(s) from being modified from new
-	 *                       the project
-	 * @return The name of the create new project page
-	 */
-	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
-	public String getCreateProjectPage(
-			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
-			final Model model,
-			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
-		model.addAttribute("useCartSamples", useCartSamples);
-
-		Map<Project, List<Sample>> selected = cartController.getSelected();
-
-		// Check which samples they can modify
-		Set<Sample> allowed = new HashSet<>();
-		Set<Sample> disallowed = new HashSet<>();
-
-		selected.values()
-				.forEach(set -> {
-					set.stream()
-							.forEach(s -> {
-								if (canModifySample(s)) {
-									allowed.add(s);
-								} else {
-									disallowed.add(s);
-								}
-							});
-				});
-
-		model.addAttribute("allowedSamples", allowed);
-		model.addAttribute("disallowedSamples", disallowed);
-
-		if (!model.containsAttribute("errors")) {
-			model.addAttribute("errors", new HashMap<>());
-		}
-		return CREATE_NEW_PROJECT_PAGE;
 	}
 
 	/**
@@ -215,48 +162,6 @@ public class ProjectsController extends ProjectBaseController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to
-	 * the project
-	 *
-	 * @param model          {@link Model}
-	 * @param project        the {@link Project} to create
-	 * @param useCartSamples add all samples in the cart to the project
-	 * @param owner          lock sample modification from the new project
-	 * @return The name of the add users to project page
-	 */
-	@RequestMapping(value = "/projects/new", method = RequestMethod.POST)
-	public String createNewProject(final Model model, @ModelAttribute Project project,
-			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples,
-			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
-
-		try {
-			if (useCartSamples) {
-				Map<Project, List<Sample>> selected = cartController.getSelected();
-
-				List<Long> sampleIds = selected.entrySet()
-						.stream()
-						.flatMap(e -> e.getValue()
-								.stream()
-								.filter(s -> {
-									return canModifySample(s);
-								})
-								.map(i -> i.getId()))
-						.collect(Collectors.toList());
-
-				project = projectService.createProjectWithSamples(project, sampleIds, owner);
-			} else {
-				project = projectService.create(project);
-			}
-		} catch (ConstraintViolationException e) {
-			model.addAttribute("errors", getErrorsFromViolationException(e));
-			model.addAttribute("project", project);
-			return getCreateProjectPage(useCartSamples, model, owner);
-		}
-
-		return "redirect:/projects/" + project.getId() + "/settings";
-	}
-
-	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
 	 * @param model model for view variables
@@ -328,23 +233,6 @@ public class ProjectsController extends ProjectBaseController {
 			elements.add(transformTreeNode);
 		}
 		return elements;
-	}
-
-	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
-	 *
-	 * @param e {@link ConstraintViolationException} for the form submitted.
-	 * @return Map of string {fieldName, error}
-	 */
-	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
-		Map<String, String> errors = new HashMap<>();
-		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-			String message = violation.getMessage();
-			String field = violation.getPropertyPath()
-					.toString();
-			errors.put(field, message);
-		}
-		return errors;
 	}
 
 	/**
