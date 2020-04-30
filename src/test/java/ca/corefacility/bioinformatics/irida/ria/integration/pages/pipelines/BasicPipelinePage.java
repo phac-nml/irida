@@ -44,6 +44,7 @@ public class BasicPipelinePage extends AbstractPage {
 				logger.debug("Got stale element reference exception when clicking launch pipeline, trying again.");
 			}
 		} while (!clicked);
+		waitForTime(300);
 	}
 
 	public void setNameForAnalysisPipeline(String value) {
