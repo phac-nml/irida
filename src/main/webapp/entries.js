@@ -78,7 +78,7 @@ module.exports = {
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
-  "groups-list": "./resources/js/pages/users/groups-list.js",
+  groups: "./resources/js/pages/users/Groups/GroupsPage/index.js",
   "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",

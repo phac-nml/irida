@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/dist/css/groups.bundle.css}" />
+  </head>
+  <body>
+    <div style="height: 100%" id="groups-root" layout:fragment="page"></div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/groups.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>

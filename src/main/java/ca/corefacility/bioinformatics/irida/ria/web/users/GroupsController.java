@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.users;
 
 import java.security.Principal;
 import java.util.*;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +25,11 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTGroupMember;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUserGroup;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -84,7 +81,7 @@ public class GroupsController {
 	 */
 	@RequestMapping
 	public String getIndex() {
-		return GROUPS_LIST;
+		return "user/groups";
 	}
 
 	/**
@@ -132,27 +129,6 @@ public class GroupsController {
 		model.addAttribute("given_description", userGroup.getDescription());
 
 		return GROUPS_CREATE;
-	}
-
-	/**
-	 * Search/filter/page with datatables for {@link UserGroup}.
-	 * @param params {@link DataTablesParams} for the current DataTable
-	 * @param principal Currently logged in user
-	 * @return {@link DataTablesResponse} for the current table base on the parameters.
-	 */
-	@RequestMapping("/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getGroups(final @DataTablesRequest DataTablesParams params, final Principal principal) {
-		Page<UserGroup> groups = userGroupService.search(
-				UserGroupSpecification.searchUserGroup(params.getSearchValue()),
-				PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-		User currentUser = userService.getUserByUsername(principal.getName());
-		List<DataTablesResponseModel> groupsWithOwnership = groups.getContent()
-				.stream()
-				.map(ug -> new DTUserGroup(ug, isGroupOwner(currentUser, ug),
-						currentUser.getSystemRole().equals(Role.ROLE_ADMIN)))
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, groups, groupsWithOwnership);
 	}
 
 	/**
