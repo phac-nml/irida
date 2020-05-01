@@ -44,10 +44,10 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping(value = "/groups")
-public class GroupsController {
+public class UserGroupsController {
 
 	public static final int MAX_PROJECTS_TO_DISPLAY = 3;
-	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserGroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
 	private static final String GROUPS_EDIT = "groups/edit";
@@ -70,7 +70,7 @@ public class GroupsController {
 	 *            the {@link MessageSource}.
 	 */
 	@Autowired
-	public GroupsController(final UserGroupService userGroupService, final UserService userService,
+	public UserGroupsController(final UserGroupService userGroupService, final UserService userService,
 			final MessageSource messageSource) {
 		this.userGroupService = userGroupService;
 		this.messageSource = messageSource;
