@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 public class ProjectMembersPage extends AbstractPage {
 	private static AntTable table;
 
-	@FindBy(className = "ant-page-header-heading-title")
+	@FindBy(tagName = "h2")
 	private WebElement title;
 
 	@FindBy(className = "t-remove-member-btn")
@@ -79,6 +79,8 @@ public class ProjectMembersPage extends AbstractPage {
 
 	private void removeMember(int row) {
 		removeMemberButtons.get(row).click();
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
 		driver.findElement(By.className("t-remove-confirm")).click();
 	}
 

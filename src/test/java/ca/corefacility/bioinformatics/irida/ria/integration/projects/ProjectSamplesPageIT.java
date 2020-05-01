@@ -45,7 +45,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
+		assertTrue("Should have the project name as the page main header.", page.getActivePage().equals("Samples"));
 		assertEquals("Should display 10 projects initially.", 10, page.getNumberProjectsDisplayed());
 	}
 

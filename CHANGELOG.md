@@ -30,8 +30,11 @@ Changes
 * [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
 * [UI/Developer]: New login page with developer ability to override template.
 * [UI/Developer]: Added excel file viewer to analysis outputs view.
+* [UI]: Added selection to export assemblies to Galaxy.
 * [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
 * [UI/Developer]: Added image file viewer to analysis outputs view.
+* [UI]: Moved project > details into the project > settings panel.
+* [UI]: Updated Project navigation to use Ant Design menu.
 * [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 
 19.09 to 20.01
