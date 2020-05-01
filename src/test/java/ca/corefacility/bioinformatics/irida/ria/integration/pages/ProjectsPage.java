@@ -9,15 +9,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * <p>
  * Page Object to represent the projects page.
  * </p>
- *
  */
 public class ProjectsPage extends AbstractPage {
-	@FindBy(css = ".ant-table-body table")
+	@FindBy(css = ".ant-table-content table")
 	WebElement projectsTable;
 
 	@FindBy(className = "ant-table-column-title")
@@ -36,45 +37,20 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public int getNumberOfProjects() {
-		return projectsTable.findElements(By.cssSelector("tbody tr"))
+		return projectsTable.findElements(By.className("ant-table-row"))
 				.size();
 	}
 
-	public void sortProjectTableBy(String columnName) {
-		WebElement header;
-		for (WebElement webElement : headers) {
-			if (webElement.getText()
-					.equals(columnName)) {
-				header = webElement;
-				header.click();
-				waitForTime(300);
-				break;
-			}
-		}
+	public void sortProjectTableBy() {
+		projectsTable.findElement(By.className("t-name-col")).click();
+		waitForTime(200);
 	}
 
-	public List<String> getProjectsSortListByColumnName(String columnName) {
-		for (int i = 0; i < headers.size(); i++) {
-			WebElement header = headers.get(i);
-			if (header.getText()
-					.equals(columnName)) {
-				return projectsTable.findElements(By.cssSelector("tbody tr td:nth-child(" + (i + 1) + ")"))
-						.stream()
-						.map(WebElement::getText)
-						.collect(Collectors.toList());
-			}
-		}
-		return null;
-	}
-
-	public void clickProjectList(String projectName) {
-		projectsTable.findElements(By.cssSelector("tbody tr td:nth-child(3)"))
+	public List<String> getProjectsSortListByColumnName() {
+		return projectsTable.findElements(By.className("t-name"))
 				.stream()
-				.filter(el -> el.getText()
-						.equals(projectName))
-				.collect(Collectors.toList())
-				.get(0)
-				.click();
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
 	}
 
 	public void searchTableForProjectName(String projectName) {

@@ -23,7 +23,7 @@ export function PageWrapper({ title, headerExtras, children }) {
         title={title}
         extra={headerExtras}
       />
-      <Content style={{ padding: SPACE_MD }}>
+      <Content style={{ padding: SPACE_MD, paddingTop: 0 }}>
         <div style={{ padding: SPACE_MD, backgroundColor: grey1 }}>
           {children}
         </div>
@@ -33,7 +33,7 @@ export function PageWrapper({ title, headerExtras, children }) {
 }
 
 PageWrapper.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   headerExtras: PropTypes.element,
-  children: PropTypes.element.isRequired
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
 };

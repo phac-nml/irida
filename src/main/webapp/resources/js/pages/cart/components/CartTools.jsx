@@ -4,9 +4,11 @@ import { Location, navigate, Router } from "@reach/router";
 import { Row } from "antd";
 import styled from "styled-components";
 import { CartToolsMenu } from "./CartToolsMenu";
-import { COLOR_BORDER_LIGHT, grey1 } from "../../../styles/colors";
+import { grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
+import { BORDERED_LIGHT } from "../../../styles/borders";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /*
 Lazy loaded since we do not need it unless we came from galaxy.
@@ -22,7 +24,7 @@ const GalaxyComponent = () => (
 const ToolsWrapper = styled(Row)`
   height: 100%;
   width: 100%;
-  border-right: 1px solid ${COLOR_BORDER_LIGHT};
+  border-right: ${BORDERED_LIGHT};
   background-color: ${grey1};
   position: relative;
 `;
@@ -77,7 +79,7 @@ export default class CartTools extends Component {
           fromGalaxy: false
         }),
         () => {
-          navigate(`${window.TL.BASE_URL}cart/pipelines`);
+          navigate(setBaseUrl(`cart/pipelines`));
           this.removeGalaxyListener();
         }
       );
@@ -91,23 +93,20 @@ export default class CartTools extends Component {
     const paths = [
       this.state.fromGalaxy
         ? {
-            link: `${window.TL.BASE_URL}cart/galaxy`,
+            link: setBaseUrl(`cart/galaxy`),
             text: i18n("CartTools.menu.galaxy"),
             component: (
-              <GalaxyComponent
-                key="galaxy"
-                path={`${window.TL.BASE_URL}cart/galaxy`}
-              />
+              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
             )
           }
         : null,
       {
-        link: `${window.TL.BASE_URL}cart/pipelines`,
+        link: setBaseUrl(`cart/pipelines`),
         text: i18n("CartTools.menu.pipelines"),
         component: (
           <Pipelines
             key="pipelines"
-            path={`${window.TL.BASE_URL}cart/pipelines`}
+            path={setBaseUrl(`cart/pipelines`)}
             displaySelect={
               this.props.count > 0 || window.PAGE.automatedProject != null
             }

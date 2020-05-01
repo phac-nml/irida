@@ -9,7 +9,7 @@
  */
 function getApiStatus(apiId) {
   return $.ajax({
-    url: `${window.TL.BASE_URL}remote_api/status/web/${apiId}`,
+    url: `remote_api/status/web/${apiId}`,
     type: "GET",
     dataType: "html"
   });
@@ -44,9 +44,7 @@ export function updateRemoteConnectionStatus($container, apiId) {
       try {
         // Update the DOM with an error message.
         $status.html(
-          `<span class="status-label api-error label label-danger"><i class="fa fa-exclamation-triangle spaced-right__sm fa-fw"></i>${
-            window.PAGE.lang.errorText
-          }</span>`
+          `<span class="status-label api-error label label-danger"><i class="fa fa-exclamation-triangle spaced-right__sm fa-fw"></i>${window.PAGE.lang.errorText}</span>`
         );
       } catch (e) {
         // Since this code is loaded onto multiple pages, this error is thrown so the developer
@@ -86,7 +84,7 @@ export function initConnectRemoteApi(connectedCB) {
     for each remote API.  Here we are loading the content of the modal and then setting the
     src for the embedded iframe to point to the remote API.
      */
-    $modal.load(`${window.TL.BASE_URL}remote_api/modal/${apiId}`, function() {
+    $modal.load(`remote_api/modal/${apiId}`, function() {
       const iframe = document.querySelector("#oauth-connect-frame");
       const url = iframe.dataset.url;
       iframe.src = `${url}${apiId}`;

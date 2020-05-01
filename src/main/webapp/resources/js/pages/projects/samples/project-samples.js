@@ -17,11 +17,14 @@ import {
   SampleProjectDropdownButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file.utilities";
+import { download } from "../../../utilities/file-utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+
+import "./linker/Linker";
 
 /*
 This is required to use select2 inside a modal.
@@ -65,6 +68,23 @@ const getSelectedIds = () => {
   }
   return ids;
 };
+
+/*
+Hack to get the sample ids from the Linker react component.
+ */
+document.addEventListener(
+  "sample-ids",
+  function(e) {
+    const event = new CustomEvent("sample-ids-return", {
+      detail: {
+        sampleIds: getSelectedIds(),
+        projectId: window.project.id
+      }
+    });
+    document.dispatchEvent(event);
+  },
+  false
+);
 
 /*
 Initialize the sample export menu.
@@ -273,7 +293,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         const link = createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${full.id}`,
+          url: setBaseUrl(`projects/${full.projectId}/samples/${full.id}`),
           label: full.sampleName,
           classes: ["t-sample-label"]
         });
@@ -303,7 +323,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.PROJECT_NAME],
       render(data, type, full) {
         return createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}`,
+          url: setBaseUrl(`projects/${full.projectId}`),
           label: `<div class="label-bar-color" style="background-color: ${PROJECT_COLOURS.get(
             full.projectId
           )}">&nbsp;</div>${data}`,

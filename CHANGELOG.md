@@ -1,6 +1,41 @@
 Changes
 =======
 
+20.01 to 20.05
+--------------
+* [UI/Developer]: Removed webpack progress.
+* [UI]: Updated clients listing table to use `ant.design` tables.
+* [UI]: Sending email to sync user when a remote project's token expires.
+* [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+* [UI]: Updated admin announcements table and creation to use `ant.design`.
+* [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
+* [UI]: Updated breadcrumbs to have cleaner look and feel and include the actual project and sample names.
+* [UI/Developer]: Updated to `react` 16.13.0.
+* [Developer]: Added Apache 2.0 licence information to `package.json`.
+* [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
+* [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
+* [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
+* [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
+* [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
+* [UI]: Updated Remote API Listing page to use Ant Design.
+* [UI]: Updated Administrator Users page to use Ant Design.
+* [UI]: Removed DataTables from overrepresented sequence file and run files page.
+* [REST]: Added a REST API endpoint to read assemblies for samples.
+* [UI]: Added selection for linker script to get assemblies in project/samples page.
+* [Developer]: `bower` completely removed.
+* [UI/Developer]: Updated analysis results page with Ant Design and React.
+* [UI]: Assemblies can now be uploaded through the sample files page.
+* [UI/Developer]: Updated to `Prettier` 2.0.2
+* [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
+* [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
+* [UI/Developer]: New login page with developer ability to override template.
+* [UI/Developer]: Added excel file viewer to analysis outputs view.
+* [UI]: Added selection to export assemblies to Galaxy.
+* [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
+* [UI/Developer]: Added image file viewer to analysis outputs view.
+* [UI]: Moved project > details into the project > settings panel.
+* [UI]: Updated Project navigation to use Ant Design menu.
+
 19.09 to 20.01
 --------------
 * [UI]: Fixed default server language.  It was accidentally set to 'fr' for release.  (19.09.1)
@@ -35,7 +70,19 @@ Changes
 * [Developer]: Update to Chromedriver 79.0.0 for Travis CI.
 * [UI/Developer]: Standardized JavaScript internationalization through webpack. See [i18n documentation](https://irida.corefacility.ca/documentation/developer/interface/i18n/) for more information.
 * [UI/Developer]: Update version of `yarn`, `babel` dependencies.
-* [Developer]: Sample filter input has underscores escaped so that proper samples are returned
+* [Developer]: Sample filter input has underscores escaped so that proper samples are returned.
+* [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
+* [UI/Developer]: Updated how url's are created to allow for the addition of the context path.
+* [Admin]: Fixed handling of file extensions of compressed sequence files uploaded to NCBI SRA.
+* [Documentation]: Updated links and references from the old IRIDA MiSeq Uploader to the new IRIDA Uploader as the old uploader will not be supported when python 2 reaches end of life.
+* [UI]: Add analyses queued and running counts to analyses listing pages, cart page, and pipeline launch page.
+* [UI/Developer]: Force angular to use only version 1.7.9 to avoid security vulnerability.
+* [UI/Developer]: Updated to V5 of styled-components.
+* [UI/Developer]: Update version of `babel` and `eslint`.
+* [Documentation]: Fixed documentation link for developer authorization/oauth docs.
+* [Documentation]: Added info about upgrading to Tomcat 8.
+* [Documentation]: Added notice to upgrading guide about mysql 5.5 hibernate dialect.
+* [UI]: Fixed page title for users list page.
 
 19.05 to 19.09
 ---------------

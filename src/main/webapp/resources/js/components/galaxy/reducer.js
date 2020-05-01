@@ -3,6 +3,7 @@ import { validateEmail } from "../../utilities/validation-utilities";
 export const types = {
   EMAIL_UPDATED: "GALAXY/SET_GALAXY_EMAIL",
   MAKE_PAIRED_COLLECTION_UPDATED: "GALAXY/MAKE_PAIRED_COLLECTION_UPDATED",
+  ASSEMBLIES_UPDATED: "GALAXY/ASSEMBLIES_UPDATED",
   OAUTH_WINDOW_CLOSED: "GALAXY_OAUTH_WINDOW_CLOSED",
   SUBMITTABLE: "GALAXY/SUBMITTABLE",
   SUBMIT: "GALAXY/SUBMIT",
@@ -15,6 +16,7 @@ export const initialState = {
   makepairedcollection: true,
   fetchingSamples: false,
   submitted: false,
+  includeAssemblies: false,
   submittable: true,
   errored: false
 };
@@ -31,6 +33,11 @@ export const reducer = (state, action) => {
       return {
         ...state,
         makepairedcollection: action.payload.makepairedcollection
+      };
+    case types.ASSEMBLIES_UPDATED:
+      return {
+        ...state,
+        includeAssemblies: action.payload.includeAssemblies
       };
     case types.OAUTH_WINDOW_CLOSED:
       return { ...state, submittable: true, submitted: false };
@@ -54,6 +61,10 @@ export const actions = {
   setMakePairedCollection: makepairedcollection => ({
     type: types.MAKE_PAIRED_COLLECTION_UPDATED,
     payload: { makepairedcollection }
+  }),
+  setIncludeAssemblies: includeAssemblies => ({
+    type: types.ASSEMBLIES_UPDATED,
+    payload: { includeAssemblies }
   }),
   submit: () => ({
     type: types.SUBMIT

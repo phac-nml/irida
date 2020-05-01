@@ -13,7 +13,6 @@ Exporting data to Galaxy
 
 
 [web-upload]: ../web-upload/
-[uploader-tool]: ../uploader-tutorial/
 [project]: {{ site.baseurl }}/user/user/project/
 [samples]: {{ site.baseurl }}/user/user/samples/
 [project-members]: {{ site.baseurl }}/user/user/project/index.html#project-members

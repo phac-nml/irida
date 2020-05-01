@@ -1,5 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.*;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles.Builder;
@@ -19,22 +34,9 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Controller managing requests to export project data to external sources.
@@ -74,18 +76,18 @@ public class ProjectExportController {
 	/**
 	 * Get the page for exporting a given {@link Project} and selected
 	 * {@link Sample}s
-	 * 
-	 * @param projectId
-	 *            The ID of the project to export
-	 * @param sampleIds
-	 *            A List of sample ids to export
-	 * @param model
-	 *            model for the view to render
+	 *
+	 * @param projectId The ID of the project to export
+	 * @param sampleIds A List of sample ids to export
+	 * @param model     model for the view to render
+	 * @param principal {@link Principal} currently logged in user
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids[]") List<Long> sampleIds, Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids[]") List<Long> sampleIds,
+			Model model, Principal principal) {
 		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		logger.trace("Reading " + sampleIds.size() + " samples");
 		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
@@ -221,22 +223,21 @@ public class ProjectExportController {
 
 	/**
 	 * Get the details view of a given {@link NcbiExportSubmission}
-	 * 
-	 * @param projectId
-	 *            ID of the {@link Project} the export is for
-	 * @param submissionId
-	 *            the {@link NcbiExportSubmission} id
-	 * @param model
-	 *            model for the view
+	 *
+	 * @param projectId    ID of the {@link Project} the export is for
+	 * @param submissionId the {@link NcbiExportSubmission} id
+	 * @param model        model for the view
+	 * @param principal    {@link Principal} currently logged in user
 	 * @return name of the details view
 	 */
 	@RequestMapping("/projects/{projectId}/export/{submissionId}")
-	public String getDetailsView(@PathVariable Long projectId, @PathVariable Long submissionId, Model model) {
+	public String getDetailsView(@PathVariable Long projectId, @PathVariable Long submissionId, Model model,
+			Principal principal) {
 		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
 		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("submission", submission);
 		model.addAttribute("activeNav", "export");
-		model.addAttribute("project", project);
 		return EXPORT_DETAILS_VIEW;
 	}
 

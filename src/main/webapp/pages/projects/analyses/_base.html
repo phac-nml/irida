@@ -1,38 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/_base}">
-<head>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.analysis}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}">
-</head>
-<body>
-<main layout:fragment="main">
-    <div class="row">
+    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
+  </head>
+  <body>
+    <main layout:fragment="main">
+      <div class="row">
         <div class="col-md-2">
-            <div class="list-group">
-                <a href=""
-                   th:href="@{/projects/{id}/analyses(id=${project.getId()})}"
-                   class="list-group-item"
-                   th:classappend="${#strings.equalsIgnoreCase(page, 'analyses') ? 'active' : ''}"
-                   th:text="#{project.nav.analysis}">_Analyses_</a>
-                <a href=""
-                   th:href="@{/projects/{id}/analyses/shared-outputs(id=${project.getId()})}"
-                   class="list-group-item"
-                   th:classappend="${#strings.equalsIgnoreCase(page, 'shared') ? 'active' : ''}"
-                   th:text="#{analysis.shared-analyses}">_Shared Output Files_</a>
-                <a href=""
-                   th:href="@{/projects/{id}/analyses/automated-outputs(id=${project.getId()})}"
-                   class="list-group-item"
-                   th:classappend="${#strings.equalsIgnoreCase(page, 'automated') ? 'active' : ''}"
-                   th:text="#{analysis.automated-analyses}">_Automated Output Files_</a>
-            </div>
+          <div class="list-group">
+            <a
+              href=""
+              th:href="@{/projects/{id}/analyses(id=${project.getId()})}"
+              class="list-group-item"
+              th:classappend="${#strings.equalsIgnoreCase(page, 'analyses') ? 'active' : ''}"
+              th:text="#{project.nav.analysis}"
+              >_Analyses_</a
+            >
+            <a
+              href=""
+              th:href="@{/projects/{id}/analyses/shared-outputs(id=${project.getId()})}"
+              class="list-group-item"
+              th:classappend="${#strings.equalsIgnoreCase(page, 'shared') ? 'active' : ''}"
+              th:text="#{analysis.shared-analyses}"
+              >_Shared Output Files_</a
+            >
+            <a
+              href=""
+              th:href="@{/projects/{id}/analyses/automated-outputs(id=${project.getId()})}"
+              class="list-group-item"
+              th:classappend="${#strings.equalsIgnoreCase(page, 'automated') ? 'active' : ''}"
+              th:text="#{analysis.automated-analyses}"
+              >_Automated Output Files_</a
+            >
+          </div>
         </div>
         <div class="col-md-10">
-            <div class="alert alert-error" layout:fragment="analyses-content">
-                <strong>This should not be displayed.  It should be overwritten by the specific page.</strong>
-            </div>
+          <div class="alert alert-error" layout:fragment="analyses-content">
+            <strong
+              >This should not be displayed. It should be overwritten by the
+              specific page.</strong
+            >
+          </div>
         </div>
-    </div>
-</main>
-</body>
+      </div>
+    </main>
+  </body>
 </html>
