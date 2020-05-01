@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -76,6 +77,38 @@ public class SamplesAjaxController {
 			for (MultipartFile file : singleFiles) {
 				createSequenceFileInSample(file, sample);
 			}
+			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
+					new Object[] { sample.getSampleName() }, locale));
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("");
+		}
+	}
+
+	/**
+	 * Upload assemblies to the given sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @param locale   The locale for the currently logged in user
+	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
+	 */
+	@RequestMapping(value = "/{sampleId}/fast5/upload", method = RequestMethod.POST)
+	public ResponseEntity<String> uploadFast5(@PathVariable Long sampleId, MultipartHttpServletRequest request,
+			Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		try {
+			while (fileNames.hasNext()) {
+				MultipartFile file = request.getFile(fileNames.next());
+				Path temp = Files.createTempDirectory(null);
+				Path target = temp.resolve(file.getOriginalFilename());
+				file.transferTo(target.toFile());
+				SequenceFile sequenceFile = new SequenceFile(target);
+				Fast5Object fast5Object = new Fast5Object(sequenceFile);
+				sequencingObjectService.createSequencingObjectInSample(fast5Object, sample);
+			}
+
 			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
 					new Object[] { sample.getSampleName() }, locale));
 		} catch (IOException e) {

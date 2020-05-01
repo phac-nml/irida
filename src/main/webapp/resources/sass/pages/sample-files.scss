@@ -104,62 +104,8 @@
   animation: move-up-down 2s infinite;
 }
 
-.fileUpload {
-  position: relative;
-  overflow: hidden;
-}
-.fileUpload input.upload {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  font-size: 20px;
-  cursor: pointer;
-  opacity: 0;
-  filter: alpha(opacity=0);
-}
-
 .flexed {
   display: flex;
-}
-
-.panel-file-upload .panel-body {
-  h3 {
-    margin-top: 0 !important;
-  }
-  .alert-info {
-    margin: 0 !important;
-    padding: 2px 5px !important;
-  }
-  .progress {
-    margin-right: 0.5em !important;
-  }
-}
-
-.file-upload-progress,
-.file-upload-crunching,
-.file-upload-error {
-  display: none !important;
-}
-
-.file-upload-crunching,
-.file-upload-error,
-.file-upload-error {
-  padding-bottom: 15px;
-}
-
-.file-upload-progress.fadeIn {
-  display: flex !important;
-  h3 {
-    margin-top: 0 !important;
-  }
-}
-
-.file-upload-crunching.fadeIn,
-.file-upload-error.fadeIn {
-  display: block !important;
 }
 
 .modal-body .alert {
@@ -204,4 +150,19 @@
   text-align: left !important;
   color: #222;
   font-weight: bold;
+}
+
+table.fast5 {
+  background-color: $color-grey-light;
+  border: 2px solid $colour-single-end;
+}
+
+tr.fast5_row {
+  border: 1px solid $colour-single-end;
+}
+
+.fast5_icon {
+  background-color: $colour-single-end;
+  text-align: center;
+  vertical-align: middle !important;
 }

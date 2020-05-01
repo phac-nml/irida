@@ -28,7 +28,7 @@ export function SampleFileUploader() {
    * @param text
    * @returns {*}
    */
-  const onSuccess = text => {
+  const onSuccess = (text) => {
     notification.success({ message: text });
     setTimeout(() => {
       window.location.reload();
@@ -54,6 +54,18 @@ export function SampleFileUploader() {
           onComplete={onComplete}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
+        </FileUploader>
+      </Menu.Item>
+      <Menu.Item>
+        <FileUploader
+          allowedTypes=".fast5"
+          url={setBaseUrl(`ajax/samples/${window.PAGE.id}/fast5/upload`)}
+          onSuccess={onSuccess}
+          onUpload={onUpload}
+          onError={onError}
+          onComplete={onComplete}
+        >
+          {i18n("SampleFileUploader.fast5")}
         </FileUploader>
       </Menu.Item>
       <Menu.Item>
