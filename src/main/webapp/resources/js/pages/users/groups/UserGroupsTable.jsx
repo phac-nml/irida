@@ -53,7 +53,11 @@ export function UserGroupsTable() {
         return canManage ? (
           <RemoveTableItemButton
             onRemove={() => deleteUserGroup(group.id)}
-            confirmText={i18n("UserGroupsTable.delete-confirm")}
+            confirmText={
+              <div style={{ maxWidth: 250 }}>
+                {i18n("UserGroupsTable.delete-confirm")}
+              </div>
+            }
             tooltipText={i18n("UserGroupsTable.delete-tooltip")}
           />
         ) : null;

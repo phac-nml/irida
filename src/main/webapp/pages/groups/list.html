@@ -5,15 +5,6 @@
 <head>
     <title th:text="#{nav.main.groups-list}">_Groups_</title>
     <link rel="stylesheet" th:href="@{/dist/css/groups.bundle.css}">
-    <script th:inline="javascript">
-        var PAGE = {
-            urls: {
-                link: /*[[@{/groups/}]]*/ '/groups',
-                deleteGroup: /*[[@{/groups/}]]*/ '/groups/',
-                deleteModal: /*[[@{/groups/deleteConfirmModal}]]*/ '/groups/deleteConfirmModal'
-            }
-        };
-    </script>
 </head>
 <body>
 <div layout:fragment="page" id="groups-root" style="height: 100%">

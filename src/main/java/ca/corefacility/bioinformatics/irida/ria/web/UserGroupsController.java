@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -49,7 +48,6 @@ public class UserGroupsController {
 	private static final String GROUPS_CREATE = "groups/create";
 	private static final String GROUPS_EDIT = "groups/edit";
 	private static final String GROUP_DETAILS = "groups/details";
-	private static final String GROUPS_REMOVE_MODAL = "groups/remove-group-modal";
 	private static final String GROUPS_USER_MODAL = "groups/remove-user-modal";
 
 	private final UserGroupService userGroupService;
@@ -336,28 +334,6 @@ public class UserGroupsController {
 			return ImmutableMap.of("failure", messageSource.getMessage("group.users.remove.notification.failure",
 					new Object[] { user.getLabel() }, locale));
 		}
-	}
-
-	/**
-	 * Get a string to tell the user which group they're going to delete.
-	 *
-	 * @param userGroupId the user group that's about to be deleted.
-	 * @param model       model for rendering view
-	 * @return a message indicating which group is going to be deleted.
-	 */
-	@RequestMapping(path = "/deleteConfirmModal", method = RequestMethod.POST)
-	public String getDeleteGroupText(final @RequestParam Long userGroupId, final Model model) {
-		final UserGroup group = userGroupService.read(userGroupId);
-		final Collection<UserGroupProjectJoin> projects = userGroupService.getProjectsWithUserGroup(group);
-
-		model.addAttribute("group", group);
-
-		if (!projects.isEmpty()) {
-			model.addAttribute("projectsWithGroup", projects);
-			model.addAttribute("maxProjectsToDisplay", MAX_PROJECTS_TO_DISPLAY);
-		}
-
-		return GROUPS_REMOVE_MODAL;
 	}
 	
 	/**
