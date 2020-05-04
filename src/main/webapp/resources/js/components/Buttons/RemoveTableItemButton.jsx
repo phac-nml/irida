@@ -1,7 +1,5 @@
 import React, { useContext, useState } from "react";
 import { Button, notification, Popconfirm, Tooltip } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { removeUserFromProject } from "../../apis/projects/members";
 import { IconRemove } from "../icons/Icons";
 import { PagedTableContext } from "../ant.design/PagedTable";
 

@@ -3,6 +3,9 @@ import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Button, Typography } from "antd";
+import { RemoveTableItemButton } from "../../../components/Buttons";
+import { deleteUserGroup } from "../../../apis/users/groups";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 
 const { Paragraph } = Typography;
 
@@ -20,7 +23,8 @@ export function UserGroupsTable() {
       },
     },
     {
-      dataIndex: i18n("UserGroupsTable.description"),
+      title: i18n("UserGroupsTable.description"),
+      dataIndex: "description",
       width: 400,
       render(text) {
         return (
@@ -43,11 +47,31 @@ export function UserGroupsTable() {
     },
     {
       dataIndex: "canManage",
-      render(canManage, item) {
-        return canManage ? "delete" : null;
+      align: "right",
+      width: 50,
+      render(canManage, group) {
+        return canManage ? (
+          <RemoveTableItemButton
+            onRemove={() => deleteUserGroup(group.id)}
+            confirmText={i18n("UserGroupsTable.delete-confirm")}
+            tooltipText={i18n("UserGroupsTable.delete-tooltip")}
+          />
+        ) : null;
       },
     },
   ];
 
-  return <PagedTable search={true} columns={columns} />;
+  return (
+    <PagedTable
+      search={true}
+      columns={columns}
+      buttons={[
+        <AddNewButton
+          key="group-new"
+          text={i18n("UserGroupsPage.create")}
+          href={setBaseUrl("/groups/create")}
+        />,
+      ]}
+    />
+  );
 }

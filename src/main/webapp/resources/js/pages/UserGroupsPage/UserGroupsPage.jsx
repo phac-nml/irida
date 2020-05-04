@@ -8,7 +8,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 export function UserGroupsPage() {
   return (
     <PagedTableProvider url={setBaseUrl(`/ajax/user-groups/list`)}>
-      <PageWrapper title={"GROUPS__"}>
+      <PageWrapper title={i18n("UserGroupsPage.title")}>
         <UserGroupsTable />
       </PageWrapper>
     </PagedTableProvider>
