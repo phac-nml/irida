@@ -9,7 +9,7 @@ const { Paragraph } = Typography;
 export function UserGroupsTable() {
   const columns = [
     {
-      title: "Name",
+      title: i18n("UserGroupsTable.name"),
       dataIndex: "name",
       render(text, item) {
         return (
@@ -20,9 +20,9 @@ export function UserGroupsTable() {
       },
     },
     {
-      dataIndex: "description",
+      dataIndex: i18n("UserGroupsTable.description"),
       width: 400,
-      render(text, item) {
+      render(text) {
         return (
           <Paragraph
             style={{ marginBottom: 0 }}
@@ -34,17 +34,17 @@ export function UserGroupsTable() {
       },
     },
     {
+      title: i18n("UserGroupsTable.created"),
       dataIndex: "createdDate",
       width: 200,
-      render(text, item) {
+      render(text) {
         return formatInternationalizedDateTime(text);
       },
     },
     {
-      dataIndex: "modifiedDate",
-      width: 200,
-      render(text, item) {
-        return formatInternationalizedDateTime(text);
+      dataIndex: "canManage",
+      render(canManage, item) {
+        return canManage ? "delete" : null;
       },
     },
   ];
