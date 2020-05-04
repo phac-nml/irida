@@ -44,7 +44,7 @@ export function SampleFileUploader() {
     <Menu className="t-upload-menu">
       <Menu.Item>
         <FileUploader
-          allowedTypes=".fastq,.fastq.gz"
+          allowedTypes=".fastq,.fastq.gz,.fast5"
           url={setBaseUrl(
             `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
           )}

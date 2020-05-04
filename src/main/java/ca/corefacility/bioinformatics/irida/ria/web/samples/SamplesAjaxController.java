@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -65,8 +66,10 @@ public class SamplesAjaxController {
 			files.add(request.getFile(fileNames.next()));
 		}
 
-		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
-		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);
+		SamplePairer samplePairer = new SamplePairer(files);
+		final Map<String, List<MultipartFile>> pairedFiles = samplePairer.getPairedFiles(files);
+		final List<MultipartFile> singleFiles = samplePairer.getSingleFiles(files);
+		final List<MultipartFile> fast5Files = samplePairer.getFast5Files();
 
 		try {
 			for (String key : pairedFiles.keySet()) {
@@ -77,6 +80,11 @@ public class SamplesAjaxController {
 			for (MultipartFile file : singleFiles) {
 				createSequenceFileInSample(file, sample);
 			}
+
+			for (MultipartFile file : fast5Files) {
+				createFast5FileInSample(file, sample);
+			}
+
 			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
 					new Object[] { sample.getSampleName() }, locale));
 		} catch (IOException e) {
@@ -178,6 +186,18 @@ public class SamplesAjaxController {
 	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
 		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
+	}
+
+	/**
+	 * Create a {@link Fast5Object} and add it to a {@link Sample}
+	 *
+	 * @param file   {@link MultipartFile}
+	 * @param sample {@link Sample} to add the file to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private void createFast5FileInSample(MultipartFile file, Sample sample) throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
+		sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample);
 	}
 
 	/**
