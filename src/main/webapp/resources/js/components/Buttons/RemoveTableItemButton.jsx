@@ -7,36 +7,33 @@ import { PagedTableContext } from "../ant.design/PagedTable";
 
 /**
  * React component to remove a member from a project
- * @param {object} user - details about the current user
+ * @param {object} item - details about the current user
  * @returns {*}
  * @constructor
  */
-export function RemoveMemberButton({ user }) {
+export function RemoveTableItemButton({
+  onRemove,
+  tooltipText = "",
+  confirmText = "",
+}) {
   const { updateTable } = useContext(PagedTableContext);
   const [loading, setLoading] = useState(false);
 
   /**
-   * Handle the successful removal of the current user
+   * Handle the successful removal of the current item
    * @param message
    */
   const removeSuccess = (message) => {
-    if (user.id !== window.PAGE.user) {
-      notification.success({ message, className: "t-remove-success" });
-      updateTable();
-    } else {
-      // If the user can remove themselves from the project, then when they
-      // are removed redirect them to their project page since they cannot
-      // use this project anymore.
-      window.location.href = setBaseUrl(`/projects`);
-    }
+    updateTable();
+    notification.success({ message, className: "t-remove-success" });
   };
 
   /**
-   * Make the request to remove the user from the project.
+   * Make the request to remove the item from the project.
    */
-  const removeUser = () => {
+  const removeItem = () => {
     setLoading(true);
-    removeUserFromProject(user.id)
+    onRemove()
       .then(removeSuccess)
       .catch((error) =>
         notification.error({
@@ -51,11 +48,11 @@ export function RemoveMemberButton({ user }) {
     <Popconfirm
       className="t-remove-popover"
       okButtonProps={{ className: "t-remove-confirm" }}
-      onConfirm={removeUser}
+      onConfirm={removeItem}
       placement="topLeft"
-      title={i18n("RemoveMemberButton.confirm")}
+      title={confirmText}
     >
-      <Tooltip title={i18n("RemoveMemberButton.tooltip")} placement="left">
+      <Tooltip title={tooltipText} placement="left">
         <Button
           className="t-remove-member-btn"
           icon={<IconRemove />}
