@@ -149,6 +149,9 @@ public class IridaApiServicesConfig {
 	@Value("${aws.secret.key:#{null}}")
 	private String awsSecretKey;
 
+	@Value("${galaxy.cloud.storage.temporary.directory}")
+	private String cloudStorageTemporaryDirectory;
+
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -310,9 +313,9 @@ public class IridaApiServicesConfig {
 	@Bean(name = "iridaFileStorageService")
 	public IridaFileStorageService iridaFileStorageService() {
 		if(storageType.equalsIgnoreCase("azure")) {
-			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
+			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName, cloudStorageTemporaryDirectory);
 		}  else if (storageType.equalsIgnoreCase("aws")) {
-			return new IridaFileStorageAwsServiceImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey);
+			return new IridaFileStorageAwsServiceImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey, cloudStorageTemporaryDirectory);
 		} else {
 			return new IridaFileStorageLocalServiceImpl();
 		}

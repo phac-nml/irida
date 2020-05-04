@@ -2,16 +2,23 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
@@ -34,16 +41,22 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsServiceImpl.class);
 
+	@Value("${galaxy.tempfile.directory.permissions}")
+	private String filePermissions;
+
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 
+	private String tempDir;
+
 	@Autowired
-	public IridaFileStorageAwsServiceImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
+	public IridaFileStorageAwsServiceImpl(String bucketName, String bucketRegion, String accessKey, String secretKey, String cloudStorageTemporaryDirectory){
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 		this.bucketName = bucketName;
+		this.tempDir = cloudStorageTemporaryDirectory;
 	}
 
 	/**
@@ -54,9 +67,6 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		File fileToProcess = null;
 
 		try {
-
-			String tmpDir = "/tmp/" + new Date().toString().replaceAll("\\W", "");
-
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
 			String [] nameTokens = file.toAbsolutePath().toString().split("/");
@@ -65,19 +75,28 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
-			fileToProcess = new File(tmpDir+fileName);
+			FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
+					.asFileAttribute(PosixFilePermissions.fromString(filePermissions));
+
+			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "objectStoreTemp", fileAttributes);
+			Path target = targetDirectory.resolve(fileName);
 
 			// Stream the file from the bucket into a local file
-			FileOutputStream fileOutputStream = new FileOutputStream(fileToProcess);
+//			FileOutputStream fileOutputStream = new FileOutputStream(fileToProcess);
 			logger.trace("Downloading s3 object to: " + fileToProcess.getAbsolutePath());
 
-			byte[] read_buf = new byte[1024];
-			int read_len = 0;
-			while ((read_len = s3ObjectInputStream.read(read_buf)) > 0) {
-				fileOutputStream.write(read_buf, 0, read_len);
-			}
+			File targetFile = new File(target.toAbsolutePath().toString());
+			FileUtils.copyInputStreamToFile(s3ObjectInputStream, targetFile);
+
+			fileToProcess = targetFile;
+
+//			byte[] read_buf = new byte[1024];
+//			int read_len = 0;
+//			while ((read_len = s3ObjectInputStream.read(read_buf)) > 0) {
+//				fileOutputStream.write(read_buf, 0, read_len);
+//			}
 			s3ObjectInputStream.close();
-			fileOutputStream.close();
+//			fileOutputStream.close();
 			s3Object.close();
 		} catch (AmazonServiceException e) {
 			logger.error(e.getErrorMessage());

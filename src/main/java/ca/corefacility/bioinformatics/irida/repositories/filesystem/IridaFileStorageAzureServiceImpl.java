@@ -7,15 +7,21 @@ import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
@@ -36,15 +42,21 @@ import com.azure.storage.blob.specialized.BlobInputStream;
 public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
 
+	@Value("${galaxy.tempfile.directory.permissions}")
+	private String filePermissions;
+
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient ;
 	private BlobClient blobClient;
 
+	private String tempDir;
+
 	@Autowired
-	public IridaFileStorageAzureServiceImpl(String connectionStr, String containerName){
+	public IridaFileStorageAzureServiceImpl(String connectionStr, String containerName, String cloudStorageTemporaryDirectory){
 		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionStr)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+		this.tempDir = cloudStorageTemporaryDirectory;
 	}
 
 	/**
@@ -64,15 +76,22 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			String [] blobNameTokens = blobClient.getBlobName().split("/");
 			String fileName = blobNameTokens[blobNameTokens.length-1];
 
-			Path targetDirectory = Files.createTempDirectory(null);
+			FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
+					.asFileAttribute(PosixFilePermissions.fromString(filePermissions));
+
+			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "objectStoreTemp", fileAttributes);
 			Path target = targetDirectory.resolve(fileName);
 
-			blobClient.downloadToFile(target.toAbsolutePath().toString());
-			fileToProcess = new File(target.toAbsolutePath().toString());
+			InputStream initialStream = blobClient.openInputStream();
+			File targetFile = new File(target.toAbsolutePath().toString());
+			FileUtils.copyInputStreamToFile(initialStream, targetFile);
+
+
+			fileToProcess = targetFile;
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't find file on azure [" + e + "]");
 		} catch (IOException e) {
-			logger.trace("Couldn't create temp directory [" + e + "]");
+			logger.debug(e.getMessage());
 		}
 
 		return fileToProcess;
