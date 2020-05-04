@@ -2,10 +2,10 @@ import React from "react";
 import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
-import { UserGroupsTable } from "../users/groups/UserGroupsTable";
+import { UserGroupsTable } from "./components/UserGroupsTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-export function UserGroupsPage() {
+export function Index() {
   return (
     <PagedTableProvider url={setBaseUrl(`/ajax/user-groups/list`)}>
       <PageWrapper title={i18n("UserGroupsPage.title")}>
@@ -15,4 +15,4 @@ export function UserGroupsPage() {
   );
 }
 
-render(<UserGroupsPage />, document.querySelector("#groups-root"));
+render(<Index />, document.querySelector("#groups-root"));
