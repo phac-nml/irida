@@ -194,7 +194,7 @@
 					<td>
 						<div class="file-name td_info--value"
 							 style="display: flex; align-items: center; height: 35px;">
-							<div th:text="${file.label}"></div>
+							<a class="btn btn-default btn-sm file-name" th:href="@{sequenceFiles/{id}/file/{fileId}/summary(id=${file.getId()},fileId=${file.getFile().getId()})}" th:text="${file.label}"></a>
 						</div>
 					</td>
 					<td>
