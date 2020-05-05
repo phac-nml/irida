@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import com.sksamuel.diffpatch.DiffMatchPatch;
-import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
+
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+
+import com.sksamuel.diffpatch.DiffMatchPatch;
+import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
 
 /**
  * Utility class for pairing up sequence files with
@@ -21,16 +23,16 @@ import java.util.stream.Stream;
 public class SamplePairer {
     private static final Logger logger = LoggerFactory.getLogger(SamplePairer.class);
 
-    private static DiffMatchPatch diff = new DiffMatchPatch();
+    private static final DiffMatchPatch diff = new DiffMatchPatch();
 
-    private static String[] forwardMatches = SequenceFilePair.forwardMatches;
-    private static String[] reverseMatches = SequenceFilePair.reverseMatches;
+    private static final String[] forwardMatches = SequenceFilePair.forwardMatches;
+    private static final String[] reverseMatches = SequenceFilePair.reverseMatches;
 
-    private static String FAST5_EXTENSION = "fast5";
+    private static final String FAST5_EXTENSION = "fast5";
 
-    private Map<String, List<MultipartFile>> pairedFiles;
-    private List<MultipartFile> fast5Files;
-    private List<MultipartFile> singleFiles;
+    private final Map<String, List<MultipartFile>> pairedFiles;
+    private final List<MultipartFile> fast5Files;
+    private final List<MultipartFile> singleFiles;
 
     public SamplePairer(List<MultipartFile> files) {
         this.singleFiles = new ArrayList<>();
@@ -93,8 +95,6 @@ public class SamplePairer {
 
                         if (filePair != null) {
                             pair = true;
-                            //organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
-
                             pairedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
 
                             logger.trace("Uploaded files [" + filePair[0].getName() + ", " + filePair[1].getName()
@@ -105,7 +105,6 @@ public class SamplePairer {
                 }
                 if (!pair) {
                     MultipartFile[] singleFile = {file1};
-                    //organizedFiles.put(file1.getOriginalFilename(), Arrays.asList(singleFile));
                     String extension = FilenameUtils.getExtension(file1.getOriginalFilename());
                     if (extension.equals(FAST5_EXTENSION)) {
                         fast5Files.addAll(Arrays.asList(singleFile));
