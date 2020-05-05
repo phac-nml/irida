@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
@@ -46,8 +47,13 @@ public class UserGroupsAjaxController {
 		return ResponseEntity.ok(service.deleteUserGroup(id, locale));
 	}
 
-	@RequestMapping("/{groupId}")
+	@RequestMapping(value = "/{groupId}", method = RequestMethod.GET)
 	public ResponseEntity<UserGroupDetails> getUserGroupDetails(@PathVariable Long groupId) {
 		return ResponseEntity.ok(service.getUserGroupDetails(groupId));
+	}
+
+	@RequestMapping(value = "/{groupId}/update", method = RequestMethod.PUT)
+	public void updateGroupDetails(@PathVariable Long groupId, @RequestBody FieldUpdate update) {
+		service.updateGroupDetails(groupId, update);
 	}
 }

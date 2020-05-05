@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupMember;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
@@ -84,6 +85,18 @@ public class UIUserGroupsService {
 				.map(UserGroupMember::new)
 				.collect(Collectors.toList());
 		return new UserGroupDetails(group, members);
+	}
+
+	public void updateGroupDetails(Long groupId, FieldUpdate update) {
+		UserGroup group = userGroupService.read(groupId);
+		switch (update.getField()) {
+		case "name":
+			group.setName(update.getValue());
+			break;
+		case "description":
+			group.setDescription(update.getValue());
+			break;
+		}
 	}
 
 	/**

@@ -1,7 +1,10 @@
 import React, { useEffect, useReducer } from "react";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
-import { getUserGroupDetails } from "../../apis/users/groups";
+import {
+  getUserGroupDetails,
+  updateUserGroupDetails,
+} from "../../apis/users/groups";
 import { Table, Typography } from "antd";
 
 const { Paragraph } = Typography;
@@ -21,6 +24,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "load":
       return { ...state, loading: false, ...action.payload };
+    case "update":
+      return { ...state, ...action.payload };
     default:
       return { ...state };
   }
@@ -37,13 +42,26 @@ export function UserGroupDetails({ id }) {
     );
   }, [id]);
 
+  const updateField = (field, value) => {
+    updateUserGroupDetails({ id, field, value }).then(() =>
+      dispatch({ type: "update", payload: { [field]: value } })
+    );
+  };
+
   return (
     <PageWrapper
       title={"User Groups"}
       onBack={() => navigate("/groups", { replace: true })}
     >
-      <Paragraph editable>{state.name}</Paragraph>
-      <Paragraph editable>{state.description}</Paragraph>
+      <Paragraph editable={{ onChange: (value) => updateField("name", value) }}>
+        {state.name}
+      </Paragraph>
+      <Paragraph
+        editable
+        onChange={(value) => updateField("description", value)}
+      >
+        {state.description}
+      </Paragraph>
       <UserGroupMembersTable members={state.members} />
     </PageWrapper>
   );
