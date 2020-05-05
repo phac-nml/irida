@@ -79,13 +79,12 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 			FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
 					.asFileAttribute(PosixFilePermissions.fromString(filePermissions));
 
-			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "objectStoreTemp", fileAttributes);
+			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "azure-temp-file-", fileAttributes);
 			Path target = targetDirectory.resolve(fileName);
 
 			InputStream initialStream = blobClient.openInputStream();
 			File targetFile = new File(target.toAbsolutePath().toString());
 			FileUtils.copyInputStreamToFile(initialStream, targetFile);
-
 
 			fileToProcess = targetFile;
 		} catch (BlobStorageException e) {

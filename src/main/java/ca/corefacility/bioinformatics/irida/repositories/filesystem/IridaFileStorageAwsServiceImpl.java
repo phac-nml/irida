@@ -78,25 +78,15 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 			FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
 					.asFileAttribute(PosixFilePermissions.fromString(filePermissions));
 
-			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "objectStoreTemp", fileAttributes);
+			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "aws-temp-file-", fileAttributes);
 			Path target = targetDirectory.resolve(fileName);
 
-			// Stream the file from the bucket into a local file
-//			FileOutputStream fileOutputStream = new FileOutputStream(fileToProcess);
-			logger.trace("Downloading s3 object to: " + fileToProcess.getAbsolutePath());
-
+			// Copy the the file from the bucket into a local file
 			File targetFile = new File(target.toAbsolutePath().toString());
 			FileUtils.copyInputStreamToFile(s3ObjectInputStream, targetFile);
-
 			fileToProcess = targetFile;
 
-//			byte[] read_buf = new byte[1024];
-//			int read_len = 0;
-//			while ((read_len = s3ObjectInputStream.read(read_buf)) > 0) {
-//				fileOutputStream.write(read_buf, 0, read_len);
-//			}
 			s3ObjectInputStream.close();
-//			fileOutputStream.close();
 			s3Object.close();
 		} catch (AmazonServiceException e) {
 			logger.error(e.getErrorMessage());
