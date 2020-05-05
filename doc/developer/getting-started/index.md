@@ -32,7 +32,7 @@ IRIDA is a Java application developed using Java 11.
 #### Spring framework
 {:.no_toc}
 
-Documentation: [http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/](http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/)
+Documentation: <https://docs.spring.io/spring-framework/docs/5.2.2.RELEASE/spring-framework-reference/>
 
 IRIDA uses the Spring Framework as the main backbone of the application.  Spring is used to assist with many of the main functions of the application including configuration, dependency injection, MVC, REST API, Java persistance API management, and more.
 
