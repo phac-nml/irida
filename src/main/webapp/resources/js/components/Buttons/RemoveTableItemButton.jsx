@@ -52,7 +52,7 @@ export function RemoveTableItemButton({
     >
       <Tooltip title={tooltipText} placement="left">
         <Button
-          className="t-remove-member-btn"
+          className="t-remove-btn"
           icon={<IconRemove />}
           shape="circle-outline"
           loading={loading}
