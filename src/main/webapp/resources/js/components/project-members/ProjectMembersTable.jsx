@@ -2,7 +2,7 @@ import React from "react";
 import { PagedTable } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectRole } from "./ProjectRole";
+import { ProjectRole } from "../roles/ProjectRole";
 import { RemoveTableItemButton } from "../Buttons";
 import { AddMembersButton } from "./AddMemberButton";
 import { removeUserFromProject } from "../../apis/projects/members";

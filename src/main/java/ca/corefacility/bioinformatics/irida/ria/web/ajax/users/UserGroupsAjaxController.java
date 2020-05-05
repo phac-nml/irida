@@ -3,9 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.users;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupRole;
@@ -62,5 +64,15 @@ public class UserGroupsAjaxController {
 	@RequestMapping("/roles")
 	public List<UserGroupRole> getUserGroupRoles(Locale locale) {
 		return service.getUserGroupRoles(locale);
+	}
+
+	@RequestMapping(value = "/{groupId}/member/role", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateUserRoleOnUserGroup(@PathVariable Long groupId, @RequestParam Long userId, @RequestParam String role, Locale locale) {
+		try {
+			return ResponseEntity.ok(service.updateUserRoleOnUserGroup(groupId, userId, role, locale));
+		} catch (UserGroupWithoutOwnerException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(e.getMessage());
+		}
 	}
 }

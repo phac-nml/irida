@@ -5,18 +5,19 @@ import {
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../apis/users/groups";
-import { Table, Typography } from "antd";
+import { Select, Table, Typography } from "antd";
 import { BasicList } from "../../components/lists";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
   UserGroupRolesProvider,
   UserGroupRolesContext,
 } from "../../contexts/UserGroupRolesContext";
+import { UserGroupRole } from "../../components/roles/UserGroupRole";
 
 const { Paragraph } = Typography;
 
-function UserGroupMembersTable({ members }) {
-  const { getRoleFromKey } = useContext(UserGroupRolesContext);
+function UserGroupMembersTable({ members, canManage, groupId }) {
+  const { roles, getRoleFromKey } = useContext(UserGroupRolesContext);
 
   const columns = [
     {
@@ -26,8 +27,11 @@ function UserGroupMembersTable({ members }) {
     {
       title: "role",
       dataIndex: "role",
-      render(text) {
-        return getRoleFromKey(text);
+      width: 200,
+      render(text, user) {
+        return (
+          <UserGroupRole user={user} canManage={canManage} groupId={groupId} />
+        );
       },
     },
     {
@@ -40,7 +44,13 @@ function UserGroupMembersTable({ members }) {
     },
   ];
 
-  return <Table columns={columns} dataSource={members} />;
+  return (
+    <Table
+      pagination={{ hideOnSinglePage: true }}
+      columns={columns}
+      dataSource={members}
+    />
+  );
 }
 
 const reducer = (state, action) => {
@@ -104,7 +114,11 @@ export function UserGroupDetails({ id }) {
           title: "Members",
           desc: (
             <UserGroupRolesProvider>
-              <UserGroupMembersTable members={state.members} />
+              <UserGroupMembersTable
+                members={state.members}
+                canManage={state.canManage}
+                groupId={id}
+              />
             </UserGroupRolesProvider>
           ),
         },

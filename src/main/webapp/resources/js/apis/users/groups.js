@@ -40,3 +40,9 @@ export function updateUserGroupDetails({ id, field, value }) {
 export function getUserGroupRoles() {
   return axios.get(`${BASE_URL}/roles`).then(({ data }) => data);
 }
+
+export function updateUserRoleOnUserGroups({ groupId, userId, role }) {
+  return axios
+    .put(`${BASE_URL}/${groupId}/member/role?userId=${userId}&role=${role}`)
+    .then(({ data }) => data);
+}

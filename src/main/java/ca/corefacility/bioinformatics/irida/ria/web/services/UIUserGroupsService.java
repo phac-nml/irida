@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -30,7 +32,13 @@ import com.google.common.collect.ImmutableList;
 @Component
 public class UIUserGroupsService {
 	private UserGroupService userGroupService;
+	private UserService userService;
 	private MessageSource messageSource;
+
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
 
 	@Autowired
 	public void setUserGroupService(UserGroupService userGroupService) {
@@ -140,4 +148,17 @@ public class UIUserGroupsService {
 		return false;
 	}
 
+	public String updateUserRoleOnUserGroup(Long groupId, Long userId, String role, Locale locale)
+			throws UserGroupWithoutOwnerException {
+		UserGroup group = userGroupService.read(groupId);
+		User user = userService.read(userId);
+		UserGroupJoin.UserGroupRole userGroupRole = UserGroupJoin.UserGroupRole.fromString(role);
+
+		try {
+			userGroupService.changeUserGroupRole(user, group, userGroupRole);
+			return "THIS IS GREAT!";
+		} catch (UserGroupWithoutOwnerException e) {
+			throw new UserGroupWithoutOwnerException("HEY!  This needs a manager!!!!");
+		}
+	}
 }
