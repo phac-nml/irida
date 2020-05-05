@@ -293,8 +293,8 @@ public class SamplesController extends BaseController {
 				sample, SingleEndSequenceFile.class);
 		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, Fast5Object.class);
-		List<Fast5Object> fast5 = fast5FileJoins.stream()
-				.map(j -> (Fast5Object) j.getObject())
+		List<SequencingObject> fast5 = fast5FileJoins.stream()
+				.map(SampleSequencingObjectJoin::getObject)
 				.collect(Collectors.toList());
 
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
