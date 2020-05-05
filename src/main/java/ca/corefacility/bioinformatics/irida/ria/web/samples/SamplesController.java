@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -286,16 +287,24 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
 
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, Fast5Object.class);
+		List<SequencingObject> fast5 = fast5FileJoins.stream()
+				.map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
+
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 		logger.trace("Assembly joins " + genomeAssemblyJoins);
 
-		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject)
+		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream()
+				.map(SampleGenomeAssemblyJoin::getObject)
 				.collect(Collectors.toList());
-		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
+		List<SequencingObject> filePairs = filePairJoins.stream()
+				.map(SampleSequencingObjectJoin::getObject)
 				.collect(Collectors.toList());
 
 		// get the project if available
@@ -316,7 +325,8 @@ public class SamplesController extends BaseController {
 		// SequenceFile
 		model.addAttribute("paired_end", filePairs);
 		model.addAttribute("single_end", singleFileJoins);
-		
+		model.addAttribute("fast5", fast5);
+
 		// assemblies
 		model.addAttribute("assemblies", genomeAssemblies);
 
