@@ -47,7 +47,7 @@
 			<h2 th:if="${!#lists.isEmpty(single_end) or !#lists.isEmpty(paired_end)}"
 				th:text="#{samples.files.sequencefiles.title}">Sequence Files</h2>
 			<table class="table"
-				   th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
+				   th:with="dateFormat=#{locale.date.short}"
 				   ng-controller="FileController as fileCtrl">
 				<th:block th:each="pair : ${paired_end}">
 					<tr class="paired_end paired_end__forward sequence-file-row"
@@ -186,7 +186,7 @@
 	<div class="row" th:if="${not #lists.isEmpty(fast5)}">
 		<div class="col-md-12">
 			<h2 th:text="#{sample.files.fast5}">FAST5 Files</h2>
-			<table class="table fast5" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}">
+			<table class="table fast5" th:with="dateFormat=#{locale.date.short}">
 				<tr class="fast5_row" th:each="file : ${fast5}">
 					<td class="td_icon fast5_icon">
 						<i class="far fa-file-alt"></i>
@@ -247,7 +247,7 @@
 	<div class="row" th:if="${not #lists.isEmpty(assemblies)}">
 		<div class="col-md-12">
 			<table class="table assembly_sample_info"
-				th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
+				th:with="dateFormat=#{locale.date.short}"
 				ng-controller="AssemblyFileController as fileCtrl">
 				<tr class="assembly_row" th:each="assembly : ${assemblies}" th:with="dateFormat=#{locale.date.short}">
 					<td class="td_icon assembly_sample_icon"><i
