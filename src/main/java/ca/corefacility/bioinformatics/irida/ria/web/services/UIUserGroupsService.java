@@ -17,13 +17,12 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupMember;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Service class for the UI for handling {@link UserGroup}s
@@ -84,7 +83,18 @@ public class UIUserGroupsService {
 		List<UserGroupMember> members = groupUsers.stream()
 				.map(UserGroupMember::new)
 				.collect(Collectors.toList());
-		return new UserGroupDetails(group, members);
+
+		/*
+		Determine if the current user can manage this group
+		 */
+
+		User user = (User) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+		boolean isAdmin = user.getSystemRole()
+				.equals(Role.ROLE_ADMIN);
+
+		return new UserGroupDetails(group, members, isAdmin || isGroupOwner(user, group));
 	}
 
 	public void updateGroupDetails(Long groupId, FieldUpdate update) {
@@ -97,6 +107,16 @@ public class UIUserGroupsService {
 			group.setDescription(update.getValue());
 			break;
 		}
+		userGroupService.update(group);
+	}
+
+	public List<UserGroupRole> getUserGroupRoles(Locale locale) {
+		final String OWNER = UserGroupJoin.UserGroupRole.GROUP_OWNER.toString();
+		final String MEMBER = UserGroupJoin.UserGroupRole.GROUP_MEMBER.toString();
+		return ImmutableList.of(new UserGroupRole(OWNER,
+						messageSource.getMessage("server.usergroups.GROUP_OWNER", new Object[] {}, locale)),
+				new UserGroupRole(MEMBER,
+						messageSource.getMessage("server.usergroups.GROUP_MEMBER", new Object[] {}, locale)));
 	}
 
 	/**
@@ -119,4 +139,5 @@ public class UIUserGroupsService {
 		}
 		return false;
 	}
+
 }

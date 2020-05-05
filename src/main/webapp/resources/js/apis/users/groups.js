@@ -36,3 +36,7 @@ export function updateUserGroupDetails({ id, field, value }) {
     value,
   });
 }
+
+export function getUserGroupRoles() {
+  return axios.get(`${BASE_URL}/roles`).then(({ data }) => data);
+}

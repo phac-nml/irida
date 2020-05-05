@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
@@ -6,14 +6,37 @@ import {
   updateUserGroupDetails,
 } from "../../apis/users/groups";
 import { Table, Typography } from "antd";
+import { BasicList } from "../../components/lists";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import {
+  UserGroupRolesProvider,
+  UserGroupRolesContext,
+} from "../../contexts/UserGroupRolesContext";
 
 const { Paragraph } = Typography;
 
 function UserGroupMembersTable({ members }) {
+  const { getRoleFromKey } = useContext(UserGroupRolesContext);
+
   const columns = [
     {
       dataIndex: "name",
       title: "Member Name",
+    },
+    {
+      title: "role",
+      dataIndex: "role",
+      render(text) {
+        return getRoleFromKey(text);
+      },
+    },
+    {
+      title: "Joined",
+      dataIndex: "createdDate",
+      width: 200,
+      render(text) {
+        return formatInternationalizedDateTime(text);
+      },
     },
   ];
 
@@ -48,21 +71,51 @@ export function UserGroupDetails({ id }) {
     );
   };
 
+  const fields = state.loading
+    ? []
+    : [
+        {
+          title: "Name",
+          desc: state.canManage ? (
+            <Paragraph
+              editable={{ onChange: (value) => updateField("name", value) }}
+            >
+              {state.name}
+            </Paragraph>
+          ) : (
+            state.name
+          ),
+        },
+        {
+          title: "Description",
+          desc: state.canManage ? (
+            <Paragraph
+              editable={{
+                onChange: (value) => updateField("description", value),
+              }}
+            >
+              {state.description}
+            </Paragraph>
+          ) : (
+            state.description
+          ),
+        },
+        {
+          title: "Members",
+          desc: (
+            <UserGroupRolesProvider>
+              <UserGroupMembersTable members={state.members} />
+            </UserGroupRolesProvider>
+          ),
+        },
+      ];
+
   return (
     <PageWrapper
       title={"User Groups"}
       onBack={() => navigate("/groups", { replace: true })}
     >
-      <Paragraph editable={{ onChange: (value) => updateField("name", value) }}>
-        {state.name}
-      </Paragraph>
-      <Paragraph
-        editable
-        onChange={(value) => updateField("description", value)}
-      >
-        {state.description}
-      </Paragraph>
-      <UserGroupMembersTable members={state.members} />
+      <BasicList dataSource={fields} />
     </PageWrapper>
   );
 }

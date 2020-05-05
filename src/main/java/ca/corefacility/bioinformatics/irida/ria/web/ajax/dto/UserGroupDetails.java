@@ -13,8 +13,9 @@ public class UserGroupDetails {
 	private final Date createdDate;
 	private final Date modifiedDate;
 	private final List<UserGroupMember> members;
+	private final boolean canManage;
 
-	public UserGroupDetails(UserGroup group, List<UserGroupMember> members) {
+	public UserGroupDetails(UserGroup group, List<UserGroupMember> members, boolean canManage) {
 		this.id = group.getId();
 		this.key = group.getId();
 		this.name = group.getLabel();
@@ -22,6 +23,7 @@ public class UserGroupDetails {
 		this.createdDate = group.getCreatedDate();
 		this.modifiedDate = group.getModifiedDate();
 		this.members = members;
+		this.canManage = canManage;
 	}
 
 	public Long getId() {
@@ -50,5 +52,9 @@ public class UserGroupDetails {
 
 	public Long getKey() {
 		return key;
+	}
+
+	public boolean isCanManage() {
+		return canManage;
 	}
 }
