@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
@@ -32,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTGroupMem
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -77,7 +75,7 @@ public class UserGroupsController {
 	 * 
 	 * @return the route to the index page.
 	 */
-	@RequestMapping
+	@RequestMapping(value = {"", "/{id}"})
 	public String getIndex() {
 		return GROUPS_LIST;
 	}
@@ -162,21 +160,21 @@ public class UserGroupsController {
 	 *            the model to write attributes to.
 	 * @return the route to the group details page.
 	 */
-	@RequestMapping("/{userGroupId}")
-	public String getDetailsPage(final @PathVariable Long userGroupId, final Principal principal, final Model model) {
-		final UserGroup group = userGroupService.read(userGroupId);
-		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
-		final User currentUser = userService.getUserByUsername(principal.getName());
-		final boolean isOwner = isGroupOwner(currentUser, group);
-
-		model.addAttribute("group", group);
-		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
-		model.addAttribute("isOwner", isOwner);
-		model.addAttribute("users", groupUsers);
-		model.addAttribute("groupRoles", ImmutableList.of(UserGroupRole.GROUP_MEMBER, UserGroupRole.GROUP_OWNER));
-
-		return GROUP_DETAILS;
-	}
+//	@RequestMapping("/{userGroupId}")
+//	public String getDetailsPage(final @PathVariable Long userGroupId, final Principal principal, final Model model) {
+//		final UserGroup group = userGroupService.read(userGroupId);
+//		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
+//		final User currentUser = userService.getUserByUsername(principal.getName());
+//		final boolean isOwner = isGroupOwner(currentUser, group);
+//
+//		model.addAttribute("group", group);
+//		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
+//		model.addAttribute("isOwner", isOwner);
+//		model.addAttribute("users", groupUsers);
+//		model.addAttribute("groupRoles", ImmutableList.of(UserGroupRole.GROUP_MEMBER, UserGroupRole.GROUP_OWNER));
+//
+//		return GROUP_DETAILS;
+//	}
 
 	/**
 	 * Get the group editing page.
@@ -214,33 +212,33 @@ public class UserGroupsController {
 	 * @return the route to the editing page on validation failure, or the
 	 *         details page on success.
 	 */
-	@RequestMapping(path = "/{userGroupId}/edit", method = RequestMethod.POST)
-	public String editGroup(final @PathVariable Long userGroupId, final @RequestParam String name,
-			final @RequestParam String description, final Principal principal, final Model model, final Locale locale) {
-		logger.debug("Editing group: [" + userGroupId + "]");
-		final Map<String, String> errors = new HashMap<>();
-		UserGroup group = userGroupService.read(userGroupId);
-
-		try {
-			group.setName(name);
-			group.setDescription(description);
-			userGroupService.update(group);
-			return getDetailsPage(userGroupId, principal, model);
-		} catch (final ConstraintViolationException e) {
-			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
-				errors.put(v.getPropertyPath().toString(), v.getMessage());
-			}
-		} catch (final EntityExistsException | DataIntegrityViolationException e) {
-			errors.put("name", messageSource.getMessage("group.name.exists", null, locale));
-		}
-
-		model.addAttribute("errors", errors);
-		model.addAttribute("group", userGroupService.read(userGroupId));
-		model.addAttribute("given_name", name);
-		model.addAttribute("given_description", description);
-
-		return GROUPS_EDIT;
-	}
+//	@RequestMapping(path = "/{userGroupId}/edit", method = RequestMethod.POST)
+//	public String editGroup(final @PathVariable Long userGroupId, final @RequestParam String name,
+//			final @RequestParam String description, final Principal principal, final Model model, final Locale locale) {
+//		logger.debug("Editing group: [" + userGroupId + "]");
+//		final Map<String, String> errors = new HashMap<>();
+//		UserGroup group = userGroupService.read(userGroupId);
+//
+//		try {
+//			group.setName(name);
+//			group.setDescription(description);
+//			userGroupService.update(group);
+//			return getDetailsPage(userGroupId, principal, model);
+//		} catch (final ConstraintViolationException e) {
+//			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
+//				errors.put(v.getPropertyPath().toString(), v.getMessage());
+//			}
+//		} catch (final EntityExistsException | DataIntegrityViolationException e) {
+//			errors.put("name", messageSource.getMessage("group.name.exists", null, locale));
+//		}
+//
+//		model.addAttribute("errors", errors);
+//		model.addAttribute("group", userGroupService.read(userGroupId));
+//		model.addAttribute("given_name", name);
+//		model.addAttribute("given_description", description);
+//
+//		return GROUPS_EDIT;
+//	}
 
 	/**
 	 * List the members in the group.

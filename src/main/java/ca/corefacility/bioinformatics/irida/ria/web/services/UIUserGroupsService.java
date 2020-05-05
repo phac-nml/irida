@@ -17,6 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupMember;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
@@ -73,6 +75,15 @@ public class UIUserGroupsService {
 		UserGroup group = userGroupService.read(id);
 		userGroupService.delete(id);
 		return messageSource.getMessage("server.usergroups.delete-success", new Object[] { group.getLabel() }, locale);
+	}
+
+	public UserGroupDetails getUserGroupDetails(Long groupId) {
+		UserGroup group = userGroupService.read(groupId);
+		Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
+		List<UserGroupMember> members = groupUsers.stream()
+				.map(UserGroupMember::new)
+				.collect(Collectors.toList());
+		return new UserGroupDetails(group, members);
 	}
 
 	/**

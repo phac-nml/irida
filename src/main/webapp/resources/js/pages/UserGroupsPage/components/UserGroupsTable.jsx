@@ -2,10 +2,11 @@ import React from "react";
 import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Button, Typography } from "antd";
+import { Typography } from "antd";
 import { RemoveTableItemButton } from "../../../components/Buttons";
 import { deleteUserGroup } from "../../../apis/users/groups";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
+import { Link } from "@reach/router";
 
 const { Paragraph } = Typography;
 
@@ -15,11 +16,7 @@ export function UserGroupsTable() {
       title: i18n("UserGroupsTable.name"),
       dataIndex: "name",
       render(text, item) {
-        return (
-          <Button type="link" href={setBaseUrl(`/groups/${item.id}`)}>
-            {text}
-          </Button>
-        );
+        return <Link to={`/groups/${item.id}`}>{text}</Link>;
       },
     },
     {
