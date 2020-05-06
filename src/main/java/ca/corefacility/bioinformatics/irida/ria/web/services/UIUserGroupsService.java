@@ -36,17 +36,9 @@ public class UIUserGroupsService {
 	private MessageSource messageSource;
 
 	@Autowired
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	@Autowired
-	public void setUserGroupService(UserGroupService userGroupService) {
+	public UIUserGroupsService(UserGroupService userGroupService, UserGroupService userService, MessageSource messageSource) {
 		this.userGroupService = userGroupService;
-	}
-
-	@Autowired
-	public void setMessageSource(MessageSource messageSource) {
+		this.userService = userService;
 		this.messageSource = messageSource;
 	}
 

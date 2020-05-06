@@ -15,6 +15,7 @@ export function UserGroupsTable() {
     {
       title: i18n("UserGroupsTable.name"),
       dataIndex: "name",
+      sorter: true,
       render(text, item) {
         return <Link to={`/groups/${item.id}`}>{text}</Link>;
       },
@@ -22,6 +23,7 @@ export function UserGroupsTable() {
     {
       title: i18n("UserGroupsTable.description"),
       dataIndex: "description",
+      sorter: true,
       width: 400,
       render(text) {
         return (
@@ -37,6 +39,7 @@ export function UserGroupsTable() {
     {
       title: i18n("UserGroupsTable.created"),
       dataIndex: "createdDate",
+      sorter: true,
       width: 200,
       render(text) {
         return formatInternationalizedDateTime(text);
