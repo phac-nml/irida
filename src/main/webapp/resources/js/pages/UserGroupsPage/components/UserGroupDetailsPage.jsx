@@ -1,57 +1,16 @@
-import React, { useContext, useEffect, useReducer } from "react";
-import { PageWrapper } from "../../components/page/PageWrapper";
+import React, { useEffect, useReducer } from "react";
+import { PageWrapper } from "../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
   getUserGroupDetails,
   updateUserGroupDetails,
-} from "../../apis/users/groups";
-import { Select, Table, Typography } from "antd";
-import { BasicList } from "../../components/lists";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import {
-  UserGroupRolesProvider,
-  UserGroupRolesContext,
-} from "../../contexts/UserGroupRolesContext";
-import { UserGroupRole } from "../../components/roles/UserGroupRole";
+} from "../../../apis/users/groups";
+import { Typography } from "antd";
+import { BasicList } from "../../../components/lists";
+import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
+import UserGroupMembersTable from "./UserGroupMembersTable";
 
 const { Paragraph } = Typography;
-
-function UserGroupMembersTable({ members, canManage, groupId }) {
-  const { roles, getRoleFromKey } = useContext(UserGroupRolesContext);
-
-  const columns = [
-    {
-      dataIndex: "name",
-      title: "Member Name",
-    },
-    {
-      title: "role",
-      dataIndex: "role",
-      width: 200,
-      render(text, user) {
-        return (
-          <UserGroupRole user={user} canManage={canManage} groupId={groupId} />
-        );
-      },
-    },
-    {
-      title: "Joined",
-      dataIndex: "createdDate",
-      width: 200,
-      render(text) {
-        return formatInternationalizedDateTime(text);
-      },
-    },
-  ];
-
-  return (
-    <Table
-      pagination={{ hideOnSinglePage: true }}
-      columns={columns}
-      dataSource={members}
-    />
-  );
-}
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -64,7 +23,7 @@ const reducer = (state, action) => {
   }
 };
 
-export function UserGroupDetails({ id }) {
+export default function UserGroupDetailsPage({ id }) {
   const [state, dispatch] = useReducer(reducer, { loading: true });
 
   const navigate = useNavigate();

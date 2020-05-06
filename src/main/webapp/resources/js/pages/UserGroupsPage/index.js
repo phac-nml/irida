@@ -1,29 +1,28 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
-import { PagedTableProvider } from "../../components/ant.design/PagedTable";
-import { UserGroupsTable } from "./components/UserGroupsTable";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { Router } from "@reach/router";
-import { PageWrapper } from "../../components/page/PageWrapper";
-import { UserGroupDetails } from "../UserGroupDetailsPage";
+import { Spin } from "antd";
+
+const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
+const UserGroupsDetailsPage = lazy(() =>
+  import("./components/UserGroupDetailsPage")
+);
 
 export function UserGroups() {
   return (
-    <PageWrapper title={"User Groups"}>
-      <PagedTableProvider url={setBaseUrl(`/ajax/user-groups/list`)}>
-        <UserGroupsTable />
-      </PagedTableProvider>
-    </PageWrapper>
+    <Suspense
+      fallback={
+        <div>
+          <Spin /> Fetching important data
+        </div>
+      }
+    >
+      <Router style={{ height: "100%" }}>
+        <UserGroupsPage path="/groups" />
+        <UserGroupsDetailsPage path="/groups/:id" />
+      </Router>
+    </Suspense>
   );
 }
 
-function UserGroupsPage() {
-  return (
-    <Router style={{ height: "100%" }}>
-      <UserGroups path="/groups" />
-      <UserGroupDetails path="/groups/:id" />
-    </Router>
-  );
-}
-
-render(<UserGroupsPage />, document.querySelector("#groups-root"));
+render(<UserGroups />, document.querySelector("#groups-root"));

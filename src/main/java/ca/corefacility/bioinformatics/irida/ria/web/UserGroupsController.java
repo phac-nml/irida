@@ -75,7 +75,7 @@ public class UserGroupsController {
 	 * 
 	 * @return the route to the index page.
 	 */
-	@RequestMapping(value = {"", "/{id}"})
+	@RequestMapping("")
 	public String getIndex() {
 		return GROUPS_LIST;
 	}
@@ -150,33 +150,6 @@ public class UserGroupsController {
 	}
 
 	/**
-	 * Get the details page for a {@link UserGroup}.
-	 * 
-	 * @param userGroupId
-	 *            the {@link UserGroup} to retrieve.
-	 * @param principal
-	 *            the user that's currently logged in.
-	 * @param model
-	 *            the model to write attributes to.
-	 * @return the route to the group details page.
-	 */
-//	@RequestMapping("/{userGroupId}")
-//	public String getDetailsPage(final @PathVariable Long userGroupId, final Principal principal, final Model model) {
-//		final UserGroup group = userGroupService.read(userGroupId);
-//		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
-//		final User currentUser = userService.getUserByUsername(principal.getName());
-//		final boolean isOwner = isGroupOwner(currentUser, group);
-//
-//		model.addAttribute("group", group);
-//		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
-//		model.addAttribute("isOwner", isOwner);
-//		model.addAttribute("users", groupUsers);
-//		model.addAttribute("groupRoles", ImmutableList.of(UserGroupRole.GROUP_MEMBER, UserGroupRole.GROUP_OWNER));
-//
-//		return GROUP_DETAILS;
-//	}
-
-	/**
 	 * Get the group editing page.
 	 * 
 	 * @param userGroupId
@@ -193,52 +166,6 @@ public class UserGroupsController {
 		model.addAttribute("given_description", group.getDescription());
 		return GROUPS_EDIT;
 	}
-
-	/**
-	 * Submit changes to the {@link UserGroup}.
-	 * 
-	 * @param userGroupId
-	 *            the group ID to edit.
-	 * @param name
-	 *            the new name of the group.
-	 * @param description
-	 *            the new description of the group.
-	 * @param principal
-	 *            the currently logged in user.
-	 * @param model
-	 *            the model to add attributes to.
-	 * @param locale
-	 *            the locale of the browser.
-	 * @return the route to the editing page on validation failure, or the
-	 *         details page on success.
-	 */
-//	@RequestMapping(path = "/{userGroupId}/edit", method = RequestMethod.POST)
-//	public String editGroup(final @PathVariable Long userGroupId, final @RequestParam String name,
-//			final @RequestParam String description, final Principal principal, final Model model, final Locale locale) {
-//		logger.debug("Editing group: [" + userGroupId + "]");
-//		final Map<String, String> errors = new HashMap<>();
-//		UserGroup group = userGroupService.read(userGroupId);
-//
-//		try {
-//			group.setName(name);
-//			group.setDescription(description);
-//			userGroupService.update(group);
-//			return getDetailsPage(userGroupId, principal, model);
-//		} catch (final ConstraintViolationException e) {
-//			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
-//				errors.put(v.getPropertyPath().toString(), v.getMessage());
-//			}
-//		} catch (final EntityExistsException | DataIntegrityViolationException e) {
-//			errors.put("name", messageSource.getMessage("group.name.exists", null, locale));
-//		}
-//
-//		model.addAttribute("errors", errors);
-//		model.addAttribute("group", userGroupService.read(userGroupId));
-//		model.addAttribute("given_name", name);
-//		model.addAttribute("given_description", description);
-//
-//		return GROUPS_EDIT;
-//	}
 
 	/**
 	 * List the members in the group.
