@@ -57,17 +57,22 @@ export function ProjectDetails() {
    * @param {string} value to be store in the field
    */
   const updateField = (field, value) => {
+    /*
+    Make sure the value actually changed, if it didn't, don't update it.
+     */
+    if (state[field] === value) return;
+
     updateProjectAttribute({
       projectId: window.project.id,
       field,
       value,
     })
-      .then((message) => {
-        notification.success({ message });
+      .then(({ data }) => {
+        notification.success({ message: data });
         dispatch({ type: "UPDATE", payload: { [field]: value } });
       })
-      .catch((message) => {
-        notification.error({ message });
+      .catch(({ response }) => {
+        notification.error({ message: response.data });
       });
   };
 

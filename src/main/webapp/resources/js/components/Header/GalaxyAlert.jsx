@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Alert } from "antd";
-import { LinkOutlined } from "@ant-design/icons";
 import { removeGalaxySession } from "../../apis/galaxy/galaxy";
 import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 import { SPACE_XS } from "../../styles/spacing";
+import { IconLinkOut } from "../icons/Icons";
 
-const GalaxyMessage = () => {
+export default function GalaxyAlert() {
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)
     .split("/tool_runner")[0];
 
-  return (
+  const message = (
     <span>
       <span style={{ fontWeight: FONT_WEIGHT_HEAVY, marginRight: SPACE_XS }}>
         {window.GALAXY.TITLE}
@@ -26,25 +26,19 @@ const GalaxyMessage = () => {
         rel="noopener noreferrer"
         href="https://irida.corefacility.ca/documentation/user/user/samples/#galaxy-export"
       >
-        {window.GALAXY.DOCUMENTATION} <LinkOutlined />
+        {window.GALAXY.DOCUMENTATION} <IconLinkOut />
       </a>
     </span>
   );
-};
 
-export default function GalaxyAlert() {
-  const [galaxy, setGalaxy] = useState(false);
-
-  useEffect(() => setGalaxy(typeof window.GALAXY !== "undefined"), []);
-
-  return galaxy ? (
+  return (
     <Alert
       type="info"
-      message={<GalaxyMessage />}
+      message={message}
       banner
       closable
       closeText={window.GALAXY.CANCEL}
       onClose={removeGalaxySession}
     />
-  ) : null;
+  );
 }

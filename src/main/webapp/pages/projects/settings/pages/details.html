@@ -7,12 +7,11 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <title>Title</title>
     <link rel="stylesheet" href="/dist/css/project-details.bundle.css">
   </head>
   <body>
     <div id="details-root" layout:fragment="settings-content" >
-      <div>LOADING ...</div>
+      <div th:text="#{ProjectDetails.loading}">LOADING ...</div>
     </div>
     <th:block layout:fragment="scripts">
       <script th:src="@{/dist/js/project-details.bundle.js}"></script>
