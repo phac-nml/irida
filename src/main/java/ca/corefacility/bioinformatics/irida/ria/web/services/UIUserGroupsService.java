@@ -27,16 +27,13 @@ import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
  */
 @Component
 public class UIUserGroupsService {
-	private UserGroupService userGroupService;
-	private MessageSource messageSource;
+	private final UserGroupService userGroupService;
+	private final MessageSource messageSource;
+
 
 	@Autowired
-	public void setUserGroupService(UserGroupService userGroupService) {
+	public UIUserGroupsService(UserGroupService userGroupService, MessageSource messageSource) {
 		this.userGroupService = userGroupService;
-	}
-
-	@Autowired
-	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
