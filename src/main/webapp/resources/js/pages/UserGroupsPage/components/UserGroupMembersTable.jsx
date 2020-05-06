@@ -5,6 +5,7 @@ import React from "react";
 import { SPACE_XS } from "../../../styles/spacing";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { stringSorter } from "../../../utilities/table-utilities";
+import { AddUserGroupMember } from "./AddUserGroupMember";
 
 const nameSorter = stringSorter("name");
 
@@ -39,7 +40,7 @@ export default function UserGroupMembersTable({ members, canManage, groupId }) {
     <>
       <div style={{ display: "flex", marginBottom: SPACE_XS }}>
         <div style={{ flex: 1 }}>
-          <AddNewButton text={"Add new Member"} />
+          {canManage ? <AddUserGroupMember id={groupId} /> : null}
         </div>
       </div>
       <Table

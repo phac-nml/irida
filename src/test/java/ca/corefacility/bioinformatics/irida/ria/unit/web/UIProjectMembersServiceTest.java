@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutO
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.NewProjectMemberRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectMembersService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -119,7 +119,7 @@ public class UIProjectMembersServiceTest {
 
 	@Test
 	public void testAddMemberToProject() {
-		NewProjectMemberRequest request = new NewProjectMemberRequest(USER_3.getId(),
+		NewMemberRequest request = new NewMemberRequest(USER_3.getId(),
 				ProjectRole.PROJECT_USER.toString());
 		service.addMemberToProject(PROJECT_ID, request, LOCALE);
 		verify(projectService, times(1)).addUserToProject(PROJECT, USER_3, ProjectRole.PROJECT_USER);

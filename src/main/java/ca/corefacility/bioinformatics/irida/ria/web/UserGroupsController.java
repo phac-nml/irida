@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,11 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTGroupMember;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -75,7 +68,7 @@ public class UserGroupsController {
 	 * 
 	 * @return the route to the index page.
 	 */
-	@RequestMapping("")
+	@RequestMapping(value = {"", "/{groupId}"})
 	public String getIndex() {
 		return GROUPS_LIST;
 	}
@@ -165,49 +158,6 @@ public class UserGroupsController {
 		model.addAttribute("given_name", group.getName());
 		model.addAttribute("given_description", group.getDescription());
 		return GROUPS_EDIT;
-	}
-
-	/**
-	 * List the members in the group.
-	 *
-	 * @param params
-	 *            the datatables parameters to search for.
-	 * @param userGroupId
-	 *            the group ID to get members for.
-	 * @return the datatables-formatted response with filtered users.
-	 */
-	@RequestMapping("/{userGroupId}/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getGroupUsers(@DataTablesRequest DataTablesParams params,
-			@PathVariable Long userGroupId) {
-		final UserGroup group = userGroupService.read(userGroupId);
-
-		final Page<UserGroupJoin> page = userGroupService.filterUsersByUsername(params.getSearchValue(), group,
-				params.getCurrentPage(), params.getLength(), params.getSort());
-		List<DataTablesResponseModel> members = page.getContent()
-				.stream()
-				.map(DTGroupMember::new)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, members);
-	}
-
-	/**
-	 * Get a list of the users that are not currently members of this group.
-	 * 
-	 * @param userGroupId
-	 *            the group ID to use as a negative filter.
-	 * @param term
-	 *            a filter on username to filter on.
-	 * @return the collection of users that match the query.
-	 */
-	@RequestMapping("/{userGroupId}/ajax/availablemembers")
-	public @ResponseBody Collection<User> getUsersNotInGroup(final @PathVariable Long userGroupId,
-			final @RequestParam String term) {
-		final UserGroup group = userGroupService.read(userGroupId);
-		logger.debug("Loading users not in group [" + userGroupId + "]");
-		final Collection<User> usersNotInGroup = userGroupService.getUsersNotInGroup(group);
-		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term.toLowerCase()))
-				.collect(Collectors.toList());
 	}
 
 	/**

@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUserGroupsService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -42,12 +43,14 @@ public class UIUserGroupsServiceText {
 	private final List<UserGroup> GROUPS = ImmutableList.of(GROUP_1, GROUP_2, GROUP_3);
 	private UIUserGroupsService service;
 	private UserGroupService userGroupService;
+	private UserService userService;
 
 	@Before
 	public void setUp() {
 		userGroupService = mock(UserGroupService.class);
+		userService = mock(UserService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		service = new UIUserGroupsService(userGroupService, messageSource);
+		service = new UIUserGroupsService(userGroupService, userService, messageSource);
 
 		/*
 		Mock the principal user

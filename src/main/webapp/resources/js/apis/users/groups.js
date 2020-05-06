@@ -46,3 +46,15 @@ export function updateUserRoleOnUserGroups({ groupId, userId, role }) {
     .put(`${BASE_URL}/${groupId}/member/role?userId=${userId}&role=${role}`)
     .then(({ data }) => data);
 }
+
+export function getAvailableUsersForUserGroup({ id, query }) {
+  return axios
+    .get(`${BASE_URL}/${id}/available?query=${query}`)
+    .then(({ data }) => data);
+}
+
+export function addMemberToUserGroup({ groupId, userId, role }) {
+  return axios
+    .put(`${BASE_URL}/${groupId}/add`, { id: userId, role })
+    .then(({ data }) => data);
+}

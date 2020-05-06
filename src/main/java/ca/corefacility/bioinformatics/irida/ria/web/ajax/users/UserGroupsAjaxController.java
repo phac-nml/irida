@@ -8,10 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupRole;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUserGroupsService;
@@ -74,5 +72,16 @@ public class UserGroupsAjaxController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(e.getMessage());
 		}
+	}
+
+	@RequestMapping("/{groupId}/available")
+	public ResponseEntity<List<User>> getAvailableUsersForUserGroup(@PathVariable Long groupId,
+			@RequestParam String query) {
+		return ResponseEntity.ok(service.getAvailableUsersForUserGroup(groupId, query));
+	}
+
+	@RequestMapping(value = "/{groupId}/add", method = RequestMethod.PUT)
+	public ResponseEntity<String> addMemberToUserGroup(@PathVariable Long groupId, @RequestBody NewMemberRequest request, Locale locale	) {
+		return ResponseEntity.ok(service.addMemberToUserGroup(groupId, request, locale));
 	}
 }

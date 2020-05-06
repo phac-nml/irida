@@ -31,12 +31,13 @@ import com.google.common.collect.ImmutableList;
  */
 @Component
 public class UIUserGroupsService {
-	private UserGroupService userGroupService;
-	private UserService userService;
-	private MessageSource messageSource;
+	private final UserGroupService userGroupService;
+	private final UserService userService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public UIUserGroupsService(UserGroupService userGroupService, UserGroupService userService, MessageSource messageSource) {
+	public UIUserGroupsService(UserGroupService userGroupService, UserService userService,
+			MessageSource messageSource) {
 		this.userGroupService = userGroupService;
 		this.userService = userService;
 		this.messageSource = messageSource;
@@ -119,6 +120,19 @@ public class UIUserGroupsService {
 						messageSource.getMessage("server.usergroups.GROUP_MEMBER", new Object[] {}, locale)));
 	}
 
+	public List<User> getAvailableUsersForUserGroup(Long groupId, String query) {
+		UserGroup group = userGroupService.read(groupId);
+		return userGroupService.getUsersNotInGroup(group, query);
+	}
+
+	public String addMemberToUserGroup(Long groupId, NewMemberRequest request, Locale locale) {
+		UserGroup group = userGroupService.read(groupId);
+		User user = userService.read(request.getId());
+		UserGroupJoin.UserGroupRole role = UserGroupJoin.UserGroupRole.fromString(request.getRole());
+		userGroupService.addUserToGroup(user, group, role);
+		return "YOU WIN A PRIZE";
+	}
+
 	/**
 	 * Determine if the current user is the owner of the current group.
 	 *
@@ -148,9 +162,11 @@ public class UIUserGroupsService {
 
 		try {
 			userGroupService.changeUserGroupRole(user, group, userGroupRole);
-			return "THIS IS GREAT!";
+			return messageSource.getMessage("server.usergroups.role-success", new Object[] { user.getLabel(), role },
+					locale);
 		} catch (UserGroupWithoutOwnerException e) {
-			throw new UserGroupWithoutOwnerException("HEY!  This needs a manager!!!!");
+			throw new UserGroupWithoutOwnerException(
+					messageSource.getMessage("server.usergroups.role-error", new Object[] { user.getLabel() }, locale));
 		}
 	}
 }
