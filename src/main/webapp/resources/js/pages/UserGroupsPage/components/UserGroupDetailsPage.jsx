@@ -40,6 +40,11 @@ export default function UserGroupDetailsPage({ id }) {
     );
   };
 
+  const updateTable = () =>
+    getUserGroupDetails(id).then((response) =>
+      dispatch({ type: "load", payload: response })
+    );
+
   const fields = state.loading
     ? []
     : [
@@ -74,6 +79,7 @@ export default function UserGroupDetailsPage({ id }) {
           desc: (
             <UserGroupRolesProvider>
               <UserGroupMembersTable
+                updateTable={updateTable}
                 members={state.members}
                 canManage={state.canManage}
                 groupId={id}

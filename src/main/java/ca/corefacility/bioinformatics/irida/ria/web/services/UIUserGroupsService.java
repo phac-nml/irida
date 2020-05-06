@@ -130,7 +130,7 @@ public class UIUserGroupsService {
 		User user = userService.read(request.getId());
 		UserGroupJoin.UserGroupRole role = UserGroupJoin.UserGroupRole.fromString(request.getRole());
 		userGroupService.addUserToGroup(user, group, role);
-		return "YOU WIN A PRIZE";
+		return messageSource.getMessage("server.usergroups.add-member", new Object[]{user.getLabel()}, locale);
 	}
 
 	/**

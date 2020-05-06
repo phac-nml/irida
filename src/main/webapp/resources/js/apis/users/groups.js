@@ -55,6 +55,6 @@ export function getAvailableUsersForUserGroup({ id, query }) {
 
 export function addMemberToUserGroup({ groupId, userId, role }) {
   return axios
-    .put(`${BASE_URL}/${groupId}/add`, { id: userId, role })
+    .post(`${BASE_URL}/${groupId}/add`, { id: userId, role })
     .then(({ data }) => data);
 }

@@ -80,7 +80,7 @@ public class UserGroupsAjaxController {
 		return ResponseEntity.ok(service.getAvailableUsersForUserGroup(groupId, query));
 	}
 
-	@RequestMapping(value = "/{groupId}/add", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{groupId}/add", method = RequestMethod.POST)
 	public ResponseEntity<String> addMemberToUserGroup(@PathVariable Long groupId, @RequestBody NewMemberRequest request, Locale locale	) {
 		return ResponseEntity.ok(service.addMemberToUserGroup(groupId, request, locale));
 	}
