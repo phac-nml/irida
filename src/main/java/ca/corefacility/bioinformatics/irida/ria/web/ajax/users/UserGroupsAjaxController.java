@@ -84,4 +84,14 @@ public class UserGroupsAjaxController {
 	public ResponseEntity<String> addMemberToUserGroup(@PathVariable Long groupId, @RequestBody NewMemberRequest request, Locale locale	) {
 		return ResponseEntity.ok(service.addMemberToUserGroup(groupId, request, locale));
 	}
+
+	@RequestMapping(value = "/{groupId}/remove", method = RequestMethod.DELETE)
+	public ResponseEntity<String> removeMemberFromUserGroup(@PathVariable Long groupId, @RequestParam Long userId, Locale locale	) {
+		try {
+			return ResponseEntity.ok(service.removeMemberFromUserGroup(groupId, userId, locale));
+		} catch (UserGroupWithoutOwnerException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(e.getMessage());
+		}
+	}
 }

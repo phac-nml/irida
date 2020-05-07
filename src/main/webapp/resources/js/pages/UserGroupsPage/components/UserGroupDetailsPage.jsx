@@ -5,10 +5,11 @@ import {
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../../apis/users/groups";
-import { Typography } from "antd";
+import { Button, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
 import UserGroupMembersTable from "./UserGroupMembersTable";
+import { WarningAlert } from "../../../components/alerts";
 
 const { Paragraph } = Typography;
 
@@ -88,6 +89,21 @@ export default function UserGroupDetailsPage({ id }) {
           ),
         },
       ];
+
+  if (state.canManage) {
+    fields.push({
+      title: "Settings",
+      desc: (
+        <WarningAlert
+          message={
+            <div>
+              <Button>DELETE</Button>
+            </div>
+          }
+        />
+      ),
+    });
+  }
 
   return (
     <PageWrapper

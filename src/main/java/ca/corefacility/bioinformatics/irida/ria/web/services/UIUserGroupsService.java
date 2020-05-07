@@ -169,4 +169,19 @@ public class UIUserGroupsService {
 					messageSource.getMessage("server.usergroups.role-error", new Object[] { user.getLabel() }, locale));
 		}
 	}
+
+	public String removeMemberFromUserGroup(Long groupId, Long userId, Locale locale)
+			throws UserGroupWithoutOwnerException {
+		UserGroup group = userGroupService.read(groupId);
+		User user = userService.read(userId);
+		try {
+			userGroupService.removeUserFromGroup(user, group);
+			return messageSource.getMessage("server.usergroups.remove-member.success", new Object[] { user.getLabel() },
+					locale);
+		} catch (UserGroupWithoutOwnerException e) {
+			throw new UserGroupWithoutOwnerException(
+					messageSource.getMessage("server.usergroups.remove-member.error", new Object[] { user.getLabel() },
+							locale));
+		}
+	}
 }

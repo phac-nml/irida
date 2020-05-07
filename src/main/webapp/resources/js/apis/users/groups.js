@@ -58,3 +58,9 @@ export function addMemberToUserGroup({ groupId, userId, role }) {
     .post(`${BASE_URL}/${groupId}/add`, { id: userId, role })
     .then(({ data }) => data);
 }
+
+export function removeMemberFromUserGroup({ groupId, userId }) {
+  return axios
+    .delete(`${BASE_URL}/${groupId}/remove?userId=${userId}`)
+    .then(({ data }) => data);
+}

@@ -8,6 +8,11 @@ const UserGroupsDetailsPage = lazy(() =>
   import("./components/UserGroupDetailsPage")
 );
 
+/**
+ * React component to display pages related to User Groups
+ * @returns {*}
+ * @constructor
+ */
 export function UserGroups() {
   return (
     <Suspense
