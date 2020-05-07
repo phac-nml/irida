@@ -1,13 +1,10 @@
 import React from "react";
 import { render } from "react-dom";
-import { Layout } from "antd";
 import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
-import { MainNavigation } from "../nav/MainNavigation";
 import { Breadcrumbs } from "./Breadcrumbs";
-
-const { Content, Header } = Layout;
+import { MainNavigation } from "../nav/MainNavigation";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -17,17 +14,28 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = `dist/`;
 
-export function PageHeader({ children }) {
-  return (
-    <Layout>
-      <MainNavigation />
-      <Breadcrumbs crumbs={window.breadcrumbs || []} />
-      <Session />
-      <Notifications />
-      <GalaxyAlert />
-      <Content>{children}</Content>
-    </Layout>
-  );
+export class PageHeader extends React.Component {
+  state = {
+    inGalaxy: false,
+  };
+
+  componentDidMount() {
+    if (typeof window.GALAXY !== "undefined") {
+      this.setState({ inGalaxy: true });
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <MainNavigation />
+        <Breadcrumbs crumbs={window.breadcrumbs} />
+        <Session />
+        <Notifications />
+        {this.state.inGalaxy ? <GalaxyAlert /> : null}
+      </div>
+    );
+  }
 }
 
 render(<PageHeader />, document.querySelector(".js-page-header"));
