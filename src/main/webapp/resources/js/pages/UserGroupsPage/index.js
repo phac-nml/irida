@@ -5,6 +5,11 @@ import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { UserGroupsTable } from "./components/UserGroupsTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+/**
+ * React component to display pages related to User Groupss
+ * @returns {*}
+ * @constructor
+ */
 export function Index() {
   return (
     <PagedTableProvider url={setBaseUrl(`/ajax/user-groups/list`)}>
