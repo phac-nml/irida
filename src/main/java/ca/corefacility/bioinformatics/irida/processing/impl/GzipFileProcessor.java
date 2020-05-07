@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class GzipFileProcessor implements FileProcessor {
 	@Transactional
 	@Override
 	public void process(SequencingObject sequencingObject) {
-		if (!disableFileProcessor) {
+		if (!disableFileProcessor && !(sequencingObject instanceof Fast5Object)) {
 			for (SequenceFile file : sequencingObject.getFiles()) {
 				processSingleFile(file);
 			}
