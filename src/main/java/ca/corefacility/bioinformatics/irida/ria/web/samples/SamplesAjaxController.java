@@ -87,6 +87,28 @@ public class SamplesAjaxController {
 		}
 	}
 
+	@RequestMapping(value = "/{sampleId}/fast5/upload", method = RequestMethod.POST)
+	public ResponseEntity<String> uploadFast5Files(@PathVariable Long sampleId, MultipartHttpServletRequest request,
+			Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		try {
+			for (MultipartFile file : files) {
+				createFast5FileInSample(file, sample);
+			}
+			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
+					new Object[] { sample.getSampleName() }, locale));
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("");
+		}
+	}
+
 	/**
 	 * Upload assemblies to the given sample
 	 *
