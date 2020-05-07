@@ -57,7 +57,7 @@ export function SampleFileUploader() {
       </Menu.Item>
       <Menu.Item>
         <FileUploader
-          allowedTypes=".fast5"
+          allowedTypes=".fast5,.gz"
           url={setBaseUrl(`ajax/samples/${window.PAGE.id}/fast5/upload`)}
           onSuccess={onSuccess}
           onUpload={onUpload}
