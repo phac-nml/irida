@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,17 +15,17 @@ import static org.mockito.Mockito.*;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.GroupsController;
+import ca.corefacility.bioinformatics.irida.ria.web.UserGroupsController;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * Unit Tests for {@link GroupsController}
+ * Unit Tests for {@link UserGroupsController}
  */
-public class GroupsControllerTest {
+public class UserGroupsControllerTest {
 
 	//Controller and Services
-	private GroupsController controller;
+	private UserGroupsController controller;
 	private UserService userService;
 	private UserGroupService userGroupService;
 	private MessageSource messageSource;
@@ -36,7 +35,7 @@ public class GroupsControllerTest {
 		this.userService = mock(UserService.class);
 		this.userGroupService = mock(UserGroupService.class);
 		this.messageSource = mock(MessageSource.class);
-		controller = new GroupsController(userGroupService, userService, messageSource);
+		controller = new UserGroupsController(userGroupService, userService, messageSource);
 	}
 
 	@Test
