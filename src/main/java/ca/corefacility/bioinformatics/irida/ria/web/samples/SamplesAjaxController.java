@@ -68,7 +68,6 @@ public class SamplesAjaxController {
 		SamplePairer samplePairer = new SamplePairer(files);
 		final Map<String, List<MultipartFile>> pairedFiles = samplePairer.getPairedFiles(files);
 		final List<MultipartFile> singleFiles = samplePairer.getSingleFiles(files);
-		final List<MultipartFile> fast5Files = samplePairer.getFast5Files();
 
 		try {
 			for (String key : pairedFiles.keySet()) {
@@ -78,10 +77,6 @@ public class SamplesAjaxController {
 
 			for (MultipartFile file : singleFiles) {
 				createSequenceFileInSample(file, sample);
-			}
-
-			for (MultipartFile file : fast5Files) {
-				createFast5FileInSample(file, sample);
 			}
 
 			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
