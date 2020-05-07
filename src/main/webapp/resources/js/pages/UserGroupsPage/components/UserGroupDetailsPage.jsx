@@ -1,15 +1,16 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../../apis/users/groups";
-import { Button, Typography } from "antd";
+import { Button, Popconfirm, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
 import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
+import { SPACE_SM } from "../../../styles/spacing";
 
 const { Paragraph } = Typography;
 
@@ -26,6 +27,7 @@ const reducer = (state, action) => {
 
 export default function UserGroupDetailsPage({ id }) {
   const [state, dispatch] = useReducer(reducer, { loading: true });
+  const deleteRef = useRef();
 
   const navigate = useNavigate();
 
@@ -92,15 +94,28 @@ export default function UserGroupDetailsPage({ id }) {
 
   if (state.canManage) {
     fields.push({
-      title: "Settings",
+      title: "Delete User Group",
       desc: (
-        <WarningAlert
-          message={
-            <div>
-              <Button>DELETE</Button>
-            </div>
-          }
-        />
+        <div>
+          <WarningAlert
+            message={
+              "Warning! Deletion of a user group is a permanent action!  Members will no longer have access to the project this group belonged to."
+            }
+          />
+          <form
+            style={{ marginTop: SPACE_SM }}
+            ref={deleteRef}
+            action={`/groups/${id}/delete`}
+            method="POST"
+          >
+            <Popconfirm
+              onConfirm={() => deleteRef.current.submit()}
+              title={"Delete this group?"}
+            >
+              <Button danger>Delete</Button>
+            </Popconfirm>
+          </form>
+        </div>
       ),
     });
   }

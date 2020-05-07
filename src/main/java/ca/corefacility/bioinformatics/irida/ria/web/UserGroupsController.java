@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -13,18 +15,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for interacting with {@link UserGroup}.
@@ -33,7 +32,6 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping(value = "/groups")
 public class UserGroupsController {
 
-	public static final int MAX_PROJECTS_TO_DISPLAY = 3;
 	private static final Logger logger = LoggerFactory.getLogger(UserGroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
@@ -65,17 +63,37 @@ public class UserGroupsController {
 
 	/**
 	 * Get the default index page for listing groups.
-	 * 
+	 *
 	 * @return the route to the index page.
 	 */
-	@RequestMapping(value = {"", "/{groupId}"})
+	@RequestMapping("")
 	public String getIndex() {
 		return GROUPS_LIST;
 	}
 
 	/**
+	 * Get the default index page for listing groups.
+	 *
+	 * @return the route to the index page.
+	 */
+	@RequestMapping("/{groupId}")
+	public String getGroupDetailsPage(@PathVariable Long groupId) {
+		/*
+		Try reading the project to make sure it exists first.
+		 */
+		userGroupService.read(groupId);
+		return GROUPS_LIST;
+	}
+
+	@RequestMapping(value = "/{groupId}/delete", method = RequestMethod.POST)
+	public String deleteUserGroup(@PathVariable Long groupId) {
+		userGroupService.delete(groupId);
+		return "redirect:/groups";
+	}
+
+	/**
 	 * Get the page to create a new group.
-	 * 
+	 *
 	 * @return the route to the creation page.
 	 */
 	@RequestMapping("/create")
@@ -118,145 +136,5 @@ public class UserGroupsController {
 		model.addAttribute("given_description", userGroup.getDescription());
 
 		return GROUPS_CREATE;
-	}
-
-	/**
-	 * Convenience method for checking whether or not the specified user is an
-	 * owner of the group.
-	 * 
-	 * @param user
-	 *            the {@link User} to check.
-	 * @param group
-	 *            the {@link UserGroup} to check.
-	 * @return true if owner, false otherwise.
-	 */
-	private boolean isGroupOwner(final User user, final UserGroup group) {
-		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
-		final Optional<UserGroupJoin> currentUserGroup = groupUsers.stream().filter(j -> j.getSubject().equals(user))
-				.findAny();
-		if (currentUserGroup.isPresent()) {
-			final UserGroupJoin j = currentUserGroup.get();
-			return j.getRole().equals(UserGroupRole.GROUP_OWNER);
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Get the group editing page.
-	 * 
-	 * @param userGroupId
-	 *            the group id to edit.
-	 * @param model
-	 *            the model to write attributes to.
-	 * @return the route to the editing page.
-	 */
-	@RequestMapping(path = "/{userGroupId}/edit")
-	public String getEditPage(final @PathVariable Long userGroupId, final Model model) {
-		final UserGroup group = userGroupService.read(userGroupId);
-		model.addAttribute("group", group);
-		model.addAttribute("given_name", group.getName());
-		model.addAttribute("given_description", group.getDescription());
-		return GROUPS_EDIT;
-	}
-
-	/**
-	 * Add a new user to the group.
-	 * 
-	 * @param userGroupId
-	 *            the group to add to.
-	 * @param userId
-	 *            the new member.
-	 * @param groupRole
-	 *            the role this user should have.
-	 * @param locale
-	 *            the locale of the browser.
-	 * @return a message indicating success.
-	 */
-	@RequestMapping(path = "/{userGroupId}/members", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> addUserToGroup(final @PathVariable Long userGroupId,
-			final @RequestParam Long userId, @RequestParam String groupRole, Locale locale) {
-		final User user = userService.read(userId);
-		final UserGroup group = userGroupService.read(userGroupId);
-		final UserGroupRole role = UserGroupRole.valueOf(groupRole);
-		userGroupService.addUserToGroup(user, group, role);
-		return ImmutableMap.of("result", messageSource.getMessage("group.users.add.notification.success",
-				new Object[] { user.getLabel() }, locale));
-	}
-
-	/**
-	 * Remove a user from a group.
-	 * 
-	 * @param userGroupId
-	 *            the group to remove from.
-	 * @param userId
-	 *            the user to remove.
-	 * @param locale
-	 *            the locale of the browser.
-	 * @return a message indicating success.
-	 */
-	@RequestMapping(path = "/{userGroupId}/members/{userId}", method = RequestMethod.DELETE)
-	public @ResponseBody Map<String, String> removeUserFromGroup(final @PathVariable Long userGroupId,
-			final @PathVariable Long userId, Locale locale) {
-		final User user = userService.read(userId);
-		final UserGroup group = userGroupService.read(userGroupId);
-		
-		try {
-			userGroupService.removeUserFromGroup(user, group);
-			return ImmutableMap.of("success", messageSource.getMessage("group.users.remove.notification.success",
-					new Object[] { user.getLabel() }, locale));
-		} catch (final UserGroupWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("group.users.remove.notification.failure",
-					new Object[] { user.getLabel() }, locale));
-		}
-	}
-	
-	/**
-	 * Get a string to tell the user which group they're going to delete.
-	 * 
-	 * @param userId
-	 *            the user group that's about to be deleted.
-	 * @param model
-	 *            model for the view to render
-	 * @return a message indicating which group is going to be deleted.
-	 */
-	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
-	public String getRemoveUserModal(final @RequestParam Long userId, final Model model) {
-		final User user = userService.read(userId);
-		model.addAttribute("user", user);
-		return GROUPS_USER_MODAL;
-	}
-	
-	/**
-	 * Update a user's role on a group
-	 * 
-	 * @param groupId
-	 *            The ID of the group
-	 * @param userId
-	 *            The ID of the user
-	 * @param groupRole
-	 *            The role to set
-	 * @param locale
-	 *            Locale of the logged in user
-	 * 
-	 * @return message indicating update result
-	 */
-	@RequestMapping(path = "/{groupId}/members/editrole/{userId}", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateUserRole(final @PathVariable Long groupId, final @PathVariable Long userId,
-			final @RequestParam String groupRole, final Locale locale) {
-		final UserGroup group = userGroupService.read(groupId);
-		final User user = userService.read(userId);
-		final UserGroupRole userGroupRole = UserGroupRole.fromString(groupRole);
-		final String roleName = messageSource.getMessage("group.users.role." + groupRole, new Object[] {}, locale);
-
-		try {
-			userGroupService.changeUserGroupRole(user, group, userGroupRole);
-			return ImmutableMap.of("success", messageSource.getMessage("group.members.edit.role.success",
-					new Object[] { user.getLabel(), roleName }, locale));
-		} catch (final UserGroupWithoutOwnerException e) {
-			return ImmutableMap.of("failure", messageSource.getMessage("group.members.edit.role.failure",
-					new Object[] { user.getLabel(), roleName }, locale));
-		}
 	}
 }

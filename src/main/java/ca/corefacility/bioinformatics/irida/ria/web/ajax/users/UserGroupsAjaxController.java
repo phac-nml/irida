@@ -45,7 +45,7 @@ public class UserGroupsAjaxController {
 	 * @return Message to user about what happened
 	 */
 	@RequestMapping(value = "", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteUserGroups(@RequestParam Long id, Locale locale) {
+	public ResponseEntity<String> deleteUserGroup(@RequestParam Long id, Locale locale) {
 		return ResponseEntity.ok(service.deleteUserGroup(id, locale));
 	}
 
