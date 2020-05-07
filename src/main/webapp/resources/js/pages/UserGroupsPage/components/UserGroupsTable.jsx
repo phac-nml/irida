@@ -10,6 +10,11 @@ import { Link } from "@reach/router";
 
 const { Paragraph } = Typography;
 
+/**
+ * React component for rendering a Table to display user groups.
+ * @returns {*}
+ * @constructor
+ */
 export function UserGroupsTable() {
   const columns = [
     {
