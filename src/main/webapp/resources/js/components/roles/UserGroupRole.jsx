@@ -9,7 +9,7 @@ export function UserGroupRole({ user, canManage, groupId }) {
   const { roles, getRoleFromKey } = useContext(UserGroupRolesContext);
 
   const onChange = (value) => {
-    if (value !== user.role) {
+    if (value !== role) {
       setLoading(true);
       updateUserRoleOnUserGroups({ groupId, userId: user.id, role: value })
         .then((message) => {

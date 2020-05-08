@@ -9,7 +9,8 @@ const UserGroupsDetailsPage = lazy(() =>
 );
 
 /**
- * React component to display pages related to User Groups
+ * React component to display pages related to User Groups.  This is a base page
+ * for both listing of user groups and user group details.
  * @returns {*}
  * @constructor
  */
@@ -17,8 +18,17 @@ export function UserGroups() {
   return (
     <Suspense
       fallback={
-        <div>
-          <Spin /> Fetching important data
+        <div
+          style={{
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <span>
+            <Spin /> Fetching important data
+          </span>
         </div>
       }
     >

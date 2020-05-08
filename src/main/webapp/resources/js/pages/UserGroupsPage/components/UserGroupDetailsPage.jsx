@@ -101,11 +101,7 @@ export default function UserGroupDetailsPage({ id }) {
 
   const DeleteGroup = () => (
     <div>
-      <WarningAlert
-        message={
-          "Warning! Deletion of a user group is a permanent action!  Members will no longer have access to the project this group belonged to."
-        }
-      />
+      <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
       <form
         style={{ marginTop: SPACE_SM }}
         ref={deleteRef}
@@ -114,9 +110,11 @@ export default function UserGroupDetailsPage({ id }) {
       >
         <Popconfirm
           onConfirm={() => deleteRef.current.submit()}
-          title={"Delete this group?"}
+          title={i18n("UserGroupDetailsPage.delete-confirm")}
         >
-          <Button danger>Delete</Button>
+          <Button type="primary" danger>
+            {i18n("UserGroupDetailsPage.delete-button")}
+          </Button>
         </Popconfirm>
       </form>
     </div>
@@ -127,7 +125,11 @@ export default function UserGroupDetailsPage({ id }) {
       title={"User Groups"}
       onBack={() => navigate("/groups", { replace: true })}
     >
-      <Tabs defaultActiveKey="details" tabPosition="left">
+      <Tabs
+        defaultActiveKey="details"
+        tabPosition="left"
+        tabBarStyle={{ width: 200 }}
+      >
         <TabPane tab={i18n("UserGroupDetailsPage.tab.details")} key="details">
           <Title level={4}>User Group Details</Title>
           <BasicList dataSource={fields} />

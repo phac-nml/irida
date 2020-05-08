@@ -171,10 +171,11 @@ public class UIUserGroupsService {
 		UserGroup group = userGroupService.read(groupId);
 		User user = userService.read(userId);
 		UserGroupJoin.UserGroupRole userGroupRole = UserGroupJoin.UserGroupRole.fromString(role);
+		String roleTranslated = messageSource.getMessage("server.usergroups." + role, new Object[] {}, locale);
 
 		try {
 			userGroupService.changeUserGroupRole(user, group, userGroupRole);
-			return messageSource.getMessage("server.usergroups.role-success", new Object[] { user.getLabel(), role },
+			return messageSource.getMessage("server.usergroups.role-success", new Object[] { user.getLabel(), roleTranslated },
 					locale);
 		} catch (UserGroupWithoutOwnerException e) {
 			throw new UserGroupWithoutOwnerException(
