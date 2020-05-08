@@ -9,7 +9,7 @@ export function UserGroupProjectsTable({ groupId }) {
   const columns = [
     {
       dataIndex: "name",
-      title: "NAME",
+      title: i18n("UserGroupProjectTable.name"),
       render(text, item) {
         return (
           <Button href={setBaseUrl(`/projects/${item.id}`)} type="link">
@@ -18,7 +18,7 @@ export function UserGroupProjectsTable({ groupId }) {
         );
       },
     },
-    { dataIndex: "role", title: "PROJECT ROLE" },
+    { dataIndex: "role", title: i18n("UserGroupProjectTable.role") },
     {
       title: "DATE ADDED",
       dataIndex: "createdDate",
