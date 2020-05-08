@@ -27,8 +27,8 @@ import ca.corefacility.bioinformatics.irida.util.FileUtils;
  * compressed file does not end with ".gz", then it will be renamed as such so
  * that the decompressed file name will not conflict with the compressed file
  * name.
- * 
- * 
+ *
+ *
  */
 @Component
 public class GzipFileProcessor implements FileProcessor {
@@ -54,17 +54,17 @@ public class GzipFileProcessor implements FileProcessor {
 	 * Decide whether or not to delete the original compressed files that are
 	 * uploaded once they're unzipped. If <code>false</code> they will be kept
 	 * in their revision directories.
-	 * 
+	 *
 	 * @param removeCompressedFile
 	 *            Whether or not to delete original compressed files.
 	 */
 	public void setRemoveCompressedFiles(boolean removeCompressedFile) {
 		this.removeCompressedFile = removeCompressedFile;
 	}
-	
+
 	/**
 	 * Disables this file processor from processing files.
-	 * 
+	 *
 	 * @param disableFileProcessor True if this processor should be disabled, false
 	 *                             otherwise.
 	 */
@@ -74,22 +74,23 @@ public class GzipFileProcessor implements FileProcessor {
 
 	/**
 	 * {@inheritDoc}
-	 */
-	@Transactional
-	@Override
-	public void process(SequencingObject sequencingObject) {
-		if (!disableFileProcessor && !(sequencingObject instanceof Fast5Object)) {
-			for (SequenceFile file : sequencingObject.getFiles()) {
-				processSingleFile(file);
-			}
-		} else {
+     */
+    @Transactional
+    @Override
+    public void process(SequencingObject sequencingObject) {
+        //we don't want to unzip fast5 objects for now because it may be a directory of objects
+        if (!disableFileProcessor && !(sequencingObject instanceof Fast5Object)) {
+            for (SequenceFile file : sequencingObject.getFiles()) {
+                processSingleFile(file);
+            }
+        } else {
 			logger.debug("Not running process. It has been disabled");
 		}
 	}
 
 	/**
 	 * Process a single {@link SequenceFile}
-	 * 
+	 *
 	 * @param sequenceFile
 	 *            file to process
 	 * @throws FileProcessorException
@@ -100,7 +101,7 @@ public class GzipFileProcessor implements FileProcessor {
 			logger.debug("Not running processSingleFile. It has been disabled");
 			return;
 		}
-		
+
 		Path file = sequenceFile.getFile();
 		String nameWithoutExtension = file.getFileName().toString();
 
@@ -149,7 +150,7 @@ public class GzipFileProcessor implements FileProcessor {
 
 	/**
 	 * Ensures that the supplied file ends with a specific extension.
-	 * 
+	 *
 	 * @param file
 	 *            the file to handle.
 	 * @return the modified (or not) file.
