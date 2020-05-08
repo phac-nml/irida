@@ -5,7 +5,7 @@ import {
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../../apis/users/groups";
-import { Button, Popconfirm, Typography } from "antd";
+import { Button, Popconfirm, Tabs, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
 import UserGroupMembersTable from "./UserGroupMembersTable";
@@ -13,6 +13,7 @@ import { WarningAlert } from "../../../components/alerts";
 import { SPACE_SM } from "../../../styles/spacing";
 
 const { Paragraph } = Typography;
+const { TabPane } = Tabs;
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -20,13 +21,18 @@ const reducer = (state, action) => {
       return { ...state, loading: false, ...action.payload };
     case "update":
       return { ...state, ...action.payload };
+    case "tab":
+      return { ...state, ...action.payload };
     default:
       return { ...state };
   }
 };
 
 export default function UserGroupDetailsPage({ id }) {
-  const [state, dispatch] = useReducer(reducer, { loading: true });
+  const [state, dispatch] = useReducer(reducer, {
+    loading: true,
+    tab: "members",
+  });
   const deleteRef = useRef();
 
   const navigate = useNavigate();
@@ -52,7 +58,7 @@ export default function UserGroupDetailsPage({ id }) {
     ? []
     : [
         {
-          title: "Name",
+          title: i18n("UserGroupDetailsPage.name"),
           desc: state.canManage ? (
             <Paragraph
               editable={{ onChange: (value) => updateField("name", value) }}
@@ -64,7 +70,7 @@ export default function UserGroupDetailsPage({ id }) {
           ),
         },
         {
-          title: "Description",
+          title: i18n("UserGroupDetailsPage.description"),
           desc: state.canManage ? (
             <Paragraph
               editable={{
@@ -78,7 +84,7 @@ export default function UserGroupDetailsPage({ id }) {
           ),
         },
         {
-          title: "Members",
+          title: i18n("UserGroupDetailsPage.members"),
           desc: (
             <UserGroupRolesProvider>
               <UserGroupMembersTable
@@ -92,40 +98,47 @@ export default function UserGroupDetailsPage({ id }) {
         },
       ];
 
-  if (state.canManage) {
-    fields.push({
-      title: "Delete User Group",
-      desc: (
-        <div>
-          <WarningAlert
-            message={
-              "Warning! Deletion of a user group is a permanent action!  Members will no longer have access to the project this group belonged to."
-            }
-          />
-          <form
-            style={{ marginTop: SPACE_SM }}
-            ref={deleteRef}
-            action={`/groups/${id}/delete`}
-            method="POST"
-          >
-            <Popconfirm
-              onConfirm={() => deleteRef.current.submit()}
-              title={"Delete this group?"}
-            >
-              <Button danger>Delete</Button>
-            </Popconfirm>
-          </form>
-        </div>
-      ),
-    });
-  }
+  const DeleteGroup = () => (
+    <div>
+      <WarningAlert
+        message={
+          "Warning! Deletion of a user group is a permanent action!  Members will no longer have access to the project this group belonged to."
+        }
+      />
+      <form
+        style={{ marginTop: SPACE_SM }}
+        ref={deleteRef}
+        action={`/groups/${id}/delete`}
+        method="POST"
+      >
+        <Popconfirm
+          onConfirm={() => deleteRef.current.submit()}
+          title={"Delete this group?"}
+        >
+          <Button danger>Delete</Button>
+        </Popconfirm>
+      </form>
+    </div>
+  );
 
   return (
     <PageWrapper
       title={"User Groups"}
       onBack={() => navigate("/groups", { replace: true })}
     >
-      <BasicList dataSource={fields} />
+      <Tabs defaultActiveKey="details" tabPosition="left">
+        <TabPane tab={"DETAILS"} key="details">
+          <BasicList dataSource={fields} />
+        </TabPane>
+        <TabPane tab={i18n("UserGroupDetailsPage.projects")} key="project">
+          PROJECTS HERE
+        </TabPane>
+        {state.canManage ? (
+          <TabPane tab={"Delete Group"} key="delete">
+            <DeleteGroup />
+          </TabPane>
+        ) : null}
+      </Tabs>
     </PageWrapper>
   );
 }

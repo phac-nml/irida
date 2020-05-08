@@ -3,8 +3,6 @@ import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Typography } from "antd";
-import { RemoveTableItemButton } from "../../../components/Buttons";
-import { deleteUserGroup } from "../../../apis/users/groups";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Link } from "@reach/router";
 
@@ -48,24 +46,6 @@ export function UserGroupsTable() {
       width: 200,
       render(text) {
         return formatInternationalizedDateTime(text);
-      },
-    },
-    {
-      dataIndex: "canManage",
-      align: "right",
-      width: 50,
-      render(canManage, group) {
-        return canManage ? (
-          <RemoveTableItemButton
-            onRemove={() => deleteUserGroup(group.id)}
-            confirmText={
-              <div style={{ maxWidth: 250 }}>
-                {i18n("UserGroupsTable.delete-confirm")}
-              </div>
-            }
-            tooltipText={i18n("UserGroupsTable.delete-tooltip")}
-          />
-        ) : null;
       },
     },
   ];
