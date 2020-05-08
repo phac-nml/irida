@@ -13,10 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
@@ -183,5 +185,17 @@ public class UIUserGroupsService {
 					messageSource.getMessage("server.usergroups.remove-member.error", new Object[] { user.getLabel() },
 							locale));
 		}
+	}
+
+	public List<UserGroupProjectTableModel> getProjectsForUserGroup(Long groupId, Locale locale) {
+		UserGroup group = userGroupService.read(groupId);
+		Collection<UserGroupProjectJoin> joins = userGroupService.getProjectsWithUserGroup(group);
+		return joins.stream()
+				.map(join -> {
+					ProjectRole role = join.getProjectRole();
+					return new UserGroupProjectTableModel(join,
+							messageSource.getMessage("projectRole." + role.toString(), new Object[] {}, locale));
+				})
+				.collect(Collectors.toList());
 	}
 }

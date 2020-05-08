@@ -64,3 +64,7 @@ export function removeMemberFromUserGroup({ groupId, userId }) {
     .delete(`${BASE_URL}/${groupId}/remove?userId=${userId}`)
     .then(({ data }) => data);
 }
+
+export function getProjectsForUserGroup(groupId) {
+  return axios.get(`${BASE_URL}/${groupId}/projects`).then(({ data }) => data);
+}

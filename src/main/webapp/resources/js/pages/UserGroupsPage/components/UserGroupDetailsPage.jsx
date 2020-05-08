@@ -11,8 +11,9 @@ import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext"
 import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
 import { SPACE_SM } from "../../../styles/spacing";
+import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
 
 const reducer = (state, action) => {
@@ -127,14 +128,17 @@ export default function UserGroupDetailsPage({ id }) {
       onBack={() => navigate("/groups", { replace: true })}
     >
       <Tabs defaultActiveKey="details" tabPosition="left">
-        <TabPane tab={"DETAILS"} key="details">
+        <TabPane tab={i18n("UserGroupDetailsPage.tab.details")} key="details">
+          <Title level={4}>User Group Details</Title>
           <BasicList dataSource={fields} />
         </TabPane>
-        <TabPane tab={i18n("UserGroupDetailsPage.projects")} key="project">
-          PROJECTS HERE
+        <TabPane tab={i18n("UserGroupDetailsPage.tab.projects")} key="project">
+          <Title level={4}>User Group Projects</Title>
+          <UserGroupProjectsTable groupId={id} />
         </TabPane>
         {state.canManage ? (
-          <TabPane tab={"Delete Group"} key="delete">
+          <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
+            <Title level={4}>Delete User Group</Title>
             <DeleteGroup />
           </TabPane>
         ) : null}

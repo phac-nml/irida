@@ -94,4 +94,9 @@ public class UserGroupsAjaxController {
 					.body(e.getMessage());
 		}
 	}
+
+	@RequestMapping("/{groupId}/projects")
+	public ResponseEntity<List<UserGroupProjectTableModel>> getProjectsForUserGroup(@PathVariable Long groupId, Locale locale) {
+		return ResponseEntity.ok(service.getProjectsForUserGroup(groupId, locale));
+	}
 }
