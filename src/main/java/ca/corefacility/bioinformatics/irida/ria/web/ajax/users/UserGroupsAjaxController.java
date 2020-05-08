@@ -49,23 +49,51 @@ public class UserGroupsAjaxController {
 		return ResponseEntity.ok(service.deleteUserGroup(id, locale));
 	}
 
+	/**
+	 * Get the details about a user group
+	 *
+	 * @param groupId identifier for a user group
+	 * @return details about a user group
+	 */
 	@RequestMapping(value = "/{groupId}", method = RequestMethod.GET)
 	public ResponseEntity<UserGroupDetails> getUserGroupDetails(@PathVariable Long groupId) {
 		return ResponseEntity.ok(service.getUserGroupDetails(groupId));
 	}
 
+	/**
+	 * Update the details within a user group
+	 *
+	 * @param groupId identifier for the user group
+	 * @param update  {@link FieldUpdate} containing name of field to update and the new value
+	 */
 	@RequestMapping(value = "/{groupId}/update", method = RequestMethod.PUT)
 	public void updateGroupDetails(@PathVariable Long groupId, @RequestBody FieldUpdate update) {
 		service.updateGroupDetails(groupId, update);
 	}
 
+	/**
+	 * Get a list of all user group roles
+	 *
+	 * @param locale current users {@link Locale}
+	 * @return list of all internationalized user group roles
+	 */
 	@RequestMapping("/roles")
 	public List<UserGroupRole> getUserGroupRoles(Locale locale) {
 		return service.getUserGroupRoles(locale);
 	}
 
+	/**
+	 * Update a group members role on the user groups
+	 *
+	 * @param groupId Identifier for an user group
+	 * @param userId  Identifier for a user
+	 * @param role    role to update the user to in the user group
+	 * @param locale  current users locale
+	 * @return message to user about the result of the update
+	 */
 	@RequestMapping(value = "/{groupId}/member/role", method = RequestMethod.PUT)
-	public ResponseEntity<String> updateUserRoleOnUserGroup(@PathVariable Long groupId, @RequestParam Long userId, @RequestParam String role, Locale locale) {
+	public ResponseEntity<String> updateUserRoleOnUserGroup(@PathVariable Long groupId, @RequestParam Long userId,
+			@RequestParam String role, Locale locale) {
 		try {
 			return ResponseEntity.ok(service.updateUserRoleOnUserGroup(groupId, userId, role, locale));
 		} catch (UserGroupWithoutOwnerException e) {
@@ -74,19 +102,44 @@ public class UserGroupsAjaxController {
 		}
 	}
 
+	/**
+	 * Get a listing of available users for the user group filtered by a text query
+	 *
+	 * @param groupId identifier for the user group
+	 * @param query   string term to filter the list of users by
+	 * @return listing of available users
+	 */
 	@RequestMapping("/{groupId}/available")
 	public ResponseEntity<List<User>> getAvailableUsersForUserGroup(@PathVariable Long groupId,
 			@RequestParam String query) {
 		return ResponseEntity.ok(service.getAvailableUsersForUserGroup(groupId, query));
 	}
 
+	/**
+	 * Add a new member to the user group
+	 *
+	 * @param groupId Identifier for the user group
+	 * @param request Identifier for the user to add as a member
+	 * @param locale  current users {@link Locale}
+	 * @return message to the user about the result of adding the user
+	 */
 	@RequestMapping(value = "/{groupId}/add", method = RequestMethod.POST)
-	public ResponseEntity<String> addMemberToUserGroup(@PathVariable Long groupId, @RequestBody NewMemberRequest request, Locale locale	) {
+	public ResponseEntity<String> addMemberToUserGroup(@PathVariable Long groupId,
+			@RequestBody NewMemberRequest request, Locale locale) {
 		return ResponseEntity.ok(service.addMemberToUserGroup(groupId, request, locale));
 	}
 
+	/**
+	 * Remove a member from the user group
+	 *
+	 * @param groupId Identifier for the user group
+	 * @param userId  Identifier for the member to remove from the user group
+	 * @param locale  current users {@link Locale}
+	 * @return message to the user about the result of removing the member
+	 */
 	@RequestMapping(value = "/{groupId}/remove", method = RequestMethod.DELETE)
-	public ResponseEntity<String> removeMemberFromUserGroup(@PathVariable Long groupId, @RequestParam Long userId, Locale locale	) {
+	public ResponseEntity<String> removeMemberFromUserGroup(@PathVariable Long groupId, @RequestParam Long userId,
+			Locale locale) {
 		try {
 			return ResponseEntity.ok(service.removeMemberFromUserGroup(groupId, userId, locale));
 		} catch (UserGroupWithoutOwnerException e) {
@@ -95,8 +148,16 @@ public class UserGroupsAjaxController {
 		}
 	}
 
+	/**
+	 * Get a full listing of all projects that this user group is on
+	 *
+	 * @param groupId Identifier for a user group
+	 * @param locale  current users {@link Locale}
+	 * @return list of {@link UserGroupProjectTableModel} that this user group is on
+	 */
 	@RequestMapping("/{groupId}/projects")
-	public ResponseEntity<List<UserGroupProjectTableModel>> getProjectsForUserGroup(@PathVariable Long groupId, Locale locale) {
+	public ResponseEntity<List<UserGroupProjectTableModel>> getProjectsForUserGroup(@PathVariable Long groupId,
+			Locale locale) {
 		return ResponseEntity.ok(service.getProjectsForUserGroup(groupId, locale));
 	}
 }

@@ -156,6 +156,16 @@ public class UIUserGroupsService {
 		return false;
 	}
 
+	/**
+	 * Update a users role on a project
+	 *
+	 * @param groupId identifier for a {@link UserGroup}
+	 * @param userId  identifier for a {@link User}
+	 * @param role    role to update the user to
+	 * @param locale  Current users {@link Locale}
+	 * @return Message to user about the result of the update
+	 * @throws UserGroupWithoutOwnerException thrown if changing the users role would result in the user group not having an owner
+	 */
 	public String updateUserRoleOnUserGroup(Long groupId, Long userId, String role, Locale locale)
 			throws UserGroupWithoutOwnerException {
 		UserGroup group = userGroupService.read(groupId);
@@ -172,6 +182,15 @@ public class UIUserGroupsService {
 		}
 	}
 
+	/**
+	 * Remove a user from an user group
+	 *
+	 * @param groupId identifier for a {@link UserGroup}
+	 * @param userId  identifier for a {@link User}
+	 * @param locale  current users {@link Locale}
+	 * @return Message to user about the result of removing the user
+	 * @throws UserGroupWithoutOwnerException thrown if removing the user would result in the user group not having an owner
+	 */
 	public String removeMemberFromUserGroup(Long groupId, Long userId, Locale locale)
 			throws UserGroupWithoutOwnerException {
 		UserGroup group = userGroupService.read(groupId);
@@ -187,6 +206,13 @@ public class UIUserGroupsService {
 		}
 	}
 
+	/**
+	 * Gets a list of projects that are on a user group
+	 *
+	 * @param groupId identifier for an {@link UserGroup}
+	 * @param locale  current users {@link Locale}
+	 * @return list of {@link UserGroupProjectTableModel}
+	 */
 	public List<UserGroupProjectTableModel> getProjectsForUserGroup(Long groupId, Locale locale) {
 		UserGroup group = userGroupService.read(groupId);
 		Collection<UserGroupProjectJoin> joins = userGroupService.getProjectsWithUserGroup(group);
