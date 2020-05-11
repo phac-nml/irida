@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { FileUploader } from "../files/FileUploader";
+import { showNotification } from "../../modules/notifications";
 import { Button, Dropdown, Menu, notification } from "antd";
 import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
@@ -43,7 +44,7 @@ export function SampleFileUploader() {
     <Menu className="t-upload-menu">
       <Menu.Item>
         <FileUploader
-          allowedTypes=".fastq,.fastq.gz,.fast5"
+          allowedTypes=".fastq,.gz,.fast5"
           url={setBaseUrl(
             `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
           )}
