@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+
 import java.util.Date;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
-
+/**
+ * Used to return details about a user group to the UI.
+ */
 public class UserGroupDetails {
 	private final Long id;
 	private final Long key;
