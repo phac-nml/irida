@@ -23,7 +23,7 @@ public class ProjectMembersPage extends AbstractPage {
 	@FindBy(tagName = "h2")
 	private WebElement title;
 
-	@FindBy(className = "t-remove-member-btn")
+	@FindBy(className = "t-remove-btn")
 	private List<WebElement> removeMemberButtons;
 
 	@FindBy(className = "t-remove-success")
