@@ -68,7 +68,7 @@ public class UserGroupsAjaxController {
 	 */
 	@RequestMapping(value = "/{groupId}/update", method = RequestMethod.PUT)
 	public void updateGroupDetails(@PathVariable Long groupId, @RequestBody FieldUpdate update) {
-		service.updateGroupDetails(groupId, update);
+		service.updateUserGroupDetails(groupId, update);
 	}
 
 	/**

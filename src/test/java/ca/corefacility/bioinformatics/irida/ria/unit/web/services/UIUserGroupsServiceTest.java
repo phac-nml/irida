@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
@@ -81,6 +82,22 @@ public class UIUserGroupsServiceTest {
 		service.deleteUserGroup(GROUP_1.getId(), Locale.CANADA);
 		verify(userGroupService, times(1)).read(GROUP_1.getId());
 		verify(userGroupService, times(1)).delete(GROUP_1.getId());
+	}
+
+	@Test
+	public void testGetUserGroupDetails() {
+		service.getUserGroupDetails(GROUP_1.getId());
+		verify(userGroupService, times(1)).read(GROUP_1.getId());
+		verify(userGroupService, times(1)).getUsersForGroup(GROUP_1);
+	}
+
+	@Test
+	public void testUpdateUserGroupDetails() {
+		FieldUpdate update = new FieldUpdate();
+		update.setField("name");
+		update.setValue("NEW_NAME");
+		service.updateUserGroupDetails(GROUP_1.getId(), update);
+		verify(userGroupService, times(1)).update(GROUP_1);
 	}
 
 	private Page<UserGroup> getPagedUserGroups() {

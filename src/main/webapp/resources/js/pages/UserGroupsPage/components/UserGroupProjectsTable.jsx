@@ -20,7 +20,7 @@ export function UserGroupProjectsTable({ groupId }) {
     },
     { dataIndex: "role", title: i18n("UserGroupProjectTable.role") },
     {
-      title: "DATE ADDED",
+      title: i18n("UserGroupProjectTable.create"),
       dataIndex: "createdDate",
       render(text) {
         return formatInternationalizedDateTime(text);

@@ -80,6 +80,12 @@ public class UIUserGroupsService {
 		return messageSource.getMessage("server.usergroups.delete-success", new Object[] { group.getLabel() }, locale);
 	}
 
+	/**
+	 * Get details about a specific user group
+	 *
+	 * @param groupId identifier for a {@link UserGroup}
+	 * @return {@link UserGroupDetails}
+	 */
 	public UserGroupDetails getUserGroupDetails(Long groupId) {
 		UserGroup group = userGroupService.read(groupId);
 		Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
@@ -90,7 +96,6 @@ public class UIUserGroupsService {
 		/*
 		Determine if the current user can manage this group
 		 */
-
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getPrincipal();
@@ -100,7 +105,13 @@ public class UIUserGroupsService {
 		return new UserGroupDetails(group, members, isAdmin || isGroupOwner(user, group));
 	}
 
-	public void updateGroupDetails(Long groupId, FieldUpdate update) {
+	/**
+	 * Update user group details
+	 *
+	 * @param groupId identifier for an {@link UserGroup} to update
+	 * @param update  details about which field and value to update
+	 */
+	public void updateUserGroupDetails(Long groupId, FieldUpdate update) {
 		UserGroup group = userGroupService.read(groupId);
 		switch (update.getField()) {
 		case "name":
@@ -113,6 +124,12 @@ public class UIUserGroupsService {
 		userGroupService.update(group);
 	}
 
+	/**
+	 * Get a list of all user group roles with their translations
+	 *
+	 * @param locale current users {@link Locale}
+	 * @return list of {@link UserGroupRole}
+	 */
 	public List<UserGroupRole> getUserGroupRoles(Locale locale) {
 		final String OWNER = UserGroupJoin.UserGroupRole.GROUP_OWNER.toString();
 		final String MEMBER = UserGroupJoin.UserGroupRole.GROUP_MEMBER.toString();
@@ -122,38 +139,32 @@ public class UIUserGroupsService {
 						messageSource.getMessage("server.usergroups.GROUP_MEMBER", new Object[] {}, locale)));
 	}
 
+	/**
+	 * Get a list of system users who are not on the project yet.
+	 *
+	 * @param groupId identifier for a {@link UserGroup}
+	 * @param query   used to search for a specific user
+	 * @return list of {@link User} that can be added to the project
+	 */
 	public List<User> getAvailableUsersForUserGroup(Long groupId, String query) {
 		UserGroup group = userGroupService.read(groupId);
 		return userGroupService.getUsersNotInGroup(group, query);
 	}
 
+	/**
+	 * Add a new member to the user group
+	 *
+	 * @param groupId identifier for the {@link UserGroup}
+	 * @param request details about the user to add to the user group
+	 * @param locale  current users {@link Locale}
+	 * @return message to the user about the status of this request
+	 */
 	public String addMemberToUserGroup(Long groupId, NewMemberRequest request, Locale locale) {
 		UserGroup group = userGroupService.read(groupId);
 		User user = userService.read(request.getId());
 		UserGroupJoin.UserGroupRole role = UserGroupJoin.UserGroupRole.fromString(request.getRole());
 		userGroupService.addUserToGroup(user, group, role);
-		return messageSource.getMessage("server.usergroups.add-member", new Object[]{user.getLabel()}, locale);
-	}
-
-	/**
-	 * Determine if the current user is the owner of the current group.
-	 *
-	 * @param user  currently logged in user
-	 * @param group {@link UserGroup} to see if user is the owner
-	 * @return {@link Boolean} true if the owner of the group
-	 */
-	private boolean isGroupOwner(User user, UserGroup group) {
-		Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
-		UserGroupJoin currentUserJoin = groupUsers.stream()
-				.filter(x -> x.getSubject()
-						.equals(user))
-				.findAny()
-				.orElse(null);
-		if (currentUserJoin != null) {
-			return currentUserJoin.getRole()
-					.equals(UserGroupJoin.UserGroupRole.GROUP_OWNER);
-		}
-		return false;
+		return messageSource.getMessage("server.usergroups.add-member", new Object[] { user.getLabel() }, locale);
 	}
 
 	/**
@@ -224,5 +235,26 @@ public class UIUserGroupsService {
 							messageSource.getMessage("projectRole." + role.toString(), new Object[] {}, locale));
 				})
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Determine if the current user is the owner of the current group.
+	 *
+	 * @param user  currently logged in user
+	 * @param group {@link UserGroup} to see if user is the owner
+	 * @return {@link Boolean} true if the owner of the group
+	 */
+	private boolean isGroupOwner(User user, UserGroup group) {
+		Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
+		UserGroupJoin currentUserJoin = groupUsers.stream()
+				.filter(x -> x.getSubject()
+						.equals(user))
+				.findAny()
+				.orElse(null);
+		if (currentUserJoin != null) {
+			return currentUserJoin.getRole()
+					.equals(UserGroupJoin.UserGroupRole.GROUP_OWNER);
+		}
+		return false;
 	}
 }

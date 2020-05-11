@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web;
+package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.util.Iterator;
 import java.util.List;
