@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +24,11 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTGroupMember;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUserGroup;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -44,15 +40,14 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping(value = "/groups")
-public class GroupsController {
+public class UserGroupsController {
 
 	public static final int MAX_PROJECTS_TO_DISPLAY = 3;
-	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserGroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
 	private static final String GROUPS_EDIT = "groups/edit";
 	private static final String GROUP_DETAILS = "groups/details";
-	private static final String GROUPS_REMOVE_MODAL = "groups/remove-group-modal";
 	private static final String GROUPS_USER_MODAL = "groups/remove-user-modal";
 
 	private final UserGroupService userGroupService;
@@ -70,7 +65,7 @@ public class GroupsController {
 	 *            the {@link MessageSource}.
 	 */
 	@Autowired
-	public GroupsController(final UserGroupService userGroupService, final UserService userService,
+	public UserGroupsController(final UserGroupService userGroupService, final UserService userService,
 			final MessageSource messageSource) {
 		this.userGroupService = userGroupService;
 		this.messageSource = messageSource;
@@ -135,27 +130,6 @@ public class GroupsController {
 	}
 
 	/**
-	 * Search/filter/page with datatables for {@link UserGroup}.
-	 * @param params {@link DataTablesParams} for the current DataTable
-	 * @param principal Currently logged in user
-	 * @return {@link DataTablesResponse} for the current table base on the parameters.
-	 */
-	@RequestMapping("/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getGroups(final @DataTablesRequest DataTablesParams params, final Principal principal) {
-		Page<UserGroup> groups = userGroupService.search(
-				UserGroupSpecification.searchUserGroup(params.getSearchValue()),
-				PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-		User currentUser = userService.getUserByUsername(principal.getName());
-		List<DataTablesResponseModel> groupsWithOwnership = groups.getContent()
-				.stream()
-				.map(ug -> new DTUserGroup(ug, isGroupOwner(currentUser, ug),
-						currentUser.getSystemRole().equals(Role.ROLE_ADMIN)))
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, groups, groupsWithOwnership);
-	}
-
-	/**
 	 * Convenience method for checking whether or not the specified user is an
 	 * owner of the group.
 	 * 
@@ -202,23 +176,6 @@ public class GroupsController {
 		model.addAttribute("groupRoles", ImmutableList.of(UserGroupRole.GROUP_MEMBER, UserGroupRole.GROUP_OWNER));
 
 		return GROUP_DETAILS;
-	}
-
-	/**
-	 * Delete the specified {@link UserGroup}.
-	 *
-	 * @param userGroupId the group to delete.
-	 * @param locale      the locale of the browser
-	 * @return a message indicating success.
-	 */
-	@RequestMapping(path = "/{userGroupId}", method = RequestMethod.DELETE)
-	public @ResponseBody
-	Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
-		final UserGroup userGroup = userGroupService.read(userGroupId);
-		userGroupService.delete(userGroupId);
-		return ImmutableMap.of("result",
-				messageSource.getMessage("group.remove.notification.success", new Object[] { userGroup.getName() },
-						locale));
 	}
 
 	/**
@@ -287,7 +244,7 @@ public class GroupsController {
 
 	/**
 	 * List the members in the group.
-	 * 
+	 *
 	 * @param params
 	 *            the datatables parameters to search for.
 	 * @param userGroupId
@@ -377,28 +334,6 @@ public class GroupsController {
 			return ImmutableMap.of("failure", messageSource.getMessage("group.users.remove.notification.failure",
 					new Object[] { user.getLabel() }, locale));
 		}
-	}
-
-	/**
-	 * Get a string to tell the user which group they're going to delete.
-	 *
-	 * @param userGroupId the user group that's about to be deleted.
-	 * @param model       model for rendering view
-	 * @return a message indicating which group is going to be deleted.
-	 */
-	@RequestMapping(path = "/deleteConfirmModal", method = RequestMethod.POST)
-	public String getDeleteGroupText(final @RequestParam Long userGroupId, final Model model) {
-		final UserGroup group = userGroupService.read(userGroupId);
-		final Collection<UserGroupProjectJoin> projects = userGroupService.getProjectsWithUserGroup(group);
-
-		model.addAttribute("group", group);
-
-		if (!projects.isEmpty()) {
-			model.addAttribute("projectsWithGroup", projects);
-			model.addAttribute("maxProjectsToDisplay", MAX_PROJECTS_TO_DISPLAY);
-		}
-
-		return GROUPS_REMOVE_MODAL;
 	}
 	
 	/**

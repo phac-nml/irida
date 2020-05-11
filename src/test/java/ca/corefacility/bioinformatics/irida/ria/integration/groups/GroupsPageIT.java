@@ -55,6 +55,6 @@ public class GroupsPageIT extends AbstractIridaUIITChromeDriver {
 		groupsPage = GroupsPage.goToCreateGroupPage(driver());
 		groupsPage.goToGroupsPage();
 		groupsPage.removeUserGroupWithProjectLinks();
-		assertTrue("Noty success should be displayed", groupsPage.checkSuccessNotificationStatus());
+		assertTrue("Success notification should be displayed", groupsPage.checkSuccessRemoveNotificationDisplayed());
 	}
 }

@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -55,8 +56,11 @@ public class GroupsPage extends AbstractPage {
 	@FindBy(className = "select2-search__field")
 	private WebElement userNameField;
 
-	@FindBy(id = "remove-group-button")
+	@FindBy(className = "t-remove-confirm")
 	private WebElement removeGroupBtn;
+
+	@FindBy(className = "t-remove-success")
+	private WebElement removeSuccessNotification;
 
 
 	public GroupsPage(WebDriver driver) {
@@ -110,12 +114,17 @@ public class GroupsPage extends AbstractPage {
 
 	public void removeUserGroupWithProjectLinks() {
 		// Group being deleted is linked to 4 projects
-		List<WebElement> deleteGroupButtons = (List<WebElement>) waitForElementsVisible(By.className("remove-btn"));
+		List<WebElement> deleteGroupButtons = (List<WebElement>) waitForElementsVisible(By.className("t-remove-btn"));
 		WebElement firstGroupDeleteButton = deleteGroupButtons.get(0);
 		firstGroupDeleteButton.click();
-		waitForElementVisible(By.id("remove-group-button"));
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		wait.until(ExpectedConditions.elementToBeClickable(removeGroupBtn));
 		removeGroupBtn.click();
-		waitForAjax();
+		wait.until(ExpectedConditions.visibilityOf(removeSuccessNotification));
+	}
+
+	public boolean checkSuccessRemoveNotificationDisplayed() {
+		return removeSuccessNotification.isDisplayed();
 	}
 
 	public boolean checkSuccessNotificationStatus() {
