@@ -34,6 +34,10 @@ Changes
 * [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
 * [UI/Developer]: Added image file viewer to analysis outputs view.
 * [UI]: Moved project > details into the project > settings panel.
+* [UI]: Updated Project navigation to use Ant Design menu.
+* [UI/Developer]: Updated to JQuery v3.5.1 to fix security vulnerability.
+* [UI]: Fixed bug preventing the upload of `*.fastqc.gz` on Mac computers.
+* [UI]: Update Groups page to remove `DataTables` and use Ant Design.
 * [Developer/UI]: Upgraded to FastQC 0.11.9.
 
 19.09 to 20.01
