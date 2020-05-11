@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
+/**
+ * Represents a user group role in the UI.
+ */
 public class UserGroupRole {
 	private final String label;
 	private final String value;
