@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Form, Input, Modal } from "antd";
+import { createUserGroup } from "../../../apis/users/groups";
+import { PagedTableContext } from "../../../components/ant.design/PagedTable";
 
 export function CreateNewUserGroupButton() {
   const [visible, setVisible] = useState();
   const [form] = Form.useForm();
+  const { updateTable } = useContext(PagedTableContext);
 
   return (
     <>
@@ -19,8 +22,11 @@ export function CreateNewUserGroupButton() {
           form
             .validateFields()
             .then((values) => {
-              // TODO: Need to submit the form :)
-              form.resetFields();
+              createUserGroup(values).then(() => {
+                updateTable();
+                form.resetFields();
+                setVisible(false);
+              });
             })
             .catch((info) => {
               console.log("Validate Failed:", info);
@@ -41,7 +47,7 @@ export function CreateNewUserGroupButton() {
           >
             <Input name="name" />
           </Form.Item>
-          <Form.Item label={"DESCRIPTION"} htmlFor="description">
+          <Form.Item label={"DESCRIPTION"} name="description">
             <Input.TextArea name="description" />
           </Form.Item>
         </Form>

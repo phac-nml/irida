@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.users;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUserGroupsService;
@@ -159,5 +162,16 @@ public class UserGroupsAjaxController {
 	public ResponseEntity<List<UserGroupProjectTableModel>> getProjectsForUserGroup(@PathVariable Long groupId,
 			Locale locale) {
 		return ResponseEntity.ok(service.getProjectsForUserGroup(groupId, locale));
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> createNewUserGroup(@RequestBody UserGroup userGroup, Locale locale) {
+		try {
+			service.createNewUserGroup(userGroup, locale);
+			return ResponseEntity.ok(null);
+		} catch (UIConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(e.getErrors());
+		}
 	}
 }

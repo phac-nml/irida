@@ -68,3 +68,12 @@ export function removeMemberFromUserGroup({ groupId, userId }) {
 export function getProjectsForUserGroup(groupId) {
   return axios.get(`${BASE_URL}/${groupId}/projects`).then(({ data }) => data);
 }
+
+export function createUserGroup({ name, description }) {
+  return axios
+    .post(`${BASE_URL}/create`, {
+      name,
+      description,
+    })
+    .catch((error) => console.log(error.response.data));
+}

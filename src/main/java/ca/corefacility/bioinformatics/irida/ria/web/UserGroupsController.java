@@ -86,16 +86,6 @@ public class UserGroupsController {
 	}
 
 	/**
-	 * Get the page to create a new group.
-	 *
-	 * @return the route to the creation page.
-	 */
-	@RequestMapping("/create")
-	public String getCreatePage() {
-		return GROUPS_CREATE;
-	}
-
-	/**
 	 * Create a new {@link UserGroup}.
 	 *
 	 * @param userGroup the {@link UserGroup} from the request.

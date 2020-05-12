@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
@@ -235,6 +237,26 @@ public class UIUserGroupsService {
 							messageSource.getMessage("projectRole." + role.toString(), new Object[] {}, locale));
 				})
 				.collect(Collectors.toList());
+	}
+
+	public boolean createNewUserGroup(UserGroup userGroup, Locale locale) throws UIConstraintViolationException {
+		try {
+			UserGroup group = userGroupService.create(userGroup);
+			return true;
+		} catch (EntityExistsException e) {
+			throw new EntityExistsException("A user group by this name already exists");
+		} catch (ConstraintViolationException e) {
+			Map<String, String> errors = new HashMap<>();
+			e.getConstraintViolations()
+					.iterator()
+					.forEachRemaining(constraintViolation -> {
+						String label = constraintViolation.getPropertyPath()
+								.toString();
+						errors.put(label, messageSource.getMessage("server.usergroups.create.constraint." + label,
+								new Object[] { userGroup.getLabel() }, locale));
+					});
+			throw new UIConstraintViolationException(errors);
+		}
 	}
 
 	/**
