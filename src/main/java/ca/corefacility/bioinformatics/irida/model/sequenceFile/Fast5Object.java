@@ -26,7 +26,7 @@ public class Fast5Object extends SequencingObject {
 	@NotNull
 	private SequenceFile file;
 
-	@Column(name = "type", nullable = false)
+	@Column(name = "fast5_type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Fast5Type fast5Type;
 
