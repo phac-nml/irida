@@ -14,8 +14,21 @@ import {
 import { Button, Table } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+/**
+ * Custom sorter for the name column since this is NOT paged server side.
+ * @type {function(*, *): number}
+ */
 const nameSorter = stringSorter("name");
 
+/**
+ * React component to render a table to display user group members
+ * @param {array} members
+ * @param {boolean} canManage can the current user manage members
+ * @param {number} groupId identifier for teh current user group
+ * @param {function} updateTable - method to refresh the contents of the table
+ * @returns {string|*}
+ * @constructor
+ */
 export default function UserGroupMembersTable({
   members,
   canManage,
@@ -24,6 +37,11 @@ export default function UserGroupMembersTable({
 }) {
   const { roles } = useContext(UserGroupRolesContext);
 
+  /**
+   * Remove a member from the group, and then refresh the table.
+   * @param user
+   * @returns {void | Promise<AxiosResponse<*>>}
+   */
   function removeMember(user) {
     return removeMemberFromUserGroup({ groupId, userId: user.id }).then(
       (message) => {
