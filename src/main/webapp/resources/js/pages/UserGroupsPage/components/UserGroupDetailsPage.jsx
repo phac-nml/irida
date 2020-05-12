@@ -147,16 +147,20 @@ export default function UserGroupDetailsPage({ id }) {
         tabBarStyle={{ width: 200 }}
       >
         <TabPane tab={i18n("UserGroupDetailsPage.tab.details")} key="details">
-          <Title level={4}>User Group Details</Title>
+          <Title level={4}>{i18n("UserGroupsDetailsPage.title.details")}</Title>
           <BasicList dataSource={fields} />
         </TabPane>
         <TabPane tab={i18n("UserGroupDetailsPage.tab.projects")} key="project">
-          <Title level={4}>User Group Projects</Title>
+          <Title level={4}>
+            {i18n("UserGroupsDetailsPage.title.projects")}
+          </Title>
           <UserGroupProjectsTable groupId={id} />
         </TabPane>
         {state.canManage ? (
           <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
-            <Title level={4}>Delete User Group</Title>
+            <Title level={4}>
+              {i18n("UserGroupsDetailsPage.title.delete")}
+            </Title>
             <DeleteGroup />
           </TabPane>
         ) : null}
