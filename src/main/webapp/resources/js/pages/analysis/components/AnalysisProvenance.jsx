@@ -71,8 +71,7 @@ export default function AnalysisProvenance() {
   function getProvenance(filename) {
     if (typeof filename !== "undefined") {
       if (
-        (provenance !== null &&
-          !provenance.data.filename.includes(filename.toString())) ||
+        (currFileName !== null && currFileName !== filename.toString()) ||
         provenance === null
       ) {
         setCurrFileName(filename.toString());
