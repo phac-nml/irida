@@ -35,7 +35,7 @@ public class Fast5Object extends SequencingObject {
 
 	public Fast5Object(SequenceFile file) {
 		this.file = file;
-		this.fast5Type = fast5Type;
+		this.fast5Type = getFileType(file);
 	}
 
 	/**
