@@ -29,6 +29,12 @@ const reducer = (state, action) => {
   }
 };
 
+/**
+ * React component to display a page for viewing User Group Details.
+ * @param {number}id - identifier for the user group
+ * @returns {*}
+ * @constructor
+ */
 export default function UserGroupDetailsPage({ id }) {
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
@@ -44,12 +50,22 @@ export default function UserGroupDetailsPage({ id }) {
     );
   }, [id]);
 
+  /**
+   * When the value of either the name or description is changes, update the
+   * server.
+   * @param {string} field to be updated
+   * @param {string} value to update to.
+   */
   const updateField = (field, value) => {
     updateUserGroupDetails({ id, field, value }).then(() =>
       dispatch({ type: "update", payload: { [field]: value } })
     );
   };
 
+  /**
+   * Update contents of the table
+   * @returns {void | Promise<void>}
+   */
   const updateTable = () =>
     getUserGroupDetails(id).then((response) =>
       dispatch({ type: "load", payload: response })
