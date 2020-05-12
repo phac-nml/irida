@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
 import { Spin } from "antd";
+import { PageLoadingIndicator } from "../../components/PageLoadingIndicator";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>
@@ -17,20 +18,7 @@ const UserGroupsDetailsPage = lazy(() =>
 export function UserGroups() {
   return (
     <Suspense
-      fallback={
-        <div
-          style={{
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <span>
-            <Spin /> Fetching important data
-          </span>
-        </div>
-      }
+      fallback={<PageLoadingIndicator text={i18n("UserGroupsPage.loading")} />}
     >
       <Router style={{ height: "100%" }}>
         <UserGroupsPage path="/groups" />

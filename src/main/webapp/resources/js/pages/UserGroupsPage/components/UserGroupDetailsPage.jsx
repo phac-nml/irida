@@ -74,6 +74,7 @@ export default function UserGroupDetailsPage({ id }) {
           title: i18n("UserGroupDetailsPage.description"),
           desc: state.canManage ? (
             <Paragraph
+              ellipsis={{ rows: 3, expandable: true }}
               editable={{
                 onChange: (value) => updateField("description", value),
               }}
@@ -81,7 +82,9 @@ export default function UserGroupDetailsPage({ id }) {
               {state.description}
             </Paragraph>
           ) : (
-            state.description
+            <Paragraph ellipsis={{ rows: 3, expandable: true }}>
+              state.description
+            </Paragraph>
           ),
         },
         {

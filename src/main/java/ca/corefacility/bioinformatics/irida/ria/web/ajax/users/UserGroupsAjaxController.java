@@ -17,6 +17,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUserGroupsService;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * Controller for asynchronous request for User Groups
  */
@@ -167,8 +169,8 @@ public class UserGroupsAjaxController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> createNewUserGroup(@RequestBody UserGroup userGroup, Locale locale) {
 		try {
-			service.createNewUserGroup(userGroup, locale);
-			return ResponseEntity.ok(null);
+			Long id= service.createNewUserGroup(userGroup, locale);
+			return ResponseEntity.ok(ImmutableMap.of("id", String.valueOf(id)));
 		} catch (UIConstraintViolationException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(e.getErrors());

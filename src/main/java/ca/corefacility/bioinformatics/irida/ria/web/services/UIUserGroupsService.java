@@ -239,10 +239,18 @@ public class UIUserGroupsService {
 				.collect(Collectors.toList());
 	}
 
-	public boolean createNewUserGroup(UserGroup userGroup, Locale locale) throws UIConstraintViolationException {
+	/**
+	 * Crate a new {@link UserGroup}
+	 *
+	 * @param userGroup {@link UserGroup} name and description
+	 * @param locale    current users {@link Locale}
+	 * @return the identifier for the new user groups
+	 * @throws UIConstraintViolationException if one of the constraint violations for a {@link UserGroup} is broken
+	 */
+	public Long createNewUserGroup(UserGroup userGroup, Locale locale) throws UIConstraintViolationException {
 		try {
 			UserGroup group = userGroupService.create(userGroup);
-			return true;
+			return group.getId();
 		} catch (EntityExistsException e) {
 			throw new EntityExistsException("A user group by this name already exists");
 		} catch (ConstraintViolationException e) {
