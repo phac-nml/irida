@@ -4,6 +4,12 @@ import { Button, Table } from "antd";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+/**
+ * Display a table of projects the current user group is used on.
+ * @param {number} groupId identifier for the current user group
+ * @returns {string|*}
+ * @constructor
+ */
 export function UserGroupProjectsTable({ groupId }) {
   const [projects, setProjects] = useState();
   const columns = [
