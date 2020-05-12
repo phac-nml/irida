@@ -62,6 +62,7 @@ public class UserGroupsController {
 	/**
 	 * Get the default index page for listing groups.
 	 *
+	 * @param groupId the identifier for the user group
 	 * @return the route to the index page.
 	 */
 	@RequestMapping("/{groupId}")
