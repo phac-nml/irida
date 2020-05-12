@@ -125,7 +125,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			sequenceFileRepository.saveMetadata(sequenceFile);
 		} catch (Exception e) {
-			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
+			logger.error("FastQC failed to process the sequence file: " + e.getMessage());
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
 	}

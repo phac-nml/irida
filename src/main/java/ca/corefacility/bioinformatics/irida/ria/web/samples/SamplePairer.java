@@ -28,16 +28,12 @@ public class SamplePairer {
     private static final String[] forwardMatches = SequenceFilePair.forwardMatches;
     private static final String[] reverseMatches = SequenceFilePair.reverseMatches;
 
-    private static final String FAST5_EXTENSION = "fast5";
-
     private final Map<String, List<MultipartFile>> pairedFiles;
-    private final List<MultipartFile> fast5Files;
     private final List<MultipartFile> singleFiles;
 
     public SamplePairer(List<MultipartFile> files) {
         this.singleFiles = new ArrayList<>();
         this.pairedFiles = new HashMap<>();
-        this.fast5Files = new ArrayList<>();
 
         organizeFiles(files);
     }
@@ -105,12 +101,7 @@ public class SamplePairer {
                 }
                 if (!pair) {
                     MultipartFile[] singleFile = {file1};
-                    String extension = FilenameUtils.getExtension(file1.getOriginalFilename());
-                    if (extension.equals(FAST5_EXTENSION)) {
-                        fast5Files.addAll(Arrays.asList(singleFile));
-                    } else {
-                        singleFiles.addAll(Arrays.asList(singleFile));
-                    }
+                    singleFiles.addAll(Arrays.asList(singleFile));
 
                     logger.trace("Uploaded file [" + file1.getName() + "] was not paired");
                 }
@@ -139,9 +130,5 @@ public class SamplePairer {
      */
     public List<MultipartFile> getSingleFiles(List<MultipartFile> files) {
         return singleFiles;
-    }
-
-    public List<MultipartFile> getFast5Files() {
-        return fast5Files;
     }
 }
