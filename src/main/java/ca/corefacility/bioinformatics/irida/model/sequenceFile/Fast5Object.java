@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+import liquibase.util.file.FilenameUtils;
 
 /**
  * {@link SequencingObject} implementation for storing .fast5 files.
@@ -25,11 +26,16 @@ public class Fast5Object extends SequencingObject {
 	@NotNull
 	private SequenceFile file;
 
+	@Column(name = "type", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Fast5Type fast5Type;
+
 	protected Fast5Object() {
 	}
 
 	public Fast5Object(SequenceFile file) {
 		this.file = file;
+		this.fast5Type = fast5Type;
 	}
 
 	/**
@@ -59,5 +65,27 @@ public class Fast5Object extends SequencingObject {
 
 	public SequenceFile getFile() {
 		return file;
+	}
+
+	public Fast5Type getFast5Type() {
+		return fast5Type;
+	}
+
+	enum Fast5Type {
+		SINGLE,
+		ZIPPED,
+		UNKNOWN
+	}
+
+	private Fast5Type getFileType(SequenceFile file) {
+		String extension = FilenameUtils.getExtension(file.getFile()
+				.toString());
+
+		if (extension.equals("fast5")) {
+			return Fast5Type.SINGLE;
+		} else if (extension.equals("gz")) {
+			return Fast5Type.ZIPPED;
+		}
+		return Fast5Type.UNKNOWN;
 	}
 }
