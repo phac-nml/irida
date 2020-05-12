@@ -95,6 +95,7 @@ export function AddMemberButton({
       .then((message) => {
         addMemberSuccessFn();
         notification.success({ message });
+        form.resetFields();
         setVisible(false);
       })
       .catch((message) => notification.error({ message }));
@@ -110,6 +111,11 @@ export function AddMemberButton({
     </Option>
   ));
 
+  const onCancel = () => {
+    form.resetFields();
+    setVisible(false);
+  };
+
   return (
     <>
       <Button className="t-add-member-btn" onClick={() => setVisible(true)}>
@@ -119,7 +125,7 @@ export function AddMemberButton({
         className="t-add-member-modal"
         visible={visible}
         okButtonProps={{ disabled: typeof userId === "undefined" }}
-        onCancel={() => setVisible(false)}
+        onCancel={onCancel}
         title={i18n("AddMemberButton.modal.title")}
         onOk={addMember}
         okText={i18n("AddMemberButton.modal.okText")}
