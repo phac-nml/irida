@@ -1,35 +1,37 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.components.AddMemberButton;
 import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-/**
- * Page to represent the group page.
- */
-public class UserGroupsPage extends AbstractPage {
-	private static final String GROUP_LISTING_PAGE = "groups";
-	private static final String GROUP_RELATIVE_URL = "groups/{groupId}";
-
+public class UserGroupsDetailsPage extends AbstractPage {
 	private static AntTable table;
 	private static AddMemberButton addMemberButton;
 
-	public UserGroupsPage(WebDriver driver) {
+	@FindBy(className = "t-group-name")
+	private WebElement groupName;
+
+	public UserGroupsDetailsPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public static UserGroupsPage goToGroupsPage(WebDriver driver) {
-		get(driver, GROUP_LISTING_PAGE);
+	public static UserGroupsDetailsPage initPage(WebDriver driver) {
 		table = AntTable.getTable(driver);
 		addMemberButton = AddMemberButton.getAddMemberButton(driver);
-		return PageFactory.initElements(driver, UserGroupsPage.class);
+		return PageFactory.initElements(driver, UserGroupsDetailsPage.class);
 	}
 
-	public static void goToGroupPage(WebDriver driver, int groupId) {
-		get(driver, GROUP_RELATIVE_URL.replace("{groupId}", String.valueOf(groupId)));
+	public void gotoPage(int groupId) {
+		get(driver, "groups/" + groupId);
+	}
+
+	public String getUserGroupName() {
+		return groupName.getText();
 	}
 
 	public int getNumberOfMembers() {

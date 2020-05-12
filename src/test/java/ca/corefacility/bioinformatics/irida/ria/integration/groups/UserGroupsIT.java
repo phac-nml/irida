@@ -4,7 +4,8 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.groups.UserGroupsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.groups.UserGroupsDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.groups.UserGroupsListingPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -14,20 +15,22 @@ import static org.junit.Assert.assertEquals;
 public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
-	public void testAddGroupMember() {
+	public void testUserGroups() {
 		LoginPage.loginAsManager(driver());
-		final int groupId = 1;
-		final String searchTermUc = "Te";
-		final String searchTermLc = "third";
-		final String role = "GROUP_MEMBER";
 
-		UserGroupsPage userGroupsPage = UserGroupsPage.goToGroupsPage(driver());
-		userGroupsPage.goToGroupPage(driver(), groupId);
-		int initialCount = userGroupsPage.getNumberOfMembers();
-		userGroupsPage.addGroupMember(searchTermUc, role);
-		assertEquals("Should have another member on the project", initialCount + 1, userGroupsPage.getNumberOfMembers());
+		// Test listing user groups
+		UserGroupsListingPage listingPage = UserGroupsListingPage.initPage(driver());
+		listingPage.gotoPage();
+		assertEquals("Should have 2 user groups", 2, listingPage.getNumberOfExistingUserGroups());
 
-		userGroupsPage.addGroupMember(searchTermLc, role);
-		assertEquals("Should be another group member", initialCount + 2, userGroupsPage.getNumberOfMembers());
+		// Test creating a new group
+		final String GROUP_NAME = "NEW_GROUP";
+		listingPage.createNewUserGroup(GROUP_NAME);
+		UserGroupsDetailsPage detailsPage = UserGroupsDetailsPage.initPage(driver());
+		assertEquals("Should be on the new user groups page", GROUP_NAME, detailsPage.getUserGroupName());
+
+		// Test removing a group
+		listingPage.gotoPage();
+		assertEquals("Should now be 3 groups", 3, listingPage.getNumberOfExistingUserGroups());
 	}
 }

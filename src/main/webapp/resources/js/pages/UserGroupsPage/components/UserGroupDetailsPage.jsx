@@ -78,6 +78,7 @@ export default function UserGroupDetailsPage({ id }) {
           title: i18n("UserGroupDetailsPage.name"),
           desc: state.canManage ? (
             <Paragraph
+              className={"t-group-name"}
               editable={{ onChange: (value) => updateField("name", value) }}
             >
               {state.name}
