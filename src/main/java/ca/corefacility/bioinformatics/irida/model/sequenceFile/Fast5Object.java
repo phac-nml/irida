@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Set;
 
@@ -7,7 +9,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
@@ -22,6 +28,8 @@ import liquibase.util.file.FilenameUtils;
 @Audited
 public class Fast5Object extends SequencingObject {
 
+	private static final Logger logger = LoggerFactory.getLogger(Fast5Object.class);
+
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull
 	private SequenceFile file;
@@ -31,11 +39,13 @@ public class Fast5Object extends SequencingObject {
 	private Fast5Type fast5Type;
 
 	protected Fast5Object() {
+		fast5Type = Fast5Type.UNKNOWN;
 	}
 
 	public Fast5Object(SequenceFile file) {
+		this();
 		this.file = file;
-		this.fast5Type = getFileType(file);
+		this.fast5Type = setType(file);
 	}
 
 	/**
@@ -71,21 +81,38 @@ public class Fast5Object extends SequencingObject {
 		return fast5Type;
 	}
 
-	enum Fast5Type {
+	public void setFast5Type(Fast5Type fast5Type) {
+		this.fast5Type = fast5Type;
+	}
+
+	/**
+	 * Type of file stored buy this fast5 object
+	 */
+	public enum Fast5Type {
 		SINGLE,
 		ZIPPED,
 		UNKNOWN
 	}
 
-	private Fast5Type getFileType(SequenceFile file) {
-		String extension = FilenameUtils.getExtension(file.getFile()
-				.toString());
+	private Fast5Type setType(SequenceFile sequenceFile) {
+		Path file = sequenceFile.getFile();
 
-		if (extension.equals("fast5")) {
-			return Fast5Type.SINGLE;
-		} else if (extension.equals("gz")) {
-			return Fast5Type.ZIPPED;
+		Fast5Object.Fast5Type type = Fast5Object.Fast5Type.UNKNOWN;
+
+		try {
+			String extension = FilenameUtils.getExtension(file.toString());
+
+			boolean gzipped = FileUtils.isGzipped(file);
+
+			if (gzipped) {
+				type = Fast5Object.Fast5Type.ZIPPED;
+			} else if (extension.equals("fast5")) {
+				type = Fast5Object.Fast5Type.SINGLE;
+			}
+		} catch (IOException e) {
+			logger.warn("Problem checking for zipped file.  Setting as UNKNOWN type", e);
 		}
-		return Fast5Type.UNKNOWN;
+
+		return type;
 	}
 }
