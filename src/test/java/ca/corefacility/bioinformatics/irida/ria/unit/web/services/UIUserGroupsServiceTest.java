@@ -18,11 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserGroupTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUserGroupsService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -42,12 +44,14 @@ public class UIUserGroupsServiceTest {
 	private final List<UserGroup> GROUPS = ImmutableList.of(GROUP_1, GROUP_2, GROUP_3);
 	private UIUserGroupsService service;
 	private UserGroupService userGroupService;
+	private UserService userService;
 
 	@Before
 	public void setUp() {
 		userGroupService = mock(UserGroupService.class);
+		userService = mock(UserService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		service = new UIUserGroupsService(userGroupService, messageSource);
+		service = new UIUserGroupsService(userGroupService, userService, messageSource);
 
 		/*
 		Mock the principal user
@@ -78,6 +82,22 @@ public class UIUserGroupsServiceTest {
 		service.deleteUserGroup(GROUP_1.getId(), Locale.CANADA);
 		verify(userGroupService, times(1)).read(GROUP_1.getId());
 		verify(userGroupService, times(1)).delete(GROUP_1.getId());
+	}
+
+	@Test
+	public void testGetUserGroupDetails() {
+		service.getUserGroupDetails(GROUP_1.getId());
+		verify(userGroupService, times(1)).read(GROUP_1.getId());
+		verify(userGroupService, times(1)).getUsersForGroup(GROUP_1);
+	}
+
+	@Test
+	public void testUpdateUserGroupDetails() {
+		FieldUpdate update = new FieldUpdate();
+		update.setField("name");
+		update.setValue("NEW_NAME");
+		service.updateUserGroupDetails(GROUP_1.getId(), update);
+		verify(userGroupService, times(1)).update(GROUP_1);
 	}
 
 	private Page<UserGroup> getPagedUserGroups() {

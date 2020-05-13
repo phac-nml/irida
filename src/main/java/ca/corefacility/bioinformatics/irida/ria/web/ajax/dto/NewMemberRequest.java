@@ -1,9 +1,9 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 /**
  * Used to send information to the server about a user to be added as a project member
  */
-public class NewProjectMemberRequest {
+public class NewMemberRequest {
 	/*
 	User Identifier
 	 */
@@ -14,10 +14,10 @@ public class NewProjectMemberRequest {
 	 */
 	private String role;
 
-	public NewProjectMemberRequest() {
+	public NewMemberRequest() {
 	}
 
-	public NewProjectMemberRequest(Long id, String role) {
+	public NewMemberRequest(Long id, String role) {
 		this.id = id;
 		this.role = role;
 	}

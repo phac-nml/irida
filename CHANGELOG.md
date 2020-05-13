@@ -38,6 +38,7 @@ Changes
 * [UI/Developer]: Updated to JQuery v3.5.1 to fix security vulnerability.
 * [UI]: Fixed bug preventing the upload of `*.fastqc.gz` on Mac computers.
 * [UI]: Update Groups page to remove `DataTables` and use Ant Design.
+* [UI]: Update Groups details page to use Ant Design and remove `DataTables`.
 * [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 
 19.09 to 20.01
