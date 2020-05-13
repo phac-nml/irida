@@ -1,8 +1,8 @@
-import React from "react";
-import { PagedTable } from "../ant.design/PagedTable";
+import React, { useContext } from "react";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectRole } from "./ProjectRole";
+import { ProjectRole } from "../roles/ProjectRole";
 import { RemoveTableItemButton } from "../Buttons";
 import { AddMembersButton } from "./AddMemberButton";
 import { removeUserFromProject } from "../../apis/projects/members";
@@ -13,6 +13,8 @@ import { removeUserFromProject } from "../../apis/projects/members";
  * @constructor
  */
 export function ProjectMembersTable() {
+  const { updateTable } = useContext(PagedTableContext);
+
   function removeUser(user) {
     return removeUserFromProject(user.id).then((message) => {
       if (user.id === window.PAGE.user) {
@@ -21,6 +23,7 @@ export function ProjectMembersTable() {
         // use this project anymore.
         window.location.href = setBaseUrl(`/projects`);
       }
+      updateTable();
       return message;
     });
   }
