@@ -29,8 +29,22 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		UserGroupsDetailsPage detailsPage = UserGroupsDetailsPage.initPage(driver());
 		assertEquals("Should be on the new user groups page", GROUP_NAME, detailsPage.getUserGroupName());
 
-		// Test removing a group
+		// Test adding a group member
+		assertEquals("Should be 1 group member", 1, detailsPage.getNumberOfMembers());
+		detailsPage.addGroupMember("third", "Collaborator");
+		assertEquals("Should be 2 group members", 2, detailsPage.getNumberOfMembers());
+
+		// Test updating group name
+		final String UPDATED_NAME = "FOOBAR";
+		detailsPage.updateUserGroupName(UPDATED_NAME);
+		assertEquals("Name should have been properly changed", UPDATED_NAME, detailsPage.getUserGroupName());
+
 		listingPage.gotoPage();
 		assertEquals("Should now be 3 groups", 3, listingPage.getNumberOfExistingUserGroups());
+
+		// Test removing a group
+		detailsPage.gotoPage(2);
+		detailsPage.deleteGroup();
+		assertEquals("Should have 2 user groups", 2, listingPage.getNumberOfExistingUserGroups());
 	}
 }

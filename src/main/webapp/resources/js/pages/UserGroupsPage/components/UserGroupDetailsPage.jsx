@@ -12,6 +12,7 @@ import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
 import { SPACE_SM } from "../../../styles/spacing";
 import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -125,14 +126,15 @@ export default function UserGroupDetailsPage({ id }) {
       <form
         style={{ marginTop: SPACE_SM }}
         ref={deleteRef}
-        action={`/groups/${id}/delete`}
+        action={setBaseUrl(`/groups/${id}/delete`)}
         method="POST"
       >
         <Popconfirm
           onConfirm={() => deleteRef.current.submit()}
           title={i18n("UserGroupDetailsPage.delete-confirm")}
+          okButtonProps={{ className: "t-delete-confirm-btn" }}
         >
-          <Button type="primary" danger>
+          <Button className="t-delete-group-btn" type="primary" danger>
             {i18n("UserGroupDetailsPage.delete-button")}
           </Button>
         </Popconfirm>
