@@ -20,11 +20,14 @@ export function MainNavigation({}) {
     >
       <a href={setBaseUrl("")}>
         <img
+          alt="IRIDA Logo - link home"
           style={{ height: 30, padding: `0 ${SPACE_MD}` }}
           src={setBaseUrl("/resources/img/irida_logo_light.svg")}
         />
       </a>
-      <Input.Search style={{ width: 400 }} />
+      <form action={setBaseUrl("/search")}>
+        <Input.Search name="query" style={{ width: 400 }} />
+      </form>
       <Menu mode="horizontal" style={{ flexGrow: 1 }}>
         <SubMenu
           title={
@@ -71,7 +74,7 @@ export function MainNavigation({}) {
           <Item>
             <>
               <IconLogout style={{ marginRight: SPACE_XS }} />
-              <a href="/logout">LOGOUT</a>
+              <a href={setBaseUrl("/logout")}>{i18n("nav.main.logout")}</a>
             </>
           </Item>
         </SubMenu>
