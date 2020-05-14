@@ -71,6 +71,8 @@ Output datasets within IRIDA can be of any file type and there can be many outpu
 
 In addition, each output dataset should be marked as a **workflow output** by selecting the asterix `*` icon, in this case both the **output_tree** and the **csv** files from the PhyML and SNP Matrix tools have been selected as output.
 
+*Note: If you have multiple of the same tool in your workflow, please ensure that each output has a unique name.*
+
 ## 2.3. Export Workflow
 
 Once the workflow is written in Galaxy, it can be exported to a file by going to the **Workflow** menu at the top, finding your particular workflow and selecting **Download or Export**.  This will save the workflow as a __*.ga__ file, which is a JSON-formatted file defining the tools, tool versions, and structure of the workflow.
@@ -112,6 +114,14 @@ output
 ```
 
 *NOTE: You may need to edit the output from [irida-wf-ga2xml][] to ensure that only necessary tool parameters are kept in the **irida_workflow.xml** file and that the proper tool revision is used for each tool if this information is not embedded in your Galaxy Workflow `ga` file.*
+
+### 3.1.1 Workflows with multiple of the same tool
+
+When building a plugin with `wf-ga2xml` it will assign the `tool_id` field from `irida_workflow_structure.ga` to the `toolId` `toolParameter` field in `irida_workflow.xml`.
+
+This creates a problem with multiple tools that share the same `toolId`
+
+You will need to edit the `irida_workflow.xml` file to replace the `toolId` fields with the `uuid` from the corresponding tool in the `irida_workflow_structure.ga` file.
 
 ## 3.2. Write IRIDA workflow plugin
 
@@ -235,10 +245,11 @@ Normally this file will be generated for you by [irida-wf-ga2xml][]. A few key e
 
 1. `<id>` defines a unique id for the workflow.  This must be a UUID.  A quick way to generate a random UUID on linux is the command `uuid -v 4`.
 2. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the `AnalysisType` in the Java plugin class defined below.
-2. `<sequenceReadsPaired>` defines the name of the input dataset in Galaxy for the paired-end sequence reads chosen previously.  In this case it is *sequence_reads*.
-3. `<toolParameter>` defines how to map parameters a user selects in IRIDA to those in Galaxy (defined in the **irida_workflow_structure.ga** file).
-4. `<output>` defines, for an output file, a name in IRIDA and maps it to the name of the file in Galaxy that was chosen previously.  In this case it is *hash.txt* and *read-count.txt*.
-5. `<toolRepositories>` defines the different Galaxy ToolSheds from which the dependency tools come from, as well as a revision number for the tool.
+3. `<sequenceReadsPaired>` defines the name of the input dataset in Galaxy for the paired-end sequence reads chosen previously.  In this case it is *sequence_reads*.
+4. `<toolParameter>` defines how to map parameters a user selects in IRIDA to those in Galaxy (defined in the **irida_workflow_structure.ga** file).
+*Note that when using multiple of the same tool, the `toolId` must use the tools `uuid` (defined in the **irida_workflow_structure.ga** file)*
+5. `<output>` defines, for an output file, a name in IRIDA and maps it to the name of the file in Galaxy that was chosen previously.  In this case it is *hash.txt* and *read-count.txt*.
+6. `<toolRepositories>` defines the different Galaxy ToolSheds from which the dependency tools come from, as well as a revision number for the tool.
 
 Additional details and a description of the syntax of this file can be found in the [IRIDA Workflow Description][] documentation.
 
