@@ -141,7 +141,7 @@ Running and building IRIDA
 
 #### Running a development server
 
-An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the database using test data. A newly created development database will contain two profiles `admin` and `test`, both with password `password1`, that can be used to log in to IRIDA.
+An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the database using test data. A newly created development database will contain the profile `admin`, with password `password1`, that can be used to log in to IRIDA.
 
 Running the `run.sh` without arguments script is equivalent to running:
 
