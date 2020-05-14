@@ -1,14 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequencingRuns;
 
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunsListPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.Map;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,6 +20,7 @@ import static org.junit.Assert.assertFalse;
 public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private SequencingRunDetailsPage page;
 
+	@Override
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
@@ -34,13 +38,17 @@ public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGetSequencerType() {
 		String sequencerType = page.getSequencerType();
-		assertEquals("MiSeq", sequencerType);
+		assertEquals("miseq", sequencerType);
 	}
-	
+
+	/**
+	 * TODO: This should be deleted after merging analysis branch.
+	 */
 	@Test
-	public void testDeleteRun(){
+	@Ignore
+	public void testDeleteRun() {
 		page.deleteRun();
-		SequencingRunsListPage listPage = new SequencingRunsListPage(driver());
+		SequencingRunsListPage listPage = SequencingRunsListPage.goToPage(driver());
 		assertFalse("run should have been deleted", listPage.idDisplayIdInList("1"));
 	}
 }

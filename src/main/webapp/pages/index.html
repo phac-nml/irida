@@ -5,7 +5,7 @@
       data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <link rel="stylesheet" th:href="@{/resources/dist/css/dashboard.bundle.css}">
+  <link rel="stylesheet" th:href="@{/dist/css/dashboard.bundle.css}">
   <script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -15,7 +15,7 @@
   </script>
 </head>
 <body>
-<div class="row" layout:fragment="page">
+<div class="row" style="margin-top: 1em;" layout:fragment="page">
   <div class="col-md-6 col-lg-5 col-lg-offset-1 col-sm-12">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
@@ -54,10 +54,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-  <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
-  <script th:src="@{/resources/bower_components/marked/marked.min.js}"></script>
-  <script th:src="@{/resources/bower_components/angular-marked/angular-marked.min.js}"></script>
-  <script th:src="@{/resources/dist/js/dashboard.bundle.js}"></script>
+  <script th:src="@{/dist/js/dashboard.bundle.js}"></script>
 </th:block>
 </body>
 

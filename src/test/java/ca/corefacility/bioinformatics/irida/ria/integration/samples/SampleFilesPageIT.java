@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
@@ -8,14 +14,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p> Integration test to ensure that the Sample Details Page. </p>
@@ -25,21 +25,18 @@ import java.util.Map;
 public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
+
+	private final String FASTQ_FILE = "src/test/resources/files/test_file.fastq";
+	private final String FASTA_FILE = "src/test/resources/files/test_file.fasta";
+
 	private SampleFilesPage page;
 
-	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
+	private final List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
 			ImmutableMap.of(
 					"href", "/samples",
 					"text", "Samples"
 			),
-			ImmutableMap.of(
-					"href", "/samples/" + SAMPLE_ID,
-					"text", String.valueOf(SAMPLE_ID)
-			),
-			ImmutableMap.of(
-					"href", "/samples/" + SAMPLE_ID + "/sequenceFiles",
-					"text", "Sequence Files"
-			)
+			ImmutableMap.of("href", "/samples/" + SAMPLE_ID, "text", "sample1")
 	);
 
 	@Before
@@ -51,6 +48,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPageSetup() {
 		page.gotoPage(SAMPLE_ID);
+		checkTranslations(page, ImmutableList.of("sample"), null);
+
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
 		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
 		assertEquals("Displays the correct number of assemblies", 2, page.getAssemblyFileCount());
@@ -90,31 +89,28 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testGoodFileUploads() throws InterruptedException {
+	public void testSequenceFilesUploads() {
 		page.gotoPage(SAMPLE_ID);
-		page.selectGoodFastqFiles();
-		assertTrue("Should display progress bar for file uploads", page.isProgressBarDisplayed());
-		
-		/*
-		 * TODO: Modify this test to check for the file successfully uploading
-		 * Note: This sleep is to allow the upload and file processing to
-		 * complete before dbunit tries to clear the database
-		 */
-		Thread.sleep(5000);
+		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
+		page.uploadSequenceFile(FASTQ_FILE);
+		page.gotoPage(SAMPLE_ID);
+		assertEquals("Displays the correct number of sequence files", 5, page.getSequenceFileCount());
+		page.gotoPage(SAMPLE_ID);
+		// Test wrong file format
+		page.uploadSequenceFile(FASTA_FILE);
+		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
 	}
 
 	@Test
-	public void testBadFileUploads() throws InterruptedException {
+	public void testAssemblyUploads() {
 		page.gotoPage(SAMPLE_ID);
-		page.selectBadFastaFile();
+		assertEquals("Displays the correct number of assemblies displayed", 2, page.getAssemblyFileCount());
+		page.uploadAssemblyFile(FASTA_FILE);
+		page.gotoPage(SAMPLE_ID);
+		assertEquals("Displays the correct number of assemblies displayed", 3, page.getAssemblyFileCount());
+		// Test wrong file format
+		page.uploadAssemblyFile(FASTQ_FILE);
 		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
-		
-		/*
-		 * TODO: Modify this test to check for the file upload stateNote: This
-		 * sleep is to allow the upload and file processing to complete before
-		 * dbunit tries to clear the database
-		 */
-		Thread.sleep(5000);
 	}
 	
 	@Test

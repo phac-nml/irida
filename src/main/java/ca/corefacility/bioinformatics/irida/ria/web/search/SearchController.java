@@ -89,7 +89,7 @@ public class SearchController {
 			orders.add(new Sort.Order(o.getDirection(), "sample." + o.getProperty()));
 		});
 
-		Sort newSort = new Sort(orders);
+		Sort newSort = Sort.by(orders);
 		Page<ProjectSampleJoin> samplePage;
 		if (global) {
 			samplePage = sampleService.searchAllSamples(query, params.getCurrentPage(), params.getLength(), newSort);

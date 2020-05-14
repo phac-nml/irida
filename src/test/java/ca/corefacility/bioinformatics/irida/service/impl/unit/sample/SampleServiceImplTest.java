@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -78,7 +79,7 @@ public class SampleServiceImplTest {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
-				ssoRepository, qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository, validator);
+				ssoRepository, qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository, null, validator);
 	}
 
 	@Test
@@ -90,7 +91,7 @@ public class SampleServiceImplTest {
 
 		ProjectSampleJoin join = new ProjectSampleJoin(p, s, true);
 
-		when(sampleRepository.findOne(s.getId())).thenReturn(s);
+		when(sampleRepository.findById(s.getId())).thenReturn(Optional.of(s));
 		when(psjRepository.readSampleForProject(p, s)).thenReturn(join);
 
 		sampleService.getSampleForProject(p, s.getId());
@@ -177,7 +178,7 @@ public class SampleServiceImplTest {
 			verify(ssoRepository).getSequencesForSample(toMerge[i]);
 			verify(ssoRepository).save(s_so_joins[i]);
 			verify(ssoRepository).delete(s_so_original[i]);
-			verify(sampleRepository).delete(toMerge[i].getId());
+			verify(sampleRepository).deleteById(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
 			verify(psjRepository).delete(p_s_joins[i]);
 		}
@@ -252,7 +253,7 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
@@ -308,7 +309,7 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
@@ -340,11 +341,11 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf2));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id2")
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder().executionManagerAnalysisId("id2")
 				.totalBases(1000L).build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 

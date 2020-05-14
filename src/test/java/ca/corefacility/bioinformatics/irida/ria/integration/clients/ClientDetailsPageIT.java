@@ -23,7 +23,8 @@ public class ClientDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
-		page = new ClientDetailsPage(driver(), id);
+		page = new ClientDetailsPage(driver());
+		page.goToPage(id);
 	}
 
 	@Test

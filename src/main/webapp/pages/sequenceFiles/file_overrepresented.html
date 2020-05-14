@@ -4,7 +4,6 @@
       data-layout-decorate="~{sequenceFiles/_base}">
 <head>
     <title th:text="${file.getLabel()}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}"/>
 </head>
 <body>
 <div layout:fragment="main">
@@ -31,19 +30,5 @@
     </table>
 </div>
 <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
-
-<th:block layout:fragment="pageScripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/resources/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
-    <script>
-        /*<![CDATA[*/
-        $("#orTable").dataTable({
-            dom: "<'top'il>rt<'bottom'p><'clear'>",
-            "bFilter": false,
-            "bSort": false
-        });
-        /*]]>*/
-    </script>
-</th:block>
 </body>
 </html>

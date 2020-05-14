@@ -1,91 +1,61 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * <p>
  * Page Object to represent the projects page.
  * </p>
- *
  */
 public class ProjectsPage extends AbstractPage {
-    private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);
-	public static final String RELATIVE_URL = "projects";
-	public static final String ADMIN_URL = RELATIVE_URL + "/all";
+	@FindBy(css = ".ant-table-content table")
+	WebElement projectsTable;
 
-    public ProjectsPage(WebDriver driver) {
+	@FindBy(className = "ant-table-column-title")
+	List<WebElement> headers;
+
+	@FindBy(css = ".ant-input-search .ant-input")
+	WebElement searchInput;
+
+	public ProjectsPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public void toUserProjectsPage() {
-		loadPage(RELATIVE_URL);
+	public static ProjectsPage goToProjectsPage(WebDriver driver, boolean isAdmin) {
+		get(driver, "projects" + (isAdmin ? "/all" : ""));
+		return PageFactory.initElements(driver, ProjectsPage.class);
 	}
 
-	public void toAdminProjectsPage() {
-		loadPage(ADMIN_URL);
+	public int getNumberOfProjects() {
+		return projectsTable.findElements(By.className("ant-table-row"))
+				.size();
 	}
 
-	private void loadPage(String url) {
-		get(driver, url);
-		waitForTime(100);
-		waitForElementVisible(By.cssSelector("#projects tbody tr"));
+	public void sortProjectTableBy() {
+		projectsTable.findElement(By.className("t-name-col")).click();
+		waitForTime(200);
 	}
 
-	public int projectsTableSize() {
-		logger.trace("Getting table size");
-
-		List<WebElement> projectList = driver.findElements(By.cssSelector("#projects tbody tr"));
-
-		int size = projectList.size();
-
-		// exclude the "no projects" row if it's empty
-		if (size == 1) {
-			WebElement next = projectList.iterator().next();
-			if (next.findElement(By.cssSelector("td")).getAttribute("class").contains("dataTables_empty")) {
-				logger.trace("Removing no projects found row");
-				size--;
-			}
-		}
-
-		return size;
+	public List<String> getProjectsSortListByColumnName() {
+		return projectsTable.findElements(By.className("t-name"))
+				.stream()
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
 	}
 
-	public void gotoProjectPage(int row) {
-		submitAndWait(driver.findElements(By.cssSelector("#projects .btn-link")).get(row));
-	}
-
-	public List<WebElement> getProjectColumn() {
-		return driver.findElements(By.cssSelector("#projects tbody td:nth-child(2)"));
-	}
-
-	public void clickProjectNameHeader() {
-		// Sorting row is the second one
-		WebElement th = driver.findElement(By.cssSelector("[data-data='name']"));
-		final String originalSortOrder = th.getAttribute("class");
-		th.click();
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
-				(org.openqa.selenium.support.ui.ExpectedCondition<Boolean>) input -> {
-					final String ariaSort = th.getAttribute("class");
-					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
-				});
-	}
-
-	public void doSearch(String term) {
-		WebElement input = driver.findElement(By.cssSelector("#projects_filter input"));
-		input.clear();
-		input.sendKeys(term);
-		waitForElementInvisible(By.className("projects_processing"));
-	}
-
-	public void clickLinkToProject(int row) {
-		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.cssSelector("#projects .btn-link"));
-		submitAndWait(links.get(row));
+	public void searchTableForProjectName(String projectName) {
+		searchInput.sendKeys(projectName);
+		searchInput.sendKeys(Keys.ENTER);
+		waitForTime(300);
 	}
 }

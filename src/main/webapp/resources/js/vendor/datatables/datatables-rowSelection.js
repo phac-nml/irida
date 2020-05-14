@@ -309,7 +309,7 @@
   /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
    * BUTTONS
    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-  $.extend(DataTable.ext.buttons, {
+  Object.assign(DataTable.ext.buttons, {
     selectAll: {
       text: i18n("buttons.selectAll", "Select All"),
       className: "btn-sm dt-select-all",

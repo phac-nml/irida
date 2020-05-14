@@ -1,41 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -47,6 +14,33 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
@@ -60,7 +54,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
 @DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml" })
 public class SequencingRunServiceImplIT {
@@ -158,7 +152,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
-		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -181,7 +175,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUser() {
-		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun create = miseqRunService.create(mr);
 		assertEquals("user", create.getUser().getUsername());
 	}
@@ -235,8 +229,8 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
-		MiseqRun r = new MiseqRun(LayoutType.PAIRED_END, "workflow");
-		miseqRunService.create(r);
+		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
+		miseqRunService.create(mr);
 	}
 
 	@Test

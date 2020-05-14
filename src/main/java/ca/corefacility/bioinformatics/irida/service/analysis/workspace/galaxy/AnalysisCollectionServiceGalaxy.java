@@ -1,29 +1,27 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A service for constructing dataset collections of input files for workflows
@@ -44,32 +42,29 @@ public class AnalysisCollectionServiceGalaxy {
 	 * Builds a new {@link AnalysisCollectionServiceGalaxy} with the given
 	 * information.
 	 * 
-	 * @param galaxyHistoriesService
-	 *            A GalaxyHistoriesService for interacting with Galaxy
-	 *            Histories.
+	 * @param galaxyHistoriesService A GalaxyHistoriesService for interacting with
+	 *                               Galaxy Histories.
 	 */
 	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 	}
-	
+
 	/**
 	 * Uploads a list of single sequence files belonging to the given samples to
 	 * Galaxy.
 	 * 
-	 * @param sampleSequenceFiles
-	 *            A map between {@link Sample} and
-	 *            {@link IridaSingleEndSequenceFile}.
-	 * @param workflowHistory
-	 *            The history to upload the sequence files into.
-	 * @param workflowLibrary
-	 *            A temporary library to upload files into.
-	 * @return A CollectionResponse for the dataset collection constructed from
-	 *         the given files.
-	 * @throws ExecutionManagerException
-	 *             If there was an error uploading the files.
+	 * @param sampleSequenceFiles A map between {@link Sample} and
+	 *                            {@link SingleEndSequenceFile}.
+	 * @param workflowHistory     The history to upload the sequence files into.
+	 * @param workflowLibrary     A temporary library to upload files into.
+	 * @return A CollectionResponse for the dataset collection constructed from the
+	 *         given files.
+	 * @throws ExecutionManagerException If there was an error uploading the files.
+	 * @throws IOException If there was an error reading the sequence file.
 	 */
-	public CollectionResponse uploadSequenceFilesSingleEnd(Map<Sample, ? extends IridaSingleEndSequenceFile> sampleSequenceFiles,
-			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
+	public CollectionResponse uploadSequenceFilesSingleEnd(
+			Map<Sample, SingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
+			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
@@ -77,14 +72,13 @@ public class AnalysisCollectionServiceGalaxy {
 
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
-			IridaSingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+			SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
 			samplesMap.put(sequenceFile.getSequenceFile().getFile(), sample);
 		}
 
 		// upload files to library and then to a history
-		Set<Path> pathsToUpload = samplesMap.keySet();
-		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
-				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(samplesMap.keySet(),
+				workflowHistory, workflowLibrary, DataStorage.LOCAL);
 
 		for (Path sequenceFilePath : samplesMap.keySet()) {
 			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
@@ -108,19 +102,19 @@ public class AnalysisCollectionServiceGalaxy {
 	 * Uploads a list of paired sequence files belonging to the given samples to
 	 * Galaxy.
 	 * 
-	 * @param sampleSequenceFilesPaired
-	 *            A map between {@link Sample} and {@link SequenceFilePair}.
-	 * @param workflowHistory
-	 *            The history to upload the sequence files into.
-	 * @param workflowLibrary
-	 *            A temporary library to upload files into.
-	 * @return A CollectionResponse for the dataset collection constructed from
-	 *         the given files.
-	 * @throws ExecutionManagerException
-	 *             If there was an error uploading the files.
+	 * @param sampleSequenceFilesPaired A map between {@link Sample} and
+	 *                                  {@link SequenceFilePair}.
+	 * @param workflowHistory           The history to upload the sequence files
+	 *                                  into.
+	 * @param workflowLibrary           A temporary library to upload files into.
+	 * @return A CollectionResponse for the dataset collection constructed from the
+	 *         given files.
+	 * @throws ExecutionManagerException If there was an error uploading the files.
+	 * @throws IOException If there was an error reading the sequence file.
 	 */
-	public CollectionResponse uploadSequenceFilesPaired(Map<Sample, ? extends IridaSequenceFilePair> sampleSequenceFilesPaired,
-			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
+	public CollectionResponse uploadSequenceFilesPaired(
+			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
+			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
@@ -130,9 +124,9 @@ public class AnalysisCollectionServiceGalaxy {
 		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
 		Set<Path> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
-			IridaSequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
-			IridaSequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
-			IridaSequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
+			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
+			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
+			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
 			samplesMapPairForward.put(sample, fileForward.getFile());
 			samplesMapPairReverse.put(sample, fileReverse.getFile());
@@ -142,7 +136,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		// upload files to library and then to a history
 		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
-				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+				workflowHistory, workflowLibrary, DataStorage.LOCAL);
 
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			Path fileForward = samplesMapPairForward.get(sample);

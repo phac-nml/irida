@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -27,50 +26,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.domain.Page;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -81,6 +61,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -101,8 +84,6 @@ public class ProjectsController {
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
-	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
-	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
@@ -129,16 +110,9 @@ public class ProjectsController {
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
-	// HTTP session variable name for Galaxy callback variable
-	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
-	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
-
 	// CONSTANTS
 	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList.of(
-			ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV")
-	);
-
-
+			ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV"));
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
@@ -163,30 +137,14 @@ public class ProjectsController {
 	/**
 	 * Request for the page to display a list of all projects available to the currently logged in user.
 	 *
-	 * @param model
-	 * 		The model to add attributes to for the template.
-	 * @param galaxyCallbackURL
-	 * 		The URL at which to call the Galaxy export tool
-	 * @param galaxyClientID
-	 * 		The OAuth2 client ID of the Galaxy instance to export to
-	 * @param httpSession
-	 * 		The user's session
-	 *
+	 * @param model The model to add attributes to for the template.
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
-	public String getProjectsPage(Model model,
-			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
-			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID, HttpSession httpSession) {
+	public String getProjectsPage(Model model) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("exportTypes", EXPORT_TYPES);
 		model.addAttribute("isAdmin", false);
-
-		// External exporting functionality
-		if (galaxyCallbackURL != null && galaxyClientID != null) {
-			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
-			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
-		}
 
 		return LIST_PROJECTS_PAGE;
 	}
@@ -194,9 +152,7 @@ public class ProjectsController {
 	/**
 	 * Get the admin projects page.
 	 *
-	 * @param model
-	 * 		{@link Model}
-	 *
+	 * @param model {@link Model}
 	 * @return The name of the page
 	 */
 	@RequestMapping("/projects/all")
@@ -211,13 +167,9 @@ public class ProjectsController {
 	/**
 	 * Request for a specific project details page.
 	 *
-	 * @param projectId
-	 * 		The id for the project to show details for.
-	 * @param model
-	 * 		Spring model to populate the html page.
-	 * @param principal
-	 * 		a reference to the logged in user.
-	 *
+	 * @param projectId The id for the project to show details for.
+	 * @param model     Spring model to populate the html page.
+	 * @param principal a reference to the logged in user.
 	 * @return The name of the project details page.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/activity")
@@ -233,35 +185,37 @@ public class ProjectsController {
 	/**
 	 * Gets the name of the template for the new project page
 	 *
-	 * @param useCartSamples
-	 *            Whether or not to use the samples in the cart when creating
-	 *            the project
-	 * @param model
-	 *            {@link Model}
-	 *
+	 * @param useCartSamples Whether or not to use the samples in the cart when creating
+	 *                       the project
+	 * @param model          {@link Model}
+	 * @param owner          whether or not to lock the sample(s) from being modified from new
+	 *                       the project
 	 * @return The name of the create new project page
 	 */
 	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
 	public String getCreateProjectPage(
 			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
-			final Model model) {
+			final Model model,
+			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
 		model.addAttribute("useCartSamples", useCartSamples);
 
-		Map<Project, Set<Sample>> selected = cartController.getSelected();
+		Map<Project, List<Sample>> selected = cartController.getSelected();
 
 		// Check which samples they can modify
 		Set<Sample> allowed = new HashSet<>();
 		Set<Sample> disallowed = new HashSet<>();
 
-		selected.values().forEach(set -> {
-			set.stream().forEach(s -> {
-				if (canModifySample(s)) {
-					allowed.add(s);
-				} else {
-					disallowed.add(s);
-				}
-			});
-		});
+		selected.values()
+				.forEach(set -> {
+					set.stream()
+							.forEach(s -> {
+								if (canModifySample(s)) {
+									allowed.add(s);
+								} else {
+									disallowed.add(s);
+								}
+							});
+				});
 
 		model.addAttribute("allowedSamples", allowed);
 		model.addAttribute("disallowedSamples", disallowed);
@@ -275,15 +229,14 @@ public class ProjectsController {
 	/**
 	 * Get the page to synchronize remote projects
 	 *
-	 * @param model
-	 *            Model to render for view
+	 * @param model Model to render for view
 	 * @return Name of the project sync page
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
 	public String getSynchronizeProjectPage(final Model model) {
 
 		Iterable<RemoteAPI> apis = remoteApiService.findAll();
-		model.addAttribute("apis",apis);
+		model.addAttribute("apis", apis);
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
 
@@ -310,12 +263,13 @@ public class ProjectsController {
 		try {
 			Project read = projectRemoteService.read(url);
 			read.setId(null);
-			read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+			read.getRemoteStatus()
+					.setSyncStatus(SyncStatus.MARKED);
 			read.setSyncFrequency(syncFrequency);
 
 			read = projectService.create(read);
 
-			return "redirect:/projects/" + read.getId() + "/metadata";
+			return "redirect:/projects/" + read.getId() + "/settings";
 		} catch (IridaOAuthException ex) {
 			Map<String, String> errors = new HashMap<>();
 			errors.put("oauthError", ex.getMessage());
@@ -333,8 +287,7 @@ public class ProjectsController {
 	 * List all the {@link Project}s that can be read for a user from a given
 	 * {@link RemoteAPI}
 	 *
-	 * @param apiId
-	 *            the local ID of the {@link RemoteAPI}
+	 * @param apiId the local ID of the {@link RemoteAPI}
 	 * @return a List of {@link Project}s
 	 */
 	@RequestMapping(value = "/projects/ajax/api/{apiId}")
@@ -343,88 +296,67 @@ public class ProjectsController {
 		RemoteAPI api = remoteApiService.read(apiId);
 		List<Project> listProjectsForAPI = projectRemoteService.listProjectsForAPI(api);
 
-		return listProjectsForAPI.stream().map(ProjectByApiResponse::new).collect(Collectors.toList());
+		return listProjectsForAPI.stream()
+				.map(ProjectByApiResponse::new)
+				.collect(Collectors.toList());
 	}
 
 	/**
 	 * Creates a new project and displays a list of users for the user to add to
 	 * the project
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param project
-	 *            the {@link Project} to create
-	 * @param useCartSamples
-	 *            add all samples in the cart to the project
-	 *
+	 * @param model          {@link Model}
+	 * @param project        the {@link Project} to create
+	 * @param useCartSamples add all samples in the cart to the project
+	 * @param owner          lock sample modification from the new project
 	 * @return The name of the add users to project page
 	 */
 	@RequestMapping(value = "/projects/new", method = RequestMethod.POST)
 	public String createNewProject(final Model model, @ModelAttribute Project project,
-			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples) {
+			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples,
+			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
 
 		try {
 			if (useCartSamples) {
-				Map<Project, Set<Sample>> selected = cartController.getSelected();
+				Map<Project, List<Sample>> selected = cartController.getSelected();
 
-				List<Long> sampleIds = selected.entrySet().stream().flatMap(e -> e.getValue().stream().filter(s -> {
-					return canModifySample(s);
-				}).map(i -> i.getId())).collect(Collectors.toList());
+				List<Long> sampleIds = selected.entrySet()
+						.stream()
+						.flatMap(e -> e.getValue()
+								.stream()
+								.filter(s -> {
+									return canModifySample(s);
+								})
+								.map(i -> i.getId()))
+						.collect(Collectors.toList());
 
-				project = projectService.createProjectWithSamples(project, sampleIds);
+				project = projectService.createProjectWithSamples(project, sampleIds, owner);
 			} else {
 				project = projectService.create(project);
 			}
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
 			model.addAttribute("project", project);
-			return getCreateProjectPage(useCartSamples, model);
+			return getCreateProjectPage(useCartSamples, model, owner);
 		}
 
-		return "redirect:/projects/" + project.getId() + "/metadata";
-	}
-
-	/**
-	 * Returns the name of a page to add users to a *new* project.
-	 *
-	 * @param model
-	 * 		{@link Model}
-	 * @param principal
-	 * 		a reference to the logged in user.
-	 * @param projectId
-	 * 		the id of the project to find the metadata for.
-	 *
-	 * @return The name of the add users to new project page.
-	 */
-	@RequestMapping("/projects/{projectId}/metadata")
-	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
-		Project project = projectService.read(projectId);
-
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
-		return PROJECT_METADATA_PAGE;
+		return "redirect:/projects/" + project.getId() + "/settings";
 	}
 
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of the {@link Project}
-	 * @param principal
-	 *            the logged in user
-	 * @param model
-	 *            model for view variables
+	 * @param projectId the ID of the {@link Project}
+	 * @param principal the logged in user
+	 * @param model     model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses")
 	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "analyses");
 		return "projects/analyses/pages/analyses_table.html";
@@ -433,12 +365,9 @@ public class ProjectsController {
 	/**
 	 * Get the page for analysis output files shared with a given {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of the {@link Project}
-	 * @param principal
-	 *            the logged in user
-	 * @param model
-	 *            model for view variables
+	 * @param projectId the ID of the {@link Project}
+	 * @param principal the logged in user
+	 * @param model     model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses/shared-outputs")
@@ -446,7 +375,7 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute("ajaxURL", "/ajax/analysis/project/" + projectId + "/list");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "shared");
 		return "projects/analyses/pages/outputs.html";
@@ -455,12 +384,9 @@ public class ProjectsController {
 	/**
 	 * Get the page for automated analysis output files shared with a given {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of the {@link Project}
-	 * @param principal
-	 *            the logged in user
-	 * @param model
-	 *            model for view variables
+	 * @param projectId the ID of the {@link Project}
+	 * @param principal the logged in user
+	 * @param model     model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses/automated-outputs")
@@ -468,87 +394,10 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute("ajaxURL", "/ajax/analysis/project/" + projectId + "/list");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "automated");
 		return "projects/analyses/pages/outputs.html";
-	}
-
-	/**
-	 * Get the project edit page
-	 *
-	 * @param model     model for the view
-	 * @param principal currently logged in user
-	 * @param projectId id of the project to get
-	 * @return name of the project edit view
-	 */
-	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
-	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId) {
-		Project project = projectService.read(projectId);
-		User user = userService.getUserByUsername(principal.getName());
-		if (user.getSystemRole().equals(Role.ROLE_ADMIN)
-				|| projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
-			if (!model.containsAttribute("errors")) {
-				model.addAttribute("errors", new HashMap<>());
-			}
-			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-
-			model.addAttribute("project", project);
-			model.addAttribute("maxFileSize", MAX_UPLOAD_SIZE);
-			if (MAX_UPLOAD_SIZE > 0) {
-				model.addAttribute("maxFileSizeString", fileSizeConverter.convert(MAX_UPLOAD_SIZE));
-			} else {
-				model.addAttribute("maxFileSizeString", "∞");
-			}
-			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
-			return PROJECT_METADATA_EDIT_PAGE;
-		} else {
-			throw new AccessDeniedException("Do not have permissions to modify this project.");
-		}
-	}
-
-	/**
-	 * Submit a project metadata edit
-	 *
-	 * @param model              Model for the view
-	 * @param principal          currently logged in user
-	 * @param projectId          id of the project
-	 * @param name               new name of the project
-	 * @param organism           new organism for the project
-	 * @param projectDescription new description for the project
-	 * @param remoteURL          new remote URL for the project
-	 * @return Project view name
-	 */
-	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.POST)
-	public String postProjectMetadataEditPage(final Model model, final Principal principal,
-			@PathVariable long projectId, @RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL) {
-
-		Project project = projectService.read(projectId);
-
-		if (!Strings.isNullOrEmpty(name)) {
-			project.setName(name);
-		}
-		if (!Strings.isNullOrEmpty(organism)) {
-			project.setOrganism(organism);
-		}
-		if (!Strings.isNullOrEmpty(projectDescription)) {
-			project.setProjectDescription(projectDescription);
-		}
-		if (!Strings.isNullOrEmpty(remoteURL)) {
-			project.setRemoteURL(remoteURL);
-		}
-
-		try {
-			projectService.update(project);
-		} catch (ConstraintViolationException ex) {
-			model.addAttribute("errors", getErrorsFromViolationException(ex));
-			return getProjectMetadataEditPage(model, principal, projectId);
-		}
-
-		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
 	/**
@@ -556,9 +405,7 @@ public class ProjectsController {
 	 * <p>
 	 * Note: If the search term was not included in the results, it will be added as an option
 	 *
-	 * @param searchTerm
-	 * 		The term to find taxa for
-	 *
+	 * @param searchTerm The term to find taxa for
 	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
@@ -585,57 +432,14 @@ public class ProjectsController {
 	}
 
 	/**
-	 *  User mapping to get a list of all project they are on.
-	 *
-	 * @param params
-	 * 		{@link DataTablesParams} passed from the UI DataTables instance.
-	 *
-	 * @return {@link DataTablesResponse}
-	 */
-	@RequestMapping("/projects/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getAjaxProjectList(@DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService
-				.findProjectsForUser(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
-						params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
-	}
-
-	/**
-	 * Admin mapping to get a list of all project they are on.
-	 *
-	 * @param params
-	 * 		{@link DataTablesParams} passed from the UI DataTables instance.
-	 *
-	 * @return {@link DataTablesResponse}
-	 */
-	@RequestMapping("/projects/admin/ajax/list")
-	@ResponseBody
-	public DataTablesResponse getAjaxAdminProjectsList(@DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService
-				.findAllProjects(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
-						params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
-	}
-
-	/**
 	 * Export Projects table as either an excel file or CSV
 	 *
-	 * @param type
-	 * 		of file to export (csv or excel)
-	 * @param isAdmin
-	 * 		if the currently logged in user is an administrator
-	 * @param response
-	 * 		{@link HttpServletResponse}
-	 * @param principal
-	 * 		{@link Principal}
-	 * @param locale
-	 * 		{@link Locale}
-	 *
-	 * @throws IOException
-	 * 		thrown if cannot open the {@link HttpServletResponse} {@link OutputStream}
+	 * @param type      of file to export (csv or excel)
+	 * @param isAdmin   if the currently logged in user is an administrator
+	 * @param response  {@link HttpServletResponse}
+	 * @param principal {@link Principal}
+	 * @param locale    {@link Locale}
+	 * @throws IOException thrown if cannot open the {@link HttpServletResponse} {@link OutputStream}
 	 */
 	@RequestMapping("/projects/ajax/export")
 	public void exportProjectsToFile(@RequestParam(value = "dtf") String type,
@@ -655,19 +459,23 @@ public class ProjectsController {
 		// If on the users projects page, give the user their projects.
 		else {
 			User user = userService.getUserByUsername(principal.getName());
-			projects = projectService.getProjectsForUser(user).stream().map(Join::getSubject)
+			projects = projectService.getProjectsForUser(user)
+					.stream()
+					.map(Join::getSubject)
 					.collect(Collectors.toList());
 		}
 
-		List<DTProject> dtProjects = projects.stream().map(this::createDataTablesProject).collect(Collectors.toList());
-		List<String> headers = ImmutableList.of("id", "name", "organism", "samples", "created", "modified").stream()
-				.map(h -> messageSource.getMessage("projects.table." + h, new Object[] {}, locale))
+		List<DTProject> dtProjects = projects.stream()
+				.map(this::createDataTablesProject)
+				.collect(Collectors.toList());
+		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name", "ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date", "ProjectsTable_th_modified_date")
+				.stream()
+				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
 		// Create the filename
 		Date date = new Date();
-		DateFormat fileDateFormat = new SimpleDateFormat(
-				messageSource.getMessage("date.iso-8601", null, locale));
+		DateFormat fileDateFormat = new SimpleDateFormat(messageSource.getMessage("date.iso-8601", null, locale));
 		String filename = "IRIDA_projects_" + fileDateFormat.format(date);
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "." + type + "\"");
@@ -681,22 +489,17 @@ public class ProjectsController {
 	/**
 	 * Write the projects as a CSV file
 	 *
-	 * @param headers
-	 * 		{@link List} for {@link String} headers for the information.
-	 * @param projects
-	 * 		{@link List} of {@link DTProject} to export
-	 * @param locale
-	 * 		{@link Locale}
-	 * @param response
-	 * 		{@link HttpServletResponse}
-	 *
-	 * @throws IOException
-	 * 		Thrown if cannot get the {@link PrintWriter} for the response
+	 * @param headers  {@link List} for {@link String} headers for the information.
+	 * @param projects {@link List} of {@link DTProject} to export
+	 * @param locale   {@link Locale}
+	 * @param response {@link HttpServletResponse}
+	 * @throws IOException Thrown if cannot get the {@link PrintWriter} for the response
 	 */
 	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
 		PrintWriter writer = response.getWriter();
-		try(CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()))) {
+		try (CSVPrinter printer = new CSVPrinter(writer,
+				CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()))) {
 			printer.printRecord(headers);
 
 			DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
@@ -717,17 +520,11 @@ public class ProjectsController {
 	/**
 	 * Write the projects as a Excel file
 	 *
-	 * @param headers
-	 * 		{@link List} for {@link String} headers for the information.
-	 * @param projects
-	 * 		{@link List} of {@link DTProject} to export
-	 * @param locale
-	 * 		{@link Locale}
-	 * @param response
-	 * 		{@link HttpServletResponse}
-	 *
-	 * @throws IOException
-	 * 		Thrown if cannot get the {@link OutputStream} for the response
+	 * @param headers  {@link List} for {@link String} headers for the information.
+	 * @param projects {@link List} of {@link DTProject} to export
+	 * @param locale   {@link Locale}
+	 * @param response {@link HttpServletResponse}
+	 * @throws IOException Thrown if cannot get the {@link OutputStream} for the response
 	 */
 	private void writeProjectsToExcelFile(List<String> headers, List<DTProject> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
@@ -747,16 +544,22 @@ public class ProjectsController {
 		for (DTProject p : projects) {
 			Row row = sheet.createRow(rowCount++);
 			int cellCount = 0;
-			row.createCell(cellCount++).setCellValue(String.valueOf(p.getId()));
-			row.createCell(cellCount++).setCellValue(p.getName());
-			row.createCell(cellCount++).setCellValue(p.getOrganism());
-			row.createCell(cellCount++).setCellValue(String.valueOf(p.getSamples()));
-			row.createCell(cellCount++).setCellValue(dateFormat.format(p.getCreatedDate()));
-			row.createCell(cellCount).setCellValue(dateFormat.format(p.getModifiedDate()));
+			row.createCell(cellCount++)
+					.setCellValue(String.valueOf(p.getId()));
+			row.createCell(cellCount++)
+					.setCellValue(p.getName());
+			row.createCell(cellCount++)
+					.setCellValue(p.getOrganism());
+			row.createCell(cellCount++)
+					.setCellValue(String.valueOf(p.getSamples()));
+			row.createCell(cellCount++)
+					.setCellValue(dateFormat.format(p.getCreatedDate()));
+			row.createCell(cellCount)
+					.setCellValue(dateFormat.format(p.getModifiedDate()));
 		}
 
 		// Write the file
-		try(OutputStream stream = response.getOutputStream()) {
+		try (OutputStream stream = response.getOutputStream()) {
 			workbook.write(stream);
 			stream.flush();
 		}
@@ -765,16 +568,15 @@ public class ProjectsController {
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
-	 * @param e
-	 * 		{@link ConstraintViolationException} for the form submitted.
-	 *
+	 * @param e {@link ConstraintViolationException} for the form submitted.
 	 * @return Map of string {fieldName, error}
 	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
 		Map<String, String> errors = new HashMap<>();
 		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
 			String message = violation.getMessage();
-			String field = violation.getPropertyPath().toString();
+			String field = violation.getPropertyPath()
+					.toString();
 			errors.put(field, message);
 		}
 		return errors;
@@ -795,12 +597,12 @@ public class ProjectsController {
 	/**
 	 * Test whether the logged in user can modify a {@link Sample}
 	 *
-	 * @param sample
-	 *            the {@link Sample} to check
+	 * @param sample the {@link Sample} to check
 	 * @return true if they can modify
 	 */
 	private boolean canModifySample(Sample sample) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 
 		return updateSamplePermission.isAllowed(authentication, sample);
 	}
@@ -810,16 +612,15 @@ public class ProjectsController {
 	 * <p>
 	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
 	 *
-	 * @param node
-	 * 		The node to transform
-	 *
+	 * @param node The node to transform
 	 * @return A Map<String,Object> which may contain more children
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
 		Map<String, Object> current = new HashMap<>();
 
 		// add the node properties to the map
-		for (Entry<String, Object> property : node.getProperties().entrySet()) {
+		for (Entry<String, Object> property : node.getProperties()
+				.entrySet()) {
 			current.put(property.getKey(), property.getValue());
 		}
 
@@ -842,9 +643,7 @@ public class ProjectsController {
 	/**
 	 * Extract the details of the a {@link Project} into a {@link DTProject} which is consumable by the UI
 	 *
-	 * @param project
-	 * 		{@link Project}
-	 *
+	 * @param project {@link Project}
 	 * @return {@link DTProject}
 	 */
 	private DTProject createDataTablesProject(Project project) {

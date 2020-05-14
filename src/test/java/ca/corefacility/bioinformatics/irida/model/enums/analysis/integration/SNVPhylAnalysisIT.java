@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -56,11 +56,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecutio
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
@@ -74,7 +76,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SNVPhylAnalysisIT {
@@ -114,6 +116,12 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private JobErrorRepository jobErrorRepository;
+
+	@Autowired
+	private EmailController emailController;
+	
+	@Autowired
+	private GzipFileProcessor gzipFileProcessor;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -161,7 +169,7 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
@@ -170,9 +178,9 @@ public class SNVPhylAnalysisIT {
 		Path sequenceFilePathRealA2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
 		Path sequenceFilePathRealB1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_1.fastq").toURI());
+				"SNVPhyl/test1/input/fastq/b_1.fastq.gz").toURI());
 		Path sequenceFilePathRealB2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_2.fastq").toURI());
+				"SNVPhyl/test1/input/fastq/b_2.fastq.gz").toURI());
 		Path sequenceFilePathRealC1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
 		Path sequenceFilePathRealC2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
@@ -185,9 +193,9 @@ public class SNVPhylAnalysisIT {
 		sequenceFilePathA2 = tempDir.resolve("a_R2_001.fastq");
 		Files.copy(sequenceFilePathRealA2, sequenceFilePathA2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq");
+		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq.gz");
 		Files.copy(sequenceFilePathRealB1, sequenceFilePathB1, StandardCopyOption.REPLACE_EXISTING);
-		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq");
+		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq.gz");
 		Files.copy(sequenceFilePathRealB2, sequenceFilePathB2, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathC1 = tempDir.resolve("c_R1_001.fastq");
@@ -230,6 +238,8 @@ public class SNVPhylAnalysisIT {
 		vcf2core3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/vcf2core.tsv").toURI());
 		filterStats3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/filterStats.txt").toURI());
 		snvAlign3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvAlignment.phy").toURI());
+		
+		gzipFileProcessor.setDisableFileProcessor(false);
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -243,7 +253,7 @@ public class SNVPhylAnalysisIT {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
 
-		AnalysisSubmission submission = analysisSubmissionRepository.findOne(submissionId);
+		AnalysisSubmission submission = analysisSubmissionRepository.findById(submissionId).orElse(null);
 
 		databaseSetupGalaxyITService.waitUntilSubmissionComplete(submission);
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
@@ -270,6 +280,8 @@ public class SNVPhylAnalysisIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
+		gzipFileProcessor.setDisableFileProcessor(true);
+		
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
 		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
@@ -287,7 +299,7 @@ public class SNVPhylAnalysisIT {
 		
 		completeSubmittedAnalyses(submission.getId());
 
-		submission = analysisSubmissionRepository.findOne(submission.getId());
+		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
@@ -387,6 +399,18 @@ public class SNVPhylAnalysisIT {
 
 		assertTrue("Should have found both reads and reference input tools.", foundReadsInputTool
 				&& foundReferenceInputTool);
+		
+		// At the end, verify that these sequence files did get automatically uncompressed
+		assertEquals("Should have 2 pairs of files", 2, sequenceFilePairA.getFiles().size());
+		for (SequenceFile file : sequenceFilePairA.getFiles()) {
+			assertFalse("Sequence files were compressed", file.getFile().toString().endsWith(".gz"));
+		}
+		
+		// At the end, verify that the sequence files did not get automatically decompressed.
+		assertEquals("Should have 2 pairs of files", 2, sequenceFilePairB.getFiles().size());
+		for (SequenceFile file : sequenceFilePairB.getFiles()) {
+			assertTrue("Sequence files were uncompressed", file.getFile().toString().endsWith(".gz"));
+		}
 	}
 	
 	/**
@@ -417,7 +441,7 @@ public class SNVPhylAnalysisIT {
 
 		completeSubmittedAnalyses(submission.getId());
 
-		submission = analysisSubmissionRepository.findOne(submission.getId());
+		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
@@ -567,7 +591,7 @@ public class SNVPhylAnalysisIT {
 
 		completeSubmittedAnalyses(submission.getId());
 
-		submission = analysisSubmissionRepository.findOne(submission.getId());
+		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();

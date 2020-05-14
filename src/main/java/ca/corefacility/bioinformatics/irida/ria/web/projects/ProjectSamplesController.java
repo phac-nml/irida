@@ -12,11 +12,9 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +28,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -54,9 +49,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Controller for handling interactions with samples in a project
@@ -105,14 +104,11 @@ public class ProjectSamplesController {
 	 * 		The user reading the project
 	 * @param projectId
 	 * 		The ID of the project
-	 * @param httpSession
-	 * 		The user's session
 	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping(value = { "/projects/{projectId}", "/projects/{projectId}/samples" })
-	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId,
-			HttpSession httpSession) {
+	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
@@ -120,10 +116,7 @@ public class ProjectSamplesController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
-		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
-				!= null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
-		model.addAttribute("galaxyCallback", haveGalaxyCallbackURL);
 
 		// Add the associated projects
 		List<RelatedProjectJoin> associatedJoin = projectService.getRelatedProjects(project);
@@ -212,29 +205,6 @@ public class ProjectSamplesController {
 		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
 		model.addAttribute("project", projectService.read(projectId));
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
-	}
-
-	/**
-	 * Generate a modal for displaying the ngs-linker command
-	 *
-	 * @param ids       List of {@link Sample} identifiers
-	 * @param projectId identtifier for the current {@link Project}
-	 * @param model     UI Model
-	 * @return Path to template
-	 */
-	@RequestMapping(value = "/projects/{projectId}/templates/linker-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getLinkerCommandModal(@RequestParam(name = "sampleIds[]", defaultValue = "") List<Long> ids,
-			@PathVariable Long projectId, Model model) {
-		Project project = projectService.read(projectId);
-		int totalSamples = sampleService.getSamplesForProject(project).size();
-
-		String cmd = LINKER_SCRIPT + " -p " + projectId;
-		if (ids.size() != 0 && ids.size() != totalSamples) {
-			cmd += " -s " +  StringUtils.join(ids, " -s ");
-		}
-
-		model.addAttribute("command", cmd);
-		return PROJECT_TEMPLATE_DIR + "linker-modal.tmpl";
 	}
 
 	/**
@@ -494,7 +464,7 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get a list of all {@link Sample} ids in a {@link Project}
+	 * Get a minimum representation of all {@link Sample} ids in a {@link Project}
 	 *
 	 * @param projectId            Identifier for the current project
 	 * @param params               {@link DataTablesParams}
@@ -506,11 +476,13 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/sampleIds", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
+	public List<ProjectCartSample> getAllProjectSampleIds(@PathVariable Long projectId,
 			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
 			@RequestParam(required = false, defaultValue = "") String search, UISampleFilter filter) {
+		List<ProjectCartSample> cartSamples = new ArrayList<>();
+
 		// Add the current project to the associatedProjectIds list.
 		associatedProjectIds.add(projectId);
 
@@ -518,7 +490,7 @@ public class ProjectSamplesController {
 		List<Project> projects = new ArrayList<>(
 				(Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
 
-		Sort sort = new Sort(Direction.ASC, "id");
+		Sort sort = Sort.by(Direction.ASC, "id");
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames,
 				filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
 				filter.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
@@ -526,14 +498,11 @@ public class ProjectSamplesController {
 		// Converting everything to a string for consumption by the UI.
 		Map<String, List<String>> result = new HashMap<>();
 		for (ProjectSampleJoin join : page) {
-			String pId = join.getSubject().getId().toString();
-			if (!result.containsKey(pId)) {
-				result.put(pId, new ArrayList<>());
-			}
-			result.get(pId).add(join.getObject().getId().toString());
+			cartSamples.add(new ProjectCartSample(join.getObject(), join.getSubject()
+					.getId()));
 		}
 
-		return result;
+		return cartSamples;
 	}
 
 	/**

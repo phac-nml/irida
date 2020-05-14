@@ -58,14 +58,14 @@ public class AgGridColumn {
 	private boolean headerCheckboxSelection;
 
 	/**
-	 * Suppress the filter on this column
+	 * Type of column filter.
 	 */
-	private boolean suppressFilter;
+	private String filter;
 
 	/**
 	 * Suppress the ability to resize this column
 	 */
-	private boolean suppressResize;
+	private boolean resizable;
 
 	/**
 	 * Set to 'asc' or 'desc' to sort by this column by default.
@@ -90,6 +90,8 @@ public class AgGridColumn {
 		this.type = type;
 		this.hide = hide;
 		this.editable = editable;
+		// Default to be resizable unless explicitly set.
+		this.resizable = true;
 	}
 
 	public String getField() {
@@ -164,19 +166,19 @@ public class AgGridColumn {
 		this.headerCheckboxSelection = headerCheckboxSelection;
 	}
 
-	public boolean isSuppressFilter() {
-		return suppressFilter;
+	public String getFilter() {
+		return filter;
 	}
 
-	public void setSuppressFilter(boolean suppressFilter) {
-		this.suppressFilter = suppressFilter;
+	public void setFilter(String filter) {
+		this.filter = filter;
 	}
 
-	public boolean isSuppressResize() {
-		return suppressResize;
+	public boolean isResizable() {
+		return resizable;
 	}
 
-	public void setSuppressResize(boolean suppressResize) {
-		this.suppressResize = suppressResize;
+	public void setResizable(boolean resizable) {
+		this.resizable = resizable;
 	}
 }

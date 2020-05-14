@@ -31,7 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -80,7 +80,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequencingObjectServiceImplIT {
@@ -362,6 +362,10 @@ public class SequencingObjectServiceImplIT {
 				Thread.sleep(1000);
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
+		
+		//one more sleep to make sure everything's settled
+		Thread.sleep(1000);
+
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
@@ -495,7 +499,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
 
-		sampleRepository.delete(1L);
+		sampleRepository.deleteById(1L);
 
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 	}

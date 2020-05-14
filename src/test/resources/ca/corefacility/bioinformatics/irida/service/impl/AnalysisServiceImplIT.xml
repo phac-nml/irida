@@ -12,7 +12,7 @@
 		credentialsNonExpired="true" />
 		
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" remoteURL="somewhere" sistr_typing_uploads="OFF"/>
+		projectDescription="description" remoteURL="somewhere" />
 	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
 		createdDate="2013-07-18 14:20:19.0" email_subscription="false"/>
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
@@ -35,8 +35,7 @@
 		property_key="sampleWell" property_value="10" />
 
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0"
-        upload_status="COMPLETE" layout_type="PAIRED_END" />
-	<miseq_run id="1" workflow="notnull" />
+        upload_status="COMPLETE" layout_type="PAIRED_END" sequencer_type="miseq" />
 
 	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
 		executionManagerAnalysisId="execution-manager" analysis_type="PHYLOGENOMICS" />

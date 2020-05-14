@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.Confi
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Email controller used for testing.  Does not really send emails.
@@ -63,6 +65,17 @@ public class TestEmailController extends EmailControllerImpl {
 	public void sendNCBIUploadExceptionEmail(String adminEmailAddress, Exception rootCause, Long submissionId)
 			throws MailSendException {
 		logger.info("TestEmailController#sendNCBIUploadExceptionEmail called.");
+	}
+
+	@Override
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) {
+		logger.info("TestEmailController#sendPipelineStatusEmail called for " + submission.getSubmitter()
+				.getEmail());
+	}
+
+	@Override
+	public void sendProjectSyncUnauthorizedEmail(Project project) {
+		logger.info("TestEmailController#sendProjectSyncUnauthorizedEmail called for project " + project.getId());
 	}
 
 	@Override

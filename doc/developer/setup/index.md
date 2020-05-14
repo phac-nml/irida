@@ -13,8 +13,8 @@ General Requirements
 You're required to install a few different pieces of software on your machine before you can get started on hacking IRIDA:
 
 1. DB: A MySQL or MariaDB server,
-2. Languages: Java 8 (we have a hard requirement on Java 8), Python, Node
-3. Build: Apache Maven, Bower
+2. Languages: Java 11 (we have a hard requirement on Java 11), Python, Node
+3. Build: Apache Maven
 4. SCM: Git
 5. IDE: Eclipse, Netbeans, IntelliJ, vim... (whatever you want, really).
 
@@ -27,13 +27,11 @@ These instructions work for a fresh, up-to-date install of Ubuntu 14.04 LTS. No 
 
     # required for using the `apt-add-repository` command
     sudo apt-get install --yes --no-install-recommends python-software-properties
-    # add the ppa for downloading the oracle java installer
-    sudo apt-add-repository --yes ppa:webupd8team/java
     # update sources
     sudo apt-get update
 
     # You will be prompted to set a root password for mysql and to accept the license for the Java installer.
-    sudo apt-get install --yes --no-install-recommends mysql-server maven git oracle-java8-installer
+    sudo apt-get install --yes --no-install-recommends mysql-server maven git openjdk-11-jdk
 
 
 Install instructions for CentOS
@@ -176,7 +174,7 @@ To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel
 * Check the "Enable" checkbox.
 * Node interpreter should be you system node by default.
 * ESLint package is the `eslint` within the projects `node_modules` directory.
-* Configuration file is the `src/main/webapp/.eslintrc.js`. 
+* Configuration file is the `src/main/webapp/.eslintrc.json`. 
 
 <video controls="controls" style="width: 960px">
     <source src="images/intellij-eslint.mp4" type="video/mp4" />

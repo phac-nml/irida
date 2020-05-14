@@ -1,5 +1,5 @@
 import find from "lodash/find";
-import { convertFileSize, download } from "../../utilities/file.utilities";
+import { convertFileSize, download } from "../../utilities/file-utilities";
 
 const angular = require("angular");
 require("ng-file-upload");
@@ -53,7 +53,7 @@ function FileService($rootScope, $q, upload) {
             // Progress handled here
             $rootScope.$broadcast(UPLOAD_PROGRESS, {
               file: file.name,
-              progress: parseInt(100.0 * evt.loaded / evt.total, 10)
+              progress: parseInt((100.0 * evt.loaded) / evt.total, 10)
             });
           }
         );

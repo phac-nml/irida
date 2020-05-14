@@ -23,7 +23,7 @@ import java.util.concurrent.Executor;
  * Configuration for any integration tests requiring the use of Galaxy. Used to
  * make sure the configuration is the same for every test requiring Galaxy to
  * avoid duplicate Galaxy beans being created.
- * 
+ *
  *
  */
 @Configuration
@@ -33,10 +33,10 @@ import java.util.concurrent.Executor;
 		IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")
 public class IridaApiGalaxyTestConfig {
-	
+
 	/**
 	 * Sets up an {@link Unmarshaller} for workflow objects.
-	 * 
+	 *
 	 * @return An {@link Unmarshaller} for workflow objects.
 	 */
 	@Bean
@@ -52,6 +52,6 @@ public class IridaApiGalaxyTestConfig {
 	 */
 	@Bean
 	public Executor uploadExecutor() {
-		return MoreExecutors.sameThreadExecutor();
+		return MoreExecutors.directExecutor();
 	}
 }

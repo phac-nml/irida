@@ -27,7 +27,7 @@ You can see the Galaxy web interface by opening your web browser and navigating 
 Connecting with an uploader tool
 --------------------------------
 
-Please visit the download page for the [IRIDA MiSeq Uploader Tool](./index.html#irida-miseq-uploader-tool) for more information about how to upload data to the IRIDA virtual appliance.
+Please visit the GitHub for the [IRIDA Uploader](https://github.com/phac-nml/irida-uploader) for more information about how to upload data to the IRIDA virtual appliance.
 
 Connecting with an SSH client
 -----------------------------
@@ -46,4 +46,3 @@ Virtual Appliance Configuration Scripts
 The IRIDA Virtual Appliance is created using a tool called [packer](https://packer.io). You can download the scripts that were used to create the virtual appliance from our `git` repository:
 
 <https://github.com/phac-nml/irida/tree/development/packer>
-

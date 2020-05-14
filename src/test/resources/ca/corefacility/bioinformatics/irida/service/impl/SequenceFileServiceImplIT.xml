@@ -17,7 +17,7 @@
 		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" sistr_typing_uploads="OFF" />
+		projectDescription="description"  />
 
 	<project_user project_id="1" user_id="2" projectRole="PROJECT_OWNER"
 		createdDate="2013-07-18 14:20:19.0" email_subscription="false" />
@@ -49,9 +49,8 @@
 		property_key="sampleWell" property_value="10" />
 
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE" 
-	   layout_type="PAIRED_END"/>
-	<miseq_run id="1" workflow="notnull" />
-	
+	   layout_type="PAIRED_END" sequencer_type="miseq"/>
+
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
 		sequencing_run_id="1" />
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>

@@ -199,6 +199,7 @@ The root endpoint has links to the top-level resource collections in IRIDA.
 | `users`      | the collection of user resources  |
 | `sequencingRuns` | the collection of sequencing runs (only administrative users can access this collection) |
 | `analysisSubmissions` | the collection of analysis submissions created by the current user account |
+| `version` | the builds IRIDA version string |
 
 Resources
 =========
@@ -374,7 +375,7 @@ Each project can be accessed by a unique URL.
 | Name | Description |
 |------|-------------|
 | `self` | A link to this project |
-| `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users) |
+| `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users)) |
 | `project/samples` | A link to view the collection of samples that are contained within this project. |
 | `project/analyses` | A link to the analyses shared with this project. |
 
@@ -420,7 +421,6 @@ Each project can be accessed by a unique URL.
 ```
 
 #### Project Analyses
-{:.no_toc}
 
 Lists all the analysis submission objects that have been shared with the particular project.
 
@@ -433,11 +433,11 @@ Lists all the analysis submission objects that have been shared with the particu
 | `project` | A link back to the individual project for these shared analyses. |
 
 ##### Properties
-
+{:.no_toc}
 Each Analysis Submission under `resources` has the same properties as for [Analysis Submssions](#properties-7).
 
 ##### Example Response
-
+{:.no_toc}
 ```json
 {
   "resource" : {
@@ -477,6 +477,63 @@ Each Analysis Submission under `resources` has the same properties as for [Analy
 
 ```
 
+#### Project Users
+
+Lists all the users currently added to a project (the same format as [the list of users](#users)).
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | The link back to this collection of users. |
+
+##### Example Response
+{:.no_toc}
+
+```json
+{
+  "resource" : {
+    "resources" : [ {
+      "username" : "test",
+      "email" : "test@nowhere.ca",
+      "firstName" : "Test",
+      "lastName" : "User",
+      "phoneNumber" : "1234",
+      "enabled" : true,
+      "systemRole" : "ROLE_USER",
+      "createdDate" : 1557259560000,
+      "modifiedDate" : 1557259560000,
+      "locale" : "en",
+      "label" : "Test User",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/users/test"
+      }, {
+        "rel" : "relationship",
+        "href" : "http://localhost:8080/api/projects/10/users/test"
+      } ],
+      "identifier" : "5"
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/10/users"
+    } ]
+  }
+}
+```
+
+##### Adding a user to a project
+{:.no_toc}
+To add a user to a project, `POST` the following properties to the project/users endpoint:
+
+
+| Name | Description | Validation |
+|------|-------------|------------|
+| `userId` | The user's username. | Required. |
+| `role` | The user's role on the project | Optional. Allowed values: [`PROJECT_USER`, `PROJECT_OWNER`]. |
+
+
 ### Samples
 
 A sample corresponds to a single isolate and contains the sequencing data and metadata. A [collection of samples](#sample-collection) can only be accessed via a [project](#project), and an [individual sample](#sample-individual) can only be accessed from a sample collection.
@@ -506,7 +563,7 @@ A sample corresponds to a single isolate and contains the sequencing data and me
       "isolate" : null,
       "strain" : null,
       "collectedBy" : null,
-      "collectionDate" : null,
+      "collectionDate" : "2019-01-25",
       "geographicLocationName" : null,
       "isolationSource" : null,
       "latitude" : null,
@@ -571,7 +628,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `sampleName` | The name used to refer to the sample by the user. This is often the same as `sequencerSampleId`, but *may* be different. | Required. Must be at least 3 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' . |` (note: this blacklist of characters is defined by the set of invalid characters on the Windows file system)|
 | `description` | A plain-text description of the sample. | Not required. |
 | `strain` | The microbial or eukaryotic strain name. | Not required. Must be at least 3 characters long. |
-| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date (in IRIDA, that is the number of milliseconds since the epoch). |
+| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date in the format of "YYYY-MM-DD" (e.g,. "2019-01-25" for January 25, 2019). |
 | `collectedBy` | The person (or organization) that collected the sample. | Not required. Must be at least 3 characters long. |
 | `latitude` | The latitude of the location where the sample was collected. | Not required. Must be a valid latitude (must match the pattern `^-?(\d){1,2}(\.\d+)?$` and the first number group must be in the range `[-90, 90]`). |
 | `longitude` | The longitude of the location where the sample was collected. | Not required. Must be a valid longitude (must match the pattern `-?(\d){1,3}(\.\d+)?$` and the first number group must be in the range `[-180, 180]`). |
@@ -822,7 +879,7 @@ Each sequence file may have FastQC data associated with it to display some basic
 
 #### Sequence File Pairs Collection
 {:.no_toc}
-Listing sequence file pairs will display the sequnece files for a given sample which are paired-end.  This collection will overlap with the [collection of sequence files](#sequence-file-collection) but will only display paired-end files.  The resources in this list are a collection of [sequence file pair individuals](#sequence-file-pair-individual).
+Listing sequence file pairs will display the sequence files for a given sample which are paired-end.  This collection will overlap with the [collection of sequence files](#sequence-file-collection) but will only display paired-end files.  The resources in this list are a collection of [sequence file pair individuals](#sequence-file-pair-individual).
 
 ##### Links
 {:.no_toc}
@@ -833,6 +890,7 @@ Listing sequence file pairs will display the sequnece files for a given sample w
 | `sample` | A link back to the sample that owns this sequence file collection. |
 
 ##### Example Response
+{:.no_toc}
 
 ```json
 {
@@ -976,6 +1034,91 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 }
 ```
 
+### Assemblies
+
+A sample will also refer to a collection of assemblies performed for that sample.  Assemblies must exist within a sample.  At the moment IRIDA can only manage assemblies generated by the IRIDA assembly & annotation pipeline.
+
+#### Assembly Collection
+{:.no_toc}
+
+A list of assemblies can be retrieved by running a `GET` on the URL for the `sample/assemblies` endpoint.
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to the collection of assemblies for the given sample. |
+| `sample` | A link back to the sample for these assemblies. |
+
+##### Example response
+{:.no_toc}
+
+```json
+{
+  "resource" : {
+    "resources" : [ {
+      "createdDate" : 1406726675000,
+      "file" : "/tmp/analysis-files/contigs.fasta",
+      "label" : "sample-contigs.fasta",
+      "fileSizeBytes" : 14,
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/samples/54/assemblies/1"
+      }, {
+        "rel" : "assembly/analysis",
+        "href" : "http://localhost:8080/api/analysisSubmissions/103"
+      } ],
+      "identifier" : "1"
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/samples/54/assemblies"
+    }, {
+      "rel" : "sample",
+      "href" : "http://localhost:8080/api/samples/54"
+    } ]
+  }
+}
+```
+
+#### Assembly Individual
+{:.no_toc}
+
+An individual assembly entry will show the details about the requested assembly.  If the assembly was generated by running an assembly pipeline within IRIDA, it will also link back to the analysis that generated the assembly.
+
+The assembly can also be downloaded by making a request for this resource with an `Accept` header of `application/fasta`.
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this assembly.. |
+| `assembly/analysis` | A link to the analysis that created this assembly (if it was generated within IRIDA). |
+
+##### Example response
+{:.no_toc}
+
+```json
+{
+  "resource" : {
+    "createdDate" : 1406726675000,
+    "file" : "/tmp/analysis-files/contigs.fasta",
+    "label" : "sample-contigs.fasta",
+    "fileSizeBytes" : 14,
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/samples/54/assemblies/1"
+    }, {
+      "rel" : "assembly/analysis",
+      "href" : "http://localhost:8080/api/analysisSubmissions/103"
+    } ],
+    "identifier" : "1"
+  }
+}
+```
+
 ### Sequencing Runs
 
 #### Sequencing Run Collection
@@ -989,7 +1132,7 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 | Name | Description |
 |------|-------------|
 | `self` | A link to the collection of sequencing runs. |
-| `sequencingRun/miseq` | A link to the endpoint to POST new MiSeq Runs. |
+| `sequencingRun/miseq` | A link to the endpoint to POST new MiSeq Runs. (Deprecated) |
 
 ##### Example response
 {:.no_toc}
@@ -998,51 +1141,48 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 {
   "resource" : {
   "resources" : [ {
-    "projectName" : "Test Project",
-    "workflow" : "test workflow",
-    "experimentName" : "Test Experiment",
-    "application" : "FASTQ",
-    "assay" : "Nextera",
-    "chemistry" : "Amplicon",
-    "readLengths" : 250,
-    "investigatorName" : "Jon Doe",
-    "description" : "Superbug",
-    "uploadStatus" : "COMPLETE",
-    "layoutType" : "SINGLE_END",
-    "identifier" : "1",
-    "createdDate" : 1406733873000,
-    "links" : [ {
-    "rel" : "self",
-    "href" : "http://localhost:8080/api/sequencingrun/1"
-    } ]
-  } ],
+      "description" : null,
+      "createdDate" : 1583529174000,
+      "modifiedDate" : 1583529174000,
+      "uploadStatus" : "UPLOADING",
+      "layoutType" : "PAIRED_END",
+      "sequencerType" : "miseq",
+      "label" : "SequencingRun 2020-03-06 15:12:54.0",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/sequencingrun/1"
+      } ],
+      "identifier" : "1"
+    } ],
   "links" : [ {
     "rel" : "self",
     "href" : "http://localhost:8080/api/sequencingrun"
-  } ]
+  }
+  , {
+      "rel" : "sequencingRun/miseq",
+      "href" : "http://localhost:8080/api/sequencingrun/miseqrun"
+    } ]
   }
 
 ```
 
 #### Creating Sequencing Runs
-{:no_toc}
+{:.no_toc}
+**Deprecation notice (v20.05)**
+Previously the IRIDA REST API planned to have different endpoints for different sequencer types.  In those versions, the `sequencingRun/miseq` endpoint allowed you to `POST` a run specifically for the *MiSeq* sequencer, but other sequencers were not officially supported.  As of IRIDA 20.05, any sequencer types are supported by `POST`ing a run to the SequencingRun collection endpoint (`/api/sequencingrun`) with the values in the properties section below.
+
+The `sequencingRun/miseq` endpoint will be maintained for a few versions for legacy purposes, but will be removed out in the near future.  It is recommended for you to stay up to date with the latest version of the [IRIDA Uploader](https://github.com/phac-nml/irida-uploader) to ensure compatibility.
+
+**Creating Legacy MiSeq Runs (Deprecated)**
+
 Sequencing runs are created differently from other resources.  To differentiate between different sequencer models alternate endpoints are exposed to create runs for each model.  To create a Sequencing Run for a given sequencer, `POST` the resource to the specific endpoint for that sequencer.  The following rels are enabled:
 
 |Sequencer     | Rel |
 |--------------|-------------|
 |Illumina Miseq| `sequencingRun/miseq` |
 
-##### Sequencing Run Upload Status
-{:no_toc}
-Sequencing Run has a special property, `uploadStatus`, which is used to track the status of a Sequencing Run upload.  `uploadStatus` should be updated by the uploader client to reflect the status of the sequencing run upload.
 
-| Value       | Description                                                            |
-|-------------|------------------------------------------------------------------------|
-| `UPLOADING` | Default value.  Run is created and files are currently being uploaded. |
-| `COMPLETE`  | The run and sequence files have been successfully uploaded.            |
-| `ERROR`     | An error occurred while the run was being uploaded.                    |
-
-#### Sequencing Run
+#### Sequencing Run Individual
 {:.no_toc}
 
 A sequencing run contains a reference to all of the files that were generated by the same execution of a sequencer (may span many samples). The run resource also contains metadata captured when the files were uploaded (on Illumina this is metadata in the `SampleSheet.csv` file).
@@ -1056,6 +1196,25 @@ A sequencing run contains a reference to all of the files that were generated by
 
 ##### Properties
 {:.no_toc}
+
+| Name | Description | Validation |
+|------|-------------|------------|
+| `description` | A text description of the sequencing run. | Not required. |
+| `uploadStatus` | The status of the upload. | Required.  This will be auto-generated by IRIDA to `UPLOADING` on creation.  It can be updated to the values listed in [Sequencing Run Upload Status](#sequencing-run-upload-status) below. |
+| `layoutType` | The layout of the sequencing run (single end or paired end). | Required. Values `SINGLE_END` or `PAIRED_END`. |
+| `sequencerType` | A text value of the type of sequencer used to generate this run. | Required. Examples `miseq`, `directory`, `miniseq`... |
+| `createdDate` | The date the sample was created in IRIDA. | This will be auto-generated by IRIDA. |
+| `modifiedDate` | The date the sample was last modified. | This will be auto-generated by IRIDA. |
+
+#### Sequencing Run Upload Status
+{:.no_toc}
+Sequencing Run has a special property, `uploadStatus`, which is used to track the status of a Sequencing Run upload.  `uploadStatus` should be updated by the uploader client to reflect the status of the sequencing run upload.
+
+| Value       | Description                                                            |
+|-------------|------------------------------------------------------------------------|
+| `UPLOADING` | Default value.  Run is created and files are currently being uploaded. |
+| `COMPLETE`  | The run and sequence files have been successfully uploaded.            |
+| `ERROR`     | An error occurred while the run was being uploaded.                    |
 
 ##### Example response
 {:.no_toc}
@@ -1071,9 +1230,10 @@ A sequencing run contains a reference to all of the files that were generated by
   "chemistry" : "Amplicon",
   "readLengths" : 250,
   "investigatorName" : "Jon Doe",
-  "description" : "Superbug",
+  "description" : "Salmonella sequencing",
   "uploadStatus" : "COMPLETE",
   "layoutType" : "SINGLE_END",
+  "sequencerType" : "miseq",
   "identifier" : "1",
   "createdDate" : 1406733873000,
   "links" : [ {
@@ -1176,6 +1336,7 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 | `input/unpaired` | A link to the collection of single-end input files used for this analysis.  See [Sequence File Collection](#sequence-file-collection) for response format. |
 
 ##### Properties
+{:.no_toc}
 
 **Note**: No validation is marked for analysis submission properties because an analysis submission is immutable.
 

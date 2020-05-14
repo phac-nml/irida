@@ -1,17 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-
 import java.security.Principal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,16 +11,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.google.common.collect.Lists;
-
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -39,15 +26,19 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUser;
+import ca.corefacility.bioinformatics.irida.ria.web.users.UsersController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link }
@@ -80,7 +71,7 @@ public class UsersControllerTest {
 		emailController = mock(EmailController.class);
 		passwordResetService = mock(PasswordResetService.class);
 		controller = new UsersController(userService, projectService, passwordResetService, emailController,
-				messageSource);
+				messageSource, new IridaApiServicesConfig.IridaLocaleList(Lists.newArrayList(Locale.ENGLISH)));
 
 		User u1 = new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom", "Matthews", "1234");
 		u1.setModifiedDate(new Date());
@@ -92,27 +83,6 @@ public class UsersControllerTest {
 	@Test
 	public void showAllUsers() {
 		assertEquals(USERS_PAGE, controller.getUsersPage());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAjaxUserList() {
-
-		when(userService.search(any(Specification.class), any(PageRequest.class))).thenReturn(
-				userPage);
-		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
-		DataTablesParams params = mock(DataTablesParams.class);
-		when(params.getLength()).thenReturn(1);
-
-		DataTablesResponse response = controller.getAjaxUserList(params, Locale.US);
-
-		List<DataTablesResponseModel> users = response.getData();
-
-		assertEquals(NUM_TOTAL_ELEMENTS, users.size());
-		DTUser firstUser = (DTUser) users.get(0);
-		assertEquals("Tom", firstUser.getFirstName());
-		assertEquals("tom@nowhere.com", firstUser.getEmail());
-		verify(messageSource, times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -216,8 +186,8 @@ public class UsersControllerTest {
 		HttpServletRequest request = new MockHttpServletRequest();
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, "checked", null,
-				model, principal, request);
+		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, null, "checked",
+				null, model, principal, request);
 
 		assertEquals("redirect:/users/1", updateUser);
 
@@ -246,8 +216,8 @@ public class UsersControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(userService.updateFields(userId, expected)).thenThrow(dataIntegrityViolationException);
 
-		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,
-				principal, new MockHttpServletRequest());
+		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, null, "checked", null,
+				model, principal, new MockHttpServletRequest());
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
@@ -285,7 +255,7 @@ public class UsersControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
 		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), password, null, model,
-				principal);
+				principal, Locale.ENGLISH);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
@@ -312,7 +282,7 @@ public class UsersControllerTest {
 		when(passwordResetService.create(any(PasswordReset.class))).thenReturn(reset);
 
 		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), null, "checked", model,
-				principal);
+				principal, Locale.ENGLISH);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
@@ -329,7 +299,7 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User u = new User(1L, username, email, password, null, null, null);
 
-		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model, principal, Locale.ENGLISH);
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
 		@SuppressWarnings("unchecked")
@@ -370,7 +340,7 @@ public class UsersControllerTest {
 		when(userService.create(any(User.class))).thenThrow(exception);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(u, "ROLE_USER", password, "checked", model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, "ROLE_USER", password, "checked", model, principal, Locale.ENGLISH);
 
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));

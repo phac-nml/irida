@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{projects/settings/_base}">
+<head>
+    <title th:text="#{project.settings.page.title.basic}">Basic</title>
+    <script th:inline="javascript">
+      var PAGE = {
+        urls: {
+          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage',
+          'priority': /*[[@{/projects/{id}/settings/priority(id=${project.getId()})}]]*/ '/projects/1/settings/priority',
+          'deleteModal': /*[[@{/projects/{id}/settings/template/removeTemplateModal(id=${project.getId()})}]]*/ '/projects/1/setttings/template/removeTemplateModal'
+        }
+      };
+    </script>
+    <link rel="stylesheet" th:href="@{/dist/css/project-settings-basic.bundle.css}">
+</head>
+<body>
+<th:block layout:fragment="settings-content">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
+
+            <div class="row spaced-bottom" th:if="${isAdmin}">
+                <div class="col-sm-12">
+                    <label for="analysis-priority" th:text="#{project.settings.automated.priority}">_Analysis Priority_</label>
+                    <select class="form-control" id="analysis-priority">
+                        <option th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}"
+                            th:value="${priority}" th:text="${priority}" th:selected="${priority == project.getAnalysisPriority()}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12" th:each="template : ${analysisTemplates}" th:data-analysis="${template.id}">
+                    <div class="auto-analysis-status">
+                        <div style="padding: 15px;">
+                            <h3 class="auto-analysis-status__title">
+                                <i class="spaced-right__sm fas fa-exclamation-triangle" th:if="${! template.enabled}"></i>
+                                <span th:text="${template.name}">_PIPELINE_TITLE_</span>
+                            </h3>
+                            <div class="auto-analysis-status__entry"
+                                 th:utext="#{project.settings.automated.template.type(${template.analysisType})}">_type_
+                            </div>
+                            <div class="auto-analysis-status__entry"
+                                 th:utext="#{project.settings.automated.template.status(${template.statusMessage})}">
+                                _status_
+                            </div>
+                        </div>
+                        <form class="remove-analysis-form" th:if="${manageMembers}">
+                            <input type="hidden" name="templateId" th:value="${template.id}">
+                            <button type="submit" class="auto-analysis-status__submit t-remove-auto-analysis">
+                                <span><i class="fas fa-times"></i> <th:block
+                                        th:text="#{project.settings.automated.template.remove}"/></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info" th:if="${analysisTemplates.isEmpty()}" th:text="#{project.settings.automated.empty}">_Add one below_</div>
+
+            <a class="btn btn-default" id="create-auto-analysis" href="/cart/pipelines" th:href="@{/cart/pipelines(automatedProject=${project.id})}" role="button" th:if="${manageMembers}">
+                <i class="fas fa-plus"></i>
+                <span th:text="#{project.settings.automated.create}">_Create new analysis_</span>
+            </a>
+
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <hr/>
+
+            <h2 class="h2-muted">Coverage
+                <span>
+            <button id="edit-coverage-btn" class="btn btn-xs btn-default edit-coverage" th:text="#{form.btn.edit}"
+                    th:if="${manageMembers}">_Edit_</button>
+            <button id="coverage-cancel" class="btn btn-default btn-xs edit-coverage" style="display: none"
+                    type="button" th:text="#{form.btn.cancel}">_cancel_</button>
+            <button id="coverage-save" class="btn btn-success btn-xs edit-coverage" style="display: none" type="button"
+                    th:text="#{form.btn.update}">_save_</button>
+        </span>
+            </h2>
+
+            <div class="form-group">
+                <div id="display-coverage" class="row edit-coverage">
+                    <div class="col-md-12">
+                        <label for="minimum-coverage-display" th:text="#{project.settings.coverage.minimum_coverage}">_Required
+                            Coverage_</label>
+                        <span id="minimum-coverage-display" th:if="${project.minimumCoverage != NULL}"
+                              th:text="${project.minimumCoverage} + 'x'"></span>
+                        <span id="minimum-coverage-display" th:if="${project.minimumCoverage == NULL}"
+                              th:text="#{project.settings.notset}">N/A</span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="maximum-coverage-display" th:text="#{project.settings.coverage.maximum_coverage}">_Required
+                            Coverage_</label>
+                        <span id="maximum-coverage-display" th:if="${project.maximumCoverage != NULL}"
+                              th:text="${project.maximumCoverage} + 'x'"></span>
+                        <span id="maximum-coverage-display" th:if="${project.maximumCoverage == NULL}"
+                              th:text="#{project.settings.notset}">N/A</span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="genome-size-display" th:text="#{project.settings.coverage.genome_size}">_Genome
+                            Size_</label>
+                        <span id="genome-size-display" th:if="${project.genomeSize != NULL}"
+                              th:text="${#numbers.formatInteger(project.genomeSize, 3, 'DEFAULT')} + 'bp'"></span>
+                        <span id="genome-size-display" th:if="${project.genomeSize == NULL}"
+                              th:text="#{project.settings.notset}">N/A</span>
+                    </div>
+                </div>
+                <div id="edit-coverage" class="form row edit-coverage" style="display: none">
+                    <div class="col-md-12">
+                        <label for="minimum-coverage" th:text="#{project.settings.coverage.minimum_coverage}">_Min
+                            Coverage_</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="minimum-coverage"
+                                   th:value="${project.minimumCoverage}"/>
+                            <div class="input-group-addon">x</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="maximum-coverage" th:text="#{project.settings.coverage.maximum_coverage}">_Max
+                            Coverage_</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="maximum-coverage"
+                                   th:value="${project.maximumCoverage}"/>
+                            <div class="input-group-addon">x</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="genome-size" th:text="#{project.settings.coverage.genome_size}">_Genome
+                            Size_</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="genome-size" th:value="${project.genomeSize}"
+                                   size="10"/>
+                            <div class="input-group-addon">bp</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="removeAnalysisTemplateModal" role="dialog" aria-labelledBy="#deleteConfirmTitle"></div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/project-settings-basic.bundle.js}"></script>
+</th:block>
+
+</body>
+</html>

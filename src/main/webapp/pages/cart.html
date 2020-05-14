@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+  th:with="galaxyUrl=${session.galaxyCallbackUrl}"
+>
+  <head>
+    <title th:text="#{page.cart.title}">MY AWESOME CART</title>
+    <link rel="stylesheet" th:href="@{/dist/css/cart.bundle.css}" />
+    <style th:text="${pipeline_plugin_style}"></style>
+    <script th:inline="javascript">
+      window.PAGE = {
+        user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org",
+        automatedProject: /*[[${automatedProject}]]*/ "0",
+        galaxyRedirect: /*[[${galaxyRedirect}]]*/ "galaxy/auth_code",
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" style="align-items: stretch; flex-grow: 1; display: flex;" layout:fragment="page">
+    <!--
+       This is a DOM element for React to render the full cart experience into.
+       See  src/main/webapp/resources/js/pages/cart/components/Cart.jsx
+    -->
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <div th:if="${galaxyUrl != null}">
+        <form id="js-galaxy-form" th:action="${galaxyUrl}" method="post">
+          <input id="js-query" name="json_params" type="hidden">
+        </form>
+      </div>
+      <script th:src="@{/dist/js/cart.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>

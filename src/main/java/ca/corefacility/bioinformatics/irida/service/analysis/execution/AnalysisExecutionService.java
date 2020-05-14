@@ -50,9 +50,10 @@ public interface AnalysisExecutionService {
 	 *             execution manager.
 	 * @throws IridaWorkflowException
 	 *             If there was an issue with the IRIDA workflow.
+	 * @throws IOException If there was an error reading some of the input files.
 	 */
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
-			throws IridaWorkflowException, ExecutionManagerException;
+			throws IridaWorkflowException, ExecutionManagerException, IOException;
 
 	/**
 	 * Gets the status for the given submitted analysis.

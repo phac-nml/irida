@@ -1,15 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.ConfigurableJavaMailSender;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.event.*;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,35 +23,29 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.google.common.collect.ImmutableMap;
-
-import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.ConfigurableJavaMailSender;
-import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.util.*;
 
 /**
- * This class is responsible for all email sent to the server that are templated
- * with Thymeleaf.
- *
+ * This class is responsible for all email sent to the server that are templated with Thymeleaf.
  */
 @Component
-@Profile({ "prod", "dev" , "web", "analysis", "ncbi", "processing", "sync" })
+@Profile({ "prod", "dev", "web", "analysis", "ncbi", "processing", "sync" })
 public class EmailControllerImpl implements EmailController {
 	private static final Logger logger = LoggerFactory.getLogger(EmailControllerImpl.class);
 
 	public static final String WELCOME_TEMPLATE = "welcome-email";
 	public static final String RESET_TEMPLATE = "password-reset-link";
 	public static final String SUBSCRIPTION_TEMPLATE = "subscription-email";
+	public static final String PIPELINE_STATUS_TEMPLATE = "pipeline-status-email";
+	public static final String SYNC_EXPIRED_TEMPLATE = "sync-expired";
 
-	private @Value("${mail.server.email}") String serverEmail;
+	@Value("${mail.server.email}")
+	private String serverEmail;
 
-	private @Value("${server.base.url}") String serverURL;
+	@Value("${server.base.url}")
+	private String serverURL;
 
 	private ConfigurableJavaMailSender javaMailSender;
 	private TemplateEngine templateEngine;
@@ -184,10 +177,8 @@ public class EmailControllerImpl implements EmailController {
 	/**
 	 * Convert the Page of events to the list expected in the model
 	 *
-	 * @param events
-	 *            Page of {@link ProjectEvent}s
-	 * @return A List<Map<String,Object>> containing the events and fragment
-	 *         names
+	 * @param events Page of {@link ProjectEvent}s
+	 * @return A List<Map<String,Object>> containing the events and fragment names
 	 */
 	private List<Map<String, Object>> buildEventsListFromCollection(Collection<ProjectEvent> events) {
 		List<Map<String, Object>> eventInfo = new ArrayList<>();
@@ -215,8 +206,9 @@ public class EmailControllerImpl implements EmailController {
 			message.setSubject("IRIDA Storage Exception: " + rootCause.getMessage());
 			message.setTo(adminEmailAddress);
 			message.setFrom(serverEmail);
-			message.setText("An exeption related to storage has occurred that requires your attention, stack as follows: "
-					+ rootCause);
+			message.setText(
+					"An exeption related to storage has occurred that requires your attention, stack as follows: "
+							+ rootCause);
 
 			javaMailSender.send(mimeMessage);
 		} catch (final MessagingException e) {
@@ -237,13 +229,99 @@ public class EmailControllerImpl implements EmailController {
 			message.setSubject("IRIDA NCBI Upload Exception: " + rootCause.getMessage());
 			message.setTo(adminEmailAddress);
 			message.setFrom(serverEmail);
-			message.setText("An exeption occurred when attempting to communicate with NCBI's SRA.  Submission "
-					+ submissionId + " had an error:" + rootCause);
+			message.setText(
+					"An exeption occurred when attempting to communicate with NCBI's SRA.  Submission " + submissionId
+							+ " had an error:" + rootCause);
 
 			javaMailSender.send(mimeMessage);
 		} catch (final MessagingException e) {
 			logger.error("Error trying to send exception email.", e);
 			throw new MailSendException("Failed to send e-mail for NCBI SRA related-exception.", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException {
+		logger.debug("Sending pipeline status email to " + submission.getSubmitter()
+				.getEmail());
+
+		Locale locale = LocaleContextHolder.getLocale();
+
+		final Context ctx = new Context(locale);
+		String pipelineStatus = submission.getAnalysisState()
+				.equals(AnalysisState.ERROR) ?
+				messageSource.getMessage("email.pipeline.ERROR", null, locale) :
+				messageSource.getMessage("email.pipeline.COMPLETED", null, locale);
+		String emailSubject = messageSource.getMessage("email.pipeline.subject",
+				new Object[] { submission.getName(), pipelineStatus }, locale);
+
+		ctx.setVariable("serverURL", serverURL);
+		ctx.setVariable("pipelineStatus", pipelineStatus);
+		ctx.setVariable("pipelineName", submission.getName());
+		ctx.setVariable("analysisSubmissionURL", (serverURL + "/analysis/" + (submission.getId())));
+
+		try {
+			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
+			message.setSubject(emailSubject);
+			message.setFrom(serverEmail);
+			message.setTo(submission.getSubmitter()
+					.getEmail());
+
+			final String htmlContent = templateEngine.process(PIPELINE_STATUS_TEMPLATE, ctx);
+			message.setText(htmlContent, true);
+			javaMailSender.send(mimeMessage);
+		} catch (final Exception e) {
+			logger.error("Pipeline status email failed to send", e);
+			throw new MailSendException("Failed to send pipeline status e-mail .", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sendProjectSyncUnauthorizedEmail(Project project) {
+		User syncUser = null;
+		try {
+			syncUser = project.getRemoteStatus()
+					.getReadBy();
+		} catch (NullPointerException e) {
+			logger.error("Tried to email a sync user for a non-remote project", e);
+		}
+
+		Locale locale = LocaleContextHolder.getLocale();
+
+		String projectSettingsUrl = serverURL + "/projects/" + project.getId() + "/settings/remote";
+
+		final Context ctx = new Context(locale);
+
+		ctx.setVariable("failedProject", project.getName());
+		ctx.setVariable("user", syncUser.getUsername());
+		ctx.setVariable("settingsLink", projectSettingsUrl);
+
+		try {
+			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
+			message.setSubject(
+					messageSource.getMessage("email.syncexpired.subject", new Object[] { project.getName() }, locale));
+			message.setFrom(serverEmail);
+			message.setTo(syncUser.getEmail());
+
+			final String htmlContent = templateEngine.process(SYNC_EXPIRED_TEMPLATE, ctx);
+			message.setText(htmlContent, true);
+
+			javaMailSender.send(mimeMessage);
+
+			message.setText(htmlContent, true);
+
+			javaMailSender.send(mimeMessage);
+		} catch (Exception e) {
+			logger.error("Error trying to send sync failed email.", e);
+			throw new MailSendException("Failed to send e-mail for sync failure.", e);
 		}
 	}
 }

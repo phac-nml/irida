@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -33,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/sample/SampleRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleRepositoryIT {
@@ -47,7 +47,7 @@ public class SampleRepositoryIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindSamplesForAnalysisSubmissionSingleSample() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(10L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(10L).orElse(null);
 		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
 		assertEquals("Sample ids are equal", Sets.newHashSet(11L),
@@ -57,7 +57,7 @@ public class SampleRepositoryIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindSamplesForAnalysisSubmissionMultipleSample() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(21L);
+		AnalysisSubmission a = analysisSubmissionRepository.findById(21L).orElse(null);
 		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
 		assertEquals("Sample ids are equal", Sets.newHashSet(22L, 33L),

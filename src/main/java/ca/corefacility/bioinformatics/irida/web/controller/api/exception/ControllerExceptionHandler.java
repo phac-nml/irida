@@ -109,6 +109,25 @@ public class ControllerExceptionHandler {
 	}
 
 	/**
+	 * Handle
+	 * {@link IllegalArgumentException}
+	 * .
+	 *
+	 * @param e
+	 *            the exception as thrown by the service.
+	 * @return an appropriate HTTP response.
+	 */
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorResponse> handleArgumentException(IllegalArgumentException e) {
+		String detailedMessage = e.getMessage();
+		logger.info("A client attempted reach a resource with invalid arguments at " + new Date()
+				+ ". Error message: " + detailedMessage);
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setMessage(detailedMessage);
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/**
 	 * Handle {@link javax.validation.ConstraintViolationException}.
 	 * 
 	 * @param e
@@ -182,7 +201,7 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ErrorResponse> handleInvalidJsonException(HttpMessageNotReadableException e) {
-		logger.debug("Client attempted to send invalid JSON.");
+		logger.debug("Client attempted to send invalid JSON.", e);
 		String message = "Your request could not be parsed.";
 		Throwable cause = e.getCause();
 		ErrorResponse errorResponse = new ErrorResponse();

@@ -1,44 +1,24 @@
-import { Grid } from "ag-grid-community/main";
+/**
+ * @file Display table for listing outputs for analyses.
+ * TODO: This needs to be refactored with ant.design.
+ */
+import { Grid } from "ag-grid-community";
 import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
-import { download } from "../../utilities/file.utilities";
+import { download } from "../../utilities/file-utilities";
 import {
-  getProjectSharedSingleSampleAnalysisOutputs,
-  prepareAnalysisOutputsDownload,
   getPrincipalUserSingleSampleAnalysisOutputs,
-  getProjectAutomatedSingleSampleAnalysisOutputs
+  getProjectAutomatedSingleSampleAnalysisOutputs,
+  getProjectSharedSingleSampleAnalysisOutputs,
+  prepareAnalysisOutputsDownload
 } from "../../apis/analysis/analysis";
 import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
-/**
- * Internationalized messages
- * @type {Object} map of messages key name to i18n text
- */
-let I18N = {
-  "sample.sampleName": "SAMPLE NAME",
-  "bc.file": "FILE",
-  "analysis.table.type": "ANALYSIS TYPE",
-  pipeline: "PIPELINE",
-  "analysis-submission": "ANALYSIS SUBMISSION",
-  "analysis.date-created": "CREATED",
-  "form.download": "DOWNLOAD",
-  "project.export.submitter": "SUBMITTER",
-  "error.request.status-code": "STATUS CODE",
-  "error.request.url": "REQUEST URL",
-  "error.request.status-text": "STATUS TEXT",
-  "analysis.batch-download.ajax.error": "REQUEST ERROR",
-  "analysis.batch-download.preparing": "PREPARING DOWNLOAD",
-  "analysis.automated-analyses": "AUTOMATED ANALYSES",
-  "analysis.shared-analyses": "SHARED ANALYSES",
-  "analysis.batch-download.help-info": "SEND HELP"
-};
-I18N = Object.assign(I18N, window.PAGE.i18n);
-
 const helpInfoIcon = `<i class="fa fa-2x fa-question-circle spaced-left__sm text-info" title="${escapeHtml(
-  I18N["analysis.batch-download.help-info"]
+  i18n("analysis.batch-download.help-info")
 )}"></i>`;
 
 /**
@@ -111,7 +91,7 @@ async function downloadSelected($dlButton, api) {
       sampleId,
       filePath
     } = selectedNodes[0].data;
-    let url = `${BASE_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
+    let url = `${BASE_URL}ajax/analysis/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
     const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
       filePath
     )}`;
@@ -121,12 +101,12 @@ async function downloadSelected($dlButton, api) {
     const outputs = selectedNodes.map(node => node.data);
     const { data, error } = await prepareAnalysisOutputsDownload(outputs);
     if (error) {
-      console.error(I18N["analysis.batch-download.ajax.error"], error);
+      console.error(i18n("analysis.batch-download.ajax.error"), error);
       return;
     }
     const { selectionSize } = data;
     const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
-    const downloadUrl = `${BASE_URL}analysis/ajax/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
+    const downloadUrl = `${BASE_URL}ajax/analysis/download/selection?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
     download(downloadUrl);
   }
   setDownloadButtonHtml(
@@ -160,8 +140,8 @@ function setDownloadButtonHtml(
     : "";
   $dlButton.innerHTML = `<i class="fa fa-download spaced-right__sm"></i> ${
     isPreparing
-      ? I18N["analysis.batch-download.preparing"]
-      : I18N["form.download"]
+      ? i18n("analysis.batch-download.preparing")
+      : i18n("form.download")
   } ${badge}`;
 }
 
@@ -175,12 +155,14 @@ function setDownloadButtonHtml(
  */
 function initAgGrid($grid, headers, rows, $dlButton) {
   const gridOptions = {
-    enableColResize: true,
     columnDefs: headers,
     rowData: rows,
     rowDeselection: true,
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef: {
+      resizable: true,
+      sortable: true,
+      filterable: true
+    },
     rowSelection: "multiple",
     onSelectionChanged: e => {
       const selectedNodes = e.api.getSelectedNodes();
@@ -232,11 +214,10 @@ function getWorkflowInfo(singleSampleOutputs) {
   );
   Object.keys(workflowIds).forEach(async function(workflowId) {
     const { data, error } = await getIridaWorkflowDescription(workflowId);
-    if (error) {
-    } else {
+    if (!error) {
       workflowIds[workflowId] = data;
       if (grid) {
-        grid.context.beans.gridApi.beanInstance.redrawRows();
+        grid.gridOptions.api.redrawRows();
       }
     }
   });
@@ -249,12 +230,12 @@ function displayErrorAlert(error) {
   $app.innerHTML = "";
   const $alert = newElement(
     `<div class="alert alert-danger">
-         <h4>${I18N["analysis.batch-download.ajax.error"]}</h4>
-         <p>${I18N["error.request.status-text"]}: ${message}; ${statusText}</p>
-         <p>${I18N["error.request.status-code"]}: ${status}</p>
-         <p>${
-           I18N["error.request.url"]
-         }: <a href="${responseURL}" target="_blank">${responseURL}</a></p>
+         <h4>${i18n("analysis.batch-download.ajax.error")}</h4>
+         <p>${i18n("error.request.status-text")}: ${message}; ${statusText}</p>
+         <p>${i18n("error.request.status-code")}: ${status}</p>
+         <p>${i18n(
+           "error.request.url"
+         )}: <a href="${responseURL}" target="_blank">${responseURL}</a></p>
        </div>`
   );
   $app.appendChild($alert);
@@ -285,7 +266,7 @@ async function getTableData(isShared = true) {
   const HEADERS = [
     {
       field: "sampleName",
-      headerName: I18N["sample.sampleName"],
+      headerName: i18n("sample.sampleName"),
       checkboxSelection: true,
       headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
@@ -297,7 +278,7 @@ async function getTableData(isShared = true) {
     },
     {
       field: "filePath",
-      headerName: I18N["bc.file"],
+      headerName: i18n("bc.file"),
       cellRenderer: p => {
         const {
           filePath,
@@ -313,46 +294,44 @@ async function getTableData(isShared = true) {
     },
     {
       field: "analysisType",
-      headerName: I18N["analysis.table.type"],
+      headerName: i18n("analysis.table.type"),
       valueGetter: function(p) {
         return p.data.analysisType.type;
       }
     },
     {
       field: "workflowId",
-      headerName: I18N["pipeline"],
+      headerName: i18n("pipeline"),
       valueGetter: function(p) {
         const wfInfo = workflowIds[p.data.workflowId];
         if (wfInfo === null) return p.data.workflowId;
         const version =
           wfInfo.version === "unknown"
-            ? I18N["analysis.table.version.unknown"]
+            ? i18n("analysis.table.version.unknown")
             : "v" + wfInfo.version;
         const name =
           wfInfo.name === "unknown"
-            ? I18N["analysis.table.name.unknown"]
+            ? i18n("analysis.table.name.unknown")
             : wfInfo.name;
         return `${name} (${version})`;
       }
     },
     {
       field: "analysisSubmissionName",
-      headerName: I18N["analysis-submission"],
+      headerName: i18n("analysis-submission"),
       cellRenderer: p =>
-        `<a href="${BASE_URL}analysis/${
-          p.data.analysisSubmissionId
-        }" target="_blank">${p.data.analysisSubmissionName}</a>`
+        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
     },
     PROJECT_ID
       ? {
           field: "userId",
-          headerName: I18N["project.export.submitter"],
+          headerName: i18n("project.export.submitter"),
           cellRenderer: p => `${p.data.userFirstName} ${p.data.userLastName}`
         }
       : null,
     {
       field: "createdDate",
-      headerName: I18N["analysis.date-created"],
+      headerName: i18n("analysis.date-created"),
       cellRenderer: p => formatDate({ date: p.data.createdDate })
     }
   ].filter(header => header !== null);

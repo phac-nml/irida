@@ -12,9 +12,8 @@
     <li class="list-group-item event-item" th:each="event : ${events}">
         <th:block th:replace="events/fragments/event :: ${event.name} (${event.event})"></th:block>
         <div class="event-date" data-toggle="tooltip"
-             th:title="${#dates.format(event.event.createdDate, dateFormat)}"
+             th:text="${#dates.format(event.event.createdDate, dateFormat)}"
              th:with="dateFormat=#{locale.date.long}">
-            <span data:livestamp="${event.event.createdDate}"></span>
         </div>
     </li>
     <li class="list-group-item" th:if="${#lists.isEmpty(events)}" th:text="#{event.no_activities}">

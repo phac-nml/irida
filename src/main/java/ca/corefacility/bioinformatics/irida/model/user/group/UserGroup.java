@@ -1,31 +1,22 @@
 package ca.corefacility.bioinformatics.irida.model.user.group;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -40,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class UserGroup implements MutableIridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@NotNull(message = "{group.name.notnull}")
@@ -49,10 +40,10 @@ public class UserGroup implements MutableIridaThing {
 	private String name;
 
 	@CreatedDate
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@Column(name = "modified_date")
 	@LastModifiedDate
@@ -61,6 +52,13 @@ public class UserGroup implements MutableIridaThing {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "group")
 	private Set<UserGroupJoin> users;
+
+	@NotAudited
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "userGroup")
+	private List<UserGroupRoleSetProjectEvent> events;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "userGroup")
+	private Set<UserGroupProjectJoin> userGroupProjects;
 	
 	@Column(name = "description")
 	@Lob

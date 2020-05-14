@@ -5,16 +5,12 @@
 
 <head>
     <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/resources/dist/css/announcement-users.bundle.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/announcement-users.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
           urls: {
             user: /*[[@{/users/}]]*/ '/users/'
-          },
-            i18n: {
-                markRead: /*[[#{announcement.markRead}]]*/ 'Mark_as_Read',
-                markUnread: /*[[#{announcement.markUnread}]]*/ 'Mark_as_Unread'
-            }
+          }
         };
     </script>
 </head>
@@ -78,7 +74,7 @@
 
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/announcement-users.bundle.js}"></script>
+    <script th:src="@{/dist/js/announcement-users.bundle.js}"></script>
 </th:block>
 </body>
 </html>

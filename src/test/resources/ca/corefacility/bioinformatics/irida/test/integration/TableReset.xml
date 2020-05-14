@@ -23,7 +23,7 @@
 	<sample />
 	
 	<sequencing_run />
-	<miseq_run />
+	<sequencing_run_properties />
 	<project />
 	<related_project />
 
@@ -57,6 +57,7 @@
 	<genome_assembly />
 	<genome_assembly_analysis />
 	<sample_genome_assembly />
+	<uploaded_assembly/>
 
 	<password_reset />
 	
@@ -108,11 +109,14 @@
 	<project_sample_AUD />
 	<project_user_AUD />
 	<sequencing_run_AUD />
-	<miseq_run_AUD />
+	<sequencing_run_properties_AUD />
 	<sequence_file_AUD />
 	<sequence_file_properties_AUD />
 	<sample_sequencingobject_AUD />
 	<sample_genome_assembly_AUD />
+	<genome_assembly_AUD />
+	<genome_assembly_analysis_AUD />
+	<uploaded_assembly_AUD />
 	<analysis_submission_AUD />
 	<analysis_submission_sequencing_object_AUD />
 	<analysis_submission_parameters_AUD />

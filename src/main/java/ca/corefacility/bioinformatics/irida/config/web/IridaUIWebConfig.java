@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,20 +22,23 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.I18nPreProcessorDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -48,20 +51,20 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
-public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
+public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
-	private static final String TEMPLATE_LOCATION = "/pages/";
-	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String LOCALE_CHANGE_PARAMETER = "lang";
+	private final static String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
+	private static final String INTERNAL_TEMPLATE_PREFIX = "/pages/";
+	private static final String HTML_TEMPLATE_SUFFIX = ".html";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
+	@Value("${locales.default}")
+	private String defaultLocaleValue;
+
 	@Autowired
 	private Environment env;
-	
-	@Autowired
-	private MessageSource messageSource;
 
 	private ApplicationContext applicationContext;
 
@@ -75,11 +78,13 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	}
 
 	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
-		logger.debug("Configuring LocaleChangeInterceptor");
-		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
-		return localeChangeInterceptor;
+	public GalaxySessionInterceptor galaxySessionInterceptor() {
+		return new GalaxySessionInterceptor();
+	}
+
+	@Bean
+	public BreadCrumbInterceptor breadCrumbInterceptor() {
+		return new BreadCrumbInterceptor();
 	}
 
 	@Bean
@@ -90,7 +95,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
 				for (Path entry : stream) {
 					List<String> lines = Files.readAllLines(entry);
-					analytics.append(Joiner.on("\n").join(lines));
+					analytics.append(Joiner.on("\n")
+							.join(lines));
 					analytics.append("\n");
 				}
 			} catch (DirectoryIteratorException ex) {
@@ -110,14 +116,12 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Bean(name = "localeResolver")
 	public LocaleResolver localeResolver() {
 		logger.debug("Configuring LocaleResolver");
-		SessionLocaleResolver slr = new SessionLocaleResolver();
-		slr.setDefaultLocale(Locale.ENGLISH);
-		return slr;
-	}
 
-	@Bean
-	public BreadCrumbInterceptor breadCrumbInterceptor() {
-		return new BreadCrumbInterceptor(messageSource);
+		Locale defaultLocale = Locale.forLanguageTag(defaultLocaleValue);
+
+		SessionLocaleResolver slr = new SessionLocaleResolver();
+		slr.setDefaultLocale(defaultLocale);
+		return slr;
 	}
 
 	@Override
@@ -125,8 +129,13 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		logger.debug("Configuring Resource Handlers");
 		// CSS: default location "/static/styles" during development and
 		// production.
-		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+		registry.addResourceHandler("/resources/**")
+				.addResourceLocations("/resources/");
+		registry.addResourceHandler("/dist/**")
+				.addResourceLocations("/dist/");
+		//serve static resources for customizing pages from /etc/irida/static
+		registry.addResourceHandler("/static/**")
+				.addResourceLocations("file:/etc/irida/static/");
 	}
 
 	@Override
@@ -135,34 +144,65 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
 		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove-modal.tmpl");
-		registry.addViewController("/cart/templates/galaxy").setViewName("cart/templates/galaxy");
 		registry.addViewController("/projects/templates/referenceFiles/delete")
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
-
-	@Bean
-	public SpringResourceTemplateResolver templateResolver(){
-		SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-		templateResolver.setApplicationContext(this.applicationContext);
-		templateResolver.setPrefix(TEMPLATE_LOCATION);
-		templateResolver.setSuffix(TEMPLATE_SUFFIX);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
+	/**
+	 * Default template resolver for IRIDA.  Templates can be overridden using the external template
+	 * resolver below.  This will look for templates in `/src/main/webapp/pages/*`
+	 *
+	 * @return {@link SpringResourceTemplateResolver}
+	 */
+	private ITemplateResolver internalTemplateResolver(){
+		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+		resolver.setApplicationContext(this.applicationContext);
+		resolver.setPrefix(INTERNAL_TEMPLATE_PREFIX);
+		resolver.setSuffix(HTML_TEMPLATE_SUFFIX);
+		resolver.setTemplateMode(TemplateMode.HTML);
+		resolver.setOrder(2);
+		resolver.setCheckExistence(true);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			templateResolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 		} else {
-			templateResolver.setCacheable(false);
+			resolver.setCacheable(false);
 		}
-		return templateResolver;
+		return resolver;
+	}
+
+	/**
+	 * This is to handle any templates (usually just the login page) that are overridden
+	 * by and organization.  The location of these files can be modified within the configuration.properties
+	 * file.
+	 *
+	 * @return {@link FileTemplateResolver}
+	 */
+	private ITemplateResolver externalTemplateResolver() {
+		FileTemplateResolver resolver = new FileTemplateResolver();
+		resolver.setSuffix(HTML_TEMPLATE_SUFFIX);
+		resolver.setOrder(1);
+		resolver.setPrefix(EXTERNAL_TEMPLATE_DIRECTORY);
+		resolver.setTemplateMode(TemplateMode.HTML);
+		resolver.setCheckExistence(true);
+
+		// Set template cache timeout if in production
+		// Don't cache at all if in development
+		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+		} else {
+			resolver.setCacheable(false);
+		}
+		return resolver;
 	}
 
 	@Bean
 	public SpringTemplateEngine templateEngine(){
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.addTemplateResolver(externalTemplateResolver());
+		templateEngine.addTemplateResolver(internalTemplateResolver());
 		templateEngine.setEnableSpringELCompiler(false);
 		templateEngine.setAdditionalDialects(additionalDialects());
 		return templateEngine;
@@ -185,7 +225,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
-		registry.addInterceptor(localeChangeInterceptor());
+		registry.addInterceptor(galaxySessionInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
@@ -200,11 +240,12 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 
 	/**
 	 * This is to add additional Thymeleaf dialects.
-	 * 
+	 *
 	 * @return A Set of Thymeleaf dialects.
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
+		dialects.add(new I18nPreProcessorDialect());
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());

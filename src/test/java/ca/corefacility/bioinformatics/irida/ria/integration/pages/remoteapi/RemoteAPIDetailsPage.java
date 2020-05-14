@@ -2,11 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -47,7 +43,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void clickDeleteButton() {
 		logger.debug("clicking remove button");
-		
+
 		WebElement findElement = new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
 				.until(ExpectedConditions.presenceOfElementLocated(By.className("t-remove-btn")));
 		findElement.click();
@@ -78,7 +74,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void clickConnect() {
 		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("oauth-connect-link ")));
+				.className("oauth-connect-link")));
 		connectButton.click();
 
 		waitForAjax();
@@ -89,9 +85,9 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		driver.switchTo().frame("oauth-connect-frame");
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
-		
+
 		driver.switchTo().defaultContent();
-		
+
 		waitForTime(8000);
 	}
 
@@ -101,7 +97,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		logger.debug("Checking for client existence");
 		do {
 			try {
-				WebElement el = driver.findElement(By.tagName("h1"));
+				WebElement el = driver.findElement(By.className("ant-page-header-heading-title"));
 				if (el.getText().equals("Remote IRIDA Connections")) {
 					logger.debug("Successfully loaded client list page");
 					waitForAjax();
@@ -119,7 +115,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 				logger.debug("Got stale element reference exception when trying to get text on h1, trying again.");
 			}
 		} while (!deleted);
-		
+
 
 		return deleted;
 	}

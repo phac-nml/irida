@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -13,11 +9,14 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>
@@ -29,10 +28,12 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private PipelinesPhylogenomicsPage page;
+	private CartPage cartPage;
 
 	@Before
 	public void setUpTest() throws IOException {
 		page = new PipelinesPhylogenomicsPage(driver());
+		cartPage = new CartPage(driver());
 	}
 
 	@Test
@@ -55,7 +56,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		samplesPage.selectSample(0);
 		samplesPage.addSelectedSamplesToCart();
 
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
+		cartPage.selectPhylogenomicsPipeline();
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
 		String fileName = page.selectReferenceFile();
@@ -85,19 +86,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	public void testClearPipelineAndGetSamples() {
-		addSamplesToCart();
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-		page.clickClearAndFindMore();
-
-		assertTrue("Should be on projects page", driver().getCurrentUrl().endsWith("/projects"));
-		assertFalse("cart should be empty", page.isCartCountVisible());
-	}
-
-	@Test
 	public void testRemoveSample() {
 		addSamplesToCart();
 
@@ -108,16 +96,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 
 		assertEquals("should have 1 less sample than before", numberOfSamplesDisplayed - 1, laterNumber);
 		assertEquals("cart samples count should equal samples on page", laterNumber, page.getCartCount());
-	}
-
-	@Test
-	public void testRemoveAllSample() {
-		addSamplesToCart();
-
-		page.removeFirstSample();
-		page.removeFirstSample();
-
-		assertTrue("user should be redirected to pipelinese page", driver().getCurrentUrl().endsWith("/pipelines"));
 	}
 
 	@Test
@@ -190,6 +168,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		samplesPage.selectSample(0);
 		samplesPage.selectSample(1);
 		samplesPage.addSelectedSamplesToCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
+		cartPage.selectPhylogenomicsPipeline();
 	}
 }

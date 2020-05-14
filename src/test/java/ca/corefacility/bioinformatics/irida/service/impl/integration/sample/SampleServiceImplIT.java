@@ -21,7 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -64,7 +64,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleServiceImplIT {
@@ -455,74 +455,6 @@ public class SampleServiceImplIT {
 		sampleService.getQCEntriesForSample(s);
 	}
 	
-	@Test
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testGetGenomeAssemblyForSampleSuccess() throws AnalysisAlreadySetException {
-		Path expectedAssemblyPath = outputFileBaseDirectory.resolve("testfile.fasta");
-		Sample s = sampleService.read(1L);
-				
-		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(s, 1L);
-		assertEquals("should have same path for assembly", expectedAssemblyPath, genomeAssembly.getFile());
-	}
-	
-	@Test(expected=EntityNotFoundException.class)
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testGetGenomeAssemblyForSampleFailNoAssembly() {
-		Sample s = sampleService.read(1L);
-		sampleService.getGenomeAssemblyForSample(s, 2L);
-	}
-	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles="USER")
-	public void testGetGenomeAssemblyForSampleFailDenied() {
-		Sample s = sampleService.read(1L);
-		sampleService.getGenomeAssemblyForSample(s, 1L);
-	}
-	
-	@Test
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testGetAssembliesForSampleSuccess() {
-		Sample s = sampleService.read(1L);
-		Collection<SampleGenomeAssemblyJoin> joins = sampleService.getAssembliesForSample(s);
-		assertEquals("should have same size for assemblies", 1, joins.size());
-		
-		SampleGenomeAssemblyJoin join = joins.iterator().next();
-		assertEquals("Should be same sample", s.getId(), join.getSubject().getId());
-		assertEquals("Should be same assembly", new Long(1L), join.getObject().getId());
-	}
-	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles="USER")
-	public void testGetAssembliesForSampleFail() {
-		Sample s = sampleService.read(1L);
-		sampleService.getAssembliesForSample(s);
-	}
-	
-	@Test
-	@WithMockUser(username = "fbristow", roles="USER")
-	public void testRemoveGenomeAssemblyFromSampleSuccess() {	
-		Sample s = sampleService.read(1L);
-		assertNotNull(sampleService.getGenomeAssemblyForSample(s, 1L));
-		
-		sampleService.removeGenomeAssemblyFromSample(s, 1L);
-		
-		try {
-			sampleService.getGenomeAssemblyForSample(s, 1L);
-		} catch (EntityNotFoundException e) {
-			return;
-		}
-		fail("Did not catch " + EntityNotFoundException.class);
-	}
-	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles="USER")
-	public void testRemoveGenomeAssemblyFromSampleFail() {	
-		Sample s = sampleService.read(1L);
-		assertNotNull(sampleService.getGenomeAssemblyForSample(s, 1L));
-		
-		sampleService.removeGenomeAssemblyFromSample(s, 1L);
-	}
-
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);

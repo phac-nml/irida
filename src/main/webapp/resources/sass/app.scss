@@ -5,9 +5,7 @@
 @import "animations/animations";
 
 // COMPONENTS
-@import "components/breadcrumbs";
 @import "components/buttons";
-@import "components/cart";
 @import "components/forms";
 @import "components/modals";
 @import "components/panels";
@@ -18,6 +16,11 @@
 html,
 body {
   height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 /****************************************************************************************
@@ -47,6 +50,10 @@ body {
       color: #717f8c !important;
     }
   }
+}
+
+label.ant-checkbox-wrapper {
+  font-weight: normal;
 }
 
 /****************************************************************************************
@@ -97,7 +104,10 @@ body {
 }
 
 .body-content {
-  padding-top: 1rem;
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .navbar-collapse {
@@ -281,6 +291,10 @@ h2.h2-muted {
   margin-top: 1em;
 }
 
+.spaced-top__lg {
+  margin-top: 1.6em;
+}
+
 .spaced-right {
   margin-right: 1em;
 }
@@ -331,6 +345,11 @@ ol.continue li:before {
   right: 0;
 }
 
+// Wrapping long sample names to the size of the container
+.text-wrap {
+  word-wrap: break-word;
+}
+
 /****************************************************************************************
 * AG-GRID
 *****************************************************************************************/
@@ -366,4 +385,17 @@ ol.continue li:before {
 .alert-sm {
   padding-top: 5px;
   padding-bottom: 5px;
+}
+
+.ant-radio-button-wrapper {
+  font-weight: normal !important;
+}
+
+.ant-descriptions-view {
+  overflow: auto !important;
+}
+
+.ant-table {
+  border: 1px solid hsl(116,0%,91%);
+  border-radius: 2px;
 }

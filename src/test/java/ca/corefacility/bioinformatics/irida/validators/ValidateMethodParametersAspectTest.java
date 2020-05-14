@@ -26,8 +26,6 @@ import com.google.common.collect.Lists;
 
 /**
  * Unit tests for validating method parameters.
- * 
- * 
  */
 public class ValidateMethodParametersAspectTest {
 
@@ -75,8 +73,8 @@ public class ValidateMethodParametersAspectTest {
 	public void testThrowsConstraintViolations() {
 		String first = "first";
 		Set<ConstraintViolation<Object>> violations = new HashSet<>();
-		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Object.class, null, null, first,
-				PathImpl.createRootPath(), null, null));
+		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Object.class, null,
+				null, first, PathImpl.createRootPath(), null, null, null));
 		when(validator.validate(any())).thenReturn(violations);
 		proxy.testOneValidParameter(first);
 	}
@@ -94,12 +92,12 @@ public class ValidateMethodParametersAspectTest {
 		interfaceProxy.testParameterAnnotatedInClass(param);
 		verify(validator).validate(param);
 	}
-	
+
 	@Test
 	public void testValidatesIterable() {
 		List<String> collection = Lists.newArrayList("first", "second", "third", "fourth");
 		interfaceProxy.testIterableValidAnnotation(collection);
-		
+
 		verify(validator, times(collection.size())).validate(any(String.class));
 		for (String el : collection) {
 			verify(validator).validate(el);
@@ -107,6 +105,9 @@ public class ValidateMethodParametersAspectTest {
 	}
 
 	private static class AnnotatedMethodsClass {
+		public AnnotatedMethodsClass() {
+		}
+
 		public void testOneValidParameter(@Valid String param) {
 
 		}
@@ -126,6 +127,9 @@ public class ValidateMethodParametersAspectTest {
 	}
 
 	private static class AnnotatedInterfaceImpl implements AnnotatedInterface {
+		public AnnotatedInterfaceImpl() {
+		}
+
 		@Override
 		public void testParameter(String parameter) {
 		}

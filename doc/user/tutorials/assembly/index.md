@@ -28,31 +28,27 @@ The assembly and annotation pipeline built into IRIDA proceeds through the follo
 Initial Data
 ============
 
-The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run-assembly-small/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
+The data for this tutorial comes from the miseq-run-salmonella/ directory within <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run-assembly-small/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
 
-![assembly-tutorial-samples.png][]
+![assembly-samples][]
 
 Adding Samples to the Cart
 ==========================
 
 Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart.  For this tutorial please select all three samples and click the **Add to Cart** button.
 
-![select-samples.png][]
+![add-to-cart][]
 
 Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
 
-![cart-button.png][]
+![cart-button][]
 
 Selecting a Pipeline
 ====================
 
-Once inside the cart, the **Select a Pipeline** button can be used to select a pipeline to run on the selected samples.
+Once inside the cart, all available pipelines will be displayed.
 
-![select-a-pipeline.png][]
-
-From the **Select a Pipeline** view a number of different pipelines are available.
-
-![select-a-pipeline-view.png][]
+![pipeline-select][]
 
 There are two different types of assembly pipelines available:
 
@@ -66,77 +62,105 @@ Selecting Parameters
 
 Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters.
 
-![assembly-pipeline-page.png][]
+![assembly-pipeline-page][]
 
 We will use the default parameters.  Please select the **Ready to Launch?** button to continue.
 
-![ready-to-launch-button.png][]
+![launch-button][]
 
 Once the button is selected you should see a screen showing that your pipeline has been launched.
 
-![pipeline-launch.png][]
+![pipeline-launched][]
 
 Monitoring Pipeline Status
 ==========================
 
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
+To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
 
-![your-analyses-menu.png][]
+![view-your-analyses][]
 
 The will bring you to a page where you can monitor the status of each launched workflow.
 
-![your-analyses-page.png][]
+![monitor-analyses][]
 
-Clicking the pipeline name **AssemblyAnnotationCollection_...** will bring you to a page for that analysis pipeline.
+Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a few minutes for the assembly and annotation collection pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
-![assembly-pipeline-page-details.png][]
-
-This page will continue to refresh as the pipeline progresses through each stage.  It will take a few minutes for the assembly and annotation pipeline to complete.
+![analysis-in-progress][]
 
 Viewing the Results
 ===================
 
-Once the pipeline is complete, you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
+Once the pipeline is complete, you will be able to view the results of the `AssemblyAnnotationCollection` analysis. Note that not all files have an available preview and as such are not displayed in the Output File Preview but are downloaded when selecting the `Download All Files` button.
 
-![assembly-pipeline-results.png][]
+![assembly-results][]
 
-A number of files are provided in the downloaded results.  These are described below.
+To download individual files select the **...** next to the Download All Files and select the file to download.
 
-1. `contigs-with-repeats-combined.fasta.zip`: The assembled contigs, after repeats were identified and low coverage/small contigs removed.
-2. `assembly-stats-with-repeats-combined.tsv`: A table of assembly statistics for the assembled contigs.
-3. `genome-combined.gbk.zip`:  The annotated contigs, in GenBank format.
-4. `prokka_stats-combined.txt.zip`:  The stats output from Prokka.
-5. `prokka-combined.log.zip`:  The log files from Prokka.
-6. `prokka-combined.err.zip`:  The error files from Prokka.
-7. `filter-spades-combined.txt.zip`:  Information on the contigs removed and filtering parameters.
-8. `contigs-without-repeats-combined.fasta.zip`:  The assembled and filtered contigs, minus any repeat regions.
-9. `contigs-all-combined.fasta.zip`:  All contigs output from SPAdes, without any flitering.
-10. `spades-combined.log.zip`:  The log files from SPAdes.
-11. `flash-combined.log.zip`:  The log files from FLASh used to merge paired-end reads.
+![assembly-download-individual-files][]
+
+To download all the files generated by the analysis, please select the **Download All Files** button.
+
+![assembly-download-all-files][]
+
 
 Viewing Provenance Information
 ==============================
 
 To view the pipeline provenance information, please select the **Provenance** tab.
 
-![assembly-provenance.png][]
+![assembly-provenance]
 
-This will display the individual steps of this pipeline and the parameters used at each step.
+The provenance is displayed on a per file basis. Clicking on `quast.tsv` file will display it's provenance. Expanding each tool will display the parameters that the tool was executed with.
 
+![assembly-provenance-tools]
+
+
+Viewing Pipeline Details
+========================
+
+To view analysis details, please select the **Settings** tab. From here you can view the analysis name, analysis description, analysis id, pipeline and pipeline version used by the analysis, analysis priority, when the analysis was created, and duration of the analysis.
+
+![assembly-settings]
+
+To edit an analysis name, please select the **Pencil** icon next to the analysis name. Once you have edited the analysis name, pressing the `ENTER` key on your keyboard or clicking anywhere outside of the text box will update the name. To cancel editing a name you can either hit the `ESC` key on your keyboard or if the name has not been changed you can also click anywhere outside of the text box.
+
+![assembly-settings-edit-name]
+
+To view samples used by the analysis, please select the **Samples** tab.
+
+![assembly-settings-samples]
+
+To share analysis results with other projects and/or save results back to samples, please select the **Manage Results** tab.
+
+![assembly-settings-share]
+
+To delete an analysis, please select the **Delete Analysis** tab.
+
+![assembly-settings-delete]
+
+
+
+[add-to-cart]: images/add-to-cart.png
+[analysis-in-progress]: images/analysis-in-progress.png
+[assembly-download-all-files]: images/assembly-download-all-files.png
+[assembly-download-individual-files]: images/assembly-download-individual-files.png
+[assembly-pipeline-page]: images/assembly-pipeline-page.png
+[assembly-provenance]: images/assembly-provenance.png
+[assembly-provenance-tools]: images/assembly-provenance-tools.png
+[assembly-results]: images/assembly-results.png
+[assembly-samples]: images/assembly-samples.png
+[assembly-settings]: images/assembly-settings.png
+[assembly-settings-delete]: images/assembly-settings-delete.png
+[assembly-settings-edit-name]: images/assembly-settings-edit-name.png
+[assembly-settings-samples]: images/assembly-settings-samples.png
+[assembly-settings-share]: images/assembly-settings-share.png
+[cart-button]: images/cart-button.png
 [FLASH]: http://ccb.jhu.edu/software/FLASH/
-[SPAdes]: http://bioinf.spbau.ru/spades
+[launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
+[monitor-analyses]: images/monitor-analyses.png
+[pipeline-launched]: images/pipeline-launched.png
+[pipeline-select]: images/pipeline-select.png
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
-[Web Upload Tutorial]: {{ site.baseurl }}/user/tutorials/web-upload
-[assembly-tutorial-samples.png]: images/assembly-tutorial-samples.png
-[select-samples.png]: images/select-samples.png
-[cart-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/cart-button.png
-[assembly-pipeline-page.png]: images/assembly-pipeline-page.png
-[ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
-[select-a-pipeline.png]: images/select-a-pipeline.png
-[select-a-pipeline-view.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-a-pipeline-view.png
-[pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
-[your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
-[your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
-[assembly-pipeline-page-details.png]: images/assembly-pipeline-page-details.png
-[assembly-pipeline-results.png]: images/assembly-pipeline-results.png
-[assembly-provenance.png]: images/assembly-provenance.png
+[SPAdes]: http://bioinf.spbau.ru/spades
+[view-your-analyses]: images/view-your-analyses.png
+[Web Upload Tutorial]: ../web-upload/

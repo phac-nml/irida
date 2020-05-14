@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -50,7 +50,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionRepositoryIT {
@@ -93,26 +93,26 @@ public class AnalysisSubmissionRepositoryIT {
 	 */
 	@Before
 	public void setup() throws IOException {
-		singleEndFile = (SingleEndSequenceFile) objectRepository.findOne(2L);
+		singleEndFile = (SingleEndSequenceFile) objectRepository.findById(2L).orElse(null);
 		sequenceFile = singleEndFile.getFileWithId(1L);
 		assertNotNull(sequenceFile);
 		Set<SequencingObject> singleFiles = Sets.newHashSet(singleEndFile);
 
-		SingleEndSequenceFile singleEndFile2 = (SingleEndSequenceFile) objectRepository.findOne(3L);
+		SingleEndSequenceFile singleEndFile2 = (SingleEndSequenceFile) objectRepository.findById(3L).orElse(null);
 		SequenceFile sequenceFile2 = singleEndFile2.getFileWithId(2L);
 		assertNotNull(sequenceFile2);
 		Set<SequencingObject> singleFiles2 = Sets.newHashSet(singleEndFile2);
 
-		sequenceFilePair = (SequenceFilePair) objectRepository.findOne(1L);
+		sequenceFilePair = (SequenceFilePair) objectRepository.findById(1L).orElse(null);
 		assertNotNull(sequenceFilePair);
 
-		referenceFile = referenceFileRepository.findOne(1L);
+		referenceFile = referenceFileRepository.findById(1L).orElse(null);
 		assertNotNull(referenceFile);
 		
-		referenceFile2 = referenceFileRepository.findOne(2L);
+		referenceFile2 = referenceFileRepository.findById(2L).orElse(null);
 
-		submitter1 = userRepository.findOne(1L);
-		submitter2 = userRepository.findOne(2L);
+		submitter1 = userRepository.findById(1L).orElse(null);
+		submitter2 = userRepository.findById(2L).orElse(null);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId).name(analysisName).inputFiles(singleFiles)
 				.referenceFile(referenceFile).build();

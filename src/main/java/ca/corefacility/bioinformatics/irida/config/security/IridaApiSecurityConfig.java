@@ -27,7 +27,6 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
-import org.springframework.security.web.access.expression.WebSecurityExpressionHandler;
 
 import java.util.List;
 
@@ -135,7 +134,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	/**
-	 * Default {@link WebSecurityExpressionHandler}. This is used by Thymeleaf's
+	 * Default {@link DefaultWebSecurityExpressionHandler}. This is used by Thymeleaf's
 	 * Spring Security plugin, and isn't actually used anywhere in the back-end,
 	 * but it needs to be in the back-end configuration classes because the
 	 * Thymeleaf plugin looks for this expression handler in the ROOT context
@@ -144,7 +143,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * @return the web security expression handler.
 	 */
 	@Bean
-	public WebSecurityExpressionHandler webSecurityExpressionHandler() {
+	public DefaultWebSecurityExpressionHandler webSecurityExpressionHandler() {
 		return new DefaultWebSecurityExpressionHandler();
 	}
 }

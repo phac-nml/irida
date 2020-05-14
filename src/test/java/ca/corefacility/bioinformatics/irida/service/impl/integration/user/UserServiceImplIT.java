@@ -27,7 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -58,7 +58,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/user/UserServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserServiceImplIT {
@@ -359,14 +359,14 @@ public class UserServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSearchUser(){
 		String search = "Mr";
-		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), new PageRequest(0, 10, new Sort(Direction.ASC, "id")));
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
 		assertEquals(3,searchUser.getContent().size());
 		for(User u : searchUser){
 			assertTrue(u.getFirstName().contains("Mr"));
 		}
 		
 		search = "User";
-		searchUser = userService.search(UserSpecification.searchUser(search), new PageRequest(0, 10, new Sort(Direction.ASC, "id")));
+		searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
 		assertEquals(2,searchUser.getContent().size());
 	}
 

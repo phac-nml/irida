@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -63,7 +64,7 @@ import com.google.common.collect.Sets;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionScheduledTaskImplIT {
@@ -85,6 +86,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 	@Autowired
 	private JobErrorRepository jobErrorRepository;
+
+	@Autowired
+	private EmailController emailController;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -111,7 +115,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
-				galaxyJobErrorsService, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -134,7 +138,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		Files.delete(referenceFilePath2);
 		Files.copy(referenceFilePathReal, referenceFilePath2);
 		
-		analysisSubmitter = userRepository.findOne(1L);
+		analysisSubmitter = userRepository.findById(1L).orElse(null);
 	}
 
 	/**
@@ -178,15 +182,15 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
-		validateCleanupAnalysis(Sets.newHashSet(analysisSubmissionRepository.findOne(analysisSubmission.getId())), 0);
+		validateCleanupAnalysis(Sets.newHashSet(analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null)), 0);
 		
-		AnalysisSubmission notCleanedSubmission = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		AnalysisSubmission notCleanedSubmission = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
 		assertEquals("State should not be cleaned", AnalysisCleanedState.NOT_CLEANED, notCleanedSubmission.getAnalysisCleanedState());
 	}
 
@@ -240,7 +244,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		// the analysis in error state should still be cleaned up
 		validateCleanupAnalysis(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
 
-		AnalysisSubmission loadedSubmission2 = analysisSubmissionRepository.findOne(analysisSubmission2.getId());
+		AnalysisSubmission loadedSubmission2 = analysisSubmissionRepository.findById(analysisSubmission2.getId()).orElse(null);
 		assertEquals(AnalysisState.ERROR, loadedSubmission2.getAnalysisState());
 	}
 
@@ -258,7 +262,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		try {
 			validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
 		} catch (ExecutionException e) {
-			AnalysisSubmission loadedSubmission = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+			AnalysisSubmission loadedSubmission = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
 			assertEquals(AnalysisState.ERROR, loadedSubmission.getAnalysisState());
 
 			throw e.getCause();
@@ -356,7 +360,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 			fail("No exception thrown");
 		} catch (ExecutionException e) {
 			assertEquals("Invalid cleaned state", AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionRepository
-					.findOne(returnedSubmission.getId()).getAnalysisCleanedState());
+					.findById(returnedSubmission.getId()).orElse(null).getAnalysisCleanedState());
 		}
 	}
 	

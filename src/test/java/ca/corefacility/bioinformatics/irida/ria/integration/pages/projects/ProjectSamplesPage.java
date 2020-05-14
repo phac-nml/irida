@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
+
+import com.google.common.base.Strings;
 
 /**
  * <p>
@@ -93,7 +93,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
-	@FindBy(className = "select2-selection")
+	@FindBy(css = "a.select2-choice")
 	private WebElement select2Opener;
 
 	@FindBy(className = "select2-search__field")
@@ -134,7 +134,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "div.ranges li")
 	private List<WebElement> dateRanges;
 
-	@FindBy(css = ".range_inputs .applyBtn")
+	@FindBy(className = "applyBtn")
 	private WebElement applyDateRangeBtn;
 
 	@FindBy(id = "selection-main")
@@ -172,6 +172,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	
 	@FindBy(className = "locked-sample")
 	private List<WebElement> lockedSamples;
+
+	@FindBy(css = "[data-dt-idx=\"1\"]")
+	private WebElement firstTablePageBtn;
+
+	@FindBy(css = ".paginate_button.next a")
+	private WebElement nextTablePageBtn;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -298,7 +304,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
 		waitForElementVisible(
-				By.cssSelector("#cart-count"));
+				By.className("js-cart-count"));
 		// If the cart count is already visible this can go too fast,
 		// wait for the cart to fully update it's total.
 		waitForTime(500);
@@ -376,19 +382,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
-	public void filterByDateRange(String start, String end) {
+	public void filterByDateRange(String range) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		openFilterModal();
 
 		dateRangeInput.clear();
-		dateRangeInput.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("daterangepicker")));
+		dateRangeInput.sendKeys(range);
 
-		daterangepickerStart.clear();
-		daterangepickerStart.sendKeys(start);
-
-		daterangepickerEnd.clear();
-		daterangepickerEnd.sendKeys(end);
 		applyDateRangeBtn.click();
 		applyFiltersBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
@@ -427,13 +427,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void enterSelect2Value(String value) {
-		select2Opener.click();
-		// Wait for select2 to be open properly.
-		waitForTime(500);
-		sendInputTextSlowly(value, select2Input);
-		// Wait needed to allow select2 to populate.
-		waitForTime(500);
-		select2Input.sendKeys(Keys.RETURN);
+		Select2Utility select2Utility = new Select2Utility(driver);
+		select2Utility.openSelect2Input();
+		select2Utility.searchByText(value);
+		select2Utility.selectDefaultMatch();
 	}
 
 	private void shareMoveSamples(String project, boolean owner) {
@@ -455,11 +452,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getLinkerText() {
+		String cmd = linkerCmd.getAttribute("aria-label");
+		if (Strings.isNullOrEmpty(cmd)) {
+			cmd = linkerCmd.getText();
+		}
+		return cmd;
+	}
+
+	public void openLinkerModal(){
 		openExportDropdown();
 		linkerBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
-		return linkerCmd.getAttribute("value");
+	}
+
+	public void clickLinkerFileType(String type){
+		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
+		fileTypeCheckbox.click();
 	}
 	
 	public List<String> getLockedSampleNames(){
@@ -473,6 +482,22 @@ public class ProjectSamplesPage extends ProjectPageBase {
 			}
 		}
 		return locked;
+	}
+
+	public void goToNextPage() {
+		nextTablePageBtn.click();
+		waitForTime(500);
+	}
+
+	public void closeModalIfOpen() {
+		List<WebElement> modals = driver.findElements(By.className("modal-open"));
+		if (modals.size() > 0) {
+			Actions actions = new Actions(driver);
+			actions.moveToElement(modals.get(0))
+					.moveByOffset(5, 5)
+					.click()
+					.perform();
+		}
 	}
 	
 	/**

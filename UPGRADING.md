@@ -4,8 +4,37 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
-0.22.0 to 0.23.0
+20.01 to 20.05
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This version changes the endpoint for creating sequencing runs to allow any type of sequencer.  The legacy `sequencingRun/miseq` endpoint is maintained, but deprecated.  See <https://irida.corefacility.ca/documentation/developer/rest/#creating-sequencing-runs> for more info.
+* Assemblies can now be uploaded to IRIDA rather than just created through an analysis pipeline.  This requires a new filesystem directory configured for files to be stored.  You must add `assembly.file.base.directory` to your `/etc/irida/irida.conf` file and create a new diretory for these files to be stored.
+
+19.09 to 20.01
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This upgrade changes the Java version to Java 11.  To upgrade, follow the install instructions for your system in <https://irida.corefacility.ca/documentation/administrator/web/#prerequisite-install-instructions>.
+* Tomcat 8 (or another Servlet 3.1 compatible servlet container) is required for this IRIDA version.  Systems using Tomcat 7 must be upgraded before deploying this update.
+* This upgrade adds a required field to OAuth2 clients using the `authorization_code` grant (that is external applications connecting to IRIDA via the web application).  This includes other IRIDA installations synchronizing data via the Remote API system, and Galaxy importer clients.  In order for these systems to continue working properly, administrators must register a redirect URI for all `authorization_code` clients.  For more on this process, see <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
+* The configuration key `hibernate.dialect=org.hibernate.dialect.MySQL55Dialect` should be set in your `/etc/irida/irida.conf` file for this release.  Note the change from `MySQL5Dialect` to `MySQL55Dialect`.
+
+19.05 to 19.09
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+
+19.01 to 19.05
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This upgrade will remove FastQC resuts from the database and move them to the file system.  It is **strongly** recommended to make a backup of your database before this upgrade.  Before upgrading you should read more at https://irida.corefacility.ca/documentation/administrator/upgrades/#1905.
+
+19.01 to 19.01.2
 ----------------
+* A new configuration value is available to control the number of threads used for communication with Galaxy when running pipelines. The default value is **4**. To change, please set `irida.workflow.analysis.threads` in the `/etc/irida/irida.conf` file. This can help when running lots of pipelines in IRIDA.
+
+
+0.22.0 to 19.01
+----------------
+* The following new Tomcat variable should be set for deployment `irida.db.profile=prod` for production deployments. See https://irida.corefacility.ca/documentation/administrator/web/#servlet-container-configuration for more details.
 * A new configuration value is avaliable to display a warning on analysis result and metadata pages to communicate that an analysis result should be considered preliminiary.  Add a warning message `irida.analysis.warning` in `/etc/irida/web.conf` to display on all analysis result and metadata pages.
 * New Spring profiles are available for running IRIDA in a multi-server mode.  This will help distribute the load in high-usage installations.  See the documentation for more details at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration.
 * The [AssemblyAnnotation](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/) and [AssemblyAnnotationCollection](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation-collection/) pipelines have been upgraded to make use of [shovill](https://github.com/tseemann/shovill) for assembly and [QUAST](http://quast.sourceforge.net/quast.html) for assembly quality assessment. Please ensure that the `shovill` and `quast` Galaxy tools are installed for these pipelines. If you haven't already, please follow [the instructions for installing `shovill`](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/#address-shovill-related-issues) and see the instructions for upgrading the [SISTR](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/) pipeline from 0.21.0 to 0.22.0 for more info.
