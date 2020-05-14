@@ -60,6 +60,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		editNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));;
 		editNameInput.sendKeys(name);
 		editNameInput.sendKeys(Keys.ENTER);
+		wait.until(ExpectedConditions.textToBePresentInElement(groupName, name));
 	}
 
 	public int getNumberOfMembers() {
