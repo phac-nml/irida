@@ -166,6 +166,12 @@ public class UserGroupsAjaxController {
 		return ResponseEntity.ok(service.getProjectsForUserGroup(groupId, locale));
 	}
 
+	/**
+	 * Create a new {@link UserGroup}
+	 * @param userGroup New {@link UserGroup} to create from UI form fields (name and role)
+	 * @param locale current users {@link Locale}
+	 * @return message to the user about the result of creating the group
+	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> createNewUserGroup(@RequestBody UserGroup userGroup, Locale locale) {
 		try {
