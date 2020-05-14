@@ -44,7 +44,7 @@ export function SampleFileUploader() {
     <Menu className="t-upload-menu">
       <Menu.Item>
         <FileUploader
-          allowedTypes=".fastq,.gz,.fast5"
+          allowedTypes=".fastq,.gz"
           url={setBaseUrl(
             `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
           )}
@@ -54,6 +54,18 @@ export function SampleFileUploader() {
           onComplete={onComplete}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
+        </FileUploader>
+      </Menu.Item>
+      <Menu.Item>
+        <FileUploader
+          allowedTypes=".fast5,.gz"
+          url={setBaseUrl(`ajax/samples/${window.PAGE.id}/fast5/upload`)}
+          onSuccess={onSuccess}
+          onUpload={onUpload}
+          onError={onError}
+          onComplete={onComplete}
+        >
+          {i18n("SampleFileUploader.fast5")}
         </FileUploader>
       </Menu.Item>
       <Menu.Item>

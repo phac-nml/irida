@@ -100,7 +100,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					ignoredExceptions.add(e);
 					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process ["
 							+ sequencingObjectId + "], but proceeding with the remaining processors because the "
-							+ "file would not be modified by the processor. Stack trace follows.", e);
+							+ "file would not be modified by the processor: " + e.getMessage());
 				}
 			}
 		}
