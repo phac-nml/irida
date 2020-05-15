@@ -12,10 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -32,9 +29,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @Controller
 @RequestMapping("/ajax/projects/{projectId}/settings")
 public class ProjectSettingsAjaxController {
-	private ProjectService projectService;
-	private UserService userService;
-	private ProjectOwnerPermission projectOwnerPermission;
+	private final ProjectService projectService;
+	private final UserService userService;
+	private final ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
 	public ProjectSettingsAjaxController(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,

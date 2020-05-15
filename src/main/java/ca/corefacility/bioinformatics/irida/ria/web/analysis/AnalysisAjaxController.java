@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -882,6 +885,41 @@ public class AnalysisAjaxController {
 	}
 
 	/**
+	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
+	 *
+	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
+	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
+	 * @param locale       locale of the logged in user
+	 * @return {@link String} containing the image file contents as a base64 encoded string.
+	 */
+	@RequestMapping("{submissionId}/image")
+	@ResponseBody
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Set<AnalysisOutputFile> files = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+		AnalysisOutputFile outputFile = null;
+
+		try {
+			for (AnalysisOutputFile file : files) {
+				if (file.getFile()
+						.toFile()
+						.getName()
+						.contains(filename)) {
+					outputFile = file;
+					break;
+				}
+			}
+			return ResponseEntity.ok(Base64.getEncoder()
+					.encodeToString(outputFile.getBytesForFile()));
+		} catch (IOException e) {
+			logger.error("Unable to open image file");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(messageSource.getMessage("AnalysisOutputs.unableToReadImageFile", null, locale));
+		}
+	}
+
+	/**
 	 * Get the metadata associated with a template for an analysis.
 	 *
 	 * @param submissionId {@link Long} identifier for the {@link AnalysisSubmission}
@@ -1031,6 +1069,40 @@ public class AnalysisAjaxController {
 			}
 		}
 		return new AnalysisTreeResponse(tree, message);
+	}
+
+	/**
+	 * Parse excel file and return an ExcelData dto which
+	 * contains the row data as well as the headers.
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param filename     The name of the excel file to parse
+	 * @param sheetIndex   The index of the sheet in the excel workbook to parse
+	 * @return dto which contains the headers and rows of the excel file
+	 */
+	@RequestMapping(value = "/{submissionId}/parseExcel")
+	@ResponseBody
+	public ExcelData parseExcelFile(@PathVariable Long submissionId, String filename, Integer sheetIndex) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Set<AnalysisOutputFile> files = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+		AnalysisOutputFile outputFile = null;
+
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename)) {
+				outputFile = file;
+				break;
+			}
+		}
+		// If the index of the sheet is not
+		// supplied then we set it to 0
+		if (sheetIndex == null) {
+			sheetIndex = 0;
+		}
+		return FileUtilities.parseExcelFile(outputFile, sheetIndex);
 	}
 
 	/**

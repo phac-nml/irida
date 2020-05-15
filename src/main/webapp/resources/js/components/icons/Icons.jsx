@@ -2,6 +2,8 @@ import React from "react";
 import {
   BoldOutlined,
   ClockCircleOutlined,
+  CloseOutlined,
+  CloseCircleOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -37,7 +39,9 @@ import {
   SwapOutlined,
   SyncOutlined,
   TableOutlined,
-  UnorderedListOutlined
+  TeamOutlined,
+  UnorderedListOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -51,6 +55,10 @@ import { blue6 } from "../../styles/colors";
  */
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
+
+export const IconCloseCircle = ({ ...props }) => (
+  <CloseCircleOutlined {...props} />
+);
 
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
@@ -106,6 +114,8 @@ export const IconPlusCircle = ({ ...props }) => (
 
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
 
+export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
+
 export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
@@ -143,6 +153,10 @@ export const IconExperiment = ({ ...props }) => (
 export const IconHome = ({ ...props }) => <HomeOutlined {...props} />;
 
 export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
+
+export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
+
+export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 
 /*
 File Type Icons

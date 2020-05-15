@@ -279,6 +279,48 @@ export async function getAnalysisProvenanceByFile(submissionId, filename) {
     return { error };
   }
 }
+
+/**
+ * Gets the parsed excel data
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function parseExcel(submissionId, filename, sheetIndex) {
+  try {
+    const { data } = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/parseExcel`,
+      {
+        params: {
+          filename,
+          sheetIndex
+        }
+      }
+    );
+    return { data };
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
+ * Gets the image file data as a base64 encoded string.
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getImageFile(submissionId, filename) {
+  try {
+    const { data } = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/image`,
+      {
+        params: {
+          filename
+        }
+      }
+    );
+    return { data };
+  } catch (error) {
+    return { error };
+  }
+}
+
 /**
  * Get all single sample analysis output file info for the principal user.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.

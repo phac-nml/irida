@@ -9,8 +9,9 @@ module.exports = {
     "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
     "expose-loader?angular!angular",
-    "./resources/js/vendors"
+    "./resources/js/vendors",
   ],
+  login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
@@ -20,6 +21,7 @@ module.exports = {
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
+  project: "./resources/js/components/project/ProjectNav.jsx",
   "project-events": "./resources/js/pages/projects/project-events.js",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
@@ -43,6 +45,7 @@ module.exports = {
     "./resources/js/pages/projects/settings/project-settings-basic.js",
   "project-settings-remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
+  "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-api-details":
     "./resources/js/pages/remote-apis/remote-api-details.js",
@@ -53,8 +56,10 @@ module.exports = {
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users-groups":
     "./resources/js/pages/projects/project-users-groups.js",
+  "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
+  sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
@@ -75,9 +80,9 @@ module.exports = {
     "./resources/js/pages/samples/sample-files-concatenate.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
-  "groups-list": "./resources/js/pages/users/groups-list.js",
-  "group-members": "./resources/js/pages/users/groups-members.js",
+  groups: "./resources/js/pages/UserGroupsPage",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  "run-files": "./resources/js/pages/sequence-files/run-files.js"
+  "run-files": "./resources/js/pages/sequence-files/run-files.js",
+  "user-details": "./resources/js/pages/user-details.js",
 };

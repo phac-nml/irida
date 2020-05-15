@@ -28,6 +28,7 @@ User Interface development
 * [User interface testing](interface/testing)
 * [Packaging JS and CSS with Webpack](interface/webpack)
 * [Adding internationalizations](interface/i18n)
+* [Creating a custom login page](interface/custom-login)
 
 
 Other IRIDA developer resources

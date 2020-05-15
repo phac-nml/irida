@@ -15,6 +15,14 @@ public class TableRequest {
 	public TableRequest() {
 	}
 
+	public TableRequest(int current, int pageSize, String sortColumn, String sortDirection, String search) {
+		this.current = current;
+		this.pageSize = pageSize;
+		this.sortColumn = sortColumn;
+		this.sortDirection = sortDirection;
+		this.search = search;
+	}
+
 	public int getCurrent() {
 		return current;
 	}

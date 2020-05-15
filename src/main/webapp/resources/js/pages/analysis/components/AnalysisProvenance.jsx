@@ -23,7 +23,8 @@ import { getAnalysisProvenanceByFile } from "../../../apis/analysis/analysis";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
-import { WarningAlert} from "../../../components/alerts";
+import { WarningAlert } from "../../../components/alerts";
+import { ContentLoading } from "../../../components/loader";
 
 const { Panel } = Collapse;
 
@@ -33,7 +34,9 @@ export default function AnalysisProvenance() {
     AnalysisOutputsContext
   );
   const [provenance, setProvenance] = useState(null);
-  const [previousExecutionToolsInfo, setPreviousExecutionToolsInfo] = useState([]);
+  const [previousExecutionToolsInfo, setPreviousExecutionToolsInfo] = useState(
+    []
+  );
   const [currFileName, setCurrFileName] = useState(null);
 
   // We use this to offset the margin for each tool
@@ -69,8 +72,7 @@ export default function AnalysisProvenance() {
   function getProvenance(filename) {
     if (typeof filename !== "undefined") {
       if (
-        (provenance !== null &&
-          !provenance.data.filename.includes(filename.toString())) ||
+        (currFileName !== null && currFileName !== filename.toString()) ||
         provenance === null
       ) {
         setCurrFileName(filename.toString());
@@ -163,7 +165,9 @@ export default function AnalysisProvenance() {
     }
 
     for (let currTool of prevTools) {
-      previousExecutionToolsInfo.push(displayToolWithExecutionParameters(currTool, margin));
+      previousExecutionToolsInfo.push(
+        displayToolWithExecutionParameters(currTool, margin)
+      );
       getPreviousExecutionTools(currTool, margin);
     }
   }
@@ -191,10 +195,13 @@ export default function AnalysisProvenance() {
             className="t-file-header"
           >
             {currFileName === output.filename && provenance !== null
-              ? [displayToolWithExecutionParameters(
-                  provenance.data.createdByTool,
-                  0
-                ), previousExecutionToolsInfo]
+              ? [
+                  displayToolWithExecutionParameters(
+                    provenance.data.createdByTool,
+                    0
+                  ),
+                  previousExecutionToolsInfo
+                ]
               : null}
           </Panel>
         );
@@ -206,11 +213,14 @@ export default function AnalysisProvenance() {
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <TabPaneContent title={i18n("Analysis.provenance")}>
-        {analysisOutputsContext.outputs !== null && analysisOutputsContext.outputs.length > 0 ?
+        {analysisOutputsContext.outputs !== null ?
+        analysisOutputsContext.outputs.length > 0 ? (
           <Collapse accordion onChange={e => getProvenance(e)}>
             {getCreatedByToolPanels()}
           </Collapse>
-          : <WarningAlert message={i18n("AnalysisProvenance.noFilesFound")} /> }
+        ) : (
+          <WarningAlert message={i18n("AnalysisProvenance.noFilesFound")} />
+        ) : <ContentLoading />}
       </TabPaneContent>
     </Layout>
   );

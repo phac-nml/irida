@@ -12,6 +12,7 @@
 export const exportToGalaxy = ({
   email,
   makepairedcollection,
+  includeAssemblies,
   oauthCode,
   oauthRedirect,
   samples
@@ -27,6 +28,7 @@ export const exportToGalaxy = ({
       user: { email },
       addtohistory: true, // Default according to Phil Mabon
       makepairedcollection,
+      includeAssemblies,
       oauth2: {
         code: oauthCode,
         redirect: oauthRedirect
