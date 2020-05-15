@@ -14,17 +14,14 @@ export function RemoveTableItemButton({
   tooltipText = "",
   confirmText = "",
 }) {
-  const { updateTable } = useContext(PagedTableContext);
   const [loading, setLoading] = useState(false);
 
   /**
    * Handle the successful removal of the current item
    * @param message
    */
-  const removeSuccess = (message) => {
-    updateTable();
+  const removeSuccess = (message) =>
     notification.success({ message, className: "t-remove-success" });
-  };
 
   /**
    * Make the request to remove the item from the project.
