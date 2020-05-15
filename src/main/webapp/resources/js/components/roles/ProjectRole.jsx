@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { updateUserRoleOnProject } from "../../apis/projects/members";
 import { notification, Select } from "antd";
-import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
+import { RolesContext, useRoles } from "../../contexts/roles-context";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -16,7 +16,7 @@ import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
 export function ProjectRole({ user }) {
   const [role, setRole] = useState(user.role);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useContext(ProjectRolesContext);
+  const { roles, getRoleFromKey } = useRoles();
 
   const onChange = (value) => {
     setLoading(true);

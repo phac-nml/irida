@@ -1,10 +1,9 @@
 import { UserGroupRole } from "../../../components/roles/UserGroupRole";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import React, { useContext } from "react";
+import React from "react";
 import { SPACE_XS } from "../../../styles/spacing";
 import { stringSorter } from "../../../utilities/table-utilities";
 import { AddMemberButton } from "../../../components/Buttons/AddMemberButton";
-import { UserGroupRolesContext } from "../../../contexts/UserGroupRolesContext";
 import { RemoveTableItemButton } from "../../../components/Buttons";
 import {
   addMemberToUserGroup,
@@ -35,8 +34,6 @@ export default function UserGroupMembersTable({
   groupId,
   updateTable,
 }) {
-  const { roles } = useContext(UserGroupRolesContext);
-
   /**
    * Remove a member from the group, and then refresh the table.
    * @param user
@@ -114,7 +111,6 @@ export default function UserGroupMembersTable({
           {canManage ? (
             <AddMemberButton
               defaultRole="GROUP_MEMBER"
-              roles={roles}
               addMemberFn={addMember}
               addMemberSuccessFn={updateTable}
               getAvailableMembersFn={getAvailableMembers}

@@ -10,13 +10,13 @@ import {
   Select,
   Typography,
 } from "antd";
+import { useRoles } from "../../contexts/roles-context";
 
 const { Option } = Select;
 const { Text } = Typography;
 
 export function AddMemberButton({
   defaultRole,
-  roles = [],
   addMemberFn = () => {},
   getAvailableMembersFn = () => {},
   addMemberSuccessFn = () => {},
@@ -26,6 +26,8 @@ export function AddMemberButton({
   to it when the window opens.
    */
   const userRef = useRef();
+
+  const { roles } = useRoles();
 
   /*
   Whether the modal to add a user is visible

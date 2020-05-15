@@ -1,8 +1,7 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { getProjectRoles } from "../apis/projects/projects";
 
-let ProjectRolesContext;
-const { Provider } = (ProjectRolesContext = createContext());
+const RolesContext = createContext();
 
 /**
  * React context to allow multiple components to get a list of project roles
@@ -12,7 +11,7 @@ const { Provider } = (ProjectRolesContext = createContext());
  * @returns {*}
  * @constructor
  */
-function ProjectRolesProvider({ children }) {
+function RolesProvider({ children }) {
   const [roles, setRoles] = useState([]);
 
   /*
@@ -34,7 +33,19 @@ function ProjectRolesProvider({ children }) {
     return role ? role.label : "UNKNOWN";
   };
 
-  return <Provider value={{ roles, getRoleFromKey }}>{children}</Provider>;
+  return (
+    <RolesContext.Provider value={{ roles, getRoleFromKey }}>
+      {children}
+    </RolesContext.Provider>
+  );
 }
 
-export { ProjectRolesContext, ProjectRolesProvider };
+function useRoles() {
+  const context = useContext(RolesContext);
+  if (context === undefined) {
+    throw new Error("useRoles must be used within a RolesProvider");
+  }
+  return context;
+}
+
+export { RolesProvider, useRoles };

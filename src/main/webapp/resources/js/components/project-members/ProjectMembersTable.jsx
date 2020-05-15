@@ -3,9 +3,12 @@ import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ProjectRole } from "../roles/ProjectRole";
-import { RemoveTableItemButton } from "../Buttons";
-import { AddMembersButton } from "./AddMemberButton";
-import { removeUserFromProject } from "../../apis/projects/members";
+import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
+import {
+  addMemberToProject,
+  getAvailableUsersForProject,
+  removeUserFromProject,
+} from "../../apis/projects/members";
 
 /**
  * React component to display a table of project users.
@@ -69,7 +72,15 @@ export function ProjectMembersTable() {
 
   return (
     <PagedTable
-      buttons={[<AddMembersButton key="add-members-btn" />]}
+      buttons={[
+        <AddMemberButton
+          key="add-members-btn"
+          addMemberFn={addMemberToProject}
+          addMemberSuccessFn={updateTable}
+          getAvailableMembersFn={getAvailableUsersForProject}
+          defaultRole="PROJECT_USER"
+        />,
+      ]}
       columns={columns}
     />
   );
