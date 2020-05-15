@@ -15,13 +15,14 @@ const { Content } = Layout;
  * @returns {*}
  * @constructor
  */
-export function PageWrapper({ title, headerExtras, children }) {
+export function PageWrapper({ title, headerExtras, children, onBack }) {
   return (
     <Layout style={{ height: "100%", minHeight: "100%" }}>
       <PageHeader
         className="t-main-heading"
         title={title}
         extra={headerExtras}
+        onBack={onBack}
       />
       <Content style={{ padding: SPACE_MD, paddingTop: 0 }}>
         <div style={{ padding: SPACE_MD, backgroundColor: grey1 }}>
@@ -35,5 +36,5 @@ export function PageWrapper({ title, headerExtras, children }) {
 PageWrapper.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   headerExtras: PropTypes.element,
-  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 };
