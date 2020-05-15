@@ -94,6 +94,12 @@ public class Fast5Object extends SequencingObject {
 		UNKNOWN
 	}
 
+	/**
+	 * Get the {@link Fast5Type} for this object
+	 *
+	 * @param sequenceFile The {@link SequenceFile} to check for type
+	 * @return the detected {@link Fast5Type}
+	 */
 	private Fast5Type setType(SequenceFile sequenceFile) {
 		Path file = sequenceFile.getFile();
 
