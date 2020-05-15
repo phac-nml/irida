@@ -192,17 +192,29 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testProvenance() {
+	public void testProvenance() throws IOException {
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/filterStats.txt");
 		LoginPage.loginAsManager(driver());
 
 		// Has output files so display a provenance
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
-		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
-		page.getFileProvenance();
+		assertEquals("There should be two files", 2, page.getProvenanceFileCount());
+		page.getFileProvenance(0);
+		assertEquals("Should have 1 tool associated with filterStats", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("Tool should have 2 parameters", 2, page.getGalaxyParametersCount());
+
+		page.getFileProvenance(1);
 		assertEquals("Should have 2 tools associated with the tree", 2, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 1 parameter", 1, page.getGalaxyParametersCount());
+
+		// We click the first file again and check for tools and execution parameters
+		page.getFileProvenance(0);
+		assertEquals("Should have 1 tool associated with filterStats", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("Tool should have 2 parameter", 2, page.getGalaxyParametersCount());
 
 		// Has no output files so no provenance displayed
 		page = AnalysisDetailsPage.initPage(driver(), 10L, "provenance");
@@ -392,7 +404,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page = AnalysisDetailsPage.initPage(driver(), 14L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
 		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
-		page.getFileProvenance();
+		page.getFileProvenance(0);
 		assertEquals("Should have 2 tools associated with the tree", 1, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 2 parameter", 2, page.getGalaxyParametersCount());

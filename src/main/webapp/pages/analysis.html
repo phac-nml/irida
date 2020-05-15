@@ -5,7 +5,7 @@
   data-layout-decorate="~{template/page}"
 >
   <head>
-    <title th:text="test">ANALYSIS RESULTS</title>
+    <title th:text="#{analysis.title(${analysisSubmission.getName()})}">ANALYSIS RESULTS</title>
     <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
 
     <script th:inline="javascript">
