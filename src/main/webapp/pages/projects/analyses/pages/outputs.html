@@ -5,10 +5,7 @@
   data-layout-decorate="~{projects/analyses/_base}"
 >
   <head>
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/analysis-outputs-table.bundle.css}"
-    />
+    <webpacker:css entry="analysis-outputs-table" />
   </head>
   <body>
     <th:block layout:fragment="analyses-content">

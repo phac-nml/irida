@@ -8,7 +8,7 @@
 			userId: /*[[${user.getId()}]]*/ 1
 		};
 	</script>
-	<link th:href="@{/dist/css/users-list.bundle.css}" />
+	<webpacker:css entry="users-list" />
 	<style>
 		#projectsTable {
 			table-layout: fixed;
@@ -193,7 +193,7 @@
 
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:src="@{/dist/js/user-details.bundle.js}"></script>
+	<webpacker:js entry="user-details" />
 	<script type="text/ng-template" id="reset-modal.html">
 		<div class="modal-header">
 			<h3 class="modal-title" id="lbx-title" th:text="#{user.passwordReset}">_Reset Password_</h3>

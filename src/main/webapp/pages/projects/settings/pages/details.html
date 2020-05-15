@@ -7,14 +7,14 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/dist/css/project-details.bundle.css">
+    <webpacker:css entry="project-details" />
   </head>
   <body>
     <div id="details-root" layout:fragment="settings-content" >
       <div th:text="#{ProjectDetails.loading}">LOADING ...</div>
     </div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/project-details.bundle.js}"></script>
+      <webpacker:js entry="project-details" />
     </th:block>
   </body>
 </html>

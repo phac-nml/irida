@@ -18,7 +18,7 @@
         status: /*[[#{'project.sync.status.'+${status.getSyncStatus()}}]]*/ ''
       };
     </script>
-    <link rel="stylesheet" th:href="@{/dist/css/project.bundle.css}">
+    <webpacker:css entry="project" />
 </head>
 <body>
 
@@ -35,7 +35,7 @@
 </div>
 
 <th:block layout:fragment="base-scripts">
-    <script th:src="@{/dist/js/project.bundle.js}"></script>
+    <webpacker:js entry="project" />
 </th:block>
 </body>
 </html>

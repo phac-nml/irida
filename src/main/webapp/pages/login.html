@@ -8,7 +8,7 @@
         emailConfigured: /*[[${emailConfigured}]]*/ false
       };
     </script>
-    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+    <webpacker:css entry="login" />
     <style>
       body {
         display: flex;
@@ -28,6 +28,6 @@
       <!-- Contents rendered from LoginPage.jsx -->
     </div>
 
-    <script th:src="@{/dist/js/login.bundle.js}"></script>
+    <webpacker:js entry="login" />
   </body>
 </html>
