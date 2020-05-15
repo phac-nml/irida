@@ -95,7 +95,7 @@ public class ProjectMembersController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping(value = "/{projectId}/settings/groups", method = RequestMethod.GET)
+	@RequestMapping(value = "/{projectId}/settings/user-groups", method = RequestMethod.GET)
 	public String getProjectGroupsPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 		logger.trace("Getting project members for project " + projectId);
 		Project project = projectService.read(projectId);
