@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/settings/_base}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/dist/css/project-details.bundle.css">
+  </head>
+  <body>
+    <div id="details-root" layout:fragment="settings-content" >
+      <div th:text="#{ProjectDetails.loading}">LOADING ...</div>
+    </div>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/project-details.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>

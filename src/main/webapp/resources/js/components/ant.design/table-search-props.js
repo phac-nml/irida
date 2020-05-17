@@ -1,17 +1,10 @@
 import React from "react";
 import { Button, Input } from "antd";
+import { IconSearch } from "../icons/Icons";
 
 function getTextSearchProps(dataIndex) {
   let searchInput;
   return {
-    onFilter: (value, record) => {
-      // Sometimes the values can be undefined so give it a default value.
-      const item = record[dataIndex] || "";
-      return item
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase());
-    },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.select());
@@ -41,7 +34,7 @@ function getTextSearchProps(dataIndex) {
           type="primary"
           className="t-name-filter-ok"
           onClick={() => confirm()}
-          icon="search"
+          icon={<IconSearch />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >

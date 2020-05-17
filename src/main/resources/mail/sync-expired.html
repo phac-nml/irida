@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{email.syncexpired.subject(${failedProject})}">_Pipeline Status_</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+</head>
+
+<body>
+<h1 th:text="#{email.syncexpired.subject(${failedProject})}">_Project sync expired_</h1>
+<div>
+    <p th:text="#{email.syncexpired.message(${failedProject})}">_A remote synchornized IRIDA project where you are listed as the synchronization user has failed to sync because your token is
+        no longer valid._</p>
+
+    <table>
+        <tr>
+            <td th:text="#{email.syncexpired.name}">_project1_</td>
+            <td th:text="${failedProject}">_project1_</td>
+        </tr>
+        <tr>
+            <td th:text="#{email.syncexpired.user}">_user_</td>
+            <td th:text="${user}">_project1_</td>
+        </tr>
+        <tr>
+            <td th:text="#{email.syncexpired.link}">_go here to re-sync_</td>
+            <td><a href="#" th:text="${settingsLink}" th:href="@{${settingsLink}}">_project1_</a></td>
+        </tr>
+    </table>
+
+    <p><a href="https://irida.corefacility.ca/documentation/user/user/project/#reconnecting-after-token-expiry" th:text="#{email.syncexpired.docs}">_See docs here_</a></p>
+
+</div>
+</body>
+</html>

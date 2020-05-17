@@ -45,7 +45,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
+		assertTrue("Should have the project name as the page main header.", page.getActivePage().equals("Samples"));
 		assertEquals("Should display 10 projects initially.", 10, page.getNumberProjectsDisplayed());
 	}
 
@@ -406,7 +406,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		assertEquals("Should display the correct linker for entire project", "ngsArchiveLinker.pl -p 1",
+		page.openLinkerModal();
+		assertEquals("Should display the correct linker for entire project", "ngsArchiveLinker.pl -p 1 -t fastq",
 				page.getLinkerText());
 	}
 
@@ -423,8 +424,20 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should only have 4 samples selected after filter", "4 samples selected", page.getSelectedInfoText());
 
 		// Open the linker modal
-		assertEquals("Should display the correct linker command", "ngsArchiveLinker.pl -p 1 -s 9 -s 8 -s 7 -s 6",
+		page.openLinkerModal();
+		assertEquals("Should display the correct linker command", "ngsArchiveLinker.pl -p 1 -s 9 -s 8 -s 7 -s 6 -t fastq",
 				page.getLinkerText());
 
+	}
+
+	@Test
+	public void testLinkerFunctionalityForFiletype() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		page.openLinkerModal();
+		page.clickLinkerFileType("assembly");
+		assertEquals("Should display the correct linker for entire project", "ngsArchiveLinker.pl -p 1 -t fastq,assembly",
+				page.getLinkerText());
 	}
 }

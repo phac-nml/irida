@@ -1,9 +1,7 @@
 const angular = require("angular");
 import "angular-ui-bootstrap";
-require("ng-file-upload");
-import { convertFileSize } from "../../utilities/file.utilities";
+import { convertFileSize } from "../../utilities/file-utilities";
 
-require("ng-file-upload");
 require("../../../sass/pages/sample-files.scss");
 
 /**
@@ -95,144 +93,9 @@ function AssemblyFileController($uibModal) {
   };
 }
 
-/**
- * Controller to handle uploading new sequence files
- *
- * @param {object} Upload angular file upload
- * @param {object} $timeout angular window timeout
- * @param {object} $window angular window object
- * @param {object} $uibModal angular-ui modal
- * @constructor
- */
-function FileUploadController(Upload, $timeout, $window, $uibModal) {
-  const vm = this;
-  let fileUpload;
-
-  /**
-   * Upload good sequence files to the server.
-   * @param {list} files of files to send.
-   */
-  function uploadGoodFiles(files) {
-    vm.uploading = true;
-
-    $window.onbeforeunload = function() {
-      return i18n("project.samples.files.upload.page-leave");
-    };
-
-    fileUpload = Upload.upload({
-      url: $window.PAGE.URLS.upload,
-      data: {
-        files: files
-      },
-      arrayKey: ""
-    });
-
-    fileUpload.then(
-      function() {
-        $window.onbeforeunload = undefined;
-        $timeout(function() {
-          vm.uploading = false;
-          $window.location.reload();
-          vm.processing = false;
-        }, 100);
-      },
-      function(data) {
-        $window.onbeforeunload = undefined;
-        vm.processing = false;
-        vm.uploading = false;
-        vm.errorMessage = data.error_message;
-      },
-      function(evt) {
-        vm.progress = parseInt((100.0 * evt.loaded) / evt.total, 0);
-        if (vm.progress >= 99) {
-          vm.uploading = false;
-          vm.processing = true;
-        }
-      }
-    );
-  }
-
-  vm.uploadFiles = function($files) {
-    console.log(arguments);
-
-    if ($files.length === 0) {
-      return;
-    }
-
-    // Check to make sure the files are the right format.
-    const fastqregex = /\.fastq(\/gz)?/;
-    const goodFiles = [];
-    const badFiles = [];
-    for (const file of $files) {
-      if (file.name.match(fastqregex) === null) {
-        badFiles.push(file);
-      } else {
-        goodFiles.push(file);
-      }
-    }
-
-    if (badFiles.length > 0) {
-      $uibModal
-        .open({
-          animation: true,
-          templateUrl: "/upload-error.html",
-          controllerAs: "rejectModalCtrl",
-          controller: [
-            "$uibModalInstance",
-            function($uibModalInstance) {
-              const vm = this;
-              vm.rejects = badFiles;
-              vm.good = goodFiles;
-
-              vm.cancel = function() {
-                $uibModalInstance.dismiss();
-              };
-
-              vm.finish = function() {
-                $uibModalInstance.close(
-                  goodFiles.filter(file => {
-                    return file.selected;
-                  })
-                );
-              };
-            }
-          ],
-          resolve: {
-            rejects: function() {
-              return badFiles;
-            },
-            files: function() {
-              return goodFiles;
-            }
-          }
-        })
-        .result.then(function(files) {
-          uploadGoodFiles(files);
-        });
-    } else {
-      uploadGoodFiles($files);
-    }
-  };
-
-  vm.cancel = function() {
-    if (typeof fileUpload !== "undefined") {
-      fileUpload.abort();
-      fileUpload = undefined;
-      vm.uploading = false;
-    }
-  };
-}
-
 const filesModule = angular
-  .module("irida.sample.files", ["ui.bootstrap", "ngFileUpload"])
+  .module("irida.sample.files", ["ui.bootstrap"])
   .filter("humanReadableBytes", humanReadableBytes)
-  .controller("FileUploadController", [
-    "Upload",
-    "$timeout",
-    "$window",
-    "$uibModal",
-    FileUploadController
-  ])
   .controller("FileController", ["$uibModal", FileController])
   .controller("AssemblyFileController", ["$uibModal", AssemblyFileController])
   .controller("FileDeletionController", [

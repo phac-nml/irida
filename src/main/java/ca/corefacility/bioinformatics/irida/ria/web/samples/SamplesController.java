@@ -1,34 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,18 +21,39 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -102,6 +104,7 @@ public class SamplesController extends BaseController {
 
 	private final SequencingObjectService sequencingObjectService;
 	private final MetadataTemplateService metadataTemplateService;
+	private final GenomeAssemblyService genomeAssemblyService;
 
 	private final UpdateSamplePermission updateSamplePermission;
 
@@ -110,12 +113,14 @@ public class SamplesController extends BaseController {
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.metadataTemplateService = metadataTemplateService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
 	}
 
@@ -295,7 +300,7 @@ public class SamplesController extends BaseController {
 				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
 				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
-		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleService.getAssembliesForSample(sample);
+		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 		logger.trace("Assembly joins " + genomeAssemblyJoins);
 
 		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject)
@@ -347,7 +352,7 @@ public class SamplesController extends BaseController {
 	public void downloadAssembly(@PathVariable Long sampleId, @PathVariable Long assemblyId,
 			HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
-		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId);
 
 		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition",
@@ -469,10 +474,10 @@ public class SamplesController extends BaseController {
 	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
 			@RequestParam Long assemblyId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId);
 
 		try {
-			sampleService.removeGenomeAssemblyFromSample(sample, assemblyId);
+			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, assemblyId);
 			attributes.addFlashAttribute("fileDeleted", true);
 			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
 					"samples.files.assembly.removed.message", new Object[] { genomeAssembly.getLabel() }, locale));
@@ -484,37 +489,6 @@ public class SamplesController extends BaseController {
 		}
 
 		return "redirect:" + request.getHeader("referer");
-	}
-
-	/**
-	 * Upload {@link SequenceFile}'s to a sample
-	 *
-	 * @param sampleId
-	 *            The {@link Sample} id to upload to
-	 * @param files
-	 *            A list of {@link MultipartFile} sequence files.
-	 * @param response
-	 *            HTTP response object to update response status if there's an
-	 *            error.
-	 * @throws IOException
-	 *             on upload failure
-	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
-	public void uploadSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(value = "files") List<MultipartFile> files, HttpServletResponse response) throws IOException {
-		Sample sample = sampleService.read(sampleId);
-
-		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
-		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);
-
-		for (String key : pairedFiles.keySet()) {
-			List<MultipartFile> list = pairedFiles.get(key);
-			createSequenceFilePairsInSample(list, sample);
-		}
-
-		for (MultipartFile file : singleFiles) {
-			createSequenceFileInSample(file, sample);
-		}
 	}
 
 	/**
@@ -619,55 +593,6 @@ public class SamplesController extends BaseController {
 		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
 		return "redirect:" + redirectUrl;
 	}
-
-	/**
-	 * Create a {@link SequenceFile} and add it to a {@link Sample}
-	 *
-	 * @param file
-	 *            {@link MultipartFile}
-	 * @param sample
-	 *            {@link Sample} to add the file to.
-	 * @throws IOException
-	 */
-	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
-		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
-	}
-
-	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
-	 * to a {@link Sample}
-	 * 
-	 * @param pair
-	 *            {@link List} of {@link MultipartFile}
-	 * @param sample
-	 *            {@link Sample} to add the pair to.
-	 * @throws IOException
-	 */
-	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = createSequenceFile(pair.get(0));
-		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
-	}
-
-	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
-	 *
-	 * @param file
-	 *            {@link MultipartFile} sequence file uploaded.
-	 *
-	 * @return {@link SequenceFile}
-	 * @throws IOException
-	 *             Exception thrown if there is an error handling the file.
-	 */
-	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		file.transferTo(target.toFile());
-		return new SequenceFile(target);
-	}
-
 	/**
 	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the
 	 * given {@link Sample}

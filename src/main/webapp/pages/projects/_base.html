@@ -4,33 +4,29 @@
 <head>
 	<title th:text="${project.label}">Project</title>
 	<script th:inline="javascript">
-		var project = {
-			id: /*[[${project.getId()}]]*/ 1
-		};
+		window.project = {
+          canManage: /*[[${isOwner or isAdmin}]]*/ false,
+          page: /*[[${activeNav}]]*/ "settings",
+          label: /*[[${project.getLabel()}]]*/ 1,
+          id: /*[[${project.getId()}]]*/ 1
+        };
 	</script>
+    <script th:inline="javascript" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
+      window.project.remote = {
+        url: /*[[@{/remote_api/{id}(id=${status.getApi().getId()})}]]*/ '',
+        label: /*[[${status.getApi().getLabel()}]]*/ "",
+        status: /*[[#{'project.sync.status.'+${status.getSyncStatus()}}]]*/ ''
+      };
+    </script>
+    <link rel="stylesheet" th:href="@{/dist/css/project.bundle.css}">
 </head>
 <body>
 
 <div layout:fragment="page">
     <div class="col-md-12">
-        <h1><th:block th:text="${project.label}"/>&nbsp;<small th:text="#{project.id}"/>&nbsp;<span id="projectIdDisplay" th:text="${project.getId()}"/></h1>
-        <div class="remote-hint" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
-            <span><i class="fas fa-exchange-alt fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
-            &nbsp;
-            <span><i class="fa fa-heartbeat fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
-        </div>
+        <div id="project-root"></div>
 
-        <ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
-            <li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
-            <li th:classappend="${activeNav} == 'linelist' ? 'active'"><a th:href="@{${baseLink} + '/linelist'}" th:text="#{project.nav.linelist}">[Line List]</a></li>
-            <li th:classappend="${activeNav} == 'analyses' ? 'active'"><a href="" th:href="@{${baseLink} + '/analyses'}" th:text="#{project.nav.analysis}">[Analyses]</a></li>
-            <li th:classappend="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}" th:text="#{project.nav.metadata}">[Metadata]</a></li>
-            <li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>
-            <li th:classappend="${activeNav} == 'activity' ? 'active'"><a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">[Recent]</a></li>
-            <li th:classappend="${activeNav} == 'settings' ? 'active'"><a href="" th:href="@{${baseLink} + '/settings'}" th:text="#{project.nav.settings}">[Settings]</a></li>
-        </ul>
-
-        <main layout:fragment="main">
+        <main layout:fragment="main" style="padding: 16px 24px;">
             <!--/*/
             This is where the main content of every project page will go.
             /*/-->
@@ -38,5 +34,8 @@
     </div>
 </div>
 
+<th:block layout:fragment="base-scripts">
+    <script th:src="@{/dist/js/project.bundle.js}"></script>
+</th:block>
 </body>
 </html>

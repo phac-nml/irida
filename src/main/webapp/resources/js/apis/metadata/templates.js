@@ -1,5 +1,7 @@
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
+const URL = setBaseUrl(`linelist/templates`);
 let projectId;
 
 /**
@@ -11,7 +13,7 @@ export function fetchTemplates(id) {
   projectId = id;
   return axios({
     method: "get",
-    url: `linelist/templates?projectId=${projectId}`
+    url: `${URL}?projectId=${projectId}`
   });
 }
 
@@ -23,7 +25,7 @@ export function fetchTemplates(id) {
 export function saveTemplate(data) {
   return axios({
     method: "post",
-    url: `linelist/templates?projectId=${projectId}`,
+    url: `${URL}?projectId=${projectId}`,
     data
   });
 }

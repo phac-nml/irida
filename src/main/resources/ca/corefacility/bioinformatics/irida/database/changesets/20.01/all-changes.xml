@@ -6,5 +6,4 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="oauth-redirect-uri.xml"
              relativeToChangelogFile="true"/>
-    <include file="metadata-entry-refactor.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
