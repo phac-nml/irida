@@ -117,6 +117,5 @@ export function createUserGroup({ name, description }) {
       name,
       description,
     })
-    .then(({ data }) => data)
-    .catch((error) => console.log(error.response.data));
+    .then(({ data }) => data);
 }
