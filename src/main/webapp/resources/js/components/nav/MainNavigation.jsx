@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, Input, Menu } from "antd";
 import { IconFolder, IconLogout, IconUser } from "../icons/Icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { grey1, grey4 } from "../../styles/colors";
+import { grey4 } from "../../styles/colors";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 
 const { Item, ItemGroup, SubMenu } = Menu;
@@ -14,7 +14,7 @@ export function MainNavigation({}) {
         display: "flex",
         alignItems: "center",
         height: 47,
-        backgroundColor: grey1,
+        backgroundColor: "#001529",
         borderBottom: `1px solid rgb(240, 240, 240)`,
       }}
     >
@@ -22,13 +22,13 @@ export function MainNavigation({}) {
         <img
           alt="IRIDA Logo - link home"
           style={{ height: 30, padding: `0 ${SPACE_MD}` }}
-          src={setBaseUrl("/resources/img/irida_logo_light.svg")}
+          src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
         />
       </a>
       <form action={setBaseUrl("/search")}>
         <Input.Search name="query" style={{ width: 400 }} />
       </form>
-      <Menu mode="horizontal" style={{ flexGrow: 1 }}>
+      <Menu mode="horizontal" theme="dark" style={{ flexGrow: 1 }}>
         <SubMenu
           title={
             <>
@@ -58,7 +58,7 @@ export function MainNavigation({}) {
           ) : null}
         </SubMenu>
       </Menu>
-      <Menu mode="horizontal">
+      <Menu mode="horizontal" theme="dark">
         <SubMenu
           title={
             <>
