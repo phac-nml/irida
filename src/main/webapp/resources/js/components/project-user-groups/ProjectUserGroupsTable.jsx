@@ -5,6 +5,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { RemoveTableItemButton } from "../Buttons";
 import { removeUserGroupFromProject } from "../../apis/projects/user-groups";
+import { AddGroupButton } from "./AddGroupButton";
 
 export function ProjectUserGroupsTable() {
   function removeUserGroups(group) {
@@ -32,7 +33,7 @@ export function ProjectUserGroupsTable() {
     {
       dataIndex: "createdDate",
       title: "Date Added",
-      render(text, group) {
+      render(text) {
         return formatInternationalizedDateTime(text);
       },
     },
@@ -40,6 +41,7 @@ export function ProjectUserGroupsTable() {
 
   if (window.PAGE.canManage) {
     columns.push({
+      align: "right",
       render(text, group) {
         return (
           <RemoveTableItemButton
@@ -52,5 +54,11 @@ export function ProjectUserGroupsTable() {
     });
   }
 
-  return <PagedTable search={true} columns={columns} />;
+  return (
+    <PagedTable
+      buttons={[<AddGroupButton key="add-group-btn" />]}
+      search={true}
+      columns={columns}
+    />
+  );
 }
