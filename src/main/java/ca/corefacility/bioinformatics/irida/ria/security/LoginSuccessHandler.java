@@ -38,20 +38,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		this.userRepository = userRepository;
 		this.localeResolver = localeResolver;
 	}
-
-	@Override
-	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) {
-		String role = authentication.getAuthorities()
-				.toString();
-
-		if (request.getRequestURI()
-				.equals("/login") && role.contains("ROLE_ADMIN")) {
-			return "/admin";
-		}
-		return "";
-	}
-
+	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
 			Authentication authentication) throws IOException, ServletException {
