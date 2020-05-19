@@ -8,3 +8,5 @@ export async function removeUserGroupFromProject({ groupId }) {
     .delete(`${BASE_URL}?groupId=${groupId}`)
     .then(({ data }) => data);
 }
+
+export async function getAvailableGroupsForProject() {}
