@@ -16,7 +16,7 @@ The majority of IRIDA's upgrade notes can be seen at <https://github.com/phac-nm
 
 The 20.05 version of IRIDA includes support for uploading your own assemblies along with storing assembly results from analysis pipelines.  Uploaded assemblies are expected to be of `.fasta` format.  Current support for .`fastq` assembly files includes data storage and REST API support.  REST API support includes uploading assemblies, exporting to Galaxy, and command line export via the NGSArchive Linker.  Currently IRIDA does not support running analyses with assembly data. 
 
-See more about working with assemblies in the IRIDA UI in our [sample management guide](http://localhost:4000/user/user/samples/#sequence-files--assemblies).
+See more about working with assemblies in the IRIDA UI in our [sample management guide](https://irida.corefacility.ca/documentation/user/user/samples/#sequence-files--assemblies).
 
 ## FAST5 data
 
@@ -26,7 +26,7 @@ Uploads of `.fast5` files will be treated similar to an unpaired sequence file, 
 
 Uploads of `.fast5.tar.gz` files are currently for storage only.  FastQC results will not be available.
 
-See more about working with FAST5 data in the IRIDA UI in our [sample management guide](http://localhost:4000/user/user/samples/#sequence-files--assemblies).
+See more about working with FAST5 data in the IRIDA UI in our [sample management guide](https://irida.corefacility.ca/documentation/user/user/samples/#sequence-files--assemblies).
 
 # 20.01
 ## Configured redirect token in REST API client details
