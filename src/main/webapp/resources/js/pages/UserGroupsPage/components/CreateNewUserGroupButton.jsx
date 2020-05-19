@@ -53,6 +53,7 @@ export function CreateNewUserGroupButton() {
    */
   const onCancel = () => {
     form.resetFields();
+    setError(undefined);
     setVisible(false);
   };
 
