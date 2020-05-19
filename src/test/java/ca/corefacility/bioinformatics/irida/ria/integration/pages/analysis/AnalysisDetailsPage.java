@@ -311,8 +311,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 *  Gets provenance for file selected
 	 */
-	public void getFileProvenance() {
-		files.get(0).click();
+	public void getFileProvenance(int fileNum) {
+		files.get(fileNum).click();
 	}
 
 	/**

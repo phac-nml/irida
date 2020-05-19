@@ -38,6 +38,9 @@ Changes
 * [UI/Developer]: Updated to JQuery v3.5.1 to fix security vulnerability.
 * [UI]: Fixed bug preventing the upload of `*.fastqc.gz` on Mac computers.
 * [UI]: Update Groups page to remove `DataTables` and use Ant Design.
+* [UI]: Update Groups details page to use Ant Design and remove `DataTables`.
+* [UI]: Fixed bug preventing display of execution tools for first file if a provenance for another file had been viewed.
+* [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
 
 19.09 to 20.01
 --------------
