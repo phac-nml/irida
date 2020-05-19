@@ -1,8 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
-import { Spin } from "antd";
-import { PageLoadingIndicator } from "../../components/PageLoadingIndicator";
+import { ContentLoading } from "../../components/loader";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>
@@ -18,7 +17,18 @@ const UserGroupsDetailsPage = lazy(() =>
 export function UserGroups() {
   return (
     <Suspense
-      fallback={<PageLoadingIndicator text={i18n("UserGroupsPage.loading")} />}
+      fallback={
+        <div
+          style={{
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ContentLoading message={i18n("UserGroupsPage.loading")} />
+        </div>
+      }
     >
       <Router style={{ height: "100%" }}>
         <UserGroupsPage path="/groups" />
