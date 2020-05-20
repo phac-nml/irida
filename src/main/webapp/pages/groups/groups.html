@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
+<head>
+    <title th:text="#{UserGroupsPage.title}">_Groups_</title>
+    <link rel="stylesheet" th:href="@{/dist/css/groups.bundle.css}">
+</head>
+<body>
+<div layout:fragment="page" id="groups-root" style="height: 100%">
+    <!--
+        React Component for groups loaded here
+        ./resources/js/pages/UserGroupsPage/index.js
+     -->
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/groups.bundle.js}"></script>
+</th:block>
+</body>
+</html>
