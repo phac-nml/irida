@@ -105,12 +105,17 @@ export function getProjectsForUserGroup(groupId) {
   return axios.get(`${BASE_URL}/${groupId}/projects`).then(({ data }) => data);
 }
 
+/**
+ * Create a new user groups
+ * @param {string} name
+ * @param {string} description
+ * @returns {Promise<AxiosResponse<any> | void>}
+ */
 export function createUserGroup({ name, description }) {
   return axios
     .post(`${BASE_URL}/create`, {
       name,
       description,
     })
-    .then(({ data }) => data)
-    .catch((error) => console.log(error.response.data));
+    .then(({ data }) => data);
 }

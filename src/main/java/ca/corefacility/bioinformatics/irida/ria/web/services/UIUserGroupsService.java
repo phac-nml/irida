@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
-
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -29,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Service class for the UI for handling {@link UserGroup}s
@@ -251,19 +251,10 @@ public class UIUserGroupsService {
 		try {
 			UserGroup group = userGroupService.create(userGroup);
 			return group.getId();
-		} catch (EntityExistsException e) {
-			throw new EntityExistsException("A user group by this name already exists");
-		} catch (ConstraintViolationException e) {
-			Map<String, String> errors = new HashMap<>();
-			e.getConstraintViolations()
-					.iterator()
-					.forEachRemaining(constraintViolation -> {
-						String label = constraintViolation.getPropertyPath()
-								.toString();
-						errors.put(label, messageSource.getMessage("server.usergroups.create.constraint." + label,
-								new Object[] { userGroup.getLabel() }, locale));
-					});
-			throw new UIConstraintViolationException(errors);
+		} catch (Exception e) {
+			throw new UIConstraintViolationException(ImmutableMap.of("name",
+					messageSource.getMessage("server.usergroups.create.constraint.name",
+							new Object[] { userGroup.getLabel() }, locale)));
 		}
 	}
 

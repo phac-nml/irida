@@ -97,7 +97,7 @@ export default function UserGroupDetailsPage({ id }) {
                 onChange: (value) => updateField("description", value),
               }}
             >
-              {state.description}
+              {state.description || ""}
             </Paragraph>
           ) : (
             <Paragraph ellipsis={{ rows: 3, expandable: true }}>

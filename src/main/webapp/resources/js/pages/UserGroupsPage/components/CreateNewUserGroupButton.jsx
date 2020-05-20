@@ -19,6 +19,8 @@ export function CreateNewUserGroupButton() {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
+  const [error, setError] = useState();
+
   /*
   Watch for changes to the forms visibility, when it becomes visible
   set keyboard focus onto the user name input.
@@ -34,11 +36,15 @@ export function CreateNewUserGroupButton() {
    */
   const onOk = () => {
     form.validateFields().then((values) => {
-      createUserGroup(values).then((data) => {
-        form.resetFields();
-        setVisible(false);
-        navigate(`groups/${data.id}`, { replace: true });
-      });
+      createUserGroup(values)
+        .then((data) => {
+          form.resetFields();
+          setVisible(false);
+          navigate(`groups/${data.id}`, { replace: true });
+        })
+        .catch((error) => {
+          setError(error.response.data.name);
+        });
     });
   };
 
@@ -47,6 +53,7 @@ export function CreateNewUserGroupButton() {
    */
   const onCancel = () => {
     form.resetFields();
+    setError(undefined);
     setVisible(false);
   };
 
@@ -71,6 +78,8 @@ export function CreateNewUserGroupButton() {
           <Form.Item
             label={i18n("CreateNewUserGroupButton.name")}
             name="name"
+            validateStatus={error ? "error" : null}
+            help={error}
             rules={[
               {
                 required: true,
@@ -78,7 +87,13 @@ export function CreateNewUserGroupButton() {
               },
             ]}
           >
-            <Input ref={inputRef} name="name" />
+            <Input
+              ref={inputRef}
+              name="name"
+              onChange={() =>
+                typeof error !== "undefined" ? setError(undefined) : null
+              }
+            />
           </Form.Item>
           <Form.Item
             label={i18n(" CreateNewUserGroupButton.description")}
