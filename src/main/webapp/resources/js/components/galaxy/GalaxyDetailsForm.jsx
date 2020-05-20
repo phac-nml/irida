@@ -11,7 +11,7 @@ import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
  */
 export function GalaxyDetailsForm() {
   const [
-    { email, validEmail, makepairedcollection, includeAssemblies },
+    { email, validEmail, makepairedcollection, includeAssemblies, includeFast5 },
     dispatch
   ] = useStateValue();
 
@@ -22,6 +22,9 @@ export function GalaxyDetailsForm() {
 
   const includeAssembliesModified = e =>
     dispatch(actions.setIncludeAssemblies(e.target.checked));
+
+  const includeFast5Modified = e =>
+    dispatch(actions.setIncludeFast5(e.target.checked));
 
   const galaxyUrl = window
     .decodeURI(window.GALAXY.URL)
@@ -50,6 +53,14 @@ export function GalaxyDetailsForm() {
             checked={includeAssemblies}
           >
             {i18n("ExportToGalaxyForm.assemblies")}
+          </Checkbox>
+        </Form.Item>
+        <Form.Item help={i18n("ExportToGalaxyForm.fast5.help")}>
+          <Checkbox
+            onChange={includeFast5Modified}
+            checked={includeFast5}
+          >
+            {i18n("ExportToGalaxyForm.fast5")}
           </Checkbox>
         </Form.Item>
         <Form.Item help={i18n("ExportToGalaxyForm.makepairedcollection.help")}>
