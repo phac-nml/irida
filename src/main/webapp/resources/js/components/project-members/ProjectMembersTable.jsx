@@ -1,10 +1,11 @@
-import React from "react";
-import { PagedTable } from "../ant.design/PagedTable";
+import React, { useContext } from "react";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectRole } from "./ProjectRole";
-import { RemoveMemberButton } from "./RemoveMemberButton";
+import { ProjectRole } from "../roles/ProjectRole";
+import { RemoveTableItemButton } from "../Buttons";
 import { AddMembersButton } from "./AddMemberButton";
+import { removeUserFromProject } from "../../apis/projects/members";
 
 /**
  * React component to display a table of project users.
@@ -12,6 +13,21 @@ import { AddMembersButton } from "./AddMemberButton";
  * @constructor
  */
 export function ProjectMembersTable() {
+  const { updateTable } = useContext(PagedTableContext);
+
+  function removeUser(user) {
+    return removeUserFromProject(user.id).then((message) => {
+      if (user.id === window.PAGE.user) {
+        // If the user can remove themselves from the project, then when they
+        // are removed redirect them to their project page since they cannot
+        // use this project anymore.
+        window.location.href = setBaseUrl(`/projects`);
+      }
+      updateTable();
+      return message;
+    });
+  }
+
   const columns = [
     {
       title: i18n("ProjectMembersTable.name"),
@@ -39,8 +55,14 @@ export function ProjectMembersTable() {
   if (window.PAGE.canManage) {
     columns.push({
       align: "right",
-      render(text, item) {
-        return <RemoveMemberButton user={item} />;
+      render(text, user) {
+        return (
+          <RemoveTableItemButton
+            onRemove={() => removeUser(user)}
+            tooltipText={i18n("RemoveMemberButton.tooltip")}
+            confirmText={i18n("RemoveMemberButton.confirm")}
+          />
+        );
       },
     });
   }

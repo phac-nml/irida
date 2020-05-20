@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutO
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.NewProjectMemberRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectMembersService;
 
 /**
@@ -104,7 +104,7 @@ public class ProjectMembersAjaxController {
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ResponseEntity<String> addMemberToProject(@PathVariable Long projectId,
-			@RequestBody NewProjectMemberRequest request, Locale locale) {
+			@RequestBody NewMemberRequest request, Locale locale) {
 		return ResponseEntity.ok(projectMembersService.addMemberToProject(projectId, request, locale));
 	}
 }
