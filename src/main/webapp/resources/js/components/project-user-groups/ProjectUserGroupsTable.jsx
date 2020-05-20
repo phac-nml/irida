@@ -1,23 +1,29 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, notification } from "antd";
-import { PagedTable } from "../ant.design/PagedTable";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { RemoveTableItemButton } from "../Buttons";
-import { removeUserGroupFromProject } from "../../apis/projects/user-groups";
+import {
+  removeUserGroupFromProject,
+  updateUserGroupRoleOnProject,
+} from "../../apis/projects/user-groups";
 import { AddGroupButton } from "./AddGroupButton";
+import { ProjectRole } from "../roles/ProjectRole";
 
 export function ProjectUserGroupsTable() {
+  const { updateTable } = useContext(PagedTableContext);
   function removeUserGroups(group) {
-    removeUserGroupFromProject({ groupId: group.id }).then((message) => {
-      notification.success({ message });
+    return removeUserGroupFromProject({ groupId: group.id }).then((message) => {
+      updateTable();
+      return message;
     });
   }
 
   const columns = [
     {
       dataIndex: "name",
-      title: "GROUP NAME",
+      title: i18n("ProjectUserGroupsTable.name"),
       render(text, group) {
         return (
           <Button type="link" href={setBaseUrl(`/groups/${group.id}`)}>
@@ -28,11 +34,16 @@ export function ProjectUserGroupsTable() {
     },
     {
       dataIndex: "role",
-      title: "ROLE",
+      title: i18n("ProjectUserGroupsTable.role"),
+      render(text, group) {
+        return (
+          <ProjectRole item={group} updateFn={updateUserGroupRoleOnProject} />
+        );
+      },
     },
     {
       dataIndex: "createdDate",
-      title: "Date Added",
+      title: i18n("ProjectUserGroupsTable.created"),
       render(text) {
         return formatInternationalizedDateTime(text);
       },
@@ -45,8 +56,8 @@ export function ProjectUserGroupsTable() {
       render(text, group) {
         return (
           <RemoveTableItemButton
-            confirmText={"SDFLKDSJLKSDJFKJSDLKF"}
-            tooltipText={"KLDSJFLKDSJFLKSJDF"}
+            confirmText={i18n("usergroups.remove.confirm")}
+            tooltipText={i18n("usergroups.remove.tooltip")}
             onRemove={() => removeUserGroups(group)}
           />
         );
@@ -56,7 +67,13 @@ export function ProjectUserGroupsTable() {
 
   return (
     <PagedTable
-      buttons={[<AddGroupButton key="add-group-btn" />]}
+      buttons={[
+        <AddGroupButton
+          key="add-group-btn"
+          defaultRole="PROJECT_USER"
+          onGroupAdded={updateTable}
+        />,
+      ]}
       search={true}
       columns={columns}
     />

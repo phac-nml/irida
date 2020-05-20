@@ -1,19 +1,30 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Button, Select } from "antd";
+import {
+  Button,
+  Form,
+  Modal,
+  notification,
+  Radio,
+  Select,
+  Typography,
+} from "antd";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
+import { useRoles } from "../../contexts/roles-context";
+import {
+  addUserGroupToProject,
+  getAvailableGroupsForProject,
+} from "../../apis/projects/user-groups";
+import { SPACE_XS } from "../../styles/spacing";
 
 const { Option } = Select;
+const { Text } = Typography;
 
-export function AddGroupButton({
-  defaultRole,
-  addGroupFn,
-  getAvailableGroups,
-}) {
+export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
    */
-  const userRef = useRef();
+  const groupRef = useRef();
 
   const { roles } = useRoles();
 
@@ -25,7 +36,7 @@ export function AddGroupButton({
   /*
   The identifier for the currently selected user from the user input
    */
-  const [userId, setUserId] = useState();
+  const [groupId, setGroupId] = useState(undefined);
 
   /*
   The value of the currently selected role from the role input
@@ -64,7 +75,9 @@ export function AddGroupButton({
    */
   useEffect(() => {
     if (debouncedQuery) {
-      getAvailableMembersFn(debouncedQuery).then((data) => setResults(data));
+      getAvailableGroupsForProject(debouncedQuery).then((data) =>
+        setResults(data)
+      );
     } else {
       setResults([]);
     }
@@ -76,9 +89,70 @@ export function AddGroupButton({
    */
   useEffect(() => {
     if (visible) {
-      setTimeout(() => userRef.current.focus(), 100);
+      setTimeout(() => groupRef.current.focus(), 100);
     }
   }, [visible]);
 
-  return <Button>HELLO</Button>;
+  const onCancel = () => {
+    form.resetFields();
+    setVisible(false);
+  };
+
+  const addUserGroup = () => {
+    addUserGroupToProject({ groupId, role }).then((message) => {
+      onGroupAdded();
+      notification.success({ message });
+      form.resetFields();
+      setVisible(false);
+    });
+  };
+
+  /*
+  Before rendering format the results into Select.Option
+   */
+  const options = results.map((u) => (
+    <Option className="t-new-member" key={u.identifier}>
+      <Text style={{ marginRight: SPACE_XS }}>{u.label}</Text>
+    </Option>
+  ));
+
+  return (
+    <Button onClick={() => setVisible(true)}>
+      {i18n("AddGroupButton.label")}
+      <Modal onCancel={onCancel} visible={visible} onOk={addUserGroup}>
+        <Form form={form} layout="vertical" initialValues={{ role }} onText={i18n("AddGroupButton.group.okText")}>
+          <Form.Item
+            label={i18n("AddGroupButton.group.label")}
+            help={i18n("AddGroupButton.group.label-help")}
+            name="user"
+          >
+            <Select
+              ref={groupRef}
+              showSearch
+              notFoundContent={null}
+              onSearch={setQuery}
+              onChange={setGroupId}
+              style={{ width: "100%" }}
+              value={groupId}
+              filterOption={false}
+            >
+              {options}
+            </Select>
+          </Form.Item>
+          <Form.Item label={i18n("AddGroupButton.group.role")} name="role">
+            <Radio.Group
+              style={{ display: "flex" }}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              {roles.map((role) => (
+                <Radio.Button key={role.value} value={role.value}>
+                  {role.label}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Button>
+  );
 }

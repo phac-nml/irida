@@ -13,15 +13,19 @@ import { RolesContext, useRoles } from "../../contexts/roles-context";
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ user }) {
-  const [role, setRole] = useState(user.role);
+export function ProjectRole({
+  item,
+  // eslint-disable-next-line no-console
+  updateFn = () => console.error("updateFn is required"),
+}) {
+  const [role, setRole] = useState(item.role);
   const [loading, setLoading] = useState(false);
   const { roles, getRoleFromKey } = useRoles();
 
   const onChange = (value) => {
     setLoading(true);
-    updateUserRoleOnProject({
-      id: user.id,
+    updateFn({
+      id: item.id,
       role: value,
     })
       .then((message) => {
@@ -56,6 +60,6 @@ export function ProjectRole({ user }) {
       ))}
     </Select>
   ) : (
-    getRoleFromKey(user.role)
+    getRoleFromKey(item.role)
   );
 }
