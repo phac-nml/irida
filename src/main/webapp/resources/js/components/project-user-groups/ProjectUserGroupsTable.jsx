@@ -13,12 +13,6 @@ import { ProjectRole } from "../roles/ProjectRole";
 
 export function ProjectUserGroupsTable() {
   const { updateTable } = useContext(PagedTableContext);
-  function removeUserGroups(group) {
-    return removeUserGroupFromProject({ groupId: group.id }).then((message) => {
-      updateTable();
-      return message;
-    });
-  }
 
   const columns = [
     {
@@ -58,7 +52,8 @@ export function ProjectUserGroupsTable() {
           <RemoveTableItemButton
             confirmText={i18n("usergroups.remove.confirm")}
             tooltipText={i18n("usergroups.remove.tooltip")}
-            onRemove={() => removeUserGroups(group)}
+            onRemove={() => removeUserGroupFromProject({groupId: group.id})}
+            onRemoveSuccess={updateTable}
           />
         );
       },

@@ -19,17 +19,14 @@ import {
 export function ProjectMembersTable() {
   const { updateTable } = useContext(PagedTableContext);
 
-  function removeUser(user) {
-    return removeUserFromProject(user.id).then((message) => {
-      if (user.id === window.PAGE.user) {
-        // If the user can remove themselves from the project, then when they
-        // are removed redirect them to their project page since they cannot
-        // use this project anymore.
-        window.location.href = setBaseUrl(`/projects`);
-      }
-      updateTable();
-      return message;
-    });
+  function userRemoved(user) {
+    if (user.id === window.PAGE.user) {
+      // If the user can remove themselves from the project, then when they
+      // are removed redirect them to their project page since they cannot
+      // use this project anymore.
+      window.location.href = setBaseUrl(`/projects`);
+    }
+    updateTable();
   }
 
   const columns = [
@@ -62,7 +59,8 @@ export function ProjectMembersTable() {
       render(text, user) {
         return (
           <RemoveTableItemButton
-            onRemove={() => removeUser(user)}
+            onRemove={() => removeUserFromProject(user.id)}
+            onRemoveSuccess={() => userRemoved(user)}
             tooltipText={i18n("RemoveMemberButton.tooltip")}
             confirmText={i18n("RemoveMemberButton.confirm")}
           />

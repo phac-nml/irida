@@ -34,19 +34,6 @@ export default function UserGroupMembersTable({
   groupId,
   updateTable,
 }) {
-  /**
-   * Remove a member from the group, and then refresh the table.
-   * @param user
-   * @returns {void | Promise<AxiosResponse<*>>}
-   */
-  function removeMember(user) {
-    return removeMemberFromUserGroup({ groupId, userId: user.id }).then(
-      (message) => {
-        updateTable();
-        return message;
-      }
-    );
-  }
 
   const columns = [
     {
@@ -74,7 +61,7 @@ export default function UserGroupMembersTable({
     {
       title: i18n("UserGroupMembersTable.joined"),
       dataIndex: "createdDate",
-      width: 200,
+      width: 230,
       render(text) {
         return formatInternationalizedDateTime(text);
       },
@@ -88,7 +75,8 @@ export default function UserGroupMembersTable({
       render(user) {
         return (
           <RemoveTableItemButton
-            onRemove={() => removeMember(user)}
+            onRemove={() => removeMemberFromUserGroup({groupId, userId: user.id})}
+            onRemoveSuccess={updateTable}
             tooltipText={i18n("UserGroupMembersTable.remove-tooltip")}
             confirmText={i18n("UserGroupMembersTable.remove-confirm")}
           />

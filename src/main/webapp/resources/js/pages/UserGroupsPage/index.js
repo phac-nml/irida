@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
 import { ContentLoading } from "../../components/loader";
+import {RolesProvider} from "../../contexts";
+import { getUserGroupRoles } from "../../apis/users/groups";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>
@@ -30,10 +32,10 @@ export function UserGroups() {
         </div>
       }
     >
-      <Router style={{ height: "100%" }}>
-        <UserGroupsPage path="/groups" />
-        <UserGroupsDetailsPage path="/groups/:id" />
-      </Router>
+      <RolesProvider rolesFn={getUserGroupRoles}><Router style={{height: "100%"}}>
+        <UserGroupsPage path="/groups"/>
+        <UserGroupsDetailsPage path="/groups/:id"/>
+      </Router></RolesProvider>
     </Suspense>
   );
 }
