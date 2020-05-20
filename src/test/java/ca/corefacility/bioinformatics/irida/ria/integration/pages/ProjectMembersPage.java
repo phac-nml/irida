@@ -10,6 +10,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.components.AddMemberButton;
 import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 
 /**
@@ -19,11 +20,12 @@ import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
  */
 public class ProjectMembersPage extends AbstractPage {
 	private static AntTable table;
+	private static AddMemberButton addMemberButton;
 
 	@FindBy(tagName = "h2")
 	private WebElement title;
 
-	@FindBy(className = "t-remove-member-btn")
+	@FindBy(className = "t-remove-btn")
 	private List<WebElement> removeMemberButtons;
 
 	@FindBy(className = "t-remove-success")
@@ -31,18 +33,6 @@ public class ProjectMembersPage extends AbstractPage {
 
 	@FindBy(className = "t-remove-error")
 	private WebElement removeErrorNotification;
-
-	@FindBy(className = "t-add-member-btn")
-	private WebElement addMemberBtn;
-
-	@FindBy(className = "t-add-member-modal")
-	private WebElement addMemberModal;
-
-	@FindBy(css = ".t-add-member-modal .ant-select-selection-search-input")
-	private WebElement addMemberInput;
-
-	@FindBy(className = "t-new-member")
-	private List<WebElement> newMemberList;
 
 	@FindBy(className = "t-role-select")
 	private List<WebElement> roleSelects;
@@ -54,6 +44,7 @@ public class ProjectMembersPage extends AbstractPage {
 	public static ProjectMembersPage goTo(WebDriver driver) {
 		get(driver, "projects/1/settings/members");
 		table = AntTable.getTable(driver);
+		addMemberButton = AddMemberButton.getAddMemberButton(driver);
 		return PageFactory.initElements(driver, ProjectMembersPage.class);
 	}
 
@@ -93,17 +84,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public void addUserToProject(String name) {
-		addMemberBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		wait.until(ExpectedConditions.visibilityOf(addMemberModal));
-		WebElement input = driver.switchTo().activeElement();
-		input.sendKeys(name);
-		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
-		newMemberList.get(0).click();
-		WebElement modalOkBtn = addMemberModal.findElement(By.cssSelector(".ant-btn.ant-btn-primary"));
-		wait.until(ExpectedConditions.elementToBeClickable(modalOkBtn));
-		modalOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOf(addMemberModal));
+		addMemberButton.addMember(driver, name);
 	}
 
 	public void updateUserRole(int row, String role) {

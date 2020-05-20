@@ -24,6 +24,7 @@ import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 import { WarningAlert } from "../../../components/alerts";
+import { ContentLoading } from "../../../components/loader";
 
 const { Panel } = Collapse;
 
@@ -71,8 +72,7 @@ export default function AnalysisProvenance() {
   function getProvenance(filename) {
     if (typeof filename !== "undefined") {
       if (
-        (provenance !== null &&
-          !provenance.data.filename.includes(filename.toString())) ||
+        (currFileName !== null && currFileName !== filename.toString()) ||
         provenance === null
       ) {
         setCurrFileName(filename.toString());
@@ -213,14 +213,14 @@ export default function AnalysisProvenance() {
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <TabPaneContent title={i18n("Analysis.provenance")}>
-        {analysisOutputsContext.outputs !== null &&
+        {analysisOutputsContext.outputs !== null ?
         analysisOutputsContext.outputs.length > 0 ? (
           <Collapse accordion onChange={e => getProvenance(e)}>
             {getCreatedByToolPanels()}
           </Collapse>
         ) : (
           <WarningAlert message={i18n("AnalysisProvenance.noFilesFound")} />
-        )}
+        ) : <ContentLoading />}
       </TabPaneContent>
     </Layout>
   );
