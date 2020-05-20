@@ -20,7 +20,7 @@ See more about working with assemblies in the IRIDA UI in our [sample management
 
 ## FAST5 data
 
-The 20.05 version of IRIDA includes preliminiary beta support for FAST5 data.  At the moment, IRIDA accepts both single `.fast5` files, and directories of `.fast5.tar.gz` files.  Support is stronger for the individual `.fast5` files and are recommended for use, but this will be reviewed in future IRIDA versions.  Current support for FAST5 files includes data storage and REST API support.   REST API support includes uploading files, exporting to Galaxy, and command line export via the NGSArchive Linker.  Currently IRIDA does not support running analyses with FAST5 data.
+The 20.05 version of IRIDA includes beta support for FAST5 data.  At the moment, IRIDA accepts both single `.fast5` files, and directories of `.fast5.tar.gz` files.  Support is stronger for the individual `.fast5` files and are recommended for use, but this will be reviewed in future IRIDA versions.  Current support for FAST5 files includes data storage and REST API support.   REST API support includes uploading files, exporting to Galaxy, and command line export via the NGSArchive Linker.  Currently IRIDA does not support running analyses with FAST5 data.
 
 Uploads of `.fast5` files will be treated similar to an unpaired sequence file, including FastQC analysis.
 
