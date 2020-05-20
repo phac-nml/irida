@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Form,
@@ -19,6 +19,13 @@ import { SPACE_XS } from "../../styles/spacing";
 const { Option } = Select;
 const { Text } = Typography;
 
+/**
+ * React component to add render a Button to add a user group to a project.
+ * @param {string} defaultRole button default
+ * @param {function} onGroupAdded what to do after the group is added
+ * @returns {*}
+ * @constructor
+ */
 export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   /*
   Required a reference to the user select input so that focus can be set
@@ -26,6 +33,9 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
    */
   const groupRef = useRef();
 
+  /*
+  Get a list of project roles
+   */
   const { roles } = useRoles();
 
   /*
@@ -93,11 +103,17 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
     }
   }, [visible]);
 
+  /*
+  Close the modal and reset the fields
+   */
   const onCancel = () => {
     form.resetFields();
     setVisible(false);
   };
 
+  /*
+  Add the user group
+   */
   const addUserGroup = () => {
     addUserGroupToProject({ groupId, role }).then((message) => {
       onGroupAdded();
@@ -119,8 +135,9 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   return (
     <Button onClick={() => setVisible(true)}>
       {i18n("AddGroupButton.label")}
-      <Modal onCancel={onCancel} visible={visible} onOk={addUserGroup}>
-        <Form form={form} layout="vertical" initialValues={{ role }} onText={i18n("AddGroupButton.group.okText")}>
+      <Modal onCancel={onCancel} visible={visible} onOk={addUserGroup}
+             okText={i18n("AddGroupButton.group.okText")}>
+        <Form form={form} layout="vertical" initialValues={{role}}>
           <Form.Item
             label={i18n("AddGroupButton.group.label")}
             help={i18n("AddGroupButton.group.label-help")}

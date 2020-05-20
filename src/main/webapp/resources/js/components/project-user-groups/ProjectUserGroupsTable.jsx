@@ -11,6 +11,12 @@ import {
 import { AddGroupButton } from "./AddGroupButton";
 import { ProjectRole } from "../roles/ProjectRole";
 
+/**
+ * React component to render a table contain user groups associated with
+ * the current project
+ * @returns {string|*}
+ * @constructor
+ */
 export function ProjectUserGroupsTable() {
   const { updateTable } = useContext(PagedTableContext);
 
