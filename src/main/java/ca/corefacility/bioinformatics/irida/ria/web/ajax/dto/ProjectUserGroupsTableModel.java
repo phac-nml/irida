@@ -5,6 +5,9 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
+/**
+ * UI Model for user groups that are associated with a project
+ */
 public class ProjectUserGroupsTableModel extends TableModel {
 	private final String role;
 	private final String description;

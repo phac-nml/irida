@@ -16,6 +16,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectUserGroupsService;
 
+/**
+ * UI Ajax Controller for handling project user groups
+ */
 @RestController
 @RequestMapping("/ajax/projects/{projectId}/user-groups")
 public class ProjectUserGroupsAjaxController {
