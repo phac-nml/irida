@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
-import { Spin } from "antd";
+import { ContentLoading } from "../../components/loader";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>
@@ -26,9 +26,7 @@ export function UserGroups() {
             alignItems: "center",
           }}
         >
-          <span>
-            <Spin /> Fetching important data
-          </span>
+          <ContentLoading message={i18n("UserGroupsPage.loading")} />
         </div>
       }
     >
