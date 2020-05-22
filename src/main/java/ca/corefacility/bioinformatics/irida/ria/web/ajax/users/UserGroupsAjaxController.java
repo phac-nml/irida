@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.users;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +10,14 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUserGroupsService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for asynchronous request for User Groups
@@ -159,5 +164,22 @@ public class UserGroupsAjaxController {
 	public ResponseEntity<List<UserGroupProjectTableModel>> getProjectsForUserGroup(@PathVariable Long groupId,
 			Locale locale) {
 		return ResponseEntity.ok(service.getProjectsForUserGroup(groupId, locale));
+	}
+
+	/**
+	 * Create a new {@link UserGroup}
+	 * @param userGroup New {@link UserGroup} to create from UI form fields (name and role)
+	 * @param locale current users {@link Locale}
+	 * @return message to the user about the result of creating the group
+	 */
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> createNewUserGroup(@RequestBody UserGroup userGroup, Locale locale) {
+		try {
+			Long id= service.createNewUserGroup(userGroup, locale);
+			return ResponseEntity.ok(ImmutableMap.of("id", String.valueOf(id)));
+		} catch (UIConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(e.getErrors());
+		}
 	}
 }
