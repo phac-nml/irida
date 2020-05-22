@@ -44,6 +44,7 @@ Changes
 * [Developer/UI]: Upgraded to FastQC 0.11.9.
 * [UI]: Added FAST5 format support.  FAST5 support is in beta and is subject to change.  See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
 * [UI]: Updated user groups to use Ant Design.
+* [UI]: Fixed bug preventing advanced visualization view page load.
 
 19.09 to 20.01
 --------------
