@@ -76,14 +76,14 @@ function LoginForm() {
           {i18n("LoginPage.submit")}
         </Button>
       </Item>
-      <Item>
+      {window.TL.emailConfigured ? <Item>
         <Row justify="space-between">
           <a href={setBaseUrl(`password_reset`)}>{i18n("LoginPage.forgot")}</a>
           <a href={setBaseUrl(`password_reset/activate`)}>
             {i18n("LoginPage.activate")}
           </a>
         </Row>
-      </Item>
+      </Item> : null}
     </Form>
   );
 }
