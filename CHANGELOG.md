@@ -41,6 +41,7 @@ Changes
 * [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
 * [UI]: Updated user groups to use Ant Design.
 * [UI]: Fixed bug preventing advanced visualization view page load.
+* [UI]: Outputs now span the full width of the page.
 
 19.09 to 20.01
 --------------
