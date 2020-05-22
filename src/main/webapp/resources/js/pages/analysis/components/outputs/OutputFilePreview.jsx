@@ -204,6 +204,8 @@ export default function OutputFilePreview() {
           : null
       }
       title={i18n("AnalysisOutputs.outputFilePreview")}
+      xl={24}
+      xxl={24}
     >
       {analysisOutputsContext.outputs.length > 0 ? (
         <div>
