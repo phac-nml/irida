@@ -40,6 +40,7 @@ Changes
 * [UI]: Fixed bug preventing display of execution tools for first file if a provenance for another file had been viewed.
 * [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
 * [UI]: Updated user groups to use Ant Design.
+* [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
 
 19.09 to 20.01
 --------------
