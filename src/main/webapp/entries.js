@@ -53,7 +53,7 @@ module.exports = {
     "./resources/js/pages/remote-apis/remote-api-details.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "create-metadata-template":
-    "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
+    "./resources/js/pages/projects/metadata-template",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users-groups":

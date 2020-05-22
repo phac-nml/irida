@@ -13,7 +13,7 @@ export function fetchTemplates(id) {
   projectId = id;
   return axios({
     method: "get",
-    url: `${URL}?projectId=${projectId}`
+    url: `${URL}?projectId=${projectId}`,
   });
 }
 
@@ -26,6 +26,12 @@ export function saveTemplate(data) {
   return axios({
     method: "post",
     url: `${URL}?projectId=${projectId}`,
-    data
+    data,
   });
+}
+
+export async function getMetadataTemplate({ templateId }) {
+  return await axios
+    .get(setBaseUrl(`/ajax/metadata/templates/${templateId}`))
+    .then(({ data }) => data);
 }
