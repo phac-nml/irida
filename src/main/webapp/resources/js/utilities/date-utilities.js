@@ -1,32 +1,19 @@
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import duration from "dayjs/plugin/duration";
 
-export function formatInternationalizedDateTime(d, options = {}) {
-  const params = {
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    ...options
-  };
-  return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, params).format(
+export function formatInternationalizedDateTime(d, options = {
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+}) {
+  if (!isDate(d)) return "";
+  return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, options).format(
     new Date(d)
   );
-}
-
-/**
- * Get how much time has passed since a certain date.
- * @param {Number} now current
- * @param {Number} date event occurred
- * @return {string} formatted time since.
- */
-export function formatTimeForNow({ now, date }) {
-  const dNow = new Date(now);
-  const dDate = new Date(date);
-  if (moment.isDate(dNow) && moment.isDate(dDate)) {
-    return moment(dDate).from(moment(dNow));
-  }
 }
 
 /**
@@ -34,46 +21,49 @@ export function formatTimeForNow({ now, date }) {
  * @param {Number} date to format
  * @return {string} humanized version of the date
  */
-export function getHumanizedDuration({ date }) {
-  if (date !== null) {
-    return moment.duration(date).humanize();
-  }
-  return "";
+export function getHumanizedDuration({date}) {
+  // TODO: Refactor usage of this function to use fromNow below - they are the same
+  return fromNow({date});
 }
 
 /**
  * Generate the time from now.  Renders as human readable.s
- * @param {string} date raw string date from server
+ * @param {number} date raw string date from server
  * @return {*}
  */
 export function fromNow({ date }) {
-  const start = new Date(date);
-  if (moment.isDate(start)) {
-    const t = moment(start).fromNow();
-    return t;
-  }
-  return "";
+  // Using dayjs because Intl.RelativeTimeFormat does not have browser
+  // support in IE11 or safari yet.
+  dayjs.extend(duration);
+  dayjs.extend(relativeTime);
+  const d1 = dayjs();
+  const d2 = dayjs(date);
+  return dayjs.duration(d2.diff(d1)).humanize(true);
 }
 
 /**
  * Format unix timestamp as human readable string.
- * @param  {Number} date unix timestamp
+ * @param  {(string | number)} date unix timestamp
  * @param {String} format defaults to "lll" which is mmm dd, YYYY h:mm AM
  * @return {string} formatted date
  */
-export function formatDate({ date, format = "lll" }) {
-  const t = new Date(date);
-  if (moment.isDate(t)) {
-    return moment(t).format(format);
-  }
-  return "";
+export function formatDate({date, format}) {
+  return formatInternationalizedDateTime(date, format);
 }
 
 /**
  * Utility function to determine if a string is a date.
- * @param {string} date
+ * @param {(number | string)} date
  * @returns {boolean}
  */
 export function isDate(date) {
-  return moment.isDate(new Date(date));
+  const d = new Date(date);
+  return !isNaN(d.valueOf());
+}
+
+// get a readable string of the time from a given number of seconds
+export function getDurationFromSeconds(seconds) {
+  dayjs.extend(duration);
+  dayjs.extend(relativeTime);
+  return dayjs.duration(seconds * 1000).humanize(false);
 }
