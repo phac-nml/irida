@@ -42,8 +42,7 @@ export default function AnalysisError() {
   const [currActiveKey, setCurrActiveKey] = useState(1);
 
   const DEFAULT_URL =
-    `/analysis/${analysisContext.analysis.identifier}` +
-    setBaseUrl(ANALYSIS.ERROR);
+    setBaseUrl(`/analysis/${analysisContext.analysis.identifier}/` + ANALYSIS.ERROR);
   const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
 
   // Sets the job errors into a local state variable on page load
