@@ -16,7 +16,7 @@ import { exportToGalaxy } from "../../apis/galaxy/submission";
  */
 export function GalaxySubmission() {
   const [
-    { submittable, submitted, email, validEmail, makepairedcollection, includeAssemblies },
+    { submittable, submitted, email, validEmail, makepairedcollection, includeAssemblies, includeFast5 },
     dispatch
   ] = useStateValue();
 
@@ -41,6 +41,7 @@ export function GalaxySubmission() {
                 email,
                 makepairedcollection,
                 includeAssemblies,
+                includeFast5,
                 oauthCode: result,
                 oauthRedirect: `${window.PAGE.galaxyRedirect}`,
                 samples
