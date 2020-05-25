@@ -15,7 +15,7 @@ import { getJobErrors } from "../../../apis/analysis/analysis";
 
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
+import { SPACE_MD } from "../../../styles/spacing";
 import { ANALYSIS, ERROR } from "../routes";
 import { grey1 } from "../../../styles/colors";
 
@@ -149,8 +149,8 @@ export default function AnalysisError() {
           <WarningAlert message={i18n("AnalysisError.noJobInfoAvailable")} />
         </div>
         { isAdmin && jobErrors.galaxyHistoryId !== null ?
-          <div style={{ display: "flex", marginTop: SPACE_XS }}>
-            <Descriptions title={i18n("AnalysisError.galaxyInformation")} column={1}>
+          <div style={{ display: "flex", marginTop: SPACE_MD }} id="t-galaxy-history-id">
+            <Descriptions title={i18n("AnalysisError.galaxyInformation")} column={1} bordered={true}>
               <Descriptions.Item label={i18n("AnalysisError.historyId")}>
                 <Button
                   type="link"

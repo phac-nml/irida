@@ -439,4 +439,20 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
 	}
 
+	@Test
+	public void testGalaxyHistoryIdNotVisibleOnError() {
+		// Regular user should not have a clickable link to the galaxy history
+		LoginPage.loginAsUser(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 16L, "");
+		assertFalse("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdVisibleOnError() {
+		// Admin user should have a clickable link to the galaxy history
+		LoginPage.loginAsAdmin(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 15L, "");
+		assertTrue("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
+	}
+
 }
