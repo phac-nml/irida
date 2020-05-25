@@ -98,7 +98,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		AnalysesUserPage analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		analysesPage.clickPagination(2);
-		assertEquals("Should have 4 analyses displayed originally", 4, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 6 analyses displayed originally", 6, analysesPage.getNumberOfAnalysesDisplayed());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
@@ -107,7 +107,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		page.clickPagination(2);
-		assertEquals("Should have 3 analyses displayed", 3, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 5 analyses displayed", 5, analysesPage.getNumberOfAnalysesDisplayed());
 	}
 
 	@Test
