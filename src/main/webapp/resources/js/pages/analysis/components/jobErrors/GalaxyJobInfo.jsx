@@ -5,16 +5,18 @@
  * is returned.
  */
 
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Typography } from "antd";
 import { Monospace } from "../../../../components/typography";
 
 import { formatDate } from "../../../../utilities/date-utilities";
 import { BasicList } from "../../../../components/lists/BasicList";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 
 const { Text } = Typography;
 
 export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
+  const { isAdmin } = useContext(AnalysisContext);
   // Returns the galaxy job details for the given index
   function galaxyJobDetails(index) {
     let jobError = galaxyJobErrors[index];
@@ -66,14 +68,16 @@ export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
       {
         title: i18n("AnalysisError.historyId"),
         desc: (
-          <Button
-            type="link"
-            style={{ paddingLeft: 0 }}
-            href={`${galaxyUrl}/histories/view?id=${jobError.historyId}`}
-            target="_blank"
-          >
-            <Monospace>{jobError.historyId}</Monospace>
-          </Button>
+          isAdmin ?
+            <Button
+              type="link"
+              style={{ paddingLeft: 0 }}
+              href={`${galaxyUrl}/histories/view?id=${jobError.historyId}`}
+              target="_blank"
+            >
+              <Monospace>{jobError.historyId}</Monospace>
+            </Button>
+            : <Monospace>{jobError.historyId}</Monospace>
         )
       },
       {
