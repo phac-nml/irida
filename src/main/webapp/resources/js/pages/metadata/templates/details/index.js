@@ -1,13 +1,14 @@
 import React from "react";
 import { render } from "react-dom";
 import { Layout, PageHeader, Typography } from "antd";
-import { BasicList } from "../../../components/lists";
+import { BasicList } from "../../../../components/lists";
 import {
   MetadataTemplateProvider,
   useMetadataTemplate,
-} from "../../../contexts/metadata-template-context";
-import { IconLoading } from "../../../components/icons/Icons";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+} from "../../../../contexts/metadata-template-context";
+import { IconLoading } from "../../../../components/icons/Icons";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { Template } from "./Template";
 
 const { Content } = Layout;
 const { Paragraph } = Typography;
@@ -47,6 +48,10 @@ function MetadataTemplatePage() {
               ) : (
                 formatInternationalizedDateTime(template.createdDate)
               ),
+            },
+            {
+              title: "TEMPLATE",
+              desc: loading ? <IconLoading /> : <Template />,
             },
           ]}
         />
