@@ -414,7 +414,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
 
 		String expectedAnalysisDetails[] = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
-				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013, 10:01:00 AM", "a few seconds" };
+				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue("The correct details are displayed for the analysis",
 				page.analysisDetailsEqual(expectedAnalysisDetails));
 	}

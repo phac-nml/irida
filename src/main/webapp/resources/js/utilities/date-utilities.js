@@ -2,14 +2,16 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
 
-export function formatInternationalizedDateTime(d, options = {
-  hour: "numeric",
-  minute: "numeric",
-  second: "numeric",
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-}) {
+export function formatInternationalizedDateTime(
+  d,
+  options = {
+    hour: "numeric",
+    minute: "numeric",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }
+) {
   if (!isDate(d)) return "";
   return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, options).format(
     new Date(d)
@@ -21,9 +23,9 @@ export function formatInternationalizedDateTime(d, options = {
  * @param {Number} date to format
  * @return {string} humanized version of the date
  */
-export function getHumanizedDuration({date}) {
+export function getHumanizedDuration({ date }) {
   // TODO: Refactor usage of this function to use fromNow below - they are the same
-  return fromNow({date});
+  return fromNow({ date });
 }
 
 /**
@@ -47,7 +49,7 @@ export function fromNow({ date }) {
  * @param {String} format defaults to "lll" which is mmm dd, YYYY h:mm AM
  * @return {string} formatted date
  */
-export function formatDate({date, format}) {
+export function formatDate({ date, format }) {
   return formatInternationalizedDateTime(date, format);
 }
 
