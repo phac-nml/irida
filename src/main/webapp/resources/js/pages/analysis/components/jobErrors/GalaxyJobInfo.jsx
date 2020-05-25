@@ -11,12 +11,11 @@ import { Monospace } from "../../../../components/typography";
 
 import { formatDate } from "../../../../utilities/date-utilities";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { AnalysisContext } from "../../../../contexts/AnalysisContext";
+import { isAdmin } from "../../../../contexts/AnalysisContext";
 
 const { Text } = Typography;
 
 export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
-  const { isAdmin } = useContext(AnalysisContext);
   // Returns the galaxy job details for the given index
   function galaxyJobDetails(index) {
     let jobError = galaxyJobErrors[index];
