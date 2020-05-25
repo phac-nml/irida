@@ -24,8 +24,9 @@ export function formatInternationalizedDateTime(
  * @return {string} humanized version of the date
  */
 export function getHumanizedDuration({ date }) {
-  // TODO: Refactor usage of this function to use fromNow below - they are the same
-  return fromNow({ date });
+  dayjs.extend(duration);
+  dayjs.extend(relativeTime);
+  return dayjs.duration(-date).humanize(false);
 }
 
 /**

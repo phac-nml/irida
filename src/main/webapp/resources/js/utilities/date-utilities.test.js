@@ -3,6 +3,7 @@ import {
   formatInternationalizedDateTime,
   fromNow,
   getDurationFromSeconds,
+  getHumanizedDuration,
   isDate,
 } from "./date-utilities";
 
@@ -37,10 +38,10 @@ test("Should format a date as instructed", () => {
   expect(formatDate({ date: SOME_RANDOM_STRING })).toBe("");
 });
 
-test("", () => {
-  expect(fromNow({ date: subtractHoursFromDate(4) })).toBe("4 hours ago");
-  expect(fromNow({ date: subtractHoursFromDate(24) })).toBe("a day ago");
-  expect(fromNow({ date: subtractHoursFromDate(-2) })).toBe("in 2 hours");
+test("Test converting a duration to time", () => {
+  expect(getHumanizedDuration({ date: 4 * 60 * 60 * 1000 })).toBe("4 hours");
+  expect(getHumanizedDuration({ date: 30 * 60 * 1000 })).toBe("30 minutes");
+  expect(getHumanizedDuration({ date: 0 })).toBe("a few seconds");
 });
 
 test("Should format the difference between 2 dates in human readable form", () => {
