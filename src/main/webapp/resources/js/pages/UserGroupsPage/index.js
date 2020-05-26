@@ -2,7 +2,16 @@ import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
 import { ContentLoading } from "../../components/loader";
-import {RolesProvider} from "../../contexts";
+import { setBaseUrl } from "../../utilities/url-utilities";
+
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`/dist/`);
+import { RolesProvider } from "../../contexts";
 import { getUserGroupRoles } from "../../apis/users/groups";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
@@ -32,10 +41,12 @@ export function UserGroups() {
         </div>
       }
     >
-      <RolesProvider rolesFn={getUserGroupRoles}><Router style={{height: "100%"}}>
-        <UserGroupsPage path="/groups"/>
-        <UserGroupsDetailsPage path="/groups/:id"/>
-      </Router></RolesProvider>
+      <RolesProvider rolesFn={getUserGroupRoles}>
+        <Router style={{ height: "100%" }}>
+          <UserGroupsPage path={setBaseUrl("/groups")} />
+          <UserGroupsDetailsPage path={setBaseUrl("/groups/:id")} />
+        </Router>
+      </RolesProvider>
     </Suspense>
   );
 }
