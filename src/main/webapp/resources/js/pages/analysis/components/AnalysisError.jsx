@@ -8,9 +8,9 @@
  */
 
 import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Button, Descriptions, Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
@@ -20,6 +20,7 @@ import { ANALYSIS, ERROR } from "../routes";
 import { grey1 } from "../../../styles/colors";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { Monospace } from "../../../components/typography";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -143,8 +144,27 @@ export default function AnalysisError() {
         </Layout>
       </Layout>
     ) : (
-      <div style={{ display: "flex" }}>
-        <WarningAlert message={i18n("AnalysisError.noJobInfoAvailable")} />
+      <div>
+        <div style={{ display: "flex" }}>
+          <WarningAlert message={i18n("AnalysisError.noJobInfoAvailable")} />
+        </div>
+        { isAdmin && jobErrors.galaxyHistoryId !== null ?
+          <div style={{ display: "flex", marginTop: SPACE_MD }} id="t-galaxy-history-id">
+            <Descriptions title={i18n("AnalysisError.galaxyInformation")} column={1} bordered={true}>
+              <Descriptions.Item label={i18n("AnalysisError.historyId")}>
+                <Button
+                  type="link"
+                  style={{ paddingLeft: 0 }}
+                  href={`${jobErrors.galaxyUrl}/histories/view?id=${jobErrors.galaxyHistoryId}`}
+                  target="_blank"
+                >
+                  <Monospace>{jobErrors.galaxyHistoryId}</Monospace>
+                </Button>
+              </Descriptions.Item>
+            </Descriptions>
+        </div>
+          : null
+        }
       </div>
     )
   ) : (
