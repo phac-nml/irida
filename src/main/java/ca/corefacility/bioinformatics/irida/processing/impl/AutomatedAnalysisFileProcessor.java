@@ -297,6 +297,7 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 
 	@Override
 	public boolean shouldProcessFile(SequencingObject sequencingObject) {
+		//don't want to run for fast5 data because no pipelines support it yet.
 		if (sequencingObject instanceof Fast5Object) {
 			return false;
 		}
