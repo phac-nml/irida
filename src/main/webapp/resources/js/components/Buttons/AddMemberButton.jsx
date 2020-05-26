@@ -16,6 +16,7 @@ const { Option } = Select;
 const { Text } = Typography;
 
 export function AddMemberButton({
+  label,
   defaultRole,
   addMemberFn = () => {},
   getAvailableMembersFn = () => {},
@@ -121,7 +122,7 @@ export function AddMemberButton({
   return (
     <>
       <Button className="t-add-member-btn" onClick={() => setVisible(true)}>
-        {i18n("AddMemberButton.label")}
+        {label}
       </Button>
       <Modal
         className="t-add-member-modal"

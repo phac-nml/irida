@@ -34,7 +34,6 @@ export default function UserGroupMembersTable({
   groupId,
   updateTable,
 }) {
-
   const columns = [
     {
       dataIndex: "name",
@@ -75,7 +74,9 @@ export default function UserGroupMembersTable({
       render(user) {
         return (
           <RemoveTableItemButton
-            onRemove={() => removeMemberFromUserGroup({groupId, userId: user.id})}
+            onRemove={() =>
+              removeMemberFromUserGroup({ groupId, userId: user.id })
+            }
             onRemoveSuccess={updateTable}
             tooltipText={i18n("UserGroupMembersTable.remove-tooltip")}
             confirmText={i18n("UserGroupMembersTable.remove-confirm")}
@@ -99,6 +100,7 @@ export default function UserGroupMembersTable({
           {canManage ? (
             <AddMemberButton
               defaultRole="GROUP_MEMBER"
+              label={i18n("UserGroupMembersTable.add")}
               addMemberFn={addMember}
               addMemberSuccessFn={updateTable}
               getAvailableMembersFn={getAvailableMembers}

@@ -74,6 +74,7 @@ export function ProjectMembersTable() {
       buttons={[
         <AddMemberButton
           key="add-members-btn"
+          label={i18n("AddMemberButton.label")}
           addMemberFn={addMemberToProject}
           addMemberSuccessFn={updateTable}
           getAvailableMembersFn={getAvailableUsersForProject}
