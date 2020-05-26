@@ -98,7 +98,7 @@ public class ProjectUserGroupsAjaxController {
 		try {
 			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, role, locale));
 		} catch (ProjectWithoutOwnerException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(e.getMessage());
 		}
 	}
