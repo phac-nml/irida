@@ -116,7 +116,11 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 						builder.name(templateName);
 
 						//set the analysis priority to the setting for the project
-						builder.priority(project.getAnalysisPriority());
+						if (project.getAnalysisPriority() != null) {
+							builder.priority(project.getAnalysisPriority());
+						} else {
+							builder.priority(AnalysisSubmission.Priority.LOW);
+						}
 
 						//build the submission and save it
 						AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))

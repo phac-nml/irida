@@ -43,6 +43,7 @@ Changes
 * [UI]: Fixed bug preventing advanced visualization view page load.
 * [UI/Developer]: Updated analysis urls to work with a context path.
 * [UI]: Outputs and Tree view now span the full width of the page.
+* [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
 
 19.09 to 20.01
 --------------
