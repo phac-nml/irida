@@ -39,9 +39,7 @@ export function fromNow({ date }) {
   // support in IE11 or safari yet.
   dayjs.extend(duration);
   dayjs.extend(relativeTime);
-  const d1 = dayjs();
-  const d2 = dayjs(date);
-  return dayjs.duration(d2.diff(d1)).humanize(true);
+  return dayjs.duration(dayjs(date).diff(dayjs())).humanize(true);
 }
 
 /**
@@ -59,10 +57,7 @@ export function formatDate({ date, format }) {
  * @param {(number | string)} date
  * @returns {boolean}
  */
-export function isDate(date) {
-  const d = new Date(date);
-  return !isNaN(d.valueOf());
-}
+export const isDate = (date) => !isNaN(new Date(date).valueOf());
 
 // get a readable string of the time from a given number of seconds
 export function getDurationFromSeconds(seconds) {
