@@ -27,6 +27,8 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { ANALYSIS } from "../routes";
 import { getNewickTree } from "../../../apis/analysis/analysis";
 
+import { setBaseUrl } from "../../../utilities/url-utilities";
+
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
   import("./AnalysisPhylogeneticTree")
@@ -41,7 +43,7 @@ const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
-  const DEFAULT_URL = `/analysis/${analysisContext.analysis.identifier}`;
+  const DEFAULT_URL = setBaseUrl(`/analysis/${analysisContext.analysis.identifier}`);
   const [treeDefault, setTreeDefault] = useState(null);
 
   useEffect(() => {
