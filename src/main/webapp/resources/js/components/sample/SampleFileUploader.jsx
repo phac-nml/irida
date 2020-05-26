@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { FileUploader } from "../files/FileUploader";
-import { showNotification } from "../../modules/notifications";
 import { Button, Dropdown, Menu, notification } from "antd";
 import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";

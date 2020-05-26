@@ -276,10 +276,9 @@ public class RESTProjectSamplesController {
 	/**
 	 * Add the required links for a sample individual: self, file pairs,
 	 * unpaired files
-	 * 
-	 * @param s
-	 *            The sample to add links to
-	 * @return the sample with added links
+	 *
+	 * @param p optionally the project for this sample
+	 * @param s The sample to add links to
 	 */
 	private void addLinksForSample(final Optional<Project> p, final Sample s) {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
