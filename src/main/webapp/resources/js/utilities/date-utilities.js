@@ -3,7 +3,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
 
 export function formatInternationalizedDateTime(
-  d,
+  date,
   options = {
     hour: "numeric",
     minute: "numeric",
@@ -12,9 +12,9 @@ export function formatInternationalizedDateTime(
     day: "numeric",
   }
 ) {
-  if (!isDate(d)) return "";
+  if (!isDate(date)) return "";
   return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, options).format(
-    new Date(d)
+    new Date(date)
   );
 }
 
