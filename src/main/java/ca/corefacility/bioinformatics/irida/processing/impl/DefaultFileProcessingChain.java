@@ -77,9 +77,9 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 		for (FileProcessor fileProcessor : fileProcessors) {
 			try {
-				if (fileProcessor.shouldProcessFile(sequencingObjectId)) {
-					SequencingObject settledSequencingObject = getSettledSequencingObject(sequencingObjectId);
+				SequencingObject settledSequencingObject = getSettledSequencingObject(sequencingObjectId);
 
+				if (fileProcessor.shouldProcessFile(settledSequencingObject)) {
 					fileProcessor.process(settledSequencingObject);
 				}
 			} catch (FileProcessorException e) {

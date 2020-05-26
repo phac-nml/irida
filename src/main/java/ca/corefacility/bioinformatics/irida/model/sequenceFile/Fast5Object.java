@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Set;
@@ -115,7 +114,7 @@ public class Fast5Object extends SequencingObject {
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.warn("Problem checking for zipped file.  Setting as UNKNOWN type", e);
 		}
 
