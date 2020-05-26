@@ -99,17 +99,10 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
    */
   useEffect(() => {
     if (visible) {
+      form.resetFields();
       setTimeout(() => groupRef.current.focus(), 100);
     }
-  }, [visible]);
-
-  /*
-  Close the modal and reset the fields
-   */
-  const onCancel = () => {
-    form.resetFields();
-    setVisible(false);
-  };
+  }, [form, visible]);
 
   /*
   Add the user group
@@ -133,11 +126,17 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   ));
 
   return (
-    <Button onClick={() => setVisible(true)}>
-      {i18n("AddGroupButton.label")}
-      <Modal onCancel={onCancel} visible={visible} onOk={addUserGroup}
-             okText={i18n("AddGroupButton.group.okText")}>
-        <Form form={form} layout="vertical" initialValues={{role}}>
+    <>
+      <Button onClick={() => setVisible(true)}>
+        {i18n("AddGroupButton.label")}
+      </Button>
+      <Modal
+        onCancel={() => setVisible(false)}
+        visible={visible}
+        onOk={addUserGroup}
+        okText={i18n("AddGroupButton.group.okText")}
+      >
+        <Form form={form} layout="vertical" initialValues={{ role }}>
           <Form.Item
             label={i18n("AddGroupButton.group.label")}
             help={i18n("AddGroupButton.group.label-help")}
@@ -170,6 +169,6 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
           </Form.Item>
         </Form>
       </Modal>
-    </Button>
+    </>
   );
 }
