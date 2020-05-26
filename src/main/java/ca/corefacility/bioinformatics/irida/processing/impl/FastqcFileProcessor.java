@@ -73,6 +73,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	@Transactional
 	public void process(SequencingObject sequencingObject) {
 		boolean processFile = true;
+
+		//we don't want to run the processor for zipped fast5 files.  It will just fail and create a qc entry even though it did what it was supposed to
 		if (sequencingObject instanceof Fast5Object) {
 			if (((Fast5Object) sequencingObject).getFast5Type()
 					.equals(Fast5Object.Fast5Type.ZIPPED)) {
