@@ -151,6 +151,12 @@
                         </a>
                     </li>
 
+                    <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                        <a th:href="@{/admin}" id="admin-panel-btn" class="nav-icon-wrapper">
+                            <i class="fa fa-fw fa-user-shield nav-icon"></i>
+                        </a>
+                    </li>
+
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle nav-icon-wrapper" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">
