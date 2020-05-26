@@ -74,16 +74,15 @@ public class GzipFileProcessor implements FileProcessor {
 
 	/**
 	 * {@inheritDoc}
-     */
-    @Transactional
-    @Override
-    public void process(SequencingObject sequencingObject) {
-        //we don't want to unzip fast5 objects for now because it may be a directory of objects
-        if (!disableFileProcessor && !(sequencingObject instanceof Fast5Object)) {
-            for (SequenceFile file : sequencingObject.getFiles()) {
-                processSingleFile(file);
-            }
-        } else {
+	 */
+	@Transactional
+	@Override
+	public void process(SequencingObject sequencingObject) {
+		if (!disableFileProcessor) {
+			for (SequenceFile file : sequencingObject.getFiles()) {
+				processSingleFile(file);
+			}
+		} else {
 			logger.debug("Not running process. It has been disabled");
 		}
 	}
@@ -172,5 +171,14 @@ public class GzipFileProcessor implements FileProcessor {
 	@Override
 	public Boolean modifiesFile() {
 		return !disableFileProcessor;
+	}
+
+	@Override
+	public boolean shouldProcessFile(SequencingObject sequencingObject) {
+		//we don't want to unzip fast5 objects for now because it may be a directory of objects
+		if (sequencingObject instanceof Fast5Object) {
+			return false;
+		}
+		return true;
 	}
 }

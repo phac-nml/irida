@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -73,14 +70,18 @@ public class FastqcFileProcessorTest {
 	}
 
 	@Test
-	public void testHandleFast5FileZipped() throws IOException {
+	public void testHandleFast5File() throws IOException {
 		//ensure we don't process zipped fast5 files
 		Fast5Object obj = new Fast5Object(new SequenceFile(null));
+
+		obj.setFast5Type(Fast5Object.Fast5Type.SINGLE);
+		assertTrue("should want to process single fast5 file)", fileProcessor.shouldProcessFile(obj));
+
 		obj.setFast5Type(Fast5Object.Fast5Type.ZIPPED);
+		assertFalse("should not want to process zipped fast5 file)", fileProcessor.shouldProcessFile(obj));
 
-		fileProcessor.process(obj);
-
-		verifyZeroInteractions(sequenceFileRepository);
+		obj.setFast5Type(Fast5Object.Fast5Type.UNKNOWN);
+		assertFalse("should not want to process unknown fast5 file)", fileProcessor.shouldProcessFile(obj));
 	}
 
 	@Test
