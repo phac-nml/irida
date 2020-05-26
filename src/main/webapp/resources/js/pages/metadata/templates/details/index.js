@@ -20,7 +20,7 @@ function MetadataTemplatePage() {
     <PageHeader
       className="site-page-header"
       onBack={() => null}
-      title="TEMPLATE NAME HERE PLEASE"
+      title={loading ? "" : template.name}
     >
       <Content>
         <BasicList
