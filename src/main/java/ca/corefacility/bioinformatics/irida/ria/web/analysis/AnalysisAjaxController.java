@@ -560,6 +560,8 @@ public class AnalysisAjaxController {
 	@ResponseBody
 	public AnalysisJobError ajaxGetJobErrors(@PathVariable Long submissionId) {
 		try {
+			AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+			String galaxyHistoryId = submission.getRemoteAnalysisId();
 			List<JobError> galaxyJobErrors = analysisSubmissionService.getJobErrors(submissionId);
 			String galaxyUrl = "";
 			try {
@@ -568,14 +570,16 @@ public class AnalysisAjaxController {
 			} catch (ExecutionManagerConfigurationException e) {
 				logger.error("Error " + e);
 			}
+			// Return a dto with galaxyJobErrors, galaxyUrl, and galaxyHistroyId
 			if (galaxyJobErrors != null && !galaxyJobErrors.isEmpty()) {
-				// Return a dto with both galaxyJobErrors and galaxyUrl
-				return new AnalysisJobError(galaxyJobErrors, galaxyUrl);
+				return new AnalysisJobError(galaxyJobErrors, galaxyUrl, galaxyHistoryId);
+			} else if(galaxyHistoryId != null) {
+				return new AnalysisJobError(null, galaxyUrl, galaxyHistoryId);
 			}
 		} catch (ExecutionManagerException e) {
 			logger.error("Error " + e);
 		}
-		// Return a dto with both galaxyJobErrors and galaxyUrl set to null
+		// Return a dto with galaxyJobErrors, galaxyUrl, and galaxyHistoryId set to null
 		return new AnalysisJobError();
 	}
 
