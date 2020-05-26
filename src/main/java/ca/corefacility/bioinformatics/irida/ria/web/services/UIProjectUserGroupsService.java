@@ -68,10 +68,10 @@ public class UIProjectUserGroupsService {
 		UserGroup group = userGroupService.read(groupId);
 		try {
 			projectService.removeUserGroupFromProject(project, group);
-			return messageSource.getMessage("server.usergroups.remove-group.success", new Object[] { group.getLabel() },
+			return messageSource.getMessage("server.usergroups.remove.success", new Object[] { group.getLabel() },
 					locale);
 		} catch (ProjectWithoutOwnerException e) {
-			return messageSource.getMessage("server.usergroups.remove-group.error", new Object[] { group.getLabel() },
+			return messageSource.getMessage("server.usergroups.remove.error", new Object[] { group.getLabel() },
 					locale);
 		}
 	}
@@ -101,7 +101,7 @@ public class UIProjectUserGroupsService {
 		UserGroup group = userGroupService.read(request.getId());
 		ProjectRole role = ProjectRole.fromString(request.getRole());
 		projectService.addUserGroupToProject(project, group, role);
-		return messageSource.getMessage("server.usergroups.add-group", new Object[] { group.getLabel() }, locale);
+		return messageSource.getMessage("server.usergroups.add", new Object[] { group.getLabel() }, locale);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class UIProjectUserGroupsService {
 
 		try {
 			projectService.updateUserGroupProjectRole(project, group, projectRole);
-			return messageSource.getMessage("server.usergroups.update-role.success",
+			return messageSource.getMessage("server.usergroups.update.success",
 					new Object[] { group.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {
 			throw new ProjectWithoutOwnerException(messageSource.getMessage("server.usergroups.update-role.error", new Object[] { group.getLabel() },
