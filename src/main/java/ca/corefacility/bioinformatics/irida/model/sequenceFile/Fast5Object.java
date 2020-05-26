@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Set;
