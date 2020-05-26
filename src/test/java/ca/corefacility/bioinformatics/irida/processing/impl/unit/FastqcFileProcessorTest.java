@@ -5,9 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -16,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.Before;
@@ -71,6 +70,17 @@ public class FastqcFileProcessorTest {
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
 		fileProcessor.process(so);
+	}
+
+	@Test
+	public void testHandleFast5FileZipped() throws IOException {
+		//ensure we don't process zipped fast5 files
+		Fast5Object obj = new Fast5Object(new SequenceFile(null));
+		obj.setFast5Type(Fast5Object.Fast5Type.ZIPPED);
+
+		fileProcessor.process(obj);
+
+		verifyZeroInteractions(sequenceFileRepository);
 	}
 
 	@Test

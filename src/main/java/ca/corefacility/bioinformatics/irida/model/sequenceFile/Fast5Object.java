@@ -115,7 +115,7 @@ public class Fast5Object extends SequencingObject {
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.warn("Problem checking for zipped file.  Setting as UNKNOWN type", e);
 		}
 

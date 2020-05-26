@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -71,8 +72,20 @@ public class FastqcFileProcessor implements FileProcessor {
 	@Override
 	@Transactional
 	public void process(SequencingObject sequencingObject) {
-		for (SequenceFile file : sequencingObject.getFiles()) {
-			processSingleFile(file);
+		boolean processFile = true;
+		if (sequencingObject instanceof Fast5Object) {
+			if (((Fast5Object) sequencingObject).getFast5Type()
+					.equals(Fast5Object.Fast5Type.ZIPPED)) {
+				processFile = false;
+			}
+		}
+
+		if (processFile) {
+			for (SequenceFile file : sequencingObject.getFiles()) {
+				processSingleFile(file);
+			}
+		} else {
+			logger.debug("Not running file processor for file. Object id: " + sequencingObject.getId());
 		}
 	}
 
