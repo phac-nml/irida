@@ -42,6 +42,7 @@ Changes
 * [UI]: Updated user groups to use Ant Design.
 * [UI]: Fixed bug preventing advanced visualization view page load.
 * [UI/Developer]: Updated analysis urls to work with a context path.
+* [UI]: Outputs and Tree view now span the full width of the page.
 
 19.09 to 20.01
 --------------
