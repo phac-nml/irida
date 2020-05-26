@@ -21,7 +21,7 @@ export function UserGroupsTable() {
       dataIndex: "name",
       sorter: true,
       render(text, item) {
-        return <Link to={`/groups/${item.id}`}>{text}</Link>;
+        return <Link to={setBaseUrl(`/groups/${item.id}`)}>{text}</Link>;
       },
     },
     {
