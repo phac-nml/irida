@@ -9,6 +9,12 @@ import { getProjectRoles } from "../../apis/projects/projects";
 
 const { Title } = Typography;
 
+/**
+ * React component to render the page to modify project user groups on a
+ * specific project
+ * @returns {*}
+ * @constructor
+ */
 function ProjectUserGroups() {
   return (
     <PagedTableProvider
