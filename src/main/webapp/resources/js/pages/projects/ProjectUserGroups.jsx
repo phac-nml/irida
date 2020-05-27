@@ -21,7 +21,7 @@ function ProjectUserGroups() {
       url={setBaseUrl(`/ajax/projects/${window.project.id}/user-groups`)}
     >
       <RolesProvider rolesFn={getProjectRoles}>
-        <Title level={2}>User Groups</Title>
+        <Title level={2}>{i18n("ProjectUserGroups.title")}</Title>
         <ProjectUserGroupsTable />
       </RolesProvider>
     </PagedTableProvider>

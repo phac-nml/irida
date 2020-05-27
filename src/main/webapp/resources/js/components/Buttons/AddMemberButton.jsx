@@ -17,6 +17,7 @@ const { Text } = Typography;
 
 export function AddMemberButton({
   label,
+  modalTitle,
   defaultRole,
   addMemberFn = () => {},
   getAvailableMembersFn = () => {},
@@ -129,7 +130,7 @@ export function AddMemberButton({
         visible={visible}
         okButtonProps={{ disabled: typeof userId === "undefined" }}
         onCancel={onCancel}
-        title={i18n("AddMemberButton.modal.title")}
+        title={modalTitle}
         onOk={addMember}
         okText={i18n("AddMemberButton.modal.okText")}
       >

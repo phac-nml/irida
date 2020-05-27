@@ -101,6 +101,7 @@ export default function UserGroupMembersTable({
             <AddMemberButton
               defaultRole="GROUP_MEMBER"
               label={i18n("UserGroupMembersTable.add")}
+              modalTitle={i18n("UserGroupMembersTable.add.title")}
               addMemberFn={addMember}
               addMemberSuccessFn={updateTable}
               getAvailableMembersFn={getAvailableMembers}
