@@ -21,25 +21,18 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 	public void accessPageAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 		AdminPage page = AdminPage.initPage(driver());
-		assertTrue("Page title should be present", page.comparePageTitle("FUBAR - YOU MADE IT"));
+		assertTrue("Admin button should be displayed", page.adminPanelButtonVisible());
+		page.clickAdminButton();
+		assertTrue("Admin can navigate to admin panel, admin page title should be present", page.adminPanelTitleVisible());
 	}
 
 	@Test
 	public void accessPageFailure() {
 		LoginPage.loginAsUser(driver());
 		AdminPage page = AdminPage.initPage(driver());
-		assertFalse("Page title should not be present", page.comparePageTitle("FUBAR - YOU MADE IT"));
-	}
-
-	@Test
-	public void adminButtonVisible() {
-		LoginPage.loginAsAdmin(driver());
-		assertTrue("Admin Button should be displayed", driver().findElements(By.id("admin-panel-btn")).size() > 0);
-	}
-
-	@Test
-	public void adminButtonNotVisible() {
-		LoginPage.loginAsUser(driver());
-		assertFalse("Admin Button should not be displayed", driver().findElements(By.id("admin-panel-btn")).size() > 0);
+		assertFalse("Admin button should not be displayed", page.adminPanelButtonVisible());
+		// No admin button, so attempt to go to admin page by modifying the URL
+		page.goToAdminPage(driver());
+		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.adminPanelTitleVisible());
 	}
 }

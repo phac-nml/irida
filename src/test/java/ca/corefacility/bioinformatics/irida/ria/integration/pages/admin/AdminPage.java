@@ -9,10 +9,11 @@ import org.openqa.selenium.support.PageFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AdminPage extends AbstractPage {
-	public static final String RELATIVE_URL = "admin/";
+	public static final String RELATIVE_URL = "/";
+	public static final String ADMIN_RELATIVE_URL = "admin/";
 
-	@FindBy(tagName="body")
-	private WebElement body;
+	@FindBy(id="t-admin-panel-btn")
+	private WebElement adminPanelBtn;
 
 	public AdminPage(WebDriver driver) { super(driver); }
 
@@ -28,14 +29,42 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 * Compares the expected page title to the actual page title.
+	 * Navigate to the admin panel page on path 'admin/'.
+	 *
+	 * @param driver	{@Link WebDriver}
+	 */
+	public void goToAdminPage(WebDriver driver) {
+		get(driver, ADMIN_RELATIVE_URL);
+	}
+
+	/**
+	 *  Determines if admin panel title is
+	 *  visible on the admin panel page.
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean comparePageTitle(String pageTitle) {
-		int titleFound = body.findElements(By.xpath("//h1[contains(text(),'" + pageTitle + "')]"))
-				.size();
+	public boolean adminPanelTitleVisible() {
+		return driver.findElements(By.id("t-admin-panel-title"))
+				.size() == 1;
+	}
 
-		return titleFound > 0;
+	/**
+	 *  Determines if admin panel button is
+	 *  visible on the navbar.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminPanelButtonVisible() {
+		return driver.findElements(By.id("t-admin-panel-btn"))
+				.size() == 1;
+	}
+
+	/**
+	 *  Clicks on the admin panel button to navigate
+	 *  to the admin panel page.
+	 */
+	public void clickAdminButton() {
+		adminPanelBtn.click();
+		waitForTime(500);
 	}
 }
