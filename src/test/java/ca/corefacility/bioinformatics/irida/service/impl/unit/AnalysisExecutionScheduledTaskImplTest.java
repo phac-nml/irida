@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Tests out scheduling analysis tasks.
@@ -84,6 +87,12 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	@Mock
 	private TestEmailController emailController;
 
+	@Mock
+	private IridaWorkflowsService workflowsService;
+
+	@Mock
+	private GalaxyHistoriesService galaxyHistoriesService;
+
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
 	private AnalysisSubmission analysisSubmission;
@@ -101,7 +110,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController);
+				jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
@@ -631,7 +640,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedOverOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController);
+				galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -658,7 +667,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedCleanupZeroSuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ZERO),
-				galaxyJobErrorsService, jobErrorRepository, emailController);
+				galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -685,7 +694,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedUnderOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController);
+				galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -712,7 +721,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedOverUnderOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController);
+				galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);

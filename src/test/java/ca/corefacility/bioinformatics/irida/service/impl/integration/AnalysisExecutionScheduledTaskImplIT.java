@@ -14,6 +14,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,6 +92,12 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Autowired
 	private EmailController emailController;
 
+	@Autowired
+	private IridaWorkflowsService workflowsService;
+
+	@Autowired
+	private GalaxyHistoriesService galaxyHistoriesService;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePath;
@@ -115,7 +123,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
-				galaxyJobErrorsService, jobErrorRepository, emailController);
+				galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -182,7 +190,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController);
+				galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);

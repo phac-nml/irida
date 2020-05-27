@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,6 +81,12 @@ public class GalaxyJobErrorsServiceIT {
 	@Autowired
 	private EmailController emailController;
 
+	@Autowired
+	private IridaWorkflowsService workflowsService;
+
+	@Autowired
+	private GalaxyHistoriesService galaxyHistoriesService;
+
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
@@ -97,7 +105,7 @@ public class GalaxyJobErrorsServiceIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController);
+				jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 	}
 
 	/**

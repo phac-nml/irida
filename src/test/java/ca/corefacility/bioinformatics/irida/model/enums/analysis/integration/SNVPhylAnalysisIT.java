@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -119,6 +121,12 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private EmailController emailController;
+
+	@Autowired
+	private IridaWorkflowsService workflowsService;
+
+	@Autowired
+	private GalaxyHistoriesService galaxyHistoriesService;
 	
 	@Autowired
 	private GzipFileProcessor gzipFileProcessor;
@@ -169,7 +177,7 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
