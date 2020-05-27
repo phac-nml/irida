@@ -98,7 +98,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		AnalysesUserPage analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		analysesPage.clickPagination(2);
-		assertEquals("Should have 4 analyses displayed originally", 4, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 6 analyses displayed originally", 6, analysesPage.getNumberOfAnalysesDisplayed());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
@@ -107,7 +107,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		page.clickPagination(2);
-		assertEquals("Should have 3 analyses displayed", 3, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 5 analyses displayed", 5, analysesPage.getNumberOfAnalysesDisplayed());
 	}
 
 	@Test
@@ -437,6 +437,22 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Receive Email Upon Pipeline Completion section
 		// should be visible
 		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdNotVisibleOnError() {
+		// Regular user should not have a clickable link to the galaxy history
+		LoginPage.loginAsUser(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 16L, "");
+		assertFalse("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdVisibleOnError() {
+		// Admin user should have a clickable link to the galaxy history
+		LoginPage.loginAsAdmin(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 15L, "");
+		assertTrue("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
 	}
 
 }

@@ -509,4 +509,17 @@ public class AnalysisDetailsPage extends AbstractPage {
 	public boolean treeToolsVisible() {
 		return treeTools.isDisplayed();
 	}
+
+	/**
+	 *  Determines if galaxy history id is
+	 *  displayed on error page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean galaxyHistoryIdVisible() {
+		if(driver.findElements( By.id("t-galaxy-history-id") ).size() == 1) {
+			return true;
+		}
+		return false;
+	}
 }
