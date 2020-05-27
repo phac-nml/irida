@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.admin;
 
-import org.openqa.selenium.By;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -12,8 +15,11 @@ public class AdminPage extends AbstractPage {
 	public static final String RELATIVE_URL = "/";
 	public static final String ADMIN_RELATIVE_URL = "admin/";
 
-	@FindBy(id="t-admin-panel-btn")
-	private WebElement adminPanelBtn;
+	@FindBy(className="t-admin-panel-title")
+	private List<WebElement> adminPanelTitle;
+
+	@FindBy(className="t-admin-panel-btn")
+	private List<WebElement> adminPanelBtn;
 
 	public AdminPage(WebDriver driver) { super(driver); }
 
@@ -44,8 +50,7 @@ public class AdminPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean adminPanelTitleVisible() {
-		return driver.findElements(By.id("t-admin-panel-title"))
-				.size() == 1;
+		return adminPanelTitle.size() == 1;
 	}
 
 	/**
@@ -55,8 +60,7 @@ public class AdminPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean adminPanelButtonVisible() {
-		return driver.findElements(By.id("t-admin-panel-btn"))
-				.size() == 1;
+		return adminPanelBtn.size() == 1;
 	}
 
 	/**
@@ -64,7 +68,8 @@ public class AdminPage extends AbstractPage {
 	 *  to the admin panel page.
 	 */
 	public void clickAdminButton() {
-		adminPanelBtn.click();
-		waitForTime(500);
+		adminPanelBtn.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin"));
 	}
 }

@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.admin;
 
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.springframework.test.context.ActiveProfiles;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
