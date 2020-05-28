@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>ADMIN PANEL</title>
+    <title th:text="#{admin.panel.title}">ADMIN PANEL</title>
 </head>
 <body>
-    <h1>FUBAR - YOU MADE IT</h1>
+    <h1 class="t-admin-panel-title" th:text="#{admin.panel.title}">ADMIN PANEL</h1>
 </body>
 </html>
