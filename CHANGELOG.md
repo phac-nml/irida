@@ -1,6 +1,9 @@
 Changes
 =======
 
+20.05 to 20.09
+--------------
+
 20.01 to 20.05
 --------------
 * [UI/Developer]: Removed webpack progress.
