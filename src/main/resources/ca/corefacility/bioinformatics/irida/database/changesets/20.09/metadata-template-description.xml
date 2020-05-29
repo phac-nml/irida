@@ -6,12 +6,12 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="metadata-template-description" author="josh">
-        <addColumn tableName="metadata-template">
+        <addColumn tableName="metadata_template">
             <column name="description" type="longtext" />
         </addColumn>
 
-        <addColumn tableName="metadata-template_AUD">
-            <column name="description" />
+        <addColumn tableName="metadata_template_AUD">
+            <column name="description" type="longtext" />
         </addColumn>
     </changeSet>
 </databaseChangeLog>
