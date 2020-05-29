@@ -3,6 +3,7 @@ Changes
 
 20.05 to 20.09
 --------------
+* [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
 
 20.01 to 20.05
 --------------
@@ -51,7 +52,6 @@ Changes
 * [UI/Developer]: Updated analysis urls to work with a context path.
 * [UI]: Outputs and Tree view now span the full width of the page.
 * [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
-* [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
 
 19.09 to 20.01
 --------------
