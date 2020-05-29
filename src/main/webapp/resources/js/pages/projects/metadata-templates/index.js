@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-templates";
-import { Avatar, Button, List, Tag, Typography } from "antd";
+import { Avatar, Button, Col, List, Row, Tag, Typography } from "antd";
 import {
   IconDownloadFile,
   IconMetadataTemplate,
@@ -18,48 +18,50 @@ function ProjectMetadataTemplates() {
   }, []);
 
   return (
-    <>
-      <Title level={2}>{i18n("ProjectMetadataTemplates.title")}</Title>
-      <List
-        itemLayout="horizontal"
-        dataSource={templates}
-        renderItem={(item) => (
-          <List.Item
-            actions={[
-              <Button
-                shape="circle"
-                icon={<IconDownloadFile />}
-                href={setBaseUrl(
-                  `/projects/${window.project.id}/metadata-templates/${item.id}/excel`
-                )}
-                key="list-download"
-              />,
-            ]}
-          >
-            <List.Item.Meta
-              avatar={<Avatar icon={<IconMetadataTemplate />} />}
-              title={
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <a
-                    href={setBaseUrl(
-                      `/projects/${window.project.id}/metadata-templates/${item.id}`
-                    )}
+    <Row>
+      <Col xl={18}>
+        <Title level={2}>{i18n("ProjectMetadataTemplates.title")}</Title>
+        <List
+          itemLayout="horizontal"
+          dataSource={templates}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <Button
+                  shape="circle"
+                  icon={<IconDownloadFile />}
+                  href={setBaseUrl(
+                    `/projects/${window.project.id}/metadata-templates/${item.id}/excel`
+                  )}
+                  key="list-download"
+                />,
+              ]}
+            >
+              <List.Item.Meta
+                avatar={<Avatar icon={<IconMetadataTemplate />} />}
+                title={
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    {item.label}
-                  </a>
-                  <Tag>
-                    {i18n("ProjectMetadataTemplates.fields", item.numFields)}
-                  </Tag>
-                </div>
-              }
-              description={item.description}
-            />
-          </List.Item>
-        )}
-      />
-    </>
+                    <a
+                      href={setBaseUrl(
+                        `/projects/${window.project.id}/metadata-templates/${item.id}`
+                      )}
+                    >
+                      {item.label}
+                    </a>
+                    <Tag>
+                      {i18n("ProjectMetadataTemplates.fields", item.numFields)}
+                    </Tag>
+                  </div>
+                }
+                description={item.description}
+              />
+            </List.Item>
+          )}
+        />
+      </Col>
+    </Row>
   );
 }
 
