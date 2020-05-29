@@ -313,6 +313,33 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
+	 * Tests successfully staying on RUNNING state when
+	 * GalaxyWorkflowState = OK and outputFilesExist = false
+	 * {@link AnalysisState.RUNNING} on success in Galaxy.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesOKStateNoFiles()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.OK,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		when(analysisWorkspaceService.outputFilesExist(analysisSubmission)).thenReturn(false);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
+	}
+
+	/**
 	 * Tests successfully skipping over switching analysis state for a queued
 	 * analysis in Galaxy.
 	 *
