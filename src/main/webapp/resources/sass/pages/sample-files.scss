@@ -205,3 +205,18 @@
   color: #222;
   font-weight: bold;
 }
+
+table.fast5 {
+  background-color: $color-grey-light;
+  border: 2px solid $colour-single-end;
+}
+
+tr.fast5_row {
+  border: 1px solid $colour-single-end;
+}
+
+.fast5_icon {
+  background-color: $colour-single-end;
+  text-align: center;
+  vertical-align: middle !important;
+}

@@ -86,8 +86,12 @@ public class SampleFilesPage extends AbstractPage {
 		uploadFile(fileName, 0);
 	}
 
-	public void uploadAssemblyFile(String fileName) {
+	public void uploadFast5File(String fileName) {
 		uploadFile(fileName, 1);
+	}
+
+	public void uploadAssemblyFile(String fileName) {
+		uploadFile(fileName, 2);
 	}
 
 	public boolean isProgressBarDisplayed() {
