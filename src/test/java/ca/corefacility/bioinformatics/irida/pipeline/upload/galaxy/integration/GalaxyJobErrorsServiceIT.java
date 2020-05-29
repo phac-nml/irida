@@ -8,8 +8,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -82,10 +81,7 @@ public class GalaxyJobErrorsServiceIT {
 	private EmailController emailController;
 
 	@Autowired
-	private IridaWorkflowsService workflowsService;
-
-	@Autowired
-	private GalaxyHistoriesService galaxyHistoriesService;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -105,7 +101,7 @@ public class GalaxyJobErrorsServiceIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
+				jobErrorRepository, emailController, analysisWorkspaceService);
 	}
 
 	/**

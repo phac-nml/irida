@@ -248,7 +248,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
 
-
+		when(analysisWorkspaceService.outputFilesExist(analysisSubmission)).thenReturn(true);
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -277,6 +277,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		when(analysisWorkspaceService.outputFilesExist(analysisSubmission)).thenReturn(true);
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 

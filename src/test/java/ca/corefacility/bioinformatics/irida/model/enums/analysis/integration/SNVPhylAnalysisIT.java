@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErro
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -123,10 +122,7 @@ public class SNVPhylAnalysisIT {
 	private EmailController emailController;
 
 	@Autowired
-	private IridaWorkflowsService workflowsService;
-
-	@Autowired
-	private GalaxyHistoriesService galaxyHistoriesService;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 	
 	@Autowired
 	private GzipFileProcessor gzipFileProcessor;
@@ -177,7 +173,8 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController, workflowsService, galaxyHistoriesService);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
+				jobErrorRepository, emailController, analysisWorkspaceService);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 

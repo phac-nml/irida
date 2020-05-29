@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Job
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
@@ -53,6 +54,9 @@ public class AnalysisScheduledTaskConfig {
 
 	@Autowired
 	private GalaxyHistoriesService galaxyHistoriesService;
+
+	@Autowired
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	/**
 	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
@@ -129,7 +133,7 @@ public class AnalysisScheduledTaskConfig {
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
 				cleanupAnalysisSubmissionCondition(), galaxyJobErrorsService, jobErrorRepository, emailController,
-				workflowsService, galaxyHistoriesService);
+				analysisWorkspaceService);
 	}
 
 	/**
