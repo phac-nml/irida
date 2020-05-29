@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -386,5 +388,26 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		
 		return new Analysis(analysisId, analysisOutputFiles, analysisType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean outputFilesExist(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
+		boolean result;
+		IridaWorkflow flow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
+		IridaWorkflowDescription workflowDescription = flow.getWorkflowDescription();
+		List<IridaWorkflowOutput> workflowDescriptionOutputs = workflowDescription.getOutputs();
+
+		List<HistoryContents> historyContents = galaxyHistoriesService.showHistoryContents(analysisSubmission.getRemoteAnalysisId());
+
+		result = workflowDescriptionOutputs.stream().allMatch( workflowOutput->
+				historyContents.stream().map(HistoryContents::getName).anyMatch( historyContentName->
+						historyContentName.equals(workflowOutput.getFileName())
+				)
+		);
+
+		return result;
 	}
 }
