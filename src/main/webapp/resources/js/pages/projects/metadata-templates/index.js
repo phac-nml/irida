@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-templates";
-import { Avatar, Button, List, Space, Tag, Typography } from "antd";
+import { Avatar, Button, List, Tag, Typography } from "antd";
 import {
   IconDownloadFile,
   IconMetadataTemplate,
@@ -39,7 +39,9 @@ function ProjectMetadataTemplates() {
             <List.Item.Meta
               avatar={<Avatar icon={<IconMetadataTemplate />} />}
               title={
-                <Space>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
                   <a
                     href={setBaseUrl(
                       `/projects/${window.project.id}/metadata-templates/${item.id}`
@@ -50,7 +52,7 @@ function ProjectMetadataTemplates() {
                   <Tag>
                     {i18n("ProjectMetadataTemplates.fields", item.numFields)}
                   </Tag>
-                </Space>
+                </div>
               }
               description={item.description}
             />
