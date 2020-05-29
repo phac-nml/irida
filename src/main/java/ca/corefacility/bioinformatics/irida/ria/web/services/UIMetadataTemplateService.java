@@ -12,6 +12,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
+/**
+ * Service for Metadata Templates in the user interface
+ */
 @Component
 public class UIMetadataTemplateService {
 	private final ProjectService projectService;
@@ -23,9 +26,17 @@ public class UIMetadataTemplateService {
 		this.templateService = templateService;
 	}
 
+	/**
+	 * Get a list of {@link ProjectMetadataTemplate} for a specific {@link Project}
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 * @return {@link List} of {@link ProjectMetadataTemplate}
+	 */
 	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
-		return joins.stream().map(ProjectMetadataTemplate::new).collect(Collectors.toList());
+		return joins.stream()
+				.map(ProjectMetadataTemplate::new)
+				.collect(Collectors.toList());
 	}
 }

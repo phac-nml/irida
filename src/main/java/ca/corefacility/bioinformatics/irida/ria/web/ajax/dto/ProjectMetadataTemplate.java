@@ -5,6 +5,9 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 
+/**
+ * Used to return details about a metadata template associated with a project.
+ */
 public class ProjectMetadataTemplate {
 	private final Long id;
 	private final String label;
