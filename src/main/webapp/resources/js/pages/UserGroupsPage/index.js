@@ -11,6 +11,8 @@ the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
+import { RolesProvider } from "../../contexts";
+import { getUserGroupRoles } from "../../apis/users/groups";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>
@@ -39,10 +41,12 @@ export function UserGroups() {
         </div>
       }
     >
-      <Router style={{ height: "100%" }}>
-        <UserGroupsPage path={setBaseUrl("/groups")} />
-        <UserGroupsDetailsPage path={setBaseUrl("/groups/:id")} />
-      </Router>
+      <RolesProvider rolesFn={getUserGroupRoles}>
+        <Router style={{ height: "100%" }}>
+          <UserGroupsPage path={setBaseUrl("/groups")} />
+          <UserGroupsDetailsPage path={setBaseUrl("/groups/:id")} />
+        </Router>
+      </RolesProvider>
     </Suspense>
   );
 }

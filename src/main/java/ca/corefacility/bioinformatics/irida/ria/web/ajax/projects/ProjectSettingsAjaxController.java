@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -12,7 +12,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;

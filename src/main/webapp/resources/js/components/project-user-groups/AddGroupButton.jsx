@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Form,
@@ -8,33 +8,35 @@ import {
   Select,
   Typography,
 } from "antd";
-import {
-  addMemberToProject,
-  getAvailableUsersForProject,
-} from "../../apis/projects/members";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
+import { useRoles } from "../../contexts/roles-context";
+import {
+  addUserGroupToProject,
+  getAvailableGroupsForProject,
+} from "../../apis/projects/user-groups";
 import { SPACE_XS } from "../../styles/spacing";
-import { PagedTableContext } from "../ant.design/PagedTable";
-import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
 
 const { Option } = Select;
 const { Text } = Typography;
 
 /**
- * React component that adds a button to open a modal to add a new member
- * to a project.  User can search for a user by first name, last name or
- * username, and select the project role for the user.
+ * React component to add render a Button to add a user group to a project.
+ * @param {string} defaultRole button default
+ * @param {function} onGroupAdded what to do after the group is added
  * @returns {*}
  * @constructor
  */
-export function AddMembersButton() {
+export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
    */
-  const userRef = useRef();
-  const { roles } = useContext(ProjectRolesContext);
-  const { updateTable } = useContext(PagedTableContext);
+  const groupRef = useRef();
+
+  /*
+  Get a list of project roles
+   */
+  const { roles } = useRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -44,12 +46,12 @@ export function AddMembersButton() {
   /*
   The identifier for the currently selected user from the user input
    */
-  const [userId, setUserId] = useState();
+  const [groupId, setGroupId] = useState(undefined);
 
   /*
   The value of the currently selected role from the role input
    */
-  const [role, setRole] = useState("PROJECT_USER");
+  const [role, setRole] = useState(defaultRole);
 
   /*
   Value to send to the server to query for a list of potential users.
@@ -78,22 +80,12 @@ export function AddMembersButton() {
   });
 
   /*
-  Watch for changes to the forms visibility, when it becomes visible
-  set keyboard focus onto the user name input.
-   */
-  useEffect(() => {
-    if (visible) {
-      setTimeout(() => userRef.current.focus(), 100);
-    }
-  }, [visible]);
-
-  /*
   Watch for changes to the debounced entered value for the user search.
   Once it changes send a request for filtered users.
    */
   useEffect(() => {
     if (debouncedQuery) {
-      getAvailableUsersForProject(debouncedQuery).then((data) =>
+      getAvailableGroupsForProject(debouncedQuery).then((data) =>
         setResults(data)
       );
     } else {
@@ -102,62 +94,68 @@ export function AddMembersButton() {
   }, [debouncedQuery]);
 
   /*
+  Watch for changes to the forms visibility, when it becomes visible
+  set keyboard focus onto the user name input.
+   */
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+      setTimeout(() => groupRef.current.focus(), 100);
+    }
+  }, [form, visible]);
+
+  /*
+  Add the user group
+   */
+  const addUserGroup = () => {
+    addUserGroupToProject({ groupId, role }).then((message) => {
+      onGroupAdded();
+      notification.success({ message });
+      form.resetFields();
+      setVisible(false);
+    });
+  };
+
+  /*
   Before rendering format the results into Select.Option
    */
   const options = results.map((u) => (
     <Option className="t-new-member" key={u.identifier}>
       <Text style={{ marginRight: SPACE_XS }}>{u.label}</Text>
-      <Text type="secondary">{u.username}</Text>
     </Option>
   ));
 
-  /**
-   * Called when the user clicks the ok button.
-   */
-  const addUserToProject = () => {
-    addMemberToProject({ id: userId, role })
-      .then((message) => {
-        updateTable();
-        notification.success({ message });
-        setVisible(false);
-      })
-      .catch((message) => notification.error({ message }));
-  };
-
   return (
     <>
-      <Button className="t-add-member-btn" onClick={() => setVisible(true)}>
-        {i18n("AddMemberButton.label")}
+      <Button onClick={() => setVisible(true)}>
+        {i18n("AddGroupButton.label")}
       </Button>
       <Modal
-        className="t-add-member-modal"
-        visible={visible}
-        okButtonProps={{ disabled: typeof userId === "undefined" }}
         onCancel={() => setVisible(false)}
-        title={i18n("AddMemberButton.modal.title")}
-        onOk={addUserToProject}
-        okText={i18n("AddMemberButton.modal.okText")}
+        visible={visible}
+        onOk={addUserGroup}
+        okText={i18n("AddGroupButton.group.okText")}
       >
-        <Form layout="vertical" form={form} initialValues={{ role }}>
+        <Form form={form} layout="vertical" initialValues={{ role }}>
           <Form.Item
-            label={i18n("AddMemberButton.modal.user-label")}
-            help={i18n("AddMemberButton.modal.user-help")}
+            label={i18n("AddGroupButton.group.label")}
+            help={i18n("AddGroupButton.group.label-help")}
             name="user"
           >
             <Select
-              ref={userRef}
+              ref={groupRef}
               showSearch
               notFoundContent={null}
               onSearch={setQuery}
-              onChange={setUserId}
+              onChange={setGroupId}
               style={{ width: "100%" }}
-              value={userId}
+              value={groupId}
               filterOption={false}
             >
               {options}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("AddMemberButton.modal.role")} name="role">
+          <Form.Item label={i18n("AddGroupButton.group.role")} name="role">
             <Radio.Group
               style={{ display: "flex" }}
               onChange={(e) => setRole(e.target.value)}
