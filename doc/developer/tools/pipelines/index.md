@@ -117,11 +117,9 @@ output
 
 ### 3.1.1 Workflows with multiple of the same tool
 
-When building a plugin with `wf-ga2xml` it will assign the `tool_id` field from `irida_workflow_structure.ga` to the `toolId` `toolParameter` field in `irida_workflow.xml`.
+When building a plugin with `wf-ga2xml` where you have multiple of the same tool, the `--uuid-as-toolid` is needed.
 
-This creates a problem with multiple tools that share the same `toolId`
-
-You will need to edit the `irida_workflow.xml` file to replace the `toolId` fields with the `uuid` from the corresponding tool in the `irida_workflow_structure.ga` file.
+You will also need to ensure that all output files you want from your workflow have unique file names. This can be done in galaxy when creating the workflow.
 
 ## 3.2. Write IRIDA workflow plugin
 
