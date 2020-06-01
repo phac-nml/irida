@@ -3,6 +3,7 @@ Changes
 
 20.05 to 20.09
 --------------
+* [UI] Updated project user groups to use Ant Design.
 
 20.01 to 20.05
 --------------

@@ -20,10 +20,8 @@ public class ProjectMembersControllerTest {
 	// Services
 	private ProjectService projectService;
 	private UserService userService;
-	private UserGroupService userGroupService;
 	private ProjectControllerUtils projectUtils;
 	private ProjectTestUtils projectTestUtils;
-	private MessageSource messageSource;
 	private static final String USER_NAME = "testme";
 
 	ProjectMembersController controller;
@@ -33,9 +31,7 @@ public class ProjectMembersControllerTest {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		messageSource = mock(MessageSource.class);
-		userGroupService = mock(UserGroupService.class);
-		controller = new ProjectMembersController(projectUtils, projectService, userGroupService, messageSource);
+		controller = new ProjectMembersController(projectUtils, projectService);
 		projectTestUtils = new ProjectTestUtils(projectService, userService);
 
 		projectTestUtils.mockSidebarInfo();
@@ -49,6 +45,6 @@ public class ProjectMembersControllerTest {
 		assertEquals("Gets the correct project members page", "projects/settings/pages/members",
 				controller.getProjectUsersPage(model, principal, projectId));
 		
-		assertEquals("Should be the memebers subpage", model.get("page"), "members");
+		assertEquals("Should be the members subpage", model.get("page"), "members");
 	}
 }

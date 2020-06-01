@@ -11,6 +11,7 @@ import { PagedTableContext } from "../ant.design/PagedTable";
  */
 export function RemoveTableItemButton({
   onRemove,
+  onRemoveSuccess = () => {},
   tooltipText = "",
   confirmText = "",
 }) {
@@ -20,8 +21,10 @@ export function RemoveTableItemButton({
    * Handle the successful removal of the current item
    * @param message
    */
-  const removeSuccess = (message) =>
-    notification.success({ message, className: "t-remove-success" });
+  const removeSuccess = (message) => {
+    onRemoveSuccess();
+    notification.success({message, className: "t-remove-success"})
+  };
 
   /**
    * Make the request to remove the item from the project.
