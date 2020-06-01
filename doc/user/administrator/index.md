@@ -201,7 +201,7 @@ After being given the client credentials, go to the "Remote IRIDA Connections" p
 
 ![Remote API page](images/remote-api-dash.png)
 
-The Remote Connections page will display all currently available Remote Connections and their connection status with an IRIDA instance.
+The Remote Connections page will display all currently available Remote Connections, and their connection status with an IRIDA instance.
 
 To add a new connection, click the "Add Remote Connection" button:
 
@@ -228,17 +228,10 @@ Setting Analysis Submission Priority
 
 Administrators have the ability to set the priority of analysis submissions in IRIDA.  This feature can be used to ensure important analyses are run in a timely fashion when the analysis queue is filled by routine or other low priority analyses.  By default all manually submitted submissions will have a priority of `MEDIUM`, whereas all automated submissions (such as automated assemblies and automated SISTR) will have `LOW` priority.
 
-To update the priority of a submission, first view the submission page.  The current priority will be displayed in the info section
+To update the priority of a submission, first view the analysis page.  The current priority will be displayed on the `Details` page. To edit the priority, click the select box under **Priority**:
 
-![Analysis priority.](images/analysis-priority.png)
+![Analysis edit button.](images/analysis-priority-edit.png)
 
-To edit the priority click the pencil icon:
-
-![Analysis edit button.](images/analysis-edit-button.png)
-
-In this menu you can edit the priority of the analysis submission:
-
-![Analysis priority edit.](images/analysis-priority-edit.png)
 
 Note that a priority change will only effect analyses in the `Queued` state.  The analysis engine will pick higher priority analyses to begin running first, but currently running jobs will not be bumped by a higher priority analysis.  
 

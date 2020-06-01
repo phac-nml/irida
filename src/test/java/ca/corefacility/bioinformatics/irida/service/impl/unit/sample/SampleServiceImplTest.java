@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -15,43 +8,49 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
-import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
+import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import org.mockito.ArgumentCaptor;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
+ * 
  */
 public class SampleServiceImplTest {
 
@@ -87,7 +86,7 @@ public class SampleServiceImplTest {
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
 				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
-				metadataEntryRepository, validator);
+				metadataEntryRepository, null, validator);
 	}
 
 	@Test
@@ -144,7 +143,7 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin[] s_so_joins = new SampleSequencingObjectJoin[SIZE];
 		SampleSequencingObjectJoin[] s_so_original = new SampleSequencingObjectJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
-
+		
 		List<Sample> mergeSamples = new ArrayList<>();
 
 		for (long i = 0; i < SIZE; i++) {
@@ -228,8 +227,9 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the coverage from a sample with no sequence files.
-	 *
+	 * Tests out successfully getting the coverage from a sample with no
+	 * sequence files.
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -244,8 +244,9 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the coverage from a sample with a sequence file.
-	 *
+	 * Tests out successfully getting the coverage from a sample with a sequence
+	 * file.
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 * @throws AnalysisAlreadySetException
 	 */
@@ -259,10 +260,8 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder()
-				.executionManagerAnalysisId("id")
-				.totalBases(1000L)
-				.build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
@@ -274,7 +273,7 @@ public class SampleServiceImplTest {
 
 	/**
 	 * Tests out passing an invalid reference length.
-	 *
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test(expected = IllegalArgumentException.class)
@@ -283,8 +282,9 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the total bases from a sample with no sequence files.
-	 *
+	 * Tests out successfully getting the total bases from a sample with no
+	 * sequence files.
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -299,14 +299,15 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the total bases from a sample with one sequence file.
-	 *
+	 * Tests out successfully getting the total bases from a sample with one
+	 * sequence file.
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessOne()
-			throws SequenceFileAnalysisException, AnalysisAlreadySetException {
+	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException,
+			AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
@@ -315,10 +316,8 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder()
-				.executionManagerAnalysisId("id")
-				.totalBases(1000L)
-				.build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
@@ -329,14 +328,15 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the total bases from a sample with two sequence files.
-	 *
+	 * Tests out successfully getting the total bases from a sample with two
+	 * sequence files.
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessTwo()
-			throws SequenceFileAnalysisException, AnalysisAlreadySetException {
+	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException,
+			AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
@@ -348,16 +348,12 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf2));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder()
-				.executionManagerAnalysisId("id")
-				.totalBases(1000L)
-				.build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder()
-				.executionManagerAnalysisId("id2")
-				.totalBases(1000L)
-				.build();
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder().executionManagerAnalysisId("id2")
+				.totalBases(1000L).build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
@@ -369,8 +365,9 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out failing to get the total bases from a sample with one sequence file due to missing FastQC
-	 *
+	 * Tests out failing to get the total bases from a sample with one sequence
+	 * file due to missing FastQC
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test(expected = SequenceFileAnalysisException.class)
@@ -389,8 +386,9 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out failing to get the total bases from a sample with one sequence file due to too many FastQC
-	 *
+	 * Tests out failing to get the total bases from a sample with one sequence
+	 * file due to too many FastQC
+	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test(expected = SequenceFileAnalysisException.class)

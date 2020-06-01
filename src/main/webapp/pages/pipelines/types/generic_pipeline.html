@@ -278,16 +278,15 @@
                                             </th:block>
 
                                             <!--/* (15-03-26 ) SINGLE END DATA */-->
-                                            <th:block th:if="${hasSingles}" th:with="files=${sample.files.single_end}">
-                                                <tr class="single_end" th:each="join : ${files}"
-                                                    th:with="file=${join.getObject()}">
+                                            <th:block th:if="${hasSingles}" th:with="singles=${sample.files.single_end}">
+                                                <tr class="single_end" th:each="file : ${singles}">
                                                     <td>
                                                         <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
                                                         <input type="radio" data-type="single_end"
                                                                th:value="${file.getId()}" th:name="${sample.id}"
                                                                th:checked="${!hasPaired and fileStat.first}"/>
                                                     </td>
-                                                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='single',relative='false')"></td>
+                                                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='false')"></td>
                                                 </tr>
                                             </th:block>
                                         </table>
@@ -313,7 +312,7 @@
             </div>
 
             <div class="col-lg-3 col-sm-3" ng-switch="pipeline.loading">
-                <div id="queue-root" style="margin: 10px 0; display: flex; justify-content: center"></div>
+		<div id="queue-root" style="margin: 10px 0; display: flex; justify-content: center"></div>
                 <!-- BUTTONS ON THE SIDE -->
                 <div ng-switch-when="false" class="ng-cloak text-center">
                     <h2 th:if="${automatedProject == null}" th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
@@ -343,7 +342,7 @@
                             th:href="@{/analysis}"
                             th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
                             </a>
-                            <br/></br/>
+                            <br/><br/>
                             <button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
                                     ng-click="pipeline.clearAndRedirect()"
                                     th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!

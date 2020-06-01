@@ -1,13 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
@@ -42,6 +35,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link RESTProjectSamplesController}.
@@ -131,8 +127,7 @@ public class RESTProjectSamplesControllerTest {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 
-		@SuppressWarnings("unchecked")
-		List<Sample> relationships = Lists.newArrayList(s);
+		@SuppressWarnings("unchecked") List<Sample> relationships = Lists.newArrayList(s);
 
 		when(sampleService.getSamplesForProjectShallow(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
@@ -144,15 +139,16 @@ public class RESTProjectSamplesControllerTest {
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
-		@SuppressWarnings("unchecked")
-		ResourceCollection<Sample> samples = (ResourceCollection<Sample>) o;
+		@SuppressWarnings("unchecked") ResourceCollection<Sample> samples = (ResourceCollection<Sample>) o;
 		assertEquals(1, samples.size());
 		List<Link> resourceLinks = samples.getLinks();
 		assertEquals(1, resourceLinks.size());
-		Link self = resourceLinks.iterator().next();
+		Link self = resourceLinks.iterator()
+				.next();
 		assertEquals("self", self.getRel());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
-		Sample resource= samples.iterator().next();
+		Sample resource = samples.iterator()
+				.next();
 		assertEquals(s.getSampleName(), resource.getSampleName());
 		//assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
@@ -160,7 +156,8 @@ public class RESTProjectSamplesControllerTest {
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE,
-				RESTSampleMetadataController.METADATA_REL);
+				RESTSampleMetadataController.METADATA_REL, RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES,
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FAST5);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));

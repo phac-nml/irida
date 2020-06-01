@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -125,7 +126,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			sequenceFileRepository.saveMetadata(sequenceFile);
 		} catch (Exception e) {
-			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
+			logger.error("FastQC failed to process the sequence file: " + e.getMessage());
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
 	}
@@ -244,5 +245,19 @@ public class FastqcFileProcessor implements FileProcessor {
 	@Override
 	public Boolean modifiesFile() {
 		return false;
+	}
+
+	@Override
+	public boolean shouldProcessFile(SequencingObject sequencingObject) {
+		//we don't want to run the processor for zipped or unknown fast5 files.  It will just fail and create a qc entry even though it did what it was supposed to
+		if (sequencingObject instanceof Fast5Object) {
+			Fast5Object fast5 = (Fast5Object) sequencingObject;
+			if (!fast5.getFast5Type()
+					.equals(Fast5Object.Fast5Type.SINGLE)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

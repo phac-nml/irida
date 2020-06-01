@@ -1,4 +1,5 @@
 import angular from "angular";
+import "angular-ui-bootstrap";
 import "./../../modules/utilities/file.utils";
 import { showNotification } from "../../modules/notifications";
 
@@ -140,7 +141,7 @@ function FileUploadCtrl($timeout, fileService) {
 }
 
 const refModule = angular
-  .module("References", ["file.utils"])
+  .module("References", ["file.utils", "ui.bootstrap"])
   .service("ProjectFileService", ["$rootScope", "$http", ProjectFileService])
   .service("ReferenceFileService", [
     "$rootScope",

@@ -1,43 +1,53 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-import com.sksamuel.diffpatch.DiffMatchPatch;
-import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+
+import com.sksamuel.diffpatch.DiffMatchPatch;
+import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
+
 /**
-* 	Utility class for pairing up sequence files with
-*	common prefixes and expected characters for forward
-*	and reverse sequence files. 
-*/
+ * Utility class for pairing up sequence files with
+ * common prefixes and expected characters for forward
+ * and reverse sequence files.
+ */
 
 public class SamplePairer {
 	private static final Logger logger = LoggerFactory.getLogger(SamplePairer.class);
 
-	private static DiffMatchPatch diff = new DiffMatchPatch();
-	
-	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
-	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
+	private static final DiffMatchPatch diff = new DiffMatchPatch();
+
+	private static final String[] forwardMatches = SequenceFilePair.forwardMatches;
+	private static final String[] reverseMatches = SequenceFilePair.reverseMatches;
+
+	private final Map<String, List<MultipartFile>> pairedFiles;
+	private final List<MultipartFile> singleFiles;
+
+	public SamplePairer(List<MultipartFile> files) {
+		this.singleFiles = new ArrayList<>();
+		this.pairedFiles = new HashMap<>();
+
+		organizeFiles(files);
+	}
 
 	/**
 	 * Organize files according to whether they should be paired up
 	 *
-	 * @param files
-	 *            List of {@link MultipartFile}s uploaded
+	 * @param files List of {@link MultipartFile}s uploaded
 	 * @return Map of {@link Path}s to uploaded sequence files,
-	 * 			where the key is the common prefix of two paired files,
-	 * 			or the full file name of a single sequence file
+	 * where the key is the common prefix of two paired files,
+	 * or the full file name of a single sequence file
 	 */
-	private static Map<String, List<MultipartFile>> organizeFiles(List<MultipartFile> files) {
+	private Map<String, List<MultipartFile>> organizeFiles(List<MultipartFile> files) {
 
 		Map<String, List<MultipartFile>> organizedFiles = new HashMap<>();
-
 
 		MultipartFile file1, file2;
 
@@ -70,27 +80,30 @@ public class SamplePairer {
 							//the first file is the "reverse" sequence file and the last file is
 							//the "forward" sequence file. This long condition checks for that
 							//situation.
-							if ((Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
-									&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x)))
-									|| (Stream.of(reverseMatches).anyMatch(x -> file1ID.contains(x))
-									&& Stream.of(forwardMatches).anyMatch(x -> file2ID.contains(x)))) {
-								filePair = new MultipartFile[]{file1, file2};
+							if ((Stream.of(forwardMatches)
+									.anyMatch(x -> file1ID.contains(x)) && Stream.of(reverseMatches)
+									.anyMatch(x -> file2ID.contains(x))) || (Stream.of(reverseMatches)
+									.anyMatch(x -> file1ID.contains(x)) && Stream.of(forwardMatches)
+									.anyMatch(x -> file2ID.contains(x)))) {
+								filePair = new MultipartFile[] { file1, file2 };
 							}
 						}
 
 						if (filePair != null) {
 							pair = true;
-							organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
+							pairedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
+
 							logger.trace("Uploaded files [" + filePair[0].getName() + ", " + filePair[1].getName()
-								+ "] were paired.");
+									+ "] were paired.");
 							wasChecked.add(file2);
 						}
 					}
 				}
 				if (!pair) {
-					MultipartFile[] singleFile = {file1};
-					organizedFiles.put(file1.getOriginalFilename(), Arrays.asList(singleFile));
-					logger.trace("Uploaded file [" + file1.getName() +"] was not paired");
+					MultipartFile[] singleFile = { file1 };
+					singleFiles.addAll(Arrays.asList(singleFile));
+
+					logger.trace("Uploaded file [" + file1.getName() + "] was not paired");
 				}
 			}
 			wasChecked.add(file1);
@@ -102,46 +115,20 @@ public class SamplePairer {
 	/**
 	 * Get {@link Path}s to all paired sequence files
 	 *
-	 * @param files
-	 *            List of {@link MultipartFile}s uploaded
+	 * @param files List of {@link MultipartFile}s uploaded
 	 * @return Map of {@link Path}s to paired sequence files.
 	 */
-	public static Map<String, List<MultipartFile>> getPairedFiles(List<MultipartFile> files) {
-
-		Map<String, List<MultipartFile>> pairedFiles = new HashMap<>();
-
-		Map<String, List<MultipartFile>> allFiles = organizeFiles(files);
-
-		for (String key : allFiles.keySet()) {
-			List<MultipartFile> item = allFiles.get(key);
-			if (item.size() > 1) {
-				pairedFiles.put(key, item);
-			}
-		}
-
+	public Map<String, List<MultipartFile>> getPairedFiles(List<MultipartFile> files) {
 		return pairedFiles;
 	}
 
 	/**
 	 * Get {@link Path}s to all single sequence files
 	 *
-	 * @param files
-	 *            List of {@link MultipartFile}s uploaded
+	 * @param files List of {@link MultipartFile}s uploaded
 	 * @return List of {@link Path}s to single sequence files.
 	 */
-	public static List<MultipartFile> getSingleFiles(List<MultipartFile> files) {
-
-		List<MultipartFile> singleFilePaths = new ArrayList<>();
-
-		Map<String, List<MultipartFile>> allFiles = organizeFiles(files);
-
-		for (String key : allFiles.keySet()) {
-			List<MultipartFile> item = allFiles.get(key);
-			if (item.size() == 1) {
-				singleFilePaths.add(item.get(0));
-			}
-		}
-
-		return singleFilePaths;
+	public List<MultipartFile> getSingleFiles(List<MultipartFile> files) {
+		return singleFiles;
 	}
 }

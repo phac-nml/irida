@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{analysis.title(${analysisSubmission.getName()})}">ANALYSIS RESULTS</title>
+    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
+
+    <script th:inline="javascript">
+      window.PAGE = {
+        analysis: [[${analysisSubmission}]],
+        analysisName: [[${analysisSubmission.getName()}]],
+        analysisState: [[${analysisSubmission.getAnalysisState()}]],
+        analysisType: [[${analysisType}]],
+        isAdmin: [[${isAdmin}]],
+        mailConfigured: [[${mailConfigured}]],
+        previousState: [[${previousState}]],
+        duration: [[${duration}]],
+      };
+
+      window.translations = [{
+        "AnalysisShare.saveResultsMessage": /*[[#{workflow.label.share-analysis-samples.__${analysisType}__}]]*/ "",
+        "AnalysisDetailsPriority.LOW": /*[[#{AnalysisDetailsPriority.LOW}]]*/ "",
+        "AnalysisDetailsPriority.MEDIUM": /*[[#{AnalysisDetailsPriority.MEDIUM}]]*/ "",
+        "AnalysisDetailsPriority.HIGH": /*[[#{AnalysisDetailsPriority.HIGH}]]*/ ""
+      }]
+    </script>
+  </head>
+  <body>
+    <div id="root" style="height: 100%;" layout:fragment="page">
+      <!--
+               This is a DOM element for React to render the analysis details into.
+               See  src/main/webapp/resources/js/pages/analysis/components/Analysis.jsx
+            -->
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/analysis.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>
+

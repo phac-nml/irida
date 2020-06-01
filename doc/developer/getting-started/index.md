@@ -27,12 +27,12 @@ Important links
 Languages and Libraries
 -----------------------
 
-IRIDA is a Java application developed using Java 8.
+IRIDA is a Java application developed using Java 11.
 
 #### Spring framework
 {:.no_toc}
 
-Documentation: [http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/](http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/)
+Documentation: <https://docs.spring.io/spring-framework/docs/5.2.2.RELEASE/spring-framework-reference/>
 
 IRIDA uses the Spring Framework as the main backbone of the application.  Spring is used to assist with many of the main functions of the application including configuration, dependency injection, MVC, REST API, Java persistance API management, and more.
 
@@ -97,13 +97,13 @@ An (incomplete) set of instructions for getting the IRIDA service layer and web 
 * Clone IRIDA from the IRIDA [GitHub][].
 * Install the following dependencies from your chosen package manager:
   * MariaDB
-  * Java 8 JDK
+  * Java 11 JDK
   * Apache Maven
 * Run the library installation script in the `lib/` directory:
 
 ```
 cd irida/lib/
-bash install-libs.sh
+./install-libs.sh
 ```
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 * Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
@@ -141,7 +141,7 @@ Running and building IRIDA
 
 #### Running a development server
 
-An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the databse using test data.
+An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the database using test data. A newly created development database will contain the profile `admin`, with password `password1`, that can be used to log in to IRIDA.
 
 Running the `run.sh` without arguments script is equivalent to running:
 

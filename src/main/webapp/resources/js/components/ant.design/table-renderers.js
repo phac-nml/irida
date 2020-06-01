@@ -1,7 +1,6 @@
 import React from "react";
-import { Icon } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { blue6 } from "../../styles/colors";
+import { IconTableFilter } from "../icons/Icons";
 
 export const idColumnFormat = () => ({
   dataIndex: "id",
@@ -14,17 +13,12 @@ export const nameColumnFormat = ({ url }) => {
   return {
     dataIndex: "name",
     key: "name",
+    width: 200,
     sorter: true,
     ellipsis: true,
+    className: "t-name-col",
     filterIcon(filtered) {
-      return (
-        <Icon
-          type="filter"
-          theme="filled"
-          style={{ color: filtered ? blue6 : undefined }}
-          className="t-name"
-        />
-      );
+      return <IconTableFilter className="t-name" filtered={filtered} />;
     },
     render(name, data) {
       return (
@@ -36,8 +30,10 @@ export const nameColumnFormat = ({ url }) => {
   };
 };
 
-export const dateColumnFormat = () => ({
+export const dateColumnFormat = ({ className = "" } = {}) => ({
   sorter: true,
   width: 230,
-  render: date => formatInternationalizedDateTime(date)
+  render: date => (
+    <span className={className}>{formatInternationalizedDateTime(date)}</span>
+  )
 });

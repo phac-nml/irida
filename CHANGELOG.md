@@ -1,9 +1,57 @@
 Changes
 =======
 
-20.01 to 20.05
+20.05 to 20.09
 --------------
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+
+20.01 to 20.05
+--------------
+* [UI/Developer]: Removed webpack progress.
+* [UI]: Updated clients listing table to use `ant.design` tables.
+* [UI]: Sending email to sync user when a remote project's token expires.
+* [UI]: Fixed bug that prevented server side filtering for analysis name on analyses table. (20.01.01)
+* [UI]: Updated admin announcements table and creation to use `ant.design`.
+* [UI]: Fixed bug that preventing using the `ngs-linker` script with >= 330 samples.
+* [UI]: Updated breadcrumbs to have cleaner look and feel and include the actual project and sample names.
+* [UI/Developer]: Updated to `react` 16.13.0.
+* [Developer]: Added Apache 2.0 licence information to `package.json`.
+* [UI]: Fixed UI bugs preventing users from selecting single-end input files for analysis pipelines. (20.01.2)
+* [UI]: Icon cleanup preparing for upgrade to Ant Design v4.
+* [UI/Developer]: Remove `husky` because running into issues with `prettier` formatting on staged files..
+* [API/Developer]: Changed the `SequencingRun` type to allow a user-defined `sequencerType` instead of it being hardcoded to `MiSeq`.
+* [Developer]: Updated maven `jetty` plugin to version 9.4.24.v20191120.
+* [UI]: Updated Remote API Listing page to use Ant Design.
+* [UI]: Updated Administrator Users page to use Ant Design.
+* [UI]: Removed DataTables from overrepresented sequence file and run files page.
+* [REST]: Added a REST API endpoint to read assemblies for samples.
+* [UI]: Added selection for linker script to get assemblies in project/samples page.
+* [Developer]: `bower` completely removed.
+* [UI/Developer]: Updated analysis results page with Ant Design and React.
+* [UI]: Assemblies can now be uploaded through the sample files page. See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
+* [UI/Developer]: Updated to `Prettier` 2.0.2
+* [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
+* [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
+* [UI/Developer]: New login page with developer ability to override template.
+* [UI/Developer]: Added excel file viewer to analysis outputs view.
+* [UI]: Added selection to export assemblies to Galaxy.
+* [UI]: Updated Project > Members page to remove `DataDables` and use Ant Design.
+* [UI/Developer]: Added image file viewer to analysis outputs view.
+* [UI]: Moved project > details into the project > settings panel.
+* [UI]: Updated Project navigation to use Ant Design menu.
+* [UI/Developer]: Updated to JQuery v3.5.1 to fix security vulnerability.
+* [UI]: Fixed bug preventing the upload of `*.fastqc.gz` on Mac computers.
+* [UI]: Update Groups page to remove `DataTables` and use Ant Design.
+* [UI]: Update Groups details page to use Ant Design and remove `DataTables`.
+* [UI]: Fixed bug preventing display of execution tools for first file if a provenance for another file had been viewed.
+* [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
+* [Developer/UI]: Upgraded to FastQC 0.11.9.
+* [UI]: Added FAST5 format support.  FAST5 support is in beta and is subject to change.  See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
+* [UI]: Updated user groups to use Ant Design.
+* [UI]: Fixed bug preventing advanced visualization view page load.
+* [UI/Developer]: Updated analysis urls to work with a context path.
+* [UI]: Outputs and Tree view now span the full width of the page.
+* [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
 
 19.09 to 20.01
 --------------

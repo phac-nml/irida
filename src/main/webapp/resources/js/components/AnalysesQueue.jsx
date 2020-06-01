@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Tag, Tooltip } from "antd";
+import { Alert, Tooltip } from "antd";
 import { fetchAnalysesQueueCounts } from "./../apis/analysis/analysis";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRunning } from "@fortawesome/free-solid-svg-icons";
 import { SPACE_XS } from "../styles/spacing";
 import styled from "styled-components";
 import { formatNumber } from "../utilities/number-utilities";
-import { blue4 } from "../styles/colors";
+import { blue4, blue6 } from "../styles/colors";
+import { IconCloudServer } from "./icons/Icons";
 
-const LabelTD = styled.td`
+const Label = styled.span`
   font-weight: bold;
 `;
 
-const ValueTD = styled.td`
+const Value = styled.span`
   width: 50px;
   text-align: right;
   font-family: monospace;
@@ -37,44 +36,53 @@ export function AnalysesQueue({}) {
 
   return (
     <Tooltip title={i18n("AnalysesQueue.title")} placement={"left"}>
-      <Tag color={"blue"}>
-        <div
-          style={{
-            width: 150,
-            display: "flex",
-            justifyContent: "space-between",
-            alignContent: "center"
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faRunning}
-            size="2x"
-            fixedWidth
+      <Alert
+        style={{ padding: 0 }}
+        type="info"
+        message={
+          <div
             style={{
-              flex: 1,
-              display: "inline-block",
-              margin: `${SPACE_XS} 0`
+              width: 160,
+              display: "flex",
+              alignContent: "center",
+              color: blue6
             }}
-          />
-
-          <table>
-            <tbody>
-              <tr style={{ borderBottom: `1px solid ${blue4}` }}>
-                <LabelTD>{i18n("AnalysesQueue.running")}</LabelTD>
-                <ValueTD className="t-running-counts">
+          >
+            <IconCloudServer
+              style={{ fontSize: "2em", flex: 1, padding: SPACE_XS }}
+            />
+            <div
+              style={{
+                display: "inline-block",
+                width: 130,
+                marginRight: SPACE_XS
+              }}
+            >
+              <div
+                style={{
+                  borderBottom: `1px solid ${blue4}`,
+                  display: "flex",
+                  justifyContent: "space-between"
+                }}
+              >
+                <Label>{i18n("AnalysesQueue.running")}</Label>
+                <Value className="t-running-counts">
                   {formatNumber(running)}
-                </ValueTD>
-              </tr>
-              <tr>
-                <LabelTD>{i18n("AnalysesQueue.queued")}</LabelTD>
-                <ValueTD className="t-queue-counts">
-                  {formatNumber(queued)}
-                </ValueTD>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Tag>
+                </Value>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between"
+                }}
+              >
+                <Label>{i18n("AnalysesQueue.queued")}</Label>
+                <Value className="t-queue-counts">{formatNumber(queued)}</Value>
+              </div>
+            </div>
+          </div>
+        }
+      />
     </Tooltip>
   );
 }

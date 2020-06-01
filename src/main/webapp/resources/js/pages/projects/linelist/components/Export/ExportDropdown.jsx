@@ -2,6 +2,8 @@ import React from "react";
 
 import PropTypes from "prop-types";
 import { Button, Dropdown, Menu } from "antd";
+import { SPACE_XS } from "../../../../../styles/spacing";
+import { IconDropDown } from "../../../../../components/icons/Icons";
 
 export function ExportDropDown(props) {
   const onClick = ({ key }) => {
@@ -22,10 +24,7 @@ export function ExportDropDown(props) {
     <Dropdown overlay={menu}>
       <Button tour="tour-export">
         {i18n("linelist.toolbar.export")}
-        <i
-          className="fas fa-chevron-down spaced-left__sm"
-          data-fa-transform="shrink-4"
-        />
+        <IconDropDown style={{ marginLeft: SPACE_XS }} />
       </Button>
     </Dropdown>
   );

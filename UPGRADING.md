@@ -4,8 +4,15 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+20.05 to 20.09
+--------------
+* This upgrade includes changes to the sample-metadata database system.  While implementing this change we encountered issues with the metadata auditing system, so we recommend additional backup steps before performing this upgrade.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+
 20.01 to 20.05
 --------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This version changes the endpoint for creating sequencing runs to allow any type of sequencer.  The legacy `sequencingRun/miseq` endpoint is maintained, but deprecated.  See <https://irida.corefacility.ca/documentation/developer/rest/#creating-sequencing-runs> for more info.
+* Assemblies can now be uploaded to IRIDA rather than just created through an analysis pipeline.  This requires a new filesystem directory configured for files to be stored.  You must add `assembly.file.base.directory` to your `/etc/irida/irida.conf` file and create a new diretory for these files to be stored.
 * This upgrade includes changes to the sample-metadata database system.  While implementing this change we encountered issues with the metadata auditing system, so we recommend additional backup steps before performing this upgrade.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 
 19.09 to 20.01

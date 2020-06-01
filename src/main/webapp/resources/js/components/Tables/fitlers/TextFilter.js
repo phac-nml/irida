@@ -5,6 +5,7 @@ import React from "react";
 import { Button, Input } from "antd";
 import { grey4 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
+import { IconSearch } from "../../icons/Icons";
 
 /**
  * This callback type is `setSelectedKeys` and is used by ant.design table to
@@ -52,11 +53,11 @@ export const TextFilter = ({
         <Button
           type="primary"
           onClick={confirm}
-          icon="search"
           size="small"
           style={{ width: 90 }}
         >
-          Search
+          <IconSearch />
+          {i18n("TextFilter.search")}
         </Button>
       </div>
     </div>

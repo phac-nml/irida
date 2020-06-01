@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
-import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
-import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +16,11 @@ import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.servlet.LocaleResolver;
+
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
+import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
 
 /**
  * Configuration for web security using OAuth2
@@ -55,6 +58,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			web.ignoring()
 					.antMatchers("/node_modules/**")
 					.antMatchers("/dist/**")
+					.antMatchers("/static/**")
 					.antMatchers("/resources/**");
 
 			// @formatter:on

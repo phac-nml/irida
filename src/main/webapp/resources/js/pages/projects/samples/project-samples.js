@@ -17,12 +17,14 @@ import {
   SampleProjectDropdownButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file.utilities";
+import { download } from "../../../utilities/file-utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+
+import "./linker/Linker";
 
 /*
 This is required to use select2 inside a modal.
@@ -66,6 +68,23 @@ const getSelectedIds = () => {
   }
   return ids;
 };
+
+/*
+Hack to get the sample ids from the Linker react component.
+ */
+document.addEventListener(
+  "sample-ids",
+  function(e) {
+    const event = new CustomEvent("sample-ids-return", {
+      detail: {
+        sampleIds: getSelectedIds(),
+        projectId: window.project.id
+      }
+    });
+    document.dispatchEvent(event);
+  },
+  false
+);
 
 /*
 Initialize the sample export menu.

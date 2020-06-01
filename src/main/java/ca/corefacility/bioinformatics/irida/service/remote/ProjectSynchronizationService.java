@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -53,12 +54,13 @@ public class ProjectSynchronizationService {
 	private SingleEndSequenceFileRemoteService singleEndRemoteService;
 	private SequenceFilePairRemoteService pairRemoteService;
 	private RemoteAPITokenService tokenService;
+	private EmailController emailController;
 
 	@Autowired
 	public ProjectSynchronizationService(ProjectService projectService, SampleService sampleService,
 			SequencingObjectService objectService, MetadataTemplateService metadataTemplateService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
-			SequenceFilePairRemoteService pairRemoteService, RemoteAPITokenService tokenService) {
+			SequenceFilePairRemoteService pairRemoteService, RemoteAPITokenService tokenService, EmailController emailController) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -69,6 +71,7 @@ public class ProjectSynchronizationService {
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
 		this.tokenService = tokenService;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -146,6 +149,8 @@ public class ProjectSynchronizationService {
 				project = projectService.read(project.getId());
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
 				projectService.update(project);
+
+				emailController.sendProjectSyncUnauthorizedEmail(project);
 			} catch (Exception e) {
 				logger.debug("An error occurred while synchronizing project " + project.getRemoteStatus().getURL(), e);
 				//re-reading project to get updated version

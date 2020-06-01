@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>20.05-SNAPSHOT</version>
+	<version>20.09-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -581,11 +581,13 @@
 			<artifactId>commons-cli</artifactId>
 			<version>${commons.cli.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>uk.ac.babraham</groupId>
 			<artifactId>fastqc</artifactId>
 			<version>${fastqc.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -667,6 +669,18 @@
 			<artifactId>jvm-breakglass</artifactId>
 			<version>${jvm-breakglass.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${com.google.code.gson.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.monitorjbl/xlsx-streamer -->
+		<dependency>
+			<groupId>com.monitorjbl</groupId>
+			<artifactId>xlsx-streamer</artifactId>
+			<version>${com.monitorjbl.xml.streamer.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -1077,15 +1091,6 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>bower install</id>
-						<goals>
-							<goal>bower</goal>
-						</goals>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
 						<id>yarn build production</id>
 						<goals>
 							<goal>yarn</goal>
@@ -1122,7 +1127,7 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
-		<fastqc.version>0.11.7-nml-custom</fastqc.version>
+		<fastqc.version>0.11.9-nml-custom</fastqc.version>
 		<aspectj.version>1.8.2</aspectj.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
@@ -1161,6 +1166,7 @@
 		<pf4j.version>2.4.0</pf4j.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<javax.activation.version>1.2.0</javax.activation.version>
+		<com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
@@ -1171,7 +1177,7 @@
 		<maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
 		<maven.war.plugin.version>3.2.2</maven.war.plugin.version>
-		<maven.jetty.plugin.version>9.4.17.v20190418</maven.jetty.plugin.version>
+		<maven.jetty.plugin.version>9.4.24.v20191120</maven.jetty.plugin.version>
 		<maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
 		<maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
 		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
@@ -1181,6 +1187,7 @@
 		<node.version>v12.13.0</node.version>
 		<yarn.version>v1.21.1</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
+		<com.google.code.gson.version>2.8.6</com.google.code.gson.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

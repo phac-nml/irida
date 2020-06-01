@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Represents page found at url: /projects/{projectId}/linelist
@@ -24,8 +26,17 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(css = ".template-option--name:first-of-type")
+	@FindBy(className = "ant-select-selection-search")
 	private WebElement templateSelectToggle;
+
+	@FindBy(css = ".ant-modal .ant-select-selection-search")
+	private WebElement modalTemplateSelectToggle;
+
+	@FindBy(className = "ant-select-selection-search-input")
+	private WebElement templateNameInput;
+
+	@FindBy(css = ".ant-modal .ant-select-selection-search-input")
+	private WebElement modalTemplateNameInput;
 
 	@FindBy(className = "template-option--name")
 	private List<WebElement> templateOptions;
@@ -35,9 +46,6 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(className = "t-template-name")
 	private WebElement templateNameInputWrapper;
-
-	@FindBy(className = "ant-select-search__field")
-	private WebElement templateNameInput;
 
 	@FindBy(className = "t-modal-save-template-btn")
 	private WebElement modalSaveTemplateBtn;
@@ -85,14 +93,17 @@ public class ProjectLineListPage extends ProjectPageBase {
 		return headerText.size() - 1;  // -1 for sample name column
 	}
 
-	public void toggleMetadataField (int field) {
-		fieldSwitches.get(field).click();
+	public void toggleMetadataField(int field) {
+		WebElement fieldSwitch = fieldSwitches.get(field);
+		waitForElementToBeClickable(fieldSwitch);
+		fieldSwitch.click();
+		waitForTime(400);
 	}
 
 	public void selectTemplate(String template) {
 		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
-		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
+		waitForElementsVisible(By.className("ant-select-dropdown"));
 		for (WebElement option : templateOptions) {
 			if (option.getText()
 					.equals(template)) {
@@ -101,13 +112,27 @@ public class ProjectLineListPage extends ProjectPageBase {
 		}
 	}
 
-	public void saveMetadataTemplate (String name) {
+	public void selectModalTemplate(String template) {
+		waitForElementToBeClickable(modalTemplateSelectToggle);
+		modalTemplateSelectToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("ant-select-item-option-content")));
+		for (WebElement option : templateOptions) {
+			if (option.getText()
+					.equals(template)) {
+				option.click();
+			}
+		}
+	}
+
+	public void saveMetadataTemplate(String name) {
 		templateSaveBtn.click();
-		waitForElementsVisible(By.className("ant-select-selection__rendered"));
+		waitForElementsVisible(By.className("ant-select-selection-search"));
 		templateNameInputWrapper.click();
-		templateNameInput.sendKeys(name);
+		modalTemplateNameInput.sendKeys(name);
+		modalTemplateNameInput.sendKeys(Keys.ENTER);
 		modalSaveTemplateBtn.click();
-		waitForElementInvisible(By.className("ant-modal-wrap "));
+		waitForElementInvisible(By.className("ant-modal"));
 	}
 
 	public String getCellContents(int rowIndex, String columnName) {
@@ -139,7 +164,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void clearTableFilter() {
-		tableFilterInput.clear();
+		tableFilterInput.sendKeys(Keys.chord(Keys.CONTROL, "a"), "");
 		tableFilterInput.sendKeys(Keys.BACK_SPACE);
 		waitForTime(500);
 	}
@@ -151,7 +176,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public void goToNextTourStage() {
 		waitForTime(500);
-		driver.findElement(By.cssSelector("button[data-tour-elem=\"right-arrow\"]")).click();
+		tourNextButton.click();
 	}
 
 	public void closeTour() {
@@ -160,6 +185,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public int getTourStep() {
+		waitForTime(500);
 		return Integer.parseInt(tourStepBadge.getText());
 	}
 }

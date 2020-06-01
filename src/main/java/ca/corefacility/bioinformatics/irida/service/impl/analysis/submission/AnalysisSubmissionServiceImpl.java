@@ -338,6 +338,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
+		checkNotNull(priority);
 		submission.setPriority(priority);
 
 		return super.update(submission);
@@ -362,7 +363,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
 		return infos;
 	}
-
 
 	/**
 	 * {@inheritDoc}

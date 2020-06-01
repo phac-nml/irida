@@ -1,69 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  data-layout-decorate="~{template/base}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/base}">
 <head>
-	<link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
-	<style>
-		.ng-cloak {
-			display: none !important;
-		}
-	</style>
+  <link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
+  <style>
+    .ng-cloak {
+      display: none !important;
+    }
+  </style>
+  <script th:inline="javascript">
+    window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
+  </script>
 </head>
 <body>
 <th:block layout:fragment="content">
-	<header class="js-page-header"></header>
-	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
-	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
-		<div class="container-fluid">
-			<ol>
-				<li th:each="crumb : ${crumbs} ">
-					<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
-				</li>
-			</ol>
-		</div>
-	</div>
-	<div class="container-fluid body-content" style="display: flex; flex-direction: column;">
-		<div class="row" layout:fragment="page"></div>
-	</div>
+  <nav th:replace="template/main-navigation.html :: #topnav"></nav>
+  <header class="js-page-header"></header>
+  <div class="container-fluid body-content" style="display: flex; flex-direction: column;">
+    <div class="row" layout:fragment="page"></div>
+  </div>
 
-	<script th:inline="javascript">
-		window.TL = {
-			_BASE_URL      : /*[[@{/}]]*/ '/',
-			LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
-		  	URLS: {
-			  cart: {
-			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
-			  }
-			},
-			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
-			lang          : {
-				page  : {
-					"first": /*[[#{table.first}]]*/ 'First',
-					"prev" : /*[[#{table.previous}]]*/ 'Previous',
-					"next" : /*[[#{table.next}]]*/ 'Next',
-					"last" : /*[[#{table.last}]]*/ 'Last'
-				}
-			}
-		};
-	</script>
+  <script th:inline="javascript">
+    window.TL = {
+      _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+      _BASE_URL      : /*[[@{/}]]*/ '/',
+      LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+      URLS: {
+        cart: {
+          add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
+        }
+      },
+      SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
+      lang          : {
+        page  : {
+          "first": /*[[#{table.first}]]*/ 'First',
+          "prev" : /*[[#{table.previous}]]*/ 'Previous',
+          "next" : /*[[#{table.next}]]*/ 'Next',
+          "last" : /*[[#{table.last}]]*/ 'Last'
+        }
+      }
+    };
+  </script>
 
-	<script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}" th:inline="javascript">
-		window.GALAXY = {
-			URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
-			CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
-			TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
-			MESSAGE: /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
-			CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
-			DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
-		};
-	</script>
-	<script th:src="@{/dist/js/vendor.bundle.js}"></script>
-	<script th:src="@{/dist/js/app.bundle.js}"></script>
+  <script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}" th:inline="javascript">
+    window.GALAXY = {
+      URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
+      CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
+      TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
+      MESSAGE: /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
+      CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
+      DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
+    };
+  </script>
+  <script th:src="@{/dist/js/vendor.bundle.js}"></script>
+  <script th:src="@{/dist/js/app.bundle.js}"></script>
+  <th:block layout:fragment="base-scripts">
+    <!--/* optional script tags */-->
+  </th:block>
 
-	<th:block layout:fragment="scripts">
-		<!--/* optional script tags */-->
-	</th:block>
+  <th:block layout:fragment="scripts">
+    <!--/* optional script tags */-->
+  </th:block>
 </th:block>
 </body>
 </html>

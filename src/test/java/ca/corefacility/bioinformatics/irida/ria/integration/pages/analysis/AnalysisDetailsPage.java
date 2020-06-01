@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,40 +13,89 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class AnalysisDetailsPage extends AbstractPage {
 	public static final String RELATIVE_URL = "analysis/";
 
-	@FindBy(id = "analysis-download-btn")
-	private WebElement analysisDownloadBtn;
+	@FindBy(className = "t-file-header")
+	private List<WebElement> files;
 
-	@FindBy(id = "preview")
-	private WebElement tabPreview;
+	@FindBy(className = "t-file-name")
+	private List<WebElement> fileNames;
 
-	@FindBy(id = "provenance")
-	private WebElement tabProvenance;
+	@FindBy(css = "th.t-galaxy-parameter")
+	private List<WebElement> galaxyParameters;
 
-	@FindBy(id = "inputs")
-	private WebElement tabInputFiles;
-
-	@FindBy(id = "share")
-	private WebElement tabShare;
-
-	@FindBy(className = "file-info")
-	private List<WebElement> fileInfo;
-
-	@FindBy(className = "share-project")
-	List<WebElement> shareCheckboxes;
+	@FindBy(className = "t-tool-name")
+	private List<WebElement> toolList;
 
 	@FindBy(className = "t-paired-end")
 	private List<WebElement> pairedEndElements;
 
-	@FindBy(id = "editAnalysisButton")
-	private WebElement editButton;
+	@FindBy(id = "root")
+	private WebElement rootDiv;
 
-	private WebElement currentFile;
+	@FindBy(className = "ant-popover-inner-content")
+	private WebElement confirmDiv;
 
-	@FindBy(className = "it-has-job-error")
-	private List<WebElement> divHasJobError;
+	@FindBy(id = "t-delete-analysis-btn")
+	private WebElement deleteButton;
 
-	@FindBy(css = ".t-paired-end h4 span")
-	private List<WebElement> sampleLabels;
+	@FindBy(id="t-sample-search-input")
+	private WebElement searchInput;
+
+	@FindBy(id="t-download-all-files-btn")
+	private List<WebElement> downloadAllFilesButton;
+
+	@FindBy(className="ant-dropdown-trigger")
+	private List<WebElement> downloadIndividualFilesMenuButton;
+
+	@FindBy(className="ant-dropdown-menu-vertical")
+	private List<WebElement> downloadIndividualFilesMenu;
+
+	@FindBy(className="ant-steps")
+	private List<WebElement> analysisSteps;
+
+	@FindBy(className = "ant-alert-message")
+	private List<WebElement> warningAlerts;
+
+	@FindBy(className="t-reference-file-download-btn")
+	private List<WebElement> referenceFileDownloadButton;
+
+	@FindBy(className="t-download-output-file-btn")
+	private List<WebElement> downloadOutputFileButtons;
+
+	@FindBy(className="ant-descriptions-view")
+	private List<WebElement> descriptionViewDivs;
+
+	@FindBy(className="ant-menu-horizontal")
+	private List<WebElement> horizontalTabMenus;
+
+	@FindBy(className="ant-layout-has-sider")
+	private List<WebElement> verticalTabMenus;
+
+	@FindBy(className="ant-list-item-meta-description")
+	private List<WebElement> listDescriptionValues;
+
+	@FindBy(className="ant-list-item-meta-title")
+	private List<WebElement> listTitleValues;
+
+	@FindBy(className="ant-checkbox")
+	private List<WebElement> checkBoxes;
+
+	@FindBy(className="ant-checkbox-checked")
+	private List<WebElement> checkedCheckBoxes;
+
+	@FindBy(id="t-tree-shape-tools")
+	private WebElement treeTools;
+
+	@FindBy(id="t-advanced-phylo-btn")
+	private WebElement advPhyloBtn;
+
+	@FindBy(id="t-phylocanvas-wrapper")
+	private WebElement phylocanvasWrapper;
+
+	@FindBy(id="phyloCanvasDiv__canvas")
+	private WebElement phyloTree;
+
+	@FindBy(id="t-citation")
+	private WebElement citation;
 
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
@@ -58,132 +105,421 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * Initialize the page so that the default {@link WebElement} have been
 	 * found.
 	 *
-	 * @param driver
-	 *            {@link WebDriver}
-	 * @param analysisId
-	 *            Id the the analysis page to view.
-	 *
+	 * @param driver     {@link WebDriver}
+	 * @param analysisId Id the the analysis page to view.
+	 * @param tabKey     Tab to be active on load
 	 * @return The initialized {@link AnalysisDetailsPage}
 	 */
-	public static AnalysisDetailsPage initPage(WebDriver driver, long analysisId) {
-		get(driver, RELATIVE_URL + analysisId);
+	public static AnalysisDetailsPage initPage(WebDriver driver, long analysisId, String tabKey) {
+		get(driver, RELATIVE_URL + analysisId + "/" + tabKey);
 		return PageFactory.initElements(driver, AnalysisDetailsPage.class);
 	}
 
 	/**
-	 * Open the tab to display the list of files for this analysis.
+	 * Adds shared project
 	 */
-	public void displayProvenanceView() {
-		tabProvenance.click();
-	}
-
-	public void displayShareTab() {
-		tabShare.click();
-
-		waitForElementVisible(By.className("share-project"));
-	}
-
-	public void displayInputTab() {
-		tabInputFiles.click();
-		waitForElementVisible(By.className("paired_end"));
-	}
-
-	public List<Long> getSharedProjectIds() {
-		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("value")))
-				.collect(Collectors.toList());
-	}
-
-	public void clickShareBox(Long id) {
-		Optional<WebElement> checkbox = shareCheckboxes.stream()
-				.filter(s -> s.getAttribute("value").equals(id.toString())).findFirst();
-
-		if (!checkbox.isPresent()) {
-			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
-		}
-		checkbox.get().click();
+	public void addSharedProjects() {
+		checkBoxes.get(0).click();
 	}
 
 	/**
-	 * Click the edit button
+	 *  Determines if advanced phylogentic tree button is
+	 *  displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
 	 */
-	public void clickEditButton() {
-		editButton.click();
+	public boolean advancedPhylogeneticTreeButtonVisible() {
+		return advPhyloBtn.isDisplayed();
+	}
+
+	/**
+	 *  Determines if advanced phylogentic tree button is
+	 *  not displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean advancedPhylogeneticTreeButtonNotFound() {
+		return driver.findElements( By.id("t-tree-shape-tools") ).size() == 0;
+	}
+
+	/**
+	 * Determines if the actual and expected analysis details
+	 * are identical
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean analysisDetailsEqual(String[] expectedDetails) {
+		boolean expectedEqualsActual = true;
+		String[] actualDetails = new String[7];
+
+		int index=0;
+		for(WebElement item : listDescriptionValues) {
+			actualDetails[index] = item.getText();
+			index++;
+		}
+
+		for(int i=0; i < expectedDetails.length; i++) {
+			if(!expectedDetails[i].equals(actualDetails[i])) {
+				expectedEqualsActual = false;
+				break;
+			}
+		}
+		return expectedEqualsActual;
+	}
+
+	/**
+	 *  Determines if analysis steps are displayed
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean analysisStepsVisible() {
+		return analysisSteps.size() > 0;
+	}
+
+	/**
+	 *  Determines if citation is
+	 *  displayed on citation page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean citationVisible() {
+		return citation.isDisplayed();
+	}
+
+	/**
+	 *  Clicks on the pagination button specified
+	 *
+	 */
+	public void clickPagination(int pageNum) {
+		rootDiv.findElements(By.className("ant-pagination-item-" + pageNum)).get(0).click();
 		waitForTime(500);
 	}
 
-	public boolean priorityEditVisible() {
-		return !driver.findElements(By.id("analysis-edit-priority")).isEmpty();
+	/**
+	 * Compares the expected page title to the actual
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean comparePageTitle(String pageTitle) {
+		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
+				.size();
+
+		return titleFound > 0;
 	}
 
 	/**
-	 * Open the tab to display the list of input files for the analysis
+	 * Compares the expected tab title to the actual
+	 *
+	 * @return {@link Boolean}
 	 */
-	public void displayInputFilesTab() {
-		tabInputFiles.click();
+	public boolean compareTabTitle(String pageTitle) {
+		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
+				.size();
+
+		return titleFound > 0;
 	}
 
 	/**
-	 * Open the accordion that contains the tools for the tree.
+	 * Clicks the delete button, waits, then clicks the confirm
+	 * button within the popover div
 	 */
-	public void displayTreeTools() {
-		setCurrentFile();
-		this.currentFile.findElement(By.className("accordion-toggle")).click();
+	public void deleteAnalysis() {
+		deleteButton.click();
+		waitForTime(500);
+		waitForElementVisible(By.className("ant-popover-inner-content"));
+		confirmDiv.findElements(By.className("ant-btn-sm")).get(1).click();
+	}
+
+	/**
+	 * Determines if delete button exists
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean deleteButtonExists() {
+		return deleteButton.isDisplayed();
+	}
+
+	/**
+	 *  Clicks on the tool to display its execution params
+	 */
+	public void displayToolExecutionParameters() {
+		toolList.get(0).click();
+		descriptionViewDivs.get(0).findElements(By.className("t-galaxy-parameter")).size();
+	}
+
+	/**
+	 *  Determines if download all files button is
+	 *  visible on output file preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean downloadAllFilesButtonVisible() {
+		return downloadAllFilesButton.size() == 1;
+	}
+
+	public boolean downloadIndividualFilesMenuButtonVisible() {
+		return downloadIndividualFilesMenuButton.size() == 1;
+	}
+
+	public boolean downloadIndividualFilesMenuVisible() {
+		downloadIndividualFilesMenuButton.get(0).click();
+		waitForTime(500);
+		return downloadIndividualFilesMenu.get(0).isDisplayed();
+	}
+
+	/**
+	 *  Determines if download file button is
+	 *  visible on output file preview page for
+	 *  individual files
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean downloadOutputFileButtonVisible() {
+		return downloadOutputFileButtons.size() == 1;
+	}
+
+	/**
+	 * Determines if email pipeline section is visible
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean emailPipelineResultVisible() {
+		return !driver.findElements(By.className("t-email-pipeline-result"))
+				.isEmpty();
+	}
+
+	/**
+	 * Determines if the number of list items (titles)
+	 * equals to the expected number of list items
+	 *
+	 * @return {@link Integer}
+	 */
+	public boolean expectedNumberOfListItemsEqualsActual(int expectedNumber)
+	{
+		return listTitleValues.size() == expectedNumber;
+	}
+
+	/**
+	 *  Filters samples based on search string and waits
+	 *  before returning
+	 */
+	public void filterSamples(String searchStr) {
+		searchInput.sendKeys(searchStr);
+		waitForTime(500);
+	}
+
+	/**
+	 *  Gets provenance for file selected
+	 */
+	public void getFileProvenance(int fileNum) {
+		files.get(fileNum).click();
+	}
+
+	/**
+	 *  Determines number of galaxy parameters for a tool
+	 *
+	 * @return {@link Integer}
+	 */
+	public int getGalaxyParametersCount() {
+		return galaxyParameters.size();
 	}
 
 	/**
 	 * Determine the number of files created.
-	 * 
+	 *
 	 * @return {@link Integer}
 	 */
 	public int getNumberOfFilesDisplayed() {
-		return fileInfo.size();
+		return fileNames.size();
 	}
 
 	/**
-	 * Determine the number of tools used to create the tree.
+	 * Determines the number of list items (titles)
 	 *
-	 * @return {@link Integer} count of number of tools.
+	 * @return {@link Integer}
 	 */
-	public int getNumberOfToolsForTree() {
-		return currentFile.findElements(By.className("tool")).size();
+	public int getNumberOfListItems() {
+		return listTitleValues.size();
 	}
 
 	/**
-	 * Determine the number of parameters and their values used in the first
-	 * tool
+	 *  Determines the number of list items (descriptions)
 	 *
-	 * @return {@link Integer} count of number of parameters
+	 * @return {@link Boolean}
 	 */
-	public int getNumberOfParametersForTool() {
-		waitForElementVisible(By.className("tool"));
-		this.currentFile.findElements(By.className("tool")).get(0).click();
-		WebElement paramTable = currentFile.findElement(By.className("parameters"));
-		return paramTable.findElements(By.className("parameter")).size();
+	public int getNumberOfListItemValues() {
+		return listDescriptionValues.size();
 	}
+
 
 	/**
-	 * Sets the current file for use by multiple methods.
+	 * Determine the number of samples used by analysis.
+	 *
+	 * @return {@link Integer}
 	 */
-	private void setCurrentFile() {
-		this.currentFile = null;
-		for (WebElement fileDiv : fileInfo) {
-			WebElement filename = fileDiv.findElement(By.className("name"));
-			if (filename.getText().contains("tree")) {
-				this.currentFile = fileDiv;
-				break;
-			}
-		}
-	}
-
 	public int getNumberOfSamplesInAnalysis() {
 		return pairedEndElements.size();
 	}
 
-	public boolean hasJobErrorInfo() {
-		return divHasJobError.size() > 0;
+
+	/**
+	 *  Determines number of output files for provenance
+	 *
+	 * @return {@link Integer}
+	 */
+	public int getProvenanceFileCount() {
+		return files.size();
 	}
 
-	public String getLabelForSample(int index) {
-		return sampleLabels.get(index).getText();
+	/**
+	 *  Determines number of tools used by analysis
+	 *
+	 * @return {@link Integer}
+	 */
+	public int getToolCount() {
+		return toolList.size();
+	}
+
+	/**
+	 *  Gets the warning alert text and returns
+	 *
+	 * @return {@link String}
+	 */
+	public String getWarningAlertText() {
+		return warningAlerts.get(0).getText();
+	}
+
+	/**
+	 *  Determines if there is a horizontal tab menu
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean hasHorizontalTabLinks() {
+		return horizontalTabMenus.size() == 1;
+	}
+
+	/**
+	 * Determines if project has shared projects
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean hasSharedWithProjects() {
+		return checkedCheckBoxes.size() > 0;
+	}
+
+	/**
+	 *  Determines if there is a sider for tabs
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean hasSideBarTabLinks() {
+		return verticalTabMenus.size() == 1;
+	}
+
+	/**
+	 *  Determines if there is a job error warning alert
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean jobErrorAlertVisible() {
+
+		return !driver.findElements(By.className("ant-alert-warning"))
+				.isEmpty();
+	}
+
+	public boolean priorityEditVisible() {
+		return !driver.findElements(By.className("t-priority-edit"))
+				.isEmpty();
+	}
+
+	/**
+	 *  Determines reference file download button is
+	 *  displayed on samples page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean referenceFileDownloadButtonVisible() {
+		return referenceFileDownloadButton.size() == 1;
+	}
+
+
+	/**
+	 * Removes shared projects
+	 */
+	public void removeSharedProjects() {
+		checkedCheckBoxes.get(0).click();
+	}
+
+	/**
+	 *  Determines if phylogenetic tree wrapper is
+	 *  not displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean phylocanvasWrapperNotFound() {
+		return driver.findElements( By.id("t-phylocanvas-wrapper") ).size() == 0;
+	}
+
+	/**
+	 *  Determines if phylogenetic tree wrapper is
+	 *  displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean phylocanvasWrapperVisible() {
+		return phylocanvasWrapper.isDisplayed();
+	}
+
+	/**
+	 *  Determines if phylogenetic tree is
+	 *  not displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean treeNotFound() {
+		return driver.findElements( By.id("__canvas") ).size() == 0;
+	}
+
+	/**
+	 *  Determines if phylogenetic tree is
+	 *  displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean treeVisible() {
+		return phyloTree.isDisplayed();
+	}
+
+	/**
+	 *  Determines if tree shape tools are not
+	 *  displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean treeToolsNotFound() {
+		return driver.findElements( By.id("t-tree-shape-tools") ).size() == 0;
+	}
+
+	/**
+	 *  Determines if tree shape tools are
+	 *  displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean treeToolsVisible() {
+		return treeTools.isDisplayed();
+	}
+
+	/**
+	 *  Determines if galaxy history id is
+	 *  displayed on error page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean galaxyHistoryIdVisible() {
+		if(driver.findElements( By.id("t-galaxy-history-id") ).size() == 1) {
+			return true;
+		}
+		return false;
 	}
 }

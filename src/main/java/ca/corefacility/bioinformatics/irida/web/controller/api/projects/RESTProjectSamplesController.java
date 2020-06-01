@@ -1,19 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-import com.google.common.net.HttpHeaders;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -27,10 +19,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+
+import com.google.common.net.HttpHeaders;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -271,28 +276,35 @@ public class RESTProjectSamplesController {
 	/**
 	 * Add the required links for a sample individual: self, file pairs,
 	 * unpaired files
-	 * 
-	 * @param s
-	 *            The sample to add links to
-	 * @return the sample with added links
+	 *
+	 * @param p optionally the project for this sample
+	 * @param s The sample to add links to
 	 */
 	private void addLinksForSample(final Optional<Project> p, final Sample s) {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId()))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId())).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class)))
-						.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+				RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class)))
-						.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
-		s.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId()))
-				.withRel(RESTSampleMetadataController.METADATA_REL));
+				RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
+				RESTSampleSequenceFilesController.objectLabels.get(Fast5Object.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FAST5));
+		s.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withRel(
+				RESTSampleMetadataController.METADATA_REL));
+		s.add(linkTo(methodOn(RESTSampleAssemblyController.class).listAssembliesForSample(s.getId())).withRel(
+				RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES));
+
 		if (p.isPresent()) {
 			final Project project = p.get();
-			s.add(linkTo(RESTProjectsController.class).slash(project.getId()).withRel(REL_PROJECT));
-			s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(project.getId(), s.getId()))
-					.withRel(REL_PROJECT_SAMPLE));
+			s.add(linkTo(RESTProjectsController.class).slash(project.getId())
+					.withRel(REL_PROJECT));
+			s.add(linkTo(
+					methodOn(RESTProjectSamplesController.class).getProjectSample(project.getId(), s.getId())).withRel(
+					REL_PROJECT_SAMPLE));
 		}
 	}
 
