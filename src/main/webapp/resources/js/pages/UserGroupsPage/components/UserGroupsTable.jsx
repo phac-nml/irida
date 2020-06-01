@@ -2,10 +2,10 @@ import React from "react";
 import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Button, Typography } from "antd";
-import { RemoveTableItemButton } from "../../../components/Buttons";
-import { deleteUserGroup } from "../../../apis/users/groups";
+import { Typography } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
+import { Link } from "@reach/router";
+import { CreateNewUserGroupButton } from "./CreateNewUserGroupButton";
 
 const { Paragraph } = Typography;
 
@@ -21,11 +21,7 @@ export function UserGroupsTable() {
       dataIndex: "name",
       sorter: true,
       render(text, item) {
-        return (
-          <Button type="link" href={setBaseUrl(`/groups/${item.id}`)}>
-            {text}
-          </Button>
-        );
+        return <Link to={setBaseUrl(`/groups/${item.id}`)}>{text}</Link>;
       },
     },
     {
@@ -48,27 +44,9 @@ export function UserGroupsTable() {
       title: i18n("UserGroupsTable.created"),
       dataIndex: "createdDate",
       sorter: true,
-      width: 200,
+      width: 220,
       render(text) {
         return formatInternationalizedDateTime(text);
-      },
-    },
-    {
-      dataIndex: "canManage",
-      align: "right",
-      width: 50,
-      render(canManage, group) {
-        return canManage ? (
-          <RemoveTableItemButton
-            onRemove={() => deleteUserGroup(group.id)}
-            confirmText={
-              <div style={{ maxWidth: 250 }}>
-                {i18n("UserGroupsTable.delete-confirm")}
-              </div>
-            }
-            tooltipText={i18n("UserGroupsTable.delete-tooltip")}
-          />
-        ) : null;
       },
     },
   ];
@@ -77,13 +55,7 @@ export function UserGroupsTable() {
     <PagedTable
       search={true}
       columns={columns}
-      buttons={[
-        <AddNewButton
-          key="group-new"
-          text={i18n("UserGroupsPage.create")}
-          href={setBaseUrl("/groups/create")}
-        />,
-      ]}
+      buttons={[<CreateNewUserGroupButton key="group-new" />]}
     />
   );
 }

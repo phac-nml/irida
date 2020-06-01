@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutO
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.NewProjectMemberRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -128,7 +128,7 @@ public class UIProjectMembersService {
 	 * @param locale    - of the currently logged in user
 	 * @return message to display to the user about the outcome of adding the user to the project
 	 */
-	public String addMemberToProject(Long projectId, NewProjectMemberRequest request, Locale locale) {
+	public String addMemberToProject(Long projectId, NewMemberRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(request.getId());
 		ProjectRole role = ProjectRole.fromString(request.getRole());

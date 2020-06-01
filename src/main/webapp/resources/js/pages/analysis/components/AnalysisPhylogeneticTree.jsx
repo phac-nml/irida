@@ -73,7 +73,7 @@ export default function Tree() {
    */
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={i18n("AnalysisPhylogeneticTree.tree")}>
+      <TabPaneContent title={i18n("AnalysisPhylogeneticTree.tree")} xl={24} xxl={24}>
         {serverMsg !== null ? (
           <WarningAlert
             message={serverMsg}

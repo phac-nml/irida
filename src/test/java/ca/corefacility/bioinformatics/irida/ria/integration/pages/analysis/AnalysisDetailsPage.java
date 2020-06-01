@@ -311,8 +311,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 *  Gets provenance for file selected
 	 */
-	public void getFileProvenance() {
-		files.get(0).click();
+	public void getFileProvenance(int fileNum) {
+		files.get(fileNum).click();
 	}
 
 	/**
@@ -508,5 +508,18 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public boolean treeToolsVisible() {
 		return treeTools.isDisplayed();
+	}
+
+	/**
+	 *  Determines if galaxy history id is
+	 *  displayed on error page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean galaxyHistoryIdVisible() {
+		if(driver.findElements( By.id("t-galaxy-history-id") ).size() == 1) {
+			return true;
+		}
+		return false;
 	}
 }

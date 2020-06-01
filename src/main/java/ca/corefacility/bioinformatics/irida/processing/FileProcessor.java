@@ -40,12 +40,12 @@ public interface FileProcessor {
 	/**
 	 * This method asks the file processor whether it should act on this file.
 	 * The processor may have some settings that would not run on certain files.
-	 * 
-	 * @param sequencingObjectId
-	 *            the {@link SequencingObject} id to check
+	 *
+	 * @param sequencingObject
+	 *            the {@link SequencingObject} to check
 	 * @return true if the processor should act on the file
 	 */
-	public default boolean shouldProcessFile(Long sequencingObjectId) {
+	public default boolean shouldProcessFile(SequencingObject sequencingObject) {
 		return true;
 	}
 }

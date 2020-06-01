@@ -146,6 +146,16 @@
                          name="My Completed Submission UNKNOWN PIPELINE"
                          analysis_id="6" workflow_id="739f29ea-ae82-48b9-8914-3d2931405db6" submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
+    <analysis_submission id="15" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake ADMIN!"
+                         reference_file_id="1" remote_analysis_id="1"
+                         analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
+    <analysis_submission id="16" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake USER!"
+                         reference_file_id="1" remote_analysis_id="1"
+                         analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="2"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
 
     <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" command_line="/bin/snp_matrix" />
     <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" command_line="/bin/vcf2pseudoalign" />
@@ -153,12 +163,15 @@
     <tool_execution id="4" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="bio_hansel" tool_version="2.0.0" command_line="/bin/bio_hansel" />
     <tool_execution id="5" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="refseq_masher" tool_version="0.1.1" command_line="/bin/refseq_masher" />
     <tool_execution id="6" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" command_line="/bin/snp_matrix" />
+    <tool_execution id="7" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="Filter Stats" tool_version="0.0.1" command_line="/bin/filter_stats" />
 
     <tool_execution_parameters tool_id="1" execution_parameter_key="ambiguous" execution_parameter_value="False" />
     <tool_execution_parameters tool_id="1" execution_parameter_key="coverage" execution_parameter_value="15" />
     <tool_execution_parameters tool_id="2" execution_parameter_key="length" execution_parameter_value="150" />
     <tool_execution_parameters tool_id="6" execution_parameter_key="ambiguous" execution_parameter_value="False" />
     <tool_execution_parameters tool_id="6" execution_parameter_key="coverage" execution_parameter_value="15" />
+    <tool_execution_parameters tool_id="7" execution_parameter_key="ambiguous" execution_parameter_value="False" />
+    <tool_execution_parameters tool_id="7" execution_parameter_key="coverage" execution_parameter_value="15" />
 
     <tool_execution_prev_steps tool_execution_id="2" tool_execution_prev_id="1"/>
 
@@ -167,12 +180,14 @@
     <analysis_output_file id="3" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/bio_hansel-results.json" tool_execution_id="4" />
     <analysis_output_file id="4" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/refseq-masher-matches.tsv" tool_execution_id="5" />
     <analysis_output_file id="5" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/snp_tree_2.tree" tool_execution_id="6" />
+    <analysis_output_file id="6" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/filterStats.txt" tool_execution_id="7" />
 
     <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
     <analysis_output_file_map analysis_id="3" analysisOutputFilesMap_id="2" analysis_output_file_key="sistr-predictions" />
     <analysis_output_file_map analysis_id="4" analysisOutputFilesMap_id="3" analysis_output_file_key="bio_hansel-results.json" />
     <analysis_output_file_map analysis_id="5" analysisOutputFilesMap_id="4" analysis_output_file_key="refseq-masher-matches" />
     <analysis_output_file_map analysis_id="6" analysisOutputFilesMap_id="5" analysis_output_file_key="tree" />
+    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="6" analysis_output_file_key="filter-stats" />
 
     <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="1" />
     <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="2" />

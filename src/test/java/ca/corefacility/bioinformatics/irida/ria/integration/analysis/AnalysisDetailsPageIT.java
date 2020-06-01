@@ -98,7 +98,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		AnalysesUserPage analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		analysesPage.clickPagination(2);
-		assertEquals("Should have 4 analyses displayed originally", 4, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 6 analyses displayed originally", 6, analysesPage.getNumberOfAnalysesDisplayed());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
@@ -107,7 +107,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		page.clickPagination(2);
-		assertEquals("Should have 3 analyses displayed", 3, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 5 analyses displayed", 5, analysesPage.getNumberOfAnalysesDisplayed());
 	}
 
 	@Test
@@ -192,17 +192,29 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testProvenance() {
+	public void testProvenance() throws IOException {
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/filterStats.txt");
 		LoginPage.loginAsManager(driver());
 
 		// Has output files so display a provenance
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
-		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
-		page.getFileProvenance();
+		assertEquals("There should be two files", 2, page.getProvenanceFileCount());
+		page.getFileProvenance(0);
+		assertEquals("Should have 1 tool associated with filterStats", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("Tool should have 2 parameters", 2, page.getGalaxyParametersCount());
+
+		page.getFileProvenance(1);
 		assertEquals("Should have 2 tools associated with the tree", 2, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 1 parameter", 1, page.getGalaxyParametersCount());
+
+		// We click the first file again and check for tools and execution parameters
+		page.getFileProvenance(0);
+		assertEquals("Should have 1 tool associated with filterStats", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("Tool should have 2 parameter", 2, page.getGalaxyParametersCount());
 
 		// Has no output files so no provenance displayed
 		page = AnalysisDetailsPage.initPage(driver(), 10L, "provenance");
@@ -392,7 +404,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page = AnalysisDetailsPage.initPage(driver(), 14L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
 		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
-		page.getFileProvenance();
+		page.getFileProvenance(0);
 		assertEquals("Should have 2 tools associated with the tree", 1, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 2 parameter", 2, page.getGalaxyParametersCount());
@@ -425,6 +437,22 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Receive Email Upon Pipeline Completion section
 		// should be visible
 		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdNotVisibleOnError() {
+		// Regular user should not have a clickable link to the galaxy history
+		LoginPage.loginAsUser(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 16L, "");
+		assertFalse("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdVisibleOnError() {
+		// Admin user should have a clickable link to the galaxy history
+		LoginPage.loginAsAdmin(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 15L, "");
+		assertTrue("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
 	}
 
 }
