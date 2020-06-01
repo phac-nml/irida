@@ -1,98 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/settings/_base}">
-<head>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/settings/_base}"
+>
+  <head>
     <title th:text="#{project.settings.page.title.groups}">Title</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-users-groups.bundle.css}">
+    <link
+      rel="stylesheet"
+      th:href="@{/dist/css/project-user-groups.bundle.css}"
+    />
     <script th:inline="javascript">
       window.PAGE = {
-        urls: {
-          'addMember': /*[[@{/projects/{id}/settings/groups(id=${project.getId()})}]]*/ '/projects/1/members',
-          'usersLink': /*[[@{/groups/}]]*/'/users',
-          'deleteModal': /*[[@{/projects/settings/removeUserGroupModal}]]*/ '/projects/removeUserModal',
-          'removeMember': /*[[@{/projects/{id}/settings/groups/(id=${project.getId()})}]]*/ '/projects/1/members/2',
-          'usersSelection': /*[[@{/projects/{id}/settings/ajax/availablegroupmembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
-          'updateRole': /*[[@{/projects/{id}/settings/groups/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
-        }
+        user: /*[[${session.user.getId()}]]*/ 1,
+        canManage: /*[[${manageMembers}]]*/ false,
       };
     </script>
-</head>
-<body>
-<div layout:fragment="settings-content">
-    <div class="hidden" id="toolbar-wrapper">
-        <div id="table-toolbar" class="btn-toolbar spaced-bottom" role="toolbar">
-            <div class="btn-group btn-group-sm">
-                <button id="add-members-button" class="btn btn-default"
-                        type="button" data-toggle="modal" data-target="#addMemberModal"
-                        th:if="${isAdmin} or ${manageMembers}" href="#addMembersLink"
-                        th:text="#{project.members.edit.add.group}">_Add Members_
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <table id="usersTable" class="table table-striped" cellspacing="0" width="100%"
-                   data:url="@{/projects/{id}/settings/ajax/groups(id=${project.getId()})}">
-                <thead>
-                <tr role="row">
-                    <th data-data="userGroup.name" th:text="#{project.table.collaborator.name}"></th>
-                    <th data-data="role"
-                        th:text="#{project.table.collaborator.role}"></th>
-                    <th width="150px" data-data="createdDate" th:text="#{project.table.collaborator.since}"></th>
-                    <th width="50px" th:if="${isAdmin} or ${manageMembers}" data-orderable="false"></th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-
-    <div th:replace="projects/templates/roles :: roles"></div>
-
-    <div class="modal fade" id="removeMemberModal" role="dialog" aria-labelledBy="#deleteConfirmTitle"></div>
-    <div class="modal fade" id="addMemberModal" role="dialog" aria-labelledby="#addMemberTitle">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title" id="addMemberTitle" th:text="#{project.members.edit.add.group}">_Add
-                        User_</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="control-label" for="add-member-membername"
-                               th:text="#{project.members.add.group.name}">_Username_</label>
-                        <input id="add-member-membername" name="memberId" class="form-control input-full"
-                                th:placeholder="#{project.members.add.select-group}"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label" for="add-member-role" th:text="#{project.members.add.role}">_Group
-                            Role_</label>
-                        <select id="add-member-role" class="form-control input-full" name="groupRole">
-                            <option th:each="role : ${projectRoles}"
-                                    th:value="${role}"
-                                    th:text="#{${'projectRole.'+role}}">_Role_
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal"
-                            th:text="#{project.members.add.cancel}">_Cancel_
-                    </button>
-                    <button id="submitAddMember" class="btn btn-primary" type="button"
-                            th:text="#{project.members.add.ok}">_OK_
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-users-groups.bundle.js}"></script>
-</th:block>
-</body>
+  </head>
+  <body>
+    <div id="groups-root" layout:fragment="settings-content"></div>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/project-user-groups.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

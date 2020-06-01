@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
 import java.util.List;
 import java.util.Locale;
@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectMembersService;
 
 /**
