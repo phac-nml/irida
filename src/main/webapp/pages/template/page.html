@@ -4,6 +4,7 @@
       data-layout-decorate="~{template/base}">
 <head>
   <link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
+  <link rel="stylesheet" th:href="@{/dist/css/nav.bundle.css}">
   <style>
     .ng-cloak {
       display: none !important;
@@ -13,13 +14,18 @@
     window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
   </script>
 </head>
-<body style="display: flex; flex-direction: column">
+<body class="ant-layout" style="display: flex; flex-direction: row; overflow: hidden; background-color: white">
 <th:block layout:fragment="content">
-  <header class="js-page-header">
-<!-- Header component rendered from PageHeader.jsx -->
-  </header>
-  <div class="container-fluid body-content" style="flex: 1; display: flex; flex-direction: column; width: 100%; padding-top: 1rem;">
-    <div class="row" layout:fragment="page"></div>
+  <div id="nav-root" style="height: 100%; width: 200px; background-color: #001529"></div>
+
+  <div style="display: flex; flex-direction: column; flex-grow: 1" class="ant-layout-has-sider">
+    <header class="js-page-header" style="background-color: white">
+      <!-- Header component rendered from PageHeader.jsx -->
+    </header>
+    <main class="ant-layout-content"
+         style="flex: 1; display: flex; flex-direction: column; width: 100%; padding-top: 1rem;">
+      <th:block layout:fragment="page"></th:block>
+    </div>
   </div>
 
   <script th:inline="javascript">
@@ -56,6 +62,7 @@
     };
   </script>
   <script th:src="@{/dist/js/vendor.bundle.js}"></script>
+  <script th:src="@{/dist/js/nav.bundle.js}"></script>
   <script th:src="@{/dist/js/app.bundle.js}"></script>
   <th:block layout:fragment="base-scripts">
     <!--/* optional script tags */-->
