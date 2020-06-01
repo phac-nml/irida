@@ -103,7 +103,7 @@ Examples of how to update these files is shown below.  After these updates are c
 ### Preparing your development environment
 {:.no_toc}
 
-Before building your updated plugin, you must pull and install the new version of IRIDA to your local Maven repository.  Follow the instructions at <https://irida.corefacility.ca/documentation/developer/tools/pipelines/#321-install-irida-to-local-maven-repository>.  Ensure you've checked out the `20.05` IRIDA version.
+Before building your updated plugin, you must pull and install the new version of IRIDA to your local Maven repository.  Follow the instructions at <https://irida.corefacility.ca/documentation/developer/tools/pipelines/#321-install-irida-to-local-maven-repository>.  Ensure you've checked out the `20.09` IRIDA version.
 
 ### `AnalysisSampleUpdater` class
 {:.no_toc}
@@ -138,7 +138,7 @@ Updates to the `pom.xml` file will be required to indicate to IRIDA that this pl
 * The `<version>` tag for your plugin should be incremented <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L9>
 * The `<plugin.version>` property should be incremented <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L16>
 * The `<plugin.requires.runtime>` property should be updated to be `1.1.0` <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L19>
-* The `<irida.version.compiletime>` property should be set to `20.05` <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L22>
+* The `<irida.version.compiletime>` property should be set to `20.09` <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L22>
 
 Since you're already editing this file, you can update your Java version to 11 for the plugin as well.  Set the following properties:
 
