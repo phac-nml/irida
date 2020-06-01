@@ -4,6 +4,7 @@ Changes
 20.05 to 20.09
 --------------
 * [UI] Updated project user groups to use Ant Design.
+* [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
 
 20.01 to 20.05
 --------------
