@@ -4,6 +4,9 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+20.05 to 20.09
+--------------
+
 20.01 to 20.05
 --------------
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.

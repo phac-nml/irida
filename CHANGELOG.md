@@ -1,6 +1,10 @@
 Changes
 =======
 
+20.05 to 20.09
+--------------
+* [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+
 20.01 to 20.05
 --------------
 * [UI/Developer]: Removed webpack progress.
@@ -24,7 +28,7 @@ Changes
 * [UI]: Added selection for linker script to get assemblies in project/samples page.
 * [Developer]: `bower` completely removed.
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
-* [UI]: Assemblies can now be uploaded through the sample files page.
+* [UI]: Assemblies can now be uploaded through the sample files page. See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
 * [UI/Developer]: Updated to `Prettier` 2.0.2
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
 * [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
@@ -41,7 +45,13 @@ Changes
 * [UI]: Update Groups details page to use Ant Design and remove `DataTables`.
 * [UI]: Fixed bug preventing display of execution tools for first file if a provenance for another file had been viewed.
 * [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
-* [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+* [Developer/UI]: Upgraded to FastQC 0.11.9.
+* [UI]: Added FAST5 format support.  FAST5 support is in beta and is subject to change.  See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
+* [UI]: Updated user groups to use Ant Design.
+* [UI]: Fixed bug preventing advanced visualization view page load.
+* [UI/Developer]: Updated analysis urls to work with a context path.
+* [UI]: Outputs and Tree view now span the full width of the page.
+* [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
 
 19.09 to 20.01
 --------------

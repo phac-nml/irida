@@ -12,6 +12,7 @@ import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
 import { SPACE_SM } from "../../../styles/spacing";
 import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -78,6 +79,7 @@ export default function UserGroupDetailsPage({ id }) {
           title: i18n("UserGroupDetailsPage.name"),
           desc: state.canManage ? (
             <Paragraph
+              className={"t-group-name"}
               editable={{ onChange: (value) => updateField("name", value) }}
             >
               {state.name}
@@ -90,14 +92,17 @@ export default function UserGroupDetailsPage({ id }) {
           title: i18n("UserGroupDetailsPage.description"),
           desc: state.canManage ? (
             <Paragraph
+              ellipsis={{ rows: 3, expandable: true }}
               editable={{
                 onChange: (value) => updateField("description", value),
               }}
             >
-              {state.description}
+              {state.description || ""}
             </Paragraph>
           ) : (
-            state.description
+            <Paragraph ellipsis={{ rows: 3, expandable: true }}>
+              state.description
+            </Paragraph>
           ),
         },
         {
@@ -121,14 +126,15 @@ export default function UserGroupDetailsPage({ id }) {
       <form
         style={{ marginTop: SPACE_SM }}
         ref={deleteRef}
-        action={`/groups/${id}/delete`}
+        action={setBaseUrl(`/groups/${id}/delete`)}
         method="POST"
       >
         <Popconfirm
           onConfirm={() => deleteRef.current.submit()}
           title={i18n("UserGroupDetailsPage.delete-confirm")}
+          okButtonProps={{ className: "t-delete-confirm-btn" }}
         >
-          <Button type="primary" danger>
+          <Button className="t-delete-group-btn" type="primary" danger>
             {i18n("UserGroupDetailsPage.delete-button")}
           </Button>
         </Popconfirm>
@@ -139,7 +145,7 @@ export default function UserGroupDetailsPage({ id }) {
   return (
     <PageWrapper
       title={"User Groups"}
-      onBack={() => navigate("/groups", { replace: true })}
+      onBack={() => navigate(setBaseUrl("/groups"), { replace: true })}
     >
       <Tabs
         defaultActiveKey="details"

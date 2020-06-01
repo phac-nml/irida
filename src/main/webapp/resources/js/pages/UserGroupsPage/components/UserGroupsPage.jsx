@@ -6,7 +6,7 @@ import React from "react";
 
 export default function UserGroupsPage() {
   return (
-    <PageWrapper title={"User Groups"}>
+    <PageWrapper title={i18n("UserGroupsPage.title")}>
       <PagedTableProvider url={setBaseUrl(`/ajax/user-groups/list`)}>
         <UserGroupsTable />
       </PagedTableProvider>

@@ -11,6 +11,23 @@ description: "Upgrade Notes"
 
 The majority of IRIDA's upgrade notes can be seen at <https://github.com/phac-nml/irida/blob/master/UPGRADING.md>.  When there are more significant upgrades to the IRIDA system, database, deployment, etc. this page will go further in depth about how to properly back up your system, perform the upgrade, and recover from problems.
 
+# 20.05
+## Assemblies data
+
+The 20.05 version of IRIDA includes support for uploading your own assemblies along with storing assembly results from analysis pipelines.  Uploaded assemblies are expected to be of `.fasta` format.  Current support for .`fastq` assembly files includes data storage and REST API support.  REST API support includes uploading assemblies, exporting to Galaxy, and command line export via the NGSArchive Linker.  Currently IRIDA does not support running analyses with assembly data. 
+
+See more about working with assemblies in the IRIDA UI in our [sample management guide](https://irida.corefacility.ca/documentation/user/user/samples/#sequence-files--assemblies).
+
+## FAST5 data
+
+The 20.05 version of IRIDA includes beta support for FAST5 data.  At the moment, IRIDA accepts both single `.fast5` files, and directories of `.fast5.tar.gz` files.  Support is stronger for the individual `.fast5` files and are recommended for use, but this will be reviewed in future IRIDA versions.  Current support for FAST5 files includes data storage and REST API support.   REST API support includes uploading files, exporting to Galaxy, and command line export via the NGSArchive Linker.  Currently IRIDA does not support running analyses with FAST5 data.
+
+Uploads of `.fast5` files will be treated similar to an unpaired sequence file, including FastQC analysis.
+
+Uploads of `.fast5.tar.gz` files are currently for storage only.  FastQC results will not be available.
+
+See more about working with FAST5 data in the IRIDA UI in our [sample management guide](https://irida.corefacility.ca/documentation/user/user/samples/#sequence-files--assemblies).
+
 # 20.01
 ## Configured redirect token in REST API client details
 

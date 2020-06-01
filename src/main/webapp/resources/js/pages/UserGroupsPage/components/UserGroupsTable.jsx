@@ -1,10 +1,11 @@
 import React from "react";
-import {PagedTable} from "../../../components/ant.design/PagedTable";
-import {formatInternationalizedDateTime} from "../../../utilities/date-utilities";
-import {setBaseUrl} from "../../../utilities/url-utilities";
-import {Typography} from "antd";
-import {AddNewButton} from "../../../components/Buttons/AddNewButton";
-import {Link} from "@reach/router";
+import { PagedTable } from "../../../components/ant.design/PagedTable";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { Typography } from "antd";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
+import { Link } from "@reach/router";
+import { CreateNewUserGroupButton } from "./CreateNewUserGroupButton";
 
 const { Paragraph } = Typography;
 
@@ -20,7 +21,7 @@ export function UserGroupsTable() {
       dataIndex: "name",
       sorter: true,
       render(text, item) {
-        return <Link to={`/groups/${item.id}`}>{text}</Link>;
+        return <Link to={setBaseUrl(`/groups/${item.id}`)}>{text}</Link>;
       },
     },
     {
@@ -54,13 +55,7 @@ export function UserGroupsTable() {
     <PagedTable
       search={true}
       columns={columns}
-      buttons={[
-        <AddNewButton
-          key="group-new"
-          text={i18n("UserGroupsPage.create")}
-          href={setBaseUrl("/groups/create")}
-        />,
-      ]}
+      buttons={[<CreateNewUserGroupButton key="group-new" />]}
     />
   );
 }

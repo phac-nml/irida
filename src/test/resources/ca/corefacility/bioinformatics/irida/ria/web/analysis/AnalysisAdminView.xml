@@ -146,6 +146,16 @@
                          name="My Completed Submission UNKNOWN PIPELINE"
                          analysis_id="6" workflow_id="739f29ea-ae82-48b9-8914-3d2931405db6" submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
+    <analysis_submission id="15" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake ADMIN!"
+                         reference_file_id="1" remote_analysis_id="1"
+                         analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
+    <analysis_submission id="16" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake USER!"
+                         reference_file_id="1" remote_analysis_id="1"
+                         analysis_id="1" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="2"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
 
     <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" command_line="/bin/snp_matrix" />
     <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" command_line="/bin/vcf2pseudoalign" />
