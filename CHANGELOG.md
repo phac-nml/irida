@@ -3,6 +3,7 @@ Changes
 
 20.05 to 20.09
 --------------
+* [Developer]: Updated deprecated runWorkflow blend4j call to invokeWorkflow and switched to using jar for blend4j
 
 20.01 to 20.05
 --------------
@@ -51,7 +52,6 @@ Changes
 * [UI/Developer]: Updated analysis urls to work with a context path.
 * [UI]: Outputs and Tree view now span the full width of the page.
 * [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
-* [Developer]: Updated deprecated runWorkflow blend4j call to invokeWorkflow and switched to using jar for blend4j
 
 19.09 to 20.01
 --------------
