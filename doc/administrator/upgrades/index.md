@@ -68,7 +68,7 @@ Solving this issue involved a refactor of the database structure to remove the `
 
 This results in a cleaner database structure with less redundancy, and allowed us to refactor IRIDA's codebase to ensure Envers can properly capture any changes to a sample's metadata.  In the long-term this should also allow us to more efficiently build extensions to IRIDA's metadata system.
 
-As with most other database updates, we use [Liquibase](https://www.liquibase.org/) to manage this update.  After the 20.01 upgrade is complete, our Liquibase changeset will also remove any "dangling" `metadata_entry` records to improve performance and the integrity of metadata in the IRIDA system.
+As with most other database updates, we use [Liquibase](https://www.liquibase.org/) to manage this update.  After the 20.09 upgrade is complete, our Liquibase changeset will also remove any "dangling" `metadata_entry` records to improve performance and the integrity of metadata in the IRIDA system.
 
 ### What about old data?
 {:.no_toc}
@@ -77,7 +77,7 @@ Since Envers was writing audit records for the `sample_AUD` and `metadata_entry_
 
 #### Metadata linking script
 {:.no_toc}
-We've included a small utility script which can be run before the upgrade to generate a report of all disconnected `sample_metadata_entry_AUD` records and their connections to their parent samples where available.  While we do not expect that these records will be needed in the future, we recommend running this utility and saving the report alongside your 20.01 upgrade database backup to ensure the history of these samples is maintained.  This script **must be run before you perform the 20.01 update**.
+We've included a small utility script which can be run before the upgrade to generate a report of all disconnected `sample_metadata_entry_AUD` records and their connections to their parent samples where available.  While we do not expect that these records will be needed in the future, we recommend running this utility and saving the report alongside your 20.09 upgrade database backup to ensure the history of these samples is maintained.  This script **must be run before you perform the 20.09 update**.
 
 This script will output a CSV file of the following data:
 
