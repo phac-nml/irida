@@ -55,9 +55,8 @@ module.exports = {
   "create-metadata-template": "./resources/js/pages/metadata/templates/details",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
-  "project-users-groups":
-    "./resources/js/pages/projects/project-users-groups.js",
   "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
+  "project-user-groups": "./resources/js/pages/projects/ProjectUserGroups.jsx",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
