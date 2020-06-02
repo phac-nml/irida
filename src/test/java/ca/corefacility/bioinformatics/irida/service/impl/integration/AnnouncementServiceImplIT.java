@@ -369,11 +369,11 @@ public class AnnouncementServiceImplIT {
         for (Announcement a: announcements) {
             Long id = a.getId();
             if (id == 1) {
-                assertEquals(failMessage, new Long(4), counts.get(a));
+                assertEquals(failMessage, Long.valueOf(4), counts.get(a));
             } else if (id >= 2 && id <= 5) {
-                assertEquals(failMessage, new Long(1), counts.get(a));
+                assertEquals(failMessage, Long.valueOf(1), counts.get(a));
             } else if (id == 6) {
-                assertEquals(failMessage, new Long(0), counts.get(a));
+                assertEquals(failMessage, Long.valueOf(0), counts.get(a));
             } else {
                 fail("Error in counting, this announcement shouldn't be counted");
             }
