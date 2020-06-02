@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
 import java.util.Locale;
 
