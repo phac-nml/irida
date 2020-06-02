@@ -5,7 +5,7 @@ import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { Avatar, Col, Input, Menu, Row } from "antd";
+import { Avatar, Input, Menu } from "antd";
 import { grey10, grey4 } from "../../styles/colors";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { IconLogout, IconUser } from "../icons/Icons";
@@ -32,55 +32,44 @@ export class PageHeader extends React.Component {
   render() {
     return (
       <>
-        <Row
-          justify="space-between"
-          style={{ borderBottom: `1px solid ${grey4}` }}
-        >
-          <Col xs={21} md={12}>
-            <form
-              style={{
-                display: "flex",
-                alignContent: "center",
-                width: "100%",
-                padding: `6px 0 0 ${SPACE_MD}`,
-              }}
-              action={setBaseUrl("/search")}
+        <div style={{ display: "flex", borderBottom: `1px solid ${grey4}` }}>
+          <form
+            style={{
+              display: "flex",
+              alignContent: "center",
+              flexGrow: 1,
+              padding: `3px 0 3px ${SPACE_MD}`,
+            }}
+            action={setBaseUrl("/search")}
+          >
+            <Input.Search name="query" />
+          </form>
+          <Menu mode="horizontal" style={{ border: "none" }}>
+            <Menu.SubMenu
+              title={
+                <>
+                  <Avatar
+                    size="small"
+                    style={{
+                      backgroundColor: grey4,
+                      color: grey10,
+                      marginRight: SPACE_XS,
+                    }}
+                    icon={<IconUser />}
+                  />
+                  {`${window.TL._USER.firstName} ${window.TL._USER.lastName}`}
+                </>
+              }
             >
-              <Input.Search name="query" />
-            </form>
-          </Col>
-          <Col xs={3} md={4}>
-            <Row justify="end">
-              <Menu mode="horizontal" style={{ border: "none" }}>
-                <Menu.SubMenu
-                  title={
-                    <>
-                      <Avatar
-                        size="small"
-                        style={{
-                          backgroundColor: grey4,
-                          color: grey10,
-                          marginRight: SPACE_XS,
-                        }}
-                        icon={<IconUser />}
-                      />
-                      {`${window.TL._USER.firstName} ${window.TL._USER.lastName}`}
-                    </>
-                  }
-                >
-                  <Menu.Item>
-                    <>
-                      <IconLogout style={{ marginRight: SPACE_XS }} />
-                      <a href={setBaseUrl("/logout")}>
-                        {i18n("nav.main.logout")}
-                      </a>
-                    </>
-                  </Menu.Item>
-                </Menu.SubMenu>
-              </Menu>
-            </Row>
-          </Col>
-        </Row>
+              <Menu.Item>
+                <>
+                  <IconLogout style={{ marginRight: SPACE_XS }} />
+                  <a href={setBaseUrl("/logout")}>{i18n("nav.main.logout")}</a>
+                </>
+              </Menu.Item>
+            </Menu.SubMenu>
+          </Menu>
+        </div>
         <Breadcrumbs crumbs={window.breadcrumbs} />
         <Session />
         <Notifications />
