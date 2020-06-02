@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI] Updated project user groups to use Ant Design.
 * [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
+* [Developer]: Removed deprecated Long constructor.
 
 20.01 to 20.05
 --------------
