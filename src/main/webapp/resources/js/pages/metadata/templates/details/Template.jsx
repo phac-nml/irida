@@ -46,7 +46,16 @@ export function Template() {
   };
 
   const getFields = () => {
-    console.log(hotRef.current.hotInstance.getDataAtRow(0));
+    const hot = hotRef.current.hotInstance;
+    console.log(hot.getDataAtRow(0));
+
+    const settings = hot.getSettings();
+    const colHeadersArray = hot.getSettings().colHeaders;
+    console.log(settings);
+    // colHeadersArray.push("Price #2");
+    // settings["colHeaders"] = colHeadersArray;
+
+    hot.updateSettings(settings);
   };
 
   return (
