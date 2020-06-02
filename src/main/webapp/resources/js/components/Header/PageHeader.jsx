@@ -5,9 +5,9 @@ import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { Avatar, Input, Menu } from "antd";
+import { Avatar, Col, Input, Menu, Row } from "antd";
 import { grey10, grey4 } from "../../styles/colors";
-import { SPACE_XS } from "../../styles/spacing";
+import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { IconLogout, IconUser } from "../icons/Icons";
 
 /*
@@ -32,47 +32,55 @@ export class PageHeader extends React.Component {
   render() {
     return (
       <>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            borderBottom: "1px solid #f0f0f0",
-            paddingRight: 20,
-          }}
+        <Row
+          justify="space-between"
+          style={{ borderBottom: `1px solid ${grey4}` }}
         >
-          <Menu mode="horizontal" style={{ border: "none" }}>
-            <Menu.Item>
-              <form layout="inline" action={setBaseUrl("/search")}>
-                <Input.Search name="query" style={{ width: 400 }} />
-              </form>
-            </Menu.Item>
-          </Menu>
-          <Menu mode="horizontal" style={{ border: "none" }}>
-            <Menu.SubMenu
-              title={
-                <>
-                  <Avatar
-                    size="small"
-                    style={{
-                      backgroundColor: grey4,
-                      color: grey10,
-                      marginRight: SPACE_XS,
-                    }}
-                    icon={<IconUser />}
-                  />
-                  {`${window.TL._USER.firstName} ${window.TL._USER.lastName}`}
-                </>
-              }
+          <Col xs={21} md={12}>
+            <form
+              style={{
+                display: "flex",
+                alignContent: "center",
+                width: "100%",
+                padding: `6px 0 0 ${SPACE_MD}`,
+              }}
+              action={setBaseUrl("/search")}
             >
-              <Menu.Item>
-                <>
-                  <IconLogout style={{ marginRight: SPACE_XS }} />
-                  <a href={setBaseUrl("/logout")}>{i18n("nav.main.logout")}</a>
-                </>
-              </Menu.Item>
-            </Menu.SubMenu>
-          </Menu>
-        </div>
+              <Input.Search name="query" />
+            </form>
+          </Col>
+          <Col xs={3} md={4}>
+            <Row justify="end">
+              <Menu mode="horizontal" style={{ border: "none" }}>
+                <Menu.SubMenu
+                  title={
+                    <>
+                      <Avatar
+                        size="small"
+                        style={{
+                          backgroundColor: grey4,
+                          color: grey10,
+                          marginRight: SPACE_XS,
+                        }}
+                        icon={<IconUser />}
+                      />
+                      {`${window.TL._USER.firstName} ${window.TL._USER.lastName}`}
+                    </>
+                  }
+                >
+                  <Menu.Item>
+                    <>
+                      <IconLogout style={{ marginRight: SPACE_XS }} />
+                      <a href={setBaseUrl("/logout")}>
+                        {i18n("nav.main.logout")}
+                      </a>
+                    </>
+                  </Menu.Item>
+                </Menu.SubMenu>
+              </Menu>
+            </Row>
+          </Col>
+        </Row>
         <Breadcrumbs crumbs={window.breadcrumbs} />
         <Session />
         <Notifications />
