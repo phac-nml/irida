@@ -6,7 +6,7 @@ import {
   generateColumnOrderInfo,
   tableConfig
 } from "../../../utilities/datatables-utilities";
-import { formatDate } from "../../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
@@ -18,7 +18,6 @@ import {
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file-utilities";
-import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
@@ -334,7 +333,7 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
       render(data) {
-        return `<time>${formatDate({ date: data })}</time>`;
+        return `<time>${formatInternationalizedDateTime({ date: data })}</time>`;
       }
     }
   ],
@@ -643,15 +642,14 @@ function displayFilters(filters) {
     filters.has(FILTERS.FILTER_BY_EARLY_DATE) &&
     filters.has(FILTERS.FILTER_BY_LATEST_DATE)
   ) {
-    const start = moment(filters.get(FILTERS.FILTER_BY_EARLY_DATE)).format(
-      "ll"
-    );
-    const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
+    const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' };
+    const start = formatInternationalizedDateTime(filters.get(FILTERS.FILTER_BY_EARLY_DATE), dateFormat);
+    const end = formatInternationalizedDateTime(filters.get(FILTERS.FILTER_BY_LATEST_DATE), dateFormat);
     const range = `${start} - ${end}`;
     createChip(i18n("project.sample.filter-date.label"), range, () => {
       filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
       filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
-      table.ajax.reload();
+      $dt.ajax.reload();
     });
   }
 

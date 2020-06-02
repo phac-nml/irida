@@ -23,6 +23,7 @@ Navigate to the project that contains the samples that you’re interested in ex
 On this page you will fill in a few options about your Galaxy export:
 * Galaxy User Email: This email must exactly match the email of your Galaxy account.  Incorrectly adding your Galaxy email will result in a failed export.
 * Include assemblies: Whether to include assemlies in the Galaxy export.  If this box is checked, any assemblies associated with the samples in the cart will be included.
+* Include FAST5: Whether to include FAST5 data in the Galaxy export.  If this box is checked, any FAST5 files associated with the samples in the cart will be included.
 * Automatically create collection: If this box is checked, a collection will be created in Galaxy with the contents of this export.
 
 After selecting your options, click the `Export Samples to Galaxy` button to start the export.

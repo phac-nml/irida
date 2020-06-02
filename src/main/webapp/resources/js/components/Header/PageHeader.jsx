@@ -4,8 +4,8 @@ import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
-import { Avatar, Input, Menu } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { Avatar, Input, Menu } from "antd";
 import { grey10, grey4 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
 import { IconLogout, IconUser } from "../icons/Icons";
@@ -16,7 +16,7 @@ Webpack does not know what the servlet context path is.  To fix this, webpack ex
 the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
-__webpack_public_path__ = `dist/`;
+__webpack_public_path__ = setBaseUrl(`/dist/`);
 
 export class PageHeader extends React.Component {
   state = {
