@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.stereotype.Repository;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+@Repository
 public class GenomeAssemblyRemoteRepositoryImpl extends RemoteRepositoryImpl<UploadedAssembly> implements
         GenomeAssemblyRemoteRepository {
 

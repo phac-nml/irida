@@ -349,6 +349,20 @@ public class ProjectSynchronizationService {
 			}
 		}
 
+		List<UploadedAssembly> genomeAssembliesForSample = assemblyRemoteService.getGenomeAssembliesForSample(sample);
+
+		for (UploadedAssembly file : genomeAssembliesForSample) {
+			if (!objectsByUrl.containsKey(file.getRemoteStatus().getURL())) {
+				file.setId(null);
+				try {
+					syncAssembly(file, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
+			}
+		}
+
+
 		if (syncErrors.isEmpty()) {
 			localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 		} else {

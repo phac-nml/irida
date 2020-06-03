@@ -13,11 +13,13 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+@Service
 public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedAssembly>
 		implements GenomeAssemblyRemoteService {
 

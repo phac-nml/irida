@@ -52,6 +52,8 @@ public class ProjectSynchronizationServiceTest {
 	private RemoteAPITokenService tokenService;
 	@Mock
 	private EmailController emailController;
+	private GenomeAssemblyService assemblyService;
+	private GenomeAssemblyRemoteService assemblyRemoteService;
 
 	ProjectSynchronizationService syncService;
 
@@ -65,8 +67,8 @@ public class ProjectSynchronizationServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
-				metadataTemplateService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
-				pairRemoteService, tokenService, emailController);
+				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
+				pairRemoteService, assemblyRemoteService, tokenService, emailController);
 
 		api = new RemoteAPI();
 		expired = new Project();
