@@ -251,7 +251,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(1, sequencesForSampleOfType.size());
 		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
 
-		assertEquals(new Long(4), join.getObject().getId());
+		assertEquals(Long.valueOf(4), join.getObject().getId());
 	}
 
 	@Test
@@ -264,7 +264,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(1, sequencesForSampleOfType.size());
 		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
 
-		assertEquals(new Long(2), join.getObject().getId());
+		assertEquals(Long.valueOf(2), join.getObject().getId());
 	}
 
 	@Test
