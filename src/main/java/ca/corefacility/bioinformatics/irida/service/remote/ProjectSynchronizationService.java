@@ -4,6 +4,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
@@ -19,10 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.apache.commons.lang3.time.DateUtils;
@@ -49,28 +48,34 @@ public class ProjectSynchronizationService {
 	private SampleService sampleService;
 	private SequencingObjectService objectService;
 	private MetadataTemplateService metadataTemplateService;
+	private GenomeAssemblyService assemblyService;
 
 	private ProjectRemoteService projectRemoteService;
 	private SampleRemoteService sampleRemoteService;
 	private SingleEndSequenceFileRemoteService singleEndRemoteService;
 	private SequenceFilePairRemoteService pairRemoteService;
+	private GenomeAssemblyRemoteService assemblyRemoteService;
 	private RemoteAPITokenService tokenService;
 	private EmailController emailController;
 
 	@Autowired
 	public ProjectSynchronizationService(ProjectService projectService, SampleService sampleService,
-			SequencingObjectService objectService, MetadataTemplateService metadataTemplateService, ProjectRemoteService projectRemoteService,
+			SequencingObjectService objectService, MetadataTemplateService metadataTemplateService,
+			GenomeAssemblyService assemblyService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
-			SequenceFilePairRemoteService pairRemoteService, RemoteAPITokenService tokenService, EmailController emailController) {
+			SequenceFilePairRemoteService pairRemoteService, GenomeAssemblyRemoteService assemblyRemoteService,
+			RemoteAPITokenService tokenService, EmailController emailController) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.objectService = objectService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.assemblyService = assemblyService;
 		this.projectRemoteService = projectRemoteService;
 		this.sampleRemoteService = sampleRemoteService;
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
+		this.assemblyRemoteService = assemblyRemoteService;
 		this.tokenService = tokenService;
 		this.emailController = emailController;
 	}
@@ -405,6 +410,31 @@ public class ProjectSynchronizationService {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
 					e);
+		}
+	}
+
+	/**
+	 * Synchronize a given {@link GenomeAssembly} to the local
+	 * installation
+	 *
+	 * @param assembly the {@link GenomeAssembly} to sync
+	 * @param sample   the {@link Sample} to add the assembly to
+	 */
+	public void syncAssembly(UploadedAssembly assembly, Sample sample) {
+		RemoteStatus fileStatus = assembly.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
+		try {
+			assembly = assemblyRemoteService.mirrorAssembly(assembly);
+
+			assembly.getRemoteStatus()
+					.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+			assemblyService.createAssemblyInSample(sample, assembly);
+		} catch (Exception e) {
+			logger.error("Error transferring assembly: " + assembly.getRemoteStatus()
+					.getURL(), e);
+			throw new ProjectSynchronizationException("Could not synchronize assembly " + assembly.getRemoteStatus()
+					.getURL(), e);
 		}
 	}
 
