@@ -1,24 +1,23 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.GenomeAssemblyRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.GenomeAssemblyRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 
+/**
+ * An implementation of {@link GenomeAssemblyRemoteService} using a {@link GenomeAssemblyRemoteRepository} to read remote {@link ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly}
+ */
 @Service
 public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedAssembly>
 		implements GenomeAssemblyRemoteService {
@@ -30,8 +29,7 @@ public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedA
 	/**
 	 * Create a new remote service that interacts with the given repository
 	 *
-	 * @param repository          The {@link RemoteRepository} handling basic operations with
-	 *                            the given Type
+	 * @param repository          The {@link GenomeAssemblyRemoteRepository} to interact with remote apis
 	 * @param remoteAPIRepository repository for storing and retrieving {@link RemoteAPI}s
 	 */
 	public GenomeAssemblyRemoteServiceImpl(GenomeAssemblyRemoteRepository repository,
@@ -41,6 +39,9 @@ public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedA
 		this.repository = repository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<UploadedAssembly> getGenomeAssembliesForSample(Sample sample) {
 		Link link = sample.getLink(SAMPLE_ASSEMBLY_REL);
@@ -50,10 +51,14 @@ public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedA
 		return repository.list(href, remoteApiForURI);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public UploadedAssembly mirrorAssembly(UploadedAssembly seqObject) {
 		String fileHref = seqObject.getSelfHref();
 		RemoteAPI api = getRemoteApiForURI(fileHref);
-		Path downloadRemoteSequenceFile = repository.downloadRemoteSequenceFile(fileHref, api);
+		Path downloadRemoteSequenceFile = repository.downloadRemoteAssembly(fileHref, api);
 		seqObject.setFile(downloadRemoteSequenceFile);
 
 		return seqObject;
