@@ -22,36 +22,40 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Audited
 public class UploadedAssembly extends GenomeAssembly implements VersionedFileFields<Long> {
 
-	@NotNull
-	@Column(name = "file_path", unique = true)
-	private Path file;
+    @NotNull
+    @Column(name = "file_path", unique = true)
+    private Path file;
 
-	@Column(name = "file_revision_number")
-	Long fileRevisionNumber;
+    @Column(name = "file_revision_number")
+    Long fileRevisionNumber;
 
-	//default constructor for hibernate
-	protected UploadedAssembly() {
-		super();
-	}
+    //default constructor for hibernate
+    protected UploadedAssembly() {
+        super();
+    }
 
-	public UploadedAssembly(Path file) {
-		super();
-		this.fileRevisionNumber = 0L;
-		this.file = file;
-	}
+    public UploadedAssembly(Path file) {
+        super();
+        this.fileRevisionNumber = 0L;
+        this.file = file;
+    }
 
-	@Override
-	public Path getFile() {
-		return file;
-	}
+    @Override
+    public Path getFile() {
+        return file;
+    }
 
-	@Override
-	public Long getFileRevisionNumber() {
-		return fileRevisionNumber;
-	}
+    public void setFile(Path file) {
+        this.file = file;
+    }
 
-	@Override
-	public void incrementFileRevisionNumber() {
-		fileRevisionNumber++;
-	}
+    @Override
+    public Long getFileRevisionNumber() {
+        return fileRevisionNumber;
+    }
+
+    @Override
+    public void incrementFileRevisionNumber() {
+        fileRevisionNumber++;
+    }
 }
