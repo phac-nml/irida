@@ -1,19 +1,18 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
+import java.nio.file.Path;
+import java.util.List;
+
+import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.GenomeAssemblyRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.GenomeAssemblyRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
-
-import org.springframework.hateoas.Link;
-import org.springframework.stereotype.Service;
-
-import java.nio.file.Path;
-import java.util.List;
 
 /**
  * An implementation of {@link GenomeAssemblyRemoteService} using a {@link GenomeAssemblyRemoteRepository} to read remote {@link ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly}
