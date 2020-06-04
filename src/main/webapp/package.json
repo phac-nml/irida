@@ -78,8 +78,7 @@
     "select2": "^3.5.1",
     "showdown": "^1.9.1",
     "sortablejs": "^1.5.1",
-    "styled-components": "^4.3.2",
-    "ui-select": "^0.19.6",
+    "styled-components": "^5.1.1",
     "xlsx": "^0.13.0"
   },
   "devDependencies": {
@@ -118,7 +117,6 @@
     "file-loader": "^5.0.2",
     "jest": "^26.0.1",
     "mini-css-extract-plugin": "^0.9.0",
-    "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
