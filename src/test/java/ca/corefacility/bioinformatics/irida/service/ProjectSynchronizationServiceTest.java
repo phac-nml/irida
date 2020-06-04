@@ -52,7 +52,9 @@ public class ProjectSynchronizationServiceTest {
 	private RemoteAPITokenService tokenService;
 	@Mock
 	private EmailController emailController;
+	@Mock
 	private GenomeAssemblyService assemblyService;
+	@Mock
 	private GenomeAssemblyRemoteService assemblyRemoteService;
 
 	ProjectSynchronizationService syncService;
