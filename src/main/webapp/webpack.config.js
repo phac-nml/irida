@@ -42,19 +42,8 @@ const config = {
         use: "babel-loader?cacheDirectory",
       },
       {
-        test: /\.(css|sass|scss)$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              plugins: () => [require("autoprefixer")],
-              sourceMap: true,
-            },
-          },
-          "sass-loader",
-        ],
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
       {
         test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,

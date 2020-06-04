@@ -2,7 +2,7 @@ import $ from "jquery";
 import Sortable from "sortablejs";
 import "../../../vendor/plugins/jquery/select2";
 import "jquery-validation";
-import "../../../../sass/pages/create-linelist-template.scss";
+import "../../../../css/pages/create-linelist-template.css";
 
 // ****************************************************************************
 // FORM VALIDATION - uses jquery-validation plugin
@@ -17,7 +17,7 @@ const setSubmitBtnState = () => {
 
 form.validate({
   errorElement: "em",
-  errorPlacement: function(error, element) {
+  errorPlacement: function (error, element) {
     error.addClass("help-block");
     error.insertAfter(element);
   },
@@ -32,7 +32,7 @@ form.validate({
       .parents(".form-group")
       .addClass("has-success")
       .removeClass("has-error");
-  }
+  },
 });
 
 form.find("input").on("keyup blur", setSubmitBtnState);
@@ -49,7 +49,7 @@ if (window.PAGE.isOwner) {
 // do not allow duplicate fields.
 // ****************************************************************************
 const existingFields = new Set();
-document.querySelectorAll(".field-names").forEach(field => {
+document.querySelectorAll(".field-names").forEach((field) => {
   existingFields.add(field.value);
 });
 
@@ -108,13 +108,13 @@ function removeFieldFromButton(btn) {
 /**
  * Handle clicking the remove button on the field.
  */
-$(".template-fields").on("click", ".field-remove", function() {
+$(".template-fields").on("click", ".field-remove", function () {
   removeFieldFromButton(this);
   setSubmitBtnState();
   checkFieldsState();
 });
 
-$("#add-field-modal").on("shown.bs.modal", function() {
+$("#add-field-modal").on("shown.bs.modal", function () {
   const modal = $(this);
   const fieldSelect2 = $("#field-select")
     .select2({
@@ -126,21 +126,21 @@ $("#add-field-modal").on("shown.bs.modal", function() {
         dataType: "json",
         delay: 250,
         processResults(data, params) {
-          data = data.filter(item => {
+          data = data.filter((item) => {
             return !existingFields.has(item);
           });
-          const results = data.map(item => ({ id: item, text: item }));
+          const results = data.map((item) => ({ id: item, text: item }));
           const searchTerm = params.term;
           if (!data.includes(searchTerm) && !existingFields.has(searchTerm)) {
             results.unshift({
               id: searchTerm,
               isNew: true,
-              text: searchTerm
+              text: searchTerm,
             });
           }
           return { results };
         },
-        cache: true
+        cache: true,
       },
       templateResult(data) {
         if (data.isNew) {
@@ -149,9 +149,9 @@ $("#add-field-modal").on("shown.bs.modal", function() {
 `);
         }
         return data.text;
-      }
+      },
     })
-    .on("select2:select", function() {
+    .on("select2:select", function () {
       const value = $(this).val();
       if (value) {
         existingFields.add(value);
@@ -169,7 +169,7 @@ $("#add-field-modal").on("shown.bs.modal", function() {
 // ****************************************************************************
 // Set up Delete Template
 // ****************************************************************************
-$("#delete-checkbox").on("change", function() {
+$("#delete-checkbox").on("change", function () {
   $("#delete-template-btn").prop("disabled", !this.checked);
 });
 
