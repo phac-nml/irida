@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
 <head>
     <meta charset="UTF-8">
     <title th:text="#{admin.panel.title}">ADMIN PANEL</title>
 </head>
-<body>
-    <h1 class="t-admin-panel-title" th:text="#{admin.panel.title}">ADMIN PANEL</h1>
+    <body>
+    <div id="root" style="height: 100%;" layout:fragment="page">
+        <!--
+                 This is a DOM element for React to render the admin details into.
+                 See  src/main/webapp/resources/js/pages/analysis/components/Admin.jsx
+              -->
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/dist/js/admin.bundle.js}"></script>
+    </th:block>
 </body>
 </html>
