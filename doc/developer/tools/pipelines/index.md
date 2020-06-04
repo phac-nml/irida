@@ -378,7 +378,7 @@ The `properties` section contains additional information you will have to update
 <plugin.dependencies></plugin.dependencies>
 <plugin.requires.runtime>1.1.0</plugin.requires.runtime>
 
-<irida.version.compiletime>20.05</irida.version.compiletime>
+<irida.version.compiletime>20.09</irida.version.compiletime>
 ```
 
 The `<plugin.*>` entries contain information about your particular plugin as defined by [PF4J][pf4j-start].
