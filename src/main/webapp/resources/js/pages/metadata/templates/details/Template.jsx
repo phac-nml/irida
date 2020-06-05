@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useMetadataTemplate } from "../../../../contexts/metadata-template-context";
 import { Button } from "antd";
 
@@ -6,7 +6,6 @@ import { SPACE_SM } from "../../../../styles/spacing";
 
 export function Template() {
   const { template } = useMetadataTemplate();
-  const [fields, setFields] = useState(template.fields.map((f) => f.label));
 
   const getFields = () => {};
 
