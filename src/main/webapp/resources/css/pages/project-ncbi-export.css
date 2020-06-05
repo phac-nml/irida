@@ -1,0 +1,8 @@
+.horizontal-scroll {
+  overflow: auto;
+}
+
+.sample-details-table {
+  width: 1300px;
+  white-space: nowrap;
+}

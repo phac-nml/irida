@@ -1,0 +1,80 @@
+h1 {
+  margin: 0;
+}
+
+$states: (
+  "new": #3092D0,
+  "preparing": #2675A7,
+  "prepared": #1C587E,
+  "submitting": #133B54,
+  "running": #133b54,
+  "finished_running": #43ac6a,
+  "completing": #61C185,
+  "completed": #66cd00,
+  "error": #f08a24
+);
+
+.analysis__state {
+  border-left: 1rem solid transparent;
+}
+
+@each $state, $bColor in $states {
+  .analysis__state--#{$state} {
+    border-color: $bColor;
+  }
+}
+
+@each $state, $bColor in $states {
+  .analysis__alert--#{$state} {
+    border-top: 6px solid $bColor;
+  }
+}
+
+.image-preview {
+  text-align: center;
+}
+
+.nav-tabs {
+  margin-top: 1rem;
+}
+.tab-pane {
+  padding: 1rem;
+  border: 1px solid rgba(221, 221, 221, 1);
+  border-top: none;
+}
+.parameters {
+  margin-left: 2rem;
+  border: 1px solid rgba(221, 221, 221, 1);
+  border-top: none;
+  border-radius: 4px;
+}
+table {
+  table-layout: fixed !important;
+  margin-bottom: 0 !important;
+  table-layout: fixed;
+  width: 100%;
+}
+tr {
+  td {
+    vertical-align: middle !important;
+  }
+}
+td.para-key {
+  word-wrap: break-word;
+}
+td.para-value {
+  text-align: right;
+}
+table.sistr-report th {
+  width: 30%;
+}
+table.sistr-report td {
+  word-wrap: break-word;
+}
+
+.pad5 {
+  padding: 5px;
+}
+.border-1-gray {
+  border: 1px solid #ddd;
+}

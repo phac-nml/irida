@@ -1,0 +1,345 @@
+@import "components/buttons.css";
+@import "components/modals.css";
+@import "components/panels.css";
+@import "components/sidenav.css";
+@import "components/tables.css";
+@import "components/typography.css";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/****************************************************************************************
+* BOOTSTRAP OVERRIDES
+*****************************************************************************************/
+.nav,
+.pagination,
+.carousel,
+.panel-title a {
+  cursor: pointer;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #e6e8eb !important;
+  margin-bottom: 1.3rem;
+  li {
+    a {
+      border: none !important;
+    }
+    &.active a {
+      font-weight: 600;
+      background-color: transparent !important;
+      border-bottom: 1px solid #1c2833 !important;
+    }
+    &:not(.active) a {
+      background-color: transparent !important;
+      color: #717f8c !important;
+    }
+  }
+}
+
+label.ant-checkbox-wrapper {
+  font-weight: normal;
+}
+
+/****************************************************************************************
+* NOTIFICATION ANIMATIONS
+*****************************************************************************************/
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInDown {
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+  animation-name: fadeInDown;
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+}
+
+.fadeOutUp {
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+  animation-name: fadeOutUp;
+}
+
+/****************************************************************************************
+* MAIN NAVIGATION
+*****************************************************************************************/
+.top-navigation {
+  margin-bottom: 0;
+  padding-right: 15px !important;
+}
+
+.body-content {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-collapse {
+  background-color: #222222;
+}
+
+.navbar-brand {
+  padding: 10px 15px 10px 15px !important;
+}
+
+.navbar-logo {
+  height: 30px;
+}
+
+.navbar-collapse-icon {
+  color: white;
+  font-size: 20px;
+}
+
+/*// Icon links*/
+.nav-icon-wrapper {
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+}
+
+.nav-icon {
+  font-size: 21px;
+}
+
+/*// Gravatar*/
+.nav-gravatar-wrapper {
+  padding-right: 15px !important;
+}
+.nav-gravatar {
+  border-radius: 50%;
+  width: 20px;
+  padding: 0;
+}
+
+/*// Notifications*/
+.navbar-notification .angular-notifications-icon {
+  background-color: #3092d0;
+  border-radius: 10px;
+  top: 3px;
+  right: -3px;
+  height: 20px;
+  width: 20px !important;
+  padding: 0 !important;
+  font-size: 1.3rem;
+  line-height: 2rem;
+}
+
+/*// Allow for proper styling in collapsed navigation.*/
+@media (max-width: 768px) {
+  #global-search {
+    .search-wrapper {
+      width: 100%;
+      display: block;
+
+      input[type="search"] {
+        width: 100%;
+      }
+    }
+  }
+}
+
+/****************************************************************************************
+* OTHER
+*****************************************************************************************/
+
+.clickable {
+  display: block;
+  cursor: pointer;
+  span {
+    display: inline-block;
+  }
+}
+
+.form-group .alert {
+  font-weight: normal;
+}
+
+.nav-tabs li {
+  cursor: pointer;
+}
+
+h2.h2-muted {
+  margin-top: 0 !important;
+  font-weight: 300 !important;
+  font-size: 2.5rem;
+}
+
+/*// TODO: Clean these up.*/
+#table-filter {
+  padding: 0;
+  & > div {
+    padding: 20px;
+  }
+  .filter-btns > button {
+    margin-top: 33px;
+  }
+}
+
+.selected__counts {
+  color: white !important;
+  border-radius: 4px;
+  padding: 4px 8px 6px 8px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.crop {
+  max-width: 250px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.wrap-cell {
+  max-width: 160px !important;
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: left !important;
+}
+
+/*// Defaults spacing for the bottom of elements.*/
+.spaced-bottom {
+  margin-bottom: 1em;
+}
+
+.spaced-top {
+  margin-top: 1em;
+}
+
+.spaced-top__lg {
+  margin-top: 1.6em;
+}
+
+.spaced-right {
+  margin-right: 1em;
+}
+
+.spaced-right__sm {
+  margin-right: 0.35em;
+}
+
+.spaced-left {
+  margin-left: 1em;
+}
+
+.spaced-left__sm {
+  margin-left: 0.35em;
+}
+
+/*// Use for ordered lists that require continued numbering.*/
+
+ol.start {
+  counter-reset: mycounter;
+}
+ol.start li,
+ol.continue li {
+  list-style: none;
+}
+ol.start li:before,
+ol.continue li:before {
+  content: counter(mycounter) ". ";
+  counter-increment: mycounter;
+}
+
+.remote-hint {
+  font-size: 1.4em;
+  padding-bottom: 10px;
+}
+
+/*// Display a number next above and to the right*/
+/*// of a button. Ex. Cart icon in navbar.*/
+.btn__badge {
+  background-color: RGB(54, 147, 206);
+  border-radius: 2px;
+  color: white;
+
+  padding: 1px 5px;
+  font-size: 0.8em;
+  position: absolute;
+  top: 5px;
+  right: 0;
+}
+
+/*// Wrapping long sample names to the size of the container*/
+.text-wrap {
+  word-wrap: break-word;
+}
+
+/****************************************************************************************
+* AG-GRID
+*****************************************************************************************/
+
+/*// OVERLAY*/
+.ag-overlay-loading-center.irida-ag-overlay {
+  border-color: #95d7fb !important;
+  background-color: #e7f7ff !important;
+  font-size: 14px !important;
+}
+
+.irida-ag-overlay-loading-icon {
+  margin-right: 0.8em;
+  color: #2e94f9;
+}
+
+.irida-ag-overlay-loading-text {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/****************************************************************************************
+* ANT DESIGN OVERRIDES
+*****************************************************************************************/
+
+.ant-form.ant-form-vertical {
+  label {
+    display: block !important;
+    margin: 0 !important;
+    font-weight: normal !important;
+  }
+}
+
+.alert-sm {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.ant-radio-button-wrapper {
+  font-weight: normal !important;
+}
+
+.ant-descriptions-view {
+  overflow: auto !important;
+}
+
+.ant-table {
+  border: 1px solid hsl(116, 0%, 91%);
+  border-radius: 2px;
+}

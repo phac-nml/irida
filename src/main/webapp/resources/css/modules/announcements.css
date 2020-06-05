@@ -1,0 +1,37 @@
+.announcement-item {
+  display: flex;
+}
+
+.announcement-info {
+  width: 120px;
+  min-width: 120px;
+}
+
+.announcement-date {
+  display: inline-block;
+  flex: 0 0 150px;
+  color: #666;
+  line-height: 18px;
+  font-size: 0.7em;
+  text-align: right;
+}
+.announcement-time {
+  display: inline-block;
+  line-height: 28px;
+}
+.announcement-content {
+  flex: 1;
+  line-height: 28px;
+  align-content: stretch;
+}
+.announcement-markread {
+  margin-left: 5px;
+}
+textarea.announcement-input {
+  height: 20em;
+}
+
+.tooltip-inner {
+  white-space: nowrap;
+  max-width: none;
+}

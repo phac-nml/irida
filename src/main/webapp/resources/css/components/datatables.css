@@ -1,0 +1,178 @@
+/**
+This is a new files to replace datatables-custom.scss after all DataTables updated
+ */
+table.dataTable thead th {
+  position: relative;
+  background-image: none !important;
+}
+
+table.dataTable {
+  margin-bottom: 0 !important;
+  th {
+    white-space: nowrap;
+    height: 32px;
+    vertical-align: middle !important;
+    position: relative;
+  }
+  /*// Center the Sort indicator*/
+  th:after {
+    position: absolute;
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+    content: "";
+  }
+}
+
+/*// For fixed columns, this adds a gradient of it to differentiate it from*/
+/*// the rest of the table.*/
+.DTFC_LeftHeadWrapper,
+.DTFC_LeftBodyWrapper {
+  border-right: 2px solid rgba(218, 220, 224, 1) !important;
+}
+
+.DTFC_LeftBodyLiner {
+  overflow-x: hidden !important;
+}
+
+.dataTables_paginate {
+  display: flex;
+  justify-content: center;
+}
+
+/*// Styles for a toolbar above the table*/
+.dt-btn-toolbar {
+  margin-bottom: 1rem;
+
+  /*// Overriding dropdown placement.*/
+  .dropdown-menu {
+    position: absolute !important;
+    top: 30px !important;
+    left: 0;
+
+    .checkbox {
+      padding-left: 10px;
+    }
+
+    .btn-default {
+      border: none !important;
+      border-radius: 0;
+      display: block;
+      text-align: left !important;
+    }
+
+    li > ul {
+      max-height: 300px;
+      overflow-y: scroll;
+      list-style: none;
+      margin: 0;
+
+      li {
+        margin-left: -40px !important;
+        line-height: 20px;
+        &:hover {
+          background-color: #f9f9f9 !important;
+        }
+      }
+
+      a {
+        background-color: #ffffff;
+        box-sizing: border-box;
+        clear: both;
+        color: rgb(38, 38, 38);
+        display: block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        list-style: none outside none;
+        outline: rgb(38, 38, 38) none 0px;
+        padding: 3px 20px;
+        text-align: left;
+        text-decoration: none;
+        text-decoration-color: rgb(38, 38, 38);
+        text-decoration-style: solid;
+        white-space: nowrap;
+        &:hover {
+          background-color: rgb(245, 245, 245);
+        }
+      }
+    }
+  }
+}
+
+/*// New custom wrapper for updated tables*/
+/*// This is set in JS in datatable-utilities.js#dom*/
+.dt-table-wrapper {
+  border: 1px solid rgba(224, 227, 232, 1);
+  margin-bottom: 1rem;
+}
+
+/*// Set up the filter to be pulled to the right and accept flex box*/
+#dt-filters {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dataTables_filter {
+  display: inline-block;
+}
+
+.dt-filter-btns {
+  margin: 0 !important;
+}
+
+/*// Filter Row - updated tables*/
+.filter-tags {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.filter-tags__space {
+  display: flex;
+}
+
+.filter-tags__tag {
+  margin-left: 4px;
+}
+
+.dt-wrap-cell {
+  position: relative;
+  white-space: pre-line;
+  word-wrap: break-word;
+  display: block;
+}
+
+.dt-date {
+  width: 200px !important;
+}
+
+/*// Filter Chips Styles*/
+.filter-chip--wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.filter-chip--chip {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 24px;
+  align-items: center;
+  cursor: default;
+  margin-left: 0.5rem;
+  background-color: #e0e0e0;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.filter-chip--close {
+  font-size: 1.2em;
+  width: 1em;
+  height: 1em;
+  margin-right: -4px;
+  margin-left: 6px;
+  cursor: pointer;
+  display: inline-block;
+}
