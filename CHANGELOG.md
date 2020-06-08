@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI] Updated project user groups to use Ant Design.
 * [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
+* [UI]: Allowing users to synchronize assembly data from remote APIs.
 
 20.01 to 20.05
 --------------
