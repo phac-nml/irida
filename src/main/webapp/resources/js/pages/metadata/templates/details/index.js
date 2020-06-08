@@ -12,6 +12,7 @@ import { Template } from "./Template";
 import { Link, Router } from "@reach/router";
 import Sider from "antd/es/layout/Sider";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { grey1 } from "../../../../styles/colors";
 
 const { Content } = Layout;
 const { Paragraph } = Typography;
@@ -24,7 +25,9 @@ const TemplateDetails = () => {
       dataSource={[
         {
           title: "TEMPLATE NAME",
-          desc: (
+          desc: loading ? (
+            <IconLoading />
+          ) : (
             <Paragraph
               editable={
                 window.project.canManage && !loading
@@ -34,7 +37,17 @@ const TemplateDetails = () => {
                   : null
               }
             >
-              {loading ? <IconLoading /> : template.name}
+              {template.name}
+            </Paragraph>
+          ),
+        },
+        {
+          title: "DESCRIPTION",
+          desc: loading ? (
+            <IconLoading />
+          ) : (
+            <Paragraph editable={{ onChange: (value) => console.log(value) }}>
+              {template.description}
             </Paragraph>
           ),
         },
@@ -58,11 +71,11 @@ function MetadataTemplatePage() {
   const [, projectId, templateId] = defaultHref.match(
     /\w+\/(\d+)\/[a-z-]+\/(\d+)/
   );
-  console.log(projectId, templateId);
 
   const BASE_URL = setBaseUrl(
-    `/projects/${projectId}/metadata-template/${templateId}`
+    `/projects/${projectId}/metadata-templates/${templateId}`
   );
+
   return (
     <PageHeader
       className="site-page-header"
@@ -85,7 +98,7 @@ function MetadataTemplatePage() {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Content>
+          <Content style={{ backgroundColor: grey1, padding: "1rem" }}>
             <Router>
               <TemplateDetails path={BASE_URL} />
               <Template path={`${BASE_URL}/fields`} />

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getMetadataTemplate } from "../apis/metadata/templates";
+import { getMetadataTemplateDetails } from "../apis/metadata/metadata-templates";
 
 const MetadataTemplateContext = createContext();
 
@@ -8,7 +8,7 @@ function MetadataTemplateProvider({ children, id }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getMetadataTemplate({ templateId: id }).then((data) => {
+    getMetadataTemplateDetails({ templateId: id }).then((data) => {
       setTemplate(data);
       setLoading(false);
     });

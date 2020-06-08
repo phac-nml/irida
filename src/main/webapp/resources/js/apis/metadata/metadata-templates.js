@@ -8,3 +8,9 @@ export function getProjectMetadataTemplates(projectId) {
     .get(`${BASE_URL}?projectId=${projectId}`)
     .then(({ data }) => data);
 }
+
+export async function getMetadataTemplateDetails({ templateId }) {
+  return await axios
+    .get(setBaseUrl(`${BASE_URL}/${templateId}`))
+    .then(({ data }) => data);
+}

@@ -29,9 +29,3 @@ export function saveTemplate(data) {
     data,
   });
 }
-
-export async function getMetadataTemplate({ templateId }) {
-  return await axios
-    .get(setBaseUrl(`/ajax/metadata/templates/${templateId}`))
-    .then(({ data }) => data);
-}
