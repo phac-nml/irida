@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Button, notification, Popconfirm, Tooltip } from "antd";
 import { IconRemove } from "../icons/Icons";
-import { PagedTableContext } from "../ant.design/PagedTable";
 
 /**
  * React component to remove a member from a project

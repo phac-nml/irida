@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
-	private FileUtilities fileUtilities = new FileUtilities();
+	private final FileUtilities fileUtilities = new FileUtilities();
 
 	@Autowired
 	@Qualifier("outputFileBaseDirectory")
@@ -65,7 +65,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
 
-		String expectedAnalysisDetails[] = new String[] { "My Completed Submission", "4",
+		String[] expectedAnalysisDetails = new String[] { "My Completed Submission", "4",
 				"SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue("The correct details are displayed for the analysis",
 				page.analysisDetailsEqual(expectedAnalysisDetails));
@@ -413,7 +413,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
 
-		String expectedAnalysisDetails[] = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
+		String[] expectedAnalysisDetails = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
 				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue("The correct details are displayed for the analysis",
 				page.analysisDetailsEqual(expectedAnalysisDetails));
