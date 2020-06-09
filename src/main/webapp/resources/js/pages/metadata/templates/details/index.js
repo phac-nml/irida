@@ -57,7 +57,7 @@ const TemplateDetails = () => {
 
 function MetadataTemplatePage() {
   const { template, loading } = useMetadataTemplate();
-  const { activeKey, setActiveKey } = useState("details");
+  const [activeKey, setActiveKey] = useState("details");
   const defaultHref = window.location.href;
   const [, projectId, templateId] = defaultHref.match(
     /\w+\/(\d+)\/[a-z-]+\/(\d+)/
@@ -77,9 +77,9 @@ function MetadataTemplatePage() {
         <Layout>
           <Sider width={200}>
             <Menu
+              onClick={(event) => setActiveKey(event.key)}
               mode="inline"
               style={{ height: "100%", borderRight: 0, width: 200 }}
-              defaultOpenKeys={[activeKey]}
               selectedKeys={[activeKey]}
             >
               <Menu.Item key="details">
