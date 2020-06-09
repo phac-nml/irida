@@ -2,13 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import javax.validation.ConstraintViolationException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataTemplateService;
@@ -36,8 +37,22 @@ public class MetadataTemplatesAjaxController {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
-	@RequestMapping("/{templateId}")
+	@RequestMapping(value = "/{templateId}", method = RequestMethod.GET)
 	public ResponseEntity<MetadataTemplate> getMetadataTemplateDetails(@PathVariable Long templateId) {
 		return ResponseEntity.ok(service.getMetadataTemplateDetails(templateId));
+	}
+
+	@RequestMapping(value = "/{templateId}", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateTemplateAttribute(@PathVariable Long templateId, @RequestParam String field,
+			@RequestParam String value) {
+		try {
+			return ResponseEntity.ok(service.updateTemplateAttribute(templateId, field, value));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(e.getMessage());
+		} catch (ConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(e.getMessage());
+		}
 	}
 }

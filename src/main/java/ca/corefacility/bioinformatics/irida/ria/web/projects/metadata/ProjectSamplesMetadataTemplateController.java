@@ -33,9 +33,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 @Controller
 @RequestMapping("/projects/{projectId}/metadata-templates")
 public class ProjectSamplesMetadataTemplateController {
-	private ProjectService projectService;
-	private MetadataTemplateService metadataTemplateService;
-	private ProjectControllerUtils projectControllerUtils;
+	private final ProjectService projectService;
+	private final MetadataTemplateService metadataTemplateService;
+	private final ProjectControllerUtils projectControllerUtils;
 
 	@Autowired
 	public ProjectSamplesMetadataTemplateController(ProjectService projectService,
@@ -74,7 +74,7 @@ public class ProjectSamplesMetadataTemplateController {
 	 * @param model      {@link Model} spring page model
 	 * @return {@link String} path to template page
 	 */
-	@RequestMapping("/{templateId}")
+	@RequestMapping(value = { "/{templateId}", "/{templateId}/fields" })
 	public String getMetadataTemplatePage(@PathVariable Long projectId, @PathVariable Long templateId,
 			Principal principal, Model model) {
 		Project project = projectService.read(projectId);

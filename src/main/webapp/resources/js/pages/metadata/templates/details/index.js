@@ -20,43 +20,34 @@ const { Paragraph } = Typography;
 const TemplateDetails = () => {
   const { template, loading, updateField } = useMetadataTemplate();
 
-  return (
+  const initField = (field, text) => {
+    const editable = window.project.canManage
+      ? {
+          onChange: (value) => updateField(field, value),
+        }
+      : null;
+    return <Paragraph editable={editable}>{text}</Paragraph>;
+  };
+
+  return loading ? (
+    <IconLoading />
+  ) : (
     <BasicList
       dataSource={[
         {
           title: "TEMPLATE NAME",
-          desc: loading ? (
-            <IconLoading />
-          ) : (
-            <Paragraph
-              editable={
-                window.project.canManage && !loading
-                  ? {
-                      onChange: (value) => updateField("name", value),
-                    }
-                  : null
-              }
-            >
-              {template.name}
-            </Paragraph>
-          ),
+          desc: initField("name", template.name),
         },
         {
           title: "DESCRIPTION",
-          desc: loading ? (
-            <IconLoading />
-          ) : (
-            <Paragraph editable={{ onChange: (value) => console.log(value) }}>
-              {template.description}
-            </Paragraph>
-          ),
+          desc: initField("description", template.description),
         },
         {
           title: "CREATED DATE",
-          desc: loading ? (
-            <IconLoading />
-          ) : (
-            formatInternationalizedDateTime(template.createdDate)
+          desc: (
+            <Paragraph>
+              {formatInternationalizedDateTime(template.createdDate)}
+            </Paragraph>
           ),
         },
       ]}
@@ -98,7 +89,13 @@ function MetadataTemplatePage() {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Content style={{ backgroundColor: grey1, padding: "1rem" }}>
+          <Content
+            style={{
+              backgroundColor: grey1,
+              paddingLeft: 20,
+              borderLeft: `1px solid blue`,
+            }}
+          >
             <Router>
               <TemplateDetails path={BASE_URL} />
               <Template path={`${BASE_URL}/fields`} />
