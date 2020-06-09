@@ -707,7 +707,7 @@ public class ProjectServiceImplIT {
 		assertEquals("should have found 1 project", 1, projectsForSequencingObjects.size());
 		Project project = projectsForSequencingObjects.iterator().next();
 
-		assertEquals("should have found project 2", new Long(2), project.getId());
+		assertEquals("should have found project 2", Long.valueOf(2), project.getId());
 	}
 
 	@Test
@@ -729,7 +729,7 @@ public class ProjectServiceImplIT {
 
 		assertEquals("should have found 1 project", 1, projects.size());
 		ProjectAnalysisSubmissionJoin project = projects.iterator().next();
-		assertEquals("should have found project 2", new Long(2L), project.getSubject().getId());
+		assertEquals("should have found project 2", Long.valueOf(2), project.getSubject().getId());
 	}
 
 	@Test

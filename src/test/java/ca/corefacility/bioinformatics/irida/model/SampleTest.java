@@ -155,7 +155,7 @@ public class SampleTest {
 
 		PipelineProvidedMetadataEntry actualEntry = (PipelineProvidedMetadataEntry) sample2.getMetadata().get(field1);
 
-		assertEquals("Updated metadata entry does not point to correct submission", new Long(2),
+		assertEquals("Updated metadata entry does not point to correct submission", Long.valueOf(2),
 				actualEntry.getSubmission().getId());
 		assertEquals("Non-updated metadata entry does not match", this.pipelineEntry2,
 				sample2.getMetadata().get(field2));
