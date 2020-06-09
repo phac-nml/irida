@@ -79,6 +79,7 @@ function MetadataTemplatePage() {
             <Menu
               mode="inline"
               style={{ height: "100%", borderRight: 0, width: 200 }}
+              defaultOpenKeys={[activeKey]}
               selectedKeys={[activeKey]}
             >
               <Menu.Item key="details">
@@ -93,7 +94,6 @@ function MetadataTemplatePage() {
             style={{
               backgroundColor: grey1,
               paddingLeft: 20,
-              borderLeft: `1px solid blue`,
             }}
           >
             <Router>

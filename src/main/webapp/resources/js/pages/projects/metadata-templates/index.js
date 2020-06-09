@@ -10,6 +10,11 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Title } = Typography;
 
+/**
+ * Display a list of metadata templates that are associated with a project.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function ProjectMetadataTemplates() {
   const [templates, setTemplates] = useState([]);
   const BASE_URL = setBaseUrl(

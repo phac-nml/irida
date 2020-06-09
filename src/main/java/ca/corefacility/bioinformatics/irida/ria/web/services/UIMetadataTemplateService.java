@@ -16,8 +16,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Service for Metadata Templates in the user interface
  */
@@ -53,7 +51,18 @@ public class UIMetadataTemplateService {
 	public String updateTemplateAttribute(Long templateId, String field, String value)
 			throws EntityNotFoundException, ConstraintViolationException {
 		try {
-			templateService.updateFields(templateId, ImmutableMap.of(field, value));
+			MetadataTemplate template = templateService.read(templateId);
+			switch (field) {
+			case "name":
+				template.setName(value);
+				break;
+			case "description":
+				template.setDescription(value);
+				break;
+			default:
+				throw new EntityNotFoundException("CANNOT UPDATE " + field);
+			}
+			templateService.updateMetadataTemplateInProject(template);
 			// TODO: i18n
 			return "UPDATED, NOW INTERNATIONALIZE ME!";
 		} catch (EntityNotFoundException e) {

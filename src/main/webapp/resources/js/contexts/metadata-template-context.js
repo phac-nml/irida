@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getMetadataTemplateDetails } from "../apis/metadata/metadata-templates";
+import {
+  getMetadataTemplateDetails,
+  updateTemplateAttribute,
+} from "../apis/metadata/metadata-templates";
+import { notification } from "antd";
 
 const MetadataTemplateContext = createContext();
 
@@ -14,7 +18,19 @@ function MetadataTemplateProvider({ children, id }) {
     });
   }, [setLoading, setTemplate, id]);
 
-  const updateField = (field, value) => console.log("UPDATING THIS");
+  const updateField = (field, value) => {
+    updateTemplateAttribute({
+      templateId: id,
+      field,
+      value,
+    }).then((message) => {
+      notification.success({ message });
+
+      const updated = { ...template };
+      updated[field] = value;
+      setTemplate(updated);
+    });
+  };
 
   return (
     <MetadataTemplateContext.Provider
