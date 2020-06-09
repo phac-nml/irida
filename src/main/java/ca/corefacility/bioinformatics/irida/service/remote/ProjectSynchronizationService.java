@@ -456,10 +456,10 @@ public class ProjectSynchronizationService {
 	}
 
 	/**
-	 * Synchronize a given {@link GenomeAssembly} to the local
+	 * Synchronize a given {@link UploadedAssembly} to the local
 	 * installation
 	 *
-	 * @param assembly the {@link GenomeAssembly} to sync
+	 * @param assembly the {@link UploadedAssembly} to sync
 	 * @param sample   the {@link Sample} to add the assembly to
 	 */
 	public void syncAssembly(UploadedAssembly assembly, Sample sample) {
