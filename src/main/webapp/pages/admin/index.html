@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title th:text="#{admin.panel.title}">ADMIN PANEL</title>
+    <link rel="stylesheet" th:href="@{/dist/css/admin.bundle.css}" />
 </head>
     <body>
     <div id="root" style="height: 100%;" layout:fragment="page">

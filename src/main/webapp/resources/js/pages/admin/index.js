@@ -1,7 +1,7 @@
 import React from "react";
 
 import { render } from "react-dom";
-import Admin from "./components/AdminStatistics";
+import Admin from "./components/Admin";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 /*

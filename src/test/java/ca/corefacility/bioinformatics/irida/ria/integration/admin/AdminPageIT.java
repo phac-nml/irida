@@ -34,4 +34,12 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToAdminPage(driver());
 		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.adminPanelTitleVisible());
 	}
+
+	@Test
+	public void testPageSetUp() {
+		LoginPage.loginAsManager(driver());
+		AdminPage page = AdminPage.initPage(driver());
+		page.clickAdminButton();
+		// default page is statistics pagee
+	}
 }
