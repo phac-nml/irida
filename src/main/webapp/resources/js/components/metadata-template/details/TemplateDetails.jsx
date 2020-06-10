@@ -1,8 +1,8 @@
 import React from "react";
-import { useMetadataTemplate } from "../../contexts/metadata-template-context";
-import { IconLoading } from "../icons/Icons";
-import { BasicList } from "../lists";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { useMetadataTemplate } from "../../../contexts/metadata-template-context";
+import { IconLoading } from "../../icons/Icons";
+import { BasicList } from "../../lists";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { Typography } from "antd";
 
 const { Paragraph } = Typography;

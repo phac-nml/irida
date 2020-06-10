@@ -4,7 +4,7 @@
  * @param href
  * @returns {(string|*|number)[]}
  */
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 export function parseMetadataTemplateUrl(href) {
   let [, url, templateId, path] = href.match(
