@@ -19,8 +19,8 @@ const AdminStatistics = lazy(() => import("./AdminStatistics"));
 const AdminUsers = lazy(() => import("./AdminUsers"));
 
 export default function Admin() {
-  const HOME_URL = setBaseUrl("/");
-  const DEFAULT_URL = setBaseUrl("/admin/");
+  const HOME_URL = setBaseUrl("/dashboard");
+  const DEFAULT_URL = setBaseUrl("/admin");
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
 
   return (
