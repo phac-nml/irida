@@ -2,15 +2,13 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
@@ -25,7 +23,7 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 
 	private Map<String, AnalysisType> runnableTypesMap;
 
-	private Map<String, AnalysisType> viewers;
+	private Map<AnalysisType, String> viewers;
 
 	/**
 	 * Builds a new default {@link AnalysisTypesServiceImpl}.
@@ -75,11 +73,18 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 
 	public void registerRunnableType(AnalysisType type, String viewer) {
 		registerRunnableType(type);
-		viewers.put(viewer, type);
+		viewers.put(type, viewer);
 	}
 
 	public void registerUnrunnableType(AnalysisType type) {
 		allTypesMap.put(type.getType(), type);
+	}
+
+	public Optional<String> getViewerForAnalysisType(AnalysisType analysisType) {
+		if (viewers.containsKey(analysisType)) {
+			return Optional.of(viewers.get(analysisType));
+		}
+		return Optional.empty();
 	}
 
 	public void registerDefaultTypes() {
