@@ -309,7 +309,7 @@ IRIDA allows you to synchronize projects between different IRIDA installations. 
 The following data will be synchronized:
 * Basic project metadata
 * FASTQ sequencing data associated with samples
-* Assemblies associated with samples (including both uploaded assemblies and assemblies created by IRIDA's assembly pipeline)
+* Assemblies associated with samples (including both assemblies created by pipeliens within IRIDA, and uploaded assemblies)
 * Sample metadata
 
 The following data **will not** be synchronized:
