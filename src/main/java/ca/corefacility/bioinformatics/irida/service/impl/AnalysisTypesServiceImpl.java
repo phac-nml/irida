@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 
 /**
  * A service for managing registered {@link AnalysisType}s.
- *
  */
 @Component
 public class AnalysisTypesServiceImpl implements AnalysisTypesService {
@@ -27,33 +26,6 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 	private Map<String, AnalysisType> runnableTypesMap;
 
 	private Map<String, AnalysisType> viewers;
-
-	/**
-	 * Builds a new {@link AnalysisTypesServiceImpl}.
-	 * 
-	 * @param runnableAnalysisTypes A {@link Set} of {@link AnalysisType}s that can
-	 *                              be run as pipelines.
-	 * @param otherAnalysisTypes    A {@link Set} of {@link AnalysisType}s that
-	 *                              should exist in IRIDA but can't be run as
-	 *                              pipelines.
-	 */
-	public AnalysisTypesServiceImpl(Set<AnalysisType> runnableAnalysisTypes, Set<AnalysisType> otherAnalysisTypes) {
-		this();
-		checkNotNull(runnableAnalysisTypes, "runnableAnalysisTypes is null");
-		checkNotNull(otherAnalysisTypes, "otherAnalysisTypes is null");
-
-		for (AnalysisType type : runnableAnalysisTypes) {
-			registerRunnableType(type);
-		}
-
-		for (AnalysisType type : otherAnalysisTypes) {
-			if (allTypesMap.containsKey(type.getType())) {
-				throw new IllegalArgumentException("Error, set otherAnalysisTypes contains type " + type
-						+ " already found in runnableAnalysisTypes");
-			}
-			registerUnrunnableType(type);
-		}
-	}
 
 	/**
 	 * Builds a new default {@link AnalysisTypesServiceImpl}.
@@ -106,11 +78,11 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		viewers.put(viewer, type);
 	}
 
-	public void registerUnrunnableType(AnalysisType type){
+	public void registerUnrunnableType(AnalysisType type) {
 		allTypesMap.put(type.getType(), type);
 	}
 
-	public void registerDefaultTypes(){
+	public void registerDefaultTypes() {
 		registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS);
 		registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING);
 		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
