@@ -1,11 +1,8 @@
-@import "../helpers/variables";
-@import "../animations/animations";
-
 .paired_end,
 .single_end,
 .file_info,
 .assembly_sample_info {
-  background-color: $color-grey-light;
+  background-color: #F3F3F3;
   td {
     border: none !important;
   }
@@ -13,36 +10,36 @@
 
 .assembly_sample_info {
   .td_icon {
-    background-color: $colour-paired-end;
-    color: $color-grey-light;
+    background-color: #133b54;
+    color: #F3F3F3;
   }
 
   .assembly_row {
-    border: 1px solid $colour-paired-end;
+    border: 1px solid #133b54;
   }
 }
 
 .paired_end {
   .td_radio {
-    border: 1px solid $colour-paired-end !important;
+    border: 1px solid #133b54 !important;
     vertical-align: middle;
     text-align: center;
   }
   .td_icon {
-    background-color: $colour-paired-end;
-    color: $color-grey-light;
+    background-color: #133b54;
+    color: #F3F3F3;
     vertical-align: middle;
     text-align: center;
   }
 }
 
 .paired_end__forward {
-  border: 1px solid $colour-paired-end;
+  border: 1px solid #133b54;
   border-bottom: none;
 }
 
 .paired_end__reverse {
-  border: 1px solid $colour-paired-end;
+  border: 1px solid #133b54;
   border-top: none;
 }
 
@@ -64,8 +61,8 @@
 }
 
 .assembly_sample_icon {
-  background-color: $colour-paired-end;
-  color: $color-grey-light;
+  background-color: #133b54;
+  color: #F3F3F3;
   vertical-align: middle;
   text-align: center;
 }
@@ -79,9 +76,9 @@
 }
 
 .single_end {
-  border: 1px solid $colour-single-end;
+  border: 1px solid #3092D0;
   .td_icon {
-    background-color: $colour-single-end;
+    background-color: #3092D0;
   }
   .td_radio {
     vertical-align: middle;
@@ -91,7 +88,7 @@
 
 .file_info,
 .assembly_sample_info {
-  border: 1px solid $colour-paired-end;
+  border: 1px solid #133b54;
 }
 
 .sidebar-content {
@@ -207,16 +204,16 @@
 }
 
 table.fast5 {
-  background-color: $color-grey-light;
-  border: 2px solid $colour-single-end;
+  background-color: #F3F3F3;
+  border: 2px solid #3092D0;
 }
 
 tr.fast5_row {
-  border: 1px solid $colour-single-end;
+  border: 1px solid #3092D0;
 }
 
 .fast5_icon {
-  background-color: $colour-single-end;
+  background-color: #3092D0;
   text-align: center;
   vertical-align: middle !important;
 }

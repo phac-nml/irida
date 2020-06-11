@@ -1,19 +1,17 @@
-@import "../helpers/variables";
-
 h1 {
   margin: 0;
 }
 
 $states: (
-  "new": $irida-colour-info,
-  "preparing": darken($irida-colour-info, 10),
-  "prepared": darken($irida-colour-info, 20),
-  "submitting": darken($irida-colour-info, 30),
-  "running": $irida-colour-primary,
-  "finished_running": $irida-colour-success,
-  "completing": lighten($irida-colour-success, 10),
+  "new": #3092D0,
+  "preparing": #2675A7,
+  "prepared": #1C587E,
+  "submitting": #133B54,
+  "running": #133b54,
+  "finished_running": #43ac6a,
+  "completing": #61C185,
   "completed": #66cd00,
-  "error": $irida-colour-warning
+  "error": #f08a24
 );
 
 .analysis__state {
