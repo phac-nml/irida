@@ -26,6 +26,8 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 
 	private Map<String, AnalysisType> runnableTypesMap;
 
+	private Map<String, AnalysisType> viewers;
+
 	/**
 	 * Builds a new {@link AnalysisTypesServiceImpl}.
 	 * 
@@ -36,15 +38,12 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 	 *                              pipelines.
 	 */
 	public AnalysisTypesServiceImpl(Set<AnalysisType> runnableAnalysisTypes, Set<AnalysisType> otherAnalysisTypes) {
+		this();
 		checkNotNull(runnableAnalysisTypes, "runnableAnalysisTypes is null");
 		checkNotNull(otherAnalysisTypes, "otherAnalysisTypes is null");
-		
-		allTypesMap = new HashMap<>();
-		runnableTypesMap = new HashMap<>();
 
 		for (AnalysisType type : runnableAnalysisTypes) {
-			allTypesMap.put(type.getType(), type);
-			runnableTypesMap.put(type.getType(), type);
+			registerRunnableType(type);
 		}
 
 		for (AnalysisType type : otherAnalysisTypes) {
@@ -52,7 +51,7 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 				throw new IllegalArgumentException("Error, set otherAnalysisTypes contains type " + type
 						+ " already found in runnableAnalysisTypes");
 			}
-			allTypesMap.put(type.getType(), type);
+			registerUnrunnableType(type);
 		}
 	}
 
@@ -62,26 +61,7 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 	public AnalysisTypesServiceImpl() {
 		allTypesMap = new HashMap<>();
 		runnableTypesMap = new HashMap<>();
-
-		allTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
-		allTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);
-		allTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION.getType(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-		allTypesMap.put(BuiltInAnalysisTypes.BIO_HANSEL.getType(), BuiltInAnalysisTypes.BIO_HANSEL);
-		allTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
-				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
-		allTypesMap.put(BuiltInAnalysisTypes.REFSEQ_MASHER.getType(), BuiltInAnalysisTypes.REFSEQ_MASHER);
-		allTypesMap.put(BuiltInAnalysisTypes.FASTQC.getType(), BuiltInAnalysisTypes.FASTQC);
-		allTypesMap.put(BuiltInAnalysisTypes.MLST_MENTALIST.getType(), BuiltInAnalysisTypes.MLST_MENTALIST);
-		allTypesMap.put(BuiltInAnalysisTypes.DEFAULT.getType(), BuiltInAnalysisTypes.DEFAULT);
-
-		runnableTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
-		runnableTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);
-		runnableTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION.getType(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-		runnableTypesMap.put(BuiltInAnalysisTypes.BIO_HANSEL.getType(), BuiltInAnalysisTypes.BIO_HANSEL);
-		runnableTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
-				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
-		runnableTypesMap.put(BuiltInAnalysisTypes.REFSEQ_MASHER.getType(), BuiltInAnalysisTypes.REFSEQ_MASHER);
-		runnableTypesMap.put(BuiltInAnalysisTypes.MLST_MENTALIST.getType(), BuiltInAnalysisTypes.MLST_MENTALIST);
+		viewers = new HashMap<>();
 	}
 
 	/**
@@ -115,4 +95,32 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 	public boolean isValid(AnalysisType analysisType) {
 		return analysisType != null && allTypesMap.containsValue(analysisType);
 	}
+
+	public void registerRunnableType(AnalysisType type) {
+		runnableTypesMap.put(type.getType(), type);
+		allTypesMap.put(type.getType(), type);
+	}
+
+	public void registerRunnableType(AnalysisType type, String viewer) {
+		registerRunnableType(type);
+		viewers.put(viewer, type);
+	}
+
+	public void registerUnrunnableType(AnalysisType type){
+		allTypesMap.put(type.getType(), type);
+	}
+
+	public void registerDefaultTypes(){
+		registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS);
+		registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING);
+		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+		registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL);
+		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
+		registerRunnableType(BuiltInAnalysisTypes.REFSEQ_MASHER);
+		registerRunnableType(BuiltInAnalysisTypes.MLST_MENTALIST);
+
+		registerUnrunnableType(BuiltInAnalysisTypes.FASTQC);
+		registerUnrunnableType(BuiltInAnalysisTypes.DEFAULT);
+	}
+
 }

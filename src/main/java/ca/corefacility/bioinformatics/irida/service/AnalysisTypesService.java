@@ -39,4 +39,12 @@ public interface AnalysisTypesService {
 	 * @return True if valid, false otherwise.
 	 */
 	public boolean isValid(AnalysisType analysisType);
+
+	public void registerRunnableType(AnalysisType type);
+
+	public void registerRunnableType(AnalysisType type, String viewer);
+
+	public void registerUnrunnableType(AnalysisType type);
+
+	public void registerDefaultTypes();
 }
