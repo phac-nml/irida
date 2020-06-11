@@ -48,7 +48,7 @@ export default function Analysis() {
 
   useEffect(() => {
     if (
-      (analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") &&
+      (analysisViewer === "tree") &&
       analysisContext.isCompleted
     ) {
       getNewickTree(analysisContext.analysis.identifier).then(data => {
@@ -75,6 +75,7 @@ export default function Analysis() {
   );
 
   const analysisType = analysisContext.analysisType;
+  const analysisViewer = analysisContext.analysisViewer;
 
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
 
@@ -217,19 +218,18 @@ export default function Analysis() {
               ? [
                   <AnalysisSistr
                     path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
-                    default={analysisType === "SISTR_TYPING"}
+                    default={analysisViewer === "sistr"}
                     key="sistr"
                   />,
                   <AnalysisBioHansel
                     path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
-                    default={analysisType === "BIO_HANSEL"}
+                    default={analysisViewer === "biohansel"}
                     key="biohansel"
                   />,
                   <AnalysisPhylogeneticTree
                     path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
-                      (analysisType === "PHYLOGENOMICS" ||
-                        analysisType === "MLST_MENTALIST") &&
+                      (analysisViewer === "tree") &&
                       treeDefault
                     }
                     key="tree"
@@ -241,12 +241,8 @@ export default function Analysis() {
                   <AnalysisOutputFiles
                     path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
-                      (analysisType !== "SISTR_TYPING" &&
-                        analysisType !== "BIO_HANSEL" &&
-                        analysisType !== "PHYLOGENOMICS" &&
-                        analysisType !== "MLST_MENTALIST") ||
-                      ((analysisType === "PHYLOGENOMICS" ||
-                        analysisType === "MLST_MENTALIST") &&
+                      (analysisViewer === "none") ||
+                      ((analysisViewer === "tree") &&
                         !treeDefault)
                     }
                     key="output"

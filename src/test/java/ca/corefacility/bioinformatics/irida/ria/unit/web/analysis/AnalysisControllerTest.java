@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -48,6 +49,7 @@ public class AnalysisControllerTest {
 	private UserService userServiceMock;
 	private EmailController emailControllerMock;
 	private AnalysisAudit analysisAuditMock;
+	private AnalysisTypesService analysisTypesService;
 
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
@@ -62,9 +64,10 @@ public class AnalysisControllerTest {
 		userServiceMock = mock(UserService.class);
 		emailControllerMock = mock(EmailController.class);
 		analysisAuditMock = mock(AnalysisAudit.class);
+		analysisTypesService = mock(AnalysisTypesService.class);
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, emailControllerMock, analysisAuditMock);
+				userServiceMock, emailControllerMock, analysisAuditMock, analysisTypesService);
 
 	}
 

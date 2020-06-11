@@ -42,7 +42,7 @@ public class IridaAnalysisTypesServiceConfig {
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING, "sistr");
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
-		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL, "hansel");
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL, "biohansel");
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.REFSEQ_MASHER);
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 

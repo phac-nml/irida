@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -50,16 +52,19 @@ public class AnalysisController {
 	private UserService userService;
 	private EmailController emailController;
 	private AnalysisAudit analysisAudit;
+	private AnalysisTypesService analysisTypesService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController, AnalysisAudit analysisAudit) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController,
+			AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
 		this.emailController = emailController;
-		this.analysisAudit=analysisAudit;
+		this.analysisAudit = analysisAudit;
+		this.analysisTypesService = analysisTypesService;
 	}
 
 	// ************************************************************************************************
@@ -150,6 +155,15 @@ public class AnalysisController {
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
+
+		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
+
+		if (viewerForAnalysisType.isPresent()) {
+			model.addAttribute("viewer", viewerForAnalysisType.get());
+		} else {
+			model.addAttribute("viewer", "none");
+		}
+
 		model.addAttribute("analysisType", analysisType);
 		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
