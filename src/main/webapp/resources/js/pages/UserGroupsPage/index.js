@@ -3,6 +3,8 @@ import { render } from "react-dom";
 import { Router } from "@reach/router";
 import { ContentLoading } from "../../components/loader";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { RolesProvider } from "../../contexts";
+import { getUserGroupRoles } from "../../apis/users/groups";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -11,8 +13,6 @@ the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
-import { RolesProvider } from "../../contexts";
-import { getUserGroupRoles } from "../../apis/users/groups";
 
 const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { updateUserRoleOnProject } from "../../apis/projects/members";
 import { notification, Select } from "antd";
 import { RolesContext, useRoles } from "../../contexts/roles-context";
 
