@@ -33,7 +33,7 @@ public class GenomeAssemblyRemoteRepositoryImpl extends RemoteRepositoryImpl<Upl
 	private static final ParameterizedTypeReference<ResourceWrapper<UploadedAssembly>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<UploadedAssembly>>() {
 	};
 
-	RemoteAPITokenService tokenService;
+	private RemoteAPITokenService tokenService;
 
 	@Autowired
 	public GenomeAssemblyRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
