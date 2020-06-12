@@ -70,7 +70,7 @@
             >
             <a
               href=""
-              th:href="@{/projects/{id}/settings/metadata-templates(id=${project.getId()})}"
+              th:href="@{/projects/{id}/metadata-templates(id=${project.getId()})}"
               class="list-group-item"
               th:classappend="${#strings.equalsIgnoreCase(page, 'metadata_templates') ? 'active' : ''}"
               th:text="#{project.settings.metadata-templates}"

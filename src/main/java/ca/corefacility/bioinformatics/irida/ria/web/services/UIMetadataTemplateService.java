@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -72,5 +73,10 @@ public class UIMetadataTemplateService {
 			// TODO: i18n
 			throw new ConstraintViolationException(e.getConstraintViolations());
 		}
+	}
+
+	public List<MetadataTemplateField> getMetadataFieldsOnTemplate(Long templateId) {
+		MetadataTemplate template = templateService.read(templateId);
+		return template.getFields();
 	}
 }

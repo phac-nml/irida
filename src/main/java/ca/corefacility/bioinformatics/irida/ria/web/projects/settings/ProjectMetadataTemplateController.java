@@ -1,5 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -7,28 +17,19 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Controller for managing metadata settings for a project
  */
 @Controller
-@RequestMapping("/projects/{projectId}/settings")
-public class ProjectSettingsMetadataController {
-	private ProjectService projectService;
-	private ProjectControllerUtils projectControllerUtils;
-	private MetadataTemplateService metadataTemplateService;
+@RequestMapping("/projects/{projectId}/metadata-templates")
+public class ProjectMetadataTemplateController {
+	private final ProjectService projectService;
+	private final ProjectControllerUtils projectControllerUtils;
+	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public ProjectSettingsMetadataController(ProjectService projectService,
+	public ProjectMetadataTemplateController(ProjectService projectService,
 			ProjectControllerUtils projectControllerUtils, MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.projectControllerUtils = projectControllerUtils;
@@ -43,7 +44,7 @@ public class ProjectSettingsMetadataController {
 	 * @param principal Logged in user
 	 * @return name of the project remote settings page
 	 */
-	@RequestMapping("/metadata-templates")
+	@RequestMapping(value = { "", "/**" })
 	public String getSampleMetadataTemplatesPage(@PathVariable Long projectId, final Model model,
 			final Principal principal) {
 		Project project = projectService.read(projectId);

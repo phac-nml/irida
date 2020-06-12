@@ -1,18 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -135,41 +127,6 @@ public class ProjectSamplesMetadataTemplateController {
 		Project project = projectService.read(projectId);
 		metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);
 		return "redirect:/projects/" + projectId + "/settings/metadata-templates";
-	}
-
-	/**
-	 * Download a {@link MetadataTemplate} as an Excel file.
-	 *
-	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
-	 * @param response   {@link HttpServletResponse}
-	 * @throws IOException thrown if output stream cannot be used.
-	 */
-	@RequestMapping(value = "/{templateId}/excel")
-	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
-		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> fields = template.getFields();
-		List<String> headers = fields.stream()
-				.map(MetadataTemplateField::getLabel)
-				.collect(Collectors.toList());
-		String label = template.getLabel()
-				.replace(" ", "_");
-		//Blank workbook
-		XSSFWorkbook workbook = new XSSFWorkbook();
-
-		//Create a blank sheet
-		XSSFSheet worksheet = workbook.createSheet(label);
-
-		// Write the headers
-		XSSFRow headerRow = worksheet.createRow(0);
-		for (int i = 0; i < headers.size(); i++) {
-			XSSFCell cell = headerRow.createCell(i);
-			cell.setCellValue(headers.get(i));
-		}
-
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + label + ".xlsx\"");
-		ServletOutputStream stream = response.getOutputStream();
-		workbook.write(stream);
-		stream.flush();
 	}
 
 	// *************************************************************************

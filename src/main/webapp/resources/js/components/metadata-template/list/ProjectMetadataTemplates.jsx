@@ -1,34 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, List, Space, Tag, Typography } from "antd";
+import { Avatar, Button, List, Space, Tag } from "antd";
 import { IconDownloadFile, IconMetadataTemplate } from "../../icons/Icons";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-templates";
+import { Link, useLocation } from "@reach/router";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
-const { Title } = Typography;
-
-export function ProjectMetadataTemplates() {
+export function ProjectMetadataTemplates({ projectId }) {
   const [templates, setTemplates] = useState([]);
-  const BASE_URL = setBaseUrl(
-    `/projects/${window.project.id}/settings/metadata-templates`
-  );
+  const location = useLocation();
 
   useEffect(() => {
-    getProjectMetadataTemplates(window.project.id).then((data) =>
-      setTemplates(data)
-    );
+    getProjectMetadataTemplates(projectId).then((data) => setTemplates(data));
   }, []);
 
   return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%", border: `1px solid blue` }}
-    >
-      <Title level={2}>{i18n("ProjectMetadataTemplates.title")}</Title>
-      <Space>
-        <Button href={`${BASE_URL}/new`} className="t-create-template-btn">
-          Create New Template
-        </Button>
-      </Space>
+    <Space direction="vertical" style={{ width: "100%" }}>
       <List
         bordered
         itemLayout="horizontal"
@@ -40,7 +26,10 @@ export function ProjectMetadataTemplates() {
               <Button
                 shape="circle"
                 icon={<IconDownloadFile />}
-                href={`${BASE_URL}/${item.id}/excel`}
+                download
+                href={setBaseUrl(
+                  `/ajax/metadata-templates/${item.id}/download`
+                )}
                 key="list-download"
               />,
             ]}
@@ -54,13 +43,9 @@ export function ProjectMetadataTemplates() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <a
-                    href={setBaseUrl(
-                      `/projects/${window.project.id}/metadata-templates/${item.id}`
-                    )}
-                  >
+                  <Link to={`${location.pathname}/${item.id}`}>
                     {item.label}
-                  </a>
+                  </Link>
                   <Tag>
                     {i18n("ProjectMetadataTemplates.fields", item.numFields)}
                   </Tag>
