@@ -1,17 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.*;
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
+
+import com.google.common.collect.Sets;
 
 /**
  * A service for managing registered {@link AnalysisType}s.
@@ -66,20 +63,32 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		return analysisType != null && allTypesMap.containsValue(analysisType);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void registerRunnableType(AnalysisType type) {
 		runnableTypesMap.put(type.getType(), type);
 		allTypesMap.put(type.getType(), type);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void registerRunnableType(AnalysisType type, String viewer) {
 		registerRunnableType(type);
 		viewers.put(type, viewer);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void registerUnrunnableType(AnalysisType type) {
 		allTypesMap.put(type.getType(), type);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Optional<String> getViewerForAnalysisType(AnalysisType analysisType) {
 		if (viewers.containsKey(analysisType)) {
 			return Optional.of(viewers.get(analysisType));
@@ -87,6 +96,9 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		return Optional.empty();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void registerDefaultTypes() {
 		registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS);
 		registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING);

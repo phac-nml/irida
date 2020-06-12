@@ -1,13 +1,9 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
