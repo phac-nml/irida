@@ -15,11 +15,20 @@ public class AdminPage extends AbstractPage {
 	public static final String RELATIVE_URL = "/";
 	public static final String ADMIN_RELATIVE_URL = "admin/";
 
-	@FindBy(className="t-admin-panel-title")
-	private List<WebElement> adminPanelTitle;
-
 	@FindBy(className="t-admin-panel-btn")
 	private List<WebElement> adminPanelBtn;
+
+	@FindBy(className="t-admin-stats-title")
+	private List<WebElement> adminStatsTitle;
+
+	@FindBy(className="t-admin-users-title")
+	private List<WebElement> adminUsersTitle;
+
+	@FindBy(className="t-admin-stats-menu")
+	private List<WebElement> adminStatsMenu;
+
+	@FindBy(className="t-admin-users-menu")
+	private List<WebElement> adminUsersMenu;
 
 	public AdminPage(WebDriver driver) { super(driver); }
 
@@ -44,13 +53,23 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin panel title is
+	 *  Determines if admin stats title is
 	 *  visible on the admin panel page.
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean adminPanelTitleVisible() {
-		return adminPanelTitle.size() == 1;
+	public boolean adminStatsTitleVisible() {
+		return adminStatsTitle.size() == 1;
+	}
+
+	/**
+	 *  Determines if admin users title is
+	 *  visible on the admin panel page.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminUsersTitleVisible() {
+		return adminUsersTitle.size() == 1;
 	}
 
 	/**
@@ -71,5 +90,25 @@ public class AdminPage extends AbstractPage {
 		adminPanelBtn.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin"));
+	}
+
+	/**
+	 *  Clicks on the admin stats menu button to navigate
+	 *  to the admin stats page.
+	 */
+	public void clickStatsMenu() {
+		adminStatsMenu.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/statistics"));
+	}
+
+	/**
+	 *  Clicks on the admin users menu button to navigate
+	 *  to the admin users page.
+	 */
+	public void clickUsersMenu() {
+		adminUsersMenu.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/users"));
 	}
 }

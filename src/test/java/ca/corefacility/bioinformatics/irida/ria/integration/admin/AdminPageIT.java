@@ -22,7 +22,7 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		AdminPage page = AdminPage.initPage(driver());
 		assertTrue("Admin button should be displayed", page.adminPanelButtonVisible());
 		page.clickAdminButton();
-		assertTrue("Admin can navigate to admin panel, admin page title should be present", page.adminPanelTitleVisible());
+		assertTrue("Admin can navigate to admin panel, admin page title should be present", page.adminStatsTitleVisible());
 	}
 
 	@Test
@@ -32,14 +32,19 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("Admin button should not be displayed", page.adminPanelButtonVisible());
 		// No admin button, so attempt to go to admin page by modifying the URL
 		page.goToAdminPage(driver());
-		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.adminPanelTitleVisible());
+		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.adminStatsTitleVisible());
 	}
 
 	@Test
 	public void testPageSetUp() {
-		LoginPage.loginAsManager(driver());
+		LoginPage.loginAsAdmin(driver());
 		AdminPage page = AdminPage.initPage(driver());
 		page.clickAdminButton();
-		// default page is statistics pagee
+		// Navigate to users page
+		page.clickUsersMenu();
+		assertTrue("Admin can navigate to users page, user page title should be present", page.adminUsersTitleVisible());
+		// Navigate back to statistics page
+		page.clickStatsMenu();
+		assertTrue("Admin can navigate to users page, user page title should be present", page.adminStatsTitleVisible());
 	}
 }

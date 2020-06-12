@@ -1,3 +1,14 @@
+/*
+ * This file renders the details for the admin as well as,
+ * lazily loads the Users and Statistics components (component
+ * is only loaded when the corresponding tab is clicked
+ */
+
+/*
+ * The following import statements makes available all the elements
+ * required by the components encompassed within
+ */
+
 import { Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
 import { ADMIN } from "../routes";
@@ -5,7 +16,7 @@ import React, { Suspense, lazy} from "react";
 import { ContentLoading } from "../../../components/loader";
 const { SubMenu } = Menu;
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { grey1, grey8 } from "../../../styles/colors";
+import { grey1 } from "../../../styles/colors";
 
 const { Content, Sider, Header } = Layout;
 import { IconUser, IconHome } from "../../../components/icons/Icons";
@@ -21,6 +32,11 @@ export default function Admin() {
   const LOGOUT_URL = setBaseUrl("/logout")
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
 
+  /*
+   * The following renders the tabs for statistics and users,
+   * the components are only loaded if the corresponding
+   * tab is clicked
+   */
   return (
     <Layout>
         <Sider style={{ width: 200 }}>
@@ -30,23 +46,23 @@ export default function Admin() {
               return (
                 <Menu style={{ height: '100vh' }} theme={"dark"} mode={"vertical"}
                       selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
-                  <Menu.Item key="image">
+                  <Menu.Item key="logo">
                     <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}>
                       <img src="/resources/img/irida_logo_dark.svg"/>
                     </Link>
                   </Menu.Item>
-                  <Menu.Item className={"t-statistics-menu"} key="statistics">
+                  <Menu.Item className={"t-admin-stats-menu"} key="statistics">
                     <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}>
                       {i18n("admin.panel.statistics")}
                     </Link>
                   </Menu.Item>
                   <SubMenu key="users" title={i18n("admin.panel.users")}>
-                    <Menu.Item className={"t-user-list-menu"} key="userList">
+                    <Menu.Item className={"t-admin-users-menu"} key="userList">
                       <Link to={`${DEFAULT_URL}/${ADMIN.USERS}`}>
                         {i18n("admin.panel.userList")}
                       </Link>
                     </Menu.Item>
-                    <Menu.Item className={"t-group-list-menu"} key="groupList">
+                    <Menu.Item className={"t-admin-groups-menu"} key="groupList">
                       <Link to={`${DEFAULT_URL}/${ADMIN.GROUPS}`}>
                         {i18n("admin.panel.groupList")}
                       </Link>
