@@ -1,13 +1,13 @@
 import React from "react";
-import { useMetadataTemplate } from "../../../contexts/metadata-template-context";
-import { IconLoading } from "../../icons/Icons";
-import { BasicList } from "../../lists";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { useMetadataTemplate } from "../../../../contexts/metadata-template-context";
+import { IconLoading } from "../../../icons/Icons";
+import { BasicList } from "../../../lists";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { Typography } from "antd";
 
 const { Paragraph } = Typography;
 
-export function TemplateDetails() {
+export default function TemplateDetails() {
   const { template, loading, updateField } = useMetadataTemplate();
 
   const initField = (field, text) => {
@@ -25,15 +25,15 @@ export function TemplateDetails() {
     <BasicList
       dataSource={[
         {
-          title: "TEMPLATE NAME",
+          title: i18n("TemplateDetails.name"),
           desc: initField("name", template.name),
         },
         {
-          title: "DESCRIPTION",
+          title: i18n("TemplateDetails.description"),
           desc: initField("description", template.description),
         },
         {
-          title: "CREATED DATE",
+          title: i18n("TemplateDetails.createdDate"),
           desc: (
             <Paragraph>
               {formatInternationalizedDateTime(template.createdDate)}

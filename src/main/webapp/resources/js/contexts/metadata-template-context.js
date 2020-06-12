@@ -19,17 +19,19 @@ function MetadataTemplateProvider({ children, id }) {
   }, [setLoading, setTemplate, id]);
 
   const updateField = (field, value) => {
-    updateTemplateAttribute({
-      templateId: id,
-      field,
-      value,
-    }).then((message) => {
-      notification.success({ message });
+    if (template[field] !== value) {
+      updateTemplateAttribute({
+        templateId: id,
+        field,
+        value,
+      }).then((message) => {
+        notification.success({ message });
 
-      const updated = { ...template };
-      updated[field] = value;
-      setTemplate(updated);
-    });
+        const updated = { ...template };
+        updated[field] = value;
+        setTemplate(updated);
+      });
+    }
   };
 
   return (

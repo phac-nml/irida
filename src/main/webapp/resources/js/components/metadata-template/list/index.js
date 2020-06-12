@@ -1,43 +1,61 @@
-import React from "react";
-import { navigate, Router, useLocation } from "@reach/router";
-import { ProjectMetadataTemplates } from "./ProjectMetadataTemplates";
-import { Button, Layout, PageHeader } from "antd";
-import { grey1 } from "../../../styles/colors";
-import { TemplatePage } from "../details/TemplatePage";
+import React, { useEffect, useState } from "react";
+import { Avatar, Button, List, Space, Tag } from "antd";
+import { IconDownloadFile, IconMetadataTemplate } from "../../icons/Icons";
+import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-templates";
+import { Link, useLocation } from "@reach/router";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
-const { Content } = Layout;
+export default function ListProjectTemplates({ projectId }) {
+  const [templates, setTemplates] = useState([]);
+  const location = useLocation();
 
-export function ListMetadataTemplates() {
+  useEffect(() => {
+    getProjectMetadataTemplates(projectId).then((data) => setTemplates(data));
+  }, [projectId]);
+
   return (
-    <Router>
-      <Test path={"/projects/:projectId/metadata-templates"}>
-        <ProjectMetadataTemplates path="/" />
-        <TemplatePage path={"/:templateId"} />
-      </Test>
-    </Router>
+    <Space direction="vertical" style={{ width: "100%" }}>
+      <List
+        bordered
+        itemLayout="horizontal"
+        dataSource={templates}
+        renderItem={(item) => (
+          <List.Item
+            className="t-template"
+            actions={[
+              <Button
+                shape="circle"
+                icon={<IconDownloadFile />}
+                download
+                href={setBaseUrl(
+                  `/ajax/metadata-templates/${item.id}/download`
+                )}
+                key="list-download"
+              />,
+            ]}
+          >
+            <List.Item.Meta
+              avatar={<Avatar icon={<IconMetadataTemplate />} />}
+              title={
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Link to={`${location.pathname}/${item.id}`}>
+                    {item.label}
+                  </Link>
+                  <Tag>
+                    {i18n("ProjectMetadataTemplates.fields", item.numFields)}
+                  </Tag>
+                </div>
+              }
+              description={item.description}
+            />
+          </List.Item>
+        )}
+      />
+    </Space>
   );
 }
-
-const Test = ({ children, projectId }) => {
-  const location = useLocation();
-  const onBack = location.pathname.match(/-templates$/)
-    ? null
-    : () => navigate(`/projects/${projectId}/metadata-templates`);
-
-  return (
-    <PageHeader
-      className="site-page-header"
-      title={i18n("ProjectMetadataTemplates.title")}
-      onBack={onBack}
-      extra={[
-        <Button key="create-btn" className="t-create-template-btn">
-          Create New Template
-        </Button>,
-      ]}
-    >
-      <Layout>
-        <Content style={{ backgroundColor: grey1 }}>{children}</Content>
-      </Layout>
-    </PageHeader>
-  );
-};

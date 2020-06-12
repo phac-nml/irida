@@ -1,8 +1,8 @@
 import React from "react";
 import { Alert } from "antd";
-import { IconInfoCircle } from "../../icons/Icons";
+import { IconInfoCircle } from "../../../icons/Icons";
 
-export function TemplateFields() {
+export default function TemplateFields() {
   return (
     <Alert
       message="NOT IMPLEMENTED YET"
