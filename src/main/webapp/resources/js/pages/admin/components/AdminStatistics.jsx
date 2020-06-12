@@ -1,10 +1,4 @@
-
-import { Layout, Menu } from "antd";
-import { grey1 } from "../../../styles/colors";
-import { Link, Location, Router } from "@reach/router";
-import { SETTINGS } from "../../analysis/routes";
-import React, { Suspense } from "react";
-const { SubMenu } = Menu;
+import React from "react";
 
 import { TabPaneContent } from "../../../components/tabs";
 

@@ -19,7 +19,7 @@ public class AdminBaseController {
 	 * Get the index page
 	 * @return name of the admin panel view
 	 */
-	@RequestMapping("")
+	@RequestMapping(value = {"", "/**"})
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String getAdminDashboard() {
 		logger.debug("Displaying admin panel");

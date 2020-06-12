@@ -1,10 +1,10 @@
 /*
- * This file contains the route names for the tabs
- * used to display analysis results
+ * This file contains the route names for the admin panel
  */
 
 export const ADMIN = {
   ADMIN: "admin",
   STATISTICS: "statistics",
-  USERS: "users"
+  USERS: "users",
+  GROUPS: "groups"
 };
