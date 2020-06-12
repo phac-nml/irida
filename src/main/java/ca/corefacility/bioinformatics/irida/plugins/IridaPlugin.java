@@ -68,6 +68,14 @@ public interface IridaPlugin extends ExtensionPoint {
 	public UUID getDefaultWorkflowUUID();
 
 	/**
+	 * Get the name of the viewer to use for this pipeline
+	 * @return
+	 */
+	public default Optional<String> getAnalysisViewer() {
+		return Optional.empty();
+	}
+
+	/**
 	 * Gets an optional {@link Color} object used to modify the background color in
 	 * the "Select a Pipeline" page.
 	 * 

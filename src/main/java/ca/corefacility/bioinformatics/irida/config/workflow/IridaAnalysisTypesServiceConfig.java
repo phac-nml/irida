@@ -48,7 +48,13 @@ public class IridaAnalysisTypesServiceConfig {
 
 		// adds additional analysis types for each loaded plugin
 		for (IridaPlugin plugin : iridaPipelinePlugins.getPlugins()) {
-			analysisTypesService.registerRunnableType(plugin.getAnalysisType());
+			if (plugin.getAnalysisViewer()
+					.isPresent()) {
+				analysisTypesService.registerRunnableType(plugin.getAnalysisType(), plugin.getAnalysisViewer()
+						.get());
+			} else {
+				analysisTypesService.registerRunnableType(plugin.getAnalysisType());
+			}
 		}
 
 		return analysisTypesService;
