@@ -4,8 +4,6 @@ import { ProjectMetadataTemplates } from "./ProjectMetadataTemplates";
 import { Button, Layout, PageHeader } from "antd";
 import { grey1 } from "../../../styles/colors";
 import { TemplatePage } from "../details/TemplatePage";
-import { TemplateDetails } from "../details/TemplateDetails";
-import { TemplateFields } from "../details/TemplateFields";
 
 const { Content } = Layout;
 
@@ -14,10 +12,7 @@ export function ListMetadataTemplates() {
     <Router>
       <Test path={"/projects/:projectId/metadata-templates"}>
         <ProjectMetadataTemplates path="/" />
-        <TemplatePage path={"/:templateId"}>
-          <TemplateDetails path={"/"} />
-          <TemplateFields path={"/fields"} />
-        </TemplatePage>
+        <TemplatePage path={"/:templateId"} />
       </Test>
     </Router>
   );

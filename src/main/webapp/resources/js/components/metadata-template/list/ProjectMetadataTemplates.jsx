@@ -11,7 +11,7 @@ export function ProjectMetadataTemplates({ projectId }) {
 
   useEffect(() => {
     getProjectMetadataTemplates(projectId).then((data) => setTemplates(data));
-  }, []);
+  }, [projectId]);
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
