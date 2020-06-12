@@ -11,10 +11,10 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
 /**
- * Custom validation annotation that implements a black-list of unacceptable
+ * Custom validation annotation that implements a block-list of unacceptable
  * characters in resources that can be named.
- * 
- * 
+ *
+ *
  */
 @Pattern.List({ @Pattern(regexp = "^[^\\?]*$", message = "{irida.name.invalid.question.mark}"),
 		@Pattern(regexp = "^[^\\(]*$", message = "{irida.name.invalid.left.paren}"),
@@ -50,8 +50,8 @@ public @interface ValidProjectName {
 	/**
 	 * Invalid characters in a project name
 	 */
-	public static class ValidProjectNameBlacklist {
-		public static final char[] BLACKLIST = { '?', '(', ')', '[', ']', '/', '\\', '=', '+', '<', '>', ':', ';', '"',
+	public static class ValidProjectNameBlocklist {
+		public static final char[] BLOCKLIST = { '?', '(', ')', '[', ']', '/', '\\', '=', '+', '<', '>', ':', ';', '"',
 				',', '*', '^', '|', '&' };
 	}
 }

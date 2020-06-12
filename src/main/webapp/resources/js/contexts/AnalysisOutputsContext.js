@@ -17,7 +17,7 @@ const initialContext = {
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
-const blacklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
+const blocklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 const excelFileExtSet = new Set(["xlsx"]);
@@ -34,7 +34,7 @@ function AnalysisOutputsProvider(props) {
       return (
         !tabExtSet.has(fileExt) &&
         !jsonExtSet.has(fileExt) &&
-        !blacklistExtSet.has(fileExt) &&
+        !blocklistExtSet.has(fileExt) &&
         !excelFileExtSet.has(fileExt) &&
         !imageFileExtSet.has(fileExt)
       );
