@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
@@ -53,9 +54,9 @@ public class MetadataTemplatesAjaxController {
 
 	@RequestMapping(value = "/{templateId}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateTemplateAttribute(@PathVariable Long templateId, @RequestParam String field,
-			@RequestParam String value) {
+			@RequestParam String value, Locale locale) {
 		try {
-			return ResponseEntity.ok(service.updateTemplateAttribute(templateId, field, value));
+			return ResponseEntity.ok(service.updateTemplateAttribute(templateId, field, value, locale));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(e.getMessage());

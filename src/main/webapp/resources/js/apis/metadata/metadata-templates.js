@@ -24,5 +24,5 @@ export async function updateTemplateAttribute({ templateId, field, value }) {
   return await axios
     .put(`${BASE_URL}/${templateId}?field=${field}&value=${value}`)
     .then(({ data }) => data)
-    .catch((error) => console.log(error.response));
+    .catch((error) => error.response.data);
 }

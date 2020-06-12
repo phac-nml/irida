@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -24,11 +24,14 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 public class UIMetadataTemplateService {
 	private final ProjectService projectService;
 	private final MetadataTemplateService templateService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public UIMetadataTemplateService(ProjectService projectService, MetadataTemplateService templateService) {
+	public UIMetadataTemplateService(ProjectService projectService, MetadataTemplateService templateService,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.templateService = templateService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -49,8 +52,8 @@ public class UIMetadataTemplateService {
 		return templateService.read(templateId);
 	}
 
-	public String updateTemplateAttribute(Long templateId, String field, String value)
-			throws EntityNotFoundException, ConstraintViolationException {
+	public String updateTemplateAttribute(Long templateId, String field, String value, Locale locale)
+			throws EntityNotFoundException {
 		try {
 			MetadataTemplate template = templateService.read(templateId);
 			switch (field) {
@@ -64,14 +67,10 @@ public class UIMetadataTemplateService {
 				throw new EntityNotFoundException("CANNOT UPDATE " + field);
 			}
 			templateService.updateMetadataTemplateInProject(template);
-			// TODO: i18n
-			return "UPDATED, NOW INTERNATIONALIZE ME!";
+			return messageSource.getMessage("server.TemplateDetails.update.success", new Object[] {}, locale);
 		} catch (EntityNotFoundException e) {
-			// TODO: i18n
-			throw new EntityNotFoundException("CANNOT FIND TEMPLATE TO UPDATE");
-		} catch (ConstraintViolationException e) {
-			// TODO: i18n
-			throw new ConstraintViolationException(e.getConstraintViolations());
+			throw new EntityNotFoundException(
+					messageSource.getMessage("server.TemplateDetails.update.error", new Object[] {}, locale));
 		}
 	}
 
