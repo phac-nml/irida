@@ -1,31 +1,28 @@
-@import "../helpers/variables";
-@import "../helpers/mixins";
-
 h1 {
   margin-top: 0 !important;
 }
 
 .description {
-  color: $irida-colour-grey-dark;
-  font-size: $irida-font-h3-size;
+  color: #929292;
+  font-size: 24px;
   font-weight: 300;
 
   a {
-    border: 1px solid $irida-colour-grey;
-    border-radius: $irida-global-radius;
-    padding: rem-calc(2) rem-calc(6);
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+    padding: 0.125rem 0.375rem;
     transition: all 0.3s ease-in;
     text-decoration: none;
     &:hover {
-      border-color: $irida-colour-primary;
-      background-color: $irida-colour-primary;
+      border-color: #133b54;
+      background-color: #133b54;
       color: #ffffff;
     }
   }
 }
 
 .description-detail {
-  color: $irida-colour-dark;
+  color: #232323;
 }
 .width-truncate-100 {
   text-align: right;

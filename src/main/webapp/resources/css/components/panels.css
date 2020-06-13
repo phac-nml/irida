@@ -1,12 +1,10 @@
-@import "../helpers/variables";
-
 .project-details {
   li {
-    border-bottom: 1px solid $irida-colour-grey-light;
+    border-bottom: 1px solid #f3f3f3;
     line-height: 2em;
   }
   i.glyphicon {
-    color: $irida-colour-grey-dark;
+    color: #929292;
     margin-right: 0.5em;
   }
   em {
@@ -28,16 +26,16 @@
 
 .sidebar {
   background-color: #ffffff;
-  border: 1px solid $irida-colour-grey;
-  border-bottom-color: $irida-colour-grey-dark;
-  border-radius: $irida-global-radius;
-  margin-bottom: $irida-global-padding;
+  border: 1px solid #dfdfdf;
+  border-bottom-color: #929292;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
 
 .sidebar__heading {
-  padding: $irida-global-padding;
+  padding: 1rem;
   h2 {
-    font-weight: $irida-font-weight-normal;
+    font-weight: 300;
     margin: 0;
     padding: 0;
   }
@@ -47,25 +45,25 @@
   position: relative;
 
   .form-group {
-    border-top: 1px solid $irida-colour-grey-light;
+    border-top: 1px solid #f3f3f3;
     padding: 4px 8px;
   }
   label {
-    font-weight: $irida-font-weight-normal;
+    font-weight: 300;
   }
   input[type="text"].form-control {
-    border: 1px solid $irida-colour-grey-dark;
+    border: 1px solid #929292;
     border-right: none;
   }
   .input-group-btn button {
-    border: 1px solid $irida-colour-grey-dark !important;
+    border: 1px solid #929292 !important;
     border-left: none;
-    color: $irida-colour-grey-dark;
+    color: #929292;
   }
 }
 
 .sidebar__item {
-  border-top: 1px solid $irida-colour-grey-light;
+  border-top: 1px solid #f3f3f3;
   padding: 0.3em 0.5em;
   display: flex;
   align-items: center;
@@ -77,11 +75,11 @@
 
 .sidebar__icon {
   width: 2.6rem;
-  color: $irida-colour-grey-dark;
+  color: #929292;
 }
 
 .sidebar__value {
-  color: $irida-colour-dark;
+  color: #232323;
   text-align: right;
   flex-grow: 2;
 }

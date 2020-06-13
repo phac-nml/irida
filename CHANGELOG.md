@@ -8,6 +8,7 @@ Changes
 * [Developer]: Removed deprecated Long constructor.
 * [Developer]: Updated `webpack-dev-server` to fix security vulnerability caused by `websocket-extensions` 0.1.3.
 * [UI]: Update project metadata templates listing page to use Ant Design.
+* [UI/Developer]: Removed SASS compilation step from front end build. Everything is done using postcss now.
 
 20.01 to 20.05
 --------------

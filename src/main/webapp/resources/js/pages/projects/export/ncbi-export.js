@@ -1,1 +1,1 @@
-import "../../../../sass/pages/project-ncbi-export.scss";
+import "../../../../css/pages/project-ncbi-export.css";

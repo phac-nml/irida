@@ -14,7 +14,7 @@ table.dataTable {
     vertical-align: middle !important;
     position: relative;
   }
-  // Center the Sort indicator
+  /*// Center the Sort indicator*/
   th:after {
     position: absolute;
     display: block;
@@ -24,8 +24,8 @@ table.dataTable {
   }
 }
 
-// For fixed columns, this adds a gradient of it to differentiate it from
-// the rest of the table.
+/*// For fixed columns, this adds a gradient of it to differentiate it from*/
+/*// the rest of the table.*/
 .DTFC_LeftHeadWrapper,
 .DTFC_LeftBodyWrapper {
   border-right: 2px solid rgba(218, 220, 224, 1) !important;
@@ -40,11 +40,11 @@ table.dataTable {
   justify-content: center;
 }
 
-// Styles for a toolbar above the table
+/*// Styles for a toolbar above the table*/
 .dt-btn-toolbar {
   margin-bottom: 1rem;
 
-  // Overriding dropdown placement.
+  /*// Overriding dropdown placement.*/
   .dropdown-menu {
     position: absolute !important;
     top: 30px !important;
@@ -100,14 +100,14 @@ table.dataTable {
   }
 }
 
-// New custom wrapper for updated tables
-// This is set in JS in datatable-utilities.js#dom
+/*// New custom wrapper for updated tables*/
+/*// This is set in JS in datatable-utilities.js#dom*/
 .dt-table-wrapper {
   border: 1px solid rgba(224, 227, 232, 1);
   margin-bottom: 1rem;
 }
 
-// Set up the filter to be pulled to the right and accept flex box
+/*// Set up the filter to be pulled to the right and accept flex box*/
 #dt-filters {
   display: flex;
   justify-content: flex-end;
@@ -121,7 +121,7 @@ table.dataTable {
   margin: 0 !important;
 }
 
-// Filter Row - updated tables
+/*// Filter Row - updated tables*/
 .filter-tags {
   display: flex;
   flex-direction: row-reverse;
@@ -146,7 +146,7 @@ table.dataTable {
   width: 200px !important;
 }
 
-// Filter Chips Styles
+/*// Filter Chips Styles*/
 .filter-chip--wrapper {
   display: flex;
   flex-direction: row;
