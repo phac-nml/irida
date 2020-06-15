@@ -17,6 +17,12 @@
 
     <th:block layout:fragment="scripts">
         <script th:src="@{/dist/js/admin.bundle.js}"></script>
+        <script th:inline="javascript">
+          window.TL = {
+            _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+            LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+          };
+        </script>
     </th:block>
 </body>
 </html>

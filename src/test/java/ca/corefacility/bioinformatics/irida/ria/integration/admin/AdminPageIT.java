@@ -41,10 +41,15 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		AdminPage page = AdminPage.initPage(driver());
 		page.clickAdminButton();
 		// Navigate to users page
+		page.clickUsersSubMenu();
 		page.clickUsersMenu();
 		assertTrue("Admin can navigate to users page, user page title should be present", page.adminUsersTitleVisible());
+		// Navigate to user groups page
+		page.clickUsersSubMenu();
+		page.clickGroupsMenu();
+		assertTrue("Admin can navigate to groups page, groups page title should be present", page.adminGroupsTitleVisible());
 		// Navigate back to statistics page
 		page.clickStatsMenu();
-		assertTrue("Admin can navigate to users page, user page title should be present", page.adminStatsTitleVisible());
+		assertTrue("Admin can navigate to stats page, stats page title should be present", page.adminStatsTitleVisible());
 	}
 }

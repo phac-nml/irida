@@ -8,11 +8,12 @@
  */
 
 import React from "react";
-import PageHeader from "antd";
+
+import AdminUsersPage from "../../AdminUsersPage";
 
 export default function AdminUsers() {
   // The following renders the Users component view
   return (
-    <PageHeader title={i18n("admin.panel.users")} className={"t-admin-users-title"} />
+    <AdminUsersPage />
   );
 }

@@ -147,10 +147,11 @@ function UsersTable() {
  * @returns {*}
  * @constructor
  */
-function AdminUsersPage() {
+export default function AdminUsersPage() {
   return (
     <PageWrapper
       title={i18n("AdminUsersPage.title")}
+      className={"t-admin-users-title"}
       headerExtras={
         <AddNewButton
           href={setBaseUrl(`users/create`)}
@@ -164,5 +165,3 @@ function AdminUsersPage() {
     </PageWrapper>
   );
 }
-
-render(<AdminUsersPage />, document.querySelector("#react-root"));

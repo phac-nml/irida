@@ -8,7 +8,7 @@
  */
 
 import React from "react";
-import PageHeader from "antd";
+import { PageHeader } from "antd";
 
 export default function AdminStatistics() {
   // The following renders the Statistics component view

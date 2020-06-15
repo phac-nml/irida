@@ -24,11 +24,20 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-users-title")
 	private List<WebElement> adminUsersTitle;
 
+	@FindBy(className="t-admin-groups-title")
+	private List<WebElement> adminGroupsTitle;
+
 	@FindBy(className="t-admin-stats-menu")
 	private List<WebElement> adminStatsMenu;
 
+	@FindBy(className="t-admin-users-sub-menu")
+	private List<WebElement> adminUsersSubMenu;
+
 	@FindBy(className="t-admin-users-menu")
 	private List<WebElement> adminUsersMenu;
+
+	@FindBy(className="t-admin-groups-menu")
+	private List<WebElement> adminGroupsMenu;
 
 	public AdminPage(WebDriver driver) { super(driver); }
 
@@ -73,6 +82,16 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
+	 *  Determines if admin user groups title is
+	 *  visible on the admin panel page.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminGroupsTitleVisible() {
+		return adminGroupsTitle.size() == 1;
+	}
+
+	/**
 	 *  Determines if admin panel button is
 	 *  visible on the navbar.
 	 *
@@ -103,6 +122,16 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
+	 *  Clicks on the users submenu to open it up
+	 *  and give access to its options.
+	 */
+	public void clickUsersSubMenu() {
+		adminUsersSubMenu.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin"));
+	}
+
+	/**
 	 *  Clicks on the admin users menu button to navigate
 	 *  to the admin users page.
 	 */
@@ -110,5 +139,15 @@ public class AdminPage extends AbstractPage {
 		adminUsersMenu.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin/users"));
+	}
+
+	/**
+	 *  Clicks on the admin user groups menu button to navigate
+	 *  to the admin user groups page.
+	 */
+	public void clickGroupsMenu() {
+		adminGroupsMenu.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/groups"));
 	}
 }
