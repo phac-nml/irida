@@ -5,7 +5,7 @@ import {
 } from "../apis/metadata/metadata-templates";
 import { message } from "antd";
 
-const MetadataTemplateContext = createContext();
+const MetadataTemplateContext = createContext(undefined, undefined);
 
 /**
  * Context to allow child components access to information about a specific
@@ -16,9 +16,20 @@ const MetadataTemplateContext = createContext();
  * @constructor
  */
 function MetadataTemplateProvider({ children, id }) {
+  /*
+  Actual template values as returned from the server.
+   */
   const [template, setTemplate] = useState();
+
+  /*
+  Whether information about the template is being requested by the server
+   */
   const [loading, setLoading] = useState(true);
 
+  /*
+  Called only when the component is first mounted,
+  get information about the current template from the server.
+   */
   useEffect(() => {
     getMetadataTemplateDetails({ templateId: id }).then((data) => {
       setTemplate(data);
@@ -26,6 +37,11 @@ function MetadataTemplateProvider({ children, id }) {
     });
   }, [setLoading, setTemplate, id]);
 
+  /**
+   * Called when either the template name or description is updated.
+   * @param {string} field - which field to update
+   * @param {string} value - updated value for the field
+   */
   const updateField = (field, value) => {
     if (template[field] !== value) {
       const loading = message.loading(i18n("TemplateDetails.saving"));
@@ -41,7 +57,7 @@ function MetadataTemplateProvider({ children, id }) {
           message.success(response);
         })
         .catch((response) => message.error(response))
-        .finally(loading);
+        .finally(() => setLoading(false));
     }
   };
 
