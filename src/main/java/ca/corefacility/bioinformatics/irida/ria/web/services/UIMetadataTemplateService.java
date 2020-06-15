@@ -48,10 +48,26 @@ public class UIMetadataTemplateService {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Get the information about a specific metadata template
+	 *
+	 * @param templateId Identifier for a metadata template
+	 * @return Details about a {@link MetadataTemplate}
+	 */
 	public MetadataTemplate getMetadataTemplateDetails(Long templateId) {
 		return templateService.read(templateId);
 	}
 
+	/**
+	 * Update the name or description on a metadata template
+	 *
+	 * @param templateId Identifier for a metadata template
+	 * @param field      The field on the template to update
+	 * @param value      The updated value to set the field to
+	 * @param locale     Currently logged in users {@link Locale}
+	 * @return Message to the user about the status of the update
+	 * @throws EntityNotFoundException If a different value was asked to be updated
+	 */
 	public String updateTemplateAttribute(Long templateId, String field, String value, Locale locale)
 			throws EntityNotFoundException {
 		try {
@@ -74,6 +90,12 @@ public class UIMetadataTemplateService {
 		}
 	}
 
+	/**
+	 * Get the {@link MetadataTemplateField}s on a template
+	 *
+	 * @param templateId Identifier for a metadata template
+	 * @return The {@link MetadataTemplateField}
+	 */
 	public List<MetadataTemplateField> getMetadataFieldsOnTemplate(Long templateId) {
 		MetadataTemplate template = templateService.read(templateId);
 		return template.getFields();
