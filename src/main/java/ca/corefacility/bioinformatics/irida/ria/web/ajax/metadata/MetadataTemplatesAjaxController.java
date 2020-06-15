@@ -39,6 +39,7 @@ public class MetadataTemplatesAjaxController {
 
 	/**
 	 * Get a list of metadata templates for a specific project
+	 *
 	 * @param projectId Identifier for the project to get templates for.
 	 * @return List of metadata templates with associate details.
 	 */
@@ -47,11 +48,26 @@ public class MetadataTemplatesAjaxController {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
+	/**
+	 * Get details about a specific metadata template
+	 *
+	 * @param templateId Identifier for a metadata template
+	 * @return Details about a metadata template wrapped in a {@link ResponseEntity}
+	 */
 	@RequestMapping(value = "/{templateId}", method = RequestMethod.GET)
 	public ResponseEntity<MetadataTemplate> getMetadataTemplateDetails(@PathVariable Long templateId) {
 		return ResponseEntity.ok(service.getMetadataTemplateDetails(templateId));
 	}
 
+	/**
+	 * Update either the name or description on a metadata template
+	 *
+	 * @param templateId Identifier for a metadata template
+	 * @param field      The field to update on the template
+	 * @param value      The new value to assign to the field
+	 * @param locale     The current users {@link Locale}
+	 * @return A message to the user about the status of the update wrapped in a {@link ResponseEntity}
+	 */
 	@RequestMapping(value = "/{templateId}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateTemplateAttribute(@PathVariable Long templateId, @RequestParam String field,
 			@RequestParam String value, Locale locale) {
@@ -66,8 +82,16 @@ public class MetadataTemplatesAjaxController {
 		}
 	}
 
+	/**
+	 * Download an excel version of a metadata template.
+	 *
+	 * @param templateId Identifier for a metadata template
+	 * @param response   {@link HttpServletResponse}
+	 * @throws IOException thrown if there was an error writing the file to the response
+	 */
 	@RequestMapping("/{templateId}/download")
-	public void downloadMetadataTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException{
+	public void downloadMetadataTemplate(@PathVariable Long templateId, HttpServletResponse response)
+			throws IOException {
 		List<MetadataTemplateField> fields = service.getMetadataFieldsOnTemplate(templateId);
 		List<String> headers = fields.stream()
 				.map(MetadataTemplateField::getLabel)
