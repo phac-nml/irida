@@ -2,6 +2,11 @@ import React from "react";
 import { Alert } from "antd";
 import { IconInfoCircle } from "../../../icons/Icons";
 
+/**
+ * Placeholder for the metadata template fields.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function TemplateFields() {
   return (
     <Alert
