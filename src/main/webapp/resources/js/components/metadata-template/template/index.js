@@ -7,6 +7,14 @@ import TemplateFields from "./fields";
 
 const { Content } = Layout;
 
+/**
+ * React component to render the layout for the metadata template details
+ * page.
+ * @param {JSX.element} children
+ * @param {number} templateId - Identifier for the current metadata template
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function MetadataTemplatePage({ children, templateId }) {
   const [activeKey, setActiveKey] = useState("details");
 
