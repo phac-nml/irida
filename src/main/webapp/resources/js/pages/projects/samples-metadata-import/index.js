@@ -3,14 +3,15 @@ import uiRouter from "angular-ui-router";
 import ngFileUpload from "ng-file-upload";
 import { states } from "./router.config";
 import metadataUploader from "./components/upload.component";
-import selectSampleNameColumnComponent from "./components/selectSampleNameColumn.component";
+import selectSampleNameColumnComponent
+  from "./components/selectSampleNameColumn.component";
 import headerItem from "./components/headerItem.component";
 import resultsComponent from "./components/results.component";
 import saveMetadata from "./components/saveMetadata.component";
 import resultsFoundComponent from "./components/results.found.component";
 import resultsMissingComponent from "./components/results.missing.component";
 import { sampleMetadataService } from "./factories/metadataImport.service";
-import "../../../../sass/pages/project-samples-metadata-import.scss";
+import "../../../../css/pages/project-samples-metadata-import.css";
 
 const app = angular.module("irida");
 
@@ -23,7 +24,7 @@ app
     "$http",
     "$window",
     "Upload",
-    sampleMetadataService
+    sampleMetadataService,
   ])
   .component("metadataUploader", metadataUploader)
   .component("selectSampleNameColumnComponent", selectSampleNameColumnComponent)

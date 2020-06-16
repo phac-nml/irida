@@ -3,6 +3,8 @@ import { render } from "react-dom";
 import { Router } from "@reach/router";
 import { ContentLoading } from "../../components/loader";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { RolesProvider } from "../../contexts";
+import { getUserGroupRoles } from "../../apis/users/groups";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -39,10 +41,12 @@ export function UserGroups() {
         </div>
       }
     >
-      <Router style={{ height: "100%" }}>
-        <UserGroupsPage path={setBaseUrl("/groups")} />
-        <UserGroupsDetailsPage path={setBaseUrl("/groups/:id")} />
-      </Router>
+      <RolesProvider rolesFn={getUserGroupRoles}>
+        <Router style={{ height: "100%" }}>
+          <UserGroupsPage path={setBaseUrl("/groups")} />
+          <UserGroupsDetailsPage path={setBaseUrl("/groups/:id")} />
+        </Router>
+      </RolesProvider>
     </Suspense>
   );
 }

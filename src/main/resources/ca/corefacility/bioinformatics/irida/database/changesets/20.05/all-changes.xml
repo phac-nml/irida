@@ -8,4 +8,6 @@
              relativeToChangelogFile="true"/>
     <include file="uploaded-assemblies.xml"
              relativeToChangelogFile="true"/>
+    <include file="fast5-file-model.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>

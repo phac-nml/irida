@@ -131,7 +131,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProject() {
 		Sample s = new Sample();
 		s.setSampleName("sample");
-		s.setId(new Long(2222));
+		s.setId(2222L);
 		Project p = project();
 
 		ProjectSampleJoin join = new ProjectSampleJoin(p, s, true);
@@ -152,7 +152,7 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testAddUserToProject() {
 		User u = new User("test", "test@nowhere.com", "PASSWOD!1", "Test", "User", "1234");
-		u.setId(new Long(1111));
+		u.setId(1111L);
 		Project p = project();
 		ProjectRole r = ProjectRole.PROJECT_USER;
 		ProjectUserJoin join = new ProjectUserJoin(p, u, r);
@@ -167,7 +167,7 @@ public class ProjectServiceImplTest {
 	@Test(expected = EntityExistsException.class)
 	public void testAddUserToProjectTwice() {
 		User u = new User("test", "test@nowhere.com", "PASSWOD!1", "Test", "User", "1234");
-		u.setId(new Long(1111));
+		u.setId(1111L);
 		Project p = project();
 		ProjectRole r = ProjectRole.PROJECT_USER;
 		ProjectUserJoin join = new ProjectUserJoin(p, u, r);
@@ -400,7 +400,7 @@ public class ProjectServiceImplTest {
 
 	private Project project() {
 		Project p = new Project("project");
-		p.setId(new Long(2222));
+		p.setId(2222L);
 		return p;
 	}
 
