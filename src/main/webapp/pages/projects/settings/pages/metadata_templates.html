@@ -3,42 +3,14 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.metadata-templates}">Basic</title>
+    <link rel="stylesheet" th:href="@{/dist/css/project-metadata-templates.bundle.css}">
 </head>
 <body>
-<th:block layout:fragment="settings-content">
-    <div class="clearfix spaced-bottom">
-        <h2 class="h2-muted pull-left" th:text="#{project.settings.metadata-templates}">_Sample Metadata Templates_</h2>
-        <a href="#" id="create-template-btn"
-           th:href="@{/projects/{id}/metadata-templates/new(id=${project.getId()})}" th:if="${isOwner}"
-           class="btn btn-link pull-right" th:text="#{project.settings.metadata-templates.new}">Create New Template</a>
-    </div>
-    <table id="template-table" class="table table-border table-striped">
-        <thead>
-        <tr>
-            <th th:text="#{project.settings.metadata-templates.table.template-name}">Template Name</th>
-            <th th:text="#{project.settings.metadata-templates.table.create-date}" style="text-align: right;">Created Date</th>
-            <th width="50"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="template : ${templates}">
-            <td>
-                <a href=""
-                   th:href="@{/projects/{id}/metadata-templates/{templateId}(id=${project.getId()}, templateId=${template.getId()})}"
-                   th:text="${template.name}"></a>
-            </td>
-            <td style="text-align: right;"
-                th:text="${#calendars.format(template.createdDate, #messages.msg('generic.dateformat'))}"></td>
-            <td width="50">
-                <div class="pull-right"><a class="btn btn-default btn-xs"
-                                           th:href="@{/projects/{id}/metadata-templates/{templateId}/excel(id=${project.getId()}, templateId=${template.getId()})}"><i
-                    class="fa fa-fw fa-download"></i></a>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div id="templates-root" layout:fragment="settings-content">
+<!-- React component: ./resources/js/pages/projects/metadata-templates/index.js   -->
+</div>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/project-metadata-templates.bundle.js}"></script>
 </th:block>
-
 </body>
 </html>

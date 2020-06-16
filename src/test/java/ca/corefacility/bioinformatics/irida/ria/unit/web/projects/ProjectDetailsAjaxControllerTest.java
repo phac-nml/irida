@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectDetailsAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.ProjectDetailsAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;

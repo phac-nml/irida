@@ -1,20 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -35,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
@@ -43,6 +35,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link RESTProjectSamplesController}.
@@ -161,7 +156,8 @@ public class RESTProjectSamplesControllerTest {
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE,
-				RESTSampleMetadataController.METADATA_REL, RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES);
+				RESTSampleMetadataController.METADATA_REL, RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES,
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FAST5);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
