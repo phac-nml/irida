@@ -5,10 +5,20 @@ import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-tem
 import { Link, useLocation } from "@reach/router";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+/**
+ * React component to render a list of metadata templates associated with
+ * the current project.
+ * @param {number} projectId - Identifier for a Project
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function ListProjectTemplates({ projectId }) {
   const [templates, setTemplates] = useState([]);
   const location = useLocation();
 
+  /*
+  When the component mounts, get a list of the metadata templates associated with this project
+   */
   useEffect(() => {
     getProjectMetadataTemplates(projectId).then((data) => setTemplates(data));
   }, [projectId]);
