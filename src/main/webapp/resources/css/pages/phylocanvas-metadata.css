@@ -1,0 +1,11 @@
+@import "../components/metadata-aside.css";
+
+canvas {
+  border: 1px solid rgb(176, 190, 197);
+  border-radius: 0.5rem;
+}
+
+h2 {
+  font-size: 1.6rem !important;
+  margin-top: 0 !important;
+}

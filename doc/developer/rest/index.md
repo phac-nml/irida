@@ -612,9 +612,11 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | Name | Description |
 |------|-------------|
 | `self` | A link to this sample. |
-| `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
-| `sample/sequenceFiles/pairs` | A link to the collection of paired-end sequence files in this sample.  Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
+| `sample/sequenceFiles` | A link to the [collection of sequence files](#sequence-file-collection) in this sample. |
+| `sample/sequenceFiles/pairs` | A link to the [collection of paired-end sequence files](#sequence-file-pairs-collection) in this sample.  Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 | `sample/sequenceFiles/unpaired` | A link to the collection of unpaired sequence files in this sample. Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
+| `sample/sequenceFiles/fast5` | A link to the collection of [FAST5 sequence files](#fast5-file-collection) in this sample. Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
+| `sample/assemblies` | A link to the collection [assemblies](#assemblies) associated with the sample. |
 | `sample/metadata`| A link to the metadata associated with the sample. |
 
 ##### Properties
@@ -735,10 +737,13 @@ Sample metadata is unstructured metadata that has been associated with the sampl
 
 Each sample will refer to a [collection of sequence files](#sequence-file-collection) that have been sequenced and uploaded to IRIDA. Every record in the sequence files resource collection has a `self` rel to access the [individual sequence file](#sequence-file-individual).
 
-The sample will also contain a [list of paired-end sequence files](#sequence-file-pairs-collection) and [individual paired-end files](#sequence-file-pairs-individual).
+The sample will also contain a [list of paired-end sequence files](#sequence-file-pairs-collection), and a [list of FAST5 files](#fast5-file-collection).
 
 #### Sequence File Collection
-{:.no_toc}
+
+This will list the collection of sequence files for a sample.  This endpoint will list all single-end, paired-end, and FAST5 files associated with the sample.
+
+You can `POST` a sequence file to this endpoint to upload a new singe-end sequencefile with the parameter `file`.
 
 ##### Links
 {:.no_toc}
@@ -878,8 +883,7 @@ Each sequence file may have FastQC data associated with it to display some basic
 ```
 
 #### Sequence File Pairs Collection
-{:.no_toc}
-Listing sequence file pairs will display the sequence files for a given sample which are paired-end.  This collection will overlap with the [collection of sequence files](#sequence-file-collection) but will only display paired-end files.  The resources in this list are a collection of [sequence file pair individuals](#sequence-file-pair-individual).
+Listing sequence file pairs will display the sequence files for a given sample which are paired-end.  This collection will overlap with the [collection of sequence files](#sequence-file-collection) but will only display paired-end files.  The resources in this list are a collection of [sequence file pair individuals](#sequence-file-pair-individual).  You can `POST` a new pair of files with the parameters `file1` and `file2` to this endpoint to upload a new pair of sequence files.
 
 ##### Links
 {:.no_toc}
@@ -1033,6 +1037,68 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
   }
 }
 ```
+
+#### FAST5 File Collection
+Listing FAST5 files will display the list of FAST5 files uploaded to a sample.  This collection will overlap with the [collection of sequence files](#sequence-file-collection) but will only display FAST5 files.  
+
+You can `POST` a file to this endpoint with the parameter `file` to upload a new FAST5 file.
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this collection of sequence files. |
+| `sample` | A link back to the sample that owns this sequence file collection. |
+
+##### Example response
+{:.no_toc}
+```json
+{
+  "resource" : {
+    "resources" : [ {
+      "createdDate" : 1589570873000,
+      "processingState" : "PROCESSING",
+      "fileProcessor" : "1111@machine",
+      "file" : {
+        "file" : "/opt/irida/sequence-files/48/1/data.fast5",
+        "createdDate" : 1589570873000,
+        "modifiedDate" : 1589570883000,
+        "uploadSha256" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "fileName" : "data.fast5",
+        "label" : "data.fast5",
+        "links" : [ {
+          "rel" : "self",
+          "href" : "http://localhost:8080/api/samples/56/fast5/31/files/48"
+        } ],
+        "identifier" : "48"
+      },
+      "fast5Type" : "SINGLE",
+      "label" : "data.fast5",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/samples/56/fast5/31"
+      }, {
+        "rel" : "sample",
+        "href" : "http://localhost:8080/api/samples/56"
+      } ],
+      "identifier" : "31"
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/samples/56/fast5"
+    }, {
+      "rel" : "sample",
+      "href" : "http://localhost:8080/api/samples/56"
+    } ]
+  }
+}
+
+```
+
+#### FAST5 File Individual
+{:.no_toc}
+The response for a FAST5 file is identical to the [sequence files individual](#sequence-file-individual).
 
 ### Assemblies
 

@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
@@ -292,5 +293,14 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 				logger.error("Could not associate automated workflow with analysis " + submission.getIdentifier(), e);
 			}
 		}
+	}
+
+	@Override
+	public boolean shouldProcessFile(SequencingObject sequencingObject) {
+		//don't want to run for fast5 data because no pipelines support it yet.
+		if (sequencingObject instanceof Fast5Object) {
+			return false;
+		}
+		return true;
 	}
 }
