@@ -4,6 +4,7 @@ Changes
 20.05 to 20.09
 --------------
 * [UI]: Fixed bug when creating/modifying a metadata template the user could not search for a field. (20.05.1)
+* [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
 
 20.01 to 20.05
 --------------

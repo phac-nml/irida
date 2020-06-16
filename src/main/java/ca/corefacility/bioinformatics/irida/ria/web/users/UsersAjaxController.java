@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.services.AdminUsersService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
 
@@ -21,14 +21,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
  */
 @RestController
 @RequestMapping("/ajax/users")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
-public class AdminUsersAjaxController {
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+public class UsersAjaxController {
 
-	private final AdminUsersService adminUsersService;
+	private final UIUsersService UIUsersService;
 
 	@Autowired
-	public AdminUsersAjaxController(AdminUsersService adminUsersService) {
-		this.adminUsersService = adminUsersService;
+	public UsersAjaxController(UIUsersService UIUsersService) {
+		this.UIUsersService = UIUsersService;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class AdminUsersAjaxController {
 	 */
 	@RequestMapping("/list")
 	public TableResponse<UserTableModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
-		return adminUsersService.getUsersPagedList(request);
+		return UIUsersService.getUsersPagedList(request);
 	}
 
 	/**
@@ -53,6 +53,6 @@ public class AdminUsersAjaxController {
 	@RequestMapping("/edit")
 	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
 			Locale locale) {
-		return adminUsersService.updateUserStatus(id, isEnabled, locale);
+		return UIUsersService.updateUserStatus(id, isEnabled, locale);
 	}
 }

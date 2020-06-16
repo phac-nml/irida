@@ -91,7 +91,7 @@ public class UsersController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public String getUsersPage() {
 		return USERS_PAGE;
 	}
