@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="fast5-file-model" author="tom">
+
+        <!-- Create a table for SingleEndSequenceFile -->
+        <createTable tableName="sequence_file_fast5">
+            <column name="id" type="bigint(20)">
+                <constraints primaryKey="true" nullable="false"
+                             referencedTableName="sequencing_object" referencedColumnNames="id"
+                             foreignKeyName="FK_SEQUENCE_FILE_FAST5_OBJECT"/>
+            </column>
+            <column name="fast5_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_id" type="bigint(20)">
+                <constraints nullable="false" referencedTableName="sequence_file"
+                             referencedColumnNames="id" foreignKeyName="FK_SEQUENCE_FILE_FAST5_FILE"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="sequence_file_fast5_AUD">
+            <column name="id" type="bigint(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fast5_type" type="varchar(255)"/>
+            <column name="file_id" type="bigint(20)"/>
+            <column name="REV" type="int(11)">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="id, REV"
+                                 baseTableName="sequence_file_fast5_AUD"
+                                 constraintName="FK_SEQUENCE_FILE_FAST5_AUD"
+                                 referencedColumnNames="id, REV" referencedTableName="sequencing_object_AUD"/>
+
+    </changeSet>
+</databaseChangeLog>

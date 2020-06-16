@@ -40,7 +40,7 @@ public class MetadataEntryTest {
 		e1.merge(e2);
 
 		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
-		assertEquals("Metadata entries did not merge", new Long(2L), e1.getSubmission().getId());
+		assertEquals("Metadata entries did not merge", Long.valueOf(2), e1.getSubmission().getId());
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public class MetadataEntryTest {
 
 		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
 		assertEquals("Metadata entries did not merge", "text2", e1.getType());
-		assertEquals("Metadata entries did not merge", new Long(2L), e1.getSubmission().getId());
+		assertEquals("Metadata entries did not merge", Long.valueOf(2), e1.getSubmission().getId());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

@@ -284,13 +284,13 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			return true;
 		}
 
-		// get the set of group owners
-		final List<UserGroupJoin> users = userGroupJoinRepository
-				.findAll(filterUserGroupJoinByRole(UserGroupRole.GROUP_OWNER));
+		long count = getUsersForGroup(userGroup).stream()
+				.filter(g -> g.getRole()
+						.equals(UserGroupRole.GROUP_OWNER))
+				.count();
 
-		// if there are at least 2 group owners, then it doesn't matter what
-		// we're changing the role to.
-		return users.size() >= 2;
+		// There must always be an owner on the project
+		return count > 1;
 	}
 
 	/**

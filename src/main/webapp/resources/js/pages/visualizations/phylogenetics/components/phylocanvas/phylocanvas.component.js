@@ -2,7 +2,7 @@ import angular from "angular";
 import metadataPlugin from "phylocanvas-plugin-metadata";
 import exportSVgPlugin from "phylocanvas-plugin-export-svg";
 import { METADATA, TREE } from "./../../constants";
-import "../../../../../../sass/pages/phylocanvas-metadata.scss";
+import "../../../../../../css/pages/phylocanvas-metadata.css";
 
 const PHYLOCANVAS_DIV = "phylocanvas";
 const BOTTOM_PADDING = 180;
@@ -22,14 +22,14 @@ const metadataFormat = {
   headerAngle: 0,
   fillStyle: "black",
   strokeStyle: "black",
-  lineWidth: 1
+  lineWidth: 1,
 };
 
 /**
  * Updates th size of the canvas to be the size of the available space in teh window.
  * @param {object} $window angular window object.
  */
-const setCanvasHeight = $window => {
+const setCanvasHeight = ($window) => {
   const canvas = document.querySelector(`#${PHYLOCANVAS_DIV}`);
   canvas.style.height = `${$window.innerHeight - BOTTOM_PADDING}px`;
 };
@@ -61,7 +61,7 @@ function phylocanvasController(
   // Initialize phylocanvas.
   const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
     lineWidth: 2,
-    metadata: metadataFormat
+    metadata: metadataFormat,
   });
 
   const promises = [];
@@ -76,7 +76,7 @@ function phylocanvasController(
      * initial metadata.
      */
     const newickPromise = PhylocanvasService.getNewickData(this.newickurl).then(
-      result => result,
+      (result) => result,
       () => {
         $scope.$emit(TREE.NOT_LOADED);
       }
@@ -84,7 +84,7 @@ function phylocanvasController(
     promises.push(newickPromise);
 
     // Create the tree when the promises complete.
-    $q.all(promises).then(results => {
+    $q.all(promises).then((results) => {
       const newick = results[1];
       if (angular.isString(newick)) {
         tree.load(newick);
@@ -161,13 +161,13 @@ phylocanvasController.$inject = [
   "$q",
   "Phylocanvas",
   "PhylocanvasService",
-  "MetadataService"
+  "MetadataService",
 ];
 
 export const PhylocanvasComponent = {
   bindings: {
-    newickurl: "@"
+    newickurl: "@",
   },
   templateUrl: "phylocanvas.tmpl.html",
-  controller: phylocanvasController
+  controller: phylocanvasController,
 };
