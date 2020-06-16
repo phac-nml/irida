@@ -7,9 +7,21 @@ import { Typography } from "antd";
 
 const { Paragraph } = Typography;
 
+/**
+ * React component to render details about a specific metadata template.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function TemplateDetails() {
   const { template, loading, updateField } = useMetadataTemplate();
 
+  /**
+   * When rendering a field, check to see whether it is editable by the current
+   * user.
+   * @param {string} field - Current field
+   * @param {string} text - Value of the current field
+   * @returns {JSX.Element}
+   */
   const initField = (field, text) => {
     const editable = window.project.canManage
       ? {
