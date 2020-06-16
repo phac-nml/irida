@@ -626,7 +626,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testReadSharedAnalysis() {
 		AnalysisSubmission read = analysisSubmissionService.read(3L);
-		assertEquals("id should be 3", new Long(3), read.getId());
+		assertEquals("id should be 3", Long.valueOf(3), read.getId());
 	}
 
 	@Test
