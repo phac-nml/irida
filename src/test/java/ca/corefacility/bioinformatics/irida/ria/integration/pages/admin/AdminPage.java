@@ -68,8 +68,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin panel button is
-	 *  visible on the navbar.
+	 * Determines if admin panel button is
+	 * visible on the navbar.
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -78,7 +78,7 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin side menu is visible.
+	 * Determines if admin side menu is visible.
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -87,8 +87,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin stats link on
-	 *  side menu is visible.
+	 * Determines if admin stats link on
+	 * side menu is visible.
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -97,8 +97,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin stats link on
-	 *  side menu is visible.
+	 * Determines if admin users link on
+	 * side menu is visible.
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -107,8 +107,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin stats link on
-	 *  side menu is visible.
+	 * Determines if admin groups link on
+	 * side menu is visible.
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -117,8 +117,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if content portion of the page
-	 *  has a title visible.
+	 * Determines if content portion of the page
+	 * has a title visible.
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -130,8 +130,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the admin panel button to navigate
-	 *  to the admin panel page.
+	 * Clicks on the admin panel button to navigate
+	 * to the admin panel page.
 	 */
 	public void clickAdminButton() {
 		adminPanelBtn.get(0).click();
@@ -140,8 +140,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the admin stats menu button to navigate
-	 *  to the admin stats page.
+	 * Clicks on the admin stats menu button to navigate
+	 * to the admin stats page.
 	 */
 	public void clickStatsLink() {
 		adminStatsLink.get(0).click();
@@ -150,8 +150,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the users submenu to open it up
-	 *  and give access to its options.
+	 * Clicks on the users submenu to open it up
+	 * and give access to its options.
 	 */
 	public void clickUsersSubMenu() {
 		adminUsersSubMenu.get(0).click();
@@ -160,8 +160,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the admin users menu button to navigate
-	 *  to the admin users page.
+	 * Clicks on the admin users menu button to navigate
+	 * to the admin users page.
 	 */
 	public void clickUsersLink() {
 		adminUsersLink.get(0).click();
@@ -170,8 +170,8 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the admin user groups menu button to navigate
-	 *  to the admin user groups page.
+	 * Clicks on the admin user groups menu button to navigate
+	 * to the admin user groups page.
 	 */
 	public void clickGroupsLink() {
 		adminGroupsLink.get(0).click();

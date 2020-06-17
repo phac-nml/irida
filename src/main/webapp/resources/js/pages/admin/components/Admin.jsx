@@ -1,6 +1,6 @@
 /*
- * This file renders the details for the admin as well as,
- * lazily loads the Users and Statistics components (component
+ * This file renders the details for the admin panel as well as,
+ * lazily loads the Users, User Groups, and Statistics components (component
  * is only loaded when the corresponding tab is clicked)
  */
 
@@ -29,9 +29,8 @@ export default function Admin() {
   const DEFAULT_URL = setBaseUrl("/admin");
 
   /*
-   * The following renders the tabs for statistics and users,
-   * the components are only loaded if the corresponding
-   * tab is clicked
+   * The following renders the tabs for statistics, users, and groups
+   * the components are only loaded if the corresponding tab is clicked
    */
   return (
     <Layout>
