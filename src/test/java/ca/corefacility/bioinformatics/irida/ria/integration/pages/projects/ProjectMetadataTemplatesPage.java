@@ -9,7 +9,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-public class ProjectSettingsMetadataTemplatesPage extends AbstractPage {
+public class ProjectMetadataTemplatesPage extends AbstractPage {
 	private static final String RELATIVE_URL = "projects/{id}/settings/metadata-templates";
 
 	@FindBy(className = "t-create-template-btn")
@@ -18,13 +18,13 @@ public class ProjectSettingsMetadataTemplatesPage extends AbstractPage {
 	@FindBy(className = "t-template")
 	private List<WebElement> templates;
 
-	public ProjectSettingsMetadataTemplatesPage(WebDriver driver) {
+	public ProjectMetadataTemplatesPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public static ProjectSettingsMetadataTemplatesPage goToPage(WebDriver driver, int projectId) {
+	public static ProjectMetadataTemplatesPage goToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL.replace("{id}", String.valueOf(projectId)));
-		return PageFactory.initElements(driver, ProjectSettingsMetadataTemplatesPage.class);
+		return PageFactory.initElements(driver, ProjectMetadataTemplatesPage.class);
 	}
 
 	public int getNumberOfTemplatesInProject() {
