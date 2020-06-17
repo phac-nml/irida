@@ -21,12 +21,14 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Service class for the UI for handling {@link UserGroup}s
@@ -235,6 +237,25 @@ public class UIUserGroupsService {
 							messageSource.getMessage("projectRole." + role.toString(), new Object[] {}, locale));
 				})
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Crate a new {@link UserGroup}
+	 *
+	 * @param userGroup {@link UserGroup} name and description
+	 * @param locale    current users {@link Locale}
+	 * @return the identifier for the new user groups
+	 * @throws UIConstraintViolationException if one of the constraint violations for a {@link UserGroup} is broken
+	 */
+	public Long createNewUserGroup(UserGroup userGroup, Locale locale) throws UIConstraintViolationException {
+		try {
+			UserGroup group = userGroupService.create(userGroup);
+			return group.getId();
+		} catch (Exception e) {
+			throw new UIConstraintViolationException(ImmutableMap.of("name",
+					messageSource.getMessage("server.usergroups.create.constraint.name",
+							new Object[] { userGroup.getLabel() }, locale)));
+		}
 	}
 
 	/**
