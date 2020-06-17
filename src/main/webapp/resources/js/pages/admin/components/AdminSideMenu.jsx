@@ -30,7 +30,7 @@ export default function AdminHeader() {
           return (
             <section>
               <Link style={{ paddingLeft: 10, paddingRight: 10 }} to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}>
-                <img style={{ height: 64, width: 180 }} src="/resources/img/irida_logo_dark.svg"/>
+                <img style={{ height: 64, width: 180 }} src={setBaseUrl("/resources/img/irida_logo_dark.svg")}/>
               </Link>
               <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
                     selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
@@ -47,7 +47,7 @@ export default function AdminHeader() {
                   </Menu.Item>
                   <Menu.Item key="userGroupsList">
                     <Link to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`} className={"t-admin-groups-link"}>
-                      {i18n("AdminPanel.groupList")}
+                      {i18n("AdminPanel.userGroupList")}
                     </Link>
                   </Menu.Item>
                 </SubMenu>
