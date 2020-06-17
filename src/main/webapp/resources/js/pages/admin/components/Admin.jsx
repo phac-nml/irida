@@ -22,7 +22,7 @@ import AdminSideMenu from "./AdminSideMenu"
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const AdminStatistics = lazy(() => import("./AdminStatistics"));
-const AdminUsersPage = lazy(() => import("../../AdminUsersPage"));
+const UsersPage = lazy(() => import("../../UsersPage"));
 const AdminUserGroupsPage = lazy(() => import("../../UserGroupsPage/components/UserGroupsPage"));
 
 export default function Admin() {
@@ -46,7 +46,7 @@ export default function Admin() {
                   }
                   default
                 />
-                <AdminUsersPage
+                <UsersPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.USERS}`
                   }
