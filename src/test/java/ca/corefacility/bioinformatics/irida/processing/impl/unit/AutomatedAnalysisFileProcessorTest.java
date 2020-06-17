@@ -133,7 +133,7 @@ public class AutomatedAnalysisFileProcessorTest {
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 		when(submissionRepository.save(any(AnalysisSubmission.class))).thenReturn(built);
 
-		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
+		assertTrue("should want to assemble file", processor.shouldProcessFile(pair));
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
@@ -174,7 +174,7 @@ public class AutomatedAnalysisFileProcessorTest {
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 		when(submissionRepository.save(any(AnalysisSubmission.class))).thenReturn(built);
 
-		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
+		assertTrue("should want to assemble file", processor.shouldProcessFile(pair));
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));

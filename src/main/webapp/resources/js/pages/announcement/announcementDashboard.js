@@ -1,7 +1,7 @@
 import angular from "angular";
 import "marked";
 import hcMarked from "angular-marked";
-import "./../../../sass/modules/announcements.scss";
+import "../../../css/modules/announcements.css";
 
 /**
  * Service to get announcements DOM from server
@@ -14,10 +14,10 @@ function AnnouncementsService($http) {
     return $http
       .get(url, {
         headers: {
-          Accept: "text/html"
-        }
+          Accept: "text/html",
+        },
       })
-      .then(function(data) {
+      .then(function (data) {
         return data.data;
       });
   }
@@ -26,17 +26,17 @@ function AnnouncementsService($http) {
     return $http
       .post(url, {
         headers: {
-          Accept: "text/html"
-        }
+          Accept: "text/html",
+        },
       })
-      .then(function(data) {
+      .then(function (data) {
         return data.data;
       });
   }
 
   return {
     getAnnouncements: getAnnouncements,
-    markAnnouncementRead: markAnnouncementRead
+    markAnnouncementRead: markAnnouncementRead,
   };
 }
 
@@ -50,23 +50,23 @@ function announcements(svc, $compile) {
   return {
     template: "<div></div>",
     scope: {
-      url: "@"
+      url: "@",
     },
     replace: true,
     controllerAs: "announcementCtrl",
     controller: [
       "$scope",
       "$element",
-      function($scope, $element) {
+      function ($scope, $element) {
         function getAnnouncements() {
-          svc.getAnnouncements($scope.url).then(function(data) {
+          svc.getAnnouncements($scope.url).then(function (data) {
             $element.html($compile(data)($scope));
           });
         }
 
         getAnnouncements();
-      }
-    ]
+      },
+    ],
   };
 }
 
@@ -76,13 +76,13 @@ export const DashboardAnnouncementsModule = angular
   .directive("announcements", [
     "AnnouncementsService",
     "$compile",
-    announcements
+    announcements,
   ])
   .controller("AnnouncementItemCtrl", [
     "$window",
     "$scope",
     "AnnouncementsService",
-    function($window, $scope, AnnouncementsService) {
+    function ($window, $scope, AnnouncementsService) {
       $scope.markRead = function markRead(aID, event) {
         var url = window.PAGE.urls.link + "/read/" + aID;
         AnnouncementsService.markAnnouncementRead(url);
@@ -91,7 +91,7 @@ export const DashboardAnnouncementsModule = angular
           .element(event.target)
           .parentsUntil(".list-group", ".list-group-item"); //get the list item to hide it
         var listElement = target.parent(); //the list containing all the items
-        target.hide(400, function() {
+        target.hide(400, function () {
           target.remove();
         });
 
@@ -102,5 +102,5 @@ export const DashboardAnnouncementsModule = angular
           listElement.remove();
         }
       };
-    }
+    },
   ]).name;
