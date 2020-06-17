@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -48,7 +51,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
 
-	private static IridaFileStorageService iridaFileStorageService;
+	private static IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,7 +124,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@JsonIgnore
 	public String getFileSize() {
 		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageService.getFileSize(getFile()), true);
+		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageUtility.getFileSize(getFile()), true);
 		return size;
 	}
 
@@ -298,12 +301,24 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.uploadSha256 = uploadSha256;
 	}
 
-	public IridaFileStorageService getIridaFileStorageService() {
-		return iridaFileStorageService;
+	@Override
+	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
-	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
-		this.iridaFileStorageService = iridaFileStorageService;
+	public InputStream getFileInputStream() {
+		return iridaFileStorageUtility.getFileInputStream(getFile());
 	}
 
+	public boolean isGzipped() throws Exception {
+		return iridaFileStorageUtility.isGzipped(getFile());
+	}
+
+	public File getTemporaryFile() {
+		return iridaFileStorageUtility.getTemporaryFile(getFile());
+	}
+
+	public boolean fileExists() {
+		return iridaFileStorageUtility.fileExists(getFile());
+	}
 }

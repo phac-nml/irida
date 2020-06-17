@@ -25,7 +25,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
  * A reference file to be associated with a {@link Project}.
@@ -35,8 +37,10 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 @Entity
 @Table(name = "reference_file")
 @Audited
-@EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class})
+@EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class, IridaFileStorageListener.class})
 public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThing {
+
+	private static IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -143,5 +147,10 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 
 	public void setFileLength(Long fileLength) {
 		this.fileLength = fileLength;
+	}
+
+	@Override
+	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 }

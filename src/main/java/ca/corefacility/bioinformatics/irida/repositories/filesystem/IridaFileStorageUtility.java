@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
  * Interface describing methods for performing storage actions
  */
 
-public interface IridaFileStorageService {
+public interface IridaFileStorageUtility {
 	//Valid extensions to try to concatenate with this tool
 	public static final List<String> VALID_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
@@ -61,24 +61,6 @@ public interface IridaFileStorageService {
 	 */
 	public String getFileName(Path file);
 
-	/**
-	 * Deletes the file from (azure, aws, or local disk)
-	 *
-	 */
-	public void deleteFile();
-
-	/**
-	 * Download the file from (azure, aws, or local disk)
-	 *
-	 */
-	public void downloadFile();
-
-	/**
-	 * Downloads all the files of type `analysis-output` from
-	 * (azure, aws, or local disk)
-	 *
-	 */
-	public void downloadFiles();
 
 	/**
 	 * Checks if file exists

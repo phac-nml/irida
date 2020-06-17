@@ -17,8 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 public class ChecksumFileProcessorTest {
@@ -26,13 +26,13 @@ public class ChecksumFileProcessorTest {
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 	private static final String CHECKSUM = "aeaa0755dc44b393ffe12f02e9bd42b0169b12ca9c15708085db6a4ac9110ee0";
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
-		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository, iridaFileStorageService);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository);
 	}
 
 	@Test
