@@ -28,31 +28,31 @@ export default function AdminHeader() {
         {props => {
           const keyname = props.location.pathname.match(pathRegx);
           return (
-            <Menu style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
-                  selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
-              <Menu.Item key="logo">
-                <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} className={"t-admin-stats-menu"}>
-                  <img src="/resources/img/irida_logo_dark.svg"/>
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="statistics">
-                <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}>
-                  {i18n("admin.panel.statistics")}
-                </Link>
-              </Menu.Item>
-              <SubMenu key="users" title={i18n("admin.panel.users")} className={"t-admin-users-sub-menu"}>
-                <Menu.Item key="userList">
-                  <Link to={`${DEFAULT_URL}/${ADMIN.USERS}`} className={"t-admin-users-menu"}>
-                    {i18n("admin.panel.userList")}
+            <section>
+              <Link style={{ paddingLeft: 10, paddingRight: 10 }} to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}>
+                <img style={{ height: 64, width: 180 }} src="/resources/img/irida_logo_dark.svg"/>
+              </Link>
+              <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
+                    selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
+                <Menu.Item key="statistics">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} className={"t-admin-stats-link"}>
+                    {i18n("admin.panel.statistics")}
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="groupList">
-                  <Link to={`${DEFAULT_URL}/${ADMIN.GROUPS}`} className={"t-admin-groups-menu"}>
-                    {i18n("admin.panel.groupList")}
-                  </Link>
-                </Menu.Item>
-              </SubMenu>
-            </Menu>
+                <SubMenu key="users" title={i18n("admin.panel.users")} className={"t-admin-users-submenu"}>
+                  <Menu.Item key="userList">
+                    <Link to={`${DEFAULT_URL}/${ADMIN.USERS}`} className={"t-admin-users-link"}>
+                      {i18n("admin.panel.userList")}
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="groupList">
+                    <Link to={`${DEFAULT_URL}/${ADMIN.GROUPS}`} className={"t-admin-groups-link"}>
+                      {i18n("admin.panel.groupList")}
+                    </Link>
+                  </Menu.Item>
+                </SubMenu>
+              </Menu>
+            </section>
           );
         }}
       </Location>

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.admin;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -18,26 +19,20 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-panel-btn")
 	private List<WebElement> adminPanelBtn;
 
-	@FindBy(className="t-admin-stats-title")
-	private List<WebElement> adminStatsTitle;
+	@FindBy(className="t-admin-side-menu")
+	private List<WebElement> adminSideMenu;
 
-	@FindBy(className="t-admin-users-title")
-	private List<WebElement> adminUsersTitle;
+	@FindBy(className="t-admin-stats-link")
+	private List<WebElement> adminStatsLink;
 
-	@FindBy(className="t-admin-groups-title")
-	private List<WebElement> adminGroupsTitle;
-
-	@FindBy(className="t-admin-stats-menu")
-	private List<WebElement> adminStatsMenu;
-
-	@FindBy(className="t-admin-users-sub-menu")
+	@FindBy(className="t-admin-users-submenu")
 	private List<WebElement> adminUsersSubMenu;
 
-	@FindBy(className="t-admin-users-menu")
-	private List<WebElement> adminUsersMenu;
+	@FindBy(className="t-admin-users-link")
+	private List<WebElement> adminUsersLink;
 
-	@FindBy(className="t-admin-groups-menu")
-	private List<WebElement> adminGroupsMenu;
+	@FindBy(className="t-admin-groups-link")
+	private List<WebElement> adminGroupsLink;
 
 	public AdminPage(WebDriver driver) { super(driver); }
 
@@ -62,33 +57,14 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if admin stats title is
-	 *  visible on the admin panel page.
+	 * Compares the expected page title to the actual
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean adminStatsTitleVisible() {
-		return adminStatsTitle.size() == 1;
-	}
-
-	/**
-	 *  Determines if admin users title is
-	 *  visible on the admin panel page.
-	 *
-	 * @return {@link Boolean}
-	 */
-	public boolean adminUsersTitleVisible() {
-		return adminUsersTitle.size() == 1;
-	}
-
-	/**
-	 *  Determines if admin user groups title is
-	 *  visible on the admin panel page.
-	 *
-	 * @return {@link Boolean}
-	 */
-	public boolean adminGroupsTitleVisible() {
-		return adminGroupsTitle.size() == 1;
+	public boolean comparePageTitle(String pageTitle) {
+		int titleFound = driver.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
+				.size();
+		return titleFound > 0;
 	}
 
 	/**
@@ -99,6 +75,58 @@ public class AdminPage extends AbstractPage {
 	 */
 	public boolean adminPanelButtonVisible() {
 		return adminPanelBtn.size() == 1;
+	}
+
+	/**
+	 *  Determines if admin side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminSideMenuVisible() {
+		return adminSideMenu.size() == 1;
+	}
+
+	/**
+	 *  Determines if admin stats link on
+	 *  side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminStatsLinkVisible() {
+		return adminStatsLink.size() == 1;
+	}
+
+	/**
+	 *  Determines if admin stats link on
+	 *  side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminUsersLinkVisible() {
+		return adminUsersLink.size() == 1;
+	}
+
+	/**
+	 *  Determines if admin stats link on
+	 *  side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminGroupsLinkVisible() {
+		return adminGroupsLink.size() == 1;
+	}
+
+	/**
+	 *  Determines if content portion of the page
+	 *  has a title visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminContentTitleVisible() {
+		WebElement content = driver.findElement(By.xpath("//main[@class='ant-layout-content']"));
+		int titleFound = content.findElements(By.className("ant-page-header-heading-title"))
+				.size();
+		return titleFound > 0;
 	}
 
 	/**
@@ -115,8 +143,8 @@ public class AdminPage extends AbstractPage {
 	 *  Clicks on the admin stats menu button to navigate
 	 *  to the admin stats page.
 	 */
-	public void clickStatsMenu() {
-		adminStatsMenu.get(0).click();
+	public void clickStatsLink() {
+		adminStatsLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin/statistics"));
 	}
@@ -135,8 +163,8 @@ public class AdminPage extends AbstractPage {
 	 *  Clicks on the admin users menu button to navigate
 	 *  to the admin users page.
 	 */
-	public void clickUsersMenu() {
-		adminUsersMenu.get(0).click();
+	public void clickUsersLink() {
+		adminUsersLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin/users"));
 	}
@@ -145,8 +173,8 @@ public class AdminPage extends AbstractPage {
 	 *  Clicks on the admin user groups menu button to navigate
 	 *  to the admin user groups page.
 	 */
-	public void clickGroupsMenu() {
-		adminGroupsMenu.get(0).click();
+	public void clickGroupsLink() {
+		adminGroupsLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin/groups"));
 	}
