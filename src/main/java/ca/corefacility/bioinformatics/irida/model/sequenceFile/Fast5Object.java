@@ -107,7 +107,7 @@ public class Fast5Object extends SequencingObject {
 		try {
 			String extension = FilenameUtils.getExtension(file.toString());
 
-			boolean gzipped = FileUtils.isGzipped(file);
+			boolean gzipped = sequenceFile.isGzipped();
 
 			if (gzipped) {
 				type = Fast5Object.Fast5Type.ZIPPED;

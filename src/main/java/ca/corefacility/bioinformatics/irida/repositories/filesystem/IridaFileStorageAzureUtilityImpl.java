@@ -31,15 +31,15 @@ import com.azure.storage.blob.models.BlobStorageException;
  * Component implementation of file utitlities for azure storage
  */
 @Component
-public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService {
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
+public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility {
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityImpl.class);
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient ;
 	private BlobClient blobClient;
 
 	@Autowired
-	public IridaFileStorageAzureServiceImpl(String connectionStr, String containerName){
+	public IridaFileStorageAzureUtilityImpl(String connectionStr, String containerName){
 		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionStr)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
@@ -103,27 +103,6 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		} catch (BlobStorageException e) {
 			logger.trace("Unable to upload file to azure [" + e + "]");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deleteFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFiles() {
 	}
 
 	/**

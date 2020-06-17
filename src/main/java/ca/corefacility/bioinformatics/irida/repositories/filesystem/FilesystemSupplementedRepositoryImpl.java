@@ -40,12 +40,12 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
 
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory, final IridaFileStorageService iridaFileStorageService) {
+	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory, final IridaFileStorageUtility iridaFileStorageUtility) {
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
-		this.iridaFileStorageService = iridaFileStorageService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -242,7 +242,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
 				logger.debug("Target is [" + target.toString() + "]");
-				iridaFileStorageService.writeFile(source, target, sequenceFileDir, sequenceFileDirWithRevision);
+				iridaFileStorageUtility.writeFile(source, target, sequenceFileDir, sequenceFileDirWithRevision);
 				ReflectionUtils.setField(field, objectToWrite, target);
 			}
 		}

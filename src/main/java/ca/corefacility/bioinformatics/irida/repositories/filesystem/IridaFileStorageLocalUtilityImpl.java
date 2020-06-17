@@ -27,11 +27,11 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
  * Component implementation of file utitlities for local storage
  */
 @Component
-public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService{
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalServiceImpl.class);
+public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility{
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 
 	@Autowired
-	public IridaFileStorageLocalServiceImpl(){
+	public IridaFileStorageLocalUtilityImpl(){
 	}
 
 	/**
@@ -88,27 +88,6 @@ public class IridaFileStorageLocalServiceImpl implements IridaFileStorageService
 			logger.error("Unable to move file into new directory", e);
 			throw new StorageException("Failed to move file into new directory.", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deleteFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFiles() {
 	}
 
 	/**

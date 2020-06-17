@@ -295,18 +295,18 @@ public class IridaApiServicesConfig {
 		return null;
 	}
 
-	@Bean(name = "iridaFileStorageService")
-	public IridaFileStorageService iridaFileStorageService() {
+	@Bean(name = "iridaFileStorageUtility")
+	public IridaFileStorageUtility iridaFileStorageUtility() {
 		if(storageType.equalsIgnoreCase("azure")) {
-			return new IridaFileStorageAzureServiceImpl(connectionStr, containerName);
+			return new IridaFileStorageAzureUtilityImpl(connectionStr, containerName);
 		} else {
-			return new IridaFileStorageLocalServiceImpl();
+			return new IridaFileStorageLocalUtilityImpl();
 		}
 	}
 
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, IridaFileStorageService iridaFileStorageService, GzipFileProcessor gzipFileProcessor,
+			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
 			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
@@ -320,7 +320,7 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, iridaFileStorageService, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")

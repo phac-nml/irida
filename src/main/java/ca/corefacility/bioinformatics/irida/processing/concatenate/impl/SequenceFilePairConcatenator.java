@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +21,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public SequenceFilePairConcatenator(IridaFileStorageService iridaFileStorageService) {
-		this.iridaFileStorageService = iridaFileStorageService;
+	public SequenceFilePairConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 
-		String extension = iridaFileStorageService.getFileExtension(toConcatenate);
+		String extension = iridaFileStorageUtility.getFileExtension(toConcatenate);
 
 		// create the filenames with F/R for the forward and reverse files
 		String forwardName = filename + "_R1." + extension;
@@ -65,8 +65,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
-			iridaFileStorageService.appendToFile(forwardFile, forwardSequenceFile);
-			iridaFileStorageService.appendToFile(reverseFile, reverseSequenceFile);
+			iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
+			iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
 		}
 
 		// create new SequenceFiles
