@@ -3,8 +3,8 @@ package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.google.common.collect.Lists;
 import org.junit.Before;
@@ -24,12 +24,12 @@ public class SequenceFilePairConcatenatorTest {
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
 	private SequenceFilePairConcatenator concat;
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
-		concat = new SequenceFilePairConcatenator(iridaFileStorageService);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		concat = new SequenceFilePairConcatenator(iridaFileStorageUtility);
 	}
 
 	@Test

@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.entity.listeners;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import javax.persistence.PostLoad;
 
 import org.slf4j.Logger;
@@ -12,39 +9,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
- * Component implementation to run on an entity after it is has been accessed from the db.
+ * Component implementation to run on a versioned entity after it is has been accessed from the db.
  */
 @Component
 public class IridaFileStorageListener {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageListener.class);
 
 	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
-	 * After the entity is loaded this method will provide
-	 * the entity access to the iridaFileStorageService
+	 * After the versioned entity is loaded this method will provide
+	 * the entity access to the iridaFileStorageUtility
 	 *
-	 * @param fileSystemEntity The entity to provide the iridaFileStorageService to
+	 * @param fileSystemEntity The versioned entity to provide the iridaFileStorageUtility to
 	 */
 	@PostLoad
 	public void afterEntityLoad(final VersionedFileFields<Long> fileSystemEntity) {
-		try {
 			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-			// Use reflection to get the setIridaFileStorageService method, make it accessible, and invoke it
-			Method iridaFileStorageServiceSetter = fileSystemEntity.getClass()
-					.getMethod("setIridaFileStorageService", IridaFileStorageService.class);
-			iridaFileStorageServiceSetter.setAccessible(true);
-			iridaFileStorageServiceSetter.invoke(fileSystemEntity, iridaFileStorageService);
-		} catch (NoSuchMethodException e) {
-			logger.error("The specified method does not exist. " + e.getMessage());
-		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage());
-		} catch (InvocationTargetException e) {
-			logger.error(e.getMessage());
-		}
+			fileSystemEntity.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 }

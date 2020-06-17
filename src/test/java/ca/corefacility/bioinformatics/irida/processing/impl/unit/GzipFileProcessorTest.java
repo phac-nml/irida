@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -36,13 +34,11 @@ public class GzipFileProcessorTest {
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
-	private IridaFileStorageService iridaFileStorageService;
 
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE, iridaFileStorageService);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -64,7 +60,7 @@ public class GzipFileProcessorTest {
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE, iridaFileStorageService);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference

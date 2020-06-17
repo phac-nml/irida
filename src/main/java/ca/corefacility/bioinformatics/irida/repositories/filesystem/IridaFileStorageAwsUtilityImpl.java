@@ -31,15 +31,15 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
  * Component implementation of file utitlities for aws storage
  */
 @Component
-public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsServiceImpl.class);
+public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 
 	@Autowired
-	public IridaFileStorageAwsServiceImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
@@ -121,27 +121,6 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to upload file to s3 bucket: " + e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deleteFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFiles() {
 	}
 
 	/**

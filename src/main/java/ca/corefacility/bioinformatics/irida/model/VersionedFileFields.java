@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Version;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+
 /**
  * An instance of a class may have a property with {@link Version} or may have
  * an internally managed version representation. This interface exposes that
@@ -26,4 +28,10 @@ public interface VersionedFileFields<VersionType extends Serializable> {
 	 * Internally modify the file revision number to something new.
 	 */
 	public void incrementFileRevisionNumber();
+
+	/**
+	 *
+	 * @param iridaFileStorageUtility instance of iridaFileStorageUtility to provide to entity
+	 */
+	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility);
 }

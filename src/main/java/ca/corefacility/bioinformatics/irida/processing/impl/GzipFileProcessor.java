@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -39,19 +38,15 @@ public class GzipFileProcessor implements FileProcessor {
 	private boolean disableFileProcessor = false;
 	private boolean removeCompressedFile;
 
-	private IridaFileStorageService iridaFileStorageService;
-
 	@Autowired
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, IridaFileStorageService iridaFileStorageService) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		removeCompressedFile = false;
-		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageService iridaFileStorageService) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.removeCompressedFile = removeCompressedFiles;
-		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -115,10 +110,10 @@ public class GzipFileProcessor implements FileProcessor {
 
 		try {
 			logger.trace("About to try handling a gzip file.");
-			if (iridaFileStorageService.isGzipped(file)) {
+			if (sequenceFile.isGzipped()) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 
-				try (GZIPInputStream zippedInputStream = new GZIPInputStream(iridaFileStorageService.getFileInputStream(file))) {
+				try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
 					logger.trace("Handling gzip compressed file.");
 
 					Path targetDirectory = Files.createTempDirectory(null);
