@@ -151,7 +151,6 @@ export default function AdminUsersPage() {
   return (
     <PageWrapper
       title={i18n("AdminUsersPage.title")}
-      className={"t-admin-users-title"}
       headerExtras={
         <AddNewButton
           href={setBaseUrl(`users/create`)}
