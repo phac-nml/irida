@@ -13,6 +13,6 @@ import { PageHeader } from "antd";
 export default function AdminStatistics() {
   // The following renders the Statistics component view
   return (
-    <PageHeader title={i18n("admin.panel.statistics")} />
+    <PageHeader title={i18n("AdminPanel.statistics")} />
   );
 }

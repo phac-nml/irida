@@ -36,18 +36,18 @@ export default function AdminHeader() {
                     selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
                 <Menu.Item key="statistics">
                   <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} className={"t-admin-stats-link"}>
-                    {i18n("admin.panel.statistics")}
+                    {i18n("AdminPanel.statistics")}
                   </Link>
                 </Menu.Item>
-                <SubMenu key="users" title={i18n("admin.panel.users")} className={"t-admin-users-submenu"}>
+                <SubMenu key="users" title={i18n("AdminPanel.users")} className={"t-admin-users-submenu"}>
                   <Menu.Item key="userList">
                     <Link to={`${DEFAULT_URL}/${ADMIN.USERS}`} className={"t-admin-users-link"}>
-                      {i18n("admin.panel.userList")}
+                      {i18n("AdminPanel.userList")}
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="groupList">
-                    <Link to={`${DEFAULT_URL}/${ADMIN.GROUPS}`} className={"t-admin-groups-link"}>
-                      {i18n("admin.panel.groupList")}
+                  <Menu.Item key="userGroupsList">
+                    <Link to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`} className={"t-admin-groups-link"}>
+                      {i18n("AdminPanel.groupList")}
                     </Link>
                   </Menu.Item>
                 </SubMenu>

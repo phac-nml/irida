@@ -6,5 +6,5 @@ export const ADMIN = {
   ADMIN: "admin",
   STATISTICS: "statistics",
   USERS: "users",
-  GROUPS: "groups"
+  USERGROUPS: "groups"
 };

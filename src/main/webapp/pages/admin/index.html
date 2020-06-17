@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+  <head>
     <meta charset="UTF-8">
-    <title th:text="#{admin.panel.title}">ADMIN PANEL</title>
+    <title th:text="#{AdminPanel.title}">ADMIN PANEL</title>
     <link rel="stylesheet" th:href="@{/dist/css/admin.bundle.css}" />
-</head>
-    <body>
+  </head>
+  <body>
     <div id="root" style="height: 100%;" layout:fragment="page">
-        <!--
-                 This is a DOM element for React to render the admin details into.
-                 See  src/main/webapp/resources/js/pages/analysis/components/Admin.jsx
-              -->
+      <!--
+         This is a DOM element for React to render the admin details into.
+         See src/main/webapp/resources/js/pages/analysis/components/Admin.jsx
+      -->
     </div>
 
     <th:block layout:fragment="scripts">
-        <script th:src="@{/dist/js/admin.bundle.js}"></script>
-        <script th:inline="javascript">
-          window.TL = {
-            _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
-            LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
-          };
-        </script>
+      <script th:src="@{/dist/js/admin.bundle.js}"></script>
+      <script th:inline="javascript">
+        window.TL = {
+          _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+          LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+        };
+      </script>
     </th:block>
-</body>
+  </body>
 </html>
