@@ -10,6 +10,8 @@ Changes
 * [UI]: Update project metadata templates listing page to use Ant Design.
 * [UI/Developer]: Removed SASS compilation step from front end build. Everything is done using postcss now.
 * [Developer]: Bumped `node` version to 12.18.0.
+* [UI]: Fixed bug when creating/modifying a metadata template the user could not search for a field. (20.05.1)
+* [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
 
 20.01 to 20.05
 --------------
