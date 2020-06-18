@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExistingSampleNameExcepti
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -45,13 +46,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Controller for managing relationships between {@link Project} and
  * {@link Sample}.
- *
  */
 @Controller
 public class RESTProjectSamplesController {
 
 	private static final Logger logger = LoggerFactory.getLogger(RESTProjectSamplesController.class);
-	
+
 	/**
 	 * Rel to get to the project that this sample belongs to.
 	 */
@@ -60,7 +60,7 @@ public class RESTProjectSamplesController {
 	 * rel used for accessing the list of samples associated with a project.
 	 */
 	public static final String REL_PROJECT_SAMPLES = "project/samples";
-	
+
 	public static final String REL_PROJECT_SAMPLE = "project/sample";
 
 	/**
@@ -91,7 +91,6 @@ public class RESTProjectSamplesController {
 	 * @param projectId the project to copy the sample to.
 	 * @param sampleIds the collection of sample IDs to copy.
 	 * @param response  a reference to the servlet response.
-	 * @param locale    The requesting user's locale for any warning messages
 	 * @return the response indicating that the sample was joined to the
 	 * project.
 	 */
@@ -166,15 +165,12 @@ public class RESTProjectSamplesController {
 	 * Create a new sample resource and create a relationship between the sample
 	 * and the project.
 	 *
-	 * @param projectId
-	 *            the identifier of the project that you want to add the sample
-	 *            to.
-	 * @param sample
-	 *            the sample that you want to create.
-	 * @param response
-	 *            a reference to the servlet response.
+	 * @param projectId the identifier of the project that you want to add the sample
+	 *                  to.
+	 * @param sample    the sample that you want to create.
+	 * @param response  a reference to the servlet response.
 	 * @return a response indicating that the sample was created and appropriate
-	 *         location information.
+	 * location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
 	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody Sample sample,
@@ -188,13 +184,14 @@ public class RESTProjectSamplesController {
 		Join<Project, Sample> r = projectService.addSampleToProject(p, sample, true);
 
 		// construct a link to the sample itself on the samples controller
-		Long sampleId = r.getObject().getId();
-		String location = linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId))
-				.withSelfRel().getHref();
+		Long sampleId = r.getObject()
+				.getId();
+		String location = linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withSelfRel()
+				.getHref();
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
 		addLinksForSample(Optional.of(p), sample);
-		
+
 		// add the resource to the model
 		model.addAttribute(RESTGenericController.RESOURCE_NAME, sample);
 
@@ -208,9 +205,8 @@ public class RESTProjectSamplesController {
 	/**
 	 * Get the list of {@link Sample} associated with this {@link Project}.
 	 *
-	 * @param projectId
-	 *            the identifier of the {@link Project} to get the
-	 *            {@link Sample}s for.
+	 * @param projectId the identifier of the {@link Project} to get the
+	 *                  {@link Sample}s for.
 	 * @return the list of {@link Sample}s associated with this {@link Project}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
@@ -227,8 +223,8 @@ public class RESTProjectSamplesController {
 			sampleResources.add(sample);
 		}
 
-		sampleResources.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId))
-				.withSelfRel());
+		sampleResources.add(
+				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
 
@@ -249,8 +245,7 @@ public class RESTProjectSamplesController {
 		Sample sampleBySampleId = sampleService.getSampleBySampleName(p, seqeuncerId);
 
 		Link withSelfRel = linkTo(
-				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleId.getId()))
-				.withSelfRel();
+				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleId.getId())).withSelfRel();
 		String href = withSelfRel.getHref();
 
 		RedirectView redirectView = new RedirectView(href);
@@ -262,18 +257,17 @@ public class RESTProjectSamplesController {
 	 * Get the representation of a specific sample that's associated with the
 	 * project.
 	 *
-	 * @param projectId
-	 *            the {@link Project} identifier that the {@link Sample} should
-	 *            be associated with.
-	 * @param sampleId
-	 *            the {@link Sample} identifier that we're looking for.
+	 * @param projectId the {@link Project} identifier that the {@link Sample} should
+	 *                  be associated with.
+	 * @param sampleId  the {@link Sample} identifier that we're looking for.
 	 * @return a representation of the specific sample.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// read project/sample to verify sample exists in project
 		Project project = projectService.read(projectId);
-		Sample s = sampleService.getSampleForProject(project, sampleId).getObject();
+		Sample s = sampleService.getSampleForProject(project, sampleId)
+				.getObject();
 
 		ModelMap modelMap = new ModelMap();
 
@@ -290,9 +284,8 @@ public class RESTProjectSamplesController {
 
 	/**
 	 * Read a {@link Sample} by its id
-	 * 
-	 * @param sampleId
-	 *            the id of the {@link Sample} to read
+	 *
+	 * @param sampleId the id of the {@link Sample} to read
 	 * @return representation of the sample
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
@@ -309,10 +302,9 @@ public class RESTProjectSamplesController {
 	/**
 	 * Add the required links for a sample individual: self, file pairs,
 	 * unpaired files
-	 * 
-	 * @param s
-	 *            The sample to add links to
-	 * @return the sample with added links
+	 *
+	 * @param p optionally the project for this sample
+	 * @param s The sample to add links to
 	 */
 	private void addLinksForSample(final Optional<Project> p, final Sample s) {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
@@ -324,11 +316,14 @@ public class RESTProjectSamplesController {
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
+				RESTSampleSequenceFilesController.objectLabels.get(Fast5Object.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FAST5));
 		s.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withRel(
 				RESTSampleMetadataController.METADATA_REL));
 		s.add(linkTo(methodOn(RESTSampleAssemblyController.class).listAssembliesForSample(s.getId())).withRel(
 				RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES));
-		
+
 		if (p.isPresent()) {
 			final Project project = p.get();
 			s.add(linkTo(RESTProjectsController.class).slash(project.getId())
@@ -343,12 +338,10 @@ public class RESTProjectSamplesController {
 	 * Remove a specific {@link Sample} from the collection of {@link Sample}s
 	 * associated with a {@link Project}.
 	 *
-	 * @param projectId
-	 *            the {@link Project} identifier.
-	 * @param sampleId
-	 *            the {@link Sample} identifier.
+	 * @param projectId the {@link Project} identifier.
+	 * @param sampleId  the {@link Sample} identifier.
 	 * @return a response including links back to the specific {@link Project}
-	 *         and collection of {@link Sample}.
+	 * and collection of {@link Sample}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
@@ -367,7 +360,8 @@ public class RESTProjectSamplesController {
 		// itself.
 		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withRel(
 				REL_PROJECT_SAMPLES));
-		resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(RESTProjectsController.REL_PROJECT));
+		resource.add(linkTo(RESTProjectsController.class).slash(projectId)
+				.withRel(RESTProjectsController.REL_PROJECT));
 
 		// add the links to the response.
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
@@ -378,17 +372,14 @@ public class RESTProjectSamplesController {
 	/**
 	 * Update a {@link Sample} details.
 	 *
-	 * @param sampleId
-	 *            the identifier of the {@link Sample}.
-	 * @param updatedFields
-	 *            the updated fields of the {@link Sample}.
+	 * @param sampleId      the identifier of the {@link Sample}.
+	 * @param updatedFields the updated fields of the {@link Sample}.
 	 * @return a response including links to the {@link Project} and
-	 *         {@link Sample}.
+	 * {@link Sample}.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ModelMap updateSample(@PathVariable Long sampleId,
-			@RequestBody Map<String, Object> updatedFields) {
+	public ModelMap updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
 		ModelMap modelMap = new ModelMap();
 
 		// issue an update request
