@@ -38,7 +38,7 @@ public class ChecksumFileProcessorTest {
 	@Test
 	public void testChecksumCreated() throws IOException {
 		final SequenceFile sf = constructSequenceFile();
-
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
 		fileProcessor.process(so);
@@ -54,6 +54,7 @@ public class ChecksumFileProcessorTest {
 	@Test(expected = FileProcessorException.class)
 	public void testFileNotExists() throws IOException {
 		final SequenceFile sf = new SequenceFile(Paths.get("/reallyfakefile"));
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 

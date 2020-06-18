@@ -29,6 +29,7 @@ public class IridaFileStorageListener {
 	 */
 	@PostLoad
 	public void afterEntityLoad(final VersionedFileFields<Long> fileSystemEntity) {
+			// Required so that Spring's IoC container can handle the injection
 			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 			fileSystemEntity.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}

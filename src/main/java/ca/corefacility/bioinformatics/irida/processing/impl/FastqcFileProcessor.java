@@ -97,7 +97,7 @@ public class FastqcFileProcessor implements FileProcessor {
 						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					sequenceFile.getTemporaryFile());
+					iridaFileStorageUtility.getTemporaryFile(fileToProcess));
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();

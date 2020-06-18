@@ -22,6 +22,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -29,16 +31,19 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  * 
  * 
  */
+
 public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -52,6 +57,7 @@ public class GzipFileProcessorTest {
 		Files.copy(uncompressed, out);
 		out.close();
 		sf.setFile(compressed);
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		when(sequenceFileRepository.save(any(SequenceFile.class))).thenThrow(new RuntimeException());
@@ -70,6 +76,7 @@ public class GzipFileProcessorTest {
 		Files.copy(uncompressed, out);
 		out.close();
 		sf.setFile(compressed);
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
@@ -85,6 +92,7 @@ public class GzipFileProcessorTest {
 		// the file processor just shouldn't do *anything*.
 		SequenceFile sf = constructSequenceFile();
 		Path original = sf.getFile();
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
@@ -117,6 +125,7 @@ public class GzipFileProcessorTest {
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
 		sf.setFile(compressed);
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		fileProcessor.process(so);
 
@@ -140,6 +149,8 @@ public class GzipFileProcessorTest {
 		SequenceFile sf = constructSequenceFile();
 		SequenceFile sfUpdated = new SequenceFile();
 		sfUpdated.setFile(sf.getFile());
+		sfUpdated.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		final Long id = 1L;
 		sf.setId(id);
 
@@ -151,7 +162,8 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		sf.setFile(compressed);
-		
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
 		fileProcessor.process(so);
