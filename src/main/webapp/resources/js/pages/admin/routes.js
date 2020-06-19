@@ -6,5 +6,7 @@ export const ADMIN = {
   ADMIN: "admin",
   STATISTICS: "statistics",
   USERS: "users",
-  USERGROUPS: "groups"
+  USERGROUPS: "groups",
+  CLIENTS: "clients",
+  REMOTEAPI: "remote_api"
 };

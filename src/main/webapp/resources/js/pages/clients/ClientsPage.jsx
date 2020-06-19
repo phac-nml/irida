@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { PagedTableProvider } from "../../contexts/PagedTableContext";
+import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { ClientsTable } from "./ClientsTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -9,12 +9,10 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * @returns {*}
  * @constructor
  */
-export function ClientsPage({}) {
+export default function ClientsPage({}) {
   return (
     <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>
       <ClientsTable />
     </PagedTableProvider>
   );
 }
-
-render(<ClientsPage />, document.querySelector("#client-list-root"));

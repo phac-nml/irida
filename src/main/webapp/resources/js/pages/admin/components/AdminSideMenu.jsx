@@ -51,6 +51,16 @@ export default function AdminHeader() {
                     </Link>
                   </Menu.Item>
                 </SubMenu>
+                <Menu.Item key="clients">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.CLIENTS}`} className={"t-admin-clients-link"}>
+                    {i18n("AdminPanel.clients")}
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="connections">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} className={"t-admin-remote_api-link"}>
+                    {i18n("AdminPanel.remote_api")}
+                  </Link>
+                </Menu.Item>
               </Menu>
             </section>
           );

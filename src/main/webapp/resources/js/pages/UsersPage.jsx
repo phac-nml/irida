@@ -13,6 +13,8 @@ import { Button, Checkbox } from "antd";
 import { setUsersDisabledStatus } from "../apis/users/users";
 import { IconEdit } from "../components/icons/Icons";
 
+const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
+
 /**
  * React component for displaying paged table of all users in the system
  * @returns {string|*}
@@ -20,7 +22,6 @@ import { IconEdit } from "../components/icons/Icons";
  */
 function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
-  const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
 
   function updateUser(user) {
     setUsersDisabledStatus({
@@ -173,4 +174,9 @@ export default function UsersPage() {
       </PagedTableProvider>
     </PageWrapper>
   );
+}
+
+{ !IS_ADMIN ?
+  render(<UsersPage />, document.querySelector("#react-root"))
+  : null
 }

@@ -23,6 +23,9 @@
           _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
           LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
         };
+        window.PAGE = {
+          admin: /*[[${isAdmin}]]*/ false
+        };
       </script>
     </th:block>
   </body>

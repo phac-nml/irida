@@ -11,7 +11,7 @@ import { PagedTableProvider } from "../../components/ant.design/PagedTable";
  * @returns {*}
  * @constructor
  */
-export function RemoteApiPage({}) {
+export default function RemoteApiPage({}) {
   return (
     <PageWrapper
       title={i18n("RemoteApi.title")}
@@ -30,5 +30,3 @@ export function RemoteApiPage({}) {
     </PageWrapper>
   );
 }
-
-render(<RemoteApiPage />, document.querySelector("#remote-api-list"));

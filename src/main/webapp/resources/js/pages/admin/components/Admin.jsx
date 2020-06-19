@@ -24,6 +24,8 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 const AdminStatistics = lazy(() => import("./AdminStatistics"));
 const UsersPage = lazy(() => import("../../UsersPage"));
 const AdminUserGroupsPage = lazy(() => import("../../UserGroupsPage/components/UserGroupsPage"));
+const ClientsPage = lazy(() => import("../../clients/ClientsPage"));
+const RemoteApiPage = lazy(() => import("../../remote-apis/RemoteApiPage"));
 
 export default function Admin() {
   const DEFAULT_URL = setBaseUrl("/admin");
@@ -54,6 +56,16 @@ export default function Admin() {
                 <AdminUserGroupsPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.USERGROUPS}`
+                  }
+                />
+                <ClientsPage
+                  path={
+                    `${DEFAULT_URL}/${ADMIN.CLIENTS}`
+                  }
+                />
+                <RemoteApiPage
+                  path={
+                    `${DEFAULT_URL}/${ADMIN.REMOTEAPI}`
                   }
                 />
               </Router>
