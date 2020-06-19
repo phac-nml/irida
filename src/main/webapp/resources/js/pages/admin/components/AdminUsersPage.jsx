@@ -18,11 +18,11 @@ export default function AdminUsersPage() {
   // The following renders the Users component view
   return (
     <PageWrapper
-      title={i18n("UsersPage.title")}
+      title={i18n("AdminPanel.users")}
       headerExtras={
         <AddNewButton
           href={setBaseUrl(`users/create`)}
-          text={i18n("UsersPage.add")}
+          text={i18n("AdminPanel.addUser")}
         />
       }
     >
