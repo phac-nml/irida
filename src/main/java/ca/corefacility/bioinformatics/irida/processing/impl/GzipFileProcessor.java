@@ -110,8 +110,10 @@ public class GzipFileProcessor implements FileProcessor {
 
 		try {
 			logger.trace("About to try handling a gzip file.");
+
 			if (sequenceFile.isGzipped()) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
+				sequenceFile.setFile(file);
 
 				try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
 					logger.trace("Handling gzip compressed file.");
