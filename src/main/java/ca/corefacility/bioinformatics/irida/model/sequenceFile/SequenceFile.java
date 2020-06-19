@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
@@ -306,14 +304,29 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
+	/**
+	 * Get the file inputstream from the iridaFileStorageUtility
+	 *
+	 * @return file inputstream.
+	 */
 	public InputStream getFileInputStream() {
 		return iridaFileStorageUtility.getFileInputStream(getFile());
 	}
 
+	/**
+	 * Checks if a file is gzipped in the iridaFileStorageUtility
+	 *
+	 * @return boolean if file is gzipped or not.
+	 */
 	public boolean isGzipped() throws Exception {
 		return iridaFileStorageUtility.isGzipped(getFile());
 	}
 
+	/**
+	 * Checks if a file exists in the iridaFileStorageUtility
+	 *
+	 * @return boolean if file exists or not.
+	 */
 	public boolean fileExists() {
 		return iridaFileStorageUtility.fileExists(getFile());
 	}
