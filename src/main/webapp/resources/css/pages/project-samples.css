@@ -1,0 +1,73 @@
+.dataTable input[type="checkbox"] {
+  margin-left: 1.3em !important;
+}
+
+/*// Used when a colour bar needs to be displayed next to a label*/
+/*// E.g. on the project samples page for a unique colour for each project.*/
+.label-bar-color {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: RGB(176, 190, 197);
+  margin-left: -15px;
+  margin-right: 5px;
+}
+
+.row-warning {
+  background-color: #f2dede !important;
+}
+
+.popover-list {
+  list-style: none;
+  padding: 0;
+
+  li {
+    padding-left: 1.3em;
+  }
+
+  li.error svg {
+    color: #d9534f;
+    display: inline-block;
+    margin-left: -1.3em;
+  }
+}
+
+.icon-wrapper {
+  position: relative;
+}
+
+.qc-warning-wrapper {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -15px;
+  color: #d9534f;
+}
+
+.locked-wrapper {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+}
+
+.panel-body__scroll {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.linker-form {
+  .copy-error,
+  .copy-success {
+    display: none !important;
+  }
+
+  &.has-success .copy-success {
+    display: block !important;
+  }
+
+  &.has-error .copy-error {
+    display: block !important;
+  }
+}

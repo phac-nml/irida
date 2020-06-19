@@ -16,7 +16,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.MailSendException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -56,7 +55,6 @@ public class UsersController {
 	private static final String SPECIFIC_USER_PAGE = "user/user_details";
 	private static final String EDIT_USER_PAGE = "user/edit";
 	private static final String CREATE_USER_PAGE = "user/create";
-	private static final String ERROR_PAGE = "error";
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
@@ -91,7 +89,7 @@ public class UsersController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public String getUsersPage() {
 		return USERS_PAGE;
 	}
@@ -512,20 +510,6 @@ public class UsersController {
 		}
 
 		return errors;
-	}
-
-	/**
-	 * Handle {@link AccessDeniedException} and {@link EntityNotFoundException}
-	 *
-	 * @param e
-	 *            THe exception to handle
-	 *
-	 * @return An error page
-	 */
-	@ExceptionHandler({ AccessDeniedException.class, EntityNotFoundException.class })
-	public String handleAccessDenied(Exception e) {
-		logger.error(e.getMessage());
-		return ERROR_PAGE;
 	}
 
 	/**

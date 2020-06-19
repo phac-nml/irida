@@ -36,7 +36,7 @@
             >
             <a
               href=""
-              th:href="@{/projects/{id}/settings/groups(id=${project.getId()})}"
+              th:href="@{/projects/{id}/settings/user-groups(id=${project.getId()})}"
               class="list-group-item"
               th:classappend="${#strings.equalsIgnoreCase(page, 'groups') ? 'active' : ''}"
               th:text="#{project.settings.page.groups}"
@@ -88,7 +88,7 @@
           </div>
         </div>
         <div class="col-md-10">
-          <div class="alert alert-error" layout:fragment="settings-content">
+          <div layout:fragment="settings-content">
             <strong
               >This should not be displayed. It should be overwritten by the
               specific page.</strong
