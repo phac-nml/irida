@@ -322,12 +322,4 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		return iridaFileStorageUtility.isGzipped(getFile());
 	}
 
-	/**
-	 * Checks if a file exists in the iridaFileStorageUtility
-	 *
-	 * @return boolean if file exists or not.
-	 */
-	public boolean fileExists() {
-		return iridaFileStorageUtility.fileExists(getFile());
-	}
 }
