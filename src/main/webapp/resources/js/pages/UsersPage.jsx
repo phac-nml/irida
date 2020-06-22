@@ -4,7 +4,7 @@ import { PageWrapper } from "../components/page/PageWrapper";
 import {
   PagedTable,
   PagedTableContext,
-  PagedTableProvider
+  PagedTableProvider,
 } from "../components/ant.design/PagedTable";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { AddNewButton } from "../components/Buttons/AddNewButton";
@@ -20,11 +20,12 @@ import { IconEdit } from "../components/icons/Icons";
  */
 function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
+  const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
 
   function updateUser(user) {
     setUsersDisabledStatus({
       isEnabled: !user.enabled,
-      id: user.id
+      id: user.id,
     }).then(updateTable);
   }
 
@@ -37,15 +38,17 @@ function UsersTable() {
       sorter: true,
       render(text, full) {
         // Don't let the current user disabled themselves!
-        const disabled = window.TL._USER.username === full.username;
+        const disabled =
+          !IS_ADMIN || window.TL._USER.username === full.username;
         return (
           <Checkbox
+            className="t-cb-enable"
             checked={full.enabled}
             onChange={() => updateUser(full)}
             disabled={disabled}
           />
         );
-      }
+      },
     },
     {
       title: (
@@ -63,19 +66,19 @@ function UsersTable() {
             {text}
           </a>
         );
-      }
+      },
     },
     {
       title: i18n("AdminUsersTable.firstName"),
       key: "firstName",
       sorter: true,
-      dataIndex: "firstName"
+      dataIndex: "firstName",
     },
     {
       title: i18n("AdminUsersTable.lastName"),
       key: "lastName",
       sorter: true,
-      dataIndex: "lastName"
+      dataIndex: "lastName",
     },
     {
       title: i18n("AdminUsersTable.email"),
@@ -83,7 +86,7 @@ function UsersTable() {
       dataIndex: "email",
       render(text, full) {
         return <a href={`mailto:${text}`}>{text}</a>;
-      }
+      },
     },
     {
       title: i18n("AdminUsersTable.role"),
@@ -103,13 +106,13 @@ function UsersTable() {
           default:
             return text;
         }
-      }
+      },
     },
     {
       ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
       title: i18n("AdminUsersTable.created"),
-      dataIndex: "createdDate"
+      dataIndex: "createdDate",
     },
     {
       ...dateColumnFormat({ className: "t-modified" }),
@@ -119,25 +122,32 @@ function UsersTable() {
           {i18n("AdminUsersTable.lastLogin")}
         </span>
       ),
-      dataIndex: "lastLogin"
+      dataIndex: "lastLogin",
     },
-    {
+  ];
+
+  if (IS_ADMIN) {
+    columns.push({
       fixed: "right",
       key: "edit",
       render(text, item) {
         return (
-          <Button shape="circle" href={setBaseUrl(`users/${item.id}/edit`)}>
+          <Button
+            className="t-edit-user"
+            shape="circle"
+            href={setBaseUrl(`users/${item.id}/edit`)}
+          >
             <IconEdit />
           </Button>
         );
-      }
-    }
-  ];
+      },
+    });
+  }
 
   return (
     <PagedTable
       columns={columns}
-      onRow={record => (record.enabled ? {} : { className: "disabled" })}
+      onRow={(record) => (record.enabled ? {} : { className: "disabled" })}
     />
   );
 }
@@ -147,14 +157,14 @@ function UsersTable() {
  * @returns {*}
  * @constructor
  */
-function AdminUsersPage() {
+function UsersPage() {
   return (
     <PageWrapper
-      title={i18n("AdminUsersPage.title")}
+      title={i18n("UsersPage.title")}
       headerExtras={
         <AddNewButton
           href={setBaseUrl(`users/create`)}
-          text={i18n("AdminUsersPage.add")}
+          text={i18n("UsersPage.add")}
         />
       }
     >
@@ -165,4 +175,4 @@ function AdminUsersPage() {
   );
 }
 
-render(<AdminUsersPage />, document.querySelector("#react-root"));
+render(<UsersPage />, document.querySelector("#react-root"));
