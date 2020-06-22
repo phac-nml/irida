@@ -25,6 +25,7 @@ import {
   LoadingOutlined,
   LockOutlined,
   LoginOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   OrderedListOutlined,
@@ -42,8 +43,6 @@ import {
   TableOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined,
-  LogoutOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
