@@ -5,28 +5,29 @@
 >
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" th:href="@{/resources/img/favicon.ico}" />
     <title th:text="#{AdminPanel.title}">ADMIN PANEL</title>
     <link rel="stylesheet" th:href="@{/dist/css/admin.bundle.css}" />
   </head>
   <body>
-    <div id="root" style="height: 100%;" layout:fragment="page">
+    <div id="root" style="height: 100%;">
       <!--
          This is a DOM element for React to render the admin details into.
          See src/main/webapp/resources/js/pages/analysis/components/Admin.jsx
       -->
     </div>
 
-    <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/admin.bundle.js}"></script>
-      <script th:inline="javascript">
-        window.TL = {
-          _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
-          LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
-        };
-        window.PAGE = {
-          admin: /*[[${isAdmin}]]*/ false
-        };
-      </script>
-    </th:block>
+    <script th:src="@{/dist/js/admin.bundle.js}"></script>
+    <script th:inline="javascript">
+      window.TL = {
+        _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+        LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+      };
+      window.PAGE = {
+        admin: /*[[${isAdmin}]]*/ false
+      };
+    </script>
   </body>
 </html>
