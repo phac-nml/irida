@@ -86,4 +86,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   "project-metadata-templates":
     "./resources/js/pages/projects/metadata-templates",
+  admin: "./resources/js/pages/admin/index.js",
 };
