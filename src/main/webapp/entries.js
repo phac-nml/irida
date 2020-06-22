@@ -71,7 +71,7 @@ module.exports = {
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
-  "users-list": "./resources/js/pages/AdminUsersPage.jsx",
+  "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
@@ -85,4 +85,6 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
+  "project-metadata-templates":
+    "./resources/js/pages/projects/metadata-templates",
 };

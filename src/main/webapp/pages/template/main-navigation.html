@@ -18,9 +18,88 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbar-collapsed-region" class="collapse navbar-collapse">
-
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <th:block th:text="#{nav.main.project}"/>
+                        <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a th:href="@{/projects}"
+                               th:text="#{nav.main.project-list}">List Projects
+                            </a>
+                        </li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                            <a th:href="@{/projects/all}"
+                               th:text="#{nav.main.project-list-all}">One more separated link
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a th:href="@{/projects/new}" th:text="#{nav.main.project-create}">
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/projects/synchronize}" th:text="#{nav.main.project-sync}">
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <th:block th:text="#{nav.main.analysis}"/>
+                        <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a th:href="@{/analysis}" th:text="#{nav.main.analysis-admin-user}">Your
+                                Analysis</a>
+                        </li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                            <a th:href="@{/analysis/all}"
+                               th:text="#{nav.main.analysis-admin-all}">List All Analysis
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a th:href="@{/analysis/user/analysis-outputs}"
+                               th:text="#{Analysis.outputFiles}">
+                                User analysis outputs
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
             <span class="nav navbar-nav navbar-right">
-
+                <form id="global-search" class="navbar-form navbar-left" th:action="@{/search}" method="GET"
+                      role="search">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon" style="background-color: white;"><i class="fa fa-fw fa-search"></i></span>
+                            <input id="global-search-input" type="search" name="query"
+                                   style="border-right: none; border-left: none"
+                                   class="form-control"
+                                   th:placeholder="#{nav.main.search}"
+                                   th:value="${searchQuery}"/>
+                            <div class="input-group-btn search-dd" sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                                <button type="button" id="admin-search-toggle" class="btn btn-default dropdown-toggle"
+                                        style="border-left: none; height: 34px"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <span class="fa fa-angle-down" aria-hidden="true"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li><a href="#" id="search-admin-link" th:text="#{nav.main.search.admin}">_Search
+                                        all
+                                        projects/samples_</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <input id="admin-global-search" type="hidden" name="global" value="false"/></div>
+                </form>
 
                 <ul class="nav navbar-nav navbar-right">
 

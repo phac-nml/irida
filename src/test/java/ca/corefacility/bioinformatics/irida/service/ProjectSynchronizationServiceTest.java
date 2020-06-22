@@ -2,12 +2,14 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -51,6 +53,10 @@ public class ProjectSynchronizationServiceTest {
 	private RemoteAPITokenService tokenService;
 	@Mock
 	private EmailController emailController;
+	@Mock
+	private GenomeAssemblyService assemblyService;
+	@Mock
+	private GenomeAssemblyRemoteService assemblyRemoteService;
 
 	ProjectSynchronizationService syncService;
 
@@ -64,8 +70,8 @@ public class ProjectSynchronizationServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
-				metadataTemplateService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
-				pairRemoteService, tokenService, emailController);
+				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
+				pairRemoteService, assemblyRemoteService, tokenService, emailController);
 
 		api = new RemoteAPI();
 		expired = new Project();
@@ -198,6 +204,23 @@ public class ProjectSynchronizationServiceTest {
 		
 		verify(pairRemoteService).mirrorSequencingObject(pair);
 		verify(objectService).createSequencingObjectInSample(pair, sample);
+	}
+
+	@Test
+	public void testSyncAssemblies() {
+		Sample sample = new Sample();
+
+		UploadedAssembly assembly = new UploadedAssembly(null);
+		RemoteStatus pairStatus = new RemoteStatus("http://assembly", api);
+		assembly.setRemoteStatus(pairStatus);
+		assembly.setId(1L);
+
+		when(assemblyRemoteService.mirrorAssembly(assembly)).thenReturn(assembly);
+
+		syncService.syncAssembly(assembly, sample);
+
+		verify(assemblyRemoteService).mirrorAssembly(assembly);
+		verify(assemblyService).createAssemblyInSample(sample, assembly);
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)

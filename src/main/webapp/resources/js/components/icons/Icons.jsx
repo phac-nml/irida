@@ -1,9 +1,10 @@
 import React from "react";
 import {
+  AppstoreOutlined,
   BoldOutlined,
   ClockCircleOutlined,
-  CloseOutlined,
   CloseCircleOutlined,
+  CloseOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -43,6 +44,7 @@ import {
   UnorderedListOutlined,
   UserOutlined,
   LogoutOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -122,6 +124,10 @@ export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
+
+export const IconMetadataTemplate = ({ ...props }) => (
+  <AppstoreOutlined {...props} />
+);
 
 /*
 Editor Icons

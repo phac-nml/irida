@@ -4,13 +4,11 @@ import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectMembersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.Assert.assertEquals;
