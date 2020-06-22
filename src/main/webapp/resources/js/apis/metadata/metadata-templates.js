@@ -38,3 +38,14 @@ export async function updateTemplateAttribute({ templateId, field, value }) {
     .then(({ data }) => data)
     .catch((error) => error.response.data);
 }
+
+export async function createNewMetadataTemplate({
+  projectId = window.project.id,
+  name,
+  description = "",
+}) {
+  return await axios
+    .post(BASE_URL, { projectId, name, description })
+    .then(({ data }) => data)
+    .catch((error) => console.log("FUCK ME"));
+}

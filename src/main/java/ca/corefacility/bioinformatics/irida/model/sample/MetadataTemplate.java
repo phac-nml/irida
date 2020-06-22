@@ -52,6 +52,11 @@ public class MetadataTemplate implements MutableIridaThing {
 	public MetadataTemplate() {
 	}
 
+	public MetadataTemplate(String name, String description) {
+		this.name = name;
+		this.description = description;
+	}
+
 	public MetadataTemplate(String name, List<MetadataTemplateField> fields) {
 		this.name = name;
 		this.fields = fields;

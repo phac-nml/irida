@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataTemplateService;
 
@@ -46,6 +47,11 @@ public class MetadataTemplatesAjaxController {
 	@RequestMapping("")
 	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	public ResponseEntity<Long> createNewMetadataTemplate(@RequestBody NewMetadataTemplateRequest request) {
+		return ResponseEntity.ok(service.createNewMetadataTemplate(request));
 	}
 
 	/**

@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -99,5 +100,12 @@ public class UIMetadataTemplateService {
 	public List<MetadataTemplateField> getMetadataFieldsOnTemplate(Long templateId) {
 		MetadataTemplate template = templateService.read(templateId);
 		return template.getFields();
+	}
+
+	public Long createNewMetadataTemplate(NewMetadataTemplateRequest request) {
+		Project project = projectService.read(request.getProjectId());
+		MetadataTemplate template = new MetadataTemplate(request.getName(), request.getDescription());
+		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
+		return join.getObject().getId();
 	}
 }

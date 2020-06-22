@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, List, Space, Tag } from "antd";
+import { Avatar, Button, List, Space, Tag, Typography } from "antd";
 import { IconDownloadFile, IconMetadataTemplate } from "../../icons/Icons";
 import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-templates";
 import { Link, useLocation } from "@reach/router";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+
+const { Paragraph } = Typography;
 
 /**
  * React component to render a list of metadata templates associated with
@@ -61,7 +63,13 @@ export default function ListProjectTemplates({ projectId }) {
                   </Tag>
                 </div>
               }
-              description={item.description}
+              description={
+                <Paragraph
+                  ellipsis={{ rows: 2, expandable: true, symbol: "more" }}
+                >
+                  {item.description}
+                </Paragraph>
+              }
             />
           </List.Item>
         )}

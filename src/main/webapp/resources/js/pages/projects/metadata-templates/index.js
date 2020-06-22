@@ -4,8 +4,10 @@ import { navigate, Router, useLocation } from "@reach/router";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import ListProjectTemplates from "../../../components/metadata-template/list";
 import Template from "../../../components/metadata-template/template";
-import { Button, Layout, PageHeader } from "antd";
+import { Layout, PageHeader } from "antd";
 import { grey1 } from "../../../styles/colors";
+import CreateTemplate
+  from "../../../components/metadata-template/create-template";
 
 const { Content } = Layout;
 
@@ -43,9 +45,7 @@ const PageLayout = ({ children, projectId }) => {
       title={i18n("ProjectMetadataTemplates.title")}
       onBack={onBack}
       extra={[
-        <Button key="create-btn" className="t-create-template-btn">
-          {i18n("ProjectMetadataTemplates.create")}
-        </Button>,
+        onBack === null ? <CreateTemplate key="create-template" /> : null,
       ]}
     >
       <Layout>
