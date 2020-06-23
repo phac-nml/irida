@@ -11,6 +11,15 @@
 		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>
+		<parameter name="enable-density-filter" required="true">
+			<choices>
+				<choice name="enable" value="true"/>
+				<choice name="disable" value="false"/>
+			</choices>
+			<toolParameter
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.2+galaxy1"
+				parameterName="use_density_filter" />
+		</parameter>
 		<parameter name="repeat-minimum-length" defaultValue="150">
 			<toolParameter
 				toolId="toolshed.g2.bx.psu.edu/repos/nml/find_repeats/findrepeat/1.8.2+galaxy1"
