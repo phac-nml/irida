@@ -31,12 +31,12 @@ import com.google.common.collect.ImmutableMap;
  * Handles service call for the the administration of the IRIDA users.
  */
 @Component
-@PreAuthorize("hasRole('ROLE_ADMIN')")
-public class AdminUsersService {
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+public class UIUsersService {
 	private final UserService userService;
 	private final MessageSource messageSource;
 
-	public AdminUsersService(UserService userService, MessageSource messageSource) {
+	public UIUsersService(UserService userService, MessageSource messageSource) {
 		this.userService = userService;
 		this.messageSource = messageSource;
 	}
