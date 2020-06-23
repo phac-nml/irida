@@ -4,14 +4,18 @@ FROM bgruening/galaxy-stable:20.05
 
 MAINTAINER Aaron Petkau, aaron.petkau@canada.ca
 
-ENV GALAXY_CONFIG_BRAND IRIDA Galaxy (20.05)
+ENV GALAXY_CONFIG_BRAND IRIDA (Galaxy 20.05)
 
 WORKDIR /galaxy-central
 
-# Install IRIDA tools
-ADD ./galaxy/irida-tools.yml $GALAXY_ROOT/irida-tools.yml
-RUN install-tools $GALAXY_ROOT/irida-tools.yml && chown -R galaxy:galaxy /tool_deps/
 RUN sed -i -e 's/#\( *allow_path_paste:\).*/\1 True/' /etc/galaxy/galaxy.yml
+
+# Install IRIDA tools
+# Some cleanup commands from Galaxy Dockerfile
+ADD ./galaxy/irida-tools.yml $GALAXY_ROOT/irida-tools.yml
+RUN install-tools $GALAXY_ROOT/irida-tools.yml \
+      && /tool_deps/_conda/bin/conda clean --packages -t -i \
+      && rm -rf /tmp/* /root/.cache/ /var/cache/* $GALAXY_ROOT/client/node_modules/ $GALAXY_VIRTUAL_ENV/src/ /home/galaxy/.cache/ /home/galaxy/.npm
 
 # Mark folders as imported from the host.
 VOLUME ["/export/", "/data/", "/var/lib/docker"]
