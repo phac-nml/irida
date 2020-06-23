@@ -114,12 +114,12 @@ public class GzipFileProcessor implements FileProcessor {
 
 		try {
 			logger.trace("About to try handling a gzip file.");
-			//sequenceFile.setIridaFileStorageUtility(iridaFileStorageUtility);
-			if (sequenceFile.isGzipped()) {
+
+			if (iridaFileStorageUtility.isGzipped(file)) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 				sequenceFile.setFile(file);
 
-				try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
+				try (GZIPInputStream zippedInputStream = new GZIPInputStream(iridaFileStorageUtility.getFileInputStream(file))) {
 					logger.trace("Handling gzip compressed file.");
 
 					Path targetDirectory = Files.createTempDirectory(null);
