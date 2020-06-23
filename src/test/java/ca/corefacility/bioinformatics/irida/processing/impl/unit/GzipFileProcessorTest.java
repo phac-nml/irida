@@ -42,8 +42,8 @@ public class GzipFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE, iridaFileStorageUtility);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -66,7 +66,7 @@ public class GzipFileProcessorTest {
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE, iridaFileStorageUtility);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference

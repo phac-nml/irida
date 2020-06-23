@@ -32,7 +32,7 @@ public class ChecksumFileProcessorTest {
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
-		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository);
+		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository, iridaFileStorageUtility);
 	}
 
 	@Test

@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -37,16 +38,19 @@ public class GzipFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private boolean disableFileProcessor = false;
 	private boolean removeCompressedFile;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		removeCompressedFile = false;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.removeCompressedFile = removeCompressedFiles;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -110,7 +114,7 @@ public class GzipFileProcessor implements FileProcessor {
 
 		try {
 			logger.trace("About to try handling a gzip file.");
-
+			//sequenceFile.setIridaFileStorageUtility(iridaFileStorageUtility);
 			if (sequenceFile.isGzipped()) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 				sequenceFile.setFile(file);

@@ -66,6 +66,7 @@ public class FastqcFileProcessorTest {
 		Path fasta = Files.createTempFile(null, null);
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
 		SequenceFile sf = new SequenceFile(fasta);
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 		sf.setId(1L);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
@@ -76,7 +77,10 @@ public class FastqcFileProcessorTest {
 	@Test
 	public void testHandleFast5File() throws IOException {
 		//ensure we don't process zipped fast5 files
-		Fast5Object obj = new Fast5Object(new SequenceFile(null));
+		SequenceFile sf = new SequenceFile(null);
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
+
+		Fast5Object obj = new Fast5Object(sf);
 
 		obj.setFast5Type(Fast5Object.Fast5Type.SINGLE);
 		assertTrue("should want to process single fast5 file)", fileProcessor.shouldProcessFile(obj));
@@ -99,6 +103,7 @@ public class FastqcFileProcessorTest {
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
+		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		try {
 			fileProcessor.process(so);
@@ -109,6 +114,7 @@ public class FastqcFileProcessorTest {
 
 		verify(sequenceFileRepository).saveMetadata(argument.capture());
 		SequenceFile updatedFile = argument.getValue();
+		updatedFile.setIridaFileStorageUtility(iridaFileStorageUtility);
 		final Field fastqcAnalysis = ReflectionUtils.findField(SequenceFile.class, "fastqcAnalysis");
 		ReflectionUtils.makeAccessible(fastqcAnalysis);
 		AnalysisFastQC updated = (AnalysisFastQC) fastqcAnalysis.get(updatedFile);

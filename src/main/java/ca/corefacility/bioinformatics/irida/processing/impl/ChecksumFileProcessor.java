@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -25,10 +26,12 @@ public class ChecksumFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(ChecksumFileProcessor.class);
 
 	private SequenceFileRepository fileRepository;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public ChecksumFileProcessor(SequenceFileRepository fileRepository) {
+	public ChecksumFileProcessor(SequenceFileRepository fileRepository, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.fileRepository = fileRepository;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -47,7 +50,7 @@ public class ChecksumFileProcessor implements FileProcessor {
 
 		for (SequenceFile file : files) {
 
-			try (InputStream is = file.getFileInputStream()) {
+			try (InputStream is = iridaFileStorageUtility.getFileInputStream(file.getFile())) {
 				String shaDigest = DigestUtils.sha256Hex(is);
 				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
 				file.setUploadSha256(shaDigest);
