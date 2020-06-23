@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-	<id>b7c8b437-3c41-485e-92e5-72b67e37959f</id>
+	<id>f609c177-c268-4ad0-9d7f-9f9d5187fef7</id>
 	<name>SNVPhyl</name>
-	<version>1.0.1</version>
+	<version>1.2.0</version>
 	<analysisType>PHYLOGENOMICS</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
@@ -13,46 +13,46 @@
 	<parameters>
 		<parameter name="repeat-minimum-length" defaultValue="150">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/find_repeats/findrepeat/1.8.2+galaxy1"
 				parameterName="length" />
 		</parameter>
 		<parameter name="repeat-minimum-pid" defaultValue="90">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/find_repeats/findrepeat/1.8.2+galaxy1"
 				parameterName="pid" />
 		</parameter>
 		<parameter name="minimum-percent-coverage" defaultValue="80">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/verify_map/verify_map/1.8.2+galaxy1"
 				parameterName="minmap" />
 		</parameter>
 		<parameter name="snv-abundance-ratio" defaultValue="0.75">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.2+galaxy1"
 				parameterName="snv_abundance_ratio" />
 		</parameter>
 		<parameter name="minimum-mean-mapping-quality" defaultValue="30">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.2+galaxy1"
 				parameterName="mean_mapping" />
 		</parameter>
 		<parameter name="minimum-read-coverage" defaultValue="15">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.2+galaxy1"
 				parameterName="coverage" />
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.8.0"
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/verify_map/verify_map/1.8.2+galaxy1"
 				parameterName="mindepth" />
 		</parameter>
 		<parameter name="filter-density-window-size" defaultValue="500">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0"
-				parameterName="use_density_filter.window_size" />
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.2+galaxy1"
+				parameterName="window_size" />
 		</parameter>
 		<parameter name="filter-density-threshold" defaultValue="2">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0"
-				parameterName="use_density_filter.threshold" />
+				toolId="toolshed.g2.bx.psu.edu/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.2+galaxy1"
+				parameterName="threshold" />
 		</parameter>
 	</parameters>
 	<outputs>
@@ -67,9 +67,9 @@
 	</outputs>
 	<toolRepositories>
 		<repository>
-			<name>suite_snvphyl_1_0_1</name>
+			<name>suite_snvphyl_1_2_0</name>
 			<owner>nml</owner>
-			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<url>https://toolshed.g2.bx.psu.edu</url>
 			<revision>4841b7148c44</revision>
 		</repository>
 	</toolRepositories>
