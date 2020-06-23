@@ -1,4 +1,4 @@
-@import "../components/metadata-aside";
+@import "../components/metadata-aside.css";
 
 canvas {
   border: 1px solid rgb(176, 190, 197);

@@ -1,24 +1,34 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 
 /**
- * UI Testing for the AdminUsersPage react component.
+ * UI Testing for the UsersPage react component.
  */
-public class AdminUsersPage extends AbstractPage {
+public class UsersPage extends AbstractPage {
 	private static AntTable table;
 
-	public AdminUsersPage(WebDriver driver) {
+	@FindBy(css = ".t-cb-enable input[type='checkbox']")
+	private List<WebElement> enableCheckboxes;
+
+	@FindBy(className = "t-edit-user")
+	private List<WebElement> editUserBtns;
+
+	public UsersPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public static AdminUsersPage goTo(WebDriver driver) {
+	public static UsersPage goTo(WebDriver driver) {
 		get(driver, "users");
 		table = AntTable.getTable(driver);
-		return PageFactory.initElements(driver, AdminUsersPage.class);
+		return PageFactory.initElements(driver, UsersPage.class);
 	}
 	
 	public int usersTableSize() {
@@ -38,4 +48,12 @@ public class AdminUsersPage extends AbstractPage {
 	}
 
 	public void sortTableByModifiedDate() { table.sortColumn("t-modified-col");}
+
+	public boolean canUserModifyUserState() {
+		return enableCheckboxes.get(0).isEnabled();
+	}
+
+	public boolean canUserAccessUserEditPage() {
+		return editUserBtns.size() > 0;
+	}
 }

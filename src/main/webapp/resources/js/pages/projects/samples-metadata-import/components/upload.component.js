@@ -1,4 +1,4 @@
-import "../../../../../sass/components/ngFileUpload.scss";
+import "../../../../../css/components/ngFileUpload.css";
 
 /**
  * @file AngularJS component displaying the capability of uploading an excel file
@@ -10,11 +10,11 @@ const metadataUploader = {
     "$state",
     "$stateParams",
     "sampleMetadataService",
-    function($state, $stateParams, sampleMetadataService) {
+    function ($state, $stateParams, sampleMetadataService) {
       // Display any errors if they were sent.
       this.errors = $stateParams.errors;
 
-      this.uploadFiles = function(files) {
+      this.uploadFiles = function (files) {
         sampleMetadataService.uploadMetadata(files[0]).then(
           () => {
             // If the response is 'success' go to the next stage
@@ -28,8 +28,8 @@ const metadataUploader = {
           }
         );
       };
-    }
-  ]
+    },
+  ],
 };
 
 export default metadataUploader;
