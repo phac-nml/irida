@@ -6,6 +6,7 @@ Changes
 * [UI]: Fixed bug when creating/modifying a metadata template the user could not search for a field. (20.05.1)
 * [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
 * [UI]: Fixed issue where analysis results pages would hang after running with remote synchronized data. (20.05.2)
+* [Developer]: Updated chromedriver to version `latest`. (20.05.2)
 
 20.01 to 20.05
 --------------
