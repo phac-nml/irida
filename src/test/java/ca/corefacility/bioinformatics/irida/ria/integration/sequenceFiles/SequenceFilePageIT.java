@@ -20,7 +20,7 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final String FILE_NAME = "test_file.fastq";
 	private static final String FILE_ID = "1";
 	private static final String FILE_ENCODING = "Sanger / Illumina 1.9";
-	private static final String FILE_CREATED = "Jul. 18, 2013";
+	private static final String FILE_CREATED = "Jul 18, 2013";
 	private static final String FILE_TOTAL_SEQUENCE = "4";
 	private static final String FILE_TOTAL_BASES = "937";
 	private static final String FILE_MIN_LENGTH = "184";

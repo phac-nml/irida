@@ -304,23 +304,4 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
-	/**
-	 * Get the file inputstream from the iridaFileStorageUtility
-	 *
-	 * @return file inputstream.
-	 */
-	public InputStream getFileInputStream() {
-		return iridaFileStorageUtility.getFileInputStream(getFile());
-	}
-
-	/**
-	 * Checks if a file is gzipped in the iridaFileStorageUtility
-	 *
-	 * @return boolean if file is gzipped or not.
-	 * @throws Exception if the file isn't found
-	 */
-	public boolean isGzipped() throws Exception {
-		return iridaFileStorageUtility.isGzipped(getFile());
-	}
-
 }
