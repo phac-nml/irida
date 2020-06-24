@@ -19,7 +19,7 @@ import { PagedTableProvider } from "../../components/ant.design/PagedTable";
  * @returns {*}
  * @constructor
  */
-export function AnnouncementAdminPage({}) {
+export default function AnnouncementAdminPage({}) {
   const tableRef = useRef(null);
 
   function addNewAnnouncement(message) {
@@ -56,5 +56,3 @@ export function AnnouncementAdminPage({}) {
     </PageWrapper>
   );
 }
-
-render(<AnnouncementAdminPage />, document.querySelector("#announcement-root"));

@@ -56,9 +56,19 @@ export default function AdminHeader() {
                     {i18n("AdminPanel.clients")}
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="connections">
-                  <Link to={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} className={"t-admin-remote_api-link"}>
-                    {i18n("AdminPanel.remote_api")}
+                <Menu.Item key="remoteApi">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} className={"t-admin-remote-api-link"}>
+                    {i18n("AdminPanel.remoteApi")}
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="sequencingRuns">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`} className={"t-admin-sequencing-runs-link"}>
+                    {i18n("AdminPanel.sequencingRuns")}
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="announcements">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.ANNOUNCEMENTS}`} className={"t-admin-announcements-link"}>
+                    {i18n("AdminPanel.announcements")}
                   </Link>
                 </Menu.Item>
               </Menu>

@@ -4,6 +4,7 @@ import { PageWrapper } from "../../components/page/PageWrapper";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { Button } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { AddNewButton } from "../../components/Buttons/AddNewButton";
 
 export function ClientsTable() {
   const columnDefs = [
@@ -49,9 +50,10 @@ export function ClientsTable() {
     <PageWrapper
       title={i18n("clients.title")}
       headerExtras={
-        <Button href={setBaseUrl("clients/create")}>
-          {i18n("clients.add")}
-        </Button>
+        <AddNewButton
+          text={i18n("clients.add")}
+          href={setBaseUrl("clients/create")}
+        />
       }
     >
       <PagedTable columns={columnDefs} />

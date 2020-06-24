@@ -195,11 +195,6 @@
                             <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')">
                                 <li role="seperator" class="divider"></li>
 
-                                <li sec:authorize="hasRole('ROLE_ADMIN')">
-                                    <a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">
-                                        _Clients_
-                                    </a>
-                                </li>
                                 <li>
                                     <a href="#" th:href="@{/sequencingRuns}" th:text="#{nav.main.sequencingruns}">
                                         _Sequencing Runs_
@@ -209,9 +204,6 @@
                                     <a th:href="@{/export/ncbi}" th:text="#{nav.main.ncbi-uploads}">
                                         _NCBI Exports_
                                     </a>
-                                </li>
-                                <li sec:authorize="hasRole('ROLE_ADMIN')">
-                                    <a th:href="@{/announcements/admin}" th:text="#{nav.main.announcement}">_Announcements_</a>
                                 </li>
 
                             </th:block>

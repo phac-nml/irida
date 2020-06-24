@@ -34,6 +34,18 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-groups-link")
 	private List<WebElement> adminGroupsLink;
 
+	@FindBy(className="t-admin-clients-link")
+	private List<WebElement> adminClientsLink;
+
+	@FindBy(className="t-admin-remote-api-link")
+	private List<WebElement> adminRemoteApiLink;
+
+	@FindBy(className="t-admin-sequencing-runs-link")
+	private List<WebElement> adminSequencingRunsLink;
+
+	@FindBy(className="t-admin-announcements-link")
+	private List<WebElement> adminAnnouncementsLink;
+
 	public AdminPage(WebDriver driver) { super(driver); }
 
 	/**
@@ -117,6 +129,46 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
+	 * Determines if admin clients link on
+	 * side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminClientsLinkVisible() {
+		return adminClientsLink.size() == 1;
+	}
+
+	/**
+	 * Determines if admin remote api link on
+	 * side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminRemoteApiLinkVisible() {
+		return adminRemoteApiLink.size() == 1;
+	}
+
+	/**
+	 * Determines if admin sequencing runs link on
+	 * side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminSequencingRunsLinkVisible() {
+		return adminSequencingRunsLink.size() == 1;
+	}
+
+	/**
+	 * Determines if admin announcements link on
+	 * side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminAnnouncementsLinkVisible() {
+		return adminAnnouncementsLink.size() == 1;
+	}
+
+	/**
 	 * Determines if content portion of the page
 	 * has a title visible.
 	 *
@@ -177,5 +229,45 @@ public class AdminPage extends AbstractPage {
 		adminGroupsLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin/groups"));
+	}
+
+	/**
+	 * Clicks on the admin clients menu button to navigate
+	 * to the admin clients page.
+	 */
+	public void clickClientsLink() {
+		adminClientsLink.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/clients"));
+	}
+
+	/**
+	 * Clicks on the admin remote api menu button to navigate
+	 * to the admin remote api page.
+	 */
+	public void clickRemoteApiLink() {
+		adminRemoteApiLink.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/remote_api"));
+	}
+
+	/**
+	 * Clicks on the admin sequencing runs menu button to navigate
+	 * to the admin sequencing runs page.
+	 */
+	public void clickSequencingRunsLink() {
+		adminSequencingRunsLink.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/sequencingRuns"));
+	}
+
+	/**
+	 * Clicks on the admin announcements menu button to navigate
+	 * to the admin announcements page.
+	 */
+	public void clickAnnouncementsLink() {
+		adminAnnouncementsLink.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/announcements"));
 	}
 }

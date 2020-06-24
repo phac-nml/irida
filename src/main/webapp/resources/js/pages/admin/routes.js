@@ -8,5 +8,7 @@ export const ADMIN = {
   USERS: "users",
   USERGROUPS: "groups",
   CLIENTS: "clients",
-  REMOTEAPI: "remote_api"
+  REMOTEAPI: "remote_api",
+  SEQUENCINGRUNS: "sequencingRuns",
+  ANNOUNCEMENTS: "announcements"
 };

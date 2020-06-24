@@ -31,6 +31,18 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.clickUsersSubMenu();
 		page.clickGroupsLink();
 		assertTrue("Admin can navigate to groups page, groups page title should be present", page.comparePageTitle("Groups"));
+		// Navigate to clients page
+		page.clickClientsLink();
+		assertTrue("Admin can navigate to clients page, clients page title should be present", page.comparePageTitle("Clients"));
+		// Navigate to remote api page
+		page.clickRemoteApiLink();
+		assertTrue("Admin can navigate to remote api page, remote api page title should be present", page.comparePageTitle("Remote IRIDA Connections"));
+		// Navigate to sequencing runs page
+		page.clickSequencingRunsLink();
+		assertTrue("Admin can navigate to sequencing runs page, sequencing runs page title should be present", page.comparePageTitle("Sequencing Runs"));
+		// Navigate to announcements page
+		page.clickAnnouncementsLink();
+		assertTrue("Admin can navigate to announcements page, announcements page title should be present", page.comparePageTitle("Announcements"));
 		// Navigate back to statistics page
 		page.clickStatsLink();
 		assertTrue("Admin can navigate to stats page, stats page title should be present", page.comparePageTitle("Statistics"));
@@ -55,6 +67,10 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Admin side menu should be visible", page.adminSideMenuVisible());
 		// Check that all top level links are visible
 		assertTrue("Admin stats link should be visible", page.adminStatsLinkVisible());
+		assertTrue("Admin stats link should be visible", page.adminClientsLinkVisible());
+		assertTrue("Admin stats link should be visible", page.adminRemoteApiLinkVisible());
+		assertTrue("Admin stats link should be visible", page.adminSequencingRunsLinkVisible());
+		assertTrue("Admin stats link should be visible", page.adminAnnouncementsLinkVisible());
 		// Open sub menu to view other links
 		page.clickUsersSubMenu();
 		assertTrue("Admin users link should be visible", page.adminUsersLinkVisible());
