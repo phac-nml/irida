@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>20.05-SNAPSHOT</version>
+	<version>20.09-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -581,11 +581,13 @@
 			<artifactId>commons-cli</artifactId>
 			<version>${commons.cli.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>uk.ac.babraham</groupId>
 			<artifactId>fastqc</artifactId>
 			<version>${fastqc.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -1125,7 +1127,7 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
-		<fastqc.version>0.11.7-nml-custom</fastqc.version>
+		<fastqc.version>0.11.9-nml-custom</fastqc.version>
 		<aspectj.version>1.8.2</aspectj.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
@@ -1182,7 +1184,7 @@
 		<maven.site.plugin.version>3.7.1</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
-		<node.version>v12.13.0</node.version>
+		<node.version>v12.18.0</node.version>
 		<yarn.version>v1.21.1</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 		<com.google.code.gson.version>2.8.6</com.google.code.gson.version>

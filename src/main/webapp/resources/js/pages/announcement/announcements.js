@@ -1,7 +1,7 @@
 import $ from "jquery";
 import showdown from "showdown";
 import { fromNow } from "../../utilities/date-utilities";
-import "../../../sass/modules/announcements.scss";
+import "../../../css/modules/announcements.css";
 
 const markdownConverter = new showdown.Converter();
 

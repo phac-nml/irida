@@ -105,7 +105,7 @@
                 </div>
                 <div class="modal-body">
                     <label for="field-select" th:text="#{visualization.phylogenomics.field-modal.description}"></label>
-                    <select class="form-control" id="field-select"></select>
+                    <input type="hidden" class="form-control" id="field-select"/>
                     <div ng-show="model.fieldExists" class="spaced-top alert alert-info">
                         <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
                         <th:block th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}"/>

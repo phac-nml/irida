@@ -12,9 +12,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class ProjectSettingsMetadataTemplatesPage extends AbstractPage {
 	private static final String RELATIVE_URL = "projects/{id}/settings/metadata-templates";
 
-	@FindBy(id = "create-template-btn") private WebElement createTemplateBtn;
-	@FindBy(id = "template-table") private WebElement templateTable;
-	@FindBy(css = "#template-table tbody tr") private List<WebElement> rows;
+	@FindBy(className = "t-create-template-btn")
+	private WebElement createTemplateBtn;
+
+	@FindBy(className = "t-template")
+	private List<WebElement> templates;
 
 	public ProjectSettingsMetadataTemplatesPage(WebDriver driver) {
 		super(driver);
@@ -26,6 +28,6 @@ public class ProjectSettingsMetadataTemplatesPage extends AbstractPage {
 	}
 
 	public int getNumberOfTemplatesInProject() {
-		return rows.size();
+		return templates.size();
 	}
 }

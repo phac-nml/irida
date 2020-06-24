@@ -145,7 +145,7 @@ export default function UserGroupDetailsPage({ id }) {
   return (
     <PageWrapper
       title={"User Groups"}
-      onBack={() => navigate("/groups", { replace: true })}
+      onBack={() => navigate(setBaseUrl("/groups"), { replace: true })}
     >
       <Tabs
         defaultActiveKey="details"

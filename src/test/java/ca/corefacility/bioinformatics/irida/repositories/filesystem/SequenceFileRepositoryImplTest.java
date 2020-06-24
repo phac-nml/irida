@@ -64,7 +64,7 @@ public class SequenceFileRepositoryImplTest {
 
 	@Test
 	public void testCreateFile() throws IOException {
-		Long lid = new Long(1111);
+		Long lid = 1111L;
 		Path f = getTempFile();
 		String filename = f.getFileName().toString();
 		SequenceFile s = new SequenceFile(f);
@@ -112,7 +112,7 @@ public class SequenceFileRepositoryImplTest {
 	public void testUpdateExistingFilename() throws IOException {
 		String originalText = "old text.";
 		String updatedText = "new text.";
-		Long lid = new Long(1111);
+		Long lid = 1111L;
 		Path oldFile = getTempFile();
 		Files.write(oldFile, originalText.getBytes());
 		SequenceFile sf = new SequenceFile(oldFile);
@@ -156,7 +156,7 @@ public class SequenceFileRepositoryImplTest {
 
 	@Test
 	public void testUpdate() throws IOException {
-		Long lId = new Long(9999);
+		Long lId = 9999L;
 		Path originalFile = getTempFile();
 		SequenceFile original = new SequenceFile(originalFile);
 		original.setId(lId);
