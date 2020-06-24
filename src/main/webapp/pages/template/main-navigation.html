@@ -212,15 +212,15 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle nav-gravatar-wrapper" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">
-                            <img class="nav-gravatar" th:src="${session.gravatar}" alt="User Icon"/>
+                            <i class="far fa-user nav-icon"></i>
                             <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown-menu">
                             <li>
                                 <a th:href="@{/users/current}">
-                                    <i class="fa fa-user spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="far fa-user spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{nav.main.account}"/>
                                 </a>
                             </li>
