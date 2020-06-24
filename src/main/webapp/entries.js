@@ -80,7 +80,7 @@ module.exports = {
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
   groups: "./resources/js/pages/UserGroupsPage",
-  "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
+  "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
