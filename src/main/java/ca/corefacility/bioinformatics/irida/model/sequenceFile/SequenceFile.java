@@ -304,4 +304,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
+	public IridaFileStorageUtility getIridaFileStorageUtility() {
+		return iridaFileStorageUtility;
+	}
+
 }

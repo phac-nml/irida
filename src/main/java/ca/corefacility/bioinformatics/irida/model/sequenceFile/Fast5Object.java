@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -107,7 +108,7 @@ public class Fast5Object extends SequencingObject {
 		try {
 			String extension = FilenameUtils.getExtension(file.toString());
 
-			boolean gzipped = FileUtils.isGzipped(file);
+			boolean gzipped = sequenceFile.getIridaFileStorageUtility().isGzipped(file);
 
 			if (gzipped) {
 				type = Fast5Object.Fast5Type.ZIPPED;
