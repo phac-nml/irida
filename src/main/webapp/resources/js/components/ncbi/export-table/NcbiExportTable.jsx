@@ -4,17 +4,56 @@ import { getNCBIExports } from "../../../apis/ncbi/ncbi";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
-const ExportState = ({ state }) => {
-  switch (state) {
-    case "NEW":
-      return <Tag color="blue">{state}</Tag>;
-    case "UPLOADED":
-      return <Tag color="green">{state}</Tag>;
-    case "UPLOADED_ERROR":
-      return <Tag color="red">{state}</Tag>;
-    default:
-      return <Tag>{state}</Tag>;
-  }
+const NcbiExportUploadState = ({ state }) => {
+  const states = {
+    NEW: {
+      color: "blue",
+      text: i18n("NcbiExportUploadState.NEW"),
+    },
+    UPLOADING: {
+      color: "blue",
+      text: i18n("NcbiExportUploadState.UPLOADING"),
+    },
+    UPLOADED: {
+      color: "green",
+      text: i18n("NcbiExportUploadState.UPLOADED"),
+    },
+    UPLOAD_ERROR: {
+      color: "red",
+      text: i18n("NcbiExportUploadState.UPLOAD_ERROR"),
+    },
+    created: {
+      text: i18n("NcbiExportUploadState.created"),
+    },
+    failed: {
+      color: "red",
+      text: i18n("NcbiExportUploadState.failed"),
+    },
+    queued: {
+      text: i18n("NcbiExportUploadState.queued"),
+    },
+    processing: {
+      text: i18n("NcbiExportUploadState.processing"),
+    },
+    "processed-ok": {
+      text: i18n("NcbiExportUploadState.processed-ok"),
+    },
+    "processed-error": {
+      color: "red",
+      text: i18n("NcbiExportUploadState.processed-error"),
+    },
+    waiting: {
+      text: i18n("NcbiExportUploadState.waiting"),
+    },
+    submitted: {
+      text: i18n("NcbiExportUploadState.submitted"),
+    },
+  };
+  return states[state] ? (
+    <Tag color={states[state].color}>{states[state].text}</Tag>
+  ) : (
+    <Tag>{i18n("NcbiExportUploadState.unknown")}</Tag>
+  );
 };
 
 export function NcbiExportTable({ url }) {
@@ -39,7 +78,7 @@ export function NcbiExportTable({ url }) {
     {
       title: i18n("NcbiExportTable.state"),
       dataIndex: "state",
-      render: (state) => <ExportState state={state} />,
+      render: (state) => <NcbiExportUploadState state={state} />,
     },
     {
       title: i18n("NcbiExportTable.project"),
