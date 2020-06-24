@@ -25,8 +25,8 @@ const AdminStatistics = lazy(() => import("./AdminStatistics"));
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
 const AdminUserGroupsPage = lazy(() => import("../../UserGroupsPage/components/UserGroupsPage"));
 const ClientsPage = lazy(() => import("../../clients/ClientsPage"));
-const RemoteApiPage = lazy(() => import("../../remote-apis/RemoteApiPage"));
-const SequencingRunsPage = lazy(() => import("../../sequencing-runs/SequencingRunsPage"));
+const AdminRemoteApiPage = lazy(() => import("./AdminRemoteApiPage"));
+const AdminSequencingRunsPage = lazy(() => import("./AdminSequencingRunsPage"));
 const AnnouncementAdminPage = lazy(() => import("../../announcement/AnnouncementAdminPage"));
 
 export default function Admin() {
@@ -65,12 +65,12 @@ export default function Admin() {
                     `${DEFAULT_URL}/${ADMIN.CLIENTS}`
                   }
                 />
-                <RemoteApiPage
+                <AdminRemoteApiPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.REMOTEAPI}`
                   }
                 />
-                <SequencingRunsPage
+                <AdminSequencingRunsPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`
                   }

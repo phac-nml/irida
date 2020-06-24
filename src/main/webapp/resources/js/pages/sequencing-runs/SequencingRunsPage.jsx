@@ -12,7 +12,7 @@ const URL = setBaseUrl(`ajax/sequencingRuns`);
  * @returns {*}
  * @constructor
  */
-export default function SequencingRuns({}) {
+export function SequencingRuns({}) {
   return (
     <PageWrapper title={i18n("sequencingruns.title")}>
       <PagedTableProvider url={`${URL}/list`}>
@@ -21,3 +21,5 @@ export default function SequencingRuns({}) {
     </PageWrapper>
   );
 }
+
+render(<SequencingRuns />, document.querySelector("#root"));
