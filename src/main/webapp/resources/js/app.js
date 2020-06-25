@@ -61,7 +61,7 @@ document.addEventListener(CART.UPDATED, (e) => {
 /**
  * Initialize the cart
  */
-getCartCount().then((count) => {
+getCartCount().then((count: number) => {
   const event = new CustomEvent(CART.UPDATED, { detail: count });
   document.dispatchEvent(event);
 });
@@ -72,7 +72,7 @@ get the correct base url.
  */
 const xmlHttpRequestOpen = window.XMLHttpRequest.prototype.open;
 
-function openBaseUrlModifier(method, url, async) {
+function openBaseUrlModifier(method: Function, url: string, async: boolean) {
   const newUrl = setBaseUrl(url);
   /*
   Call the original open method with the new url.
