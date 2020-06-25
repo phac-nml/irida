@@ -15,6 +15,7 @@ Changes
 * [UI]: Added functionality for users to synchronize assembly data from remote APIs.
 * [Developer]: Updated chromedriver to version `latest`.
 * [UI]: Removed gravatar and replaced with user icon.
+* [Developer]: Removed `webpack-dev-server`.
 
 20.01 to 20.05
 --------------
