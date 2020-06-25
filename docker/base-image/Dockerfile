@@ -1,10 +1,10 @@
 # Galaxy - IRIDA Base Image
 
-FROM bgruening/galaxy-stable:20.05
+FROM bgruening/galaxy-stable:19.09
 
 MAINTAINER Aaron Petkau, aaron.petkau@canada.ca
 
-ENV GALAXY_CONFIG_BRAND IRIDA (Galaxy 20.05)
+ENV GALAXY_CONFIG_BRAND IRIDA (Galaxy 19.09)
 
 WORKDIR /galaxy-central
 

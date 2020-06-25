@@ -7,3 +7,10 @@ tools:
   - "a7094fa1d679"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
+- name: "smalt"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "5ba47ab90254"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
