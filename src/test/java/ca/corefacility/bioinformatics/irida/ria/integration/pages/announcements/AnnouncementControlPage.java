@@ -10,6 +10,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -79,10 +80,11 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void gotoMessageDetails(int index) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement p"));
         if (index < messages.size()) {
             messages.get(index).click();
-            waitForTime(DEFAULT_WAIT);
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.urlContains("/details"));
         } else {
             throw new IndexOutOfBoundsException();
         }
