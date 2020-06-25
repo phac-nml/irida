@@ -3,14 +3,14 @@
       data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.metadata-templates}">Basic</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-metadata-templates.bundle.css}">
+    <webpacker:css entry="project-metadata-templates" />
 </head>
 <body>
 <div id="templates-root" layout:fragment="settings-content">
 <!-- React component: ./resources/js/pages/projects/metadata-templates/index.js   -->
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-metadata-templates.bundle.js}"></script>
+    <webpacker:js entry="project-metadata-templates" />
 </th:block>
 </body>
 </html>

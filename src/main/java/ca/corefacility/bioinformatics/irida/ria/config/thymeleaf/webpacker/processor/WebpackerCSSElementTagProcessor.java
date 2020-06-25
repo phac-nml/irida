@@ -56,10 +56,9 @@ public class WebpackerCSSElementTagProcessor extends AbstractElementTagProcessor
 			 * ensure the link is created properly for the container.
 			 */
 			chunks.forEach(chunk -> {
-				model.add(modelFactory.createOpenElementTag(ELEMENT_NAME,
+				model.add(modelFactory.createStandaloneElementTag(ELEMENT_NAME,
 						ImmutableMap.of("th:href", String.format("@{/dist/%s}", chunk), "rel", "stylesheet"),
-						AttributeValueQuotes.DOUBLE, false));
-				model.add(modelFactory.createCloseElementTag(ELEMENT_NAME));
+						AttributeValueQuotes.DOUBLE, false, true));
 			});
 			structureHandler.replaceWith(model, true);
 		}

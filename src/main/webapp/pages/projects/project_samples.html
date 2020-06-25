@@ -4,49 +4,47 @@
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   data-layout-decorate="~{projects/_base}"
 >
-  <head>
-    <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-    <webpacker:css entry="project-samples" />
-    <webpacker:css entry="project-samples-copy"
-    />
-    <webpacker:css entry="project-samples-filter"
-    />
-    <script th:inline="javascript">
-      window.PAGE = {
-        isRemoteProject: /*[[${project.isRemote()}]]*/ false,
-        urls: {
-          projects: {
-            available:
-              /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ""
-          },
-          samples: {
-            project:
-              /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ "",
-            local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ "",
-            remove:
-              /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ "",
-            copy:
-              /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ "",
-            export:
-              /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ "projects/1/samples/export",
-            idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
-            sampleIds:
-              /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/sampleIds"
-          },
-          fileMissingSamples:
-            /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
-        }
-      };
+<head>
+  <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+  <webpacker:css entry="project-samples"/>
+  <webpacker:css entry="project-samples-copy"/>
+  <script th:inline="javascript">
+    window.PAGE = {
+      isRemoteProject: /*[[${project.isRemote()}]]*/ false,
+      urls: {
+        projects: {
+          available:
+          /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ""
+        },
+        samples: {
+          project:
+          /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ "",
+          local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ "",
+          remove:
+          /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ "",
+          copy:
+          /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ "",
+          export:
+          /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ "projects/1/samples/export",
+          idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
+          sampleIds:
+          /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/sampleIds"
+        },
+        fileMissingSamples:
+        /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
+      }
+    };
 
-      // Translations for the date range filter modal
-      window.translations = [{
-        "project.sample.filter.date.format": /*[[#{project.sample.filter.date.format}]]*/ "",
-        "project.sample.filter.date.month": /*[[#{project.sample.filter.date.month}]]*/ "",
-        "project.sample.filter.date.months3": /*[[#{project.sample.filter.date.months3}]]*/ "",
-        "project.sample.filter.date.months6": /*[[#{project.sample.filter.date.months6}]]*/ "",
-        "project.sample.filter.date.year": /*[[#{project.sample.filter.date.year}]]*/ ""}];
-    </script>
-  </head>
+    // Translations for the date range filter modal
+    window.translations = [{
+      "project.sample.filter.date.format": /*[[#{project.sample.filter.date.format}]]*/ "",
+      "project.sample.filter.date.month": /*[[#{project.sample.filter.date.month}]]*/ "",
+      "project.sample.filter.date.months3": /*[[#{project.sample.filter.date.months3}]]*/ "",
+      "project.sample.filter.date.months6": /*[[#{project.sample.filter.date.months6}]]*/ "",
+      "project.sample.filter.date.year": /*[[#{project.sample.filter.date.year}]]*/ ""
+    }];
+  </script>
+</head>
   <body>
     <main id="project-samples-main" layout:fragment="main">
       <div class="row">

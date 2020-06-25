@@ -21,6 +21,7 @@ import { download } from "../../../utilities/file-utilities";
 import "../../../../css/pages/project-samples.css";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
+import moment from "moment";
 import "bootstrap-daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -37,7 +38,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function () {};
 Keep a reference to all the modals that have been loaded onto the page
  */
 window.IRIDA = window.IRIDA = {
-  modals: {}
+  modals: {},
 };
 
 /*
@@ -301,7 +302,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         const link = createItemLink({
-          url: setBaseUrl(`projects/${full.projectId}/samples/${full.id}`),
+          url: setBaseUrl(`/projects/${full.projectId}/samples/${full.id}`),
           label: full.sampleName,
           classes: ["t-sample-label"],
         });
@@ -541,14 +542,16 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function () {
   const data = {
     associated: ASSOCIATED_PROJECTS.size
       ? Array.from(ASSOCIATED_PROJECTS.keys())
-      : []
+      : [],
   };
   axios
-    .get(`${window.TL.BASE_URL}projects/${window.project.id}/filter/organisms`)
+    .get(
+      setBaseUrl(setBaseUrl(`/projects/${window.project.id}/filter/organisms`))
+    )
     .then(({ data }) => {
       $organism.empty();
       $organism.append(`<option value="">---</option>`);
-      data.stringList.forEach(organism =>
+      data.stringList.forEach((organism) =>
         $organism.append(`<option value="${organism}">${organism}</option>`)
       );
     });
@@ -569,29 +572,29 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function () {
     .daterangepicker({
       autoUpdateInput: false,
       locale: {
-        cancelLabel: "Clear"
+        cancelLabel: "Clear",
       },
       showDropdowns: true,
       ranges: {
         [i18n("project.sample.filter.date.month")]: [
           moment().subtract(1, "month"),
-          moment()
+          moment(),
         ],
         [i18n("project.sample.filter.date.months3")]: [
           moment().subtract(3, "month"),
-          moment()
+          moment(),
         ],
         [i18n("project.sample.filter.date.months6")]: [
           moment().subtract(6, "month"),
-          moment()
+          moment(),
         ],
         [i18n("project.sample.filter.date.year")]: [
           moment().subtract(1, "year"),
-          moment()
-        ]
-      }
+          moment(),
+        ],
+      },
     })
-    .on("apply.daterangepicker", function(ev, picker) {
+    .on("apply.daterangepicker", function (ev, picker) {
       /*
       Call the the apply button is clicked.
       Formats the dates into human readable form.  This is required since we disabled
@@ -599,14 +602,14 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function () {
        */
       formatDateRangeInput(picker.startDate, picker.endDate);
     })
-    .on("cancel.daterangepicker", function() {
+    .on("cancel.daterangepicker", function () {
       $(this).val("");
     });
 
   /*
   Handle applying the filters
    */
-  modal.on("hide.bs.modal", function(e, filters) {
+  modal.on("hide.bs.modal", function (e, filters) {
     if ($name.val()) {
       TABLE_FILTERS.set(FILTERS.FILTER_BY_NAME, $name.val());
     } else {
