@@ -13,6 +13,8 @@ Changes
 * [UI]: Fixed bug when creating/modifying a metadata template the user could not search for a field. (20.05.1)
 * [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
 * [UI]: Added functionality for users to synchronize assembly data from remote APIs.
+* [Developer]: Updated chromedriver to version `latest`.
+* [UI]: Removed gravatar and replaced with user icon.
 
 20.01 to 20.05
 --------------

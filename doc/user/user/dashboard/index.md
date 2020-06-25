@@ -124,7 +124,7 @@ You will be shown a confirmation and your browser will reload the current page. 
 User Settings
 -------------
 
-The settings menu allows you to view and edit the details of your own user account. This menu also allows you to update your email subscription preferences.  You can find the settings menu in the top, right-hand corner of the page, if you have a [Gravatar](https://en.gravatar.com/) account associated with your email in IRIDA, your gravatar will be displayed:
+The settings menu allows you to view and edit the details of your own user account. This menu also allows you to update your email subscription preferences.  You can find the settings menu in the top, right-hand corner of the page under the user icon:
 
 ![The settings menu in the dashboard.](images/user-settings.png)
 
