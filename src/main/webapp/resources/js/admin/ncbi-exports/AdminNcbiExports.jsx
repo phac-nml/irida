@@ -1,17 +1,20 @@
 import React from "react";
 import { render } from "react-dom";
 import { Typography } from "antd";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { NcbiExportTable } from "../../components/ncbi/export-table/NcbiExportTable";
+import { PagedTableProvider } from "../../components/ant.design/PagedTable";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import AdminNcbiExportsTable from "./AdminNcbiExportsTable";
+import { PageWrapper } from "../../components/page/PageWrapper";
 
 const { Title } = Typography;
 
 function AdminNcbiExportsPage() {
   return (
-    <>
-      <Title level={2}>ADMIN NCBI EXPORTS</Title>
-      <NcbiExportTable url={setBaseUrl(`/ajax/ncbi/list`)} />
-    </>
+    <PageWrapper title={"NCBI Exports"}>
+      <PagedTableProvider url={setBaseUrl(`/ajax/ncbi/list`)}>
+        <AdminNcbiExportsTable />
+      </PagedTableProvider>
+    </PageWrapper>
   );
 }
 

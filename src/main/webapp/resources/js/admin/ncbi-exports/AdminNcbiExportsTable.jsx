@@ -1,17 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Table } from "antd";
-import { getNCBIExports } from "../../../apis/ncbi/ncbi";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import NcbiUploadStates from "../upload-states";
+import React from "react";
+import { PagedTable } from "../../components/ant.design/PagedTable";
+import NcbiUploadStates from "../../components/ncbi/upload-states";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 
-export function NcbiExportTable({ url }) {
-  const [exports, setExports] = useState(null);
-
-  useEffect(() => {
-    getNCBIExports({ url }).then(setExports);
-  }, [url]);
-
+export default function AdminNcbiExportsTable() {
   const columns = [
     {
       title: i18n("NcbiExportTable.id"),
@@ -28,6 +21,15 @@ export function NcbiExportTable({ url }) {
       title: i18n("NcbiExportTable.state"),
       dataIndex: "state",
       render: (state) => <NcbiUploadStates state={state} />,
+    },
+    {
+      title: i18n("NcbiExportTable.project"),
+      dataIndex: "project",
+      render(project) {
+        return (
+          <a href={setBaseUrl(`/projects/${project.id}`)}>{project.name}</a>
+        );
+      },
     },
     {
       title: i18n("NcbiExportTable.submitter"),
@@ -47,7 +49,5 @@ export function NcbiExportTable({ url }) {
     },
   ];
 
-  return (
-    <Table columns={columns} dataSource={exports} rowKey={(item) => item.id} />
-  );
+  return <PagedTable columns={columns} search={false} />;
 }
