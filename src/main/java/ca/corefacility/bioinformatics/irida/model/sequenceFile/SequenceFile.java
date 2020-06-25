@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -304,6 +303,11 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
+	/**
+	 * Gets the iridaFileStorageUtility implementation
+	 *
+	 * @return iridaFileStorageUtility implementation
+	 */
 	public IridaFileStorageUtility getIridaFileStorageUtility() {
 		return iridaFileStorageUtility;
 	}
