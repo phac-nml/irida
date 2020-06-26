@@ -65,7 +65,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteFirstSequenceFile();
 		assertTrue("Should display a confirmation message that the file was deleted",
 				page.isDeleteConfirmationMessageDisplayed());
-		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
+		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
 	}
 
 	@Test
