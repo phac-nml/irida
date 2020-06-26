@@ -143,7 +143,7 @@
 							<div class="btn-group-sm pull-right" role="group">
 								<button th:if="${canManageSample}"
 									class="btn btn-default remove-file"
-									th:with="fId=${file.getSequenceFile().id + ', &#39;'' + file.getSequenceFile().getLabel() + ''&#39;'}"
+									th:with="fId=${file.id + ', &#39;'' + file.getSequenceFile().getLabel() + ''&#39;'}"
 									data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
