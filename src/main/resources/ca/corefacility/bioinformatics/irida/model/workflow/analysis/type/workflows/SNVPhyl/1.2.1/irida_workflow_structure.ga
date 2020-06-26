@@ -1,9 +1,9 @@
 {
-    "uuid": "e4b2b988-d9e3-4424-979b-6745e27fd5a5",
+    "uuid": "4de5e11b-fd80-48f9-babf-30da8529e841",
     "tags": [],
     "format-version": "0.1",
-    "name": "SNVPhyl v1.2 Paired-End",
-    "version": 3,
+    "name": "SNVPhyl v1.2.1 Paired-End",
+    "version": 1,
     "steps": {
         "0": {
             "tool_id": null,
@@ -12,7 +12,7 @@
             "workflow_outputs": [
                 {
                     "output_name": "output",
-                    "uuid": "09d284f8-cc59-48df-846d-16ee2395c602",
+                    "uuid": "d44cd988-8f5a-4162-b36a-27ffc9305604",
                     "label": null
                 }
             ],
@@ -44,7 +44,7 @@
             "workflow_outputs": [
                 {
                     "output_name": "output",
-                    "uuid": "6f0d490d-24b1-4620-8815-7f3a92d15a32",
+                    "uuid": "178369ca-46c2-43e3-9723-a431a6d14854",
                     "label": null
                 }
             ],
@@ -129,8 +129,8 @@
             "type": "tool"
         },
         "3": {
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/smalt/smalt/0.7.6+galaxy0",
-            "tool_version": "0.7.6+galaxy0",
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/smalt/smalt/0.7.6+galaxy1",
+            "tool_version": "0.7.6+galaxy1",
             "outputs": [
                 {
                     "type": "cigar",
@@ -154,11 +154,11 @@
                     "id": 1
                 }
             },
-            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": null, \"insertmin\": \"\\\"20\\\"\", \"mincover\": \"\\\"\\\"\", \"reference\": \"{\\\"__class__\\\": \\\"ConnectedValue\\\"}\", \"insfil\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"scordiff\": \"\\\"\\\"\", \"minscor\": \"\\\"\\\"\", \"singlePaired\": \"{\\\"__current_case__\\\": 2, \\\"fastq_collection\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"pairtype\\\": \\\"pe\\\", \\\"sPaired\\\": \\\"collections\\\"}\", \"minid\": \"\\\"0.5\\\"\", \"search_harder\": \"\\\"false\\\"\", \"s\": \"\\\"\\\"\", \"seed\": \"\\\"1\\\"\", \"sw_weighted\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"oformat\": \"{\\\"__current_case__\\\": 1, \\\"bamOptions\\\": null, \\\"outformat\\\": \\\"bam\\\"}\", \"insertmax\": \"\\\"1000\\\"\", \"k\": \"\\\"13\\\"\"}",
+            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": null, \"insertmin\": \"\\\"20\\\"\", \"mincover\": \"\\\"\\\"\", \"reference\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"insfil\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"scordiff\": \"\\\"\\\"\", \"minscor\": \"\\\"\\\"\", \"singlePaired\": \"{\\\"__current_case__\\\": 2, \\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"pairtype\\\": \\\"pe\\\", \\\"sPaired\\\": \\\"collections\\\"}\", \"minid\": \"\\\"0.5\\\"\", \"search_harder\": \"\\\"false\\\"\", \"s\": \"\\\"\\\"\", \"seed\": \"\\\"1\\\"\", \"sw_weighted\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"oformat\": \"{\\\"__current_case__\\\": 1, \\\"bamOptions\\\": null, \\\"outformat\\\": \\\"bam\\\"}\", \"insertmax\": \"\\\"1000\\\"\", \"k\": \"\\\"13\\\"\"}",
             "id": 3,
             "tool_shed_repository": {
                 "owner": "nml",
-                "changeset_revision": "fae9ec82e10f",
+                "changeset_revision": "5ba47ab90254",
                 "name": "smalt",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             },
@@ -169,7 +169,15 @@
             "label": null,
             "inputs": [
                 {
+                    "name": "reference",
+                    "description": "runtime parameter for tool smalt"
+                },
+                {
                     "name": "insfil",
+                    "description": "runtime parameter for tool smalt"
+                },
+                {
+                    "name": "singlePaired",
                     "description": "runtime parameter for tool smalt"
                 }
             ],
@@ -178,7 +186,7 @@
                 "left": 492.9000244140625
             },
             "annotation": "",
-            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/smalt/smalt/0.7.6+galaxy0",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/smalt/smalt/0.7.6+galaxy1",
             "type": "tool"
         },
         "4": {
@@ -298,13 +306,13 @@
                 }
             ],
             "input_connections": {
-                "reference_source|ref_file": {
-                    "output_name": "output",
-                    "id": 1
-                },
                 "input|input_bam": {
                     "output_name": "output",
                     "id": 3
+                },
+                "reference_source|ref_file": {
+                    "output_name": "output",
+                    "id": 1
                 }
             },
             "tool_state": "{\"sec_output_options\": \"{\\\"gvcf\\\": \\\"\\\", \\\"output_tags\\\": null}\", \"__page__\": null, \"sec_restrict\": \"{\\\"regions\\\": {\\\"__current_case__\\\": 0, \\\"regions_src\\\": \\\"__none__\\\"}, \\\"targets\\\": {\\\"__current_case__\\\": 0, \\\"targets_src\\\": \\\"__none__\\\"}}\", \"__rerun_remap_job_id__\": null, \"sec_indel\": \"{\\\"perform_indel_calling\\\": {\\\"__current_case__\\\": 2, \\\"perform_indel_calling_selector\\\": \\\"do_not_perform_indel_calling\\\"}}\", \"sec_subset\": \"{\\\"invert_samples\\\": \\\"false\\\", \\\"invert_samples_file\\\": \\\"false\\\", \\\"samples\\\": \\\"\\\", \\\"samples_file\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}}\", \"reference_source\": \"{\\\"__current_case__\\\": 1, \\\"ref_file\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"reference_source_selector\\\": \\\"history\\\"}\", \"input\": \"{\\\"__current_case__\\\": 0, \\\"input_bam\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"input_number\\\": \\\"single\\\"}\", \"output_type\": \"\\\"b\\\"\", \"sec_filtering\": \"{\\\"filter_by_flags\\\": {\\\"__current_case__\\\": 1, \\\"filter_flags\\\": \\\"nofilter\\\"}, \\\"ignore_overlaps\\\": \\\"false\\\", \\\"max_reads_per_bam\\\": \\\"1024\\\", \\\"quality\\\": {\\\"__current_case__\\\": 0, \\\"baq\\\": \\\"\\\", \\\"coefficient_for_downgrading\\\": \\\"0\\\", \\\"minimum_base_quality\\\": \\\"0\\\", \\\"minimum_mapping_quality\\\": \\\"0\\\", \\\"quality_settings\\\": \\\"adjust\\\"}, \\\"read_groups\\\": {\\\"__current_case__\\\": 3, \\\"read_groups_selector\\\": \\\"no_limit\\\"}, \\\"skip_anomalous_read_pairs\\\": \\\"true\\\"}\"}",
@@ -327,7 +335,7 @@
                 }
             ],
             "position": {
-                "top": 511.8000183105469,
+                "top": 511.79998779296875,
                 "left": 794.800048828125
             },
             "annotation": "",
@@ -709,12 +717,10 @@
             "errors": null,
             "name": "VCF 2 snvalignment",
             "post_job_actions": {
-                "RenameDatasetActionvcf2core": {
-                    "output_name": "vcf2core",
-                    "action_type": "RenameDatasetAction",
-                    "action_arguments": {
-                        "newname": "vcf2core.tsv"
-                    }
+                "HideDatasetActionfasta": {
+                    "output_name": "fasta",
+                    "action_type": "HideDatasetAction",
+                    "action_arguments": {}
                 },
                 "RenameDatasetActionpositions": {
                     "output_name": "positions",
@@ -728,10 +734,12 @@
                     "action_type": "HideDatasetAction",
                     "action_arguments": {}
                 },
-                "HideDatasetActionfasta": {
-                    "output_name": "fasta",
-                    "action_type": "HideDatasetAction",
-                    "action_arguments": {}
+                "RenameDatasetActionvcf2core": {
+                    "output_name": "vcf2core",
+                    "action_type": "RenameDatasetAction",
+                    "action_arguments": {
+                        "newname": "vcf2core.tsv"
+                    }
                 }
             },
             "label": null,
@@ -895,7 +903,7 @@
                     "id": 14
                 }
             },
-            "tool_state": "{\"equi_freq\": \"\\\"m\\\"\", \"__page__\": null, \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"seq\": \"{\\\"__current_case__\\\": 0, \\\"model\\\": \\\"GTR\\\", \\\"tstv\\\": \\\"e\\\", \\\"type_of_seq\\\": \\\"nt\\\"}\", \"__rerun_remap_job_id__\": null, \"move\": \"\\\"BEST\\\"\", \"support_condition\": \"{\\\"__current_case__\\\": 3, \\\"branchSupport\\\": \\\"-4\\\"}\", \"numStartSeed\": \"\\\"0\\\"\", \"prop_invar\": \"\\\"e\\\"\", \"optimisationTopology\": \"\\\"tlr\\\"\", \"gamma\": \"\\\"e\\\"\", \"phylip_format\": \"\\\"\\\"\", \"nb_data_set\": \"\\\"1\\\"\", \"userInputTree\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"nbSubstCat\": \"\\\"4\\\"\"}",
+            "tool_state": "{\"equi_freq\": \"\\\"m\\\"\", \"__page__\": null, \"input\": \"{\\\"__class__\\\": \\\"ConnectedValue\\\"}\", \"seq\": \"{\\\"__current_case__\\\": 0, \\\"model\\\": \\\"GTR\\\", \\\"tstv\\\": \\\"e\\\", \\\"type_of_seq\\\": \\\"nt\\\"}\", \"__rerun_remap_job_id__\": null, \"move\": \"\\\"BEST\\\"\", \"support_condition\": \"{\\\"__current_case__\\\": 3, \\\"branchSupport\\\": \\\"-4\\\"}\", \"numStartSeed\": \"\\\"0\\\"\", \"prop_invar\": \"\\\"e\\\"\", \"optimisationTopology\": \"\\\"tlr\\\"\", \"gamma\": \"\\\"e\\\"\", \"phylip_format\": \"\\\"\\\"\", \"nb_data_set\": \"\\\"1\\\"\", \"userInputTree\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"nbSubstCat\": \"\\\"4\\\"\"}",
             "id": 16,
             "tool_shed_repository": {
                 "owner": "iuc",
@@ -926,10 +934,6 @@
             "inputs": [
                 {
                     "name": "userInputTree",
-                    "description": "runtime parameter for tool PhyML"
-                },
-                {
-                    "name": "input",
                     "description": "runtime parameter for tool PhyML"
                 }
             ],

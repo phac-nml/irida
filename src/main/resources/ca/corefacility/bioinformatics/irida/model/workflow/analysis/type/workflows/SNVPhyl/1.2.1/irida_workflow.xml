@@ -3,7 +3,7 @@
 <iridaWorkflow>
 	<id>f609c177-c268-4ad0-9d7f-9f9d5187fef7</id>
 	<name>SNVPhyl</name>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<analysisType>PHYLOGENOMICS</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
@@ -76,10 +76,10 @@
 	</outputs>
 	<toolRepositories>
 		<repository>
-			<name>suite_snvphyl_1_2_0</name>
+			<name>suite_snvphyl_1_2_1</name>
 			<owner>nml</owner>
 			<url>https://toolshed.g2.bx.psu.edu</url>
-			<revision>4841b7148c44</revision>
+			<revision>a7094fa1d679</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>
