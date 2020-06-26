@@ -32,6 +32,13 @@ public class FileUtils {
 		}
 	}
 
+	/**
+	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size- into-human-readable-format-in-java)
+	 *
+	 * @param bytes The {@link Long} size of the file in bytes.
+	 * @param si    {@link Boolean} true to use si units
+	 * @return A human readable {@link String} representation of the file size.
+	 */
 	public static String humanReadableByteCount(long bytes, boolean si) {
 		int unit = si ? 1000 : 1024;
 		if (bytes < unit)

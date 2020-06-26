@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Version;
 
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
  * An instance of a class may have a property with {@link Version} or may have

@@ -2,6 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
+/**
+ * Used as a response for encapsulating paired end files and their sizes
+ */
+
+
 public class PairedEndFiles {
 	private SequenceFilePair pair;
 	private String forwardFileSize;

@@ -2,6 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 
+/**
+ * Used as a response for encapsulating a genome assembly and its file size
+ */
+
 public class GenomeAssemblyFiles {
 	private GenomeAssembly genomeAssembly;
 	private String fileSize;

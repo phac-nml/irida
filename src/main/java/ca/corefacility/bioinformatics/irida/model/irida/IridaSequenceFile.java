@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.irida;
 
 import java.nio.file.Path;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Describes fields that must be made available for a Sequence File in IRIDA

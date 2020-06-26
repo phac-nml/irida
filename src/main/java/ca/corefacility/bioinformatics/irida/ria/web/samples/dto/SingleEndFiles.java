@@ -2,6 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
+/**
+ * Used as a response for encapsulating a single end file and its size
+ */
+
+
 public class SingleEndFiles {
 	private SingleEndSequenceFile singleEndSequenceFile;
 	private String fileSize;
