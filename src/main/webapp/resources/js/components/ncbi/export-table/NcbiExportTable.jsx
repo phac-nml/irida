@@ -16,8 +16,12 @@ export function NcbiExportTable({ url }) {
     {
       title: i18n("NcbiExportTable.id"),
       dataIndex: "id",
-      render(id) {
-        return <a href={`${window.location.href}/${id}`}>{id}</a>;
+      render(id, item) {
+        return (
+          <a className="t-biosample-id" href={`${window.location.href}/${id}`}>
+            {item.bioProjectId}
+          </a>
+        );
       },
     },
     {

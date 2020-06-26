@@ -8,12 +8,14 @@ public class NcbiExportSubmissionTableModel extends TableModel {
 	private final int exportedSamples;
 	private final String state;
 	private final Submitter submitter;
+	private final String bioProjectId;
 
 
 	public NcbiExportSubmissionTableModel (NcbiExportSubmission submission) {
 		super(submission.getId(), null, submission.getCreatedDate(), null);
 		this.exportedSamples = submission.getBioSampleFiles().size();
 		this.state = submission.getUploadState().toString();
+		this.bioProjectId = submission.getBioProjectId();
 		this.submitter = new Submitter(submission.getSubmitter());
 	}
 
@@ -29,7 +31,11 @@ public class NcbiExportSubmissionTableModel extends TableModel {
 		return submitter;
 	}
 
-	 static class Submitter {
+	public String getBioProjectId() {
+		return bioProjectId;
+	}
+
+	static class Submitter {
 		private final long id;
 		private final String name;
 

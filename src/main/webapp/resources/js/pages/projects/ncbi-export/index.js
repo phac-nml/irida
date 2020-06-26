@@ -9,7 +9,7 @@ const { Title } = Typography;
 function ProjectNcbiExportsPage() {
   return (
     <>
-      <Title level={2}>NCBI EXPORTS</Title>
+      <Title level={2}>{i18n("NcbiExportPage.title")}</Title>
       <NcbiExportTable
         url={setBaseUrl(`/ajax/ncbi/project/${window.project.id}/list`)}
       />

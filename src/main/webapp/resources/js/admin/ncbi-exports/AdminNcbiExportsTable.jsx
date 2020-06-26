@@ -4,13 +4,23 @@ import NcbiUploadStates from "../../components/ncbi/upload-states";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 
+/**
+ * React component for rendering a table to display NCBI Exports in the
+ * IRIDA system.
+ * @returns {JSX.Element|string}
+ * @constructor
+ */
 export default function AdminNcbiExportsTable() {
   const columns = [
     {
       title: i18n("NcbiExportTable.id"),
       dataIndex: "id",
-      render(id) {
-        return <a href={`${window.location.href}/${id}`}>{id}</a>;
+      render(id, item) {
+        return (
+          <a href={setBaseUrl(`/projects/${item.project.id}/export/${id}`)}>
+            {item.bioProjectId}
+          </a>
+        );
       },
     },
     {
