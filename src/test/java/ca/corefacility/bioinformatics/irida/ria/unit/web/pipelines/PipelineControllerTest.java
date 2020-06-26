@@ -18,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController;
@@ -70,6 +72,7 @@ public class PipelineControllerTest {
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
 	private TestEmailController emailController;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
@@ -84,12 +87,13 @@ public class PipelineControllerTest {
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		galaxyToolDataService = mock(GalaxyToolDataService.class);
 		emailController = mock(TestEmailController.class);
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController, iridaFileStorageUtility);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 

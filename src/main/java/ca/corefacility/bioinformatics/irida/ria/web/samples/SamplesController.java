@@ -35,13 +35,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -108,6 +106,8 @@ public class SamplesController extends BaseController {
 	private final MetadataTemplateService metadataTemplateService;
 	private final GenomeAssemblyService genomeAssemblyService;
 
+	private final IridaFileStorageUtility iridaFileStorageUtility;
+
 	private final UpdateSamplePermission updateSamplePermission;
 
 	private final MessageSource messageSource;
@@ -116,7 +116,7 @@ public class SamplesController extends BaseController {
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
 			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
-			MessageSource messageSource) {
+			MessageSource messageSource, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -124,6 +124,7 @@ public class SamplesController extends BaseController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/************************************************************************************************
@@ -313,22 +314,49 @@ public class SamplesController extends BaseController {
 			project = projectService.read(projectId);
 		}
 
-		// add project to qc entries and filter any unavailable entries
+		List<PairedEndFiles> pairedEndFilesList = new ArrayList<>();
+
 		for (SequencingObject f : filePairs) {
+			// add project to qc entries and filter any unavailable entries
 			enhanceQcEntries(f, project);
+
+			// create a PairedEndFiles dto which has the pair as well as the forward and reverse file sizes
+			SequenceFilePair pair = (SequenceFilePair) f;
+			String forwardFileSize = iridaFileStorageUtility.getFileSize(pair.getForwardSequenceFile().getFile());
+			String reverseFileSize = iridaFileStorageUtility.getFileSize(pair.getReverseSequenceFile().getFile());
+			pairedEndFilesList.add(new PairedEndFiles(pair, forwardFileSize, reverseFileSize));
 		}
 
+		List<Fast5Files> fast5FilesList = new ArrayList<>();
+		for(SequencingObject f : fast5) {
+			Fast5Object fast5Object = (Fast5Object) f;
+			String fileSize = iridaFileStorageUtility.getFileSize(fast5Object.getFile().getFile());
+			fast5FilesList.add(new Fast5Files(fast5Object, fileSize));
+		}
+
+		List<SingleEndFiles> singleEndFilesList = new ArrayList<>();
 		for (SampleSequencingObjectJoin f : singleFileJoins) {
 			enhanceQcEntries(f.getObject(), project);
+
+			SingleEndSequenceFile singleEndSequenceFile = (SingleEndSequenceFile) f.getObject();
+			String fileSize = iridaFileStorageUtility.getFileSize(singleEndSequenceFile.getSequenceFile().getFile());
+			singleEndFilesList.add(new SingleEndFiles(singleEndSequenceFile, fileSize));
+		}
+
+		List<GenomeAssemblyFiles> genomeAssemblyFilesList = new ArrayList<>();
+		for (GenomeAssembly ga : genomeAssemblies) {
+			String fileSize = iridaFileStorageUtility.getFileSize(ga.getFile());
+			genomeAssemblyFilesList.add(new GenomeAssemblyFiles(ga, fileSize));
 		}
 
 		// SequenceFile
-		model.addAttribute("paired_end", filePairs);
-		model.addAttribute("single_end", singleFileJoins);
-		model.addAttribute("fast5", fast5);
+		model.addAttribute("paired_end", pairedEndFilesList);
+		model.addAttribute("single_end", singleEndFilesList);
+		model.addAttribute("fast5", fast5FilesList);
+
 
 		// assemblies
-		model.addAttribute("assemblies", genomeAssemblies);
+		model.addAttribute("assemblies", genomeAssemblyFilesList);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));

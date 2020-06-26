@@ -42,7 +42,6 @@ public class Fast5Object extends SequencingObject {
 	public Fast5Object(SequenceFile file) {
 		this();
 		this.file = file;
-		this.fast5Type = setType(file);
 	}
 
 	/**
@@ -94,20 +93,16 @@ public class Fast5Object extends SequencingObject {
 	/**
 	 * Get the {@link Fast5Type} for this object
 	 *
-	 * @param sequenceFile The {@link SequenceFile} to check for type
-	 * @return the detected {@link Fast5Type}
+	 * @param isGzipped if the file type is gzipped or not
 	 */
-	private Fast5Type setType(SequenceFile sequenceFile) {
-		Path file = sequenceFile.getFile();
+	public void setType(boolean isGzipped) {
 
 		Fast5Object.Fast5Type type = Fast5Object.Fast5Type.UNKNOWN;
 
 		try {
-			String extension = FilenameUtils.getExtension(file.toString());
+			String extension = FilenameUtils.getExtension(getFile().getFileName());
 
-			boolean gzipped = sequenceFile.getIridaFileStorageUtility().isGzipped(file);
-
-			if (gzipped) {
+			if (isGzipped) {
 				type = Fast5Object.Fast5Type.ZIPPED;
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;
@@ -116,6 +111,6 @@ public class Fast5Object extends SequencingObject {
 			logger.warn("Problem checking for zipped file.  Setting as UNKNOWN type", e);
 		}
 
-		return type;
+		setFast5Type(type);
 	}
 }

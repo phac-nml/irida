@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -35,6 +37,7 @@ public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
 	private SequencingObjectService sequencingObjectService;
 	private GenomeAssemblyService genomeAssemblyService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/*
 	TEST DATA
@@ -58,7 +61,8 @@ public class SamplesAjaxControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource, iridaFileStorageUtility);
 
 		// Set up mocks
 		when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);

@@ -26,9 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+
 
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -42,13 +41,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "sequence_file")
 @Audited
-@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, IridaFileStorageListener.class })
+@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
 public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
-
-	private static IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -110,19 +107,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@Override
 	public String getLabel() {
 		return file.getFileName().toString();
-	}
-
-	/**
-	 * Get the implementation-specific file size.
-	 *
-	 * @return the file size.
-	 */
-	@Override
-	@JsonIgnore
-	public String getFileSize() {
-		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageUtility.getFileSize(getFile()), true);
-		return size;
 	}
 
 	/**
@@ -296,20 +280,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	public void setUploadSha256(String uploadSha256) {
 		this.uploadSha256 = uploadSha256;
-	}
-
-	@Override
-	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
-	}
-
-	/**
-	 * Gets the iridaFileStorageUtility implementation
-	 *
-	 * @return iridaFileStorageUtility implementation
-	 */
-	public IridaFileStorageUtility getIridaFileStorageUtility() {
-		return iridaFileStorageUtility;
 	}
 
 }

@@ -28,12 +28,12 @@ public interface IridaFileStorageUtility {
 	public File getTemporaryFile(Path file);
 
 	/**
-	 * Get file size in bytes
+	 * Get file size
 	 *
 	 * @param file The {@link Path} to the file
 	 * @return {@link Long} size of file retrieved from path
 	 */
-	public Long getFileSize(Path file);
+	public String getFileSize(Path file);
 
 	/**
 	 * Write file to storage (azure, aws, or local)

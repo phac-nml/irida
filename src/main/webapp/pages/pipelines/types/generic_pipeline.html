@@ -265,14 +265,14 @@
                                                         <td class="td_radio" rowspan="2">
                                                             <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
                                                             <input type="radio" data-type="paired_end"
-                                                                   th:value="${pair.getId()}"
+                                                                   th:value="${pair.pair.getId()}"
                                                                    th:checked="${pairStat.first}"
                                                                    th:name="${sample.id}"/>
                                                         </td>
-                                                        <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${pair.getForwardSequenceFile()},icon='forward',relative='false')"></td>
+                                                        <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair.pair},file=${pair.pair.getForwardSequenceFile()},fileSize=${pair.forwardFileSize},icon='forward',relative='false')"></td>
                                                     </tr>
                                                     <tr class="paired_end paired_end__reverse">
-                                                        <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${pair.getReverseSequenceFile()},icon='reverse',relative='false')"></td>
+                                                        <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair.pair},file=${pair.pair.getReverseSequenceFile()},fileSize=${pair.reverseFileSize},icon='reverse',relative='false')"></td>
                                                     </tr>
                                                 </th:block>
                                             </th:block>
@@ -283,10 +283,10 @@
                                                     <td>
                                                         <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
                                                         <input type="radio" data-type="single_end"
-                                                               th:value="${file.getId()}" th:name="${sample.id}"
+                                                               th:value="${file.singleEndSequenceFile.getId()}" th:name="${sample.id}"
                                                                th:checked="${!hasPaired and fileStat.first}"/>
                                                     </td>
-                                                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='false')"></td>
+                                                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file.singleEndSequenceFile},file=${file.singleEndSequenceFile.getSequenceFile()},fileSize=${file.fileSize},icon='single',relative='false')"></td>
                                                 </tr>
                                             </th:block>
                                         </table>

@@ -31,9 +31,9 @@ public class Fast5ObjectTest {
 	public void testCreateZippedFile() throws IOException {
 		Path zipFile = createZipFile();
 		SequenceFile sf = new SequenceFile(zipFile);
-		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
-		Fast5Object fast5Object = new Fast5Object(sf);
 
+		Fast5Object fast5Object = new Fast5Object(sf);
+		fast5Object.setType(iridaFileStorageUtility.isGzipped(sf.getFile()));
 		assertEquals(Fast5Object.Fast5Type.ZIPPED, fast5Object.getFast5Type());
 	}
 
@@ -41,8 +41,9 @@ public class Fast5ObjectTest {
 	public void testCreateSingleFile() throws IOException {
 		Path zipFile = createSingleFile();
 		SequenceFile sf = new SequenceFile(zipFile);
-		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		Fast5Object fast5Object = new Fast5Object(sf);
+		fast5Object.setType(iridaFileStorageUtility.isGzipped(sf.getFile()));
 
 		assertEquals(Fast5Object.Fast5Type.SINGLE, fast5Object.getFast5Type());
 	}
@@ -51,8 +52,9 @@ public class Fast5ObjectTest {
 	public void testCreateUnknownFile() throws IOException {
 		Path zipFile = createFile(".somethingelse");
 		SequenceFile sf = new SequenceFile(zipFile);
-		sf.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		Fast5Object fast5Object = new Fast5Object(sf);
+		fast5Object.setType(iridaFileStorageUtility.isGzipped(sf.getFile()));
 
 		assertEquals(Fast5Object.Fast5Type.UNKNOWN, fast5Object.getFast5Type());
 	}

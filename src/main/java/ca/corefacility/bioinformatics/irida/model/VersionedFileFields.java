@@ -29,9 +29,4 @@ public interface VersionedFileFields<VersionType extends Serializable> {
 	 */
 	public void incrementFileRevisionNumber();
 
-	/**
-	 *
-	 * @param iridaFileStorageUtility instance of iridaFileStorageUtility to provide to entity
-	 */
-	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility);
 }

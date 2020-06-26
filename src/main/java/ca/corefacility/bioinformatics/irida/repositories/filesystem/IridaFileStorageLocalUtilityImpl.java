@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
  * Component implementation of file utitlities for local storage
@@ -48,10 +49,10 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Long getFileSize(Path file) {
-		Long fileSize = 0L;
+	public String getFileSize(Path file) {
+		String fileSize = "N/A";
 		try {
-			fileSize = Files.size(file);
+			fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
 		} catch (NoSuchFileException e) {
 			logger.error("Could not find file " + file);
 		} catch (IOException e) {

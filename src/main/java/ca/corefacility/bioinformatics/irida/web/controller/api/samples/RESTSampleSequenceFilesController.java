@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -132,17 +133,19 @@ public class RESTSampleSequenceFilesController {
 
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
-			SequencingObjectService sequencingObjectService, AnalysisService analysisService) {
+			SequencingObjectService sequencingObjectService, AnalysisService analysisService, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.sampleService = sampleService;
 		this.sequencingRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysisService = analysisService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -529,6 +532,8 @@ public class RESTSampleSequenceFilesController {
 			sf.setFile(target);
 
 			Fast5Object fast5Object = new Fast5Object(sf);
+			fast5Object.setType(iridaFileStorageUtility.isGzipped(sf.getFile()));
+
 			if (sequencingRun != null) {
 				if (sequencingRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {
 					throw new IllegalArgumentException("The sequencing run must be in the UPLOADING state to upload data.");

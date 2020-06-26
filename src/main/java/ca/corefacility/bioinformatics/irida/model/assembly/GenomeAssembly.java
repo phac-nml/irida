@@ -20,8 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -32,13 +30,11 @@ import com.google.common.collect.Lists;
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners({ IridaFileStorageListener.class })
 @Audited
 public abstract class GenomeAssembly extends IridaResourceSupport
 		implements IridaThing, IridaSequenceFile, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
-	private static IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -102,17 +98,6 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 		}
 	}
 
-	/**
-	 * Get human-readable file size.
-	 *
-	 * @return A human-readable file size.
-	 */
-	@JsonIgnore
-	public String getFileSize() {
-		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageUtility.getFileSize(getFile()), true);
-		return size;
-	}
 
 	/**
 	 * Gets the assembly file.
@@ -147,7 +132,4 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 		return Objects.equals(this.id, other.id) && Objects.equals(this.createdDate, other.createdDate);
 	}
 
-	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
-	}
 }
