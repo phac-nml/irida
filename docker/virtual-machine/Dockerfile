@@ -3,9 +3,18 @@
 FROM phacnml/galaxy-irida-19.09:base
 
 ADD ./data/tools-list.yml $GALAXY_ROOT/irida-tools.yml
+
+# Install tools
 RUN install-tools $GALAXY_ROOT/irida-tools.yml \
       && /tool_deps/_conda/bin/conda clean --packages -t -i \
       && rm -rf /tmp/* /root/.cache/ /var/cache/* $GALAXY_ROOT/client/node_modules/ $GALAXY_VIRTUAL_ENV/src/ /home/galaxy/.cache/ /home/galaxy/.npm
+
+# Fix up prokka issues (update tbl2asn and install 'less' and 'libidn11')
+RUN apt-get update -y && apt-get install less libidn11 \
+      && curl -o /tmp/tbl2asn.gz ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz \
+      && gunzip /tmp/tbl2asn.gz && cp /tmp/tbl2asn /tool_deps/_conda/envs/__prokka\@1.13/bin/tbl2asn && rm /tmp/tbl2asn \
+      && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && rm -rf ~/.cache/ \
+      && rm -rf /tmp/* /root/.cache/ /var/cache/*
 
 # Install some example mentalist databases
 ADD --chown=galaxy:galaxy ./data/tool-data.tar.gz /galaxy-central/
