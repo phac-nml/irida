@@ -2,7 +2,7 @@
 
 FROM bgruening/galaxy-stable:19.09
 
-MAINTAINER Aaron Petkau, aaron.petkau@canada.ca
+LABEL maintainer="Aaron Petkau <aaron.petkau@canada.ca>"
 
 ENV GALAXY_CONFIG_BRAND IRIDA (Galaxy 19.09)
 
