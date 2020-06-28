@@ -255,8 +255,7 @@ public class UsersController {
 				User user = userService.updateFields(userId, updatedValues);
 				returnView = "redirect:/users/" + userId;
 
-				// If the user is updating their account make sure you update it in the sesion variable
-				// this will update the users gravatar!
+				// If the user is updating their account make sure you update it in the session variable
 				if (user != null && principal.getName()
 						.equals(user.getUsername())) {
 					HttpSession session = request.getSession();
