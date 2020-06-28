@@ -3,37 +3,37 @@ api_key: "<Galaxy Admin user API key>"
 galaxy_instance: "<IP address for target Galaxy instance>"
 tools:
 
-  ### Tools for AssemblyAnnotation v0.5.0 ###
+  ### Tools for AssemblyAnnotation v0.6.0 ###
 
 - name: "shovill"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "865119fcb694"
+  - "8d1af5db538d"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "prokka"
   owner: "crs4"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "eaee459f3d69"
+  - "111884f0d912"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "quast"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "81df4950d65b"
+  - "ebb0dcdb621a"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
-  ### Tools for AssemblyAnnotationCollection v0.4.0 ###
+  ### Tools for AssemblyAnnotationCollection v0.5.0 ###
 
 - name: "bundle_collections"
-  owner: "irida"
-  tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "7bc329e1ada4"
+  - "cd6da887a5f4"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
