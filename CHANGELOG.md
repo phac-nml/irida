@@ -16,6 +16,8 @@ Changes
 * [Developer]: Updated chromedriver to version `latest`.
 * [UI]: Removed gravatar and replaced with user icon.
 * [Developer]: Removed `webpack-dev-server`.
+* [UI]: Fixed issue where analysis results pages would hang after running with remote synchronized data. (20.05.2)
+* [Developer]: Updated chromedriver to version `latest`. (20.05.2)
 * [Developer]: Updated frontend dependencies (`babel`, `fontawesome`, and `ant-icons`)
 
 20.01 to 20.05
