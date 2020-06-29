@@ -1,5 +1,5 @@
-$color-danger: rgb(244, 67, 54);
-$color-danger-light: lighten($color-danger, 40%);
+$color-danger: #f44336;
+$color-danger-light: #FFF8F7;
 
 .alert > strong {
   font-size: 2rem;
@@ -9,7 +9,7 @@ label > input[type="radio"] {
   margin-top: 0 !important;
 }
 
-// Datatables
+/*// Datatables*/
 .dataTables_scrollHeadInner .table {
   margin-bottom: 0;
 }
@@ -50,7 +50,7 @@ th {
   white-space: nowrap;
 }
 
-// Bootstrap nav
+/*// Bootstrap nav*/
 .nav-pills > li#danger.active > a,
 .nav-pills > li#danger.active > a:hover {
   border: 1px solid $color-danger;

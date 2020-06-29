@@ -2,8 +2,8 @@
   margin-left: 1.3em !important;
 }
 
-// Used when a colour bar needs to be displayed next to a label
-// E.g. on the project samples page for a unique colour for each project.
+/*// Used when a colour bar needs to be displayed next to a label*/
+/*// E.g. on the project samples page for a unique colour for each project.*/
 .label-bar-color {
   position: absolute;
   top: 0;
