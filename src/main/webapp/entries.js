@@ -8,7 +8,6 @@ module.exports = {
     "core-js/stable",
     "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
-    "expose-loader?angular!angular",
     "./resources/js/vendors",
   ],
   login: "./resources/js/pages/LoginPage.jsx",
