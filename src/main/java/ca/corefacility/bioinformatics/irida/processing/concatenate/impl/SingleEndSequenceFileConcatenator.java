@@ -33,7 +33,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 	 */
 	@Override
 	public SingleEndSequenceFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
-			throws ConcatenateException {
+			throws ConcatenateException, IOException {
 		Path tempFile;
 
 		String extension = iridaFileStorageUtility.getFileExtension(toConcatenate);

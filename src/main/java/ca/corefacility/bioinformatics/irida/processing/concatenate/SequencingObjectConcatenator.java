@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.processing.concatenate;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,6 +23,6 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 	 * @throws ConcatenateException if there is an error during concatenation
 	 */
 	public abstract Type concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
-			throws ConcatenateException;
+			throws ConcatenateException, IOException;
 
 }
