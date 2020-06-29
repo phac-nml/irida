@@ -9,11 +9,11 @@ Assembly and Annotation
 
 This workflow uses the [shovill] and [Prokka][] software for assembly and annotation of genomes, respectively, as well as [QUAST] for assembly quality assessment.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                  | Owner    | Tool Revision  | Toolshed Installable Revision | Toolshed             |
-|:--------------------------:|:--------:|:--------------:|:-----------------------------:|:--------------------:|
-| **shovill**                | iuc      | [8d1af5db538d] | 3 (2020-06-28)                | [Galaxy Main Shed][] |
-| **prokka**                 | crs4     | [111884f0d912] | 17 (2020-06-04)               | [Galaxy Main Shed][] |
-| **quast**                  | iuc      | [ebb0dcdb621a] | 8 (2020-02-03)                | [Galaxy Main Shed][] |
+| Tool Name                  | Owner    | Tool Revision    | Toolshed Installable Revision | Toolshed             |
+|:--------------------------:|:--------:|:----------------:|:-----------------------------:|:--------------------:|
+| **shovill**                | iuc      | [8d1af5db538d][] | 3 (2020-06-28)                | [Galaxy Main Shed][] |
+| **prokka**                 | crs4     | [111884f0d912][] | 17 (2020-06-04)               | [Galaxy Main Shed][] |
+| **quast**                  | iuc      | [ebb0dcdb621a][] | 8 (2020-02-03)                | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.
@@ -55,19 +55,18 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successful then all dependencies for this pipeline have been properly installed.
 
-[865119fcb694]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/865119fcb694
-[eaee459f3d69]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/eaee459f3d69
-[81df4950d65b]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/81df4950d65b
+[8d1af5db538d]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/8d1af5db538d
+[111884f0d912]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/111884f0d912
+[ebb0dcdb621a]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/ebb0dcdb621a
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [SLURM]: https://slurm.schedmd.com
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
 [SPAdes]: http://bioinf.spbau.ru/spades
 [shovill]: https://github.com/tseemann/shovill/
-[Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
+[Prokka]: https://github.com/tseemann/prokka
 [QUAST]: http://quast.sourceforge.net/quast.html
 [tbl2asn]: http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation/assembly-annotation.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/assembly-annotation/reads
