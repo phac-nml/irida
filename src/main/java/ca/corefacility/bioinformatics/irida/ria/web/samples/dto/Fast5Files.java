@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 
 /**
- * Used as a response for encapsulating a fast5object its file size
+ * Used as a response for encapsulating a fast5object and its file size
  */
 
 public class Fast5Files {

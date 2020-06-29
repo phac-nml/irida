@@ -52,7 +52,9 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
+			if(file != null) {
+				fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
+			}
 		} catch (NoSuchFileException e) {
 			logger.error("Could not find file " + file);
 		} catch (IOException e) {
