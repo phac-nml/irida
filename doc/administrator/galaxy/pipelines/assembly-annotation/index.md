@@ -11,9 +11,9 @@ This workflow uses the [shovill] and [Prokka][] software for assembly and annota
 
 | Tool Name                  | Owner    | Tool Revision  | Toolshed Installable Revision | Toolshed             |
 |:--------------------------:|:--------:|:--------------:|:-----------------------------:|:--------------------:|
-| **shovill**                | iuc      | [865119fcb694] | 3 (2018-11-13)                | [Galaxy Main Shed][] |
-| **prokka**                 | crs4     | [eaee459f3d69] | 14 (2018-03-28)               | [Galaxy Main Shed][] |
-| **quast**                  | iuc      | [81df4950d65b] | 5 (2018-12-04)                | [Galaxy Main Shed][] |
+| **shovill**                | iuc      | [8d1af5db538d] | 3 (2020-06-28)                | [Galaxy Main Shed][] |
+| **prokka**                 | crs4     | [111884f0d912] | 17 (2020-06-04)               | [Galaxy Main Shed][] |
+| **quast**                  | iuc      | [ebb0dcdb621a] | 8 (2020-02-03)                | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.
@@ -32,11 +32,6 @@ The install progress can be checked by monitoring the Galaxy log files `galaxy/*
 
 **Note**: Prokka downloads several large databases and may take some time to install.
 
-### Updating `tbl2asn`
-
-The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The version of `tbl2asn` installed by default may have to be updated. Please see our [FAQ][] for more details.
-
-
 ## Step 3: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
@@ -51,7 +46,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **a**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **AssemblyAnnotation-shovill-prokka-quast-paired_reads-v0.5 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **AssemblyAnnotation-shovill-prokka-quast-paired_reads-v0.6 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]

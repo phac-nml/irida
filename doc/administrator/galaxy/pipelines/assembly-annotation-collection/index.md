@@ -11,7 +11,7 @@ This workflow can assemble and annotate multiple genomes in one submission.  The
 
 | Tool Name                  | Owner    | Tool Revision  | Toolshed Installable Revision | Toolshed             |
 |:--------------------------:|:--------:|:--------------:|:-----------------------------:|:--------------------:|
-| **bundle_collections**     | irida    | [7bc329e1ada4] | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
+| **bundle_collections**     | nml      | [cd6da887a5f4] | 1 (2017-08-04)                | [Galaxy Main Shed][] |
 | **shovill**                | iuc      | [865119fcb694] | 3 (2018-11-13)                | [Galaxy Main Shed][] |
 | **prokka**                 | crs4     | [eaee459f3d69] | 14 (2018-03-28)               | [Galaxy Main Shed][] |
 | **quast**                  | iuc      | [81df4950d65b] | 5 (2018-12-04)                | [Galaxy Main Shed][] |
@@ -32,10 +32,6 @@ Please install all the Galaxy tools in the table above by logging into Galaxy, n
 The install progress can be checked by monitoring the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
 **Note**: Prokka downloads several large databases and may take some time to install.
-
-### Updating `tbl2asn`
-
-The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built. The version of `tbl2asn` installed by default may have to be updated. Please see our [FAQ][] for more details. 
 
 ## Step 3: Testing Pipeline
 
@@ -71,7 +67,6 @@ If everything was successful then all dependencies for this pipeline have been p
 [shovill]: https://github.com/tseemann/shovill/
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
 [QUAST]: http://quast.sourceforge.net/quast.html
-[tbl2asn]: http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Assembly Annotation Collection Galaxy Workflow]: ../test/assembly-annotation-collection/assembly-annotation-collection.ga
