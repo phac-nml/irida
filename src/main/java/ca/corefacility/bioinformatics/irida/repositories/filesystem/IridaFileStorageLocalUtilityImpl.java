@@ -145,7 +145,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * {@inheritDoc}
 	 */
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException {
+	public void appendToFile(Path target, SequenceFile file) throws IOException {
 
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
@@ -154,20 +154,20 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new ConcatenateException("Could not open input file for reading", e);
+				throw new IOException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {
-			throw new ConcatenateException("Could not open target file for writing", e);
+			throw new IOException("Could not open target file for writing", e);
 		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException {
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException {
 		String selectedExtension = null;
-		for (SequencingObject object : toConcatenate) {
+		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = file.getFile()
@@ -179,7 +179,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 						.findFirst();
 
 				if (!currentExtensionOpt.isPresent()) {
-					throw new ConcatenateException("File extension is not valid " + fileName);
+					throw new IOException("File extension is not valid " + fileName);
 				}
 
 				String currentExtension = currentExtensionOpt.get();
@@ -187,7 +187,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 				if (selectedExtension == null) {
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
-					throw new ConcatenateException(
+					throw new IOException(
 							"Extensions of files to concatenate do not match " + currentExtension + " vs "
 									+ selectedExtension);
 				}

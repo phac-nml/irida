@@ -95,16 +95,16 @@ public interface IridaFileStorageUtility {
 	 *
 	 * @param target the {@link Path} to append to
 	 * @param file   the {@link SequenceFile} to append to the path
-	 * @throws ConcatenateException if there is an error appending the file
+	 * @throws IOException if there is an error appending the file
 	 */
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException;
+	public void appendToFile(Path target, SequenceFile file) throws IOException;
 
 	/**
-	 * Get the extension of the files to concatenate
+	 * Get the extension of the files
 	 *
-	 * @param toConcatenate The list of {@link SequencingObject} to concatenate
+	 * @param sequencingObjects The list of {@link SequencingObject} to get file extensions for
 	 * @return The common extension of the files
-	 * @throws ConcatenateException if the files have different or invalid extensions
+	 * @throws IOException if the files have different or invalid extensions
 	 */
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException;
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
 }
