@@ -13,3 +13,26 @@ export function getProjectMetadataTemplates(projectId) {
     .get(`${BASE_URL}?projectId=${projectId}`)
     .then(({ data }) => data);
 }
+
+/**
+ * Get details about a specific metadata template
+ * @param {number} templateId Identifier for a metadata template
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export async function getMetadataTemplateDetails({ templateId }) {
+  return await axios.get(`${BASE_URL}/${templateId}`).then(({ data }) => data);
+}
+
+/**
+ * Update either the description or name of a metadata template
+ * @param {number} templateId - Identifier for a metadata template
+ * @param {string} field - either 'name' or 'description'
+ * @param {string} value - value to update the field to
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export async function updateTemplateAttribute({ templateId, field, value }) {
+  return await axios
+    .put(`${BASE_URL}/${templateId}?field=${field}&value=${value}`)
+    .then(({ data }) => data)
+    .catch((error) => error.response.data);
+}

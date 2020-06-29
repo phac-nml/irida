@@ -1,86 +1,61 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { render } from "react-dom";
-import { getProjectMetadataTemplates } from "../../../apis/metadata/metadata-templates";
-import { Avatar, Button, List, Space, Tag, Typography } from "antd";
-import {
-  IconDownloadFile,
-  IconMetadataTemplate,
-} from "../../../components/icons/Icons";
+import { navigate, Router, useLocation } from "@reach/router";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import ListProjectTemplates from "../../../components/metadata-template/list";
+import Template from "../../../components/metadata-template/template";
+import { Button, Layout, PageHeader } from "antd";
+import { grey1 } from "../../../styles/colors";
 
-const { Title } = Typography;
+const { Content } = Layout;
 
 /**
- * Display a list of metadata templates that are associated with a project.
+ * React component for setting up page routing on the project metadata template
+ * page.
  * @returns {JSX.Element}
  * @constructor
  */
-function ProjectMetadataTemplates() {
-  const [templates, setTemplates] = useState([]);
-  const BASE_URL = setBaseUrl(
-    `/projects/${window.project.id}/metadata-templates`
-  );
-
-  useEffect(() => {
-    getProjectMetadataTemplates(window.project.id).then((data) =>
-      setTemplates(data)
-    );
-  }, []);
-
+function ProjectMetadataTemplatesPage() {
   return (
-    <div>
-      <Space direction="vertical" style={{ width: "100%" }}>
-        <Title level={2}>{i18n("ProjectMetadataTemplates.title")}</Title>
-        <Space>
-          <Button href={`${BASE_URL}/new`} className="t-create-template-btn">
-            Create New Template
-          </Button>
-        </Space>
-        <List
-          bordered
-          itemLayout="horizontal"
-          dataSource={templates}
-          renderItem={(item) => (
-            <List.Item
-              className="t-template"
-              actions={[
-                <Button
-                  shape="circle"
-                  icon={<IconDownloadFile />}
-                  href={`${BASE_URL}/${item.id}/excel`}
-                  key="list-download"
-                />,
-              ]}
-            >
-              <List.Item.Meta
-                avatar={<Avatar icon={<IconMetadataTemplate />} />}
-                title={
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <a
-                      href={setBaseUrl(
-                        `/projects/${window.project.id}/metadata-templates/${item.id}`
-                      )}
-                    >
-                      {item.label}
-                    </a>
-                    <Tag>
-                      {i18n("ProjectMetadataTemplates.fields", item.numFields)}
-                    </Tag>
-                  </div>
-                }
-                description={item.description}
-              />
-            </List.Item>
-          )}
-        />
-      </Space>
-    </div>
+    <Router>
+      <PageLayout path={setBaseUrl("/projects/:projectId/metadata-templates")}>
+        <ListProjectTemplates path="/" />
+        <Template path={"/:templateId"} />
+      </PageLayout>
+    </Router>
   );
 }
 
-render(<ProjectMetadataTemplates />, document.querySelector("#templates-root"));
+const PageLayout = ({ children, projectId }) => {
+  const location = useLocation();
+
+  /*
+  Only show the back button if currently viewing a template.
+  The url will end in a number if viewing a template
+   */
+  const onBack = location.pathname.match(/-templates$/)
+    ? null
+    : () => navigate(setBaseUrl(`/projects/${projectId}/metadata-templates`));
+
+  return (
+    <PageHeader
+      className="site-page-header"
+      title={i18n("ProjectMetadataTemplates.title")}
+      onBack={onBack}
+      extra={[
+        <Button key="create-btn" className="t-create-template-btn">
+          {i18n("ProjectMetadataTemplates.create")}
+        </Button>,
+      ]}
+    >
+      <Layout>
+        <Content style={{ backgroundColor: grey1 }}>{children}</Content>
+      </Layout>
+    </PageHeader>
+  );
+};
+
+render(
+  <ProjectMetadataTemplatesPage />,
+  document.querySelector("#templates-root")
+);

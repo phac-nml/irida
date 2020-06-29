@@ -6,7 +6,7 @@ import org.junit.Test;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataTemplatePage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsMetadataTemplatesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataTemplatesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -19,9 +19,10 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	private final String NEW_TEMPLATE = "new";
 
 	@Test
+	@Ignore
 	public void testSettingsMetadataPage() {
 		LoginPage.loginAsManager(driver());
-		ProjectSettingsMetadataTemplatesPage page = ProjectSettingsMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
+		ProjectMetadataTemplatesPage page = ProjectMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
 		assertEquals("Should be one template on the page", 1, page.getNumberOfTemplatesInProject());
 	}
 
@@ -41,7 +42,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 				page.isSaveButtonEnabled());
 
 		page.saveTemplate();
-		ProjectSettingsMetadataTemplatesPage settingsMetadataTemplatesPage = ProjectSettingsMetadataTemplatesPage
+		ProjectMetadataTemplatesPage settingsMetadataTemplatesPage = ProjectMetadataTemplatesPage
 				.goToPage(driver(), PROJECT_ID);
 		assertEquals("Should be two template on the Metadata Template List page", 2,
 				settingsMetadataTemplatesPage.getNumberOfTemplatesInProject());
@@ -74,6 +75,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testViewExistingTemplateAsUser() {
 		LoginPage.loginAsUser(driver());
 		ProjectMetadataTemplatePage page = ProjectMetadataTemplatePage.goToPage(driver(), PROJECT_ID, TEMPLATE_ID);
