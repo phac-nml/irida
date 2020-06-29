@@ -25,7 +25,7 @@
                 <tr
                   class="file-row"
                   role="row"
-                  th:each="fileObject : ${seqObject.sequenceFileDetailsList)}"
+                  th:each="fileObject : ${seqObject.sequenceFileDetailsList}"
                   th:id="${'file-row-' + fileObject.sequenceFile.identifier}"
                 >
                   <td class="file-id" th:text="${fileObject.sequenceFile.identifier}">ID</td>

@@ -120,8 +120,8 @@ public class SequencingRunController {
 		 * and a list of sequence files for that sequencing object with their file sizes
 		 */
 		List<SequencingObjectDetails> sequencingObjectList = new ArrayList<>();
-		List<SequenceFileDetails> sequenceFileList = new ArrayList<>();
 		for(SequencingObject sequencingObject : sequencingObjectsForSequencingRun) {
+			List<SequenceFileDetails> sequenceFileList = new ArrayList<>();
 			Set<SequenceFile> sequenceFiles = sequencingObject.getFiles();
 			for(SequenceFile sequenceFile : sequenceFiles) {
 				sequenceFileList.add(new SequenceFileDetails(sequenceFile, iridaFileStorageUtility.getFileSize(sequenceFile.getFile())));
