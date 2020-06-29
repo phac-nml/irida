@@ -20,9 +20,7 @@ export function getProjectMetadataTemplates(projectId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function getMetadataTemplateDetails({ templateId }) {
-  return await axios
-    .get(setBaseUrl(`${BASE_URL}/${templateId}`))
-    .then(({ data }) => data);
+  return await axios.get(`${BASE_URL}/${templateId}`).then(({ data }) => data);
 }
 
 /**
