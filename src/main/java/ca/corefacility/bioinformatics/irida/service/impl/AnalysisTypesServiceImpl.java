@@ -100,13 +100,13 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 	 * {@inheritDoc}
 	 */
 	public void registerDefaultTypes() {
-		registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS);
-		registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING);
+		registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree");
+		registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING, "sistr");
 		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
-		registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL);
+		registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL, "biohansel");
 		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
 		registerRunnableType(BuiltInAnalysisTypes.REFSEQ_MASHER);
-		registerRunnableType(BuiltInAnalysisTypes.MLST_MENTALIST);
+		registerRunnableType(BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 
 		registerUnrunnableType(BuiltInAnalysisTypes.FASTQC);
 		registerUnrunnableType(BuiltInAnalysisTypes.DEFAULT);
