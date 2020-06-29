@@ -3,6 +3,21 @@ Changes
 
 20.05 to 20.09
 --------------
+* [UI] Updated project user groups to use Ant Design.
+* [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
+* [Developer]: Removed deprecated Long constructor.
+* [Developer]: Updated `webpack-dev-server` to fix security vulnerability caused by `websocket-extensions` 0.1.3.
+* [UI]: Update project metadata templates listing page to use Ant Design.
+* [UI/Developer]: Removed SASS compilation step from front end build. Everything is done using postcss now.
+* [Developer]: Bumped `node` version to 12.18.0.
+* [UI]: Fixed bug when creating/modifying a metadata template the user could not search for a field. (20.05.1)
+* [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
+* [UI]: Added functionality for users to synchronize assembly data from remote APIs.
+* [Developer]: Updated chromedriver to version `latest`.
+* [UI]: Removed gravatar and replaced with user icon.
+* [Developer]: Removed `webpack-dev-server`.
+* [UI]: Fixed issue where analysis results pages would hang after running with remote synchronized data. (20.05.2)
+* [Developer]: Updated chromedriver to version `latest`. (20.05.2)
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 
 20.01 to 20.05
