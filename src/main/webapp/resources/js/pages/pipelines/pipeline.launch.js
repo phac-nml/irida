@@ -7,6 +7,7 @@ import React from "react";
 import { render } from "react-dom";
 import { AnalysesQueue } from "../../components/AnalysesQueue";
 import { emptyCart, removeSample } from "../../apis/cart/cart";
+import { CART } from "../../utilities/events-utilities";
 
 render(<AnalysesQueue />, document.querySelector("#queue-root"));
 
@@ -307,7 +308,11 @@ function PipelineController(
    * @param sampleId the sample if to remove
    */
   vm.removeSample = function (projectId, sampleId) {
-    removeSample(projectId, sampleId).then(() => {
+    removeSample(projectId, sampleId).then(({ count }) => {
+      // Update the cart
+      const event = new CustomEvent(CART.UPDATED, { detail: { count } });
+      document.dispatchEvent(event);
+
       angular.element("#sample-" + sampleId).remove();
       if (angular.element(".sample-container").length === 0) {
         location.reload();
