@@ -129,16 +129,6 @@ label.ant-checkbox-wrapper {
   font-size: 21px;
 }
 
-/*// Gravatar*/
-.nav-gravatar-wrapper {
-  padding-right: 15px !important;
-}
-.nav-gravatar {
-  border-radius: 50%;
-  width: 20px;
-  padding: 0;
-}
-
 /*// Notifications*/
 .navbar-notification .angular-notifications-icon {
   background-color: #3092d0;
