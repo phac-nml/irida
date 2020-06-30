@@ -1,17 +1,17 @@
 import React from "react";
 import { render } from "react-dom";
-import { PageWrapper } from "../../../components/page/PageWrapper";
-import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
+import { PageWrapper } from "../../../../../components/page/PageWrapper";
+import { PagedTableProvider } from "../../../../../components/ant.design/PagedTable";
 import { ClientsTable } from "./ClientsTables";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { AddNewButton } from "../../../components/Buttons/AddNewButton";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { AddNewButton } from "../../../../../components/Buttons/AddNewButton";
 
 /**
  * Page for displaying the list of all clients.
  * @return {*}
  * @constructor
  */
-function ClientListingPage() {
+export default function ClientListingPage() {
   return (
     <PageWrapper
       title={i18n("clients.title")}
@@ -28,5 +28,3 @@ function ClientListingPage() {
     </PageWrapper>
   );
 }
-
-render(<ClientListingPage />, document.querySelector("#client-root"));

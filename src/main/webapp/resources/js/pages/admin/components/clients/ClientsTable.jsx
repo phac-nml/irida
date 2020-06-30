@@ -1,10 +1,10 @@
 import React from "react";
-import { PagedTable } from "../../components/ant.design/PagedTable";
-import { PageWrapper } from "../../components/page/PageWrapper";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { PagedTable } from "../../../../components/ant.design/PagedTable";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { Button } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { AddNewButton } from "../../components/Buttons/AddNewButton";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 
 export function ClientsTable() {
   const columnDefs = [

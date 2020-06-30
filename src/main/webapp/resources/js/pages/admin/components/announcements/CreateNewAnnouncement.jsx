@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { Modal } from "antd";
-import { AddNewButton } from "../../components/Buttons/AddNewButton";
-import { MarkdownEditor } from "../../components/markdown/MarkdownEditor";
-import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
-import { IconEdit } from "../../components/icons/Icons";
+import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
+import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import { IconEdit } from "../../../../components/icons/Icons";
 
 /**
  * Component to add a button which will open a modal to create an announcement.

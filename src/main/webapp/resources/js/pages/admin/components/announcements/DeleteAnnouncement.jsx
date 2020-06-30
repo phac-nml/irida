@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Popconfirm } from "antd";
-import { red6 } from "../../styles/colors";
-import { IconQuestionCircle, IconTrash } from "../../components/icons/Icons";
+import { red6 } from "../../../../styles/colors";
+import { IconQuestionCircle, IconTrash } from "../../../../components/icons/Icons";
 
 /**
  * Component to render a Delete announcement button.

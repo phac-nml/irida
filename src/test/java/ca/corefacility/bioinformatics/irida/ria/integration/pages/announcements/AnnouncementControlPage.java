@@ -30,7 +30,7 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void goTo() {
-        get(driver, "announcements/admin");
+        get(driver, "admin/announcements");
 		waitForTime(1000);
 	}
 
@@ -70,7 +70,8 @@ public class AnnouncementControlPage extends AbstractPage {
     public void clickDateCreatedHeader() {
         WebElement header = driver.findElement(By.cssSelector("th.t-created-date"));
         header.click();
-        waitForAjax();
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.urlContains("/admin/announcements"));
     }
 
     public void clickCreateNewAnnouncementButton() {

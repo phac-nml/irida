@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { Button, Modal } from "antd";
-import { MarkdownEditor } from "../../components/markdown/MarkdownEditor";
-import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
-import { IconEdit } from "../../components/icons/Icons";
+import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import { IconEdit } from "../../../../components/icons/Icons";
 
 /**
  * Render React component to edit an announcement.

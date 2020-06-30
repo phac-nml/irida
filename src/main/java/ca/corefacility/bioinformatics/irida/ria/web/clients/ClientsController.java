@@ -431,7 +431,7 @@ public class ClientsController extends BaseController {
 	public String removeClient(@RequestParam Long id) {
 		clientDetailsService.delete(id);
 
-		return "redirect:/clients";
+		return "redirect:/admin/clients";
 	}
 
 	/**

@@ -159,7 +159,7 @@ public class AnnouncementsController extends BaseController {
             model.addAttribute("errors", "Announcement was not updated successfully");
             logger.error("Announcement could not be updated or saved to the database.", e.getMessage());
         }
-        return "redirect:/announcements/admin";
+        return "redirect:/admin/announcements";
     }
 
     /**
@@ -183,7 +183,7 @@ public class AnnouncementsController extends BaseController {
             logger.error(e.getMessage());
         }
 
-        return "redirect:/announcements/admin";
+        return "redirect:/admin/announcements";
     }
 
     /**
