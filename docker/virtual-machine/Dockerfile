@@ -19,7 +19,8 @@ RUN apt-get update -y && apt-get install less libidn11 \
 ADD ./data/mentalist.env /tmp/mentalist.env
 RUN /tool_deps/_conda/bin/conda remove --name __mentalist@0.1.9 --all -y \
       && /tool_deps/_conda/bin/conda create -c defaults -c bioconda -c conda-forge --name __mentalist@0.1.9 --file /tmp/mentalist.env -y \
-      && /tool_deps/_conda/bin/conda clean --packages -t -i
+      && /tool_deps/_conda/bin/conda clean --packages -t -i \
+      && chown -R galaxy:galaxy /tool_deps/_conda/envs/__mentalist@0.1.9
 
 # Install some example mentalist databases
 ADD --chown=galaxy:galaxy ./data/tool-data.tar.gz /galaxy-central/
