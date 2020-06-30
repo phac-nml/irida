@@ -21,6 +21,7 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 	 * @param filename      base name of the new file to create
 	 * @return the newly created {@link SequencingObject} class
 	 * @throws ConcatenateException if there is an error during concatenation
+	 * @throws IOException if there was an error reading sequences
 	 */
 	public abstract Type concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException, IOException;
