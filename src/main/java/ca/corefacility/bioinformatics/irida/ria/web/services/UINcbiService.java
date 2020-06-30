@@ -16,6 +16,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 
+/**
+ * Utility class for formatting responses for NCBI Export Listing page UI.
+ */
 @Component
 public class UINcbiService {
 	private final ProjectService projectService;
@@ -27,12 +30,27 @@ public class UINcbiService {
 		this.ncbiService = ncbiService;
 	}
 
+	/**
+	 * Get a {@link List} of all {@link NcbiExportSubmission} that have occurred on a {@link Project}
+	 *
+	 * @param projectId Identifier for a {@link Project} for the {@link NcbiExportSubmission}
+	 * @return {@link List} of {@link NcbiExportSubmissionTableModel}
+	 */
 	public List<NcbiExportSubmissionTableModel> getNCBIExportsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<NcbiExportSubmission> submissions = ncbiService.getSubmissionsForProject(project);
-		return submissions.stream().map(NcbiExportSubmissionTableModel::new).collect(Collectors.toList());
+		return submissions.stream()
+				.map(NcbiExportSubmissionTableModel::new)
+				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Get a {@link Page} of {@link NcbiExportSubmission}
+	 *
+	 * @param request {@link TableRequest} containing the details about the specific {@link Page} of {@link NcbiExportSubmission}
+	 *                wanted
+	 * @return {@link TableResponse} of {@link NcbiExportSubmissionAdminTableModel}
+	 */
 	public TableResponse<NcbiExportSubmissionAdminTableModel> getNCBIExportsForAdmin(TableRequest request) {
 		Page<NcbiExportSubmission> page = ncbiService.list(request.getCurrent(), request.getPageSize(),
 				request.getSort());

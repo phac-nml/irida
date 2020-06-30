@@ -4,6 +4,9 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
+/**
+ * Represents a {@link NcbiExportSubmission} for use within the UI.
+ */
 public class NcbiExportSubmissionTableModel extends TableModel {
 	private final int exportedSamples;
 	private final String state;

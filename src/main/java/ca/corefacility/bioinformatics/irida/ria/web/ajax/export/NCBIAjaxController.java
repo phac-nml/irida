@@ -29,14 +29,27 @@ public class NCBIAjaxController {
 		this.service = service;
 	}
 
+	/**
+	 * Get a {@link List} of all NCBI Export Submissions on a Project
+	 *
+	 * @param projectId Identifier for a Project
+	 * @return {@link List} of {@link NcbiExportSubmissionAdminTableModel}
+	 */
 	@RequestMapping("/project/{projectId}/list")
 	public ResponseEntity<List<NcbiExportSubmissionTableModel>> getNCBIExportsForProject(@PathVariable Long projectId) {
 		return ResponseEntity.ok(service.getNCBIExportsForProject(projectId));
 	}
 
+	/**
+	 * Get a paged list of NCBI Export Submission based on the current page information
+	 *
+	 * @param request {@link TableRequest} containing details about the current page
+	 * @return {@link TableResponse} of NCBI Export Submissions
+	 */
 	@RequestMapping("/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<TableResponse<NcbiExportSubmissionAdminTableModel>> getNCBIExportsForAdmin(@RequestBody TableRequest request) {
+	public ResponseEntity<TableResponse<NcbiExportSubmissionAdminTableModel>> getNCBIExportsForAdmin(
+			@RequestBody TableRequest request) {
 		return ResponseEntity.ok(service.getNCBIExportsForAdmin(request));
 	}
 }
