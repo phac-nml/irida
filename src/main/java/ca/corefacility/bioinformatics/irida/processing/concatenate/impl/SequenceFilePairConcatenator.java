@@ -33,7 +33,7 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	 */
 	@Override
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
-			throws ConcatenateException {
+			throws ConcatenateException, IOException {
 
 		String extension = iridaFileStorageUtility.getFileExtension(toConcatenate);
 
