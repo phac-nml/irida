@@ -17,7 +17,7 @@ This is a quick tutorial on how to construct a whole genome SNV phylogeny with [
 Initial Data
 ============
 
-The data for this tutorial comes from  https://irida.corefacility.ca/downloads/snvphyl-galaxy/examples/snvphyl-example-lm.tar.gz. It is assumed the sequence files (forward and reverse) `CFSAN002349` and `CFSAN023463` in fastq/ have been uploaded into appropriate samples as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with samples that appear as:
+The data for this tutorial comes from <https://irida.corefacility.ca/downloads/snvphyl-galaxy/examples/snvphyl-example-lm.tar.gz>. It is assumed the sequence files (forward and reverse) `CFSAN002349` and `CFSAN023463` in fastq/ have been uploaded into appropriate samples as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with samples that appear as:
 
 ![snvphyl-samples]
 
@@ -48,11 +48,15 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![snvphyl-pipeline-page][]
 
-SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` using the following steps.
+SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` by clicking the **Upload New** button.
 
-![snvpyhyl-pipeline-upload-ref-file]
+![snvphyl-pipeline-upload-ref-file][]
 
-Selecting **Customize** brings up a page where parameters can be customized. The default parameters will often be appropriate.
+One component of the SNVPhyl pipeline is to remove regions with high SNV density (which could suggest possible recombination). This component works well when all genomes under question are fairly closely-related, but when analyzing distantly-related genomes the **SNV density filtering** may remove too much data. The **SNV density filtering** can be enabled or disabled using the drop-down menu as shown.
+
+![snvphyl-pipeline-snv-density.png][]
+
+Next, selecting **Customize** brings up a page where parameters can be customized. The default parameters will often be appropriate, so we will use them for now.
 
 ![snvphyl-pipeline-customize][]
 
@@ -76,7 +80,7 @@ The will bring you to a page where you can monitor the status of each launched w
 
 ![monitor-analyses][]
 
-Clicking the pipeline name **SNVPhyl_20200227** will bring you to a page for that analysis pipeline. It will take a while for the SNVPhyl analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
+Clicking the pipeline name **SNVPhyl_20200702** will bring you to a page for that analysis pipeline. It will take a while for the SNVPhyl analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
 ![analysis-in-progress][]
 
@@ -152,10 +156,10 @@ To delete an analysis, please select the **Delete Analysis** tab.
 
 
 
-Advanced SNVPHyl Visualizations
+Advanced SNVPhyl Visualizations
 ===============================
 
-SNVPHyl Analyses can be combined with metadata from the sample the were run to get a more complete picture.  For more information see  [Advanced Visualizations].
+SNVPhyl Analyses can be combined with metadata from the sample the were run to get a more complete picture.  For more information see  [Advanced Visualizations].
 
 To view the advanced visualization, click the **Phylogenetic Tree** tab and click the **View Advanced Visualization** button on the **Tree Preview** tab.
 
@@ -177,7 +181,7 @@ To view the advanced visualization, click the **Phylogenetic Tree** tab and clic
 [snvphyl-output-files]: images/snvphyl-output-files.png
 [SNVPhyl Output Guide]: http://snvphyl.readthedocs.io/en/latest/user/output/
 [snvphyl-pipeline-page]: images/snvphyl-pipeline-page.png
-[snvpyhyl-pipeline-upload-ref-file]: images/snvpyhyl-pipeline-upload-ref-file.png
+[snvphyl-pipeline-upload-ref-file]: images/snvphyl-pipeline-upload-ref-file.png
 [snvphyl-provenance]: images/snvphyl-provenance.png
 [snvphyl-provenance-tools]: images/snvphyl-provenance-tools.png
 [snvphyl-results]: images/snvphyl-results.png
@@ -188,5 +192,6 @@ To view the advanced visualization, click the **Phylogenetic Tree** tab and clic
 [snvphyl-settings-edit-name]: images/snvphyl-settings-edit-name.png
 [snvphyl-settings-samples]: images/snvphyl-settings-samples.png
 [snvphyl-settings-share]: images/snvphyl-settings-share.png
+[snvphyl-pipeline-snv-density.png]: images/snvphyl-pipeline-snv-density.png
 [view-your-analyses]: images/view-your-analyses.png
 [Web Upload Tutorial]: ../web-upload/
