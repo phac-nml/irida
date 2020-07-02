@@ -6,6 +6,7 @@ upgrading IRIDA that cannot be automated.
 
 20.05 to 20.09
 --------------
+* The [SNVPhyl](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/) pipeline has been ugpraded. Please make sure to install the necessary tools in Galaxy.
 
 20.01 to 20.05
 --------------
