@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
-import { getNCBIExports } from "../../../apis/ncbi/ncbi";
+import { getProjectNCBIExports } from "../../../apis/ncbi/ncbi";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import NcbiUploadStates from "../upload-states";
 
-export function NcbiExportTable({ url }) {
+/**
+ * Render a list of all Project NCBI Exports.
+ * @returns {JSX.Element|string}
+ * @constructor
+ */
+export function NcbiExportTable() {
   const [exports, setExports] = useState(null);
 
   useEffect(() => {
-    getNCBIExports({ url }).then(setExports);
-  }, [url]);
+    getProjectNCBIExports().then(setExports);
+  }, []);
 
   const columns = [
     {
@@ -18,7 +23,10 @@ export function NcbiExportTable({ url }) {
       dataIndex: "id",
       render(id, item) {
         return (
-          <a className="t-biosample-id" href={`${window.location.href}/${id}`}>
+          <a
+            className="t-biosample-id"
+            href={setBaseUrl(`/projects/${window.project.id}/export/${id}`)}
+          >
             {item.bioProjectId}
           </a>
         );

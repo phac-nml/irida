@@ -1,6 +1,13 @@
 import React from "react";
 import { Tag } from "antd";
 
+/**
+ * React component to render an NCBI Upload State in a tag with an appropriate
+ * colour.  Also provides internationalization for the state.
+ * @param state
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function NcbiUploadStates({ state }) {
   const states = {
     NEW: {

@@ -104,6 +104,9 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 		return super.list(page, size, order, sortProperties);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<NcbiExportSubmission> list(int page, int size, Sort sort) throws IllegalArgumentException {
