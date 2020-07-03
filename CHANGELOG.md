@@ -21,7 +21,6 @@ Changes
 * [Developer]: Updated frontend dependencies (`babel`, `fontawesome`, and `ant-icons`)
 * [Workflow]: Updated the SNVPhyl pipeline to version `1.2.1`.
 * [Developer]: Updated the Galaxy Docker instance to Galaxy `19.09`.
-* [Workflow]: Removed dependency of IRIDA on the IRIDA Toolshed (<https://irida.corefacility.ca/galaxy-shed>). This means IRIDA is compatible with newer versions of Galaxy (`20.XX`).
 
 20.01 to 20.05
 --------------
