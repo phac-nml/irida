@@ -21,6 +21,9 @@ Changes
 * [Developer]: Updated frontend dependencies (`babel`, `fontawesome`, and `ant-icons`)
 * [Workflow]: Updated the SNVPhyl pipeline to version `1.2.1`.
 * [Developer]: Updated the Galaxy Docker instance to Galaxy `19.09`.
+* [Workflow]: Updated the tools `Shovill`, `Prokka`, and `Quast` in the **Assembly and Annotation** pipeline. These updates mean the issue with out-of-date `tbl2asn` is now fixed and the value of `SHOVILL_RAM` will now be set automatically by Galaxy based on assigned resources to the tool.
+* [Workflow]: Updated the tools `Shovill`, `Prokka`, and `Quast` in the  **Assembly and Annotation Collection** pipeline. Also moved tool **Bundle collections** from the IRIDA Toolshed to the Galaxy Main Toolshed.
+* [Workflow]: Removed dependency of IRIDA on the IRIDA Toolshed (<https://irida.corefacility.ca/galaxy-shed>). This means that all tools for IRIDA pipelines are now available on the main Galaxy toolshed and that IRIDA is compatible with newer versions of Galaxy (`20.XX+`).
 
 20.01 to 20.05
 --------------
