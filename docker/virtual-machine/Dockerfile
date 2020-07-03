@@ -3,7 +3,6 @@
 FROM phacnml/galaxy-irida-19.09:base
 
 ADD ./data/tools-list.yml $GALAXY_ROOT/irida-tools.yml
-ADD ./data/mentalist.env /tmp/mentalist.env
 
 # Install tools
 RUN install-tools $GALAXY_ROOT/irida-tools.yml \
