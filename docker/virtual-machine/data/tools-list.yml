@@ -9,7 +9,7 @@ tools:
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "8d1af5db538d"
+  - "83ead2be47b2"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "prokka"
