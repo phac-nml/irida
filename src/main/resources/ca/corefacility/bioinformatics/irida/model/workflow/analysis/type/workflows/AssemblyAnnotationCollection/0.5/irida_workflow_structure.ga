@@ -1,5 +1,5 @@
 {
-    "uuid": "5530fe18-2eef-4ce3-82cb-5e70629682f3",
+    "uuid": "c54b3423-da7d-4c6a-af3d-2dc17af64baf",
     "tags": [],
     "format-version": "0.1",
     "name": "AssemblyAnnotationCollection-shovill-prokka-paired_reads-v0.5",
@@ -12,7 +12,7 @@
             "workflow_outputs": [
                 {
                     "output_name": "output",
-                    "uuid": "523750a7-2f7f-4057-a28e-60aaaebf2993",
+                    "uuid": "e30f7136-4f2b-4f7a-85b7-940fe656094a",
                     "label": null
                 }
             ],
@@ -38,8 +38,8 @@
             "type": "data_collection_input"
         },
         "1": {
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1",
-            "tool_version": "1.0.4+galaxy1",
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0",
+            "tool_version": "1.1.0+galaxy0",
             "outputs": [
                 {
                     "type": "txt",
@@ -77,11 +77,11 @@
                     "id": 0
                 }
             },
-            "tool_state": "{\"adv\": \"{\\\"depth\\\": \\\"100\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"mincov\\\": \\\"2\\\", \\\"minlen\\\": \\\"0\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"nocorr\\\": \\\"false\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": null, \"__rerun_remap_job_id__\": null, \"assembler\": \"\\\"spades\\\"\", \"library\": \"{\\\"__current_case__\\\": 1, \\\"input1\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"lib_type\\\": \\\"collection\\\"}\"}",
+            "tool_state": "{\"adv\": \"{\\\"depth\\\": \\\"100\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"mincov\\\": \\\"2\\\", \\\"minlen\\\": \\\"0\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"nocorr\\\": \\\"false\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"true\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": null, \"__rerun_remap_job_id__\": null, \"assembler\": \"\\\"spades\\\"\", \"library\": \"{\\\"__current_case__\\\": 1, \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"lib_type\\\": \\\"collection\\\"}\"}",
             "id": 1,
             "tool_shed_repository": {
                 "owner": "iuc",
-                "changeset_revision": "8d1af5db538d",
+                "changeset_revision": "83ead2be47b2",
                 "name": "shovill",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             },
@@ -90,13 +90,18 @@
             "name": "Shovill",
             "post_job_actions": {},
             "label": null,
-            "inputs": [],
+            "inputs": [
+                {
+                    "name": "library",
+                    "description": "runtime parameter for tool Shovill"
+                }
+            ],
             "position": {
                 "top": 200,
                 "left": 492.9000244140625
             },
             "annotation": "",
-            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0",
             "type": "tool"
         },
         "2": {
@@ -132,13 +137,13 @@
                     "label": null
                 },
                 {
-                    "output_name": "log",
-                    "uuid": "22c20afc-8f4b-4706-b965-7a155b684557",
+                    "output_name": "report_html",
+                    "uuid": "91b3939e-6f1f-4b19-912c-fd2e8e3b2832",
                     "label": null
                 },
                 {
-                    "output_name": "report_html",
-                    "uuid": "91b3939e-6f1f-4b19-912c-fd2e8e3b2832",
+                    "output_name": "log",
+                    "uuid": "22c20afc-8f4b-4706-b965-7a155b684557",
                     "label": null
                 }
             ],
@@ -148,7 +153,7 @@
                     "id": 1
                 }
             },
-            "tool_state": "{\"scaffold_gap_max_size\": \"\\\"1000\\\"\", \"skip_unaligned_mis_contigs\": \"\\\"true\\\"\", \"assembly\": \"{\\\"__current_case__\\\": 0, \\\"orga_type\\\": \\\"\\\", \\\"ref\\\": {\\\"__current_case__\\\": 1, \\\"est_ref_size\\\": \\\"\\\", \\\"use_ref\\\": \\\"false\\\"}, \\\"type\\\": \\\"genome\\\"}\", \"circos\": \"\\\"false\\\"\", \"contig_thresholds\": \"\\\"0,1000\\\"\", \"__page__\": null, \"strict_NA\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"genes\": \"{\\\"conserved_genes_finding\\\": \\\"false\\\", \\\"gene_finding\\\": {\\\"__current_case__\\\": 0, \\\"tool\\\": \\\"none\\\"}, \\\"rna_finding\\\": \\\"false\\\"}\", \"unaligned_part_size\": \"\\\"500\\\"\", \"al\": \"{\\\"ambiguity_score\\\": \\\"0.99\\\", \\\"ambiguity_usage\\\": \\\"one\\\", \\\"fragmented\\\": \\\"false\\\", \\\"fragmented_max_indent\\\": \\\"50\\\", \\\"min_alignment\\\": \\\"65\\\", \\\"min_identity\\\": \\\"95.0\\\", \\\"upper_bound_assembly\\\": \\\"false\\\", \\\"upper_bound_min_con\\\": \\\"2\\\", \\\"use_all_alignments\\\": \\\"false\\\"}\", \"extensive_mis_size\": \"\\\"1000\\\"\", \"large\": \"\\\"false\\\"\", \"in\": \"{\\\"__current_case__\\\": 1, \\\"custom\\\": \\\"false\\\", \\\"inputs\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}}\", \"k_mer\": \"{\\\"__current_case__\\\": 1, \\\"k_mer_stats\\\": \\\"\\\"}\", \"split_scaffolds\": \"\\\"false\\\"\", \"min_contig\": \"\\\"500\\\"\"}",
+            "tool_state": "{\"scaffold_gap_max_size\": \"\\\"1000\\\"\", \"skip_unaligned_mis_contigs\": \"\\\"true\\\"\", \"assembly\": \"{\\\"__current_case__\\\": 0, \\\"orga_type\\\": \\\"\\\", \\\"ref\\\": {\\\"__current_case__\\\": 1, \\\"est_ref_size\\\": \\\"\\\", \\\"use_ref\\\": \\\"false\\\"}, \\\"type\\\": \\\"genome\\\"}\", \"circos\": \"\\\"false\\\"\", \"contig_thresholds\": \"\\\"0,1000\\\"\", \"__page__\": null, \"strict_NA\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"genes\": \"{\\\"conserved_genes_finding\\\": \\\"false\\\", \\\"gene_finding\\\": {\\\"__current_case__\\\": 0, \\\"tool\\\": \\\"none\\\"}, \\\"rna_finding\\\": \\\"false\\\"}\", \"unaligned_part_size\": \"\\\"500\\\"\", \"al\": \"{\\\"ambiguity_score\\\": \\\"0.99\\\", \\\"ambiguity_usage\\\": \\\"one\\\", \\\"fragmented\\\": \\\"false\\\", \\\"fragmented_max_indent\\\": \\\"50\\\", \\\"min_alignment\\\": \\\"65\\\", \\\"min_identity\\\": \\\"95.0\\\", \\\"upper_bound_assembly\\\": \\\"false\\\", \\\"upper_bound_min_con\\\": \\\"2\\\", \\\"use_all_alignments\\\": \\\"false\\\"}\", \"extensive_mis_size\": \"\\\"1000\\\"\", \"large\": \"\\\"false\\\"\", \"in\": \"{\\\"__current_case__\\\": 1, \\\"custom\\\": \\\"false\\\", \\\"inputs\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}}\", \"k_mer\": \"{\\\"__current_case__\\\": 1, \\\"k_mer_stats\\\": \\\"\\\"}\", \"split_scaffolds\": \"\\\"false\\\"\", \"min_contig\": \"\\\"500\\\"\"}",
             "id": 2,
             "tool_shed_repository": {
                 "owner": "iuc",
@@ -160,11 +165,11 @@
             "errors": null,
             "name": "Quast",
             "post_job_actions": {
-                "RenameDatasetActionreport_pdf": {
-                    "output_name": "report_pdf",
+                "RenameDatasetActionlog": {
+                    "output_name": "log",
                     "action_type": "RenameDatasetAction",
                     "action_arguments": {
-                        "newname": "quast.pdf"
+                        "newname": "quast.log"
                     }
                 },
                 "RenameDatasetActionreport_html": {
@@ -174,11 +179,11 @@
                         "newname": "quast.html.zip"
                     }
                 },
-                "RenameDatasetActionlog": {
-                    "output_name": "log",
+                "RenameDatasetActionreport_pdf": {
+                    "output_name": "report_pdf",
                     "action_type": "RenameDatasetAction",
                     "action_arguments": {
-                        "newname": "quast.log"
+                        "newname": "quast.pdf"
                     }
                 },
                 "RenameDatasetActionquast_tabular": {
@@ -190,12 +195,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "in",
-                    "description": "runtime parameter for tool Quast"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 200,
                 "left": 821.800048828125
@@ -226,7 +226,7 @@
                     "id": 1
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 3,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -247,12 +247,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 472.9000244140625,
                 "left": 821.800048828125
@@ -283,7 +278,7 @@
                     "id": 1
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 4,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -304,12 +299,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 592.7999877929688,
                 "left": 821.800048828125
@@ -340,7 +330,7 @@
                     "id": 1
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 5,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -361,12 +351,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 712.7000122070312,
                 "left": 821.800048828125
@@ -545,7 +530,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 7,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -566,12 +551,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 200,
                 "left": 1150.699951171875
@@ -602,7 +582,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 8,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -623,12 +603,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 319.8999938964844,
                 "left": 1150.699951171875
@@ -659,7 +634,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 9,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -680,12 +655,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 439.79998779296875,
                 "left": 1150.699951171875
@@ -716,7 +686,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 10,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -737,12 +707,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 559.7000122070312,
                 "left": 1150.699951171875
@@ -773,7 +738,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 11,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -794,12 +759,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 679.5999755859375,
                 "left": 1150.699951171875
@@ -830,7 +790,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 12,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -851,12 +811,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 799.5,
                 "left": 1150.699951171875
@@ -887,7 +842,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 13,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -908,12 +863,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 919.4000244140625,
                 "left": 1150.699951171875
@@ -944,7 +894,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 14,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -965,12 +915,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 1039.300048828125,
                 "left": 1150.699951171875
@@ -1001,7 +946,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 15,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -1022,12 +967,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 1159.199951171875,
                 "left": 1150.699951171875
@@ -1058,7 +998,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 16,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -1079,12 +1019,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 1279.0999755859375,
                 "left": 1150.699951171875
@@ -1115,7 +1050,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 17,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -1136,12 +1071,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 1399,
                 "left": 1150.699951171875
@@ -1172,7 +1102,7 @@
                     "id": 6
                 }
             },
-            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"singles_or_list\": \"{\\\"__current_case__\\\": 1, \\\"input\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"type\\\": \\\"list\\\"}\"}",
             "id": 18,
             "tool_shed_repository": {
                 "owner": "nml",
@@ -1193,12 +1123,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "singles_or_list",
-                    "description": "runtime parameter for tool Bundle Collection"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 1518.9000244140625,
                 "left": 1150.699951171875

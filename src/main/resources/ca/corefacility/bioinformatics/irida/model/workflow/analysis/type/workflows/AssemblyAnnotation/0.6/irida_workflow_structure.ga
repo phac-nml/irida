@@ -1,9 +1,9 @@
 {
-    "uuid": "9b4a4e23-127a-4f88-b13c-ef90d44c7c11",
+    "uuid": "be0307fe-ed6d-475f-91c8-fd9104363e05",
     "tags": [],
     "format-version": "0.1",
     "name": "AssemblyAnnotation-shovill-prokka-quast-paired_reads-v0.6",
-    "version": 4,
+    "version": 1,
     "steps": {
         "0": {
             "tool_id": null,
@@ -12,7 +12,7 @@
             "workflow_outputs": [
                 {
                     "output_name": "output",
-                    "uuid": "d26efcff-41f6-45c7-ac84-8d0f1cc346fe",
+                    "uuid": "cb91db45-ab04-45cf-9853-2cd471a48703",
                     "label": null
                 }
             ],
@@ -38,8 +38,8 @@
             "type": "data_collection_input"
         },
         "1": {
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1",
-            "tool_version": "1.0.4+galaxy1",
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0",
+            "tool_version": "1.1.0+galaxy0",
             "outputs": [
                 {
                     "type": "txt",
@@ -77,11 +77,11 @@
                     "id": 0
                 }
             },
-            "tool_state": "{\"adv\": \"{\\\"depth\\\": \\\"100\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"mincov\\\": \\\"2\\\", \\\"minlen\\\": \\\"0\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"nocorr\\\": \\\"false\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": null, \"__rerun_remap_job_id__\": null, \"assembler\": \"\\\"spades\\\"\", \"library\": \"{\\\"__current_case__\\\": 1, \\\"input1\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}, \\\"lib_type\\\": \\\"collection\\\"}\"}",
+            "tool_state": "{\"adv\": \"{\\\"depth\\\": \\\"100\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"mincov\\\": \\\"2\\\", \\\"minlen\\\": \\\"0\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"nocorr\\\": \\\"false\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"true\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": null, \"__rerun_remap_job_id__\": null, \"assembler\": \"\\\"spades\\\"\", \"library\": \"{\\\"__current_case__\\\": 1, \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"lib_type\\\": \\\"collection\\\"}\"}",
             "id": 1,
             "tool_shed_repository": {
                 "owner": "iuc",
-                "changeset_revision": "8d1af5db538d",
+                "changeset_revision": "83ead2be47b2",
                 "name": "shovill",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             },
@@ -112,13 +112,18 @@
                 }
             },
             "label": null,
-            "inputs": [],
+            "inputs": [
+                {
+                    "name": "library",
+                    "description": "runtime parameter for tool Shovill"
+                }
+            ],
             "position": {
                 "top": 200,
                 "left": 492.9000244140625
             },
             "annotation": "",
-            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0",
             "type": "tool"
         },
         "2": {
@@ -181,8 +186,8 @@
                     "label": null
                 },
                 {
-                    "output_name": "out_sqn",
-                    "uuid": "c016c419-7723-4841-97a6-d80e4e6f1a95",
+                    "output_name": "out_tbl",
+                    "uuid": "e38a6e06-02b3-4365-93cb-59499c9d3fba",
                     "label": null
                 },
                 {
@@ -226,8 +231,8 @@
                     "label": null
                 },
                 {
-                    "output_name": "out_tbl",
-                    "uuid": "e38a6e06-02b3-4365-93cb-59499c9d3fba",
+                    "output_name": "out_sqn",
+                    "uuid": "c016c419-7723-4841-97a6-d80e4e6f1a95",
                     "label": null
                 },
                 {
@@ -403,7 +408,7 @@
                     "id": 1
                 }
             },
-            "tool_state": "{\"scaffold_gap_max_size\": \"\\\"1000\\\"\", \"skip_unaligned_mis_contigs\": \"\\\"true\\\"\", \"assembly\": \"{\\\"__current_case__\\\": 0, \\\"orga_type\\\": \\\"\\\", \\\"ref\\\": {\\\"__current_case__\\\": 1, \\\"est_ref_size\\\": \\\"\\\", \\\"use_ref\\\": \\\"false\\\"}, \\\"type\\\": \\\"genome\\\"}\", \"circos\": \"\\\"false\\\"\", \"contig_thresholds\": \"\\\"0,1000\\\"\", \"__page__\": null, \"strict_NA\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"genes\": \"{\\\"conserved_genes_finding\\\": \\\"false\\\", \\\"gene_finding\\\": {\\\"__current_case__\\\": 0, \\\"tool\\\": \\\"none\\\"}, \\\"rna_finding\\\": \\\"false\\\"}\", \"unaligned_part_size\": \"\\\"500\\\"\", \"al\": \"{\\\"ambiguity_score\\\": \\\"0.99\\\", \\\"ambiguity_usage\\\": \\\"one\\\", \\\"fragmented\\\": \\\"false\\\", \\\"fragmented_max_indent\\\": \\\"50\\\", \\\"min_alignment\\\": \\\"65\\\", \\\"min_identity\\\": \\\"95.0\\\", \\\"upper_bound_assembly\\\": \\\"false\\\", \\\"upper_bound_min_con\\\": \\\"2\\\", \\\"use_all_alignments\\\": \\\"false\\\"}\", \"extensive_mis_size\": \"\\\"1000\\\"\", \"large\": \"\\\"false\\\"\", \"in\": \"{\\\"__current_case__\\\": 1, \\\"custom\\\": \\\"false\\\", \\\"inputs\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}}\", \"k_mer\": \"{\\\"__current_case__\\\": 1, \\\"k_mer_stats\\\": \\\"\\\"}\", \"split_scaffolds\": \"\\\"false\\\"\", \"min_contig\": \"\\\"500\\\"\"}",
+            "tool_state": "{\"scaffold_gap_max_size\": \"\\\"1000\\\"\", \"skip_unaligned_mis_contigs\": \"\\\"true\\\"\", \"assembly\": \"{\\\"__current_case__\\\": 0, \\\"orga_type\\\": \\\"\\\", \\\"ref\\\": {\\\"__current_case__\\\": 1, \\\"est_ref_size\\\": \\\"\\\", \\\"use_ref\\\": \\\"false\\\"}, \\\"type\\\": \\\"genome\\\"}\", \"circos\": \"\\\"false\\\"\", \"contig_thresholds\": \"\\\"0,1000\\\"\", \"__page__\": null, \"strict_NA\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"genes\": \"{\\\"conserved_genes_finding\\\": \\\"false\\\", \\\"gene_finding\\\": {\\\"__current_case__\\\": 0, \\\"tool\\\": \\\"none\\\"}, \\\"rna_finding\\\": \\\"false\\\"}\", \"unaligned_part_size\": \"\\\"500\\\"\", \"al\": \"{\\\"ambiguity_score\\\": \\\"0.99\\\", \\\"ambiguity_usage\\\": \\\"one\\\", \\\"fragmented\\\": \\\"false\\\", \\\"fragmented_max_indent\\\": \\\"50\\\", \\\"min_alignment\\\": \\\"65\\\", \\\"min_identity\\\": \\\"95.0\\\", \\\"upper_bound_assembly\\\": \\\"false\\\", \\\"upper_bound_min_con\\\": \\\"2\\\", \\\"use_all_alignments\\\": \\\"false\\\"}\", \"extensive_mis_size\": \"\\\"1000\\\"\", \"large\": \"\\\"false\\\"\", \"in\": \"{\\\"__current_case__\\\": 1, \\\"custom\\\": \\\"false\\\", \\\"inputs\\\": {\\\"__class__\\\": \\\"ConnectedValue\\\"}}\", \"k_mer\": \"{\\\"__current_case__\\\": 1, \\\"k_mer_stats\\\": \\\"\\\"}\", \"split_scaffolds\": \"\\\"false\\\"\", \"min_contig\": \"\\\"500\\\"\"}",
             "id": 3,
             "tool_shed_repository": {
                 "owner": "iuc",
@@ -415,11 +420,11 @@
             "errors": null,
             "name": "Quast",
             "post_job_actions": {
-                "RenameDatasetActionreport_pdf": {
-                    "output_name": "report_pdf",
+                "RenameDatasetActionreport_html": {
+                    "output_name": "report_html",
                     "action_type": "RenameDatasetAction",
                     "action_arguments": {
-                        "newname": "quast.pdf"
+                        "newname": "quast.html.zip"
                     }
                 },
                 "RenameDatasetActionlog": {
@@ -429,11 +434,11 @@
                         "newname": "quast.log"
                     }
                 },
-                "RenameDatasetActionreport_html": {
-                    "output_name": "report_html",
+                "RenameDatasetActionreport_pdf": {
+                    "output_name": "report_pdf",
                     "action_type": "RenameDatasetAction",
                     "action_arguments": {
-                        "newname": "quast.html.zip"
+                        "newname": "quast.pdf"
                     }
                 },
                 "RenameDatasetActionquast_tabular": {
@@ -445,12 +450,7 @@
                 }
             },
             "label": null,
-            "inputs": [
-                {
-                    "name": "in",
-                    "description": "runtime parameter for tool Quast"
-                }
-            ],
+            "inputs": [],
             "position": {
                 "top": 930.9000244140625,
                 "left": 821.800048828125
