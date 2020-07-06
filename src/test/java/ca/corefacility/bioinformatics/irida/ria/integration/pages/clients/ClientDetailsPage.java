@@ -5,6 +5,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -70,7 +71,8 @@ public class ClientDetailsPage extends AbstractPage {
 		logger.debug("Checking for client existence");
 		if (driver.getCurrentUrl().contains(RELATIVE_URL)) {
 			logger.debug("Succesfully loaded client list page");
-			waitForAjax();
+			WebDriverWait wait = new WebDriverWait(driver, 2);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-admin-clients-table")));
 			logger.debug("Table loaded");
 			List<WebElement> findElements = driver.findElements(By.className("clientIdCol"));
 			deleted = true;
@@ -83,10 +85,5 @@ public class ClientDetailsPage extends AbstractPage {
 		}
 
 		return deleted;
-	}
-
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
 	}
 }

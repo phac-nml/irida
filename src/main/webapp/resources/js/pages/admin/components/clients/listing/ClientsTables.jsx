@@ -99,5 +99,5 @@ export function ClientsTable() {
     revokeClientTokens(id).then(updateTable);
   }
 
-  return <PagedTable columns={columns} />;
+  return <PagedTable className={"t-admin-clients-table"} columns={columns} />;
 }

@@ -46,6 +46,21 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-announcements-link")
 	private List<WebElement> adminAnnouncementsLink;
 
+	@FindBy(className="t-add-user-btn")
+	private List<WebElement> adminAddUserBtn;
+
+	@FindBy(className="t-create-group-btn")
+	private List<WebElement> adminCreateGroupBtn;
+
+	@FindBy(className="t-add-client-btn")
+	private List<WebElement> adminAddClientBtn;
+
+	@FindBy(className="t-add-remote-api-btn")
+	private List<WebElement> adminAddRemoteApiBtn;
+
+	@FindBy(className="t-create-announcement")
+	private List<WebElement> adminAddAnnouncementBtn;
+
 	public AdminPage(WebDriver driver) { super(driver); }
 
 	/**
@@ -166,6 +181,49 @@ public class AdminPage extends AbstractPage {
 	 */
 	public boolean adminAnnouncementsLinkVisible() {
 		return adminAnnouncementsLink.size() == 1;
+	}
+
+	/**
+	 * Determines if add user button is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminAddUserVisible() {
+		return adminAddUserBtn.size() == 1;
+	}
+
+	/**
+	 * Determines if create user group button is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminCreateGroupVisible() { return adminCreateGroupBtn.size() == 1; }
+
+	/**
+	 * Determines if add client button is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminAddClientVisible() {
+		return adminAddClientBtn.size() == 1;
+	}
+
+	/**
+	 * Determines if add remote connection button is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminAddRemoteApiVisible() {
+		return adminAddRemoteApiBtn.size() == 1;
+	}
+
+	/**
+	 * Determines if add announcement button is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminAddAnnouncementVisible() {
+		return adminAddAnnouncementBtn.size() == 1;
 	}
 
 	/**

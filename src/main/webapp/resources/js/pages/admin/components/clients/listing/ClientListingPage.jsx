@@ -17,12 +17,13 @@ export default function ClientListingPage() {
       title={i18n("clients.title")}
       headerExtras={
         <AddNewButton
+          className={"t-add-client-btn"}
           href={setBaseUrl(`clients/create`)}
           text={i18n("clients.add")}
         />
       }
     >
-      <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>
+      <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
         <ClientsTable />
       </PagedTableProvider>
     </PageWrapper>

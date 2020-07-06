@@ -435,28 +435,6 @@ public class ClientsController extends BaseController {
 	}
 
 	/**
-	 * Get a {@link TableResponse} for the Clients page.
-	 *
-	 * @param tableRequest
-	 * 		{@link TableRequest} for the current clients table.
-	 *
-	 * @return {@link TableResponse}
-	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public TableResponse<ClientModel> getAjaxClientsList(@RequestBody ClientTableRequest tableRequest) {
-		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
-				.searchClient(tableRequest.getSearch());
-
-		Page<IridaClientDetails> page = clientDetailsService
-				.search(specification, PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
-		List<ClientModel> models = page.getContent().stream().map(client -> new ClientModel(client, clientDetailsService.countActiveTokensForClient(client)))
-				.collect(Collectors.toList());
-
-		return new TableResponse<ClientModel>(models, page.getTotalElements());
-	}
-
-	/**
 	 * Generate a temporary password for a user
 	 *
 	 * @return A temporary password

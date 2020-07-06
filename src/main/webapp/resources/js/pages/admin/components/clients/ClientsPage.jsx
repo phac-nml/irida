@@ -11,7 +11,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  */
 export default function ClientsPage({}) {
   return (
-    <PagedTableProvider url={setBaseUrl("clients/ajax/list")}>
+    <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
       <ClientsTable />
     </PagedTableProvider>
   );

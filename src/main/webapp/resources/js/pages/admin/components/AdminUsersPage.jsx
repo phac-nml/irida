@@ -21,6 +21,7 @@ export default function AdminUsersPage() {
       title={i18n("AdminPanel.users")}
       headerExtras={
         <AddNewButton
+          className={"t-add-user-btn"}
           href={setBaseUrl(`users/create`)}
           text={i18n("AdminPanel.addUser")}
         />

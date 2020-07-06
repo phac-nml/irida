@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -18,8 +19,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.Announceme
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsService;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -29,6 +32,7 @@ import static org.mockito.Mockito.*;
 public class AnnouncementsAjaxControllerTest {
 	private AnnouncementService announcementService;
 	private UserService userService;
+	private UIAnnouncementsService UIAnnouncementsService;
 	private AnnouncementAjaxController controller;
 
 	private final User ANNOUNCEMENT_USER_01 = new User(1L, "FRED", "fred@nowhere.ca", "SDKLDJFLKSJK##@", "Fred",
@@ -44,7 +48,8 @@ public class AnnouncementsAjaxControllerTest {
 	public void setUp() {
 		announcementService = mock(AnnouncementService.class);
 		userService = mock(UserService.class);
-		controller = new AnnouncementAjaxController(announcementService, userService);
+		UIAnnouncementsService = new UIAnnouncementsService(announcementService, userService);
+		controller = new AnnouncementAjaxController(UIAnnouncementsService);
 
 		Page<Announcement> announcementPage = new Page<>() {
 			@Override

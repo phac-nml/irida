@@ -27,22 +27,27 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.clickUsersSubMenu();
 		page.clickUsersLink();
 		assertTrue("Admin can navigate to users page, user page title should be present", page.comparePageTitle("Users"));
+		assertTrue("Add User button should be present", page.adminAddUserVisible());
 		// Navigate to user groups page
 		page.clickUsersSubMenu();
 		page.clickGroupsLink();
 		assertTrue("Admin can navigate to groups page, groups page title should be present", page.comparePageTitle("Groups"));
+		assertTrue("Create New User Group button should be present", page.adminCreateGroupVisible());
 		// Navigate to clients page
 		page.clickClientsLink();
 		assertTrue("Admin can navigate to clients page, clients page title should be present", page.comparePageTitle("Clients"));
+		assertTrue("Add Client button should be present", page.adminAddClientVisible());
 		// Navigate to remote api page
 		page.clickRemoteApiLink();
 		assertTrue("Admin can navigate to remote api page, remote api page title should be present", page.comparePageTitle("Remote IRIDA Connections"));
+		assertTrue("Add Remote Connection button should be present", page.adminAddRemoteApiVisible());
 		// Navigate to sequencing runs page
 		page.clickSequencingRunsLink();
 		assertTrue("Admin can navigate to sequencing runs page, sequencing runs page title should be present", page.comparePageTitle("Sequencing Runs"));
 		// Navigate to announcements page
 		page.clickAnnouncementsLink();
 		assertTrue("Admin can navigate to announcements page, announcements page title should be present", page.comparePageTitle("Announcements"));
+		assertTrue("Add Announcement button should be present", page.adminAddAnnouncementVisible());
 		// Navigate back to statistics page
 		page.clickStatsLink();
 		assertTrue("Admin can navigate to stats page, stats page title should be present", page.comparePageTitle("Statistics"));

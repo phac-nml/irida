@@ -21,6 +21,7 @@ export default function AdminRemoteApiPage() {
       title={i18n("AdminPanel.remoteApi")}
       headerExtras={
         <AddNewButton
+          className={"t-add-remote-api-btn"}
           text={i18n("AdminPanel.addRemoteApi")}
           href={setBaseUrl("remote_api/create")}
         />

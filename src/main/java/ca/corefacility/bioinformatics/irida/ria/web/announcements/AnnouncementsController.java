@@ -212,43 +212,4 @@ public class AnnouncementsController extends BaseController {
 
         return ANNOUNCEMENT_DETAILS;
     }
-
-    /**
-     * Get user read status for current announcement
-     * @param announcementID {@link Long} identifier for the {@link Announcement}
-     * @param params {@link DataTablesParams} parameters for current DataTable
-     * @return {@link DataTablesResponse} containing the list of users.
-     */
-    @RequestMapping(value = "/{announcementID}/details/ajax/list", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DataTablesResponse getUserAnnouncementInfoTable(
-            @PathVariable Long announcementID,
-            final @DataTablesRequest DataTablesParams params) {
-
-        final Announcement currentAnnouncement = announcementService.read(announcementID);
-
-        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()), PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-        final List<DataTablesResponseModel> announcementUsers = page.getContent().stream()
-                .map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
-                .collect(Collectors.toList());
-
-        return new DataTablesResponse(params, page, announcementUsers);
-    }
-
-    /**
-     * Utility method for checking whether the {@link Announcement} has been read by the {@link User}
-     *
-     * @param user
-     *          The user we want to check
-     * @param announcement
-     *          The announcement we want to check.
-     * @return {@link AnnouncementUserJoin} representing that the user has read the announcement, or null
-     *              if the user hasn't read the announcement.
-     */
-    private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
-        final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
-        final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
-                .filter(j -> j.getObject().equals(user)).findAny();
-        return currentAnnouncement.orElse(null);
-    }
 }

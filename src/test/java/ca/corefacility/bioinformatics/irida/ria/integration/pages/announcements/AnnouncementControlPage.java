@@ -90,9 +90,4 @@ public class AnnouncementControlPage extends AbstractPage {
             throw new IndexOutOfBoundsException();
         }
     }
-
-    private void waitForAjax() {
-        Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-        wait.until(Ajax.waitForAjax(60000));
-    }
 }
