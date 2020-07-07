@@ -41,7 +41,7 @@ module.exports = {
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "ncbi-exports": "./resources/js/admin/ncbi-exports",
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
@@ -80,7 +80,7 @@ module.exports = {
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
   groups: "./resources/js/pages/UserGroupsPage",
-  "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
+  "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
