@@ -316,7 +316,7 @@ public class AdminPage extends AbstractPage {
 	public void clickSequencingRunsLink() {
 		adminSequencingRunsLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
-		wait.until(ExpectedConditions.urlContains("/admin/sequencingRuns"));
+		wait.until(ExpectedConditions.urlContains("/admin/sequencing_runs"));
 	}
 
 	/**
