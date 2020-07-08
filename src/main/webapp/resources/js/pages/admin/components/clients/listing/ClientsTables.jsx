@@ -2,12 +2,12 @@ import React, { useContext } from "react";
 import {
   PagedTable,
   PagedTableContext
-} from "../../../components/ant.design/PagedTable";
+} from "../../../../../components/ant.design/PagedTable";
 import { Button, Popconfirm, Tag } from "antd";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
-import { revokeClientTokens } from "../../../apis/clients/clients";
-import { IconStop } from "../../../components/icons/Icons";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../../../components/ant.design/table-renderers";
+import { revokeClientTokens } from "../../../../../apis/clients/clients";
+import { IconStop } from "../../../../../components/icons/Icons";
 
 /**
  * Table for displaying a list of clients.
@@ -31,7 +31,7 @@ export function ClientsTable() {
       sorter: true,
       render(text, item) {
         return (
-          <a className="t-client-name" href={setBaseUrl(`clients/${item.id}`)}>
+          <a className="t-client-name" href={setBaseUrl(`/clients/${item.id}`)}>
             {text}
           </a>
         );
@@ -99,5 +99,5 @@ export function ClientsTable() {
     revokeClientTokens(id).then(updateTable);
   }
 
-  return <PagedTable columns={columns} />;
+  return <PagedTable className={"t-admin-clients-table"} columns={columns} />;
 }

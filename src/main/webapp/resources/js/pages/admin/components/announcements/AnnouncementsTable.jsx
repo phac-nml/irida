@@ -2,16 +2,16 @@
  * @fileOverview React component to render the announcements table.
  */
 import React, { forwardRef, useContext, useImperativeHandle } from "react";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { dateColumnFormat } from "../../components/ant.design/table-renderers";
-import { SPACE_XS } from "../../styles/spacing";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
+import { SPACE_XS } from "../../../../styles/spacing";
 import { EditAnnouncement } from "./EditAnnouncement";
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
 import {
   PagedTable,
   PagedTableContext
-} from "../../components/ant.design/PagedTable";
-import { MarkdownViewer } from "../../components/markdown/MarkdownViewer";
+} from "../../../../components/ant.design/PagedTable";
+import { MarkdownViewer } from "../../../../components/markdown/MarkdownViewer";
 
 /**
  * React component to render the announcements table.

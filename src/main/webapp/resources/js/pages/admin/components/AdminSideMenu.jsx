@@ -23,14 +23,14 @@ export default function AdminHeader() {
 
   // The following renders the AdminPanelSideMenu component
   return (
-    <Sider>
+    <Sider width={220}>
       <Location>
         {props => {
           const keyname = props.location.pathname.match(pathRegx);
           return (
             <section>
               <Link style={{ paddingLeft: 10, paddingRight: 10 }} to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}>
-                <img style={{ height: 64, width: 180 }} src={setBaseUrl("/resources/img/irida_logo_dark.svg")}/>
+                <img style={{ height: 64, width: 200 }} src={setBaseUrl("/resources/img/irida_logo_dark.svg")}/>
               </Link>
               <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
                     selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
@@ -51,6 +51,26 @@ export default function AdminHeader() {
                     </Link>
                   </Menu.Item>
                 </SubMenu>
+                <Menu.Item key="clients">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.CLIENTS}`} className={"t-admin-clients-link"}>
+                    {i18n("AdminPanel.clients")}
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="remoteApi">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} className={"t-admin-remote-api-link"}>
+                    {i18n("AdminPanel.remoteApi")}
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="sequencingRuns">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`} className={"t-admin-sequencing-runs-link"}>
+                    {i18n("AdminPanel.sequencingRuns")}
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="announcements">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.ANNOUNCEMENTS}`} className={"t-admin-announcements-link"}>
+                    {i18n("AdminPanel.announcements")}
+                  </Link>
+                </Menu.Item>
               </Menu>
             </section>
           );
