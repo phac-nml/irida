@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,8 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-
-
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -280,6 +281,34 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	public void setUploadSha256(String uploadSha256) {
 		this.uploadSha256 = uploadSha256;
+	}
+
+	/**
+	 * Gets the sequence file size.
+	 *
+	 * @return The sequence file size.
+	 */
+	public String getFileSize() {
+		return IridaFiles.getFileSize(file);
+	}
+
+	/**
+	 * Checks if a file is gzipped.
+	 *
+	 * @return boolean if file is gzipped or not.
+	 * @throws IOException if file cannot be read
+	 */
+	public boolean isGzipped() throws IOException {
+		return IridaFiles.isGzipped(file);
+	}
+
+	/**
+	 * Gets sequence file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
 	}
 
 }

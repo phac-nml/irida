@@ -532,7 +532,6 @@ public class RESTSampleSequenceFilesController {
 			sf.setFile(target);
 
 			Fast5Object fast5Object = new Fast5Object(sf);
-			fast5Object.setType(iridaFileStorageUtility.isGzipped(sf.getFile()));
 
 			if (sequencingRun != null) {
 				if (sequencingRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {

@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcesso
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 public class ChecksumFileProcessorTest {
 	private ChecksumFileProcessor fileProcessor;
@@ -33,6 +34,7 @@ public class ChecksumFileProcessorTest {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository, iridaFileStorageUtility);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@Test

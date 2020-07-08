@@ -1,0 +1,54 @@
+package ca.corefacility.bioinformatics.irida.util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+
+/**
+ * Static class which has file object operations that require
+ * access to the iridaFileStorageUtility but in a static context
+ */
+
+public final class IridaFiles {
+
+	private static IridaFileStorageUtility iridaFileStorageUtility;
+
+	public static void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
+		IridaFiles.iridaFileStorageUtility = iridaFileStorageUtility;
+	}
+	private IridaFiles() {
+	}
+
+	/**
+	 * Gets the file size of the file from the iridaFileStorageUtility
+	 *
+	 * @param file The path to the file
+	 * @return file size as a human readable string
+	 */
+	public static String getFileSize(Path file) {
+		return iridaFileStorageUtility.getFileSize(file);
+	}
+
+	/**
+	 * Checks if the file is gzipped in iridaFileStorageUtility
+	 *
+	 * @param file The path to the file
+	 * @return if file is gzipped or not
+	 * @throws IOException if file cannot be read
+	 */
+	public static boolean isGzipped(Path file) throws IOException {
+		return iridaFileStorageUtility.isGzipped(file);
+	}
+
+	/**
+	 * Gets the file input stream from iridaFileStorageUtility
+	 *
+	 * @param file The path to the file
+	 * @return the file input stream
+	 */
+	public static InputStream getFileInputStream(Path file) {
+		return iridaFileStorageUtility.getFileInputStream(file);
+	}
+}

@@ -4,8 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.SequencingRunController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -25,14 +23,12 @@ public class SequencingRunControllerTest {
 
 	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
-		controller = new SequencingRunController(sequencingRunService, objectService, iridaFileStorageUtility);
+		controller = new SequencingRunController(sequencingRunService, objectService);
 	}
 
 	@Test

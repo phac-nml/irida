@@ -25,27 +25,27 @@
                 <tr
                   class="file-row"
                   role="row"
-                  th:each="fileObject : ${seqObject.sequenceFileDetailsList}"
-                  th:id="${'file-row-' + fileObject.sequenceFile.identifier}"
+                  th:each="file : ${seqObject.getFiles()}"
+                  th:id="${'file-row-' + file.identifier}"
                 >
-                  <td class="file-id" th:text="${fileObject.sequenceFile.identifier}">ID</td>
+                  <td class="file-id" th:text="${file.identifier}">ID</td>
                   <td>
                     <a
                       class="file-name btn btn-default btn-xs"
-                      th:href="@{/sequencingRuns/{runId}/sequenceFiles/{objId}/file/{id}/summary(runId=${run.getId()}, objId=${seqObject.sequencingObjectId}, id=${fileObject.sequenceFile.getId()})}"
+                      th:href="@{/sequencingRuns/{runId}/sequenceFiles/{objId}/file/{id}/summary(runId=${run.getId()}, objId=${seqObject.getId()}, id=${file.getId()})}"
                       href="#"
-                      th:text="${fileObject.sequenceFile.label}"
+                      th:text="${file.label}"
                     ></a>
                   </td>
                   <td
-                    data-order="${fileObject.fileSize}"
-                    th:text="${fileObject.fileSize}"
+                    data:order="${file.getFileSize()}"
+                    th:text="${file.getFileSize()}"
                   ></td>
                   <td class="file-buttons">
                     <div class="btn-toolbar pull-right">
                       <button
                         class="btn btn-primary btn-xs download-file"
-                        th:attr="data-file-id=${fileObject.sequenceFile.getId()},data-object-id=${seqObject.sequencingObjectId}"
+                        th:attr="data-file-id=${file.getId()},data-object-id=${seqObject.getId()}"
                       >
                         <span class="fa fa-fw fa-download"></span>
                       </button>

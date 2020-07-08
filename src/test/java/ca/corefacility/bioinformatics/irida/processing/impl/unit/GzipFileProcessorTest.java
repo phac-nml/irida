@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -44,6 +45,7 @@ public class GzipFileProcessorTest {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE, iridaFileStorageUtility);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@Test(expected = FileProcessorException.class)

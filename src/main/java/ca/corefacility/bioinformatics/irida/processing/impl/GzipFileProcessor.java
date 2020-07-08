@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
+
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip
  * compressed files have the extension ".gz" (not for determining whether or not
@@ -41,10 +42,9 @@ public class GzipFileProcessor implements FileProcessor {
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, IridaFileStorageUtility iridaFileStorageUtility) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		removeCompressedFile = false;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageUtility iridaFileStorageUtility) {
@@ -115,11 +115,11 @@ public class GzipFileProcessor implements FileProcessor {
 		try {
 			logger.trace("About to try handling a gzip file.");
 
-			if (iridaFileStorageUtility.isGzipped(file)) {
+			if (sequenceFile.isGzipped()) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 				sequenceFile.setFile(file);
 
-				try (GZIPInputStream zippedInputStream = new GZIPInputStream(iridaFileStorageUtility.getFileInputStream(file))) {
+				try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
 					logger.trace("Handling gzip compressed file.");
 
 					Path targetDirectory = Files.createTempDirectory(null);

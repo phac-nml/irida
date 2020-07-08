@@ -23,14 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.PipelineStartParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.PairedEndFiles;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SingleEndFiles;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -98,7 +95,6 @@ public class PipelineController extends BaseController {
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
 	private EmailController emailController;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/*
 	 * CONTROLLERS
@@ -112,7 +108,7 @@ public class PipelineController extends BaseController {
 			CartController cartController, MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService, UpdateSamplePermission updateSamplePermission,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			GalaxyToolDataService galaxyToolDataService, EmailController emailController, IridaFileStorageUtility iridaFileStorageUtility) {
+			GalaxyToolDataService galaxyToolDataService, EmailController emailController) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -126,7 +122,6 @@ public class PipelineController extends BaseController {
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
 		this.emailController = emailController;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -231,30 +226,19 @@ public class PipelineController extends BaseController {
 							Collection<SampleSequencingObjectJoin> pairs = sequencingObjectService.getSequencesForSampleOfType(
 									sample, SequenceFilePair.class);
 
-							List<PairedEndFiles> pairedEndFilesList = new ArrayList<>();
-							for(SampleSequencingObjectJoin p : pairs) {
-								SequenceFilePair pair = (SequenceFilePair) p.getObject();
-								String forwardFileSize = iridaFileStorageUtility.getFileSize(pair.getForwardSequenceFile().getFile());
-								String reverseFileSize = iridaFileStorageUtility.getFileSize(pair.getReverseSequenceFile().getFile());
-								pairedEndFilesList.add(new PairedEndFiles(pair, forwardFileSize, reverseFileSize));
-							}
-
-							files.put("paired_end", pairedEndFilesList);
+							files.put("paired_end", pairs.stream()
+									.map(SampleSequencingObjectJoin::getObject)
+									.collect(Collectors.toList()));
 						}
 
-						List<SingleEndFiles> singleEndFilesList = new ArrayList<>();
 						// get the single end reads
 						if (description.acceptsSingleSequenceFiles()) {
 							Collection<SampleSequencingObjectJoin> singles = sequencingObjectService.getSequencesForSampleOfType(
 									sample, SingleEndSequenceFile.class);
 
-							for(SampleSequencingObjectJoin p : singles) {
-								SingleEndSequenceFile singleEndSequenceFile = (SingleEndSequenceFile) p.getObject();
-								String fileSize = iridaFileStorageUtility.getFileSize(singleEndSequenceFile.getSequenceFile().getFile());
-								singleEndFilesList.add(new SingleEndFiles(singleEndSequenceFile, fileSize));
-							}
-
-							files.put("single_end", singleEndFilesList);
+							files.put("single_end", singles.stream()
+									.map(SampleSequencingObjectJoin::getObject)
+									.collect(Collectors.toList()));
 						}
 
 						sampleMap.put("files", files);

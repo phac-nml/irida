@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -98,6 +99,14 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 		}
 	}
 
+	/**
+	 * Gets the assembly file size.
+	 *
+	 * @return The assembly file size.
+	 */
+	public String getFileSize() {
+		return IridaFiles.getFileSize(getFile());
+	}
 
 	/**
 	 * Gets the assembly file.
