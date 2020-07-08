@@ -44,6 +44,9 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		// Navigate to sequencing runs page
 		page.clickSequencingRunsLink();
 		assertTrue("Admin can navigate to sequencing runs page, sequencing runs page title should be present", page.comparePageTitle("Sequencing Runs"));
+		// Navigate to ncbi exports page
+		page.clickNcbiExportsLink();
+		assertTrue("Admin can navigate to ncbi exports page, ncbi exports page title should be present", page.comparePageTitle("NCBI Exports"));
 		// Navigate to announcements page
 		page.clickAnnouncementsLink();
 		assertTrue("Admin can navigate to announcements page, announcements page title should be present", page.comparePageTitle("Announcements"));
@@ -72,10 +75,11 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Admin side menu should be visible", page.adminSideMenuVisible());
 		// Check that all top level links are visible
 		assertTrue("Admin stats link should be visible", page.adminStatsLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminClientsLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminRemoteApiLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminSequencingRunsLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminAnnouncementsLinkVisible());
+		assertTrue("Admin clients link should be visible", page.adminClientsLinkVisible());
+		assertTrue("Admin remote api link should be visible", page.adminRemoteApiLinkVisible());
+		assertTrue("Admin sequencing runs link should be visible", page.adminSequencingRunsLinkVisible());
+		assertTrue("Admin ncbi exports link should be visible", page.adminNcbiExportsLinkVisible());
+		assertTrue("Admin announcements link should be visible", page.adminAnnouncementsLinkVisible());
 		// Open sub menu to view other links
 		page.clickUsersSubMenu();
 		assertTrue("Admin users link should be visible", page.adminUsersLinkVisible());
