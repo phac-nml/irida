@@ -159,14 +159,14 @@
                         </a>
                     </li>
 
-                    <li class="dropdown">
+                    <li sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_USER', 'ROLE_TECHNICIAN')" class="dropdown">
                         <a href="#" class="dropdown-toggle nav-icon-wrapper" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">
                             <i class="fa fa-cog nav-icon" aria-hidden="true"></i>
                             <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+                            <th:block sec:authorize="hasAnyRole('ROLE_MANAGER')">
                                 <li>
                                     <a th:href="@{/users}" th:text="#{nav.main.users-list}">
                                         List Users
@@ -192,7 +192,7 @@
                                     Connections_</a>
                             </li>
 
-                            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')">
+                            <th:block sec:authorize="hasAnyRole('ROLE_TECHNICIAN')">
                                 <li role="seperator" class="divider"></li>
 
                                 <li>
