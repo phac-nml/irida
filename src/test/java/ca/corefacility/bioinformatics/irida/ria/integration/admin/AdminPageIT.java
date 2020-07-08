@@ -72,10 +72,10 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Admin side menu should be visible", page.adminSideMenuVisible());
 		// Check that all top level links are visible
 		assertTrue("Admin stats link should be visible", page.adminStatsLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminClientsLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminRemoteApiLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminSequencingRunsLinkVisible());
-		assertTrue("Admin stats link should be visible", page.adminAnnouncementsLinkVisible());
+		assertTrue("Admin clients link should be visible", page.adminClientsLinkVisible());
+		assertTrue("Admin remote api link should be visible", page.adminRemoteApiLinkVisible());
+		assertTrue("Admin sequencing runs link should be visible", page.adminSequencingRunsLinkVisible());
+		assertTrue("Admin announcements link should be visible", page.adminAnnouncementsLinkVisible());
 		// Open sub menu to view other links
 		page.clickUsersSubMenu();
 		assertTrue("Admin users link should be visible", page.adminUsersLinkVisible());
