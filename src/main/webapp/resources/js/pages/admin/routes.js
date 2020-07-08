@@ -10,6 +10,6 @@ export const ADMIN = {
   CLIENTS: "clients",
   REMOTEAPI: "remote_api",
   SEQUENCINGRUNS: "sequencingRuns",
-  NCBIEXPORTS: "ncbiExports",
+  NCBIEXPORTS: "ncbi_exports",
   ANNOUNCEMENTS: "announcements"
 };
