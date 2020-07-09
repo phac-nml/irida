@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
