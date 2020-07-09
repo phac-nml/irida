@@ -66,6 +66,11 @@ export default function AdminHeader() {
                     {i18n("AdminPanel.sequencingRuns")}
                   </Link>
                 </Menu.Item>
+                <Menu.Item key="ncbiExports">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.NCBIEXPORTS}`} className={"t-admin-ncbi-exports-link"}>
+                    {i18n("AdminPanel.ncbiExports")}
+                  </Link>
+                </Menu.Item>
                 <Menu.Item key="announcements">
                   <Link to={`${DEFAULT_URL}/${ADMIN.ANNOUNCEMENTS}`} className={"t-admin-announcements-link"}>
                     {i18n("AdminPanel.announcements")}

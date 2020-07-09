@@ -43,6 +43,9 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-sequencing-runs-link")
 	private List<WebElement> adminSequencingRunsLink;
 
+	@FindBy(className="t-admin-ncbi-exports-link")
+	private List<WebElement> adminNcbiExportsLink;
+
 	@FindBy(className="t-admin-announcements-link")
 	private List<WebElement> adminAnnouncementsLink;
 
@@ -161,6 +164,16 @@ public class AdminPage extends AbstractPage {
 	 */
 	public boolean adminRemoteApiLinkVisible() {
 		return adminRemoteApiLink.size() == 1;
+	}
+
+	/**
+	 * Determines if admin ncbi exports link on
+	 * side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminNcbiExportsLinkVisible() {
+		return adminNcbiExportsLink.size() == 1;
 	}
 
 	/**
@@ -317,6 +330,16 @@ public class AdminPage extends AbstractPage {
 		adminSequencingRunsLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin/sequencing_runs"));
+	}
+
+	/**
+	 * Clicks on the admin ncbi exports menu button to navigate
+	 * to the admin ncbi exports page.
+	 */
+	public void clickNcbiExportsLink() {
+		adminNcbiExportsLink.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.urlContains("/admin/ncbi_exports"));
 	}
 
 	/**

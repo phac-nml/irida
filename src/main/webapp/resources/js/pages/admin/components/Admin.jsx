@@ -28,6 +28,7 @@ const ClientListingPage = lazy(() => import("./clients/listing/ClientListingPage
 const AdminRemoteApiPage = lazy(() => import("./AdminRemoteApiPage"));
 const AdminSequencingRunsPage = lazy(() => import("./AdminSequencingRunsPage"));
 const AnnouncementAdminPage = lazy(() => import("./announcements/AnnouncementAdminPage"));
+const AdminNcbiExportsPage = lazy(() => import("./ncbi-exports/AdminNcbiExportsPage"));
 
 export default function Admin() {
   const DEFAULT_URL = setBaseUrl("/admin");
@@ -73,6 +74,11 @@ export default function Admin() {
                 <AdminSequencingRunsPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`
+                  }
+                />
+                <AdminNcbiExportsPage
+                  path={
+                    `${DEFAULT_URL}/${ADMIN.NCBIEXPORTS}`
                   }
                 />
                 <AnnouncementAdminPage
