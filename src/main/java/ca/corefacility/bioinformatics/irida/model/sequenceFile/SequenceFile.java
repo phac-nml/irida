@@ -288,6 +288,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	 *
 	 * @return The sequence file size.
 	 */
+	@JsonIgnore
 	public String getFileSize() {
 		return IridaFiles.getFileSize(file);
 	}
@@ -298,6 +299,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	 * @return boolean if file is gzipped or not.
 	 * @throws IOException if file cannot be read
 	 */
+	@JsonIgnore
 	public boolean isGzipped() throws IOException {
 		return IridaFiles.isGzipped(file);
 	}
@@ -307,6 +309,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	 *
 	 * @return returns input stream.
 	 */
+	@JsonIgnore
 	public InputStream getFileInputStream() {
 		return IridaFiles.getFileInputStream(file);
 	}
