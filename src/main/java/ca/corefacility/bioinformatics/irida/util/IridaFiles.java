@@ -3,7 +3,10 @@ package ca.corefacility.bioinformatics.irida.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
@@ -50,5 +53,25 @@ public final class IridaFiles {
 	 */
 	public static InputStream getFileInputStream(Path file) {
 		return iridaFileStorageUtility.getFileInputStream(file);
+	}
+
+	/**
+	 * Gets the file extension from iridaFileStorageUtility
+	 *
+	 * @param toConcatenate List of sequencingObjects to get file extensions for
+	 * @return the common extension of the files
+	 */
+	public static String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException{
+		return iridaFileStorageUtility.getFileExtension(toConcatenate);
+	}
+
+	/**
+	 * Appends a sequence file to another file
+	 *
+	 * @param target The path to the file into which to append
+	 * @param file The sequence file to append
+	 */
+	public static void appendToFile(Path target, SequenceFile file) throws IOException {
+		iridaFileStorageUtility.appendToFile(target, file);
 	}
 }

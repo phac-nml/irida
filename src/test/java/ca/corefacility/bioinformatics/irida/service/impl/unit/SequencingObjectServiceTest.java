@@ -6,8 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -32,7 +30,6 @@ public class SequencingObjectServiceTest {
 	SampleSequencingObjectJoinRepository ssoRepository;
 	SequenceConcatenationRepository concatenationRepository;
 	Validator validator;
-	IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
@@ -40,9 +37,8 @@ public class SequencingObjectServiceTest {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		concatenationRepository = mock(SequenceConcatenationRepository.class);
-		iridaFileStorageUtility = mock(IridaFileStorageLocalUtilityImpl.class);
 		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository,
-				concatenationRepository, validator, iridaFileStorageUtility);
+				concatenationRepository, validator);
 	}
 
 	@Test

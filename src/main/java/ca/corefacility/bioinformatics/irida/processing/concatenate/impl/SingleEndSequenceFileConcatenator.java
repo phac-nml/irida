@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatenator<SingleEndSequenceFile> {
 
-	private IridaFileStorageUtility iridaFileStorageUtility;
-
 	@Autowired
-	public SingleEndSequenceFileConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
+	public SingleEndSequenceFileConcatenator() {
 	}
 
 	/**
@@ -36,7 +34,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 			throws ConcatenateException, IOException {
 		Path tempFile;
 
-		String extension = iridaFileStorageUtility.getFileExtension(toConcatenate);
+		String extension = IridaFiles.getFileExtension(toConcatenate);
 
 		// create the filename with extension
 		filename = filename + "." + extension;
@@ -58,7 +56,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 
 			SequenceFile forwardSequenceFile = single.getSequenceFile();
 
-			iridaFileStorageUtility.appendToFile(tempFile, forwardSequenceFile);
+			IridaFiles.appendToFile(tempFile, forwardSequenceFile);
 		}
 
 		// create the new sequencefile and object

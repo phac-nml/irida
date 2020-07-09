@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +21,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
-	private IridaFileStorageUtility iridaFileStorageUtility;
-
 	@Autowired
-	public SequenceFilePairConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
+	public SequenceFilePairConcatenator() {
 	}
 
 	/**
@@ -35,7 +32,7 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException, IOException {
 
-		String extension = iridaFileStorageUtility.getFileExtension(toConcatenate);
+		String extension = IridaFiles.getFileExtension(toConcatenate);
 
 		// create the filenames with F/R for the forward and reverse files
 		String forwardName = filename + "_R1." + extension;
@@ -65,8 +62,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
-			iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
-			iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
+			IridaFiles.appendToFile(forwardFile, forwardSequenceFile);
+			IridaFiles.appendToFile(reverseFile, reverseSequenceFile);
 		}
 
 		// create new SequenceFiles

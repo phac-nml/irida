@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenatorFactory;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -47,19 +46,17 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	private final SequencingObjectRepository repository;
 	private final SequenceConcatenationRepository concatenationRepository;
 
-	private final IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
 			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			SequenceConcatenationRepository concatenationRepository, Validator validator, IridaFileStorageUtility iridaFileStorageUtility) {
+			SequenceConcatenationRepository concatenationRepository, Validator validator) {
 		super(repository, validator, SequencingObject.class);
 		this.repository = repository;
 		this.ssoRepository = ssoRepository;
 
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.concatenationRepository = concatenationRepository;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -249,7 +246,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			throws ConcatenateException, IOException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
-				.getConcatenator(toJoin, iridaFileStorageUtility);
+				.getConcatenator(toJoin);
 
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
 		
