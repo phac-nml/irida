@@ -311,14 +311,11 @@ public class SamplesController extends BaseController {
 			project = projectService.read(projectId);
 		}
 
-		List<PairedEndFiles> pairedEndFilesList = new ArrayList<>();
-
 		for (SequencingObject f : filePairs) {
 			// add project to qc entries and filter any unavailable entries
 			enhanceQcEntries(f, project);
 		}
 
-		List<SingleEndFiles> singleEndFilesList = new ArrayList<>();
 		for (SampleSequencingObjectJoin f : singleFileJoins) {
 			enhanceQcEntries(f.getObject(), project);
 		}

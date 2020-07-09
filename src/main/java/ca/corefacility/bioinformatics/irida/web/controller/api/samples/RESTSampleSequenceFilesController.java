@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -133,19 +132,17 @@ public class RESTSampleSequenceFilesController {
 
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
-			SequencingObjectService sequencingObjectService, AnalysisService analysisService, IridaFileStorageUtility iridaFileStorageUtility) {
+			SequencingObjectService sequencingObjectService, AnalysisService analysisService) {
 		this.sampleService = sampleService;
 		this.sequencingRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysisService = analysisService;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**

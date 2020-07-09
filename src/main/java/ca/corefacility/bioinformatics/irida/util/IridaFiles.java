@@ -58,12 +58,12 @@ public final class IridaFiles {
 	/**
 	 * Gets the file extension from iridaFileStorageUtility
 	 *
-	 * @param toConcatenate List of sequencingObjects to get file extensions for
+	 * @param files List of sequencingObjects to get file extensions for
 	 * @return the common extension of the files
-	 * @throws IOException if file cannot be read
+	 * @throws IOException if file(s) cannot be read
 	 */
-	public static String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException{
-		return iridaFileStorageUtility.getFileExtension(toConcatenate);
+	public static String getFileExtension(List<? extends SequencingObject> files) throws IOException {
+		return iridaFileStorageUtility.getFileExtension(files);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public final class IridaFiles {
 	 *
 	 * @param target The path to the file into which to append
 	 * @param file The sequence file to append
-	 * @throws IOException if file cannot be read
+	 * @throws IOException if file cannot be read/written
 	 */
 	public static void appendToFile(Path target, SequenceFile file) throws IOException {
 		iridaFileStorageUtility.appendToFile(target, file);

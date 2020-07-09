@@ -30,11 +30,16 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 	 */
 	@Override
 	public SingleEndSequenceFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
-			throws ConcatenateException, IOException {
+			throws ConcatenateException {
 		Path tempFile;
 
-		String extension = IridaFiles.getFileExtension(toConcatenate);
+		String extension = null;
 
+		try {
+			extension = IridaFiles.getFileExtension(toConcatenate);
+		} catch (IOException e) {
+			throw new ConcatenateException("Could not get file extension", e);
+		}
 		// create the filename with extension
 		filename = filename + "." + extension;
 		try {
@@ -55,7 +60,11 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 
 			SequenceFile forwardSequenceFile = single.getSequenceFile();
 
-			IridaFiles.appendToFile(tempFile, forwardSequenceFile);
+			try {
+				IridaFiles.appendToFile(tempFile, forwardSequenceFile);
+			} catch (IOException e) {
+				throw new ConcatenateException("Could not append file", e);
+			}
 		}
 
 		// create the new sequencefile and object

@@ -87,7 +87,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = ConcatenateException.class)
 	public void testConcatenateDifferentFileTypes() throws IOException, ConcatenateException {
 		String newFileName = "newFile";
 
@@ -100,7 +100,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = ConcatenateException.class)
 	public void testConcatenateBadExtension() throws IOException, ConcatenateException {
 		String newFileName = "newFile";
 

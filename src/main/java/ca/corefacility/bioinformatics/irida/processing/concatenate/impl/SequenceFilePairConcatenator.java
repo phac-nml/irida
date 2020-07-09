@@ -30,10 +30,15 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	 */
 	@Override
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
-			throws ConcatenateException, IOException {
+			throws ConcatenateException {
 
-		String extension = IridaFiles.getFileExtension(toConcatenate);
+		String extension = null;
 
+		try {
+			extension = IridaFiles.getFileExtension(toConcatenate);
+		} catch (IOException e) {
+			throw new ConcatenateException("Could not get file extension", e);
+		}
 		// create the filenames with F/R for the forward and reverse files
 		String forwardName = filename + "_R1." + extension;
 		String reverseName = filename + "_R2." + extension;
@@ -62,8 +67,12 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
-			IridaFiles.appendToFile(forwardFile, forwardSequenceFile);
-			IridaFiles.appendToFile(reverseFile, reverseSequenceFile);
+			try {
+				IridaFiles.appendToFile(forwardFile, forwardSequenceFile);
+				IridaFiles.appendToFile(reverseFile, reverseSequenceFile);
+			} catch (IOException e) {
+				throw new ConcatenateException("Could not append files", e);
+			}
 		}
 
 		// create new SequenceFiles
