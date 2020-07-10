@@ -22,6 +22,7 @@ Changes
 * [UI]: Updated NCBI Exports listing pages to use Ant Design Tables.
 * [UI/Developer]: Removed `irida.cart.js` (an older angularjs service for the cart).
 * [UI]: Fixed issue #637 where metadata toggles were not displaying in the "on" position properly on loading the advanced phylogenic viewer.
+* [Developer]: Added optional method `getAnalysisViewer` for IridaPlugin to allow external applications to use IRIDA's built in analysis visualizations (such as the phylogenetic tree viewer).
 
 20.01 to 20.05
 --------------
