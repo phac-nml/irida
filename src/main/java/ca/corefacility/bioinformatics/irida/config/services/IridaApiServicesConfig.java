@@ -287,6 +287,13 @@ public class IridaApiServicesConfig {
 		return null;
 	}
 
+	/**
+	 * Used to configure both the IridaFileStorageUtility implementation
+	 * as well as set the implementation in the IridaFiles static class
+	 * which uses the this implementation.
+	 *
+	 * @return A new {@link IridaFileStorageUtility} implementation.
+	 */
 	@Bean(name = "iridaFileStorageUtility")
 	public IridaFileStorageUtility iridaFileStorageUtility() {
 		IridaFileStorageUtility iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
