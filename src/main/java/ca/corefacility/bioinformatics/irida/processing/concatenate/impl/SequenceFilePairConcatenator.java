@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
@@ -12,17 +13,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * {@link SequencingObjectConcatenator} for {@link SequenceFilePair}s
  */
-@Component
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
-	@Autowired
-	public SequenceFilePairConcatenator() {
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	public SequenceFilePairConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -68,8 +68,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
 			try {
-				IridaFiles.appendToFile(forwardFile, forwardSequenceFile);
-				IridaFiles.appendToFile(reverseFile, reverseSequenceFile);
+				iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
+				iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
 			} catch (IOException e) {
 				throw new ConcatenateException("Could not append files", e);
 			}

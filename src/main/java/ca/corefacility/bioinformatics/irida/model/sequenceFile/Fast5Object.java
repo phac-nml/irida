@@ -96,14 +96,14 @@ public class Fast5Object extends SequencingObject {
 	 * @param file if the file
 	 * @return type of fast5object (unknown, zipped, or single)
 	 */
-	public Fast5Type setType(SequenceFile file) {
+	private Fast5Type setType(SequenceFile file) {
 
 		Fast5Object.Fast5Type type = Fast5Object.Fast5Type.UNKNOWN;
 
 		try {
 			String extension = FilenameUtils.getExtension(getFile().getFileName());
 
-			if (extension.equals("gz")) {
+			if (file.isGzipped()) {
 				type = Fast5Object.Fast5Type.ZIPPED;
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;

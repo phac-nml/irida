@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
@@ -66,14 +65,4 @@ public final class IridaFiles {
 		return iridaFileStorageUtility.getFileExtension(files);
 	}
 
-	/**
-	 * Appends a sequence file to another file
-	 *
-	 * @param target The path to the file into which to append
-	 * @param file The sequence file to append
-	 * @throws IOException if file cannot be read/written
-	 */
-	public static void appendToFile(Path target, SequenceFile file) throws IOException {
-		iridaFileStorageUtility.appendToFile(target, file);
-	}
 }

@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 
 import com.google.common.collect.ImmutableList;
@@ -288,7 +289,9 @@ public class IridaApiServicesConfig {
 
 	@Bean(name = "iridaFileStorageUtility")
 	public IridaFileStorageUtility iridaFileStorageUtility() {
-		return new IridaFileStorageLocalUtilityImpl();
+		IridaFileStorageUtility iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		return iridaFileStorageUtility;
 	}
 
 	@Bean(name = "uploadFileProcessingChain")

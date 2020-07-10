@@ -28,9 +28,9 @@ public class SequenceFilePairConcatenatorTest {
 
 	@Before
 	public void setUp() {
-		concat = new SequenceFilePairConcatenator();
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		concat = new SequenceFilePairConcatenator(iridaFileStorageUtility);
 	}
 
 	@Test
