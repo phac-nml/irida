@@ -5,10 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -16,6 +21,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class Fast5ObjectTest {
 	private static final String FILE_CONTENTS = "DATA CONTENTS";
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	@Before
+	public void setUp() {
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+	}
 
 	@Test
 	public void testCreateZippedFile() throws IOException {
