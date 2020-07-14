@@ -1,62 +1,102 @@
-import React from "react";
-import { PagedTable } from "../../../../components/ant.design/PagedTable";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { Button } from "antd";
+import React, { useContext, useRef } from "react";
+import {
+  PagedTable,
+  PagedTableContext
+} from "../../../../components/ant.design/PagedTable";
+import { Button, Popconfirm, Tag } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
+import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
+import { revokeClientTokens } from "../../../../apis/clients/clients";
+import { IconStop } from "../../../../components/icons/Icons";
 
+/**
+ * Table for displaying a list of clients.
+ * @return {*}
+ * @constructor
+ */
 export function ClientsTable() {
-  const columnDefs = [
+
+  const columns = [
     {
       title: i18n("iridaThing.id"),
-      key: "id",
-      dataIndex: "id"
+      width: 80,
+      dataIndex: "id",
+      sorter: true
     },
     {
       title: i18n("client.clientid"),
-      key: "name",
       dataIndex: "name",
-      render(text, record) {
+      ellipsis: true,
+      sorter: true,
+      render(text, item) {
         return (
-          <Button type="link" href={`clients/${record.id}`}>
+          <a className="t-client-name" href={setBaseUrl(`/clients/${item.id}`)}>
             {text}
-          </Button>
+          </a>
         );
       }
     },
     {
       title: i18n("client.grant-types"),
-      key: "grants",
-      dataIndex: "grants"
+      dataIndex: "grants",
+      render(grants) {
+        const colors = {
+          password: "purple",
+          authorization_code: "volcano",
+          refresh_token: "magenta"
+        };
+        return (
+          <div>
+            {grants.map(g => (
+              <Tag color={colors[g] || ""} key={g}>
+                {g}
+              </Tag>
+            ))}
+          </div>
+        );
+      }
     },
     {
+      ...dateColumnFormat(),
       title: i18n("iridaThing.timestamp"),
-      key: "createdDate",
-      dataIndex: "createdDate",
-      render(text) {
-        return formatInternationalizedDateTime(text);
-      }
+      dataIndex: "createdDate"
     },
     {
       title: i18n("client.details.token.active"),
-      key: "activeTokens",
       dataIndex: "tokens",
       align: "right"
+    },
+    {
+      key: "action",
+      align: "right",
+      fixed: "right",
+      width: 200,
+      render(text, record) {
+        const disabled = !record.tokens;
+        return (
+          <Popconfirm
+            disabled={disabled}
+            title={i18n("client.revoke.confirm", record.name)}
+            placement={"topRight"}
+            onConfirm={() => revokeTokens(record.id)}
+          >
+            <Button disabled={disabled}>
+              <IconStop />
+              {i18n("client.details.token.revoke")}
+            </Button>
+          </Popconfirm>
+        );
+      }
     }
   ];
 
-  return (
-    <PageWrapper
-      title={i18n("clients.title")}
-      headerExtras={
-        <AddNewButton
-          text={i18n("clients.add")}
-          href={setBaseUrl("clients/create")}
-        />
-      }
-    >
-      <PagedTable columns={columnDefs} />
-    </PageWrapper>
-  );
+  /**
+   * Revoke the tokens for the current client described
+   * in the current row.
+   */
+  function revokeTokens(id) {
+    revokeClientTokens(id).then(updateTable);
+  }
+
+  return <PagedTable className={"t-admin-clients-table"} columns={columns} />;
 }

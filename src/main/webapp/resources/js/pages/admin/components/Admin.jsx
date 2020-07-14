@@ -24,7 +24,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 const AdminStatistics = lazy(() => import("./AdminStatistics"));
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
 const AdminUserGroupsPage = lazy(() => import("../../UserGroupsPage/components/UserGroupsPage"));
-const ClientListingPage = lazy(() => import("./clients/listing/ClientListingPage"));
+const AdminClientsPage = lazy(() => import("./clients/AdminClientsPage"));
 const AdminRemoteApiPage = lazy(() => import("./AdminRemoteApiPage"));
 const AdminSequencingRunsPage = lazy(() => import("./AdminSequencingRunsPage"));
 const AnnouncementAdminPage = lazy(() => import("./announcements/AnnouncementAdminPage"));
@@ -61,7 +61,7 @@ export default function Admin() {
                     `${DEFAULT_URL}/${ADMIN.USERGROUPS}`
                   }
                 />
-                <ClientListingPage
+                <AdminClientsPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.CLIENTS}`
                   }
