@@ -2164,11 +2164,6 @@ angular-aside@^1.3.2:
   resolved "https://registry.yarnpkg.com/angular-aside/-/angular-aside-1.4.0.tgz#e57d42bb43c48d7ff388627c18d3adb16d762b2c"
   integrity sha1-5X1Cu0PEjX/ziGJ8GNOtsW12Kyw=
 
-angular-bootstrap-lightbox@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/angular-bootstrap-lightbox/-/angular-bootstrap-lightbox-0.12.0.tgz#5dce19730bd207a4c1873e340c393abab50b1929"
-  integrity sha1-Xc4ZcwvSB6TBhz40DDk6urULGSk=
-
 angular-marked@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/angular-marked/-/angular-marked-1.2.2.tgz#031f81015dad5fb01adf8d48922c52feb3588de5"
@@ -6576,11 +6571,6 @@ lodash.debounce@4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
-
-lodash.keys@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/lodash.keys/-/lodash.keys-4.2.0.tgz#a08602ac12e4fb83f91fc1fb7a360a4d9ba35205"
-  integrity sha1-oIYCrBLk+4P5H8H7ejYKTZujUgU=
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
