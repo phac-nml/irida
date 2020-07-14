@@ -102,10 +102,17 @@ public class UIMetadataTemplateService {
 		return template.getFields();
 	}
 
+	/**
+	 * Create a new {@link MetadataTemplate} within a {@link Project}
+	 *
+	 * @param request Details about the template to create
+	 * @return The identifier for the new {@link MetadataTemplate}
+	 */
 	public Long createNewMetadataTemplate(NewMetadataTemplateRequest request) {
 		Project project = projectService.read(request.getProjectId());
 		MetadataTemplate template = new MetadataTemplate(request.getName(), request.getDescription());
 		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
-		return join.getObject().getId();
+		return join.getObject()
+				.getId();
 	}
 }
