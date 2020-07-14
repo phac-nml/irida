@@ -49,6 +49,12 @@ public class MetadataTemplatesAjaxController {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
+	/**
+	 * Create a new Metadata Template within a project.
+	 *
+	 * @param request {@link NewMetadataTemplateRequest} with details about the template to create.
+	 * @return The identifier for the newly created template.
+	 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<Long> createNewMetadataTemplate(@RequestBody NewMetadataTemplateRequest request) {
 		return ResponseEntity.ok(service.createNewMetadataTemplate(request));

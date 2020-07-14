@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
+/**
+ * UI Request to create a new metadata template within a project.
+ */
 public class NewMetadataTemplateRequest {
 	private Long projectId;
 	private String name;

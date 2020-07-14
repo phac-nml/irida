@@ -37,6 +37,13 @@ export async function updateTemplateAttribute({ templateId, field, value }) {
     .catch((error) => error.response.data);
 }
 
+/**
+ * Create a new metadata template
+ * @param projectId - Identifier for the project to create the template in.
+ * @param name - Name of the template
+ * @param description - Template description (optional)
+ * @returns {Promise<AxiosResponse<any>|void>}
+ */
 export async function createNewMetadataTemplate({
   projectId = window.project.id,
   name,
@@ -44,6 +51,5 @@ export async function createNewMetadataTemplate({
 }) {
   return await axios
     .post(BASE_URL, { projectId, name, description })
-    .then(({ data }) => data)
-    .catch((error) => console.log("FUCK ME"));
+    .then(({ data }) => data);
 }
