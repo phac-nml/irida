@@ -5,7 +5,8 @@
 <head>
   <link rel="stylesheet" th:href="@{/dist/css/app.bundle.css}">
   <style>
-    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    <!-- This is used by angular to prevent page flickering. Remove when done with angular -->
+    .ng-cloak {
       display: none !important;
     }
   </style>
