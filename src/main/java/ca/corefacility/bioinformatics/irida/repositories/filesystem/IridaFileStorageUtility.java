@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
@@ -28,12 +27,12 @@ public interface IridaFileStorageUtility {
 	public File getTemporaryFile(Path file);
 
 	/**
-	 * Get file size in bytes
+	 * Get file size
 	 *
 	 * @param file The {@link Path} to the file
 	 * @return {@link Long} size of file retrieved from path
 	 */
-	public Long getFileSize(Path file);
+	public String getFileSize(Path file);
 
 	/**
 	 * Write file to storage (azure, aws, or local)
@@ -95,16 +94,16 @@ public interface IridaFileStorageUtility {
 	 *
 	 * @param target the {@link Path} to append to
 	 * @param file   the {@link SequenceFile} to append to the path
-	 * @throws ConcatenateException if there is an error appending the file
+	 * @throws IOException if there is an error appending the file
 	 */
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException;
+	public void appendToFile(Path target, SequenceFile file) throws IOException;
 
 	/**
-	 * Get the extension of the files to concatenate
+	 * Get the extension of the files
 	 *
-	 * @param toConcatenate The list of {@link SequencingObject} to concatenate
+	 * @param sequencingObjects The list of {@link SequencingObject} to get file extensions for
 	 * @return The common extension of the files
-	 * @throws ConcatenateException if the files have different or invalid extensions
+	 * @throws IOException if the files have different or invalid extensions
 	 */
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException;
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
 }

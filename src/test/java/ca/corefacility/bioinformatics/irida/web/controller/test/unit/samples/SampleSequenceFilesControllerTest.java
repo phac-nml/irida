@@ -69,7 +69,6 @@ public class SampleSequenceFilesControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
-
 		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
 	}
 

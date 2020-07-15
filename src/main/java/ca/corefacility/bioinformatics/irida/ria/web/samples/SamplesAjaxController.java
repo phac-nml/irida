@@ -189,6 +189,7 @@ public class SamplesAjaxController {
 	 */
 	private void createFast5FileInSample(MultipartFile file, Sample sample) throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
+		Fast5Object fast5Object = new Fast5Object(sequenceFile);
 		sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample);
 	}
 

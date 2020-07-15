@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 
 import com.google.common.collect.ImmutableList;
@@ -295,18 +296,28 @@ public class IridaApiServicesConfig {
 		return null;
 	}
 
+	/**
+	 * Used to configure both the IridaFileStorageUtility implementation
+	 * as well as set the implementation in the IridaFiles static class
+	 * which uses the this implementation.
+	 *
+	 * @return A new {@link IridaFileStorageUtility} implementation.
+	 */
 	@Bean(name = "iridaFileStorageUtility")
 	public IridaFileStorageUtility iridaFileStorageUtility() {
+		IridaFileStorageUtility iridaFileStorageUtility;
 		if(storageType.equalsIgnoreCase("azure")) {
-			return new IridaFileStorageAzureUtilityImpl(connectionStr, containerName);
+			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(connectionStr, containerName);
 		} else {
-			return new IridaFileStorageLocalUtilityImpl();
+			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		}
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		return iridaFileStorageUtility;
 	}
 
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
+			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
 			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
@@ -320,7 +331,7 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, iridaFileStorageUtility, fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")

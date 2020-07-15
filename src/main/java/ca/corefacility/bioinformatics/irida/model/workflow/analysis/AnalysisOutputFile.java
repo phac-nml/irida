@@ -26,10 +26,8 @@ import com.google.common.base.Strings;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -39,10 +37,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
  */
 @Entity
 @Table(name = "analysis_output_file")
-@EntityListeners({ RelativePathTranslatorListener.class, IridaFileStorageListener.class })
+@EntityListeners({ RelativePathTranslatorListener.class })
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
-
-	private static IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +48,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	@NotNull(message = "{analysis.output.file.file.notnull}")
 	@com.fasterxml.jackson.annotation.JsonIgnore
 	@org.codehaus.jackson.annotate.JsonIgnore
-	protected final Path file;
+	private final Path file;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -193,8 +189,4 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		return bytes;
 	}
 
-	@Override
-	public void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
-	}
 }

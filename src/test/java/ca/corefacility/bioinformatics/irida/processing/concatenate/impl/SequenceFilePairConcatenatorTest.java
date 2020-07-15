@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.Lists;
 import org.junit.Before;
@@ -16,7 +17,6 @@ import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class SequenceFilePairConcatenatorTest {
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -29,6 +29,7 @@ public class SequenceFilePairConcatenatorTest {
 	@Before
 	public void setUp() {
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		concat = new SequenceFilePairConcatenator(iridaFileStorageUtility);
 	}
 
