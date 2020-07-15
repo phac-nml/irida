@@ -410,8 +410,6 @@
           contentType: 'application/json',
           data: JSON.stringify(submission),
           success: function(data, textStatus, jqXHR) {
-            console.log("HERE");
-            console.log(data);
             var url = /*[[@{/projects/{id}/export/(id=${project.id})}]]*/ '/export/';
             url = url + data.submissionId;
             window.location = url;
