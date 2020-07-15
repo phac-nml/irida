@@ -12,11 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingObjectDetails;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
@@ -42,13 +38,11 @@ public class SequencingRunController {
 
 	private final SequencingRunService sequencingRunService;
 	private final SequencingObjectService objectService;
-	private final IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public SequencingRunController(SequencingRunService sequencingRunService, SequencingObjectService objectService, IridaFileStorageUtility iridaFileStorageUtility) {
+	public SequencingRunController(SequencingRunService sequencingRunService, SequencingObjectService objectService) {
 		this.sequencingRunService = sequencingRunService;
 		this.objectService = objectService;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -116,22 +110,9 @@ public class SequencingRunController {
 		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
 				.getSequencingObjectsForSequencingRun(run);
 
-		/* Gets a list of sequencingObjectDetails which includes the sequencing object id
-		 * and a list of sequence files for that sequencing object with their file sizes
-		 */
-		List<SequencingObjectDetails> sequencingObjectList = new ArrayList<>();
-		for(SequencingObject sequencingObject : sequencingObjectsForSequencingRun) {
-			List<SequenceFileDetails> sequenceFileList = new ArrayList<>();
-			Set<SequenceFile> sequenceFiles = sequencingObject.getFiles();
-			for(SequenceFile sequenceFile : sequenceFiles) {
-				sequenceFileList.add(new SequenceFileDetails(sequenceFile, iridaFileStorageUtility.getFileSize(sequenceFile.getFile())));
-			}
-			sequencingObjectList.add(new SequencingObjectDetails(sequencingObject.getId(), sequenceFileList));
-		}
-
 		int fileCount = sequencingObjectsForSequencingRun.stream().mapToInt(o -> o.getFiles().size()).sum();
 
-		model.addAttribute("sequencingObjects", sequencingObjectList);
+		model.addAttribute("sequencingObjects", sequencingObjectsForSequencingRun);
 		model.addAttribute("fileCount", fileCount);
 		model.addAttribute("run", run);
 

@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -37,16 +36,14 @@ public class SamplesAjaxController {
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
 	private final MessageSource messageSource;
-	private final IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
 	public SamplesAjaxController(SampleService sampleService, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, IridaFileStorageUtility iridaFileStorageUtility) {
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -193,7 +190,6 @@ public class SamplesAjaxController {
 	private void createFast5FileInSample(MultipartFile file, Sample sample) throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
 		Fast5Object fast5Object = new Fast5Object(sequenceFile);
-		fast5Object.setType(iridaFileStorageUtility.isGzipped(sequenceFile.getFile()));
 		sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample);
 	}
 

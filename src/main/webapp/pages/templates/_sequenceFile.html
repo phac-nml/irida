@@ -16,7 +16,7 @@
 	</td>
 	<td>
 		<div class="td_info">
-			<div class="td_info--value" th:text="${fileSize}"></div>
+			<div class="td_info--value" th:text="${file.getFileSize()}"></div>
 			<div class="small text-muted td_info--desc"
 			     th:text="#{samples.files.fileSize}">File Size
 			</div>
@@ -45,7 +45,7 @@
 	</td>
 	<td>
 		<div class="td_info">
-			<div class="td_info--value" th:text="${fileSize}"></div>
+			<div class="td_info--value" th:text="${file.getFileSize()}"></div>
 			<div class="small text-muted td_info--desc"
 			     th:text="#{samples.files.fileSize}">File Size
 			</div>

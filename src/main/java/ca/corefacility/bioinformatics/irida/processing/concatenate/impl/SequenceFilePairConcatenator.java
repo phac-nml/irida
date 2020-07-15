@@ -6,24 +6,21 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * {@link SequencingObjectConcatenator} for {@link SequenceFilePair}s
  */
-@Component
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Autowired
 	public SequenceFilePairConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
@@ -33,10 +30,15 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	 */
 	@Override
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
-			throws ConcatenateException, IOException {
+			throws ConcatenateException {
 
-		String extension = iridaFileStorageUtility.getFileExtension(toConcatenate);
+		String extension = null;
 
+		try {
+			extension = IridaFiles.getFileExtension(toConcatenate);
+		} catch (IOException e) {
+			throw new ConcatenateException("Could not get file extension", e);
+		}
 		// create the filenames with F/R for the forward and reverse files
 		String forwardName = filename + "_R1." + extension;
 		String reverseName = filename + "_R2." + extension;
@@ -65,8 +67,12 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
-			iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
-			iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
+			try {
+				iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
+				iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
+			} catch (IOException e) {
+				throw new ConcatenateException("Could not append files", e);
+			}
 		}
 
 		// create new SequenceFiles

@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -246,7 +245,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@PreAuthorize("hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
 	@Transactional
 	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename, Sample targetSample, boolean removeOriginals)
-			throws ConcatenateException, IOException {
+			throws ConcatenateException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
 				.getConcatenator(toJoin, iridaFileStorageUtility);

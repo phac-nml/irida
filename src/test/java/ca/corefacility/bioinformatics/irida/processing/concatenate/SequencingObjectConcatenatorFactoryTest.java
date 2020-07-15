@@ -30,6 +30,7 @@ public class SequencingObjectConcatenatorFactoryTest {
 		iridaFileStorageUtility = mock(IridaFileStorageLocalUtilityImpl.class);
 	}
 
+
 	@Test
 	public void testGetConcatenatorSingle() {
 		SequencingObjectConcatenator<SingleEndSequenceFile> concatenator = SequencingObjectConcatenatorFactory.getConcatenator(
