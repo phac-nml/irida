@@ -104,9 +104,12 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 				S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 				fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
 						.getContentLength(), true);
+				s3Object.close();
 			}
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
+		} catch (IOException e) {
+			logger.error("Unable to close connection to s3object: " + e);
 		}
 		return fileSize;
 	}
