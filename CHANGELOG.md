@@ -18,6 +18,11 @@ Changes
 * [Developer]: Removed `webpack-dev-server`.
 * [UI]: Fixed issue where analysis results pages would hang after running with remote synchronized data. (20.05.2)
 * [Developer]: Updated chromedriver to version `latest`. (20.05.2)
+* [Developer]: Updated frontend dependencies (`babel`, `fontawesome`, and `ant-icons`)
+* [UI]: Updated NCBI Exports listing pages to use Ant Design Tables.
+* [UI/Developer]: Removed `irida.cart.js` (an older angularjs service for the cart).
+* [UI]: Fixed issue #637 where metadata toggles were not displaying in the "on" position properly on loading the advanced phylogenic viewer.
+* [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
 
 20.01 to 20.05
 --------------
