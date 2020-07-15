@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -21,15 +22,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.AnalysisOutputListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -39,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
  */
 @Entity
 @Table(name = "analysis_output_file")
-@EntityListeners({RelativePathTranslatorListener.class, AnalysisOutputListener.class })
+@EntityListeners({ RelativePathTranslatorListener.class })
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
@@ -50,7 +51,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	@NotNull(message = "{analysis.output.file.file.notnull}")
 	@com.fasterxml.jackson.annotation.JsonIgnore
 	@org.codehaus.jackson.annotate.JsonIgnore
-	protected final Path file;
+	private final Path file;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -67,8 +68,6 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	
 	@Column(name = "label_prefix")
 	private final String labelPrefix;
-
-	private static IridaFileStorageService iridaFileStorageService;
 
 	/**
 	 * for hibernate
@@ -182,18 +181,34 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		return false;
 	}
 
-	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
-		this.iridaFileStorageService = iridaFileStorageService;
-	}
-
 	/**
-	 * Read the bytes for an image output file
+	 * Read the bytes for an output file
 	 *
 	 * @return the bytes for the file
 	 * @throws IOException if the file couldn't be read
 	 */
 	public byte[] getBytesForFile() throws IOException  {
-		byte[] bytes = iridaFileStorageService.readAllBytes(getFile());
+		byte[] bytes = IridaFiles.getBytesForFile(getFile());
 		return bytes;
+	}
+
+	/**
+	 * Gets output file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
+	}
+
+	/**
+	 * Checks if file exists
+	 *
+	 * @return if file exists or not
+	 */
+	@JsonIgnore
+	public boolean fileExists() {
+		return IridaFiles.fileExists(file);
 	}
 }

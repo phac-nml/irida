@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,10 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
-
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -42,13 +42,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "sequence_file")
 @Audited
-@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class, IridaFileStorageListener.class })
+@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
 public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
-
-	private static IridaFileStorageService iridaFileStorageService;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -110,19 +108,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@Override
 	public String getLabel() {
 		return file.getFileName().toString();
-	}
-
-	/**
-	 * Get the implementation-specific file size.
-	 *
-	 * @return the file size.
-	 */
-	@Override
-	@JsonIgnore
-	public String getFileSize() {
-		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageService.getFileSize(getFile()), true);
-		return size;
 	}
 
 	/**
@@ -298,12 +283,35 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.uploadSha256 = uploadSha256;
 	}
 
-	public IridaFileStorageService getIridaFileStorageService() {
-		return iridaFileStorageService;
+	/**
+	 * Gets the sequence file size.
+	 *
+	 * @return The sequence file size.
+	 */
+	@JsonIgnore
+	public String getFileSize() {
+		return IridaFiles.getFileSize(file);
 	}
 
-	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
-		this.iridaFileStorageService = iridaFileStorageService;
+	/**
+	 * Checks if a file is gzipped.
+	 *
+	 * @return boolean if file is gzipped or not.
+	 * @throws IOException if file cannot be read
+	 */
+	@JsonIgnore
+	public boolean isGzipped() throws IOException {
+		return IridaFiles.isGzipped(file);
+	}
+
+	/**
+	 * Gets sequence file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
 	}
 
 }

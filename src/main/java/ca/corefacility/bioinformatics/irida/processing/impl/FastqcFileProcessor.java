@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private final AnalysisOutputFileRepository outputFileRepository;
 	private final MessageSource messageSource;
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Create a new {@link FastqcFileProcessor}
@@ -63,15 +63,15 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *                               analysis).
 	 * @param sequenceFileRepository Repository for storing sequence files
 	 * @param outputFileRepository   Repository for storing analysis output files
-	 * @param iridaFileStorageService The irida file storage service
+	 * @param iridaFileStorageUtility The irida file storage service
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
-			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageService iridaFileStorageService) {
+			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.outputFileRepository = outputFileRepository;
-		this.iridaFileStorageService = iridaFileStorageService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class FastqcFileProcessor implements FileProcessor {
 						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					iridaFileStorageService.getTemporaryFile(fileToProcess));
+					iridaFileStorageUtility.getTemporaryFile(fileToProcess));
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();

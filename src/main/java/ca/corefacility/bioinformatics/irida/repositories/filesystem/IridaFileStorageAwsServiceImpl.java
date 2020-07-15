@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -26,12 +27,13 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.azure.storage.blob.models.BlobStorageException;
 
 /**
  * Component implementation of file utitlities for aws storage
  */
 @Component
-public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
+public class IridaFileStorageAwsServiceImpl implements IridaFileStorageUtility{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsServiceImpl.class);
 
 	private String bucketName;
@@ -94,17 +96,16 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Long getFileSize(Path file) {
-		Long fileSize = 0L;
+	public String getFileSize(Path file) {
+		String fileSize = "N/A";
 		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			fileSize = s3Object.getObjectMetadata()
-					.getContentLength();
-			s3Object.close();
+			if(file != null) {
+				S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+				fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
+						.getContentLength(), true);
+			}
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
-		} catch (IOException e) {
-			logger.error("Unable to close connection to s3object: " + e);
 		}
 		return fileSize;
 	}
@@ -121,27 +122,6 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to upload file to s3 bucket: " + e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deleteFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFiles() {
 	}
 
 	/**
@@ -214,7 +194,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException {
+	public void appendToFile(Path target, SequenceFile file) throws IOException {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(getTemporaryFile(file.getFile())).getChannel()) {
@@ -222,11 +202,11 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new ConcatenateException("Could not open input file for reading", e);
+				throw new IOException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {
-			throw new ConcatenateException("Could not open target file for writing", e);
+			throw new IOException("Could not open target file for writing", e);
 		}
 	}
 
@@ -234,7 +214,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException {
+	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
 		String selectedExtension = null;
 		for (SequencingObject object : toConcatenate) {
 
@@ -246,7 +226,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 						.findFirst();
 
 				if (!currentExtensionOpt.isPresent()) {
-					throw new ConcatenateException("File extension is not valid " + fileName);
+					throw new IOException("File extension is not valid " + fileName);
 				}
 
 				String currentExtension = currentExtensionOpt.get();
@@ -254,8 +234,8 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 				if (selectedExtension == null) {
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
-					throw new ConcatenateException(
-							"Extensions of files to concatenate do not match " + currentExtension + " vs "
+					throw new IOException(
+							"Extensions of files do not match " + currentExtension + " vs "
 									+ selectedExtension);
 				}
 			}

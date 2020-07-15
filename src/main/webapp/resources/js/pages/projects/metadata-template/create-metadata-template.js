@@ -125,34 +125,30 @@ $("#add-field-modal").on("shown.bs.modal", function () {
         url: window.PAGE.urls.fields,
         dataType: "json",
         delay: 250,
-        processResults(data, params) {
-          data = data.filter((item) => {
-            return !existingFields.has(item);
-          });
-          const results = data.map((item) => ({ id: item, text: item }));
-          const searchTerm = params.term;
-          if (!data.includes(searchTerm) && !existingFields.has(searchTerm)) {
-            results.unshift({
-              id: searchTerm,
-              isNew: true,
-              text: searchTerm,
-            });
-          }
-          return { results };
+        data: function (term, page) {
+          // page is the one-based page number tracked by Select2
+          return {
+            q: term, //search term
+            page: page, // page number
+          };
+        },
+        results: function (data, page, query) {
+          // Filter based on what is currently in the template
+          data = data.filter((item) => !existingFields.has(item));
+
+          // Check to see if the search term is in the list.
+          if (!data.includes(query.term)) data.unshift(query.term);
+
+          // Format in way expected for select2
+          data = data.map((item) => ({ text: item, id: item }));
+
+          return { results: data };
         },
         cache: true,
       },
-      templateResult(data) {
-        if (data.isNew) {
-          return $(`
-<div>${data.text}<span class="label label-warning pull-right">NEW</span></div>
-`);
-        }
-        return data.text;
-      },
     })
-    .on("select2:select", function () {
-      const value = $(this).val();
+    .on("select2-selecting", function (e) {
+      const value = e.object.text;
       if (value) {
         existingFields.add(value);
         addNewField(value);

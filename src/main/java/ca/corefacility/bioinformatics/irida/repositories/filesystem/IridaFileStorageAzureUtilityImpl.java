@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Date;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -33,15 +35,15 @@ import com.azure.storage.blob.specialized.BlobInputStream;
  * Component implementation of file utitlities for azure storage
  */
 @Component
-public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService {
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureServiceImpl.class);
+public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility {
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityImpl.class);
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient ;
 	private BlobClient blobClient;
 
 	@Autowired
-	public IridaFileStorageAzureServiceImpl(String connectionStr, String containerName){
+	public IridaFileStorageAzureUtilityImpl(String connectionStr, String containerName){
 		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionStr)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
@@ -82,15 +84,17 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Long getFileSize(Path file) {
-		Long fileSize = 0L;
+	public String getFileSize(Path file) {
+		String fileSize = "N/A";
 		try {
-			// We set the blobClient "path" to which we want to upload our file to
-			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			fileSize = blobClient.getProperties().getBlobSize();
+			if(file != null) {
+				blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+				fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
+			}
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
 		}
+
 		return fileSize;
 	}
 
@@ -108,27 +112,6 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 		} catch (BlobStorageException e) {
 			logger.trace("Unable to upload file to azure [" + e + "]");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deleteFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFiles() {
 	}
 
 	/**
@@ -200,7 +183,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException {
+	public void appendToFile(Path target, SequenceFile file) throws IOException {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(getTemporaryFile(file.getFile())).getChannel()) {
@@ -208,11 +191,11 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new ConcatenateException("Could not open input file for reading", e);
+				throw new IOException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {
-			throw new ConcatenateException("Could not open target file for writing", e);
+			throw new IOException("Could not open target file for writing", e);
 		}
 	}
 
@@ -220,7 +203,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException {
+	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
 		String selectedExtension = null;
 		for (SequencingObject object : toConcatenate) {
 
@@ -232,7 +215,7 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 						.findFirst();
 
 				if (!currentExtensionOpt.isPresent()) {
-					throw new ConcatenateException("File extension is not valid " + fileName);
+					throw new IOException("File extension is not valid " + fileName);
 				}
 
 				String currentExtension = currentExtensionOpt.get();
@@ -240,8 +223,8 @@ public class IridaFileStorageAzureServiceImpl implements IridaFileStorageService
 				if (selectedExtension == null) {
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
-					throw new ConcatenateException(
-							"Extensions of files to concatenate do not match " + currentExtension + " vs "
+					throw new IOException(
+							"Extensions of files do not match " + currentExtension + " vs "
 									+ selectedExtension);
 				}
 			}

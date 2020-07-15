@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.nio.file.Path;
 import java.util.Date;
 import java.util.Set;
 
@@ -11,8 +10,6 @@ import org.hibernate.envers.Audited;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
@@ -96,20 +93,17 @@ public class Fast5Object extends SequencingObject {
 	/**
 	 * Get the {@link Fast5Type} for this object
 	 *
-	 * @param sequenceFile The {@link SequenceFile} to check for type
-	 * @return the detected {@link Fast5Type}
+	 * @param file if the file
+	 * @return type of fast5object (unknown, zipped, or single)
 	 */
-	private Fast5Type setType(SequenceFile sequenceFile) {
-		Path file = sequenceFile.getFile();
+	private Fast5Type setType(SequenceFile file) {
 
 		Fast5Object.Fast5Type type = Fast5Object.Fast5Type.UNKNOWN;
 
 		try {
-			String extension = FilenameUtils.getExtension(file.toString());
+			String extension = FilenameUtils.getExtension(getFile().getFileName());
 
-			boolean gzipped = FileUtils.isGzipped(file);
-
-			if (gzipped) {
+			if (file.isGzipped()) {
 				type = Fast5Object.Fast5Type.ZIPPED;
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;
