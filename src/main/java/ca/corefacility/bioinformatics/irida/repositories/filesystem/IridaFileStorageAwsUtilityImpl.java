@@ -33,15 +33,16 @@ import com.azure.storage.blob.models.BlobStorageException;
  * Component implementation of file utitlities for aws storage
  */
 @Component
-public class IridaFileStorageAwsServiceImpl implements IridaFileStorageUtility{
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsServiceImpl.class);
+
+public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 
 	@Autowired
-	public IridaFileStorageAwsServiceImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();

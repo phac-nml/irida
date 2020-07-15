@@ -320,6 +320,8 @@ public class IridaApiServicesConfig {
 		IridaFileStorageUtility iridaFileStorageUtility;
 		if(storageType.equalsIgnoreCase("azure")) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(connectionStr, containerName);
+		} else if (storageType.equalsIgnoreCase("aws")) {
+			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		}
