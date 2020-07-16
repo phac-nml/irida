@@ -144,5 +144,5 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @throws IOException if there was an error reading the sequences to concatenate
 	 */
 	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename,
-			Sample targetSample, boolean removeOriginals) throws ConcatenateException, IOException;
+			Sample targetSample, boolean removeOriginals) throws ConcatenateException;
 }

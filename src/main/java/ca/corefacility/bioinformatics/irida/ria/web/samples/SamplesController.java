@@ -581,10 +581,7 @@ public class SamplesController extends BaseController {
 		try {
 			sequencingObjectService.concatenateSequences(Lists.newArrayList(readMultiple), filename, sample,
 					removeOriginals);
-		} catch (IOException e) {
-			logger.error("Error reading files: ", e);
-		}
-		catch (ConcatenateException ex) {
+		} catch (ConcatenateException ex) {
 			logger.error("Error concatenating files: ", ex);
 			
 			model.addAttribute("concatenateError", true);
