@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.Lists;
 
@@ -98,6 +99,8 @@ public class AnalysisAjaxControllerTest {
 		analysisAuditMock = mock(AnalysisAudit.class);
 		httpServletResponseMock = mock(HttpServletResponse.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,

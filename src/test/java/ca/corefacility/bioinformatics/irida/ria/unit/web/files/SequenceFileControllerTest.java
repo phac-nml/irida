@@ -23,10 +23,13 @@ import org.springframework.ui.Model;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Unit Tests for @{link SequenceFileController}
@@ -43,12 +46,15 @@ public class SequenceFileControllerTest {
 	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
 	private AnalysisService analysisService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
 		sequencingRunService = mock(SequencingRunService.class);
 		analysisService = mock(AnalysisService.class);
 		objectService = mock(SequencingObjectService.class);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		controller = new SequenceFileController(objectService, sequencingRunService, analysisService);
 

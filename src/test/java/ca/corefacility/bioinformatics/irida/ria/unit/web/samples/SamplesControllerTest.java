@@ -30,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
@@ -39,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -62,6 +65,7 @@ public class SamplesControllerTest {
 	private MetadataTemplateService metadataTemplateService;
 	private GenomeAssemblyService genomeAssemblyService;
 	private MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
@@ -73,7 +77,8 @@ public class SamplesControllerTest {
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
-
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
 				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource);
 	}
