@@ -23,6 +23,7 @@ Changes
 * [UI/Developer]: Removed `irida.cart.js` (an older angularjs service for the cart).
 * [UI]: Fixed issue #637 where metadata toggles were not displaying in the "on" position properly on loading the advanced phylogenic viewer.
 * [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
+* [Developer/UI]: Removed `irida` angular app.  Individual components load themselves now.
 
 20.01 to 20.05
 --------------
