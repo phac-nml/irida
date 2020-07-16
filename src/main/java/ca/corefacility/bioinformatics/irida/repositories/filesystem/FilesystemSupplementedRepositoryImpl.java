@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,14 +16,15 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreUpdate;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+
 
 /**
  * Custom implementation of a repository that writes the {@link Path} part of an
@@ -41,9 +40,12 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
 
-	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory, final IridaFileStorageUtility iridaFileStorageUtility) {
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -169,7 +171,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			entityManager.persist(entity);
 		}
 		logger.trace("About to write files to disk.");
+
 		writeFilesToDisk(baseDirectory, entity);
+
 		logger.trace("Returning merged entity.");
 		return entityManager.merge(entity);
 	}
@@ -202,7 +206,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * works using reflection to automagically find and update any internal
 	 * {@link Path} members on the {@link VersionedFileFields}. This class
 	 * **does not** update the object in the database
-	 * 
+	 *
 	 * @param baseDirectory
 	 * @param iridaThing
 	 */
@@ -215,7 +219,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 		Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
 		// now find any members that are of type Path and shuffle them around:
-		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields()).filter(pathFilter)
+		Set<Field> pathFields = Arrays.stream(FieldUtils.getAllFields(objectToWrite.getClass())).filter(pathFilter)
 				.collect(Collectors.toSet());
 
 		Set<Field> fieldsToUpdate = new HashSet<>();
@@ -238,28 +242,11 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
 				logger.debug("Target is [" + target.toString() + "]");
-				try {
-					if (!Files.exists(sequenceFileDir)) {
-						Files.createDirectory(sequenceFileDir);
-						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
-					}
-
-					if (!Files.exists(sequenceFileDirWithRevision)) {
-						Files.createDirectory(sequenceFileDirWithRevision);
-						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
-					}
-
-					Files.move(source, target);
-					logger.trace("Moved file " + source + " to " + target);
-				} catch (IOException e) {
-					logger.error("Unable to move file into new directory", e);
-					throw new StorageException("Failed to move file into new directory.", e);
-				}
-
+				iridaFileStorageUtility.writeFile(source, target, sequenceFileDir, sequenceFileDirWithRevision);
 				ReflectionUtils.setField(field, objectToWrite, target);
 			}
 		}
-
 		return objectToWrite;
 	}
+
 }

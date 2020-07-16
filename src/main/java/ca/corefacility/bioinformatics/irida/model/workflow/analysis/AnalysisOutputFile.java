@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 @Entity
 @Table(name = "analysis_output_file")
-@EntityListeners(RelativePathTranslatorListener.class)
+@EntityListeners({ RelativePathTranslatorListener.class })
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
@@ -188,4 +188,5 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		byte[] bytes = Files.readAllBytes(getFile());
 		return bytes;
 	}
+
 }

@@ -529,6 +529,7 @@ public class RESTSampleSequenceFilesController {
 			sf.setFile(target);
 
 			Fast5Object fast5Object = new Fast5Object(sf);
+
 			if (sequencingRun != null) {
 				if (sequencingRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {
 					throw new IllegalArgumentException("The sequencing run must be in the UPLOADING state to upload data.");

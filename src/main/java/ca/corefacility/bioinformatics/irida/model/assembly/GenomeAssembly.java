@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -100,21 +100,12 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	}
 
 	/**
-	 * Get human-readable file size.
+	 * Gets the assembly file size.
 	 *
-	 * @return A human-readable file size.
+	 * @return The assembly file size.
 	 */
-	@JsonIgnore
 	public String getFileSize() {
-		String size = "N/A";
-		try {
-			size = IridaSequenceFile.humanReadableByteCount(getFileSizeBytes(), true);
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + getFile());
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
-		return size;
+		return IridaFiles.getFileSize(getFile());
 	}
 
 	/**
@@ -149,4 +140,5 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 		GenomeAssembly other = (GenomeAssembly) obj;
 		return Objects.equals(this.id, other.id) && Objects.equals(this.createdDate, other.createdDate);
 	}
+
 }

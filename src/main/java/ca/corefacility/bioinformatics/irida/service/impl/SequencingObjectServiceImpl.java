@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenatorFactory;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,23 +39,26 @@ import java.util.stream.Collectors;
 @Service
 public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject> implements
 		SequencingObjectService {
-	
+
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 
 	private final SequencingObjectRepository repository;
 	private final SequenceConcatenationRepository concatenationRepository;
 
+	private final IridaFileStorageUtility iridaFileStorageUtility;
+
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
 			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			SequenceConcatenationRepository concatenationRepository, Validator validator) {
+			SequenceConcatenationRepository concatenationRepository, Validator validator, IridaFileStorageUtility iridaFileStorageUtility) {
 		super(repository, validator, SequencingObject.class);
 		this.repository = repository;
 		this.ssoRepository = ssoRepository;
 
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.concatenationRepository = concatenationRepository;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -243,7 +248,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			throws ConcatenateException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
-				.getConcatenator(toJoin);
+				.getConcatenator(toJoin, iridaFileStorageUtility);
 
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
 		

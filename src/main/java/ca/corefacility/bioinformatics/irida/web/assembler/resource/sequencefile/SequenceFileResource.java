@@ -18,6 +18,7 @@ public class SequenceFileResource {
 
 	private SequenceFile resource;
 
+
 	public SequenceFileResource() {
 		resource = new SequenceFile();
 	}

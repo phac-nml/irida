@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.analysis.ReadAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadSequencingObjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 

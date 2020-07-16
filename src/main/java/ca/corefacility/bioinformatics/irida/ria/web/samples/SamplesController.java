@@ -35,13 +35,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -107,6 +104,7 @@ public class SamplesController extends BaseController {
 	private final SequencingObjectService sequencingObjectService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final GenomeAssemblyService genomeAssemblyService;
+
 
 	private final UpdateSamplePermission updateSamplePermission;
 
@@ -313,8 +311,8 @@ public class SamplesController extends BaseController {
 			project = projectService.read(projectId);
 		}
 
-		// add project to qc entries and filter any unavailable entries
 		for (SequencingObject f : filePairs) {
+			// add project to qc entries and filter any unavailable entries
 			enhanceQcEntries(f, project);
 		}
 
@@ -322,10 +320,12 @@ public class SamplesController extends BaseController {
 			enhanceQcEntries(f.getObject(), project);
 		}
 
+
 		// SequenceFile
 		model.addAttribute("paired_end", filePairs);
 		model.addAttribute("single_end", singleFileJoins);
 		model.addAttribute("fast5", fast5);
+
 
 		// assemblies
 		model.addAttribute("assemblies", genomeAssemblies);
@@ -593,6 +593,7 @@ public class SamplesController extends BaseController {
 		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
 		return "redirect:" + redirectUrl;
 	}
+
 
 	/**
 	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the

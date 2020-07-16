@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -10,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
@@ -43,14 +42,16 @@ public class ProjectReferenceFileController {
 	private final ReferenceFileService referenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
 	public ProjectReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService,
-			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
+			ProjectControllerUtils projectControllerUtils, MessageSource messageSource, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -93,12 +94,7 @@ public class ProjectReferenceFileController {
 			map.put("label", file.getLabel());
 			map.put("createdDate", file.getCreatedDate());
 			Path path = file.getFile();
-			try {
-				map.put("size", Files.size(path));
-			} catch (IOException e) {
-				logger.error("Cannot find the size of file " + file.getLabel());
-				map.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[] {}, locale));
-			}
+			map.put("size", iridaFileStorageUtility.getFileSize(path));
 			files.add(map);
 		}
 		return ImmutableMap.of("files", files);

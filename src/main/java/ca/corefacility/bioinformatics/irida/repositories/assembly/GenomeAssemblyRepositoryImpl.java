@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
  * A {@link FilesystemSupplementedRepositoryImpl} implementation for {@link GenomeAssembly}
@@ -20,8 +21,8 @@ public class GenomeAssemblyRepositoryImpl extends FilesystemSupplementedReposito
 
 	@Autowired
 	public GenomeAssemblyRepositoryImpl(EntityManager entityManager,
-			@Qualifier("assemblyFileBaseDirectory") Path baseDirectory) {
-		super(entityManager, baseDirectory);
+			@Qualifier("assemblyFileBaseDirectory") Path baseDirectory, IridaFileStorageUtility iridaFileStorageUtility) {
+		super(entityManager, baseDirectory, iridaFileStorageUtility);
 	}
 
 	@Override

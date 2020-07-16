@@ -10,7 +10,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private final AnalysisOutputFileRepository outputFileRepository;
 	private final MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Create a new {@link FastqcFileProcessor}
@@ -60,13 +63,15 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *                               analysis).
 	 * @param sequenceFileRepository Repository for storing sequence files
 	 * @param outputFileRepository   Repository for storing analysis output files
+	 * @param iridaFileStorageUtility The irida file storage service
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
-			AnalysisOutputFileRepository outputFileRepository) {
+			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.outputFileRepository = outputFileRepository;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	@Override
@@ -92,7 +97,7 @@ public class FastqcFileProcessor implements FileProcessor {
 						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					fileToProcess.toFile());
+					iridaFileStorageUtility.getTemporaryFile(fileToProcess));
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();

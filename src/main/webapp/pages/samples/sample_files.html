@@ -53,7 +53,7 @@
 					<tr class="paired_end paired_end__forward sequence-file-row"
 						th:with="file=${pair.getForwardSequenceFile()}">
 						<td
-								th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
+								th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file}, icon='forward',relative='true')"></td>
 						<td>
 							<div class="btn-group-sm pull-right" role="group">
 								<button th:if="${canManageSample}"
@@ -73,7 +73,7 @@
 					<tr class="paired_end paired_end__reverse sequence-file-row"
 						th:with="file=${pair.getReverseSequenceFile()}">
 						<td
-							th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
+							th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file}, icon='reverse',relative='true')"></td>
 						<td>
 							<div class="btn-group btn-group-sm pull-right" role="group">
 								<a class="btn btn-default btn-sm"
@@ -135,7 +135,7 @@
 					</tr>
 				</th:block>
 				<th:block th:each="join : ${single_end}"
-					th:with="file=${join.getObject()}">
+						  th:with="file=${join.getObject()}">
 					<tr class="single_end sequence-file-row">
 						<td
 							th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
@@ -255,8 +255,8 @@
 					<td th:switch="${assembly instanceof T(ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis)}">
 						<a class="btn btn-default btn-sm file-name" href="#"
 							th:case="true"
-							th:href="@{/analysis/{sId}(sId=${assembly.analysisSubmission.id})}"
-							th:text="${assembly.label}"></a>
+						    th:href="@{/analysis/{sId}(sId=${assembly.analysisSubmission.id})}"
+						    th:text="${assembly.label}"></a>
 						<div class="file-name td_info--value" 
 							th:case="false"
 							 style="display: flex; align-items: center; height: 35px;">

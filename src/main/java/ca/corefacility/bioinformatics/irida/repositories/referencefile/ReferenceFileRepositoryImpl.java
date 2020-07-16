@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 
 /**
@@ -27,8 +28,8 @@ public class ReferenceFileRepositoryImpl extends FilesystemSupplementedRepositor
 	@Autowired
 	public ReferenceFileRepositoryImpl(final EntityManager entityManager, 
 			final SequenceFileUtilities sequenceFileUtilities,
-			final @Qualifier("referenceFileBaseDirectory") Path baseDirectory) {
-		super(entityManager, baseDirectory);
+			final @Qualifier("referenceFileBaseDirectory") Path baseDirectory, IridaFileStorageUtility iridaFileStorageUtility) {
+		super(entityManager, baseDirectory, iridaFileStorageUtility);
 		this.sequenceFileUtilities = sequenceFileUtilities;
 	}
 
