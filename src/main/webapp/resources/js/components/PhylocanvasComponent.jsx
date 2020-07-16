@@ -4,9 +4,8 @@
 
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import PhyloCanvas from "phylocanvas";
-import { treeTypes } from "phylocanvas";
-import _keys from "lodash.keys";
+import PhyloCanvas, { treeTypes } from "phylocanvas";
+import _keys from "lodash/keys";
 
 export function PhylocanvasComponent({ data, className, style, treeType }) {
   const [currentTree, setCurrentTree] = useState(null);

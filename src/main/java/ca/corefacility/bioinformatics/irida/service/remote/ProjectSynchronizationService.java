@@ -4,7 +4,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
@@ -19,10 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.apache.commons.lang3.time.DateUtils;
@@ -49,28 +49,34 @@ public class ProjectSynchronizationService {
 	private SampleService sampleService;
 	private SequencingObjectService objectService;
 	private MetadataTemplateService metadataTemplateService;
+	private GenomeAssemblyService assemblyService;
 
 	private ProjectRemoteService projectRemoteService;
 	private SampleRemoteService sampleRemoteService;
 	private SingleEndSequenceFileRemoteService singleEndRemoteService;
 	private SequenceFilePairRemoteService pairRemoteService;
+	private GenomeAssemblyRemoteService assemblyRemoteService;
 	private RemoteAPITokenService tokenService;
 	private EmailController emailController;
 
 	@Autowired
 	public ProjectSynchronizationService(ProjectService projectService, SampleService sampleService,
-			SequencingObjectService objectService, MetadataTemplateService metadataTemplateService, ProjectRemoteService projectRemoteService,
+			SequencingObjectService objectService, MetadataTemplateService metadataTemplateService,
+			GenomeAssemblyService assemblyService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
-			SequenceFilePairRemoteService pairRemoteService, RemoteAPITokenService tokenService, EmailController emailController) {
+			SequenceFilePairRemoteService pairRemoteService, GenomeAssemblyRemoteService assemblyRemoteService,
+			RemoteAPITokenService tokenService, EmailController emailController) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.objectService = objectService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.assemblyService = assemblyService;
 		this.projectRemoteService = projectRemoteService;
 		this.sampleRemoteService = sampleRemoteService;
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
+		this.assemblyRemoteService = assemblyRemoteService;
 		this.tokenService = tokenService;
 		this.emailController = emailController;
 	}
@@ -299,11 +305,9 @@ public class ProjectSynchronizationService {
 			projectService.addSampleToProject(project, sample, true);
 		}
 
-		// get the local files and organize by their url
-		
+		//get a collection of the files already sync'd.  we don't want to grab them a 2nd time.
 		Collection<SampleSequencingObjectJoin> localObjects = objectService.getSequencingObjectsForSample(localSample);
-
-		Map<String, SequencingObject> objectsByUrl = new HashMap<>();
+		Set<String> objectsByUrl = new HashSet<>();
 		localObjects.forEach(j -> {
 			SequencingObject pair = j.getObject();
 			
@@ -312,17 +316,36 @@ public class ProjectSynchronizationService {
 			if (pair.getRemoteStatus() != null) {
 				String url = pair.getRemoteStatus().getURL();
 
-				objectsByUrl.put(url, pair);
+				objectsByUrl.add(url);
 			}
 		});
 
-		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
-		
+		//same with assemblies.  get the ones we've already grabbed and store their URL so we don't double-sync
+		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(localSample);
+		Set<String> localAssemblyUrls = new HashSet<>();
+		assembliesForSample.forEach(j -> {
+			GenomeAssembly genomeAssembly = j.getObject();
+
+			if (genomeAssembly.getRemoteStatus() != null) {
+				String url = genomeAssembly.getRemoteStatus()
+						.getURL();
+				localAssemblyUrls.add(url);
+			}
+		});
+
+		//a list of errors from the sync.  we'll collect them as we go.  we won't cancel the sync for one error
 		List<ProjectSynchronizationException> syncErrors = new ArrayList<>();
 
+		//list the pairs from the remote api
+		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
+		
+
+		//for each pair
 		for (SequenceFilePair pair : sequenceFilePairsForSample) {
-			if (!objectsByUrl.containsKey(pair.getRemoteStatus().getURL())) {
+			//check if we've already got it
+			if (!objectsByUrl.contains(pair.getRemoteStatus().getURL())) {
 				pair.setId(null);
+				//if not, download it locally
 				try {
 					syncSequenceFilePair(pair, localSample);
 				} catch (ProjectSynchronizationException e) {
@@ -331,11 +354,15 @@ public class ProjectSynchronizationService {
 			}
 		}
 
+		//list the single files from the remote api
 		List<SingleEndSequenceFile> unpairedFilesForSample = singleEndRemoteService.getUnpairedFilesForSample(sample);
 
+		//for each single file
 		for (SingleEndSequenceFile file : unpairedFilesForSample) {
-			if (!objectsByUrl.containsKey(file.getRemoteStatus().getURL())) {
+			//check if we already have it
+			if (!objectsByUrl.contains(file.getRemoteStatus().getURL())) {
 				file.setId(null);
+				//if not, get it locally and save it
 				try {
 					syncSingleEndSequenceFile(file, localSample);
 				} catch (ProjectSynchronizationException e) {
@@ -344,9 +371,29 @@ public class ProjectSynchronizationService {
 			}
 		}
 
+		//list the remote assemblies for the sample
+		List<UploadedAssembly> genomeAssembliesForSample = assemblyRemoteService.getGenomeAssembliesForSample(sample);
+
+		//for each assembly
+		for (UploadedAssembly file : genomeAssembliesForSample) {
+			//if we haven't already sync'd this assembly, get it
+			if (!localAssemblyUrls.contains(file.getRemoteStatus()
+					.getURL())) {
+				file.setId(null);
+				try {
+					syncAssembly(file, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
+			}
+		}
+
+
+		//if we have no errors, report that the sample is sync'd
 		if (syncErrors.isEmpty()) {
 			localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 		} else {
+			//otherwise set it as an error and log
 			localSample.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
 
 			logger.error(
@@ -405,6 +452,31 @@ public class ProjectSynchronizationService {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
 					e);
+		}
+	}
+
+	/**
+	 * Synchronize a given {@link UploadedAssembly} to the local
+	 * installation
+	 *
+	 * @param assembly the {@link UploadedAssembly} to sync
+	 * @param sample   the {@link Sample} to add the assembly to
+	 */
+	public void syncAssembly(UploadedAssembly assembly, Sample sample) {
+		RemoteStatus fileStatus = assembly.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
+		try {
+			assembly = assemblyRemoteService.mirrorAssembly(assembly);
+
+			assembly.getRemoteStatus()
+					.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+			assemblyService.createAssemblyInSample(sample, assembly);
+		} catch (Exception e) {
+			logger.error("Error transferring assembly: " + assembly.getRemoteStatus()
+					.getURL(), e);
+			throw new ProjectSynchronizationException("Could not synchronize assembly " + assembly.getRemoteStatus()
+					.getURL(), e);
 		}
 	}
 

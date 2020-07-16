@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -65,16 +65,17 @@ public class GalaxyHistoriesService {
 	
 	private GalaxyLibrariesService librariesService;
 
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
 	 * @param librariesService  A service for dealing with Galaxy libraries.
+	 * @param iridaFileStorageUtility The file storage implementation
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, GalaxyLibrariesService librariesService, IridaFileStorageService iridaFileStorageService) {
+			ToolsClient toolsClient, GalaxyLibrariesService librariesService, IridaFileStorageUtility iridaFileStorageUtility) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
 		checkNotNull(librariesService, "librariesService is null");
@@ -82,7 +83,7 @@ public class GalaxyHistoriesService {
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
 		this.librariesService = librariesService;
-		this.iridaFileStorageService = iridaFileStorageService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -152,9 +153,9 @@ public class GalaxyHistoriesService {
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
 		checkNotNull(history.getId(), "history id is null");
-		checkState(iridaFileStorageService.fileExists(path), "path " + path + " does not exist");
+		checkState(iridaFileStorageUtility.fileExists(path), "path " + path + " does not exist");
 		
-		File file = iridaFileStorageService.getTemporaryFile(path);
+		File file = iridaFileStorageUtility.getTemporaryFile(path);
 				
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType(fileType.toString());

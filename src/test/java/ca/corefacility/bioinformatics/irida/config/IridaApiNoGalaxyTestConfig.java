@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -66,7 +66,7 @@ public class IridaApiNoGalaxyTestConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiNoGalaxyTestConfig.class);
 
 	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * @return An ExecutorService executing code in the same thread for testing
@@ -93,12 +93,12 @@ public class IridaApiNoGalaxyTestConfig {
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService(HistoriesClient historiesClient, ToolsClient toolsClient,
 			GalaxyLibrariesService librariesService) {
-		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService, iridaFileStorageService);
+		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService, iridaFileStorageUtility);
 	}
 
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService(LibrariesClient librariesClient) {
-		return new GalaxyLibrariesService(librariesClient, 5, 60, 1, iridaFileStorageService);
+		return new GalaxyLibrariesService(librariesClient, 5, 60, 1, iridaFileStorageUtility);
 	}
 
 	@Bean

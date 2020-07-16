@@ -47,8 +47,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -103,7 +103,7 @@ public class GalaxyWorkflowsIT {
 	private LibrariesClient librariesClient;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	private GalaxyHistoriesService galaxyHistory;
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
@@ -163,10 +163,10 @@ public class GalaxyWorkflowsIT {
 		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageService);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageUtility);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}

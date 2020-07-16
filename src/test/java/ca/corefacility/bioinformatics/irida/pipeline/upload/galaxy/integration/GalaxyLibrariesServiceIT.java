@@ -27,13 +27,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -66,7 +65,7 @@ public class GalaxyLibrariesServiceIT {
 	
 	private GalaxyInstance galaxyInstanceAdmin;
 	private LibrariesClient librariesClient;
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	
@@ -90,9 +89,9 @@ public class GalaxyLibrariesServiceIT {
 	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
 		
 		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
@@ -212,7 +211,7 @@ public class GalaxyLibrariesServiceIT {
 	 */
 	@Test(expected = UploadTimeoutException.class)
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageService);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageUtility);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
 		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,

@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErro
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.*;
 
@@ -31,7 +31,7 @@ public class GalaxyExecutionTestConfig {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Timeout in seconds to stop polling a Galaxy library.
@@ -55,14 +55,14 @@ public class GalaxyExecutionTestConfig {
 	public GalaxyHistoriesService galaxyHistoriesService() {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService(), iridaFileStorageService);
+		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService(), iridaFileStorageUtility);
 	}
 
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
-		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
+		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
 	}
 	
 	@Lazy

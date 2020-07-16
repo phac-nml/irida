@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
@@ -36,19 +36,19 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private QCEntryRepository qcRepository;
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, IridaFileStorageService iridaFileStorageService, FileProcessor... fileProcessors) {
-		this(sequencingObjectRepository, qcRepository, iridaFileStorageService, Arrays.asList(fileProcessors));
+			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility, FileProcessor... fileProcessors) {
+		this(sequencingObjectRepository, qcRepository, iridaFileStorageUtility, Arrays.asList(fileProcessors));
 	}
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, IridaFileStorageService iridaFileStorageService, List<FileProcessor> fileProcessors) {
+			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility, List<FileProcessor> fileProcessors) {
 		this.fileProcessors = fileProcessors;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.qcRepository = qcRepository;
-		this.iridaFileStorageService = iridaFileStorageService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			if(sequencingObject.isPresent()) {
 				Set<SequenceFile> files = sequencingObject.get().getFiles();
 				filesNotSettled = files.stream().anyMatch(f -> {
-					return !iridaFileStorageService.fileExists(f.getFile());
+					return !iridaFileStorageUtility.fileExists(f.getFile());
 				});
 			}
 		} while (filesNotSettled);

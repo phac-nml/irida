@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
@@ -16,7 +15,7 @@ import com.google.common.collect.Lists;
  * Interface describing methods for performing storage actions
  */
 
-public interface IridaFileStorageService {
+public interface IridaFileStorageUtility {
 	//Valid extensions to try to concatenate with this tool
 	public static final List<String> VALID_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
@@ -28,12 +27,12 @@ public interface IridaFileStorageService {
 	public File getTemporaryFile(Path file);
 
 	/**
-	 * Get file size in bytes
+	 * Get file size
 	 *
 	 * @param file The {@link Path} to the file
-	 * @return {@link Long} size of file retrieved from path
+	 * @return {@link String} size of file retrieved from path
 	 */
-	public Long getFileSize(Path file);
+	public String getFileSize(Path file);
 
 	/**
 	 * Write file to storage (azure, aws, or local)
@@ -61,24 +60,6 @@ public interface IridaFileStorageService {
 	 */
 	public String getFileName(Path file);
 
-	/**
-	 * Deletes the file from (azure, aws, or local disk)
-	 *
-	 */
-	public void deleteFile();
-
-	/**
-	 * Download the file from (azure, aws, or local disk)
-	 *
-	 */
-	public void downloadFile();
-
-	/**
-	 * Downloads all the files of type `analysis-output` from
-	 * (azure, aws, or local disk)
-	 *
-	 */
-	public void downloadFiles();
 
 	/**
 	 * Checks if file exists
@@ -113,25 +94,33 @@ public interface IridaFileStorageService {
 	 *
 	 * @param target the {@link Path} to append to
 	 * @param file   the {@link SequenceFile} to append to the path
-	 * @throws ConcatenateException if there is an error appending the file
+	 * @throws IOException if there is an error appending the file
 	 */
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException;
+	public void appendToFile(Path target, SequenceFile file) throws IOException;
 
 	/**
-	 * Get the extension of the files to concatenate
+	 * Get the extension of the files
 	 *
-	 * @param toConcatenate The list of {@link SequencingObject} to concatenate
+	 * @param sequencingObjects The list of {@link SequencingObject} to get file extensions for
 	 * @return The common extension of the files
-	 * @throws ConcatenateException if the files have different or invalid extensions
+	 * @throws IOException if the files have different or invalid extensions
 	 */
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException;
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
 
 	/**
-	 * Read the bytes for an image
+	 * Read the bytes for a file
 	 *
-	 * @param file path to file which to read
+	 * @param file The path to the file
 	 * @return the bytes for the file
 	 */
 	public byte[] readAllBytes(Path file);
+
+	/**
+	 * Get file size in bytes
+	 *
+	 * @param file The {@link Path} to the file
+	 * @return {@link Long} size of file in bytes retrieved from path
+	 */
+	public Long getFileSizeBytes(Path file);
 
 }

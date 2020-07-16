@@ -82,8 +82,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -186,7 +186,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	private static final String SAMPLE1_NAME = "sample1";
 
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Sets up variables for testing.
@@ -231,11 +231,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageService);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
 
-		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageService);
+		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageUtility);
 
 		pairSequenceFiles1A = new ArrayList<>();
 		pairSequenceFiles1A.add(sequenceFilePathA);

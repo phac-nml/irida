@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -20,8 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.repositories.entity.listeners.IridaFileStorageListener;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -32,13 +32,11 @@ import com.google.common.collect.Lists;
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners({ IridaFileStorageListener.class })
 @Audited
 public abstract class GenomeAssembly extends IridaResourceSupport
 		implements IridaThing, IridaSequenceFile, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
-	private static IridaFileStorageService iridaFileStorageService;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -103,15 +101,12 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	}
 
 	/**
-	 * Get human-readable file size.
+	 * Gets the assembly file size.
 	 *
-	 * @return A human-readable file size.
+	 * @return The assembly file size.
 	 */
-	@JsonIgnore
 	public String getFileSize() {
-		String size = "N/A";
-		size = IridaSequenceFile.humanReadableByteCount(iridaFileStorageService.getFileSize(getFile()), true);
-		return size;
+		return IridaFiles.getFileSize(getFile());
 	}
 
 	/**
@@ -147,7 +142,13 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 		return Objects.equals(this.id, other.id) && Objects.equals(this.createdDate, other.createdDate);
 	}
 
-	public void setIridaFileStorageService(IridaFileStorageService iridaFileStorageService) {
-		this.iridaFileStorageService = iridaFileStorageService;
+	/**
+	 * Gets assembly file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(getFile());
 	}
 }

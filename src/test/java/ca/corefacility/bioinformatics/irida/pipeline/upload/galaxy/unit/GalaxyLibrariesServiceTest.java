@@ -16,8 +16,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalServiceImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
  * Tests for {@link GalaxyLibrariesService}.
@@ -32,7 +32,7 @@ public class GalaxyLibrariesServiceTest {
 	
 	private Library testLibrary;
 
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Setup for tests.
@@ -40,7 +40,7 @@ public class GalaxyLibrariesServiceTest {
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		iridaFileStorageService = new IridaFileStorageLocalServiceImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		setupLibrariesTest();
 	}
 	
@@ -59,7 +59,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testZeroPollingTime() {
-		new GalaxyLibrariesService(librariesClient, 0, 1, 1, iridaFileStorageService);
+		new GalaxyLibrariesService(librariesClient, 0, 1, 1, iridaFileStorageUtility);
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testZeroUploadTimeout() {
-		new GalaxyLibrariesService(librariesClient, 1, 0, 1, iridaFileStorageService);
+		new GalaxyLibrariesService(librariesClient, 1, 0, 1, iridaFileStorageUtility);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testEqualPollingTimeUploadTimeout() {
-		new GalaxyLibrariesService(librariesClient, 1, 1, 1, iridaFileStorageService);
+		new GalaxyLibrariesService(librariesClient, 1, 1, 1, iridaFileStorageUtility);
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test
 	public void testSuccessfullTimeoutValues() {
-		new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageService);
+		new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageUtility);
 	}
 	
 	/**
@@ -91,7 +91,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testFailThreadValue() {
-		new GalaxyLibrariesService(librariesClient, 1, 2, 0, iridaFileStorageService);
+		new GalaxyLibrariesService(librariesClient, 1, 2, 0, iridaFileStorageUtility);
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class GalaxyLibrariesServiceTest {
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(
 				testLibrary);
 
-		Library library = new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageService).buildEmptyLibrary(new GalaxyProjectName(
+		Library library = new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageUtility).buildEmptyLibrary(new GalaxyProjectName(
 				"test"));
 
 		assertNotNull(library);
@@ -120,6 +120,6 @@ public class GalaxyLibrariesServiceTest {
 	public void testBuildEmptyLibraryFail() throws CreateLibraryException {
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(null);
 
-		new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageService).buildEmptyLibrary(new GalaxyProjectName("test"));
+		new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageUtility).buildEmptyLibrary(new GalaxyProjectName("test"));
 	}
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
@@ -42,16 +41,14 @@ public class ProjectReferenceFileController {
 	private final ReferenceFileService referenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final MessageSource messageSource;
-	private IridaFileStorageService iridaFileStorageService;
 
 	@Autowired
 	public ProjectReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService,
-			ProjectControllerUtils projectControllerUtils, MessageSource messageSource, IridaFileStorageService iridaFileStorageService) {
+			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;
-		this.iridaFileStorageService = iridaFileStorageService;
 	}
 
 	/**
@@ -75,7 +72,7 @@ public class ProjectReferenceFileController {
 	}
 
 	/**
-	 * Get the reference files fro a project
+	 * Get the reference files for a project
 	 *
 	 * @param projectId the ID of the project
 	 * @param locale    locale of the logged in user
@@ -94,7 +91,7 @@ public class ProjectReferenceFileController {
 			map.put("label", file.getLabel());
 			map.put("createdDate", file.getCreatedDate());
 			Path path = file.getFile();
-			map.put("size", iridaFileStorageService.getFileSize(path));
+			map.put("size", file.getFileLength());
 			files.add(map);
 		}
 		return ImmutableMap.of("files", files);

@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -92,7 +92,7 @@ public class ExecutionManagerConfig {
 	private Validator validator;
 
 	@Autowired
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 	
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
@@ -279,7 +279,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() throws ExecutionManagerConfigurationException {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient(), galaxyLibrariesService(), iridaFileStorageService);
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(), galaxyLibrariesService(), iridaFileStorageUtility);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() throws ExecutionManagerConfigurationException {
-		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads, iridaFileStorageService);
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads, iridaFileStorageUtility);
 	}
 
 	/**

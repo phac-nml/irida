@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

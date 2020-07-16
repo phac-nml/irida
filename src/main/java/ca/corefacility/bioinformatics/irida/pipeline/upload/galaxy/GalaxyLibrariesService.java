@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
@@ -58,7 +58,7 @@ public class GalaxyLibrariesService {
 	private final int libraryPollingTime;
 	private final int libraryUploadTimeout;
 
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * State a library dataset should be in on proper upload.
@@ -73,34 +73,33 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
-	 * 
-	 * @param librariesClient
-	 *            The LibrariesClient used to interact with Galaxy libraries.
-	 * @param libraryPollingTime
-	 *            The time (in seconds) for polling a Galaxy library.
-	 * @param libraryUploadTimeout
-	 *            The timeout (in seconds) for waiting for files to be uploaded
-	 *            to a library.
-	 * @param threadPoolSize
-	 *            The thread pool size for parallel polling of Galaxy to check if uploads are finished.
+	 *
+	 * @param librariesClient         The LibrariesClient used to interact with Galaxy libraries.
+	 * @param libraryPollingTime      The time (in seconds) for polling a Galaxy library.
+	 * @param libraryUploadTimeout    The timeout (in seconds) for waiting for files to be uploaded
+	 *                                to a library.
+	 * @param threadPoolSize          The thread pool size for parallel polling of Galaxy to check if uploads are finished.
+	 * @param iridaFileStorageUtility The file storage implementation
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
-			final int libraryUploadTimeout, final int threadPoolSize, IridaFileStorageService iridaFileStorageService) {
+			final int libraryUploadTimeout, final int threadPoolSize, IridaFileStorageUtility iridaFileStorageUtility) {
 		checkNotNull(librariesClient, "librariesClient is null");
 		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
-		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
-				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		checkArgument(libraryUploadTimeout > libraryPollingTime,
+				"libraryUploadTimeout=" + libraryUploadTimeout + " must be greater then libraryPollingTime="
+						+ libraryPollingTime);
 		checkArgument(threadPoolSize > 0, "threadPoolSize=" + threadPoolSize + " must be positive");
-		
-		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout 
-				+ ", threadPoolSize=" + threadPoolSize);
+
+		logger.debug(
+				"Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout
+						+ ", threadPoolSize=" + threadPoolSize);
 
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
 		this.libraryUploadTimeout = libraryUploadTimeout;
-		this.iridaFileStorageService = iridaFileStorageService;
-		
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
+
 		executor = Executors.newFixedThreadPool(threadPoolSize);
 	}
 	
@@ -154,9 +153,9 @@ public class GalaxyLibrariesService {
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(library, "library is null");
 		checkNotNull(library.getId(), "library id is null");
-		checkState(iridaFileStorageService.fileExists(path), "path " + path + " does not exist");
+		checkState(iridaFileStorageUtility.fileExists(path), "path " + path + " does not exist");
 
-		File file = iridaFileStorageService.getTemporaryFile(path);
+		File file = iridaFileStorageUtility.getTemporaryFile(path);
 
 		try {
 			LibraryContent rootContent = librariesClient.getRootFolder(library
@@ -266,9 +265,9 @@ public class GalaxyLibrariesService {
 	 * @throws IOException If there was an error reading the file to determine the file type.
 	 */
 	private InputFileType getFileType(Path path) throws IOException {
-		checkArgument(iridaFileStorageService.fileExists(path), "path=[" + path + "] does not exist");
+		checkArgument(iridaFileStorageUtility.fileExists(path), "path=[" + path + "] does not exist");
 		
-		return (iridaFileStorageService.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER);
+		return (iridaFileStorageUtility.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER);
 	}
 
 	/**

@@ -225,6 +225,7 @@ public class PipelineController extends BaseController {
 						if (description.acceptsPairedSequenceFiles()) {
 							Collection<SampleSequencingObjectJoin> pairs = sequencingObjectService.getSequencesForSampleOfType(
 									sample, SequenceFilePair.class);
+
 							files.put("paired_end", pairs.stream()
 									.map(SampleSequencingObjectJoin::getObject)
 									.collect(Collectors.toList()));
@@ -234,6 +235,7 @@ public class PipelineController extends BaseController {
 						if (description.acceptsSingleSequenceFiles()) {
 							Collection<SampleSequencingObjectJoin> singles = sequencingObjectService.getSequencesForSampleOfType(
 									sample, SingleEndSequenceFile.class);
+
 							files.put("single_end", singles.stream()
 									.map(SampleSequencingObjectJoin::getObject)
 									.collect(Collectors.toList()));

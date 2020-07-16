@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
@@ -38,8 +37,9 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
  * Component implementation of file utitlities for aws storage
  */
 @Component
-public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsServiceImpl.class);
+
+public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
 	@Value("${galaxy.tempfile.directory.permissions}")
 	private String filePermissions;
@@ -51,7 +51,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	private String tempDir;
 
 	@Autowired
-	public IridaFileStorageAwsServiceImpl(String bucketName, String bucketRegion, String accessKey, String secretKey, String cloudStorageTemporaryDirectory){
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey, String cloudStorageTemporaryDirectory){
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
@@ -103,13 +103,15 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Long getFileSize(Path file) {
-		Long fileSize = 0L;
+	public String getFileSize(Path file) {
+		String fileSize = "N/A";
 		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			fileSize = s3Object.getObjectMetadata()
-					.getContentLength();
-			s3Object.close();
+			if(file != null) {
+				S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+				fileSize = ca.corefacility.bioinformatics.irida.util.FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
+						.getContentLength(), true);
+				s3Object.close();
+			}
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
 		} catch (IOException e) {
@@ -130,27 +132,6 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to upload file to s3 bucket: " + e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deleteFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFile() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void downloadFiles() {
 	}
 
 	/**
@@ -223,7 +204,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void appendToFile(Path target, SequenceFile file) throws ConcatenateException {
+	public void appendToFile(Path target, SequenceFile file) throws IOException {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(getTemporaryFile(file.getFile())).getChannel()) {
@@ -231,11 +212,11 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new ConcatenateException("Could not open input file for reading", e);
+				throw new IOException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {
-			throw new ConcatenateException("Could not open target file for writing", e);
+			throw new IOException("Could not open target file for writing", e);
 		}
 	}
 
@@ -243,7 +224,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws ConcatenateException {
+	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
 		String selectedExtension = null;
 		for (SequencingObject object : toConcatenate) {
 
@@ -255,7 +236,7 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 						.findFirst();
 
 				if (!currentExtensionOpt.isPresent()) {
-					throw new ConcatenateException("File extension is not valid " + fileName);
+					throw new IOException("File extension is not valid " + fileName);
 				}
 
 				String currentExtension = currentExtensionOpt.get();
@@ -263,8 +244,8 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 				if (selectedExtension == null) {
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
-					throw new ConcatenateException(
-							"Extensions of files to concatenate do not match " + currentExtension + " vs "
+					throw new IOException(
+							"Extensions of files do not match " + currentExtension + " vs "
 									+ selectedExtension);
 				}
 			}
@@ -303,5 +284,25 @@ public class IridaFileStorageAwsServiceImpl implements IridaFileStorageService{
 					.substring(1);
 		}
 		return absolutePath;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long getFileSizeBytes(Path file) {
+		Long fileSize = 0L;
+		try {
+			if(file != null) {
+				S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+				fileSize = s3Object.getObjectMetadata().getContentLength();
+				s3Object.close();
+			}
+		} catch (AmazonServiceException e) {
+			logger.error("Unable to get file size from s3 bucket: " + e);
+		} catch (IOException e) {
+			logger.error("Unable to close connection to s3object: " + e);
+		}
+		return fileSize;
 	}
 }

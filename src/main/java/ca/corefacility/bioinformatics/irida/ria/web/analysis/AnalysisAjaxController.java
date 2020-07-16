@@ -43,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltIn
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
@@ -60,6 +60,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -95,7 +96,7 @@ public class AnalysisAjaxController {
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private ExecutionManagerConfig configFile;
 	private AnalysisAudit analysisAudit;
-	private IridaFileStorageService iridaFileStorageService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
@@ -103,7 +104,7 @@ public class AnalysisAjaxController {
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission, MetadataTemplateService metadataTemplateService,
 			SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, IridaFileStorageService iridaFileStorageService) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, IridaFileStorageUtility iridaFileStorageUtility) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -118,7 +119,7 @@ public class AnalysisAjaxController {
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.configFile = configFile;
 		this.analysisAudit = analysisAudit;
-		this.iridaFileStorageService = iridaFileStorageService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -424,7 +425,7 @@ public class AnalysisAjaxController {
 			AnalysisOutputFileInfo info = new AnalysisOutputFileInfo(aof.getId(), submission.getId(), analysis.getId(),
 					aof.getFile()
 							.getFileName()
-							.toString(), fileExt, iridaFileStorageService.getFileSize(aof.getFile()),
+							.toString(), fileExt, aof.getFileSizeBytes(),
 					tool.getToolName(), tool.getToolVersion(), outputName);
 
 			if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
@@ -446,7 +447,7 @@ public class AnalysisAjaxController {
 		RandomAccessFile reader = null;
 		final Path aofFile = aof.getFile();
 		try {
-			reader = new RandomAccessFile(iridaFileStorageService.getTemporaryFile(aofFile), "r");
+			reader = new RandomAccessFile(iridaFileStorageUtility.getTemporaryFile(aofFile), "r");
 			info.setFirstLine(reader.readLine());
 			info.setFilePointer(reader.getFilePointer());
 		} catch (FileNotFoundException e) {
@@ -502,11 +503,11 @@ public class AnalysisAjaxController {
 					.toString());
 			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName()
 					.toString()));
-			contents.setFileSizeBytes(iridaFileStorageService.getFileSize(aofFile));
+			contents.setFileSizeBytes(aof.getFileSizeBytes());
 			contents.setToolName(tool.getToolName());
 			contents.setToolVersion(tool.getToolVersion());
 			try {
-				final File file = iridaFileStorageService.getTemporaryFile(aofFile);
+				final File file = iridaFileStorageUtility.getTemporaryFile(aofFile);
 				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 				randomAccessFile.seek(seek);
 				if (seek == 0) {
@@ -746,7 +747,7 @@ public class AnalysisAjaxController {
 					.getFile();
 
 			try {
-				String json = new Scanner(new BufferedReader(new FileReader(iridaFileStorageService.getTemporaryFile(path)))).useDelimiter("\\Z")
+				String json = new Scanner(new BufferedReader(new FileReader(iridaFileStorageUtility.getTemporaryFile(path)))).useDelimiter("\\Z")
 						.next();
 
 				// verify file is proper json file and map to a SistrResult list
@@ -808,7 +809,7 @@ public class AnalysisAjaxController {
 
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
-		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files, iridaFileStorageService);
+		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
 
 	/**
@@ -836,7 +837,7 @@ public class AnalysisAjaxController {
 	@RequestMapping(value = "/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void downloadSelection(@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String  filename, HttpServletResponse response) {
 		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
-		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files, iridaFileStorageService);
+		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
 	}
 
 	/**
@@ -864,9 +865,9 @@ public class AnalysisAjaxController {
 		}
 
 		if (!Strings.isNullOrEmpty(filename)) {
-			FileUtilities.createSingleFileResponse(response, optFile.get(), filename, iridaFileStorageService);
+			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
 		} else {
-			FileUtilities.createSingleFileResponse(response, optFile.get(), iridaFileStorageService);
+			FileUtilities.createSingleFileResponse(response, optFile.get());
 		}
 	}
 
@@ -885,7 +886,7 @@ public class AnalysisAjaxController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
-		List<String> lines = IOUtils.readLines(iridaFileStorageService.getFileInputStream(file.getFile()));
+		List<String> lines = IOUtils.readLines(IridaFiles.getFileInputStream(file.getFile()));
 		return ImmutableMap.of("newick", lines.get(0));
 	}
 
@@ -907,7 +908,7 @@ public class AnalysisAjaxController {
 
 		try {
 			for (AnalysisOutputFile file : files) {
-				if (iridaFileStorageService.getFileName(file.getFile())
+				if (iridaFileStorageUtility.getFileName(file.getFile())
 						.contains(filename)) {
 					outputFile = file;
 					break;
@@ -1050,7 +1051,7 @@ public class AnalysisAjaxController {
 					new Object[] {}, locale);
 		} else {
 			try {
-				List<String> lines = IOUtils.readLines(iridaFileStorageService.getFileInputStream(file.getFile()));
+				List<String> lines = IOUtils.readLines(IridaFiles.getFileInputStream(file.getFile()));
 
 				if (lines.size() > 0) {
 					tree = lines.get(0);
@@ -1092,7 +1093,7 @@ public class AnalysisAjaxController {
 		AnalysisOutputFile outputFile = null;
 
 		for (AnalysisOutputFile file : files) {
-			if (iridaFileStorageService.getFileName(file.getFile())
+			if (iridaFileStorageUtility.getFileName(file.getFile())
 					.contains(filename)) {
 				outputFile = file;
 				break;
