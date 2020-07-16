@@ -8,14 +8,14 @@ import org.junit.Test;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>

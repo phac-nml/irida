@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { FileUploader } from "../files/FileUploader";
-import { showNotification } from "../../modules/notifications";
 import { Button, Dropdown, Menu, notification } from "antd";
 import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
@@ -28,7 +27,7 @@ export function SampleFileUploader() {
    * @param text
    * @returns {*}
    */
-  const onSuccess = text => {
+  const onSuccess = (text) => {
     notification.success({ message: text });
     setTimeout(() => {
       window.location.reload();
@@ -44,7 +43,7 @@ export function SampleFileUploader() {
     <Menu className="t-upload-menu">
       <Menu.Item>
         <FileUploader
-          allowedTypes=".fastq,.fastq.gz"
+          allowedTypes=".fastq,.gz"
           url={setBaseUrl(
             `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
           )}
@@ -54,6 +53,18 @@ export function SampleFileUploader() {
           onComplete={onComplete}
         >
           {i18n("SampleFileUploader.sequenceFiles")}
+        </FileUploader>
+      </Menu.Item>
+      <Menu.Item>
+        <FileUploader
+          allowedTypes=".fast5,.gz"
+          url={setBaseUrl(`ajax/samples/${window.PAGE.id}/fast5/upload`)}
+          onSuccess={onSuccess}
+          onUpload={onUpload}
+          onError={onError}
+          onComplete={onComplete}
+        >
+          {i18n("SampleFileUploader.fast5")}
         </FileUploader>
       </Menu.Item>
       <Menu.Item>

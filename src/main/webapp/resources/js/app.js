@@ -1,8 +1,6 @@
-import angular from "angular";
-import "./modules/cart/irida.cart";
 import "./pages/search/irida.search";
 // Import css
-import "../sass/app.scss";
+import "../css/app.css";
 // Font Awesome
 import "@fortawesome/fontawesome-free/js/all";
 /*
@@ -17,15 +15,11 @@ import { getCartCount } from "./apis/cart/cart";
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";
 
-const deps = ["irida.cart"];
-
-const app = angular.module("irida", deps);
-
 /*
 This is here since this has been updated to use a standard Event,
 and not handled through angularjs.
  */
-document.addEventListener(CART.UPDATED, e => {
+document.addEventListener(CART.UPDATED, (e) => {
   const { count, added, duplicate, existing } = e.detail;
 
   const counter = document.querySelector(".js-cart-count");
@@ -39,21 +33,21 @@ document.addEventListener(CART.UPDATED, e => {
   // Display notifications
   if (added) {
     showNotification({
-      text: added
+      text: added,
     });
   }
 
   if (duplicate) {
     showNotification({
       text: duplicate,
-      type: "warning"
+      type: "warning",
     });
   }
 
   if (existing) {
     showNotification({
       text: existing,
-      type: "info"
+      type: "info",
     });
   }
 });
@@ -61,7 +55,7 @@ document.addEventListener(CART.UPDATED, e => {
 /**
  * Initialize the cart
  */
-getCartCount().then(count => {
+getCartCount().then((count) => {
   const event = new CustomEvent(CART.UPDATED, { detail: count });
   document.dispatchEvent(event);
 });
@@ -81,5 +75,3 @@ function openBaseUrlModifier(method, url, async) {
 }
 
 window.XMLHttpRequest.prototype.open = openBaseUrlModifier;
-
-export default app;

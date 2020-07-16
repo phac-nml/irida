@@ -2,8 +2,6 @@ const path = require("path");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const cssnano = require("cssnano");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 
 const dev = require("./webpack.config.dev");
@@ -16,7 +14,6 @@ const BUILD_PATH = path.resolve(__dirname, "dist");
 const config = {
   externals: {
     jquery: "jQuery",
-    angular: "angular",
   },
   stats: {
     children: false,
@@ -42,18 +39,23 @@ const config = {
         use: "babel-loader?cacheDirectory",
       },
       {
-        test: /\.(css|sass|scss)$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader",
           {
             loader: "postcss-loader",
             options: {
-              plugins: () => [require("autoprefixer")],
-              sourceMap: true,
+              ident: "postcss",
+              plugins: (loader) => [
+                require("postcss-import")({ root: loader.resourcePath }),
+                require("postcss-preset-env")(),
+                require("cssnano")(),
+                require("autoprefixer")(),
+                require("postcss-nested")(),
+              ],
             },
           },
-          "sass-loader",
         ],
       },
       {
@@ -81,39 +83,11 @@ const config = {
           },
         ],
       },
-      {
-        test: require.resolve("angular"),
-        use: [
-          {
-            loader: "expose-loader",
-            options: "angular",
-          },
-        ],
-      },
     ],
   },
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css",
-    }),
-    new OptimizeCSSAssetsPlugin({
-      cssProcessor: cssnano,
-      cssProcessorPluginOptions: {
-        preset: [
-          "default",
-          {
-            discardComments: { removeAll: true },
-            normalizeCharset: { add: true },
-          },
-        ],
-      },
-      cssProcessorOptions: {
-        // Run cssnano in safe mode to avoid
-        // potentially unsafe transformations.
-        safe: true,
-        canPrint: false,
-        map: this.mode === "development" ? { inline: false } : null,
-      },
     }),
     new i18nThymeleafWebpackPlugin({
       functionName: "i18n",

@@ -1,8 +1,8 @@
-const angular = require("angular");
+import angular from "angular";
 import "angular-ui-bootstrap";
 import { convertFileSize } from "../../utilities/file-utilities";
 
-require("../../../sass/pages/sample-files.scss");
+require("../../../css/pages/sample-files.css");
 
 /**
  * Filter for formatting the files size.
@@ -24,11 +24,11 @@ function FileDeletionController($uibModalInstance, id, label) {
   this.fileId = id;
   this.label = label;
 
-  this.deleteFile = function() {
+  this.deleteFile = function () {
     $uibModalInstance.close();
   };
 
-  this.cancel = function() {
+  this.cancel = function () {
     $uibModalInstance.dismiss();
   };
 }
@@ -47,18 +47,18 @@ function FileController($uibModal) {
    * @param {long} id Id for the sequenceFile to delete
    * @param {String} label Name of the sequenceFile to delete
    */
-  this.deleteFile = function(id, label) {
+  this.deleteFile = function (id, label) {
     $uibModal.open({
       templateUrl: "/confirm.html",
       controller: "FileDeletionController as deleteCtrl",
       resolve: {
-        id: function() {
+        id: function () {
           return id;
         },
-        label: function() {
+        label: function () {
           return label;
-        }
-      }
+        },
+      },
     });
   };
 }
@@ -77,23 +77,23 @@ function AssemblyFileController($uibModal) {
    * @param {long} id Id for the assembly to delete
    * @param {String} label Name of the assembly to delete
    */
-  this.deleteFile = function(id, label) {
+  this.deleteFile = function (id, label) {
     $uibModal.open({
       templateUrl: "/confirm_assembly.html",
       controller: "FileDeletionController as deleteCtrl",
       resolve: {
-        id: function() {
+        id: function () {
           return id;
         },
-        label: function() {
+        label: function () {
           return label;
-        }
-      }
+        },
+      },
     });
   };
 }
 
-const filesModule = angular
+angular
   .module("irida.sample.files", ["ui.bootstrap"])
   .filter("humanReadableBytes", humanReadableBytes)
   .controller("FileController", ["$uibModal", FileController])
@@ -102,7 +102,5 @@ const filesModule = angular
     "$uibModalInstance",
     "id",
     "label",
-    FileDeletionController
-  ]).name;
-
-angular.module("irida").requires.push(filesModule);
+    FileDeletionController,
+  ]);

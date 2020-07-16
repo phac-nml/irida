@@ -1,5 +1,30 @@
 package ca.corefacility.bioinformatics.irida.service.impl.user;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
@@ -15,29 +40,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepositor
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Implementation of {@link UserGroupService}.
@@ -282,13 +284,13 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			return true;
 		}
 
-		// get the set of group owners
-		final List<UserGroupJoin> users = userGroupJoinRepository
-				.findAll(filterUserGroupJoinByRole(UserGroupRole.GROUP_OWNER));
+		long count = getUsersForGroup(userGroup).stream()
+				.filter(g -> g.getRole()
+						.equals(UserGroupRole.GROUP_OWNER))
+				.count();
 
-		// if there are at least 2 group owners, then it doesn't matter what
-		// we're changing the role to.
-		return users.size() >= 2;
+		// There must always be an owner on the project
+		return count > 1;
 	}
 
 	/**
@@ -307,8 +309,8 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Collection<User> getUsersNotInGroup(final UserGroup userGroup) {
-		return userGroupJoinRepository.findUsersNotInGroup(userGroup);
+	public List<User> getUsersNotInGroup(final UserGroup userGroup, final String filter) {
+		return userGroupJoinRepository.findUsersNotInGroup(userGroup, filter);
 	}
 
 	/**

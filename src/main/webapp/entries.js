@@ -8,8 +8,7 @@ module.exports = {
     "core-js/stable",
     "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
-    "expose-loader?angular!angular",
-    "./resources/js/vendors"
+    "./resources/js/vendors",
   ],
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
@@ -21,6 +20,7 @@ module.exports = {
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
+  project: "./resources/js/components/project/ProjectNav.jsx",
   "project-events": "./resources/js/pages/projects/project-events.js",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
@@ -40,12 +40,13 @@ module.exports = {
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "ncbi-exports": "./resources/js/admin/ncbi-exports",
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
   "project-settings-remote":
     "./resources/js/pages/projects/settings/project-settings-remote.js",
+  "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-api-details":
     "./resources/js/pages/remote-apis/remote-api-details.js",
@@ -54,9 +55,8 @@ module.exports = {
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
-  "project-users-groups":
-    "./resources/js/pages/projects/project-users-groups.js",
   "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
+  "project-user-groups": "./resources/js/pages/projects/ProjectUserGroups.jsx",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
@@ -69,7 +69,7 @@ module.exports = {
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
-  "users-list": "./resources/js/pages/AdminUsersPage.jsx",
+  "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
@@ -78,10 +78,11 @@ module.exports = {
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
-  "groups-list": "./resources/js/pages/users/groups-list.js",
-  "group-members": "./resources/js/pages/users/groups-members.js",
-  "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
+  groups: "./resources/js/pages/UserGroupsPage",
+  "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
-  "user-details": "./resources/js/pages/user-details.js"
+  "user-details": "./resources/js/pages/user-details.js",
+  "project-metadata-templates":
+    "./resources/js/pages/projects/metadata-templates",
 };

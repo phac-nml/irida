@@ -6,6 +6,8 @@ import "ng-file-upload";
 import React from "react";
 import { render } from "react-dom";
 import { AnalysesQueue } from "../../components/AnalysesQueue";
+import { emptyCart, removeSample } from "../../apis/cart/cart";
+import { CART } from "../../utilities/events-utilities";
 
 render(<AnalysesQueue />, document.querySelector("#queue-root"));
 
@@ -13,7 +15,6 @@ render(<AnalysesQueue />, document.querySelector("#queue-root"));
  * Main controller for the pipeline launch page.
  * @param $scope Application model object
  * @param $http AngularJS http object
- * @param CartService {CartService} a reference to the cart service (to clear it)
  * @param ParameterService {ParameterService} for passing parameter information between modal and page
  * @param DynamicSourceService {DynamicSourceService} for selecting parameters from a Galaxy Tool Data Table
  * @param ParametersWithChoicesService {ParametersWithChoicesService} for handling required parameters with a restricted set of choices
@@ -22,7 +23,6 @@ render(<AnalysesQueue />, document.querySelector("#queue-root"));
 function PipelineController(
   $scope,
   $http,
-  CartService,
   ParameterService,
   DynamicSourceService,
   ParametersWithChoicesService
@@ -37,11 +37,11 @@ function PipelineController(
   vm.paramsWithChoices = ParametersWithChoicesService.getParameters();
   vm.choiceParams = ParametersWithChoicesService.getDefaultSelectedParameters();
 
-  $scope.$on("PARAMETERS_SAVED", function() {
+  $scope.$on("PARAMETERS_SAVED", function () {
     vm.selectedParameters = ParameterService.getSelectedParameters();
   });
 
-  $scope.$on("REFERENCE_FILE_UPLOADED", function(event, uploaded) {
+  $scope.$on("REFERENCE_FILE_UPLOADED", function (event, uploaded) {
     vm.uploadedReferenceFile = uploaded.id;
   });
 
@@ -60,7 +60,7 @@ function PipelineController(
    * for the modal dialog whenever we select a new set of parameters
    * from the drop-down.
    */
-  vm.parameterSelected = function() {
+  vm.parameterSelected = function () {
     ParameterService.setSelectedParameters(vm.selectedParameters);
   };
 
@@ -69,7 +69,7 @@ function PipelineController(
    * for the modal dialog whenever we select a new tool data table field
    * from the drop-down.
    */
-  vm.dynamicSourceValueSelected = function(dynamicSourceValue) {
+  vm.dynamicSourceValueSelected = function (dynamicSourceValue) {
     DynamicSourceService.setSelectedDynamicSourceValue(
       dynamicSourceValue,
       vm.selectedDynamicSource
@@ -84,7 +84,7 @@ function PipelineController(
    *
    * @param name {string} Name of choice parameter corresponding to XML name attribute for <parameter> tag
    */
-  vm.choiceParamChanged = function(name) {
+  vm.choiceParamChanged = function (name) {
     const selectValueObj = vm.selectedChoiceParam[name];
     if (
       typeof selectValueObj === "undefined" ||
@@ -121,7 +121,7 @@ function PipelineController(
    * Disable the launch button if there are any choice parameters with no
    * values set or if a Galaxy dynamic source is required, but not set.
    */
-  vm.shouldDisableLaunch = function() {
+  vm.shouldDisableLaunch = function () {
     return (
       (!$.isEmptyObject(vm.choiceParams) && anyNull(vm.choiceParams)) ||
       !(
@@ -134,7 +134,7 @@ function PipelineController(
   /**
    * Provide a title for the launch button, depending on this.shouldDisableLaunch().
    */
-  vm.launchButtonTitle = function() {
+  vm.launchButtonTitle = function () {
     if (this.shouldDisableLaunch()) {
       return i18n("workflow.launch.btn.title-disarmed");
     } else {
@@ -145,7 +145,7 @@ function PipelineController(
   /**
    * Launch the pipeline
    */
-  vm.launch = function() {
+  vm.launch = function () {
     var // reference file id (use the most recently uploaded or the selected one)
       ref =
         typeof vm.uploadedReferenceFile !== "undefined"
@@ -175,7 +175,7 @@ function PipelineController(
       vm.loading = true;
 
       // Get a list of paired and single end files to run.
-      radioBtns.each(function(c) {
+      radioBtns.each(function (c) {
         c = $(this);
 
         if (c.attr("data-type") === "single_end") {
@@ -185,7 +185,7 @@ function PipelineController(
         }
       });
 
-      angular.element(".share-project:checked").each(function() {
+      angular.element(".share-project:checked").each(function () {
         var box = $(this);
         shared.push(box.val());
       });
@@ -197,7 +197,7 @@ function PipelineController(
 
       var selectedParameters = {
         id: currentSettings.id,
-        parameters: currentSettings.parameters
+        parameters: currentSettings.parameters,
       };
       if (Object.keys(currentDynamicSourceSettings).length > 0) {
         var dynamicSourceParameters = Object.values(
@@ -209,10 +209,10 @@ function PipelineController(
       }
       // If there are any parameters with choices, then add them to the list of selected parameters
       if (!$.isEmptyObject(vm.choiceParams)) {
-        Object.keys(vm.choiceParams).forEach(k => {
+        Object.keys(vm.choiceParams).forEach((k) => {
           selectedParameters.parameters.push({
             name: k,
-            value: vm.choiceParams[k]
+            value: vm.choiceParams[k],
           });
         });
       }
@@ -255,7 +255,7 @@ function PipelineController(
         url: window.PAGE.urls.startUrl,
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(params),
-        success: function(response, status, request) {
+        success: function (response, status, request) {
           if (response.success) {
             vm.success = true;
           } else {
@@ -270,14 +270,14 @@ function PipelineController(
                 text: response.pipelineError,
                 timeout: false,
                 progressBar: false,
-                closeWith: ["button"]
+                closeWith: ["button"],
               });
             }
           }
           // trigger Angular digest with the following call
           $scope.$apply();
         },
-        error: function(response, status, request) {
+        error: function (response, status, request) {
           const errorMsg =
             request +
             "- HTTP " +
@@ -292,11 +292,11 @@ function PipelineController(
             text: errorMsg,
             timeout: false,
             progressBar: false,
-            closeWith: ["button"]
+            closeWith: ["button"],
           });
           // trigger Angular digest with the following call
           $scope.$apply();
-        }
+        },
       });
     }
   };
@@ -307,8 +307,12 @@ function PipelineController(
    * @param projectId the project id of the sample to remove
    * @param sampleId the sample if to remove
    */
-  vm.removeSample = function(projectId, sampleId) {
-    CartService.removeSample(projectId, sampleId).then(function() {
+  vm.removeSample = function (projectId, sampleId) {
+    removeSample(projectId, sampleId).then(({ count }) => {
+      // Update the cart
+      const event = new CustomEvent(CART.UPDATED, { detail: { count } });
+      document.dispatchEvent(event);
+
       angular.element("#sample-" + sampleId).remove();
       if (angular.element(".sample-container").length === 0) {
         location.reload();
@@ -319,10 +323,8 @@ function PipelineController(
   /**
    * Clear the cart and redirect to the projects page
    */
-  vm.clearAndRedirect = function() {
-    CartService.clear().then(function() {
-      window.location = window.PAGE.urls.projectsPage;
-    });
+  vm.clearAndRedirect = function () {
+    emptyCart().then(() => (window.location = window.PAGE.urls.projectsPage));
   };
 }
 
@@ -333,10 +335,10 @@ function PipelineController(
 function ParameterModalController($uibModal) {
   var vm = this;
 
-  vm.openModal = function() {
+  vm.openModal = function () {
     $uibModal.open({
       templateUrl: "/parameters.html",
-      controller: "ParameterController as paras"
+      controller: "ParameterController as paras",
     });
   };
 }
@@ -367,7 +369,7 @@ function ParameterController(
    * that the parameters were updated in the service, optionally
    * save the parameters to the server and close the modal.
    */
-  vm.update = function() {
+  vm.update = function () {
     ParameterService.parametersModified = true;
     if (vm.saveParameters) {
       vm.saveAndUse();
@@ -378,7 +380,7 @@ function ParameterController(
   /**
    * Straight up close the modal.
    */
-  vm.close = function() {
+  vm.close = function () {
     $uibModalInstance.dismiss();
   };
 
@@ -386,7 +388,7 @@ function ParameterController(
    * Reset the specified value back to the default value.
    * @param index the index in the list of parameters we can set.
    */
-  vm.reset = function(index) {
+  vm.reset = function (index) {
     ParameterService.resetCurrentSelectionIndex(index);
   };
 
@@ -395,32 +397,32 @@ function ParameterController(
    * saved set to the list of parameters on the page, and select
    * the parameters.
    */
-  vm.saveAndUse = function() {
+  vm.saveAndUse = function () {
     var parametersToSave = {
       pipelineId: window.PAGE.pipeline.pipelineId,
       parameterSetName: vm.parameterSetName,
       // vm.selectedParameters.parameters is an array of maps, this will reduce it down
       // into a single map with key-value pairs from each parameter name to its corresponding
       // value. The final parameter to reduce is the empty map, that's our initial state.
-      parameterValues: vm.selectedParameters.parameters.reduce(function(
+      parameterValues: vm.selectedParameters.parameters.reduce(function (
         prev,
         curr
       ) {
         prev[curr.name] = curr.value;
         return prev;
       },
-      {})
+      {}),
     };
 
     $http({
       url: window.PAGE.urls.saveParametersUrl,
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       transformRequest: undefined,
-      data: JSON.stringify(parametersToSave)
-    }).then(function(response) {
+      data: JSON.stringify(parametersToSave),
+    }).then(function (response) {
       var data = response.data;
       $uibModalInstance.dismiss();
       // on success, we can re-use the selected parameters in
@@ -441,7 +443,7 @@ function ParameterController(
    * a marker to the parameter set name to show the user that the
    * params have been modified.
    */
-  vm.valueChanged = function() {
+  vm.valueChanged = function () {
     vm.parametersModified = true;
     vm.selectedParameters.id = "custom";
     if (vm.parameterSetName.indexOf("(*)") == -1) {
@@ -461,7 +463,7 @@ function ParameterService() {
     window.PAGE.pipeline.parameters.push({
       id: "no_parameters",
       label: "",
-      parameters: []
+      parameters: [],
     });
   }
 
@@ -470,10 +472,10 @@ function ParameterService() {
    * so that we can quickly roll back to default values for any
    * parameter set.
    */
-  var originalSettings = window.PAGE.pipeline.parameters.map(function(params) {
+  var originalSettings = window.PAGE.pipeline.parameters.map(function (params) {
     return {
       currentSettings: angular.copy(params),
-      defaultSettings: angular.copy(params)
+      defaultSettings: angular.copy(params),
     };
   });
 
@@ -482,7 +484,7 @@ function ParameterService() {
   /**
    * Get the settings that the page currently has.
    */
-  svc.getOriginalSettings = function() {
+  svc.getOriginalSettings = function () {
     return originalSettings;
   };
 
@@ -492,10 +494,10 @@ function ParameterService() {
    *
    * @param settingsToAdd the settings to add to the current set of settings.
    */
-  svc.addSettingsToFront = function(settingsToAdd) {
+  svc.addSettingsToFront = function (settingsToAdd) {
     var savedParameters = {
       currentSettings: angular.copy(settingsToAdd),
-      defaultSettings: angular.copy(settingsToAdd)
+      defaultSettings: angular.copy(settingsToAdd),
     };
     originalSettings.unshift(savedParameters);
     selectedParameters = originalSettings[0];
@@ -504,7 +506,7 @@ function ParameterService() {
   /**
    * Get the currently selected parameters from the page.
    */
-  svc.getSelectedParameters = function() {
+  svc.getSelectedParameters = function () {
     return selectedParameters;
   };
 
@@ -513,7 +515,7 @@ function ParameterService() {
    *
    * @param currentSelection the parameters that are currently selected
    */
-  svc.setSelectedParameters = function(currentSelection) {
+  svc.setSelectedParameters = function (currentSelection) {
     selectedParameters = currentSelection;
   };
 
@@ -522,7 +524,7 @@ function ParameterService() {
    * parameters back to its default value.
    * @param index the index of the parameter to reset.
    */
-  svc.resetCurrentSelectionIndex = function(index) {
+  svc.resetCurrentSelectionIndex = function (index) {
     selectedParameters.currentSettings.parameters[index] = angular.copy(
       selectedParameters.defaultSettings.parameters[index]
     );
@@ -531,7 +533,7 @@ function ParameterService() {
   /**
    * Completely reset the current settings back to the set of default values.
    */
-  svc.resetCurrentSelection = function() {
+  svc.resetCurrentSelection = function () {
     selectedParameters.currentSettings = angular.copy(
       selectedParameters.defaultSettings
     );
@@ -550,8 +552,8 @@ function DynamicSourceService() {
       {
         id: "no_dynamic_sources",
         label: "",
-        parameters: []
-      }
+        parameters: [],
+      },
     ];
   }
 
@@ -568,14 +570,14 @@ function DynamicSourceService() {
   /**
    * Get the settings that the page currently has.
    */
-  svc.getSettings = function() {
+  svc.getSettings = function () {
     return settings;
   };
 
   /**
    * Get the currently selected parameters from the page.
    */
-  svc.getSelectedDynamicSourceValue = function(galaxyToolDataTable) {
+  svc.getSelectedDynamicSourceValue = function (galaxyToolDataTable) {
     return settings.currentSettings[galaxyToolDataTable];
   };
 
@@ -584,7 +586,7 @@ function DynamicSourceService() {
    * @param galaxyToolDataTable the Galaxy Tool Data Table to set
    * @param currentSelection the tool data table field that is currently selected
    */
-  svc.setSelectedDynamicSourceValue = function(
+  svc.setSelectedDynamicSourceValue = function (
     galaxyToolDataTable,
     currentSelection
   ) {
@@ -603,14 +605,14 @@ function ParametersWithChoicesService() {
       params[p.name] = {
         label: p.label,
         name: p.name,
-        choices: angular.copy(p.choices)
+        choices: angular.copy(p.choices),
       };
     }
   }
-  svc.getParameters = function() {
+  svc.getParameters = function () {
     return params;
   };
-  svc.getDefaultSelectedParameters = function() {
+  svc.getDefaultSelectedParameters = function () {
     return Object.keys(params).reduce((acc, x) => {
       acc[x] = null;
       return acc;
@@ -623,32 +625,32 @@ function FileUploadCtrl($rootScope, Upload) {
 
   vm.referenceUploadStarted = false;
 
-  vm.upload = function(files) {
+  vm.upload = function (files) {
     if (files && files.length > 0) {
       vm.referenceUploadStarted = true;
       Upload.upload({
         url: window.PAGE.urls.upload,
-        file: files[0]
+        file: files[0],
       })
-        .progress(function(evt) {
+        .progress(function (evt) {
           vm.progress = parseInt((100.0 * evt.loaded) / evt.total);
         })
         .then(
-          function(response) {
+          function (response) {
             var data = response.data;
             vm.uploaded = {
               id: data["uploaded-file-id"],
-              name: data["uploaded-file-name"]
+              name: data["uploaded-file-name"],
             };
             vm.uploadError = false;
             $rootScope.$emit("REFERENCE_FILE_UPLOADED", vm.uploaded);
             vm.referenceUploadStarted = false;
           },
-          function(response) {
+          function (response) {
             vm.referenceUploadStarted = false;
             window.notifications.show({
               text: response.data.error,
-              type: "error"
+              type: "error",
             });
           }
         );
@@ -656,31 +658,28 @@ function FileUploadCtrl($rootScope, Upload) {
   };
 }
 
-const pipelineModule = angular
-  .module("irida.pipelines", ["ui.bootstrap", "irida.cart", "ngFileUpload"])
+angular
+  .module("irida.pipelines", ["ui.bootstrap", "ngFileUpload"])
   .controller("PipelineController", [
     "$rootScope",
     "$http",
-    "CartService",
     "ParameterService",
     "DynamicSourceService",
     "ParametersWithChoicesService",
-    PipelineController
+    PipelineController,
   ])
   .controller("ParameterModalController", [
     "$uibModal",
-    ParameterModalController
+    ParameterModalController,
   ])
   .controller("ParameterController", [
     "$rootScope",
     "$http",
     "$uibModalInstance",
     "ParameterService",
-    ParameterController
+    ParameterController,
   ])
   .controller("FileUploadCtrl", ["$rootScope", "Upload", FileUploadCtrl])
   .service("ParameterService", [ParameterService])
   .service("DynamicSourceService", [DynamicSourceService])
-  .service("ParametersWithChoicesService", [ParametersWithChoicesService]).name;
-
-angular.module("irida").requires.push(pipelineModule);
+  .service("ParametersWithChoicesService", [ParametersWithChoicesService]);

@@ -4,7 +4,7 @@
 
 <head>
   <title th:text="#{project.export.title}"></title>
-  <link rel="stylesheet" th:href="@{/dist/css/project-ncbi-export.bundle.css}">
+  <link rel="stylesheet" th:href="@{/dist/css/project-ncbi-exports.bundle.css}">
   <link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
 </head>
 
@@ -41,13 +41,8 @@
               <p class="help-block" th:text="#{project.export.namespace.description}">_Namespace used for identifier creation_</p>
             </div>
             <div class="form-group col-md-6">
-              <label for="release-date" th:text="#{project.export.release_date.title}">_Release Date_</label>
-              <div class="input-group" ng-controller="DatePickerControl as picker">
-                <input type="text" id="release_date" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="picker.dt" is-open="picker.opened" ng-required="true" close-text="Close" required="required" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="picker.open($event)"><i class="fa fa-calendar" aria-hidden="true"></i></button>
-              </span>
-              </div>
+              <label for="release_date" th:text="#{project.export.release_date.title}">_Release Date_</label>
+              <input type="date" id="release_date" class="form-control" th:value="${#calendars.format(#dates.createToday(),'YYYY-MM-dd')}">
               <p class="help-block" th:text="#{project.export.release_date.description}">_When data will be released_</p>
             </div>
           </div>
@@ -228,7 +223,7 @@
         </div>
         <button id="submit" class="btn btn-primary" th:text="#{global.btn.submit}">_Submit_</button>
       </form>
-      
+
       <!-- Help popups -->
             
       <div class="modal fade" id="bioSampleHelp" role="dialog" aria-labelledby="#Help">
@@ -349,6 +344,7 @@
   <th:block layout:fragment="scripts" th:inline="javascript">
     <script>
       $("#submissionForm").submit(function(event) {
+        event.preventDefault();
 
         $(".empty-file-warning").hide();
 
@@ -450,7 +446,7 @@
       */
       function checkNumberValidSamples(){
         //If there's only one sample, remove the remove button.  we can't have an empty submission
-        if($(".sample-container").size() == 1){
+        if($(".sample-container").length === 1){
           $(".remove-button").remove();
         }
       }
@@ -470,28 +466,6 @@
           submitButton.attr("disabled", "disabled");
         }
       }
-
-      /*
-       * Angular controller for the date picker widget
-       */
-      (function() {
-        const ncbiModule = angular.module('irida.ncbi', []).controller("DatePickerControl", function () {
-          var vm = this;
-
-          vm.dt = /*[[${#calendars.format(#dates.createToday(),'YYYY-MM-dd')}]]*/ "2015-08-24";
-          vm.opened = false;
-
-          vm.open = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            this.opened = true;
-          };
-
-        }).name;
-
-        angular.module("irida").requires.push(ncbiModule);
-
-      })();
     </script>
   </th:block>
 </body>

@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -26,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -33,17 +33,15 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
 
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
 
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
-	private FileUtilities fileUtilities = new FileUtilities();
+	private final FileUtilities fileUtilities = new FileUtilities();
 
 	@Autowired
 	@Qualifier("outputFileBaseDirectory")
@@ -67,8 +65,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
 
-		String expectedAnalysisDetails[] = new String[] { "My Completed Submission", "4",
-				"SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013 10:01 AM", "a few seconds" };
+		String[] expectedAnalysisDetails = new String[] { "My Completed Submission", "4",
+				"SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue("The correct details are displayed for the analysis",
 				page.analysisDetailsEqual(expectedAnalysisDetails));
 	}
@@ -98,7 +96,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		AnalysesUserPage analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		analysesPage.clickPagination(2);
-		assertEquals("Should have 4 analyses displayed originally", 4, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 6 analyses displayed originally", 6, analysesPage.getNumberOfAnalysesDisplayed());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
 		assertTrue("Page title should equal", page.compareTabTitle("Delete Analysis"));
@@ -107,7 +105,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		analysesPage = AnalysesUserPage.initializeAdminPage(driver());
 		page.clickPagination(2);
-		assertEquals("Should have 3 analyses displayed", 3, analysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals("Should have 5 analyses displayed", 5, analysesPage.getNumberOfAnalysesDisplayed());
 	}
 
 	@Test
@@ -192,17 +190,29 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testProvenance() {
+	public void testProvenance() throws IOException {
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/filterStats.txt");
 		LoginPage.loginAsManager(driver());
 
 		// Has output files so display a provenance
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
-		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
-		page.getFileProvenance();
+		assertEquals("There should be two files", 2, page.getProvenanceFileCount());
+		page.getFileProvenance(0);
+		assertEquals("Should have 1 tool associated with filterStats", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("Tool should have 2 parameters", 2, page.getGalaxyParametersCount());
+
+		page.getFileProvenance(1);
 		assertEquals("Should have 2 tools associated with the tree", 2, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 1 parameter", 1, page.getGalaxyParametersCount());
+
+		// We click the first file again and check for tools and execution parameters
+		page.getFileProvenance(0);
+		assertEquals("Should have 1 tool associated with filterStats", 1, page.getToolCount());
+		page.displayToolExecutionParameters();
+		assertEquals("Tool should have 2 parameter", 2, page.getGalaxyParametersCount());
 
 		// Has no output files so no provenance displayed
 		page = AnalysisDetailsPage.initPage(driver(), 10L, "provenance");
@@ -392,7 +402,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page = AnalysisDetailsPage.initPage(driver(), 14L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
 		assertEquals("There should be one file", 1, page.getProvenanceFileCount());
-		page.getFileProvenance();
+		page.getFileProvenance(0);
 		assertEquals("Should have 2 tools associated with the tree", 1, page.getToolCount());
 		page.displayToolExecutionParameters();
 		assertEquals("First tool should have 2 parameter", 2, page.getGalaxyParametersCount());
@@ -403,8 +413,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals("There should be only 6 values for these labels", 6, page.getNumberOfListItemValues());
 
-		String expectedAnalysisDetails[] = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
-				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013 10:01 AM", "a few seconds" };
+		String[] expectedAnalysisDetails = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
+				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue("The correct details are displayed for the analysis",
 				page.analysisDetailsEqual(expectedAnalysisDetails));
 	}
@@ -425,6 +435,22 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Receive Email Upon Pipeline Completion section
 		// should be visible
 		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdNotVisibleOnError() {
+		// Regular user should not have a clickable link to the galaxy history
+		LoginPage.loginAsUser(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 16L, "");
+		assertFalse("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
+	}
+
+	@Test
+	public void testGalaxyHistoryIdVisibleOnError() {
+		// Admin user should have a clickable link to the galaxy history
+		LoginPage.loginAsAdmin(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 15L, "");
+		assertTrue("Galaxy History Id link should not be displayed", page.galaxyHistoryIdVisible());
 	}
 
 }

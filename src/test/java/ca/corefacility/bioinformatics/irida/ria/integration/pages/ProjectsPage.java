@@ -9,6 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * <p>
@@ -41,6 +43,7 @@ public class ProjectsPage extends AbstractPage {
 
 	public void sortProjectTableBy() {
 		projectsTable.findElement(By.className("t-name-col")).click();
+		waitForTime(200);
 	}
 
 	public List<String> getProjectsSortListByColumnName() {

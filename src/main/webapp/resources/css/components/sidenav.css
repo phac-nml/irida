@@ -1,0 +1,26 @@
+.sidenav {
+  height: 100%;
+  background-color: #ffffff;
+  margin-right: 1rem;
+  padding: 0.5rem;
+  @media screen and (max-width: 960px) {
+    width: 100%;
+  }
+}
+
+.sidenav__inner--fixed {
+  @media screen and (min-width: 960px) {
+    z-index: 200;
+    width: 290px;
+    position: fixed;
+    top: 70px;
+  }
+}
+
+.sidenav__label {
+  color: #929292;
+  font-weight: normal;
+  font-size: 1.3rem;
+  margin: 0;
+  padding: 0;
+}
