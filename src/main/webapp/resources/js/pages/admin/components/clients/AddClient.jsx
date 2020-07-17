@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, Modal } from "antd";
+import { Form, Input, Modal, Select } from "antd";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { useNavigate } from "@reach/router";
-import { createUserGroup } from "../../../../apis/users/groups";
+import { addNewClient } from "../../../../apis/clients/clients";
 
 /**
  * Component to add a button which will open a modal to add a client.
@@ -24,6 +24,26 @@ export function AddClient() {
 
   const [error, setError] = useState();
 
+  const AVAILABLE_TOKEN_VALIDITY = [
+    // 30 minutes
+    { "1800": "1800" },
+    // 1 hour
+    { "3600": 3600 },
+    // 2 hours
+    { "7200": 7200 },
+    // 6 hours
+    { "21600": 21600 },
+    // 12 hours
+    { "43200": 43200 },
+    // 1 day
+    { "86400": 86400 },
+    // 2 days
+    { "172800": 172800 },
+    // 7 days
+    { "604800": 604800 }];
+
+  const given_tokenValidity = "43200";
+
   /*
   Watch for changes to the forms visibility, when it becomes visible
   set keyboard focus onto the user name input.
@@ -39,7 +59,7 @@ export function AddClient() {
    */
   const onOk = () => {
     form.validateFields().then((values) => {
-      createUserGroup(values)
+      addNewClient(values)
         .then((data) => {
           form.resetFields();
           setVisible(false);
@@ -92,17 +112,22 @@ export function AddClient() {
           >
             <Input
               ref={inputRef}
-              name="name"
+              name="clientId"
+              placeholder={i18n("client.clientid")}
               onChange={() =>
                 typeof error !== "undefined" ? setError(undefined) : null
               }
             />
           </Form.Item>
           <Form.Item
-            label={i18n(" CreateNewUserGroupButton.description")}
-            name="description"
+            label={i18n("client.details.tokenValidity")}
+            name="accessTokenValiditySeconds"
           >
-            <Input.TextArea name="description" />
+            <Select
+              name="accessTokenValiditySeconds"
+              options={AVAILABLE_TOKEN_VALIDITY}
+              selected={given_tokenValidity}
+            />
           </Form.Item>
         </Form>
       </Modal>
