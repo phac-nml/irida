@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -141,8 +140,7 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 *                        the sample
 	 * @return the new {@link SampleSequencingObjectJoin}
 	 * @throws ConcatenateException if there was an error concatenating the sequences
-	 * @throws IOException if there was an error reading the sequences to concatenate
 	 */
 	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename,
-			Sample targetSample, boolean removeOriginals) throws ConcatenateException, IOException;
+			Sample targetSample, boolean removeOriginals) throws ConcatenateException;
 }
