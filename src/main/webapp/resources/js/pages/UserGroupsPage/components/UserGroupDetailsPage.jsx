@@ -33,10 +33,11 @@ const reducer = (state, action) => {
 /**
  * React component to display a page for viewing User Group Details.
  * @param {number}id - identifier for the user group
+ * @param baseUrl - either /admin/groups for admin panel or /groups for main app
  * @returns {*}
  * @constructor
  */
-export default function UserGroupDetailsPage({ id }) {
+export default function UserGroupDetailsPage({ id, baseUrl }) {
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
     tab: "members",
@@ -126,7 +127,7 @@ export default function UserGroupDetailsPage({ id }) {
       <form
         style={{ marginTop: SPACE_SM }}
         ref={deleteRef}
-        action={setBaseUrl(`/groups/${id}/delete`)}
+        action={setBaseUrl(`${baseUrl}/${id}/delete`)}
         method="POST"
       >
         <Popconfirm
@@ -145,7 +146,7 @@ export default function UserGroupDetailsPage({ id }) {
   return (
     <PageWrapper
       title={"User Groups"}
-      onBack={() => navigate(setBaseUrl("/groups"), { replace: true })}
+      onBack={() => navigate(setBaseUrl(`${baseUrl}`), { replace: true })}
     >
       <Tabs
         defaultActiveKey="details"

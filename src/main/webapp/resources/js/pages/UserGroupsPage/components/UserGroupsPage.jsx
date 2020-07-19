@@ -4,11 +4,11 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { UserGroupsTable } from "./UserGroupsTable";
 import React from "react";
 
-export default function UserGroupsPage() {
+export default function UserGroupsPage({ baseUrl }) {
   return (
     <PageWrapper title={i18n("UserGroupsPage.title")}>
       <PagedTableProvider url={setBaseUrl(`/ajax/user-groups/list`)}>
-        <UserGroupsTable />
+        <UserGroupsTable baseUrl={baseUrl} />
       </PagedTableProvider>
     </PageWrapper>
   );

@@ -3,13 +3,14 @@ import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Form, Input, Modal } from "antd";
 import { createUserGroup } from "../../../apis/users/groups";
 import { useNavigate } from "@reach/router";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /**
  * React component to render a button to create a new user group
  * @returns {*}
  * @constructor
  */
-export function CreateNewUserGroupButton() {
+export function CreateNewUserGroupButton({ baseUrl }) {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
@@ -40,7 +41,7 @@ export function CreateNewUserGroupButton() {
         .then((data) => {
           form.resetFields();
           setVisible(false);
-          navigate(`groups/${data.id}`, { replace: true });
+          navigate(setBaseUrl(`${baseUrl}/${data.id}`), { replace: true });
         })
         .catch((error) => {
           setError(error.response.data.name);
