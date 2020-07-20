@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/samples/SamplePagesIT.xml")
 public class SampleDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Long SAMPLE_ID = 1L;
-	private static final String SAMPLE_CREATED_DATE = "18 Jul. 2013";
+	private static final String SAMPLE_CREATED_DATE = "18 Jul 2013";
 	private static final String SAMPLE_ORGANISM = "E. coli";
 	private static final String SAMPLE_LATITUDE = "49.8994";
 	private static final String SAMPLE_LONGITUDE = "-97.1392";
