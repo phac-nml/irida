@@ -2,8 +2,8 @@
  * @file Responsible for setting up new project synchronizations with a remote API.
  * Loaded onto pages/projects/project_sync.html
  */
-
 import $ from "jquery";
+import angular from "angular";
 import {
   initConnectRemoteApi,
   updateRemoteConnectionStatus
@@ -91,3 +91,8 @@ Initialize the page.
  */
 initConnectRemoteApi(updateConnection);
 updateConnection(originalApiId);
+
+/*
+Angular is used on a modal on this page so we need it here.
+ */
+angular.module("irida.sync", []);
