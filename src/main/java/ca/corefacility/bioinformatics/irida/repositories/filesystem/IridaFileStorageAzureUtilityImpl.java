@@ -84,10 +84,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			if(file != null) {
-				blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-				fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
-			}
+			// We set the blobClient "path" to which we want to upload our file to
+			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
 		}
@@ -200,9 +199,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException {
 		String selectedExtension = null;
-		for (SequencingObject object : toConcatenate) {
+		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());
