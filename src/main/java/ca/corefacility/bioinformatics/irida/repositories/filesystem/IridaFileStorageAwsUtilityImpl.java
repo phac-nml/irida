@@ -98,12 +98,10 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			if(file != null) {
-				S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-				fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
-						.getContentLength(), true);
-				s3Object.close();
-			}
+			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
+					.getContentLength(), true);
+			s3Object.close();
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
 		} catch (IOException e) {
@@ -216,9 +214,9 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException {
 		String selectedExtension = null;
-		for (SequencingObject object : toConcatenate) {
+		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());
