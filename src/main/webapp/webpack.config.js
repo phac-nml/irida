@@ -14,7 +14,6 @@ const BUILD_PATH = path.resolve(__dirname, "dist");
 const config = {
   externals: {
     jquery: "jQuery",
-    angular: "angular",
   },
   stats: {
     children: false,
@@ -81,15 +80,6 @@ const config = {
           {
             loader: "expose-loader",
             options: "jQuery",
-          },
-        ],
-      },
-      {
-        test: require.resolve("angular"),
-        use: [
-          {
-            loader: "expose-loader",
-            options: "angular",
           },
         ],
       },
