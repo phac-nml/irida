@@ -468,7 +468,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void clickLinkerFileType(String type){
 		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
+		boolean isChecked = fileTypeCheckbox.isSelected();
 		fileTypeCheckbox.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 	}
 	
 	public List<String> getLockedSampleNames(){
