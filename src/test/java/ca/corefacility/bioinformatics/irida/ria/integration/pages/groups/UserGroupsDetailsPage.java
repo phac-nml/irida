@@ -25,7 +25,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 	@FindBy(css = ".t-group-name.ant-typography-edit-content textarea")
 	private WebElement editNameInput;
 
-	@FindBy(id = "tab-delete")
+	@FindBy(className = "t-tab-delete")
 	private WebElement deleteTab;
 
 	@FindBy(className = "t-delete-group-btn")
@@ -57,7 +57,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		wait.until(ExpectedConditions.elementToBeClickable(editNameBtn));
 		editNameBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(editNameInput));
-		editNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));;
+		editNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		editNameInput.sendKeys(name);
 		editNameInput.sendKeys(Keys.ENTER);
 		wait.until(ExpectedConditions.textToBePresentInElement(groupName, name));

@@ -5,13 +5,13 @@
 <body>
 <div class="col-md-12 col-lg-10 col-lg-offset-1" layout:fragment="page">
 
-    <div class="row">
+    <div class="row spaced-top">
         <header>
             <div class="col-md-10">
                 <h1 class="t-title" th:text="#{samples.title(${sample.getLabel()})}">__TITLE__</h1>
             </div>
             <div class="col-md-2" th:if="${canManageSample}">
-                <a id="edit-sample" class="btn btn-default btn-sm pull-right ng-cloak"
+                <a id="edit-sample" class="btn btn-default btn-sm pull-right"
                    href="edit" th:text="#{form.btn.edit}">__EDIT__</a>
             </div>
         </header>
