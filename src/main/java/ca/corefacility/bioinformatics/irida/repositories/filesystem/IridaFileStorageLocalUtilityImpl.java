@@ -187,7 +187,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
 					throw new IOException(
-							"Extensions of files to concatenate do not match " + currentExtension + " vs "
+							"Extensions of files do not match " + currentExtension + " vs "
 									+ selectedExtension);
 				}
 			}
