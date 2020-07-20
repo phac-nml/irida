@@ -213,9 +213,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException {
 		String selectedExtension = null;
-		for (SequencingObject object : toConcatenate) {
+		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());
@@ -234,7 +234,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
 					throw new IOException(
-							"Extensions of files to concatenate do not match " + currentExtension + " vs "
+							"Extensions of files do not match " + currentExtension + " vs "
 									+ selectedExtension);
 				}
 			}
