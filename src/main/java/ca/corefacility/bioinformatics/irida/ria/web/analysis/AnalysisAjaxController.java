@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.Principal;

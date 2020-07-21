@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
