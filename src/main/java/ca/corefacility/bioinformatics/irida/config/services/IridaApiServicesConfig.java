@@ -150,7 +150,7 @@ public class IridaApiServicesConfig {
 	@Value("${aws.secret.key:#{null}}")
 	private String awsSecretKey;
 
-	@Value("${galaxy.cloud.storage.temporary.directory}")
+	@Value("${galaxy.cloud.storage.temporary.directory:#{null}}")
 	private String cloudStorageTemporaryDirectory;
 
 
