@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelCol;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelHeader;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelRow;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.monitorjbl.xlsx.StreamingReader;
 import com.monitorjbl.xlsx.impl.StreamingCell;
@@ -85,13 +83,12 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				IOUtils.copy(IridaFiles.getFileInputStream(file.getFile()),outputStream);
+				IOUtils.copy(file.getFileInputStream(),outputStream);
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
 
-				ObjectMapper objectMapper = new ObjectMapper();
-				byte[] bytes = objectMapper.writeValueAsBytes(file);
+				byte[] bytes = file.getBytesForFile();
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
 				outputStream.write(bytes);
 				outputStream.closeEntry();
@@ -154,7 +151,7 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				IOUtils.copy(IridaFiles.getFileInputStream(file.getFile()),outputStream);
+				IOUtils.copy(file.getFileInputStream(),outputStream);
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
@@ -190,7 +187,7 @@ public class FileUtilities {
 		response.setContentType(CONTENT_TYPE_TEXT);
 
 		try (ServletOutputStream outputStream = response.getOutputStream()) {
-			IOUtils.copy(IridaFiles.getFileInputStream(file.getFile()), outputStream);
+			IOUtils.copy(file.getFileInputStream(), outputStream);
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this

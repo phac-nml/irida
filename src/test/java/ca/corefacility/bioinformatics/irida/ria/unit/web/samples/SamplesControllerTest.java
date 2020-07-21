@@ -79,8 +79,10 @@ public class SamplesControllerTest {
 		readSamplePermission = mock(ReadSamplePermission.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
 				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	// ************************************************************************************************

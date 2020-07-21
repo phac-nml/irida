@@ -57,6 +57,7 @@ public class SequenceFileControllerTest {
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		controller = new SequenceFileController(objectService, sequencingRunService, analysisService);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);

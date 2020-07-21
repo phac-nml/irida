@@ -67,7 +67,6 @@ public class ReferenceFileControllerTest {
 		referenceFileService = mock(ReferenceFileService.class);
 		messageSource = mock(MessageSource.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
-
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		// Set up the reference file
@@ -76,6 +75,7 @@ public class ReferenceFileControllerTest {
 		when(referenceFileService.read(FILE_ID)).thenReturn(file);
 
 		controller = new ReferenceFileController(projectService, referenceFileService, messageSource);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@Test

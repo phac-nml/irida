@@ -10,9 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -105,6 +107,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		String fileSize = "N/A";
 		try {
 			if(file != null) {
+				// We set the blobClient "path" to which we want to upload our file to
 				blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 				fileSize = ca.corefacility.bioinformatics.irida.util.FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 			}
@@ -220,9 +223,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException {
 		String selectedExtension = null;
-		for (SequencingObject object : toConcatenate) {
+		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());

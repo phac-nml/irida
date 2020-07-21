@@ -224,9 +224,9 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileExtension(List<? extends SequencingObject> toConcatenate) throws IOException {
+	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException {
 		String selectedExtension = null;
-		for (SequencingObject object : toConcatenate) {
+		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());

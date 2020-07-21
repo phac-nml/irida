@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -193,13 +192,23 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	}
 
 	/**
+	 * Gets output file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
+	}
+
+	/**
 	 * Checks if file exists
 	 *
 	 * @return if file exists or not
 	 */
 	@JsonIgnore
 	public boolean fileExists() {
-		return IridaFiles.fileExists(getFile());
+		return IridaFiles.fileExists(file);
 	}
 
 	/**
