@@ -29,10 +29,13 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.ReferenceFileController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.ImmutableList;
 
@@ -55,19 +58,21 @@ public class ReferenceFileControllerTest {
 	private ProjectService projectService;
 	private ReferenceFileService referenceFileService;
 	private MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		messageSource = mock(MessageSource.class);
-
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		// Set up the reference file
 		Path path = Paths.get(FILE_PATH);
 		ReferenceFile file = new ReferenceFile(path);
 		when(referenceFileService.read(FILE_ID)).thenReturn(file);
 
 		controller = new ReferenceFileController(projectService, referenceFileService, messageSource);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@Test
