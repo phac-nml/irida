@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +88,7 @@ public class FileUtilities {
 				// the next entry.
 				outputStream.closeEntry();
 
-				ObjectMapper objectMapper = new ObjectMapper();
-				byte[] bytes = objectMapper.writeValueAsBytes(file);
+				byte[] bytes = file.getBytesForFile();
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
 				outputStream.write(bytes);
 				outputStream.closeEntry();
