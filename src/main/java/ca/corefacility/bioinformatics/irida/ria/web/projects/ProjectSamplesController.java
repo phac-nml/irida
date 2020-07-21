@@ -83,7 +83,7 @@ public class ProjectSamplesController {
 	private final SampleService sampleService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final SequencingObjectService sequencingObjectService;
-	private MessageSource messageSource;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
@@ -107,7 +107,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Name of the project samples list view
 	 */
-	@RequestMapping(value = { "/projects/{projectId}", "/projects/{projectId}/samples" })
+	@RequestMapping(value = { "/projects/{projectId}", "/projects/{projectId}/samples", "/projects/{projectId}/add-sample*/**", "/projects/{projectId}/samples/add-sample*/**" })
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -363,9 +363,7 @@ public class ProjectSamplesController {
 			// See if the name is there
 			for (Join<Project, Sample> join : psj) {
 				Sample sample = join.getObject();
-				if (sampleNames.contains(sample.getLabel())) {
-					sampleNames.remove(sample.getLabel());
-				}
+				sampleNames.remove(sample.getLabel());
 				if (sampleNames.size() == 0) {
 					break;
 				}
