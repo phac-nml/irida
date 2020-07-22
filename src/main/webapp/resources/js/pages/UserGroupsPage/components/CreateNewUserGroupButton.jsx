@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Form, Input, Modal } from "antd";
 import { createUserGroup } from "../../../apis/users/groups";
 import { useNavigate } from "@reach/router";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { useResetFormOnCloseModal } from "../../../hooks";
 
 /**
  * React component to render a button to create a new user group
@@ -17,7 +17,16 @@ export function CreateNewUserGroupButton({ baseUrl }) {
    */
   const inputRef = useRef();
   const [visible, setVisible] = useState();
+
+  /*
+  Ant Design form
+   */
   const [form] = Form.useForm();
+  useResetFormOnCloseModal({
+    form,
+    visible,
+  });
+
   const navigate = useNavigate();
 
   const [error, setError] = useState();
@@ -41,7 +50,7 @@ export function CreateNewUserGroupButton({ baseUrl }) {
         .then((data) => {
           form.resetFields();
           setVisible(false);
-          navigate(setBaseUrl(`${baseUrl}/${data.id}`), { replace: true });
+          navigate(`${baseUrl}/${data.id}`, { replace: true });
         })
         .catch((error) => {
           setError(error.response.data.name);

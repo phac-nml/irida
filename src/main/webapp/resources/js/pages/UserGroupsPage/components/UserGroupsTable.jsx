@@ -1,7 +1,6 @@
 import React from "react";
 import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Typography } from "antd";
 import { Link } from "@reach/router";
 import { CreateNewUserGroupButton } from "./CreateNewUserGroupButton";
@@ -20,7 +19,7 @@ export function UserGroupsTable({ baseUrl }) {
       dataIndex: "name",
       sorter: true,
       render(text, item) {
-        return <Link to={setBaseUrl(`${baseUrl}/${item.id}`)}>{text}</Link>;
+        return <Link to={`${baseUrl}/${item.id}`}>{text}</Link>;
       },
     },
     {

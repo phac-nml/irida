@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  */
 public class UserGroupsListingPage extends AbstractPage {
 	private static final String GROUP_LISTING_PAGE = "groups";
+	private static final String GROUP_LISTING_ADMIN_PAGE = "admin/groups";
 	private static WebDriver webDriver;
 	private static AntTable table;
 
@@ -39,6 +40,10 @@ public class UserGroupsListingPage extends AbstractPage {
 
 	public void gotoPage() {
 		get(driver, GROUP_LISTING_PAGE);
+	}
+
+	public void gotoAdminPage() {
+		get(driver, GROUP_LISTING_ADMIN_PAGE);
 	}
 
 	public int getNumberOfExistingUserGroups() {

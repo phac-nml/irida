@@ -19,8 +19,8 @@ export default function AdminUserGroupsPage() {
   return (
       <RolesProvider rolesFn={getUserGroupRoles}>
         <Router>
-          <UserGroupsPage baseUrl={"/admin/groups"} path={setBaseUrl("")} />
-          <UserGroupsDetailsPage baseUrl={"/admin/groups"} path={setBaseUrl("/:id")} />
+          <UserGroupsPage baseUrl={setBaseUrl("/admin/groups")} path={setBaseUrl("")} />
+          <UserGroupsDetailsPage baseUrl={setBaseUrl("/admin/groups")} path={setBaseUrl("/:id")} />
         </Router>
       </RolesProvider>
   );

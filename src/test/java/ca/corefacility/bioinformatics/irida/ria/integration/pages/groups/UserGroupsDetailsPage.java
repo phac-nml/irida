@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -48,6 +49,10 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		get(driver, "groups/" + groupId);
 	}
 
+	public void gotoAdminPage(int groupId) {
+		get(driver, "admin/groups/" + groupId);
+	}
+
 	public String getUserGroupName() {
 		return groupName.getText();
 	}
@@ -79,5 +84,15 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		deleteBtn.click();
 		wait.until(ExpectedConditions.elementToBeClickable(deleteConfirmBtn));
 		deleteConfirmBtn.click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(findPageTitle("User Groups")));
+	}
+
+	/**
+	 * Locates page title when it is present on page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public By findPageTitle(String pageTitle) {
+		return By.xpath("//span[contains(text(),'" + pageTitle + "')]");
 	}
 }

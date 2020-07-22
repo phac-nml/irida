@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer } from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
+  deleteUserGroup,
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../../apis/users/groups";
@@ -10,9 +11,8 @@ import { BasicList } from "../../../components/lists";
 import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
 import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
-import { SPACE_SM } from "../../../styles/spacing";
 import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { SPACE_SM } from "../../../styles/spacing";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -42,7 +42,6 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
     loading: true,
     tab: "members",
   });
-  const deleteRef = useRef();
 
   const navigate = useNavigate();
 
@@ -72,6 +71,15 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
     getUserGroupDetails(id).then((response) =>
       dispatch({ type: "load", payload: response })
     );
+
+  /**
+   * Action to take when delete is confirmed
+   */
+  const onDeleteConfirm = () => {
+    deleteUserGroup(id).then(() => {
+      navigate(`${baseUrl}`, { replace: true });
+    });
+  };
 
   const fields = state.loading
     ? []
@@ -124,14 +132,9 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
   const DeleteGroup = () => (
     <div>
       <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
-      <form
-        style={{ marginTop: SPACE_SM }}
-        ref={deleteRef}
-        action={setBaseUrl(`${baseUrl}/${id}/delete`)}
-        method="POST"
-      >
+      <div style={{ marginTop: SPACE_SM }}>
         <Popconfirm
-          onConfirm={() => deleteRef.current.submit()}
+          onConfirm={onDeleteConfirm}
           title={i18n("UserGroupDetailsPage.delete-confirm")}
           okButtonProps={{ className: "t-delete-confirm-btn" }}
         >
@@ -139,14 +142,14 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
             {i18n("UserGroupDetailsPage.delete-button")}
           </Button>
         </Popconfirm>
-      </form>
+      </div>
     </div>
   );
 
   return (
     <PageWrapper
       title={"User Groups"}
-      onBack={() => navigate(setBaseUrl(`${baseUrl}`), { replace: true })}
+      onBack={() => navigate(`${baseUrl}`, { replace: true })}
     >
       <Tabs
         defaultActiveKey="details"
