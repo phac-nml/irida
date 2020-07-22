@@ -1,45 +1,80 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
-import { Button, Input, Modal, Space, Upload } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { IconPlusCircle } from "../../../../components/icons/Icons";
-import { grey9 } from "../../../../styles/colors";
-import { Link, navigate, Router } from "@reach/router";
+import { grey6, grey9 } from "../../../../styles/colors";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { useModalBackButton } from "../../../../hooks";
+import { OntologySelect } from "../../../../components/ontology";
+import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
+import { useDebounce, useModalBackButton } from "../../../../hooks";
 
-function AddSampleStepOne({ path }) {
-  return (
-    <>
-      <Space direction={"vertical"} style={{ width: "100%" }}>
-        <Button block>
-          <Link to={setBaseUrl(`${path}/upload`)}>With Sequence Files</Link>
-        </Button>
-        <Button block>Without Sequence Files</Button>
-      </Space>
-    </>
-  );
-}
+function AddSampleForm({ onSubmitForm }) {
+  const [name, setName] = useState("");
+  const [nameHelp, setNameHelp] = useState("");
+  const [nameStatus, setNameStatus] = useState(undefined);
+  const debouncedName = useDebounce(name);
+  const [organism, setOrganism] = useState("");
+  const nameRef = useRef();
 
-function UploadSequenceFiles() {
-  const [name, setName] = useState();
+  const validateName = useCallback(() => {
+    return fetch(
+      setBaseUrl(`/projects/${window.project.id}/samples/add-sample/validate`),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: debouncedName }),
+      }
+    ).then((response) => response.json());
+  }, [debouncedName]);
 
-  const onFileSelect = ({ file, fileList }) => {
-    const [filename] = file.name.split(".");
-    setName(filename);
-  };
+  useEffect(() => {
+    nameRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    if (debouncedName.length) {
+      setNameStatus("validating");
+      validateName().then((response) => {
+        setNameHelp(response.help);
+        setNameStatus(response.status);
+      });
+    }
+  }, [debouncedName, validateName]);
 
   const updateName = (e) => {
     setName(e.target.value);
-    // Need to do validation here!!!
+  };
+
+  const updateOrganism = (value) => {
+    setOrganism(value);
+    console.log(value);
   };
 
   return (
-    <>
-      <Upload onChange={onFileSelect}>
-        <Button>Click to upload files</Button>
-      </Upload>
-      <Input value={name} onChange={updateName} />
-    </>
+    <Form layout={"vertical"}>
+      <Form.Item
+        label={"Sample Name"}
+        hasFeedback={nameHelp.length}
+        validateStatus={nameStatus}
+        help={nameHelp}
+      >
+        <Input ref={nameRef} value={name} onChange={updateName} />
+      </Form.Item>
+      <Form.Item label={"Organism"}>
+        <OntologySelect
+          term={organism}
+          ontology={TAXONOMY}
+          onTermSelected={updateOrganism}
+        />
+      </Form.Item>
+      <Form.Item>
+        <Button type={"primary"} htmlType={"submit"}>
+          SUBMIT
+        </Button>
+      </Form.Item>
+    </Form>
   );
 }
 
@@ -47,24 +82,23 @@ function AddSample() {
   const [visible, setVisible] = useState(false);
   const location = setBaseUrl(`/projects/${window.project.id}/add-sample`);
 
-  useEffect(() => {
-    if (window.location.href.includes("add-sample")) {
-      setVisible(true);
-    }
-  }, []);
-
-  useModalBackButton(() => setVisible(false));
-
   const openNewSampleModal = () => {
+    // Allow the user to use the back button.
     window.history.pushState({}, null, location);
     setVisible(true);
   };
 
   const closeNewSampleModal = () => {
     // Need to update the url to the original one.
-    navigate(setBaseUrl(`/projects/${window.project.id}`));
+    window.history.pushState(
+      {},
+      null,
+      setBaseUrl(`/projects/${window.project.id}`)
+    );
     setVisible(false);
   };
+
+  useModalBackButton(openNewSampleModal, closeNewSampleModal, "add-sample");
 
   return (
     <>
@@ -76,7 +110,9 @@ function AddSample() {
           paddingLeft: 20,
           color: grey9,
         }}
-        icon={<IconPlusCircle style={{ marginRight: 3 }} />}
+        icon={
+          <IconPlusCircle style={{ marginRight: 3 }} twoToneColor={grey6} />
+        }
         onClick={openNewSampleModal}
       >
         {i18n("project.samples.nav.new")}
@@ -86,10 +122,7 @@ function AddSample() {
         onCancel={closeNewSampleModal}
         title={"ADD NEW SAMPLE"}
       >
-        <Router>
-          <AddSampleStepOne path={location} default />
-          <UploadSequenceFiles path={`${location}/upload`} />
-        </Router>
+        <AddSampleForm onSubmitForm={closeNewSampleModal} />
       </Modal>
     </>
   );

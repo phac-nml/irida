@@ -1,18 +1,29 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
-export function useModalBackButton(handler) {
-  const [location, setLocation] = useState();
-
-  useEffect(() => setLocation(window.location.href), []);
-
+export function useModalBackButton(
+  openHandler = () => {},
+  closeHandler = () => {},
+  modalKey
+) {
   const callback = useCallback(() => {
-    if (window.location.href === location) {
-      handler();
+    if (window.location.href.includes(modalKey)) {
+      openHandler();
+    } else {
+      closeHandler();
     }
-  }, [handler, location]);
+  }, [openHandler, closeHandler, modalKey]);
 
   useEffect(() => {
     window.addEventListener("popstate", callback);
     return () => window.removeEventListener("popstate", callback);
   }, [callback]);
+
+  /**
+   * When mounted, check to see if the modal should be open.
+   */
+  useEffect(() => {
+    if (window.location.href.includes("add-sample")) {
+      openHandler();
+    }
+  }, [openHandler]);
 }
