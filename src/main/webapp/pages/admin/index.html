@@ -25,6 +25,12 @@
         _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
         LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
       };
+
+      window.PAGE = {
+        available_token_validity: [[${available_token_validity}]],
+        validity: /*[[${given_tokenValidity}]]*/ '43200',
+        refresh_validity: /*[[${refresh_validity}]]*/ '2592000'
+      }
     </script>
   </body>
 </html>

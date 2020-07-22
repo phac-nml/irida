@@ -24,26 +24,6 @@ export function AddClient() {
 
   const [error, setError] = useState();
 
-  const AVAILABLE_TOKEN_VALIDITY = [
-    // 30 minutes
-    { "1800": "1800" },
-    // 1 hour
-    { "3600": 3600 },
-    // 2 hours
-    { "7200": 7200 },
-    // 6 hours
-    { "21600": 21600 },
-    // 12 hours
-    { "43200": 43200 },
-    // 1 day
-    { "86400": 86400 },
-    // 2 days
-    { "172800": 172800 },
-    // 7 days
-    { "604800": 604800 }];
-
-  const given_tokenValidity = "43200";
-
   /*
   Watch for changes to the forms visibility, when it becomes visible
   set keyboard focus onto the user name input.
@@ -125,8 +105,8 @@ export function AddClient() {
           >
             <Select
               name="accessTokenValiditySeconds"
-              options={AVAILABLE_TOKEN_VALIDITY}
-              selected={given_tokenValidity}
+              options={window.PAGE.available_token_validity}
+              selected={window.PAGE.validity}
             />
           </Form.Item>
         </Form>
