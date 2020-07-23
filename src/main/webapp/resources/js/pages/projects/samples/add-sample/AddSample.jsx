@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
 import { Button, Form, Input, Modal } from "antd";
 import { IconPlusCircle } from "../../../../components/icons/Icons";
@@ -6,67 +6,82 @@ import { grey6, grey9 } from "../../../../styles/colors";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { OntologySelect } from "../../../../components/ontology";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
-import { useDebounce, useModalBackButton } from "../../../../hooks";
+import { useModalBackButton } from "../../../../hooks";
 
-function AddSampleForm({ onSubmitForm }) {
+function AddSampleForm({ onSubmit }) {
+  const [form] = Form.useForm();
   const [name, setName] = useState("");
-  const [nameHelp, setNameHelp] = useState("");
-  const [nameStatus, setNameStatus] = useState(undefined);
-  const debouncedName = useDebounce(name);
   const [organism, setOrganism] = useState("");
   const nameRef = useRef();
 
-  const validateName = useCallback(() => {
+  const validateName = (name) => {
     return fetch(
-      setBaseUrl(`/projects/${window.project.id}/samples/add-sample/validate`),
+      setBaseUrl(
+        `/ajax/projects/${window.project.id}/samples/add-sample/validate`
+      ),
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: debouncedName }),
+        body: JSON.stringify({ name }),
       }
     ).then((response) => response.json());
-  }, [debouncedName]);
+  };
 
   useEffect(() => {
     nameRef.current.focus();
   }, []);
 
-  useEffect(() => {
-    if (debouncedName.length) {
-      setNameStatus("validating");
-      validateName().then((response) => {
-        setNameHelp(response.help);
-        setNameStatus(response.status);
-      });
+  const validateSampleName = async (rule, value) => {
+    const response = await validateName(value);
+    if (response.status === "error") {
+      return Promise.reject(response.help);
+    } else {
+      return Promise.resolve();
     }
-  }, [debouncedName, validateName]);
-
-  const updateName = (e) => {
-    setName(e.target.value);
   };
 
-  const updateOrganism = (value) => {
-    setOrganism(value);
-    console.log(value);
+  const submit = async () => {
+    const response = await fetch(
+      setBaseUrl(`/ajax/projects/${window.project.id}/samples/add-sample`),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, organism }),
+      }
+    ).then((response) => response.json());
+
+    // Need to update the table!
+    onSubmit();
+    window.$dt.ajax.reload(null, false);
   };
 
   return (
-    <Form layout={"vertical"}>
+    <Form layout={"vertical"} form={form} onFinish={submit}>
       <Form.Item
+        name="name"
         label={"Sample Name"}
-        hasFeedback={nameHelp.length}
-        validateStatus={nameStatus}
-        help={nameHelp}
+        hasFeedback
+        rules={[
+          () => ({
+            validator: validateSampleName,
+          }),
+        ]}
       >
-        <Input ref={nameRef} value={name} onChange={updateName} />
+        <Input
+          ref={nameRef}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </Form.Item>
-      <Form.Item label={"Organism"}>
+      <Form.Item label={"Organism"} name="organism">
         <OntologySelect
           term={organism}
           ontology={TAXONOMY}
-          onTermSelected={updateOrganism}
+          onTermSelected={(value) => setOrganism(value)}
         />
       </Form.Item>
       <Form.Item>
@@ -121,8 +136,9 @@ function AddSample() {
         visible={visible}
         onCancel={closeNewSampleModal}
         title={"ADD NEW SAMPLE"}
+        footer={null}
       >
-        <AddSampleForm onSubmitForm={closeNewSampleModal} />
+        <AddSampleForm onSubmit={closeNewSampleModal} />
       </Modal>
     </>
   );

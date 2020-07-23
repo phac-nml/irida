@@ -1,53 +1,33 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 
 @RestController
-@RequestMapping("/projects/{projectId}/samples")
+@RequestMapping("/ajax/projects/{projectId}/samples")
 public class ProjectSamplesAjaxController {
+	private final UIProjectSampleService service;
+
+	@Autowired
+	public ProjectSamplesAjaxController(UIProjectSampleService service) {
+		this.service = service;
+	}
 
 	@RequestMapping("/add-sample/validate")
-	public ResponseEntity<NameValidationResponse> validateNewSampleName(@RequestBody NameValidationRequest request) {
-		return ResponseEntity.ok(new NameValidationResponse("error", "NAME EXISIS"));
+	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(@RequestBody SampleNameValidationRequest request, @PathVariable long projectId) {
+		return service.validateNewSampleName(request, projectId);
 	}
 
-	private static class NameValidationResponse {
-		private final String status;
-		private final String help;
-
-		public NameValidationResponse(String status, String help) {
-			this.status = status;
-			this.help = help;
-		}
-
-		public String getStatus() {
-			return status;
-		}
-
-		public String getHelp() {
-			return help;
-		}
-	}
-
-	private static class NameValidationRequest {
-		private String name;
-
-		public NameValidationRequest(String name) {
-			this.name = name;
-		}
-
-		public NameValidationRequest() {
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
+	@PostMapping("/add-sample")
+	public ResponseEntity<CreateSampleResponse> createSampleInProject(@RequestBody CreateSampleRequest request,
+			@PathVariable long projectId) {
+		return service.createSample(request, projectId);
 	}
 }

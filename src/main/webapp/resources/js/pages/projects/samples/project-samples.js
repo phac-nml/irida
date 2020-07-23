@@ -362,7 +362,7 @@ const config = Object.assign({}, tableConfig, {
   },
 });
 
-const $dt = $table.DataTable(config);
+const $dt = (window.$dt = $table.DataTable(config));
 
 function checkToolButtonState(count = $dt.select.selected()[0].size) {
   /*
