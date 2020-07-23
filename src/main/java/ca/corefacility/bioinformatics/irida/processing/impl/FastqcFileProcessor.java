@@ -12,6 +12,8 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +34,12 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -96,8 +100,8 @@ public class FastqcFileProcessor implements FileProcessor {
 				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", new Object[] {FastQCApplication.VERSION},
 						LocaleContextHolder.getLocale()));
 		try {
-			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					iridaFileStorageUtility.getTemporaryFile(fileToProcess));
+			File fastQCSequenceFileToProcess = iridaFileStorageUtility.getFile(fileToProcess);
+			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(fastQCSequenceFileToProcess);
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
@@ -130,6 +134,12 @@ public class FastqcFileProcessor implements FileProcessor {
 			sequenceFile.setFastQCAnalysis(analysis.build());
 
 			sequenceFileRepository.saveMetadata(sequenceFile);
+
+			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+				// Delete the temporarily downloaded sequence file as it
+				// has been processed and it's parent directory
+				FileUtils.removeTemporaryFile(fastQCSequenceFileToProcess.getParent(), fastQCSequenceFileToProcess.toPath());
+			}
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file: " + e.getMessage());
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);

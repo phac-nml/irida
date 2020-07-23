@@ -66,7 +66,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File getTemporaryFile(Path file) {
+	public File getFile(Path file) {
 		File fileToProcess = null;
 
 		// We set the blobClient "path" to which we want to upload our file to
@@ -206,7 +206,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public void appendToFile(Path target, SequenceFile file) throws IOException {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
-			try (FileChannel in = new FileInputStream(getTemporaryFile(file.getFile())).getChannel()) {
+			try (FileChannel in = new FileInputStream(getFile(file.getFile())).getChannel()) {
 				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}

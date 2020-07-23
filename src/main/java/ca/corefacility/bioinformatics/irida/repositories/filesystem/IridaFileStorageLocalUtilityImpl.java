@@ -38,7 +38,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File getTemporaryFile(Path file) {
+	public File getFile(Path file) {
 		File fileToProcess = null;
 		fileToProcess = file.toFile();
 		return fileToProcess;

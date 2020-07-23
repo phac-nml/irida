@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -446,9 +447,13 @@ public class AnalysisAjaxController {
 		RandomAccessFile reader = null;
 		final Path aofFile = aof.getFile();
 		try {
-			reader = new RandomAccessFile(iridaFileStorageUtility.getTemporaryFile(aofFile), "r");
+			File file = iridaFileStorageUtility.getFile(aofFile);
+			reader = new RandomAccessFile(file, "r");
 			info.setFirstLine(reader.readLine());
 			info.setFilePointer(reader.getFilePointer());
+			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+				FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+			}
 		} catch (FileNotFoundException e) {
 			logger.error("Could not find file '" + aofFile + "' " + e);
 		} catch (IOException e) {
@@ -506,7 +511,7 @@ public class AnalysisAjaxController {
 			contents.setToolName(tool.getToolName());
 			contents.setToolVersion(tool.getToolVersion());
 			try {
-				final File file = iridaFileStorageUtility.getTemporaryFile(aofFile);
+				final File file = iridaFileStorageUtility.getFile(aofFile);
 				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 				randomAccessFile.seek(seek);
 				if (seek == 0) {
@@ -536,6 +541,9 @@ public class AnalysisAjaxController {
 					}
 				}
 				contents.setFilePointer(randomAccessFile.getFilePointer());
+				if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+					FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+				}
 			} catch (IOException e) {
 				logger.error("Could not read output file '" + aof.getId() + "' " + e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -746,7 +754,8 @@ public class AnalysisAjaxController {
 					.getFile();
 
 			try {
-				String json = new Scanner(new BufferedReader(new FileReader(iridaFileStorageUtility.getTemporaryFile(path)))).useDelimiter("\\Z")
+				File file = iridaFileStorageUtility.getFile(path);
+				String json = new Scanner(new BufferedReader(new FileReader(file))).useDelimiter("\\Z")
 						.next();
 
 				// verify file is proper json file and map to a SistrResult list
@@ -759,6 +768,9 @@ public class AnalysisAjaxController {
 					if (samples != null && samples.size() == 1) {
 						Sample sample = samples.iterator()
 								.next();
+						if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+							FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+						}
 						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
 					} else {
 						logger.error("Invalid number of associated samples for submission " + submission);

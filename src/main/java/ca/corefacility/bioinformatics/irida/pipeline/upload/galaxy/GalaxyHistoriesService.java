@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileTy
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -155,7 +156,7 @@ public class GalaxyHistoriesService {
 		checkNotNull(history.getId(), "history id is null");
 		checkState(iridaFileStorageUtility.fileExists(path), "path " + path + " does not exist");
 		
-		File file = iridaFileStorageUtility.getTemporaryFile(path);
+		File file = iridaFileStorageUtility.getFile(path);
 				
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType(fileType.toString());
@@ -175,7 +176,11 @@ public class GalaxyHistoriesService {
 			
 			throw new UploadException(message);
 		} else {
-			return getDatasetForFileInHistory(file.getName(), history.getId());
+			Dataset dataset = getDatasetForFileInHistory(file.getName(), history.getId());
+			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+				FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+			}
+			return dataset;
 		}
 	}
 	

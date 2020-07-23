@@ -19,12 +19,12 @@ public interface IridaFileStorageUtility {
 	//Valid extensions to try to concatenate with this tool
 	public static final List<String> VALID_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
-	 * Get a temporarry file from storage
+	 * Get a file from storage
 	 *
 	 * @param file The {@link Path} to the file
 	 * @return {@link File} which was retrieved from path
 	 */
-	public File getTemporaryFile(Path file);
+	public File getFile(Path file);
 
 	/**
 	 * Get file size

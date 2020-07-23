@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
 
@@ -46,5 +47,29 @@ public class FileUtils {
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+
+	/**
+	 * Removes temporarily downloaded files from an object store off the local filesystem
+	 *
+	 * @param parentDirectoryPath The parent directory.
+	 * @param fileToRemove The file to remove
+	 */
+	public static void removeTemporaryFile(String parentDirectoryPath, Path fileToRemove){
+		try {
+			Path dirToRemovePath = Paths.get(parentDirectoryPath);
+			try {
+				Files.delete(fileToRemove);
+			} catch (IOException e) {
+				throw new IOException("Unable to find file to remove " + e);
+			}
+			try {
+				Files.delete(dirToRemovePath);
+			} catch (IOException e) {
+				throw new IOException("Unable to find parent directory to remove " + e);
+			}
+		} catch(IOException e) {
+
+		}
 	}
 }

@@ -155,7 +155,7 @@ public class GalaxyLibrariesService {
 		checkNotNull(library.getId(), "library id is null");
 		checkState(iridaFileStorageUtility.fileExists(path), "path " + path + " does not exist");
 
-		File file = iridaFileStorageUtility.getTemporaryFile(path);
+		File file = iridaFileStorageUtility.getFile(path);
 
 		try {
 			LibraryContent rootContent = librariesClient.getRootFolder(library
