@@ -115,7 +115,7 @@ function AddSample() {
 
   useModalBackButton(openNewSampleModal, closeNewSampleModal, "add-sample");
 
-  return (
+  return window.PAGE.isRemoteProject ? null : (
     <>
       <Button
         type="link"
