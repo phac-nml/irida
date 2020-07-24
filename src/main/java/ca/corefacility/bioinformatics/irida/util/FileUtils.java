@@ -64,16 +64,25 @@ public class FileUtils {
 		String parentDirectoryPath = fileToRemove.getParent().toString();
 		Path dirToRemovePath = Paths.get(parentDirectoryPath);
 
-		try {
-			Files.delete(fileToRemove);
-		} catch (IOException e) {
-			logger.debug("Unable to find file to remove " + e);
+		if(fileToRemove.toFile().isFile()) {
+			try {
+				Files.delete(fileToRemove);
+			} catch (IOException e) {
+				logger.debug("Unable to find file to remove " + e);
+			}
 		}
 
-		try {
-			org.apache.commons.io.FileUtils.deleteDirectory(dirToRemovePath.toFile());
-		} catch (IOException e) {
-			logger.debug("Unable to remove directory " + e);
+		// Directory is empty
+		if(dirToRemovePath.toFile().listFiles().length == 0) {
+			try {
+				org.apache.commons.io.FileUtils.deleteDirectory(dirToRemovePath.toFile());
+				Path tDir = dirToRemovePath.toFile().toPath();
+				if(tDir.toString().substring(tDir.toString().length() - 1).matches("\\d+")) {
+					removeTemporaryFile(tDir);
+				}
+			} catch (IOException e) {
+				logger.debug("Unable to remove directory " + e);
+			}
 		}
 	}
 
