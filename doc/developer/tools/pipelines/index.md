@@ -350,6 +350,13 @@ This contains the message to display asking the user if they wish to **Save Resu
 
 ![example-plugin-save-results.png][]
 
+### 3.2.6. (Optional) Set a viewer for analysis results
+
+Your plugin can use one of IRIDA's built in analysis results viewers by implementing the `getAnalysisViewer()` method in `IridaPlugin`.  
+
+Currently the only viewer that can be used by a plugin is the `tree` viewer.  By setting this analysis viewer type, IRIDA will look for an output file with a `.newick` extension and display it in the analysis output pages.  Note that only one tree file is currently able to be visualized.
+
+
 ## 3.3. Update the [pom.xml][] file
 
 You will have to update the `pom.xml` file in order to set version information and other metadata about your pipeline.
