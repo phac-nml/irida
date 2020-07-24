@@ -15,6 +15,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -22,10 +25,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.google.common.collect.Sets;
 
@@ -51,6 +57,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
 	private final EmailController emailController;
+	private SequencingObjectService sequencingObjectService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -63,18 +71,22 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
 	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
+	 * @param sequencingObjectService        {@link SequencingObjectService} for getting the {@link SequencingObject}s
+	 * @param iridaFileStorageUtility        The irida file storage utility implementation
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository, EmailController emailController) {
+			JobErrorRepository jobErrorRepository, EmailController emailController, SequencingObjectService sequencingObjectService, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 		this.galaxyJobErrorsService = galaxyJobErrorsService;
 		this.jobErrorRepository = jobErrorRepository;
 		this.emailController = emailController;
+		this.sequencingObjectService = sequencingObjectService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -298,8 +310,26 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 and the user selected to be emailed on completion, then the following code
 		 will be executed.
 		 */
-		if (finalWorkflowStatusSet && analysisSubmission.getEmailPipelineResult()) {
-			emailController.sendPipelineStatusEmail(analysisSubmission);
+		if (finalWorkflowStatusSet) {
+			if(analysisSubmission.getEmailPipelineResult()) {
+				emailController.sendPipelineStatusEmail(analysisSubmission);
+			}
+
+			// Cleanup files downloaded from object store
+			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+				Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+						analysisSubmission, SequenceFilePair.class);
+				Set<SingleEndSequenceFile> inputFilesSingle = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+						analysisSubmission, SingleEndSequenceFile.class);
+				for(SequenceFilePair sfp : inputFilePairs) {
+					for(SequenceFile sf : sfp.getFiles()) {
+						FileUtils.removeTemporaryFile(sf.getFile());
+					}
+				}
+				for(SingleEndSequenceFile ssf : inputFilesSingle) {
+					FileUtils.removeTemporaryFile(ssf.getSequenceFile().getFile());
+				}
+			}
 		}
 
 		return returnedSubmission;

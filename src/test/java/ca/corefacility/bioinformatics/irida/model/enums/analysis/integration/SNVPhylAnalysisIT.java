@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErro
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -125,6 +126,10 @@ public class SNVPhylAnalysisIT {
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
+	@Autowired
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+
 	private Path sequenceFilePathA1;
 	private Path sequenceFilePathA2;
 	private Path sequenceFilePathB1;
@@ -169,7 +174,8 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
+				jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 

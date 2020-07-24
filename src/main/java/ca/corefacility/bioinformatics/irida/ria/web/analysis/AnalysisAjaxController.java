@@ -452,7 +452,7 @@ public class AnalysisAjaxController {
 			info.setFirstLine(reader.readLine());
 			info.setFilePointer(reader.getFilePointer());
 			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
-				FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+				FileUtils.removeTemporaryFile(file.toPath());
 			}
 		} catch (FileNotFoundException e) {
 			logger.error("Could not find file '" + aofFile + "' " + e);
@@ -542,7 +542,7 @@ public class AnalysisAjaxController {
 				}
 				contents.setFilePointer(randomAccessFile.getFilePointer());
 				if(!iridaFileStorageUtility.storageTypeIsLocal()) {
-					FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+					FileUtils.removeTemporaryFile(file.toPath());
 				}
 			} catch (IOException e) {
 				logger.error("Could not read output file '" + aof.getId() + "' " + e);
@@ -769,7 +769,7 @@ public class AnalysisAjaxController {
 						Sample sample = samples.iterator()
 								.next();
 						if(!iridaFileStorageUtility.storageTypeIsLocal()) {
-							FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
+							FileUtils.removeTemporaryFile(file.toPath());
 						}
 						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
 					} else {

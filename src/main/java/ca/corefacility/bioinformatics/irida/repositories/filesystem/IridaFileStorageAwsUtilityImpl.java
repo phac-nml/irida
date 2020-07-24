@@ -2,23 +2,16 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -41,22 +34,16 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
-	@Value("${galaxy.tempfile.directory.permissions}")
-	private String filePermissions;
-
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 
-	private String tempDir;
-
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey, String cloudStorageTemporaryDirectory){
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 		this.bucketName = bucketName;
-		this.tempDir = cloudStorageTemporaryDirectory;
 	}
 
 	/**
@@ -67,22 +54,11 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 		File fileToProcess = null;
 
 		try {
-			// Since the file system is virtual the full file path is the file name.
-			// We split it on "/" and get the last token which is the actual file name.
-			String [] nameTokens = file.toAbsolutePath().toString().split("/");
-			String fileName = nameTokens[nameTokens.length-1];
-
 			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
-			FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
-					.asFileAttribute(PosixFilePermissions.fromString(filePermissions));
-
-			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "aws-temp-file-", fileAttributes);
-			Path target = targetDirectory.resolve(fileName);
-
 			// Copy the the file from the bucket into a local file
-			File targetFile = new File(target.toAbsolutePath().toString());
+			File targetFile = new File(file.toAbsolutePath().toString());
 			FileUtils.copyInputStreamToFile(s3ObjectInputStream, targetFile);
 			fileToProcess = targetFile;
 

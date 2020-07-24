@@ -136,7 +136,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
 				// Delete the temporarily downloaded sequence file as it
 				// has been processed and it's parent directory
-				FileUtils.removeTemporaryFile(fastQCSequenceFileToProcess.getParent(), fastQCSequenceFileToProcess.toPath());
+				FileUtils.removeTemporaryFile(fastQCSequenceFileToProcess.toPath());
 			}
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file: " + e.getMessage());

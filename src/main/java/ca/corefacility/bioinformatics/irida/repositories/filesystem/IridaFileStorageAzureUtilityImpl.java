@@ -5,26 +5,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -44,22 +36,16 @@ import com.azure.storage.blob.specialized.BlobInputStream;
 public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityImpl.class);
 
-	@Value("${galaxy.tempfile.directory.permissions}")
-	private String filePermissions;
-
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient ;
 	private BlobClient blobClient;
 
-	private String tempDir;
-
 	@Autowired
 
-	public IridaFileStorageAzureUtilityImpl(String connectionStr, String containerName, String cloudStorageTemporaryDirectory){
+	public IridaFileStorageAzureUtilityImpl(String connectionStr, String containerName){
 		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionStr)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
-		this.tempDir = cloudStorageTemporaryDirectory;
 	}
 
 	/**
@@ -73,22 +59,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
-			// Since the file system is virtual the full file path is the file name.
-			// We split it on "/" and get the last token which is the actual file name.
-
-			String [] blobNameTokens = blobClient.getBlobName().split("/");
-			String fileName = blobNameTokens[blobNameTokens.length-1];
-
-			FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
-					.asFileAttribute(PosixFilePermissions.fromString(filePermissions));
-
-			Path targetDirectory = Files.createTempDirectory(Paths.get(tempDir), "azure-temp-file-", fileAttributes);
-			Path target = targetDirectory.resolve(fileName);
-
 			InputStream initialStream = blobClient.openInputStream();
-			File targetFile = new File(target.toAbsolutePath().toString());
+			File targetFile = new File(file.toAbsolutePath().toString());
 			FileUtils.copyInputStreamToFile(initialStream, targetFile);
-
 			fileToProcess = targetFile;
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't find file on azure [" + e + "]");

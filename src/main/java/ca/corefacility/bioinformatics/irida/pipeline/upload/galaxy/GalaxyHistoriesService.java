@@ -177,9 +177,6 @@ public class GalaxyHistoriesService {
 			throw new UploadException(message);
 		} else {
 			Dataset dataset = getDatasetForFileInHistory(file.getName(), history.getId());
-			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
-				FileUtils.removeTemporaryFile(file.getParent(), file.toPath());
-			}
 			return dataset;
 		}
 	}

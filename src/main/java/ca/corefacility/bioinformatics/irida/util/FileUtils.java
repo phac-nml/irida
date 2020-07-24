@@ -8,10 +8,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A class containing a number of utilities for dealing with files.
  */
 public class FileUtils {
+	private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
 	/**
 	 * Determines if a file is compressed. Adapted from stackoverflow answer:
@@ -51,25 +55,26 @@ public class FileUtils {
 
 	/**
 	 * Removes temporarily downloaded files from an object store off the local filesystem
+	 * and the parent directory if it is empty
 	 *
-	 * @param parentDirectoryPath The parent directory.
 	 * @param fileToRemove The file to remove
 	 */
-	public static void removeTemporaryFile(String parentDirectoryPath, Path fileToRemove){
-		try {
-			Path dirToRemovePath = Paths.get(parentDirectoryPath);
-			try {
-				Files.delete(fileToRemove);
-			} catch (IOException e) {
-				throw new IOException("Unable to find file to remove " + e);
-			}
-			try {
-				Files.delete(dirToRemovePath);
-			} catch (IOException e) {
-				throw new IOException("Unable to find parent directory to remove " + e);
-			}
-		} catch(IOException e) {
+	public static void removeTemporaryFile(Path fileToRemove){
 
+		String parentDirectoryPath = fileToRemove.getParent().toString();
+		Path dirToRemovePath = Paths.get(parentDirectoryPath);
+
+		try {
+			Files.delete(fileToRemove);
+		} catch (IOException e) {
+			logger.debug("Unable to find file to remove " + e);
+		}
+
+		try {
+			org.apache.commons.io.FileUtils.deleteDirectory(dirToRemovePath.toFile());
+		} catch (IOException e) {
+			logger.debug("Unable to remove directory " + e);
 		}
 	}
+
 }

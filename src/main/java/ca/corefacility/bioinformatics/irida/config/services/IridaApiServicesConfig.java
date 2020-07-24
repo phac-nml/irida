@@ -150,10 +150,6 @@ public class IridaApiServicesConfig {
 	@Value("${aws.secret.key:#{null}}")
 	private String awsSecretKey;
 
-	@Value("${galaxy.cloud.storage.temporary.directory:#{null}}")
-	private String cloudStorageTemporaryDirectory;
-
-
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 
@@ -322,9 +318,9 @@ public class IridaApiServicesConfig {
 	public IridaFileStorageUtility iridaFileStorageUtility() {
 		IridaFileStorageUtility iridaFileStorageUtility;
 		if(storageType.equalsIgnoreCase("azure")) {
-			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(connectionStr, containerName, cloudStorageTemporaryDirectory);
+			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(connectionStr, containerName);
 		} else if (storageType.equalsIgnoreCase("aws")) {
-			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey, cloudStorageTemporaryDirectory);
+			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey, awsSecretKey);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		}
