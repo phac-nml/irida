@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-import { render } from "react-dom";
-import { Button, Form, Input, Modal } from "antd";
-import { IconPlusCircle } from "../../../../components/icons/Icons";
-import { grey6, grey9 } from "../../../../styles/colors";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { OntologySelect } from "../../../../components/ontology";
-import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
-import { useModalBackButton } from "../../../../hooks";
+import React, {useEffect, useRef, useState} from "react";
+import {render} from "react-dom";
+import {Button, Form, Input, Modal} from "antd";
+import {IconPlusCircle} from "../../../../components/icons/Icons";
+import {grey6, grey9} from "../../../../styles/colors";
+import {setBaseUrl} from "../../../../utilities/url-utilities";
+import {OntologySelect} from "../../../../components/ontology";
+import {TAXONOMY} from "../../../../apis/ontology/taxonomy";
+import {useModalBackButton} from "../../../../hooks";
+import {validateSampleName} from "../../../../apis/projects/samples";
 
 function AddSampleForm({ onSubmit }) {
   const [form] = Form.useForm();
@@ -14,27 +15,19 @@ function AddSampleForm({ onSubmit }) {
   const [organism, setOrganism] = useState("");
   const nameRef = useRef();
 
-  const validateName = (name) => {
-    return fetch(
-      setBaseUrl(
-        `/ajax/projects/${window.project.id}/samples/add-sample/validate`
-      ),
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name }),
-      }
-    ).then((response) => response.json());
-  };
-
   useEffect(() => {
     nameRef.current.focus();
   }, []);
 
-  const validateSampleName = async (rule, value) => {
-    const response = await validateName(value);
+    /**
+     * This is used by Ant Design's input  validation system to server side validate the
+     * sample name.  This includes name length, special characters, and if the name is already used.
+     * @param rule
+     * @param {string} value - the current value of the input
+     * @returns {Promise<void>}
+     */
+  const validateName = async (rule, value) => {
+    const response = await validateSampleName(value);
     if (response.status === "error") {
       return Promise.reject(response.help);
     } else {
@@ -43,7 +36,7 @@ function AddSampleForm({ onSubmit }) {
   };
 
   const submit = async () => {
-    const response = await fetch(
+    await fetch(
       setBaseUrl(`/ajax/projects/${window.project.id}/samples/add-sample`),
       {
         method: "POST",
@@ -52,7 +45,7 @@ function AddSampleForm({ onSubmit }) {
         },
         body: JSON.stringify({ name, organism }),
       }
-    ).then((response) => response.json());
+    );
 
     // Need to update the table!
     onSubmit();
@@ -67,7 +60,7 @@ function AddSampleForm({ onSubmit }) {
         hasFeedback
         rules={[
           () => ({
-            validator: validateSampleName,
+            validator: validateName,
           }),
         ]}
       >
