@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1028,7 +1029,7 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Construct the model parameters for PHYLOGENOMICS or MLST_MENTALIST
+	 * Construct the model parameters for results with a newick output
 	 * {@link Analysis}
 	 *
 	 * @param submissionId The analysis submission id
@@ -1038,18 +1039,29 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping("/{submissionId}/tree")
 	public AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
-		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
+
+		//get the analysis output files
+		Set<AnalysisOutputFile> analysisOutputFiles = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+
+		//loop through the files looking for with a newick file.  Get the first one
+		Optional<AnalysisOutputFile> treeOptional = analysisOutputFiles.stream()
+				.filter(f -> FileUtilities.getFileExt(f.getFile()
+						.toString())
+						.equals(TREE_EXT))
+				.findFirst();
 		String tree = null;
 		String message = null;
 
-		if (file == null) {
+		if (!treeOptional.isPresent()) {
 			logger.debug("No tree file for analysis: " + submission);
 			tree=null;
 			message= messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound",
 					new Object[] {}, locale);
 		} else {
+			AnalysisOutputFile file = treeOptional.get();
+
 			try {
 				List<String> lines = Files.readAllLines(file.getFile());
 
