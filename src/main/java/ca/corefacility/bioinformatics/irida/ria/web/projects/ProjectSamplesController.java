@@ -129,55 +129,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the create new sample page.
-	 *
-	 * @param projectId
-	 * 		Id for the {@link Project} the sample will belong to.
-	 * @param model
-	 * 		{@link Model}
-	 * @param sample
-	 * 		{@link Sample} required if redirected back to the create page.
-	 *
-	 * @return Name of the add sample page.
-	 */
-	@RequestMapping("/projects/{projectId}/samples/new")
-	public String getCreateNewSamplePage(@PathVariable Long projectId, Model model, Sample sample) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		model.addAttribute("sample", sample);
-		return "projects/project_add_sample";
-	}
-
-	/**
-	 * Create a new {@link Sample} in a {@link Project}
-	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param sample
-	 * 		{@link Sample} to create in the {@link Project}
-	 *
-	 * @return Redirect to the newly created {@link Sample} page
-	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/new", method = RequestMethod.POST)
-	public String createNewSample(@PathVariable Long projectId, Sample sample) {
-		Project project = projectService.read(projectId);
-
-		// Need a check to see if the Organism name was actually set.
-		if(sample.getOrganism().equals("")) {
-			sample.setOrganism(null);
-		}
-
-		try {
-			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
-			return "redirect:/projects/" + projectId + "/samples/" + join.getObject().getId();
-		} catch (EntityExistsException e) {
-			// This will be thrown if a sample already exists in the project with this name.
-			// This should have already been addressed on the client
-			return "redirect:/projects/" + projectId + "/samples/new";
-		}
-	}
-
-	/**
 	 * Creates the modal to remove samples from a project.
 	 *
 	 * @param ids       {@link List} of sample names to remove.
@@ -887,28 +838,6 @@ public class ProjectSamplesController {
 				.getExportableTableHeaders(messageSource, locale);
 		DataTablesExportToFile.writeFile(type, response, project.getLabel()
 				.replace(" ", "_"), models, headers);
-	}
-
-	/**
-	 * Valid the name for a new {@link Sample} label.  This checks against existing sample names within the current
-	 * project to ensure that it is not a duplicate.
-	 *
-	 * @param projectId  Identifier for the current project
-	 * @param sampleName {@link String} name to validate.
-	 * @return {@link Boolean} true if the name is unique.
-	 */
-	@RequestMapping("/projects/{projectId}/validate-sample-name")
-	@ResponseBody
-	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
-		Project project = projectService.read(projectId);
-		try {
-			sampleService.getSampleBySampleName(project, sampleName);
-			return false;
-		} catch (EntityNotFoundException e) {
-			// If the sample is not found, then the name is good to go!
-			return true;
-		}
-
 	}
 
 	/**

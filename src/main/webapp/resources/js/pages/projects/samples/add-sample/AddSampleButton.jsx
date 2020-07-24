@@ -12,14 +12,25 @@ import {
   validateSampleName,
 } from "../../../../apis/projects/samples";
 
-function AddSampleForm({ onSubmit, visible }) {
+/**
+ * React Ant Design form to create a new sample within a project.
+ * @param {function} onSubmit - what should the parent do when the form is submitted
+ * @param {boolean} visible - whether the parent modal is open.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+function AddSampleForm({ onSubmit, visible = false }) {
   const [form] = Form.useForm();
   const [name, setName] = useState("");
   const [organism, setOrganism] = useState("");
   const nameRef = useRef();
 
+  /**
+   * Watch for changes in the modal visibilty. When it changes update the form to reflect.
+   * If it opens, focus on the name input
+   * If it closes, clear fields
+   */
   useEffect(() => {
-    // Reset the form
     if (visible) {
       nameRef.current.focus();
     } else {
@@ -28,7 +39,7 @@ function AddSampleForm({ onSubmit, visible }) {
       // because it is an ontology
       setOrganism("");
     }
-  }, [visible]);
+  }, [form, visible]);
 
   /**
    * This is used by Ant Design's input  validation system to server side validate the
@@ -46,11 +57,16 @@ function AddSampleForm({ onSubmit, visible }) {
     }
   };
 
+  /**
+   * Submit the form and update the UI.
+   * @returns {Promise<void>}
+   */
   const submit = async () => {
     await createNewSample({ name, organism });
 
-    // Need to update the table!
+    // Call parent (if this is in a modal, this should close it).
     onSubmit();
+    // Need to update the table!
     window.$dt.ajax.reload(null, false);
   };
 
@@ -88,16 +104,31 @@ function AddSampleForm({ onSubmit, visible }) {
   );
 }
 
-function AddSample() {
+/**
+ * React component to add a button to open a modal to create a new sample
+ * in a project.
+ * @returns {null|JSX.Element}
+ * @constructor
+ */
+function AddSampleButton() {
   const [visible, setVisible] = useState(false);
   const location = setBaseUrl(`/projects/${window.project.id}`);
 
+  /**
+   * Open the modal to create a new sample.
+   * Add to the browser history in able to allow the back button to
+   * close the modal.
+   */
   const openNewSampleModal = () => {
     // Allow the user to use the back button.
     window.history.pushState({}, null, `${location}/add-sample`);
     setVisible(true);
   };
 
+  /**
+   * Close modal
+   * Update the url.
+   */
   const closeNewSampleModal = () => {
     // Need to update the url to the original one.
     window.history.pushState({}, null, location);
@@ -135,4 +166,4 @@ function AddSample() {
   );
 }
 
-render(<AddSample />, document.querySelector(".js-add-sample"));
+render(<AddSampleButton />, document.querySelector(".js-add-sample"));

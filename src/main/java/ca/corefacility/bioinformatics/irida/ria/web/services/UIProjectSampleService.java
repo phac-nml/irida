@@ -15,6 +15,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
 
+/**
+ * UI Service to handle samples within a project.
+ */
 @Component
 public class UIProjectSampleService {
 
@@ -27,15 +30,19 @@ public class UIProjectSampleService {
 		this.sampleService = sampleService;
 	}
 
-	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(SampleNameValidationRequest request,
-			long projectId) {
+	/**
+	 *
+	 * @param name
+	 * @param projectId
+	 * @return
+	 */
+	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, long projectId) {
 		int SAMPLE_NAME_MIN_LENGTH = 3;
 
 		Project project = projectService.read(projectId);
 
 		// Make sure it has the correct length
-		if (request.getName()
-				.length() <= SAMPLE_NAME_MIN_LENGTH) {
+		if (name.length() <= SAMPLE_NAME_MIN_LENGTH) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
 					.body(new SampleNameValidationResponse("error", "Name needs to be at least 3 characters"));
 		}
@@ -43,15 +50,14 @@ public class UIProjectSampleService {
 		/*
 		This is copied from the previous client side validation.
 		 */
-		if (!request.getName()
-				.matches("[A-Za-z\\d-_!@#$%~`]+")) {
+		if (!name.matches("[A-Za-z\\d-_!@#$%~`]+")) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
 					.body(new SampleNameValidationResponse("error", "Should not contain any special characters."));
 		}
 
 		// Check to see if the sample name already exists.
 		try {
-			sampleService.getSampleBySampleName(project, request.getName());
+			sampleService.getSampleBySampleName(project, name);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(new SampleNameValidationResponse("error", "Name already exists"));
 

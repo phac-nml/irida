@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 
@@ -21,8 +20,8 @@ public class ProjectSamplesAjaxController {
 	}
 
 	@RequestMapping("/add-sample/validate")
-	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(@RequestBody SampleNameValidationRequest request, @PathVariable long projectId) {
-		return service.validateNewSampleName(request, projectId);
+	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(@RequestParam String name, @PathVariable long projectId) {
+		return service.validateNewSampleName(name, projectId);
 	}
 
 	@PostMapping("/add-sample")
