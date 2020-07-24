@@ -7,25 +7,33 @@ import {setBaseUrl} from "../../../../utilities/url-utilities";
 import {OntologySelect} from "../../../../components/ontology";
 import {TAXONOMY} from "../../../../apis/ontology/taxonomy";
 import {useModalBackButton} from "../../../../hooks";
-import {validateSampleName} from "../../../../apis/projects/samples";
+import {createNewSample, validateSampleName,} from "../../../../apis/projects/samples";
 
-function AddSampleForm({ onSubmit }) {
+function AddSampleForm({ onSubmit, visible }) {
   const [form] = Form.useForm();
   const [name, setName] = useState("");
   const [organism, setOrganism] = useState("");
   const nameRef = useRef();
 
   useEffect(() => {
-    nameRef.current.focus();
-  }, []);
+    // Reset the form
+    if (visible) {
+      nameRef.current.focus();
+    } else {
+      form.resetFields(["name", "organism"]);
+      // Special handler for organism since it is rendered slightly different
+      // because it is an ontology
+      setOrganism("");
+    }
+  }, [visible]);
 
-    /**
-     * This is used by Ant Design's input  validation system to server side validate the
-     * sample name.  This includes name length, special characters, and if the name is already used.
-     * @param rule
-     * @param {string} value - the current value of the input
-     * @returns {Promise<void>}
-     */
+  /**
+   * This is used by Ant Design's input  validation system to server side validate the
+   * sample name.  This includes name length, special characters, and if the name is already used.
+   * @param rule
+   * @param {string} value - the current value of the input
+   * @returns {Promise<void>}
+   */
   const validateName = async (rule, value) => {
     const response = await validateSampleName(value);
     if (response.status === "error") {
@@ -36,16 +44,7 @@ function AddSampleForm({ onSubmit }) {
   };
 
   const submit = async () => {
-    await fetch(
-      setBaseUrl(`/ajax/projects/${window.project.id}/samples/add-sample`),
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, organism }),
-      }
-    );
+    await createNewSample({ name, organism });
 
     // Need to update the table!
     onSubmit();
@@ -88,21 +87,17 @@ function AddSampleForm({ onSubmit }) {
 
 function AddSample() {
   const [visible, setVisible] = useState(false);
-  const location = setBaseUrl(`/projects/${window.project.id}/add-sample`);
+  const location = setBaseUrl(`/projects/${window.project.id}`);
 
   const openNewSampleModal = () => {
     // Allow the user to use the back button.
-    window.history.pushState({}, null, location);
+    window.history.pushState({}, null, `${location}/add-sample`);
     setVisible(true);
   };
 
   const closeNewSampleModal = () => {
     // Need to update the url to the original one.
-    window.history.pushState(
-      {},
-      null,
-      setBaseUrl(`/projects/${window.project.id}`)
-    );
+    window.history.pushState({}, null, location);
     setVisible(false);
   };
 
@@ -131,7 +126,7 @@ function AddSample() {
         title={"ADD NEW SAMPLE"}
         footer={null}
       >
-        <AddSampleForm onSubmit={closeNewSampleModal} />
+        <AddSampleForm onSubmit={closeNewSampleModal} visible={visible} />
       </Modal>
     </>
   );

@@ -19,3 +19,18 @@ export async function validateSampleName(name) {
     )
     return response.json();
 }
+
+export async function createNewSample({name, organism}) {
+    const response = await fetch(
+        setBaseUrl(`${URL}/add-sample`),
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name, organism }),
+        }
+    );
+
+    return response.json();
+}
