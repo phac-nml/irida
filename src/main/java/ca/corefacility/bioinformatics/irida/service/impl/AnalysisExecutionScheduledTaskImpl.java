@@ -71,7 +71,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
 	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
-	 * @param sequencingObjectService        {@link SequencingObjectService} for getting the {@link SequencingObject}s
+	 * @param sequencingObjectService        {@link SequencingObjectService} for getting the sequencing objects
 	 * @param iridaFileStorageUtility        The irida file storage utility implementation
 	 */
 	@Autowired
