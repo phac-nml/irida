@@ -1,13 +1,16 @@
-import React, {useEffect, useRef, useState} from "react";
-import {render} from "react-dom";
-import {Button, Form, Input, Modal} from "antd";
-import {IconPlusCircle} from "../../../../components/icons/Icons";
-import {grey6, grey9} from "../../../../styles/colors";
-import {setBaseUrl} from "../../../../utilities/url-utilities";
-import {OntologySelect} from "../../../../components/ontology";
-import {TAXONOMY} from "../../../../apis/ontology/taxonomy";
-import {useModalBackButton} from "../../../../hooks";
-import {createNewSample, validateSampleName,} from "../../../../apis/projects/samples";
+import React, { useEffect, useRef, useState } from "react";
+import { render } from "react-dom";
+import { Button, Form, Input, Modal } from "antd";
+import { IconPlusCircle } from "../../../../components/icons/Icons";
+import { grey6, grey9 } from "../../../../styles/colors";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { OntologySelect } from "../../../../components/ontology";
+import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
+import { useModalBackButton } from "../../../../hooks";
+import {
+  createNewSample,
+  validateSampleName,
+} from "../../../../apis/projects/samples";
 
 function AddSampleForm({ onSubmit, visible }) {
   const [form] = Form.useForm();
@@ -55,7 +58,7 @@ function AddSampleForm({ onSubmit, visible }) {
     <Form layout={"vertical"} form={form} onFinish={submit}>
       <Form.Item
         name="name"
-        label={"Sample Name"}
+        label={i18n("AddSample.name")}
         hasFeedback
         rules={[
           () => ({
@@ -69,7 +72,7 @@ function AddSampleForm({ onSubmit, visible }) {
           onChange={(e) => setName(e.target.value)}
         />
       </Form.Item>
-      <Form.Item label={"Organism"} name="organism">
+      <Form.Item label={i18n("AddSample.organism")} name="organism">
         <OntologySelect
           term={organism}
           ontology={TAXONOMY}
@@ -78,7 +81,7 @@ function AddSampleForm({ onSubmit, visible }) {
       </Form.Item>
       <Form.Item>
         <Button type={"primary"} htmlType={"submit"}>
-          SUBMIT
+          {i18n("AddSample.submit")}
         </Button>
       </Form.Item>
     </Form>
@@ -123,7 +126,7 @@ function AddSample() {
       <Modal
         visible={visible}
         onCancel={closeNewSampleModal}
-        title={"ADD NEW SAMPLE"}
+        title={i18n("AddSample.title")}
         footer={null}
       >
         <AddSampleForm onSubmit={closeNewSampleModal} visible={visible} />
