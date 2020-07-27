@@ -3,10 +3,8 @@ import { render } from "react-dom";
 import { Button, Form, Input, Modal } from "antd";
 import { IconPlusCircle } from "../../../../components/icons/Icons";
 import { grey6, grey9 } from "../../../../styles/colors";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { OntologySelect } from "../../../../components/ontology";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
-import { useModalBackButton } from "../../../../hooks";
 import {
   createNewSample,
   validateSampleName,
@@ -22,6 +20,7 @@ import {
 function AddSampleForm({ onSubmit, visible = false }) {
   const [form] = Form.useForm();
   const [name, setName] = useState("");
+  const [isValid, setIsValid] = useState(false);
   const [organism, setOrganism] = useState("");
   const nameRef = useRef();
 
@@ -38,6 +37,7 @@ function AddSampleForm({ onSubmit, visible = false }) {
       // Special handler for organism since it is rendered slightly different
       // because it is an ontology
       setOrganism("");
+      setIsValid(false);
     }
   }, [form, visible]);
 
@@ -51,8 +51,10 @@ function AddSampleForm({ onSubmit, visible = false }) {
   const validateName = async (rule, value) => {
     const response = await validateSampleName(value);
     if (response.status === "error") {
+      setIsValid(false);
       return Promise.reject(response.help);
     } else {
+      setIsValid(true);
       return Promise.resolve();
     }
   };
@@ -91,12 +93,13 @@ function AddSampleForm({ onSubmit, visible = false }) {
       <Form.Item label={i18n("AddSample.organism")} name="organism">
         <OntologySelect
           term={organism}
+          K
           ontology={TAXONOMY}
           onTermSelected={(value) => setOrganism(value)}
         />
       </Form.Item>
       <Form.Item>
-        <Button type={"primary"} htmlType={"submit"}>
+        <Button type={"primary"} htmlType={"submit"} disabled={!isValid}>
           {i18n("AddSample.submit")}
         </Button>
       </Form.Item>
@@ -112,30 +115,20 @@ function AddSampleForm({ onSubmit, visible = false }) {
  */
 function AddSampleButton() {
   const [visible, setVisible] = useState(false);
-  const location = setBaseUrl(`/projects/${window.project.id}`);
 
   /**
    * Open the modal to create a new sample.
-   * Add to the browser history in able to allow the back button to
-   * close the modal.
    */
   const openNewSampleModal = () => {
-    // Allow the user to use the back button.
-    window.history.pushState({}, null, `${location}/add-sample`);
     setVisible(true);
   };
 
   /**
    * Close modal
-   * Update the url.
    */
   const closeNewSampleModal = () => {
-    // Need to update the url to the original one.
-    window.history.pushState({}, null, location);
     setVisible(false);
   };
-
-  useModalBackButton(openNewSampleModal, closeNewSampleModal, "add-sample");
 
   return window.PAGE.isRemoteProject ? null : (
     <>
