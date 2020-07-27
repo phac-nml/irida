@@ -7,6 +7,8 @@ Changes
 * [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
 * [UI]: Fixed issue where analysis results pages would hang after running with remote synchronized data. (20.05.2)
 * [Developer]: Updated chromedriver to version `latest`. (20.05.2)
+* [UI]: Updated sample details metadata numbers containing decimal places will be display 2 significant places. (20.05.3);
+* [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
 
 20.01 to 20.05
 --------------
