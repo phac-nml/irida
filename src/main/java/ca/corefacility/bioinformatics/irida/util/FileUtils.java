@@ -64,7 +64,7 @@ public class FileUtils {
 		String parentDirectoryPath = fileToRemove.getParent().toString();
 		Path dirToRemovePath = Paths.get(parentDirectoryPath);
 
-		if(fileToRemove.toFile().isFile()) {
+		if(Files.isRegularFile(fileToRemove)) {
 			try {
 				Files.delete(fileToRemove);
 			} catch (IOException e) {
@@ -72,16 +72,22 @@ public class FileUtils {
 			}
 		}
 
-		// Directory is empty
-		if(dirToRemovePath.toFile().listFiles().length == 0) {
-			try {
-				org.apache.commons.io.FileUtils.deleteDirectory(dirToRemovePath.toFile());
-				Path tDir = dirToRemovePath.toFile().toPath();
-				if(tDir.toString().substring(tDir.toString().length() - 1).matches("\\d+")) {
-					removeTemporaryFile(tDir);
+		if(Files.isDirectory(dirToRemovePath)) {
+			boolean directoryIsNumeric = dirToRemovePath.toString()
+					.substring(dirToRemovePath.toString()
+							.length() - 1)
+					.matches("\\d+");
+			// Directory is empty
+			if (directoryIsNumeric && dirToRemovePath.toFile()
+					.listFiles().length == 0) {
+				try {
+					org.apache.commons.io.FileUtils.deleteDirectory(dirToRemovePath.toFile());
+					// Recusrsively call remoteTemporaryFile to remove all
+					// other empty numeric named parent directories
+					removeTemporaryFile(dirToRemovePath);
+				} catch (IOException e) {
+					logger.debug("Unable to remove directory " + e);
 				}
-			} catch (IOException e) {
-				logger.debug("Unable to remove directory " + e);
 			}
 		}
 	}
