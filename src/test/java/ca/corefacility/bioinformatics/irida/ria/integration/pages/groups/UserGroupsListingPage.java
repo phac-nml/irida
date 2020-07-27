@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -57,5 +58,13 @@ public class UserGroupsListingPage extends AbstractPage {
 		WebElement input = driver.switchTo().activeElement();
 		input.sendKeys(name);
 		newGroupConfirmButton.click();
+	}
+
+	/*
+	 * Method that takes in the current url and waits until the url has changed.
+	 */
+	public void validateRouteChange(String url) {
+		WebDriverWait wait = new WebDriverWait(webDriver, 2);
+		wait.until(ExpectedConditions.not(ExpectedConditions.urlToBe(url)));
 	}
 }

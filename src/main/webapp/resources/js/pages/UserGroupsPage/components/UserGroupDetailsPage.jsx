@@ -1,14 +1,14 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
-  deleteUserGroup,
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../../apis/users/groups";
 import { Button, Popconfirm, Tabs, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
+import { UserGroupsContext } from "../../../contexts/UserGroupsContext";
 import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
 import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
@@ -38,6 +38,8 @@ const reducer = (state, action) => {
  * @constructor
  */
 export default function UserGroupDetailsPage({ id, baseUrl }) {
+  const { userGroupsContextDeleteUserGroup } = useContext(UserGroupsContext);
+
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
     tab: "members",
@@ -75,11 +77,9 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
   /**
    * Action to take when delete is confirmed
    */
-  const onDeleteConfirm = () => {
-    deleteUserGroup(id).then(() => {
-      navigate(`${baseUrl}`, { replace: true });
-    });
-  };
+  function deleteUserGroup() {
+    userGroupsContextDeleteUserGroup(id, baseUrl);
+  }
 
   const fields = state.loading
     ? []
@@ -134,7 +134,7 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
       <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
       <div style={{ marginTop: SPACE_SM }}>
         <Popconfirm
-          onConfirm={onDeleteConfirm}
+          onConfirm={deleteUserGroup}
           title={i18n("UserGroupDetailsPage.delete-confirm")}
           okButtonProps={{ className: "t-delete-confirm-btn" }}
         >

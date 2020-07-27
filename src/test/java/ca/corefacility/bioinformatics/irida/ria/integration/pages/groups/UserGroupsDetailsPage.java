@@ -84,15 +84,5 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		deleteBtn.click();
 		wait.until(ExpectedConditions.elementToBeClickable(deleteConfirmBtn));
 		deleteConfirmBtn.click();
-		wait.until(ExpectedConditions.presenceOfElementLocated(findPageTitle("User Groups")));
-	}
-
-	/**
-	 * Locates page title when it is present on page
-	 *
-	 * @return {@link Boolean}
-	 */
-	public By findPageTitle(String pageTitle) {
-		return By.xpath("//span[contains(text(),'" + pageTitle + "')]");
 	}
 }
