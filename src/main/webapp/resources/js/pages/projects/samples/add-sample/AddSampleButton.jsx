@@ -86,6 +86,7 @@ function AddSampleForm({ onSubmit, visible = false }) {
       >
         <Input
           ref={nameRef}
+          className={"t=sample-name"}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -134,6 +135,7 @@ function AddSampleButton() {
     <>
       <Button
         type="link"
+        className={"t-create-sample"}
         style={{
           margin: `0 inherit`,
           padding: 0,
