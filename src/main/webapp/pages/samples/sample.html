@@ -96,12 +96,7 @@
                     <div th:each="entry : ${sample.getMetadata()}" class="col-md-6">
                     <dl>
                         <dt th:text="${entry.key}"></dt>
-                        <th:block th:if="${entry.value}" >
-                            <dd th:if="${not T(org.apache.commons.lang3.math.NumberUtils).isParsable(entry.value.value)}" th:text="${entry.value.value}"></dd>
-                            <dd th:if="${T(org.apache.commons.lang3.math.NumberUtils).isParsable(entry.value.value)}"
-                                th:text="${entry.value.value} % 1 == 0 ? ${entry.value.value} : ${#numbers.formatDecimal(entry.value.value,1,2)}">NUMBER</dd>
-                        </th:block>
-
+                        <dd th:if="${entry.value}" th:text="${entry.value.value}"></dd>
                         <dd th:if="${#strings.isEmpty(entry.value)}"></dd>
                     </dl>
                     </div>

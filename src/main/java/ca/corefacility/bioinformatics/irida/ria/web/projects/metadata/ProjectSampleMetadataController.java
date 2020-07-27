@@ -132,14 +132,22 @@ public class ProjectSampleMetadataController {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				while (cellIterator.hasNext()) {
 					Cell cell = cellIterator.next();
+
 					int columnIndex = cell.getColumnIndex();
 					if (columnIndex < headers.size()) {
 						String header = headers.get(columnIndex);
 
 						if (!Strings.isNullOrEmpty(header)) {
 							// Need to ignore empty headers.
-							cell.setCellType(CellType.STRING);
-							rowMap.put(header, cell.getStringCellValue());
+							if(cell.getCellTypeEnum().equals(CellType.NUMERIC)) {
+								DataFormatter formatter = new DataFormatter();
+								String value = formatter.formatCellValue(cell);
+								rowMap.put(header, value);
+							}
+							else {
+								cell.setCellType(CellType.STRING);
+								rowMap.put(header, cell.getStringCellValue());
+							}
 						}
 					}
 				}
