@@ -4,13 +4,9 @@
  */
 
 import React from "react";
-
-import {
-  showNotification,
-  showErrorNotification
-} from "../modules/notifications";
 import { deleteUserGroup } from "../apis/users/groups";
 import { navigate } from "@reach/router";
+import { notification } from "antd";
 
 const initialContext = {};
 
@@ -18,16 +14,14 @@ const UserGroupsContext = React.createContext(initialContext);
 
 function UserGroupsProvider(props) {
   /*
-   * Deletes User Group and show confirmation notification.
+   * Deletes User Group and shows confirmation notification.
    */
   function userGroupsContextDeleteUserGroup(id, url) {
-    deleteUserGroup(id).then(res => {
-      if (res.type === "error") {
-        showErrorNotification({ text: res.text, type: res.type });
-      } else {
-        navigate(`${url}`, { replace: true });
-        showNotification({ text: "User Group deleted successfully" });
-      }
+    deleteUserGroup(id).then((message) => {
+      navigate(`${url}`, { replace: true });
+      notification.success({ message });
+    }).catch((message) => {
+      notification.error({ message })
     });
   }
 
