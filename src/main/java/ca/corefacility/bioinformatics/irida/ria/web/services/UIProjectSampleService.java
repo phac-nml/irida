@@ -37,9 +37,15 @@ public class UIProjectSampleService {
 	}
 
 	/**
-	 * @param name
-	 * @param projectId
-	 * @return
+	 * Validate a sample name to ensure can be stored correctly.  Must be:
+	 * - at least 3 characters long,
+	 * - no special characters (including spaces)
+	 * - name must not already exist for a sample in the project
+	 *
+	 * @param name      Name to validate.
+	 * @param projectId current project identifier
+	 * @param locale    current users locale
+	 * @return result of the validation.
 	 */
 	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, long projectId, Locale locale) {
 		int SAMPLE_NAME_MIN_LENGTH = 3;
@@ -64,7 +70,8 @@ public class UIProjectSampleService {
 		try {
 			sampleService.getSampleBySampleName(project, name);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));
+					.body(new SampleNameValidationResponse("error",
+							messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));
 
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.ok(new SampleNameValidationResponse("success", null));
@@ -72,6 +79,13 @@ public class UIProjectSampleService {
 
 	}
 
+	/**
+	 * Create a new sample in a project
+	 *
+	 * @param request   {@link CreateSampleRequest} details about the sample to create
+	 * @param projectId Identifier for the current project
+	 * @return result of creating the sample
+	 */
 	public ResponseEntity<CreateSampleResponse> createSample(CreateSampleRequest request, long projectId) {
 		Project project = projectService.read(projectId);
 		try {
@@ -80,9 +94,11 @@ public class UIProjectSampleService {
 				sample.setOrganism(request.getOrganism());
 			}
 			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
-			return ResponseEntity.ok(new CreateSampleSuccessResponse(join.getObject().getId()));
+			return ResponseEntity.ok(new CreateSampleSuccessResponse(join.getObject()
+					.getId()));
 		} catch (EntityNotFoundException e) {
-			return ResponseEntity.ok(new CreateSampleErrorResponse("A sample by that name already exists"));
+			return ResponseEntity.ok(new CreateSampleErrorResponse(
+					messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));
 		}
 	}
 }
