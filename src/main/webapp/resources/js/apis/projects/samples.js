@@ -8,7 +8,9 @@ const URL = setBaseUrl(`/ajax/projects/${window.project.id}/samples`);
  * @returns {Promise<any>}
  */
 export async function validateSampleName(name) {
-  const response = await fetch(`${URL}/add-sample/validate?name=${name}`);
+  const response = await fetch(
+    `${URL}/add-sample/validate?name=${name.trim()}`
+  );
   return response.json();
 }
 
@@ -18,8 +20,8 @@ export async function createNewSample({ name, organism }) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name, organism }),
+    body: JSON.stringify({ name: name.trim(), organism }),
   });
 
-  return response.json();
+  return response;
 }

@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,20 +26,22 @@ public class UIProjectSampleService {
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public UIProjectSampleService(ProjectService projectService, SampleService sampleService) {
+	public UIProjectSampleService(ProjectService projectService, SampleService sampleService,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.messageSource = messageSource;
 	}
 
 	/**
-	 *
 	 * @param name
 	 * @param projectId
 	 * @return
 	 */
-	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, long projectId) {
+	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, long projectId, Locale locale) {
 		int SAMPLE_NAME_MIN_LENGTH = 3;
 
 		Project project = projectService.read(projectId);
@@ -44,7 +49,7 @@ public class UIProjectSampleService {
 		// Make sure it has the correct length
 		if (name.length() <= SAMPLE_NAME_MIN_LENGTH) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-					.body(new SampleNameValidationResponse("error", "Name needs to be at least 3 characters"));
+					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.length", new Object[] {}, locale)));
 		}
 
 		/*
@@ -52,14 +57,14 @@ public class UIProjectSampleService {
 		 */
 		if (!name.matches("[A-Za-z\\d-_!@#$%~`]+")) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-					.body(new SampleNameValidationResponse("error", "Should not contain any special characters."));
+					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {}, locale)));
 		}
 
 		// Check to see if the sample name already exists.
 		try {
 			sampleService.getSampleBySampleName(project, name);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body(new SampleNameValidationResponse("error", "Name already exists"));
+					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));
 
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.ok(new SampleNameValidationResponse("success", null));

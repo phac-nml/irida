@@ -446,7 +446,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.openCreateNewSampleModal();
+		page.enterSampleName("BAD");
+		assertTrue("Should show a warning message", page.isSampleNameErrorDisplayed());
 		page.enterSampleName("BAD NAME");
-		String fllbar = "DFKLJSDF";
+		assertTrue("Should show a warning message", page.isSampleNameErrorDisplayed());
+		page.enterSampleName("BAD ***");
+		assertTrue("Should show a warning message", page.isSampleNameErrorDisplayed());
+		page.enterSampleName("GOOD_NAME");
+		assertFalse("Sample name error should not be displayed", page.isSampleNameErrorDisplayed());
 	}
 }

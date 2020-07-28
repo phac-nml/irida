@@ -516,7 +516,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void enterSampleName(String sampleName) {
+		sampleNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		sampleNameInput.sendKeys(sampleName);
+		waitForTime(100);
+	}
+
+	public boolean isSampleNameErrorDisplayed() {
+		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain")).size() > 0;
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +22,9 @@ public class ProjectSamplesAjaxController {
 	}
 
 	@RequestMapping("/add-sample/validate")
-	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(@RequestParam String name, @PathVariable long projectId) {
-		return service.validateNewSampleName(name, projectId);
+	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(@RequestParam String name,
+			@PathVariable long projectId, Locale locale) {
+		return service.validateNewSampleName(name, projectId, locale);
 	}
 
 	@PostMapping("/add-sample")

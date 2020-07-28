@@ -49,14 +49,15 @@ function AddSampleForm({ onSubmit, visible = false }) {
    * @returns {Promise<void>}
    */
   const validateName = async (rule, value) => {
-    const response = await validateSampleName(value);
-    if (response.status === "error") {
-      setIsValid(false);
-      return Promise.reject(response.help);
-    } else {
-      setIsValid(true);
-      return Promise.resolve();
-    }
+    await validateSampleName(value).then((response) => {
+      if (response.status === "success") {
+        setIsValid(true);
+        return Promise.resolve();
+      } else {
+        setIsValid(false);
+        return Promise.reject(response.help);
+      }
+    });
   };
 
   /**
@@ -75,6 +76,7 @@ function AddSampleForm({ onSubmit, visible = false }) {
   return (
     <Form layout={"vertical"} form={form} onFinish={submit}>
       <Form.Item
+        className="t-sample-name-wrapper"
         name="name"
         label={i18n("AddSample.name")}
         hasFeedback
@@ -86,7 +88,7 @@ function AddSampleForm({ onSubmit, visible = false }) {
       >
         <Input
           ref={nameRef}
-          className={"t=sample-name"}
+          className={"t-sample-name"}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -94,7 +96,6 @@ function AddSampleForm({ onSubmit, visible = false }) {
       <Form.Item label={i18n("AddSample.organism")} name="organism">
         <OntologySelect
           term={organism}
-          K
           ontology={TAXONOMY}
           onTermSelected={(value) => setOrganism(value)}
         />
