@@ -84,9 +84,10 @@ public class UIProjectSampleService {
 	 *
 	 * @param request   {@link CreateSampleRequest} details about the sample to create
 	 * @param projectId Identifier for the current project
+	 * @param locale Users current locale
 	 * @return result of creating the sample
 	 */
-	public ResponseEntity<CreateSampleResponse> createSample(CreateSampleRequest request, long projectId) {
+	public ResponseEntity<CreateSampleResponse> createSample(CreateSampleRequest request, long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		try {
 			Sample sample = new Sample(request.getName());
