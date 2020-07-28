@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
+/**
+ * UI Request to create a new sample
+ */
 public class CreateSampleRequest {
 	private  String name;
 	private  String organism;
