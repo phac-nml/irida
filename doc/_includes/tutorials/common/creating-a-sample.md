@@ -6,10 +6,4 @@ Clicking this button will open the Create New Sample mmodal dialog.  When creati
 
 ![Create new sample palge]({{ site.baseurl }}/images/tutorials/common/samples/add-sample.gif)
 
-If you choose to set a sample organism, click on the "Organism" drop-down menu and begin typing the name of the organism. For example, if you wanted to specify a sample organism of “Escherichia coli O26:NM”, you would begin to type "Esc" and the menu would allow you to choose from a set of well-defined organism names:
-
-![Taxonomic terms]({{ site.baseurl }}/images/tutorials/common/samples/create-sample-page-organism.png)
-
 When you've finished choosing the name and organism for the sample, click on the "Create Sample" button.
-
-![Create Sample]({{ site.baseurl }}/images/tutorials/common/samples/create-sample-page-create.png)
