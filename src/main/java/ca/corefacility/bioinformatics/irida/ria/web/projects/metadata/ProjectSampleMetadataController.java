@@ -140,6 +140,11 @@ public class ProjectSampleMetadataController {
 						if (!Strings.isNullOrEmpty(header)) {
 							// Need to ignore empty headers.
 							if(cell.getCellTypeEnum().equals(CellType.NUMERIC)) {
+								/*
+								This is a special handler for number cells.  It was requested that numbers
+								keep their formatting from their excel files.  E.g. 2.222222 with formatting
+								for 2 decimal places will be saved as 2.22.
+								 */
 								DataFormatter formatter = new DataFormatter();
 								String value = formatter.formatCellValue(cell);
 								rowMap.put(header, value);
