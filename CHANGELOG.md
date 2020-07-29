@@ -25,6 +25,7 @@ Changes
 * [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
 * [Developer/UI]: Removed `irida` angular app.  Individual components load themselves now.
 * [Developer/UI]: Updated to Ant Design v4.4.2.
+* [UI]: Updated UI for creating a sample within a project.
 
 20.01 to 20.05
 --------------
