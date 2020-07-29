@@ -8,9 +8,9 @@ const URL = setBaseUrl(`/ajax/projects/${window.project.id}/samples`);
  * @returns {Promise<any>}
  */
 export async function validateSampleName(name) {
-  const response = await fetch(
-    `${URL}/add-sample/validate?name=${name.trim()}`
-  );
+  const params = new URLSearchParams();
+  params.append("name", name.trim());
+  const response = await fetch(`${URL}/add-sample/validate?${params}`);
   return response.json();
 }
 
