@@ -52,21 +52,26 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public int getFoundCount() {
-		return Integer.parseInt(foundPill.findElement(By.className("badge")).getText());
+		return Integer.parseInt(foundPill.findElement(By.className("badge"))
+				.getText());
 	}
 
 	public int getMissingCount() {
-		return Integer.parseInt(missingPill.findElement(By.className("badge")).getText());
+		return Integer.parseInt(missingPill.findElement(By.className("badge"))
+				.getText());
 	}
 
-	public List<String> getNumberColumnValues() {
+	public List<String> getValuesForColumnByName(String column) {
 		// Get the text from the headers
 		List<String> headerText = headers.stream()
-				.map(WebElement::getText).collect(Collectors.toList());
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
 		// Find which columns is the numbers
-		int index = headerText.indexOf("Numbers");
-		List<String> numbers = rows.stream().map(row -> row.findElements(By.tagName("td")).get(index).getText()).collect(
-				Collectors.toList());
-		return numbers;
+		int index = headerText.indexOf(column);
+		return rows.stream()
+				.map(row -> row.findElements(By.tagName("td"))
+						.get(index)
+						.getText())
+				.collect(Collectors.toList());
 	}
 }

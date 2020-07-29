@@ -51,7 +51,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 						.setScale(2, RoundingMode.HALF_UP)
 						.doubleValue())
 				.collect(Collectors.toList());
-		List<String> formattedNumbers = page.getNumberColumnValues();
+		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
 		formattedNumbers.forEach(num -> assertTrue("Found " + num + " that was not formatted properly", values.contains(Double.valueOf(num))));
 
 	}
