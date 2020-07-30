@@ -31,3 +31,11 @@ export async function addNewClient({ clientId, accessTokenValiditySeconds, autho
     })
     .then(({ data }) => data);
 }
+
+/**
+ * Add new client.
+ * @return {Promise<AxiosResponse<T>>}
+ */
+export async function getAddClientPage() {
+  return axios.get(`${BASE_URL}/create`);
+}

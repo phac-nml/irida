@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, Modal, Select } from "antd";
+import { Form, Input, Modal, Select, Checkbox } from "antd";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { useNavigate } from "@reach/router";
-import { addNewClient } from "../../../../apis/clients/clients";
+import { addNewClient, getAddClientPage } from "../../../../apis/clients/clients";
 
 /**
  * Component to add a button which will open a modal to add a client.
@@ -60,11 +60,17 @@ export function AddClient() {
     setVisible(false);
   };
 
+  const onClick = () => {
+    getAddClientPage().then(() => {
+      setVisible(true);
+    });
+  }
+
   return (
     <>
       <AddNewButton
         className={"t-add-client-btn"}
-        onClick={() => setVisible(true)}
+        onClick={onClick}
         text={i18n("AdminPanel.addClient")}
       />
       <Modal
@@ -78,6 +84,7 @@ export function AddClient() {
         cancelText={i18n("AdminPanel.cancel")}
       >
         <Form layout="vertical" form={form}>
+          {/*CLIENT ID*/}
           <Form.Item
             label={i18n("client.clientid")}
             name="clientId"
@@ -99,6 +106,7 @@ export function AddClient() {
               }
             />
           </Form.Item>
+          {/*TOKEN VALIDITY*/}
           <Form.Item
             label={i18n("client.details.tokenValidity")}
             name="accessTokenValiditySeconds"
@@ -107,6 +115,83 @@ export function AddClient() {
               name="accessTokenValiditySeconds"
               options={window.PAGE.available_token_validity}
               selected={window.PAGE.validity}
+            />
+          </Form.Item>
+          {/*GRANT TYPES*/}
+          <Form.Item
+            label={i18n("client.grant-types")}
+            name="authorizedGrantTypes"
+          >
+            <Select
+              name="authorizedGrantTypes"
+              options={window.PAGE.available_token_validity}
+              selected={window.PAGE.validity}
+            />
+          </Form.Item>
+          {/*REFRESH TOKEN VALIDITY*/}
+          <Form.Item
+            label={i18n("client.grant-types")}
+            name="authorizedGrantTypes"
+          >
+            <Select
+              name="authorizedGrantTypes"
+              options={window.PAGE.available_token_validity}
+              selected={window.PAGE.validity}
+            />
+          </Form.Item>
+          {/*Redirect URL*/}
+          <Form.Item
+            label={i18n("client.clientid")}
+            name="clientId"
+            validateStatus={error ? "error" : null}
+            help={error}
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUserGroupButton.name-warning"),
+              },
+            ]}
+          >
+            <Input
+              ref={inputRef}
+              name="clientId"
+              placeholder={window.PAGE.validity}
+              onChange={() =>
+                typeof error !== "undefined" ? setError(undefined) : null
+              }
+            />
+          </Form.Item>
+          {/*SCOPES*/}
+          <Form.Item
+            label={i18n("client.scope.autoApprove")}
+            name="scope_auto_read"
+          >
+            <Checkbox
+              name="scope_auto_read"
+            />
+          </Form.Item>
+          <Form.Item
+            label={i18n("client.scope.autoApprove")}
+            name="scope_auto_read"
+          >
+            <Checkbox
+              name="scope_auto_read"
+            />
+          </Form.Item>
+          <Form.Item
+            label={i18n("client.scope.autoApprove")}
+            name="scope_write"
+          >
+            <Checkbox
+              name="scope_write"
+            />
+          </Form.Item>
+          <Form.Item
+            label={i18n("client.scope.autoApprove")}
+            name="scope_auto_write"
+          >
+            <Checkbox
+              name="scope_auto_write"
             />
           </Form.Item>
         </Form>

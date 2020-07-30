@@ -71,9 +71,8 @@ public class ClientsControllerTest {
 	public void testGetAddClientPage() {
 		ExtendedModelMap model = new ExtendedModelMap();
 
-		String addClientPage = controller.getAddClientPage(model);
+		controller.getAddClientPage(model);
 
-		assertEquals(ClientsController.ADD_CLIENT_PAGE, addClientPage);
 		assertTrue(model.containsAttribute("errors"));
 		assertTrue(model.containsAttribute("given_tokenValidity"));
 	}

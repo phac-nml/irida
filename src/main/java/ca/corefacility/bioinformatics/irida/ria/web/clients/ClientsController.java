@@ -299,10 +299,9 @@ public class ClientsController extends BaseController {
 	 *
 	 * @param model
 	 *            Model for the view
-	 * @return The name of the create client page
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String getAddClientPage(Model model) {
+	public void getAddClientPage(Model model) {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
@@ -320,8 +319,6 @@ public class ClientsController extends BaseController {
 		}
 
 		model.addAttribute("refresh_validity", IridaClientDetails.DEFAULT_REFRESH_TOKEN_VALIDITY);
-
-		return ADD_CLIENT_PAGE;
 	}
 
 	/**
@@ -404,7 +401,7 @@ public class ClientsController extends BaseController {
 					client.getRegisteredRedirectUri()
 							.iterator()
 							.next());
-			responsePage = getAddClientPage(model);
+			responsePage = "redirect:/clients/";
 		}
 
 		return responsePage;
