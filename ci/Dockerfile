@@ -20,6 +20,10 @@ RUN dpkg -i google-chrome-stable_current_amd64.deb; exit 0
 RUN apt update
 RUN apt install -qyy -f
 
+RUN IFS='.' read major minor build patch < <(google-chrome --product-version);
+RUN CHROME_VERSION_MAJOR=$major
+RUN sed -i "s/\"chromedriver\": \"latest\",/\"chromedriver\": \"$CHROME_VERSION.0.0\",/g" irida/src/main/webapp/package.json
+
 # install other required packages for tests
 RUN apt install -qyy xvfb build-essential rubygems ruby-dev git mysql-client
 RUN gem install --force jekyll pygments.rb
