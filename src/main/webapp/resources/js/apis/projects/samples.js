@@ -14,6 +14,12 @@ export async function validateSampleName(name) {
   return response.json();
 }
 
+/**
+ * Create a new sample within a project
+ * @param {string} name - name of the new sample
+ * @param {string} organism - name of the organism (optional)
+ * @returns {Promise<Response>}
+ */
 export async function createNewSample({ name, organism }) {
   const response = await fetch(setBaseUrl(`${URL}/add-sample`), {
     method: "POST",
