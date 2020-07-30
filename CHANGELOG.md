@@ -25,6 +25,7 @@ Changes
 * [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
 * [Developer/UI]: Removed `irida` angular app.  Individual components load themselves now.
 * [Developer/UI]: Updated to Ant Design v4.4.2.
+* [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
 
 20.01 to 20.05
 --------------
