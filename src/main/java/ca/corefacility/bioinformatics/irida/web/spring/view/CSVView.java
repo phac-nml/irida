@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.web.spring.view;
 
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
@@ -21,7 +21,8 @@ import com.google.common.net.HttpHeaders;
  * Write out CSV files to the client.
  *
  */
-public class CSVView extends AbstractView {
+public class
+CSVView extends AbstractView {
 	public static final String DEFAULT_CONTENT_TYPE = "text/csv";
 	private static final Logger logger = LoggerFactory.getLogger(CSVView.class);
 
@@ -44,9 +45,9 @@ public class CSVView extends AbstractView {
 		logger.trace("Sending file to client [" + filename + "]");
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
-		response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(fileContent)));
+		response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(sfr.getFileSizeBytes()));
 		OutputStream os = response.getOutputStream();
-		Files.copy(fileContent, os);
+		IOUtils.copy(sfr.getFileInputStream(), os);
 		os.flush();
 		os.close();
 	}

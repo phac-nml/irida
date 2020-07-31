@@ -314,4 +314,13 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		return IridaFiles.getFileInputStream(file);
 	}
 
+	/**
+	 * Get file size in bytes
+	 *
+	 * @return if file exists or not
+	 */
+	public Long getFileSizeBytes() {
+		return IridaFiles.getFileSizeBytes(getFile());
+	}
+
 }
