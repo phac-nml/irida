@@ -136,8 +136,10 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+			boolean gzipped = ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			is.close();
+			return gzipped;
 		}
 	}
 

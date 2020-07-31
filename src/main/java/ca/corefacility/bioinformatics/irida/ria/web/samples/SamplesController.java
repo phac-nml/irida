@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -356,8 +357,10 @@ public class SamplesController extends BaseController {
 		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition",
 				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
-		genomeAssembly.getFileInputStream().transferTo(response.getOutputStream());
+		InputStream inputStream = genomeAssembly.getFileInputStream();
+		inputStream.transferTo(response.getOutputStream());
 		response.flushBuffer();
+		inputStream.close();
 	}
 
 	/**

@@ -171,8 +171,10 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 		try (InputStream inputStream = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			inputStream.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+			boolean gzipped = ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			inputStream.close();
+			return gzipped;
 		}
 	}
 

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -72,10 +73,11 @@ public class ReferenceFileController {
 	public void downloadReferenceFile(@PathVariable Long fileId,
 			HttpServletResponse response) throws IOException {
 		ReferenceFile file = referenceFileService.read(fileId);
-		Path path = file.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-		file.getFileInputStream().transferTo(response.getOutputStream());
+		InputStream inputStream = file.getFileInputStream();
+		inputStream.transferTo(response.getOutputStream());
 		response.flushBuffer();
+		inputStream.close();
 	}
 
 	/**
