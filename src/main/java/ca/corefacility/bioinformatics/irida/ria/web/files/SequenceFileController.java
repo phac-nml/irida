@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.files;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 
@@ -129,8 +130,10 @@ public class SequenceFileController {
 		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
 		Path path = sequenceFile.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
-		sequenceFile.getFileInputStream().transferTo(response.getOutputStream());
+		InputStream inputStream = sequenceFile.getFileInputStream();
+		inputStream.transferTo(response.getOutputStream());
 		response.flushBuffer();
+		inputStream.close();
 	}
 
 	/**

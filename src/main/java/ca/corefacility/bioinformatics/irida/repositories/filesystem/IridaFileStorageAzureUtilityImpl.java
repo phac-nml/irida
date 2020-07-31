@@ -62,6 +62,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			InputStream initialStream = blobClient.openInputStream();
 			File targetFile = new File(file.toAbsolutePath().toString());
 			FileUtils.copyInputStreamToFile(initialStream, targetFile);
+			initialStream.close();
 			fileToProcess = targetFile;
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't find file on azure [" + e + "]");
@@ -167,8 +168,10 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+			boolean gzipped = ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			is.close();
+			return gzipped;
 		}
 	}
 
