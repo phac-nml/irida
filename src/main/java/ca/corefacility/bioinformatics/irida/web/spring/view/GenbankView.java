@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.spring.view;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Map;
@@ -46,7 +47,9 @@ public class GenbankView extends AbstractView {
         response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
         response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(sfr.getFileSizeBytes()));
         OutputStream os = response.getOutputStream();
-        IOUtils.copy(sfr.getFileInputStream(), os);
+        InputStream is = sfr.getFileInputStream();
+        IOUtils.copy(is, os);
+        is.close();
         os.flush();
         os.close();
     }

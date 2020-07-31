@@ -12,6 +12,8 @@ import org.springframework.web.servlet.view.AbstractView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Map;
@@ -45,7 +47,9 @@ public class FastaView extends AbstractView {
         response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
         response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(IridaFiles.getFileSizeBytes(fileContent)));
         OutputStream os = response.getOutputStream();
-        IOUtils.copy(IridaFiles.getFileInputStream(fileContent), os);
+        InputStream is = IridaFiles.getFileInputStream(fileContent);
+        IOUtils.copy(is, os);
+        is.close();
         os.flush();
         os.close();
     }
