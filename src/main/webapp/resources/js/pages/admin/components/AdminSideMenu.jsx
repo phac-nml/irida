@@ -19,7 +19,7 @@ const { Sider } = Layout;
 
 export default function AdminHeader() {
   const DEFAULT_URL = setBaseUrl("/admin");
-  const pathRegx = new RegExp(/([a-zA-Z]+)$/);
+  const pathRegx = new RegExp(/([a-zA-Z_])+\/?(\d*$)/);
 
   // The following renders the AdminPanelSideMenu component
   return (
@@ -33,19 +33,19 @@ export default function AdminHeader() {
                 <img style={{ height: 64, width: 200 }} src={setBaseUrl("/resources/img/irida_logo_dark.svg")}/>
               </Link>
               <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
-                    selectedKeys={[keyname ? keyname[1] : ADMIN.STATISTICS]}>
+                    selectedKeys={[keyname ? keyname[0].split('/')[0] : ADMIN.STATISTICS]}>
                 <Menu.Item key="statistics">
                   <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} className={"t-admin-stats-link"}>
                     {i18n("AdminPanel.statistics")}
                   </Link>
                 </Menu.Item>
-                <SubMenu key="users" title={i18n("AdminPanel.users")} className={"t-admin-users-submenu"}>
-                  <Menu.Item key="userList">
+                <SubMenu title={i18n("AdminPanel.users")} className={"t-admin-users-submenu"}>
+                  <Menu.Item key="users">
                     <Link to={`${DEFAULT_URL}/${ADMIN.USERS}`} className={"t-admin-users-link"}>
                       {i18n("AdminPanel.userList")}
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="userGroupsList">
+                  <Menu.Item key="groups">
                     <Link to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`} className={"t-admin-groups-link"}>
                       {i18n("AdminPanel.userGroupList")}
                     </Link>
@@ -56,17 +56,17 @@ export default function AdminHeader() {
                     {i18n("AdminPanel.clients")}
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="remoteApi">
+                <Menu.Item key="remote_api">
                   <Link to={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} className={"t-admin-remote-api-link"}>
                     {i18n("AdminPanel.remoteApi")}
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="sequencingRuns">
+                <Menu.Item key="sequencing_runs">
                   <Link to={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`} className={"t-admin-sequencing-runs-link"}>
                     {i18n("AdminPanel.sequencingRuns")}
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="ncbiExports">
+                <Menu.Item key="ncbi_exports">
                   <Link to={`${DEFAULT_URL}/${ADMIN.NCBIEXPORTS}`} className={"t-admin-ncbi-exports-link"}>
                     {i18n("AdminPanel.ncbiExports")}
                   </Link>

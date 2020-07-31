@@ -10,6 +10,14 @@
     <link rel="icon" th:href="@{/resources/img/favicon.ico}" />
     <title th:text="#{AdminPanel.title}">ADMIN PANEL</title>
     <link rel="stylesheet" th:href="@{/dist/css/admin.bundle.css}" />
+
+    <script th:inline="javascript">
+      window.TL = {
+        _BASE_URL: /*[[@{/}]]*/ "/",
+        _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+        LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+      };
+    </script>
   </head>
   <body>
     <div id="root" style="height: 100%;">
@@ -20,11 +28,5 @@
     </div>
 
     <script th:src="@{/dist/js/admin.bundle.js}"></script>
-    <script th:inline="javascript">
-      window.TL = {
-        _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
-        LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
-      };
-    </script>
   </body>
 </html>
