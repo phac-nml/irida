@@ -25,6 +25,9 @@ Changes
 * [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
 * [Developer/UI]: Removed `irida` angular app.  Individual components load themselves now.
 * [Developer/UI]: Updated to Ant Design v4.4.2.
+* [UI]: Updated importing numbers through excel file.  IRIDA will now check for excel formatted numeric cells and keep the formatting. (20.05.3);
+* [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
+* [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
 * [UI]: Updated UI for creating a sample within a project.
 
 20.01 to 20.05
