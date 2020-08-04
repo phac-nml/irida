@@ -215,7 +215,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());
 
-				Optional<String> currentExtensionOpt = VALID_EXTENSIONS.stream()
+				Optional<String> currentExtensionOpt = VALID_CONCATENATION_EXTENSIONS.stream()
 						.filter(e -> fileName.endsWith(e))
 						.findFirst();
 
