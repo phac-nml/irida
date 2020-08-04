@@ -162,4 +162,6 @@ function AddSampleButton() {
   );
 }
 
-render(<AddSampleButton />, document.querySelector(".js-add-sample"));
+if (window.project.canManage) {
+  render(<AddSampleButton />, document.querySelector(".js-add-sample"));
+}
