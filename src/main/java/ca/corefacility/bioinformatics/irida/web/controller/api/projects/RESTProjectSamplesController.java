@@ -36,17 +36,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.net.HttpHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
-import com.google.common.net.HttpHeaders;
-
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -100,7 +89,6 @@ public class RESTProjectSamplesController {
 	 *         project.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
-	@ResponseBody
 	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
 			HttpServletResponse response) {
 
@@ -155,7 +143,6 @@ public class RESTProjectSamplesController {
 	 *         location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	@ResponseBody
 	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody Sample sample,
 			HttpServletResponse response) {
 		ModelMap model = new ModelMap();
@@ -193,7 +180,6 @@ public class RESTProjectSamplesController {
 	 * @return the list of {@link Sample}s associated with this {@link Project}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelMap getProjectSamples(@PathVariable Long projectId) {
 
 		ModelMap modelMap = new ModelMap();
@@ -223,7 +209,6 @@ public class RESTProjectSamplesController {
 	 * @return The found sample
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId) {
 		Project p = projectService.read(projectId);
 
@@ -251,7 +236,6 @@ public class RESTProjectSamplesController {
 	 * @return a representation of the specific sample.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// read project/sample to verify sample exists in project
 		Project project = projectService.read(projectId);
@@ -278,7 +262,6 @@ public class RESTProjectSamplesController {
 	 * @return representation of the sample
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelMap getSample(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
@@ -336,7 +319,6 @@ public class RESTProjectSamplesController {
 	 *         and collection of {@link Sample}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-	@ResponseBody
 	public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 
@@ -373,7 +355,6 @@ public class RESTProjectSamplesController {
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	public ModelMap updateSample(@PathVariable Long sampleId,
 			@RequestBody Map<String, Object> updatedFields) {
 		ModelMap modelMap = new ModelMap();

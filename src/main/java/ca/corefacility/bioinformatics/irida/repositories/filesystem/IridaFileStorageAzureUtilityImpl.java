@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -36,7 +35,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient ;
-	private BlobClient blobClient;
 
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String connectionStr, String containerName){
@@ -53,21 +51,18 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		File fileToProcess = null;
 
 		// We set the blobClient "path" to which we want to upload our file to
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
-			// Create a file that will be unique in the /tmp/ folder. We append the current date/time
-			// to the file name
-			String tmpDir = "/tmp/" + new Date().toString().replaceAll("\\W", "");
-			// Since the file system is virtual the full file path is the file name.
-			// We split it on "/" and get the last token which is the actual file name.
-			String [] blobNameTokens = blobClient.getBlobName().split("/");
-			String fileName = blobNameTokens[blobNameTokens.length-1];
-			String filePath = tmpDir + fileName;
-			blobClient.downloadToFile(filePath);
-			fileToProcess = new File(filePath);
+			InputStream initialStream = blobClient.openInputStream();
+			File targetFile = new File(file.toAbsolutePath().toString());
+			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, targetFile);
+			initialStream.close();
+			fileToProcess = targetFile;
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't find file on azure [" + e + "]");
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
 		}
 
 		return fileToProcess;
@@ -81,7 +76,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		String fileSize = "N/A";
 		try {
 			// We set the blobClient "path" to which we want to upload our file to
-			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
@@ -95,7 +90,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// We set the blobClient "path" to which we want to upload our file to
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
 		try {
 			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
 			blobClient.uploadFromFile(source.toString(), false);
@@ -118,7 +113,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		try {
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
@@ -137,7 +132,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public boolean fileExists(Path file) {
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		if(blobClient.exists()) {
 			return true;
 		}
@@ -149,12 +144,14 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
+		BlobClient blobClient;
 		try {
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			return blobClient.openInputStream();
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't read file from azure [" + e + "]");
 		}
-		return blobClient.openInputStream();
+		return null;
 	}
 
 	/**
@@ -186,8 +183,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		}
 		return absolutePath;
 	}
-
 	/**
+
 	 * {@inheritDoc}
 	 */
 	@Override

@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
  *
  */
 @Controller
-@ResponseBody
 @RequestMapping(value = "/api/projects")
 public class RESTProjectsController extends RESTGenericController<Project> {
 	

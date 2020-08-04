@@ -66,7 +66,6 @@ public class RESTProjectAnalysisController {
 	 *         {@link Project}.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/analyses", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelMap getProjectAnalyses(@PathVariable Long projectId) {
 		logger.debug("Loading analyses for project [" + projectId + "]");
 
@@ -109,7 +108,6 @@ public class RESTProjectAnalysisController {
 	 *             found in IRIDA.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/analyses/{type}", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelMap getProjectAnalysesByType(@PathVariable Long projectId, @PathVariable String type)
 			throws IridaWorkflowNotFoundException {
 		logger.debug("Loading analyses for project [" + projectId + "] by type [" + type + "]");
