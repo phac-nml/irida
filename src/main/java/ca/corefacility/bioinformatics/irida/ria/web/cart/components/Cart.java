@@ -22,21 +22,21 @@ public class Cart {
 	/**
 	 * Container for all the {@link Sample} identifiers in the cart organized by {@link Project} identifier
 	 */
-	private Map<Long, Map<Long, CartSample>> cart = new HashMap<>();
+	private final Map<Long, Map<Long, CartSample>> cart = new HashMap<>();
 
 	/**
 	 * Cannot have the same sample in the cart twice, this is here to ensure that the sample was not added via
 	 * another project.
 	 */
-	private Set<Long> currentSampleIds = new HashSet<>();
+	private final Set<Long> currentSampleIds = new HashSet<>();
 
 	/**
 	 * Cannot have duplicate sample names (different samples can have the same name by coincidence).
 	 */
-	private Set<String> currentSampleLabels = new HashSet<>();
+	private final Set<String> currentSampleLabels = new HashSet<>();
 
-	private ProjectService projectService;
-	private MessageSource messageSource;
+	private final ProjectService projectService;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public Cart(ProjectService projectService, MessageSource messageSource) {
@@ -203,5 +203,16 @@ public class Cart {
 				.collect(Collectors.toSet()));
 		cart.remove(id);
 		return new RemoveSampleResponse(this.getNumberOfSamples());
+	}
+
+	/**
+	 * Get all the projects that currently have samples in the cart.
+	 * @return List of projects.
+	 */
+	public List<Project> getProjects() {
+		return this.cart.keySet()
+				.stream()
+				.map(id -> projectService.read(id))
+				.collect(Collectors.toList());
 	}
 }

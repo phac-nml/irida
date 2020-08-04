@@ -15,9 +15,18 @@ function launchReducer(state, action) {
 function LaunchProvider({ children }) {
   const [state, dispatch] = React.useReducer(launchReducer, { loading: true });
 
+  // Get the pipeline id
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  console.log(params.get("pipeline"));
+
   return (
     <LaunchStateContext.Provider value={state}>
-      <LaunchDispatchContext value={dispatch}>{children}</LaunchDispatchContext>
+      <LaunchDispatchContext.Provider value={dispatch}>
+        {children}
+      </LaunchDispatchContext.Provider>
     </LaunchStateContext.Provider>
   );
 }
+
+export { LaunchProvider };
