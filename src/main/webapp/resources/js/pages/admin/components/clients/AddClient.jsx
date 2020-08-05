@@ -129,20 +129,19 @@ export function AddClient() {
             />
           </Form.Item>
           {/*REFRESH TOKEN VALIDITY*/}
+
           <Form.Item
-            label={i18n("client.grant-types")}
-            name="authorizedGrantTypes"
+            label={i18n("client.details.refreshTokenValidity")}
+            name="refreshTokenValidity"
           >
-            <Select
-              name="authorizedGrantTypes"
-              options={window.PAGE.available_token_validity}
-              selected={window.PAGE.validity}
+            <Checkbox
+              name="refreshTokenValidity"
             />
           </Form.Item>
           {/*Redirect URL*/}
           <Form.Item
             label={i18n("client.clientid")}
-            name="clientId"
+            name="registeredRedirectUri"
             validateStatus={error ? "error" : null}
             help={error}
             rules={[
@@ -154,8 +153,8 @@ export function AddClient() {
           >
             <Input
               ref={inputRef}
-              name="clientId"
-              placeholder={window.PAGE.validity}
+              name="registeredRedirectUri"
+              placeholder={i18n("client.registeredRedirectUrl")}
               onChange={() =>
                 typeof error !== "undefined" ? setError(undefined) : null
               }
@@ -163,11 +162,11 @@ export function AddClient() {
           </Form.Item>
           {/*SCOPES*/}
           <Form.Item
-            label={i18n("client.scope.autoApprove")}
-            name="scope_auto_read"
+            label={i18n("client.scope.read")}
+            name="scope_read"
           >
             <Checkbox
-              name="scope_auto_read"
+              name="scope_read"
             />
           </Form.Item>
           <Form.Item
@@ -179,7 +178,7 @@ export function AddClient() {
             />
           </Form.Item>
           <Form.Item
-            label={i18n("client.scope.autoApprove")}
+            label={i18n("client.scope.write")}
             name="scope_write"
           >
             <Checkbox
