@@ -841,6 +841,29 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Valid the name for a new {@link Sample} label.  This checks against existing sample names within the current
+	 * project to ensure that it is not a duplicate.
+	 * TODO: Remove this after removing merge-modal code.
+	 *
+	 * @param projectId  Identifier for the current project
+	 * @param sampleName {@link String} name to validate.
+	 * @return {@link Boolean} true if the name is unique.
+	 */
+	@RequestMapping("/projects/{projectId}/validate-sample-name")
+	@ResponseBody
+	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
+		Project project = projectService.read(projectId);
+		try {
+			sampleService.getSampleBySampleName(project, sampleName);
+			return false;
+		} catch (EntityNotFoundException e) {
+			// If the sample is not found, then the name is good to go!
+			return true;
+		}
+
+	}
+
+	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for disabling in the UI.
 	 *
 	 * @param e
