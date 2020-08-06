@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
 @RestController
@@ -24,7 +25,7 @@ public class PipelineAjaxController {
 	}
 
 	@RequestMapping("/{workflowId}")
-	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(@PathVariable UUID workflowId) {
-		return service.getPipelineDetails(workflowId);
+	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(@PathVariable UUID workflowId, @RequestParam boolean automated) {
+		return service.getPipelineDetails(workflowId, automated);
 	}
 }

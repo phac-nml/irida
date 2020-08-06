@@ -1,15 +1,13 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines;
 
 import java.util.List;
 import java.util.UUID;
-
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 
 public class UIPipelineDetailsResponse {
 		private UUID id;
 		private String name;
 		private boolean canPipelineWriteToSamples;
-		private List<ReferenceFile> files;
+		private List<UIReferenceFile> files;
 
 		public UUID getId() {
 			return id;
@@ -27,11 +25,11 @@ public class UIPipelineDetailsResponse {
 			this.name = name;
 		}
 
-		public List<ReferenceFile> getFiles() {
+		public List<UIReferenceFile> getFiles() {
 			return files;
 		}
 
-		public void setFiles(List<ReferenceFile> files) {
+		public void setFiles(List<UIReferenceFile> files) {
 			this.files = files;
 		}
 

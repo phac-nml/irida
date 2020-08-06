@@ -12,14 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -42,7 +41,7 @@ public class UIPipelineService {
 		this.referenceFileService = referenceFileService;
 	}
 
-	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(UUID workflowId) {
+	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(UUID workflowId, boolean automated) {
 		IridaWorkflow workflow;
 
 		/*
@@ -76,10 +75,10 @@ public class UIPipelineService {
 			possible reference files.
 			 */
 			if (workflowDescription.requiresReference()) {
-				List<ReferenceFile> files = new ArrayList<>();
+				List<UIReferenceFile> files = new ArrayList<>();
 				projects.forEach(project -> files.addAll(referenceFileService.getReferenceFilesForProject(project)
 						.stream()
-						.map(Join::getObject)
+						.map(UIReferenceFile::new)
 						.collect(Collectors.toList())));
 				details.setFiles(files);
 			}

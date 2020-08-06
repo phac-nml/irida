@@ -90,7 +90,7 @@ export default class Pipeline extends React.Component {
                 >
                   {i18n("pipelines.cart.select")}
                 </Button>,
-                <Launch pipelineId={this.props.id} />,
+                <Launch pipelineId={this.props.id} automated={false} />,
               ]
             : []
         }

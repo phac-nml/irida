@@ -3,7 +3,7 @@ import { Button } from "antd";
 
 const PipelineDetailsModal = React.lazy(() => import("./PipelineDetailsModal"));
 
-export function Launch({ pipelineId }) {
+export function Launch({ pipelineId, automated }) {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -17,6 +17,7 @@ export function Launch({ pipelineId }) {
             visible={visible}
             id={pipelineId}
             onCancel={() => setVisible(false)}
+            automated={automated}
           />
         </Suspense>
       ) : null}
