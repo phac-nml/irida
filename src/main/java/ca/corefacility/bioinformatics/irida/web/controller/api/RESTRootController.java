@@ -117,7 +117,6 @@ public class RESTRootController {
 	 * @return a response to the client
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/api/version")
-	@ResponseBody
 	public ModelMap version(){
 		ModelMap mm = new ModelMap();
 		mm.put("version", iridaVersion);
