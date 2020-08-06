@@ -1,19 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -36,7 +42,7 @@ public class UIPipelineService {
 		this.referenceFileService = referenceFileService;
 	}
 
-	public ResponseEntity<String> getPipelineDetails(UUID workflowId) {
+	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(UUID workflowId) {
 		IridaWorkflow workflow;
 
 		/*
@@ -46,7 +52,12 @@ public class UIPipelineService {
 
 		try {
 			workflow = workflowsService.getIridaWorkflow(workflowId);
+			UIPipelineDetailsResponse details = new UIPipelineDetailsResponse();
+
 			IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
+			details.setId(workflowDescription.getId());
+			details.setName(workflowDescription.getName());
+
 			AnalysisType type = workflowDescription.getAnalysisType();
 
 			/*
@@ -55,8 +66,9 @@ public class UIPipelineService {
 			not want it to happen if they are re-running an analysis or just don't want it written back into the sample
 			metadata.
 			 */
-			Boolean workflowCanUpdatesAllSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+			boolean workflowCanUpdatesAllSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
 					type);
+			details.setCanPipelineWriteToSamples(workflowCanUpdatesAllSamples);
 
 			/*
 			REFERENCE FILES.
@@ -64,14 +76,21 @@ public class UIPipelineService {
 			possible reference files.
 			 */
 			if (workflowDescription.requiresReference()) {
-
+				List<ReferenceFile> files = new ArrayList<>();
+				projects.forEach(project -> files.addAll(referenceFileService.getReferenceFilesForProject(project)
+						.stream()
+						.map(Join::getObject)
+						.collect(Collectors.toList())));
+				details.setFiles(files);
 			}
 
-			String workflowName = workflowDescription.getName();
+			return ResponseEntity.ok(details);
 
 		} catch (IridaWorkflowNotFoundException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(null);
 		}
-	}
 
+	}
 }
