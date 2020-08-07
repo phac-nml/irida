@@ -29,7 +29,6 @@ Changes
 * [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
 * [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
 * [UI]: Updated UI for creating a sample within a project.
-* [Developer]: Updated yarn lock file.
 
 20.01 to 20.05
 --------------
