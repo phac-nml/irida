@@ -21,6 +21,16 @@ export default function AdminHeader() {
   const DEFAULT_URL = setBaseUrl("/admin");
   const pathRegx = new RegExp(/([a-zA-Z_])+\/?(\d*$)/);
 
+  /**
+   * Removes the end of the path that isn't part of the base route for the current admin page,
+   * to allow the side menu item to be correctly selected for all paths on the route
+   * @param {array} keyname holds a list of matches that represent a valid path name
+   * @returns {string} key that corresponds to the selected admin side menu item
+   */
+  function parseKey(keyname) {
+    return keyname[0].split('/')[0];
+  }
+
   // The following renders the AdminPanelSideMenu component
   return (
     <Sider width={220}>
@@ -33,7 +43,7 @@ export default function AdminHeader() {
                 <img style={{ height: 64, width: 200 }} src={setBaseUrl("/resources/img/irida_logo_dark.svg")}/>
               </Link>
               <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
-                    selectedKeys={[keyname ? keyname[0].split('/')[0] : ADMIN.STATISTICS]}>
+                    selectedKeys={[keyname ? parseKey(keyname) : ADMIN.STATISTICS]}>
                 <Menu.Item key="statistics">
                   <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} className={"t-admin-stats-link"}>
                     {i18n("AdminPanel.statistics")}
