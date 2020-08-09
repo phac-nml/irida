@@ -127,20 +127,30 @@ export function AddClient() {
               options={window.PAGE.available_token_validity}
               selected={window.PAGE.validity}
             />
+            <Form.Item
+              name="refresh"
+            >
+              <Checkbox
+                name="refresh"
+              >
+                {i18n("client.refresh")}
+              </Checkbox>
+            </Form.Item>
           </Form.Item>
           {/*REFRESH TOKEN VALIDITY*/}
-
           <Form.Item
             label={i18n("client.details.refreshTokenValidity")}
             name="refreshTokenValidity"
           >
-            <Checkbox
+            <Select
               name="refreshTokenValidity"
+              options={window.PAGE.available_refresh_token_validity}
+              selected={window.PAGE.refresh_validity}
             />
           </Form.Item>
           {/*Redirect URL*/}
           <Form.Item
-            label={i18n("client.clientid")}
+            label={i18n("client.registeredRedirectUri")}
             name="registeredRedirectUri"
             validateStatus={error ? "error" : null}
             help={error}
@@ -154,7 +164,7 @@ export function AddClient() {
             <Input
               ref={inputRef}
               name="registeredRedirectUri"
-              placeholder={i18n("client.registeredRedirectUrl")}
+              placeholder={i18n("client.registeredRedirectUri")}
               onChange={() =>
                 typeof error !== "undefined" ? setError(undefined) : null
               }
@@ -162,36 +172,41 @@ export function AddClient() {
           </Form.Item>
           {/*SCOPES*/}
           <Form.Item
-            label={i18n("client.scope.read")}
+            label={i18n("client.scopes")}
             name="scope_read"
           >
             <Checkbox
               name="scope_read"
-            />
-          </Form.Item>
-          <Form.Item
-            label={i18n("client.scope.autoApprove")}
-            name="scope_auto_read"
-          >
-            <Checkbox
+            >
+              {i18n("client.scope.read")}
+            </Checkbox>
+            <Form.Item
               name="scope_auto_read"
-            />
+            >
+              <Checkbox
+                name="scope_auto_read"
+              >
+                {i18n("client.scope.autoApprove")}
+              </Checkbox>
+            </Form.Item>
           </Form.Item>
           <Form.Item
-            label={i18n("client.scope.write")}
             name="scope_write"
           >
             <Checkbox
               name="scope_write"
-            />
-          </Form.Item>
-          <Form.Item
-            label={i18n("client.scope.autoApprove")}
-            name="scope_auto_write"
-          >
-            <Checkbox
+            >
+              {i18n("client.scope.write")}
+            </Checkbox>
+            <Form.Item
               name="scope_auto_write"
-            />
+            >
+              <Checkbox
+                name="scope_auto_write"
+              >
+                {i18n("client.scope.autoApprove")}
+              </Checkbox>
+            </Form.Item>
           </Form.Item>
         </Form>
       </Modal>
