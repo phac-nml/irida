@@ -17,6 +17,7 @@ function launchReducer(state, action) {
         ...action.value,
         fetching: false,
         name: formatName(action.value.name),
+        requiresReference: action.value.files !== null,
       };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -35,6 +36,7 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
     fetch(setBaseUrl(`/ajax/pipelines/${pipelineId}?automated=${automated}`))
       .then((response) => response.json())
       .then((json) => {
+        console.log(json.files);
         dispatch({ type: CONSTANTS.DISPATCH_PIPELINE_LOADED, value: json });
       });
   }, [pipelineId, automated]);

@@ -2,10 +2,13 @@ import React from "react";
 import { Steps } from "antd";
 import * as STATUS from "../../components/ant.design/step-status";
 import { IconFile, IconForm } from "../icons/Icons";
+import { useLaunchState } from "./launch-context";
 
 const { Step } = Steps;
 
 export function LaunchSteps() {
+  const { requiresReference } = useLaunchState();
+
   return (
     <Steps>
       <Step
@@ -13,11 +16,13 @@ export function LaunchSteps() {
         title={"PIPELINE DETAILS"}
         icon={<IconForm />}
       />
-      <Step
-        status={STATUS.STEP_WAIT}
-        title={"REFERENCE FILES"}
-        icon={<IconFile />}
-      />
+      {requiresReference ? (
+        <Step
+          status={STATUS.STEP_WAIT}
+          title={"REFERENCE FILES"}
+          icon={<IconFile />}
+        />
+      ) : null}
     </Steps>
   );
 }
