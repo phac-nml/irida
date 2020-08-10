@@ -37,7 +37,6 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-filter.js",
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
-  "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
