@@ -1,5 +1,6 @@
 import React, { Suspense, useState } from "react";
 import { Button } from "antd";
+import { PipelineLaunchModal } from "./PipelineLaunchModal";
 
 const PipelineDetailsModal = React.lazy(() => import("./PipelineDetailsModal"));
 
@@ -13,11 +14,11 @@ export function Launch({ pipelineId, automated }) {
       </Button>
       {visible ? (
         <Suspense fallback={null}>
-          <PipelineDetailsModal
+          <PipelineLaunchModal
             visible={visible}
-            id={pipelineId}
-            onCancel={() => setVisible(false)}
+            pipelineId={pipelineId}
             automated={automated}
+            onCancel={() => setVisible(false)}
           />
         </Suspense>
       ) : null}

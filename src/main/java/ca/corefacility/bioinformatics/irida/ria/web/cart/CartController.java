@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.GalaxyRedirectionEndpointController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.GalaxyRedirectionEndpointController;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -25,7 +26,7 @@ import java.util.*;
 @Scope("session")
 @RequestMapping("/cart")
 public class CartController {
-	private Cart cart;
+	private final Cart cart;
 
 	private final SampleService sampleService;
 	private final ProjectService projectService;
@@ -35,7 +36,7 @@ public class CartController {
 	/*
 	 * Additional variables
 	 */
-	private String iridaPipelinePluginStyle;
+	private final String iridaPipelinePluginStyle;
 
 	@Autowired
 	public CartController(SampleService sampleService, ProjectService projectService,
@@ -53,7 +54,7 @@ public class CartController {
 	 * @param automatedProject The ID of the automated project to add a pipeline to (optional)
 	 * @return {@link String} path to the cart page template
 	 */
-	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = {"", "/**/*"}, produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage(Model model,
 			@RequestParam(required = false, name = "automatedProject")
 					Long automatedProject) {

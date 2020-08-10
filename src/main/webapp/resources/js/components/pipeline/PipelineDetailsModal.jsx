@@ -1,6 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { Checkbox, Divider, Form, Input, Modal, Select } from "antd";
+import { message, Modal, Upload } from "antd";
+import { IconCloudUpload } from "../icons/Icons";
+import { LaunchSteps } from "./LaunchSteps";
+import { Router } from "@reach/router";
+
+const { Dragger } = Upload;
+
+function UploadReferenceFile({ afterReferenceUpload }) {
+  const options = {
+    multiple: true,
+    action: setBaseUrl(`referenceFiles/new`),
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        // console.log("NOT UPLOADING", info.file, info.fileList);
+      }
+      if (status === "done") {
+        // console.log(`DONE`, info);
+        message.success(`${info.file.name} file uploaded successfully.`);
+        afterReferenceUpload({
+          name: info.file.name,
+          id: info.file.response["uploaded-file-id"],
+        });
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+  return (
+    <Dragger {...options}>
+      <p className="ant-upload-drag-icon">
+        <IconCloudUpload />
+      </p>
+      <p className="ant-upload-text">
+        Click or drag file to this area to upload
+      </p>
+      <p className="ant-upload-hint">
+        Support for a single or bulk upload. Strictly prohibit from uploading
+        company data or other band files
+      </p>
+    </Dragger>
+  );
+}
 
 export default function PipelineDetailsModal({
   visible,
@@ -9,30 +51,19 @@ export default function PipelineDetailsModal({
   automated,
 }) {
   const [details, setDetails] = useState({});
-  const [name, setName] = useState("");
+  const [referenceFiles, setReferenceFiles] = useState([]);
   const [reference, setReference] = useState(undefined);
-  const nameRef = useRef();
 
-  const selectNameText = () => nameRef.current.select();
-  const formatName = (n) => `${n.replace(/ /g, "_")}_${Date.now()}`;
-
-  useEffect(() => {
-    if (visible) {
-      setTimeout(() => nameRef.current.focus(), 100);
-    }
-  }, [visible]);
+  const afterReferenceUpload = (file) => {
+    const t = [...referenceFiles];
+    t.push(file);
+    setReferenceFiles(t);
+  };
 
   useEffect(() => {
-    fetch(setBaseUrl(`/ajax/pipelines/${id}?automated=${automated}`), {})
-      .then((response) => response.json())
-      .then((json) => {
-        setDetails(json);
-        setName(formatName(json.name));
-        if (typeof json.files !== "undefined" && json.files !== null) {
-          setReference(json.files[0].id);
-        }
-      });
-  }, [id, visible]);
+    console.log(referenceFiles.length);
+    setReference(referenceFiles.length ? referenceFiles[0].id : "");
+  }, [referenceFiles]);
 
   const updateName = (event) => setName(event.currentTarget.value);
 
@@ -41,38 +72,40 @@ export default function PipelineDetailsModal({
       title={i18n("PipelineDetailsModal.title", details.name)}
       visible={visible}
       onCancel={onCancel}
+      width={800}
     >
-      <Form layout="vertical">
-        <Form.Item label={"NAME"}>
-          <Input
-            type={"text"}
-            value={name}
-            ref={nameRef}
-            onFocus={selectNameText}
-            onChange={updateName}
-          />
-        </Form.Item>
-        <Form.Item label={"DESCRIPTION"}>
-          <Input.TextArea />
-        </Form.Item>
-        {typeof reference !== "undefined" ? (
-          <Form.Item label={`REFERENCE FILES`}>
-            <Select defaultValue={reference}>
-              {details.files.map((file) => (
-                <Select.Option key={file.id} value={file.id}>
-                  {file.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        ) : null}
-        {details.canPipelineWriteToSamples ? (
-          <Form.Item help={"Need to figure out help text"}>
-            <Checkbox>Save results to sample</Checkbox>
-          </Form.Item>
-        ) : null}
-        <Divider />
-      </Form>
+      <LaunchSteps />
+      <Router>
+        <h1>FUCK</h1>
+        {/*  {typeof reference !== "undefined" ? (*/}
+        {/*    <>*/}
+        {/*      <Form.Item label={`REFERENCE FILES`}>*/}
+        {/*        <Select*/}
+        {/*          defaultValue={reference}*/}
+        {/*          disabled={!referenceFiles.length}*/}
+        {/*        >*/}
+        {/*          {referenceFiles.map((file) => (*/}
+        {/*            <Select.Option key={file.id} value={file.id}>*/}
+        {/*              {file.name}*/}
+        {/*            </Select.Option>*/}
+        {/*          ))}*/}
+        {/*        </Select>*/}
+        {/*      </Form.Item>*/}
+        {/*      <Form.Item>*/}
+        {/*        <UploadReferenceFile*/}
+        {/*          afterReferenceUpload={afterReferenceUpload}*/}
+        {/*        />*/}
+        {/*      </Form.Item>*/}
+        {/*    </>*/}
+        {/*  ) : null}*/}
+        {/*  {details.canPipelineWriteToSamples ? (*/}
+        {/*    <Form.Item help={"Need to figure out help text"}>*/}
+        {/*      <Checkbox>Save results to sample</Checkbox>*/}
+        {/*    </Form.Item>*/}
+        {/*  ) : null}*/}
+        {/*  <Divider />*/}
+        {/*</Form>*/}
+      </Router>
     </Modal>
   );
 }
