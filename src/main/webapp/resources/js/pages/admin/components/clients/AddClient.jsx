@@ -43,7 +43,7 @@ export function AddClient() {
         .then((data) => {
           form.resetFields();
           setVisible(false);
-          navigate(`groups/${data.id}`, { replace: true });
+          navigate(`admin/groups/${data.id}`, { replace: true });
         })
         .catch((error) => {
           setError(error.response.data.name);

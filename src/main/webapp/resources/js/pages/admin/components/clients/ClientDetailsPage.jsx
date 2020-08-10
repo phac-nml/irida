@@ -74,16 +74,16 @@ export default function ClientDetailsPage({ id }) {
     ? []
     : [
       {
-        title: i18n("UserGroupDetailsPage.name"),
+        title: i18n("client.clientid"),
         desc: state.canManage ? (
           <Paragraph
             className={"t-group-name"}
-            editable={{ onChange: (value) => updateField("name", value) }}
+            editable={{ onChange: (value) => updateField("clientId", value) }}
           >
-            {state.name}
+            {state.clientId}
           </Paragraph>
         ) : (
-          state.name
+          state.clientId
         ),
       },
       {
