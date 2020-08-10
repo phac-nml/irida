@@ -1,11 +1,9 @@
-import React from "react";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import {
-  PagedTableProvider
-} from "../../../../components/ant.design/PagedTable";
-import { ClientsTable } from "./ClientsTable";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { AddClient } from "./AddClient";
+import React, { lazy, Suspense } from "react";
+import { ContentLoading } from "../../../../components/loader";
+import { Router } from "@reach/router";
+
+const ClientListingPage = lazy(() => import("./ClientListingPage"));
+const ClientDetailsPage = lazy(() => import("./ClientDetailsPage"));
 
 /**
  * Page for displaying the list of all clients.
@@ -14,15 +12,24 @@ import { AddClient } from "./AddClient";
  */
 export default function AdminClientsPage() {
   return (
-    <PageWrapper
-      title={i18n("clients.title")}
-      headerExtras={
-        <AddClient />
+    <Suspense
+      fallback={
+        <div
+          style={{
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ContentLoading message={i18n("client.loading")} />
+        </div>
       }
     >
-      <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
-        <ClientsTable />
-      </PagedTableProvider>
-    </PageWrapper>
+      <Router style={{ height: "100%" }}>
+        <ClientListingPage path={"/"} />
+        <ClientDetailsPage path={"/:id"} />
+      </Router>
+    </Suspense>
   );
 }

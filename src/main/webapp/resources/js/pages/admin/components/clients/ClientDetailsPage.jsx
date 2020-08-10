@@ -1,18 +1,16 @@
 import React, { useEffect, useReducer, useRef } from "react";
-import { PageWrapper } from "../../../components/page/PageWrapper";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
-  getUserGroupDetails,
-  updateUserGroupDetails,
-} from "../../../apis/users/groups";
+  getClientDetails,
+  updateClientDetails,
+} from "../../../../apis/clients/clients";
 import { Button, Popconfirm, Tabs, Typography } from "antd";
-import { BasicList } from "../../../components/lists";
-import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
-import UserGroupMembersTable from "./UserGroupMembersTable";
-import { WarningAlert } from "../../../components/alerts";
-import { SPACE_SM } from "../../../styles/spacing";
-import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { BasicList } from "../../../../components/lists";
+import { WarningAlert } from "../../../../components/alerts";
+import { SPACE_SM } from "../../../../styles/spacing";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { updateUserGroupDetails } from "../../../../apis/users/groups";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -68,7 +66,7 @@ export default function ClientDetailsPage({ id }) {
    * @returns {void | Promise<void>}
    */
   const updateTable = () =>
-    getUserGroupDetails(id).then((response) =>
+    getClientDetails(id).then((response) =>
       dispatch({ type: "load", payload: response })
     );
 
@@ -120,7 +118,7 @@ export default function ClientDetailsPage({ id }) {
       },
     ];
 
-  const RemoveClient = () => (
+  const removeClient = () => (
     <div>
       <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
       <form

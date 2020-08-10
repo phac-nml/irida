@@ -299,9 +299,10 @@ public class ClientsController extends BaseController {
 	 *
 	 * @param model
 	 *            Model for the view
+	 * @return The name of the admin panel where create client is located
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public void getAddClientPage(Model model) {
+	public String getAddClientPage(Model model) {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
@@ -319,6 +320,8 @@ public class ClientsController extends BaseController {
 		}
 
 		model.addAttribute("refresh_validity", IridaClientDetails.DEFAULT_REFRESH_TOKEN_VALIDITY);
+
+		return "admin/index";
 	}
 
 	/**
@@ -401,7 +404,7 @@ public class ClientsController extends BaseController {
 					client.getRegisteredRedirectUri()
 							.iterator()
 							.next());
-			responsePage = "redirect:/clients/";
+			responsePage = getAddClientPage(model);
 		}
 
 		return responsePage;

@@ -49,11 +49,11 @@ export async function getAddClientPage() {
 }
 
 /**
- * Get details about a specific user group
+ * Get details about a specific client
  *
- * @param {number} id for a user group
+ * @param {number} id for a client
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function getUserGroupDetails(id) {
+export function getClientDetails(id) {
   return axios.get(`${BASE_URL}/${id}`).then(({ data }) => data);
 }
