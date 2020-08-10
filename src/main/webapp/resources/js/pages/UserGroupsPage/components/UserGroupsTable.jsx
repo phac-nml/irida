@@ -1,9 +1,7 @@
 import React from "react";
 import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Typography } from "antd";
-import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Link } from "@reach/router";
 import { CreateNewUserGroupButton } from "./CreateNewUserGroupButton";
 
@@ -14,14 +12,14 @@ const { Paragraph } = Typography;
  * @returns {*}
  * @constructor
  */
-export function UserGroupsTable() {
+export function UserGroupsTable({ baseUrl }) {
   const columns = [
     {
       title: i18n("UserGroupsTable.name"),
       dataIndex: "name",
       sorter: true,
       render(text, item) {
-        return <Link to={setBaseUrl(`/groups/${item.id}`)}>{text}</Link>;
+        return <Link to={`${baseUrl}/${item.id}`}>{text}</Link>;
       },
     },
     {
@@ -55,7 +53,7 @@ export function UserGroupsTable() {
     <PagedTable
       search={true}
       columns={columns}
-      buttons={[<CreateNewUserGroupButton key="group-new" />]}
+      buttons={[<CreateNewUserGroupButton baseUrl={baseUrl} key="group-new" />]}
     />
   );
 }
