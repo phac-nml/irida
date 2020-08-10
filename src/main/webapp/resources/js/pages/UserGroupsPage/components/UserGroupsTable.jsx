@@ -9,6 +9,8 @@ const { Paragraph } = Typography;
 
 /**
  * React component for rendering a Table to display user groups.
+ * @param baseUrl - either /admin/groups for admin panel or /groups for main app
+ * baseUrl should already be set in parent component
  * @returns {*}
  * @constructor
  */

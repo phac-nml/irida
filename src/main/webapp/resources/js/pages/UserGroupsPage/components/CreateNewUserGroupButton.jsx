@@ -7,6 +7,8 @@ import { useResetFormOnCloseModal } from "../../../hooks";
 
 /**
  * React component to render a button to create a new user group
+ * @param baseUrl - either /admin/groups for admin panel or /groups for main app
+ * baseUrl should already be set in parent component
  * @returns {*}
  * @constructor
  */
@@ -17,6 +19,9 @@ export function CreateNewUserGroupButton({ baseUrl }) {
    */
   const inputRef = useRef();
   const [visible, setVisible] = useState();
+  const [error, setError] = useState();
+
+  const navigate = useNavigate();
 
   /*
   Ant Design form
@@ -26,10 +31,6 @@ export function CreateNewUserGroupButton({ baseUrl }) {
     form,
     visible,
   });
-
-  const navigate = useNavigate();
-
-  const [error, setError] = useState();
 
   /*
   Watch for changes to the forms visibility, when it becomes visible
