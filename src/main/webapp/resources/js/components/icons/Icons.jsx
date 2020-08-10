@@ -18,6 +18,7 @@ import {
   FileOutlined,
   FilterOutlined,
   FolderOutlined,
+  FormOutlined,
   HomeOutlined,
   InfoCircleOutlined,
   ItalicOutlined,
@@ -162,6 +163,8 @@ export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
 export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
 export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
+
+export const IconForm = ({ ...props }) => <FormOutlined {...props} />;
 
 /*
 File Type Icons

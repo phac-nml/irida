@@ -1,17 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Form, Input } from "antd";
+import { useLaunchDispatch, useLaunchState } from "./launch-context";
+import * as CONSTANTS from "./lauch-constants";
 
 export function PipelineDetails({}) {
-  const [name, setName] = useState("");
-
-  const selectNameText = () => nameRef.current.select();
-  const formatName = (n) => `${n.replace(/ /g, "_")}_${Date.now()}`;
+  const { name, description } = useLaunchState();
+  const dispatch = useLaunchDispatch();
+  const nameRef = useRef();
 
   useEffect(() => {
     setTimeout(() => nameRef.current.focus(), 100);
   }, []);
 
-  const nameRef = useRef();
+  const selectNameText = () => nameRef.current.select();
+
   return (
     <Form layout="vertical">
       <Form.Item label={"NAME"}>
@@ -20,11 +22,26 @@ export function PipelineDetails({}) {
           value={name}
           ref={nameRef}
           onFocus={selectNameText}
-          onChange={updateName}
+          onChange={(e) =>
+            dispatch({
+              type: CONSTANTS.DISPATCH_DETAILS_UPDATE,
+              value: e.target.value,
+              field: "name",
+            })
+          }
         />
       </Form.Item>
       <Form.Item label={"DESCRIPTION"}>
-        <Input.TextArea />
+        <Input.TextArea
+          value={description}
+          onChange={(e) =>
+            dispatch({
+              type: CONSTANTS.DISPATCH_DETAILS_UPDATE,
+              value: e.target.value,
+              field: "description",
+            })
+          }
+        />
       </Form.Item>
     </Form>
   );

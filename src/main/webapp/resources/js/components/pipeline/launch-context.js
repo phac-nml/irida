@@ -1,13 +1,23 @@
 import React, { useEffect } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import * as CONSTANTS from "./lauch-constants";
 
 const LaunchStateContext = React.createContext();
 const LaunchDispatchContext = React.createContext();
 
 function launchReducer(state, action) {
+  const formatName = (n) => `${n.replace(/ /g, "_")}_${Date.now()}`;
+
   switch (action.type) {
-    case "loaded":
-      return { ...state, fetching: true };
+    case CONSTANTS.DISPATCH_DETAILS_UPDATE:
+      return { ...state, [action.field]: action.value };
+    case CONSTANTS.DISPATCH_PIPELINE_LOADED:
+      return {
+        ...state,
+        ...action.value,
+        fetching: false,
+        name: formatName(action.value.name),
+      };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -16,13 +26,16 @@ function launchReducer(state, action) {
 function LaunchProvider({ children, pipelineId, automated = false }) {
   const [state, dispatch] = React.useReducer(launchReducer, {
     fetching: true,
+    step: CONSTANTS.STEP_DETAILS,
+    name: "",
+    description: "",
   });
 
   useEffect(() => {
     fetch(setBaseUrl(`/ajax/pipelines/${pipelineId}?automated=${automated}`))
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
+        dispatch({ type: CONSTANTS.DISPATCH_PIPELINE_LOADED, value: json });
       });
   }, [pipelineId, automated]);
 
