@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -24,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -49,6 +52,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	private SampleService sampleService;
 	private SequencingObjectService sequencingObjectService;
 	private IridaWorkflowsService iridaWorkflowsService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	// rel for reading the analysis for a submission
 	public static final String ANALYSIS_REL = "analysis";
@@ -70,12 +74,13 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,
 			SampleService sampleService, SequencingObjectService sequencingObjectService,
-			IridaWorkflowsService iridaWorkflowsService) {
+			IridaWorkflowsService iridaWorkflowsService, IridaFileStorageUtility iridaFileStorageUtility) {
 		super(analysisSubmissionService, AnalysisSubmission.class);
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -266,15 +271,14 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *
 	 * @param submissionId The {@link AnalysisSubmission} id
 	 * @param fileId       The {@link AnalysisOutputFile} id
-	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
+	 * @return a {@link InputStreamResource} containing the contents of the {@link AnalysisOutputFile}.
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
+	public InputStreamSource getAnalysisOutputFileContents(@PathVariable Long submissionId,
 			@PathVariable Long fileId) {
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
-		return new FileSystemResource(analysisOutputFile.getFile()
-				.toFile());
+		return new InputStreamResource(analysisOutputFile.getFileInputStream());
 	}
 
 	/**
