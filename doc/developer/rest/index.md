@@ -20,7 +20,7 @@ The IRIDA REST API follows a standard output format, regardless of the resource 
   1. As an individual resource,
   2. As part of a resource collection.
 
-Communication with the IRIDA REST API should be via the JSON format for sending and reciving data.  Generally this means using an `Accept` and `Content-type` of `application/json` for requests and submissions.  Some resources (for example sequence file and analysis result resources stored on the file-system) support output in FASTA or FASTQ format.
+Communication with the IRIDA REST API should be via the JSON format for sending and receiving data.  Generally this means using an `Accept` and `Content-type` of `application/json` for requests and submissions.  Some resources (for example sequence file and analysis result resources stored on the file-system) support output in FASTA or FASTQ format.
 
 JSON Format
 -----------
