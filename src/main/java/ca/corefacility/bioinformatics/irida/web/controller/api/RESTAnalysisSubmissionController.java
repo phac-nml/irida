@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -24,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.hateoas.Link;
@@ -52,7 +50,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	private SampleService sampleService;
 	private SequencingObjectService sequencingObjectService;
 	private IridaWorkflowsService iridaWorkflowsService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	// rel for reading the analysis for a submission
 	public static final String ANALYSIS_REL = "analysis";
@@ -74,13 +71,12 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,
 			SampleService sampleService, SequencingObjectService sequencingObjectService,
-			IridaWorkflowsService iridaWorkflowsService, IridaFileStorageUtility iridaFileStorageUtility) {
+			IridaWorkflowsService iridaWorkflowsService) {
 		super(analysisSubmissionService, AnalysisSubmission.class);
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
