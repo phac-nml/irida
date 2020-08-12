@@ -50,7 +50,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public File getTemporaryFile(Path file) {
 		File fileToProcess = null;
 
-		// We set the blobClient "path" to which we want to upload our file to
+		// We set the blobClient "path" to which file we want to get
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
@@ -75,7 +75,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			// We set the blobClient "path" to which we want to upload our file to
+			// We set the blobClient "path" to which we want to get a file size for
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 		} catch (BlobStorageException e) {
