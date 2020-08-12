@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -38,7 +38,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient ;
-	private BlobClient blobClient;
 
 	@Autowired
 
@@ -55,13 +54,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public File getFile(Path file) {
 		File fileToProcess = null;
 
-		// We set the blobClient "path" to which we want to upload our file to
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		// We set the blobClient "path" to which file we want to get
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
 			InputStream initialStream = blobClient.openInputStream();
 			File targetFile = new File(file.toAbsolutePath().toString());
-			FileUtils.copyInputStreamToFile(initialStream, targetFile);
+			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, targetFile);
 			initialStream.close();
 			fileToProcess = targetFile;
 		} catch (BlobStorageException e) {
@@ -80,11 +79,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			if(file != null) {
-				// We set the blobClient "path" to which we want to upload our file to
-				blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-				fileSize = ca.corefacility.bioinformatics.irida.util.FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
-			}
+			// We set the blobClient "path" to which we want to get a file size for
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
 		}
@@ -98,7 +95,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// We set the blobClient "path" to which we want to upload our file to
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
 		try {
 			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
 			blobClient.uploadFromFile(source.toString(), false);
@@ -121,7 +118,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		try {
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
@@ -140,7 +137,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public boolean fileExists(Path file) {
-		blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		if(blobClient.exists()) {
 			return true;
 		}
@@ -152,12 +149,14 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
+		BlobClient blobClient;
 		try {
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			return blobClient.openInputStream();
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't read file from azure [" + e + "]");
 		}
-		return blobClient.openInputStream();
+		return null;
 	}
 
 	/**
@@ -206,7 +205,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			for (SequenceFile file : object.getFiles()) {
 				String fileName = getFileName(file.getFile());
 
-				Optional<String> currentExtensionOpt = VALID_EXTENSIONS.stream()
+				Optional<String> currentExtensionOpt = VALID_CONCATENATION_EXTENSIONS.stream()
 						.filter(e -> fileName.endsWith(e))
 						.findFirst();
 
@@ -235,6 +234,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public byte[] readAllBytes(Path file) {
 		BlobInputStream blobInputStream = null;
+		BlobClient blobClient;
 		byte [] bytes = new byte[0];
 		try {
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
@@ -274,6 +274,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public Long getFileSizeBytes(Path file) {
 		Long fileSize = 0L;
+		BlobClient blobClient;
 		try {
 			if(file != null) {
 				blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
