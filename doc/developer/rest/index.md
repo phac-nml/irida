@@ -20,7 +20,7 @@ The IRIDA REST API follows a standard output format, regardless of the resource 
   1. As an individual resource,
   2. As part of a resource collection.
 
-Both XML and JSON are valid output formats for all resources. Some resources (notably resources representing files produced by a sequencer stored on the file-system) support output in FASTA or FASTQ format.
+Communication with the IRIDA REST API should be via the JSON format for sending and receiving data.  Generally this means using an `Accept` and `Content-type` of `application/json` for requests and submissions.  Some resources (for example sequence file and analysis result resources stored on the file-system) support output in FASTA or FASTQ format.
 
 JSON Format
 -----------
@@ -150,7 +150,7 @@ General Contracts
 
 ### Formats
 
-By default, IRIDA will respond to requests with JSON if no `Accept` is specified. IRIDA can also generally respond to requests for `application/xml`. Some resources (specifically marked) will be able to respond to requests for `application/fastq` and `application/fasta`.
+By default, IRIDA will respond to requests with JSON if no `Accept` is specified.  Some resources (specifically marked) will be able to respond to requests for `application/fastq` and `application/fasta`.
 
 All timestamps in IRIDA are returned in **milliseconds** since the [epoch](http://en.wikipedia.org/wiki/Unix_time).
 
