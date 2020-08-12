@@ -9,6 +9,8 @@ Changes
 * [Developer]: Updated chromedriver to version `latest`. (20.05.2)
 * [UI]: Updated importing numbers through excel file.  IRIDA will now check for excel formatted numeric cells and keep the formatting. (20.05.3);
 * [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
+* [UI]: Fixed bug where import bulk metadata button was displayed on linelist page for project collaborators. (20.05.04)
+* [UI]: Fixed bug where add member to project button was displayed on project members page for project collaborators. (20.05.04)
 
 20.01 to 20.05
 --------------
