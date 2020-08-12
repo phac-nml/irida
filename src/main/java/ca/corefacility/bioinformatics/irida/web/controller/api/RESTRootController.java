@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -27,9 +26,11 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RES
 
 import com.google.common.collect.Sets;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 /**
  * A basis for clients to begin discovering other URLs in our API.
- *
  */
 @Controller
 public class RESTRootController {
@@ -78,10 +79,8 @@ public class RESTRootController {
 	/**
 	 * Creates a response with a set of links used to discover the rest of the
 	 * system.
-	 * 
-	 * @param request
-	 *            Incoming HTTP request object to check the user's role.
 	 *
+	 * @param request Incoming HTTP request object to check the user's role.
 	 * @return a response to the client.
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/api")
@@ -92,7 +91,8 @@ public class RESTRootController {
 
 		links.addAll(buildLinks(PUBLIC_CONTROLLERS));
 
-		if (RESTRICTED_ROLES.stream().anyMatch(r -> request.isUserInRole(r))) {
+		if (RESTRICTED_ROLES.stream()
+				.anyMatch(r -> request.isUserInRole(r))) {
 			links.addAll(buildLinks(RESTRICTED_CONTROLLERS));
 		}
 
@@ -117,8 +117,7 @@ public class RESTRootController {
 	 * @return a response to the client
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/api/version")
-	@ResponseBody
-	public ModelMap version(){
+	public ModelMap version() {
 		ModelMap mm = new ModelMap();
 		mm.put("version", iridaVersion);
 		return mm;
@@ -127,9 +126,8 @@ public class RESTRootController {
 	/**
 	 * Build a collection of links for the specified map of link rel names to
 	 * controllers.
-	 * 
-	 * @param controllers
-	 *            the collection of controllers.
+	 *
+	 * @param controllers the collection of controllers.
 	 * @return the list of links for that collection of controllers.
 	 */
 	private List<Link> buildLinks(final Map<String, Class<?>> controllers) {
