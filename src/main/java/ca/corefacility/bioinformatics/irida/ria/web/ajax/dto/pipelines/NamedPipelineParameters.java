@@ -5,9 +5,9 @@ import java.util.List;
 public class NamedPipelineParameters {
 	private final Long id;
 	private final String label;
-	private final List<PipelineParameters> parameters;
+	private final List<Parameter> parameters;
 
-	public NamedPipelineParameters(Long id, String label, List<PipelineParameters> parameters) {
+	public NamedPipelineParameters(Long id, String label, List<Parameter> parameters) {
 		this.id = id;
 		this.label = label;
 		this.parameters = parameters;
@@ -21,7 +21,7 @@ public class NamedPipelineParameters {
 		return label;
 	}
 
-	public List<PipelineParameters> getParameters() {
+	public List<Parameter> getParameters() {
 		return parameters;
 	}
 }

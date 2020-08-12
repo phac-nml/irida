@@ -49,14 +49,13 @@ public class UIPipelineService {
 
 	public UIPipelineDetailsResponse getPipelineDetails(UUID workflowId, boolean automated)
 			throws IridaWorkflowNotFoundException {
-		IridaWorkflow workflow;
 
 		/*
 		Need to get a list of all the projects in the cart
 		 */
 		List<Project> projects = cart.getProjects();
 
-		workflow = workflowsService.getIridaWorkflow(workflowId);
+		IridaWorkflow workflow = workflowsService.getIridaWorkflow(workflowId);
 		UIPipelineDetailsResponse details = new UIPipelineDetailsResponse();
 
 		IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
@@ -105,12 +104,26 @@ public class UIPipelineService {
 		// NAMED PARAMETERS ??
 		List<IridaWorkflowNamedParameters> workflowNamedParameters = namedParametersService.findNamedParametersForWorkflow(
 				description.getId());
-		List<NamedPipelineParameters> namedPipelineParameters = workflowNamedParameters.stream().map(namedParameter -> {
-			List<Parameter> parameters = namedParameter.getInputParameters().entrySet().stream().map(entry -> new Parameter(
-					messageSource.getMessage("pipeline.parameters." + description.getName() + "." + entry.getKey(), new Object[]{}, locale),
-					entry.getValue(), entry.getKey())).collect(Collectors.toList());
-			return new NamedPipelineParameters(namedParameter.getId(), namedParameter.getLabel(), parameters);
-		}).collect(Collectors.toList());
+		List<NamedPipelineParameters> pipelineParameters = workflowNamedParameters.stream()
+				.map(wp -> {
+					List<Parameter> parameters = wp.getInputParameters()
+							.entrySet()
+							.stream()
+							.map(entry -> new Parameter(messageSource.getMessage(
+									"pipeline.parameters." + description.getName() + "." + entry.getKey(), null,
+									locale), entry.getValue(), entry.getKey()))
+							.collect(Collectors.toList());
+					return new NamedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
+				})
+				.collect(Collectors.toList());
+
+		//		List<NamedPipelineParameters> namedPipelineParameters = workflowNamedParameters.stream().map(namedParameter -> {
+		//			List<Parameter> parameters = namedParameter.getInputParameters().entrySet().stream().map(entry -> new Parameter(
+		//					messageSource.getMessage("pipeline.parameters." + description.getName() + "." + entry.getKey(), new Object[]{}, locale),
+		//					entry.getValue(), entry.getKey())).collect(Collectors.toList());
+		//			return new NamedPipelineParameters(namedParameter.getId(), namedParameter.getLabel(), parameters);
+		//		}).collect(Collectors.toList());
+		return null;
 	}
 
 	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
