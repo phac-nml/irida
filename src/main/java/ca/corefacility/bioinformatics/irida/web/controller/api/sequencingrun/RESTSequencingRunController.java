@@ -59,8 +59,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
-	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE })
+	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
 			HttpServletResponse response) {
 		logger.trace("creating sequencing run");

@@ -29,6 +29,7 @@ Changes
 * [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
 * [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
 * [UI]: Updated UI for creating a sample within a project.
+* [REST]: Removed broken XML serialization config from REST API classes.  It was breaking content negotiation for some tools as it sometimes tried to return XML when it couldn't.
 
 20.01 to 20.05
 --------------
