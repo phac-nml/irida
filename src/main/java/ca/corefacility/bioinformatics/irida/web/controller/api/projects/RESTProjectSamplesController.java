@@ -364,18 +364,14 @@ public class RESTProjectSamplesController {
 	/**
 	 * Update a {@link Sample} details.
 	 *
-	 * @param sampleId
-	 *            the identifier of the {@link Sample}.
-	 * @param updatedFields
-	 *            the updated fields of the {@link Sample}.
+	 * @param sampleId      the identifier of the {@link Sample}.
+	 * @param updatedFields the updated fields of the {@link Sample}.
 	 * @return a response including links to the {@link Project} and
-	 *         {@link Sample}.
+	 * {@link Sample}.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
-	public ModelMap updateSample(@PathVariable Long sampleId,
-			@RequestBody Map<String, Object> updatedFields) {
+			MediaType.APPLICATION_JSON_VALUE })
+	public ModelMap updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
 		ModelMap modelMap = new ModelMap();
 
 		// issue an update request
