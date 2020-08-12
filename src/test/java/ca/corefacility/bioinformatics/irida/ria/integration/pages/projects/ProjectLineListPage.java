@@ -188,4 +188,8 @@ public class ProjectLineListPage extends ProjectPageBase {
 		waitForTime(500);
 		return Integer.parseInt(tourStepBadge.getText());
 	}
+
+	public boolean isImportMetadataBtnVisible() {
+		return driver.findElements(By.className("t-import-metadata-btn")).size() > 0;
+	}
 }
