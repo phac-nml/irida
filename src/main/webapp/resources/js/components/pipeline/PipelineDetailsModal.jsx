@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { message, Modal, Upload } from "antd";
 import { IconCloudUpload } from "../icons/Icons";
-import { LaunchSteps } from "./LaunchSteps";
 import { Router } from "@reach/router";
 
 const { Dragger } = Upload;
@@ -74,7 +73,6 @@ export default function PipelineDetailsModal({
       onCancel={onCancel}
       width={800}
     >
-      <LaunchSteps />
       <Router>
         <h1>FUCK</h1>
         {/*  {typeof reference !== "undefined" ? (*/}

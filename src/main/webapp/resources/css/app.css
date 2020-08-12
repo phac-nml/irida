@@ -44,7 +44,8 @@ body {
   }
 }
 
-label.ant-checkbox-wrapper {
+label.ant-checkbox-wrapper,
+label.ant-radio-wrapper {
   font-weight: normal;
 }
 

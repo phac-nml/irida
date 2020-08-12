@@ -1,23 +1,13 @@
 import React from "react";
 import { useLaunchState } from "./launch-context";
-import { Modal, Space } from "antd";
+import { Modal, Tabs } from "antd";
 import { PipelineDetails } from "./PipelineDetails";
-import { LaunchSteps } from "./LaunchSteps";
-import { STEP_DETAILS, STEP_REFERENCE } from "./lauch-constants";
+import { ReferenceFiles } from "../reference/ReferenceFiles";
 
-const CurrentStep = ({ current }) => {
-  switch (current) {
-    case STEP_DETAILS:
-      return <PipelineDetails />;
-    case STEP_REFERENCE:
-      return <strong>REFERENCE FILES</strong>;
-    default:
-      return <h1>FUCK NOTHING</h1>;
-  }
-};
+const { TabPane } = Tabs;
 
 export function PipelineLaunchModal({ visible = false, onCancel }) {
-  const { step } = useLaunchState();
+  const { step, requiresReference, files } = useLaunchState();
 
   return (
     <Modal
@@ -27,10 +17,20 @@ export function PipelineLaunchModal({ visible = false, onCancel }) {
       width={800}
       okText={"LAUNCH THE PIPELINE!"}
     >
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        <LaunchSteps />
-        <CurrentStep current={step} />
-      </Space>
+      <Tabs defaultActiveKey={1}>
+        <TabPane tab={"Pipeline Description"} key={1}>
+          <PipelineDetails />
+        </TabPane>
+        {requiresReference ? (
+          <TabPane tab={"Reference Files"}>
+            <ReferenceFiles files={files} />
+            {/*<UploadReferenceFile afterReferenceUpload={}*/}
+          </TabPane>
+        ) : null}
+        <TabPane tab={"PARAMETERS"} key={3}>
+          FUN PARAMETERS HERE
+        </TabPane>
+      </Tabs>
     </Modal>
   );
 }

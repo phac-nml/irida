@@ -1,14 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -16,32 +15,40 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.*;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
 @Component
 @Scope("session")
 public class UIPipelineService {
 	private final Cart cart;
 	private final IridaWorkflowsService workflowsService;
+	private final WorkflowNamedParametersService namedParametersService;
 	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private final ReferenceFileService referenceFileService;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
+			WorkflowNamedParametersService namedParametersService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			ReferenceFileService referenceFileService) {
+			ReferenceFileService referenceFileService, MessageSource messageSource) {
 		this.cart = cart;
 		this.workflowsService = workflowsService;
+		this.namedParametersService = namedParametersService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.referenceFileService = referenceFileService;
+		this.messageSource = messageSource;
 	}
 
-	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(UUID workflowId, boolean automated) {
+	public UIPipelineDetailsResponse getPipelineDetails(UUID workflowId, boolean automated)
+			throws IridaWorkflowNotFoundException {
 		IridaWorkflow workflow;
 
 		/*
@@ -49,47 +56,70 @@ public class UIPipelineService {
 		 */
 		List<Project> projects = cart.getProjects();
 
-		try {
-			workflow = workflowsService.getIridaWorkflow(workflowId);
-			UIPipelineDetailsResponse details = new UIPipelineDetailsResponse();
+		workflow = workflowsService.getIridaWorkflow(workflowId);
+		UIPipelineDetailsResponse details = new UIPipelineDetailsResponse();
 
-			IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
-			details.setId(workflowDescription.getId());
-			details.setName(workflowDescription.getName());
+		IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
+		details.setId(workflowDescription.getId());
+		details.setName(workflowDescription.getName());
 
-			AnalysisType type = workflowDescription.getAnalysisType();
+		AnalysisType type = workflowDescription.getAnalysisType();
 
-			/*
-			This will let us know if the pipeline is able to write back information to the samples.  If this is possible
-			then we should display a checkbox in the UI asking the user if they want this to occur or not.  User might
-			not want it to happen if they are re-running an analysis or just don't want it written back into the sample
-			metadata.
-			 */
-			boolean workflowCanUpdatesAllSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
-					type);
-			details.setCanPipelineWriteToSamples(workflowCanUpdatesAllSamples);
+		/*
+		This will let us know if the pipeline is able to write back information to the samples.  If this is possible
+		then we should display a checkbox in the UI asking the user if they want this to occur or not.  User might
+		not want it to happen if they are re-running an analysis or just don't want it written back into the sample
+		metadata.
+		 */
+		boolean workflowCanUpdatesAllSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+				type);
+		details.setCanPipelineWriteToSamples(workflowCanUpdatesAllSamples);
 
-			/*
-			REFERENCE FILES.
-			Check to see if the pipeline requires reference files.  If it does then go through each project and get all
-			possible reference files.
-			 */
-			if (workflowDescription.requiresReference()) {
-				List<UIReferenceFile> files = new ArrayList<>();
-				projects.forEach(project -> files.addAll(referenceFileService.getReferenceFilesForProject(project)
-						.stream()
-						.map(UIReferenceFile::new)
-						.collect(Collectors.toList())));
-				details.setFiles(files);
-			}
-
-			return ResponseEntity.ok(details);
-
-		} catch (IridaWorkflowNotFoundException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(null);
+		/*
+		REFERENCE FILES.
+		Check to see if the pipeline requires reference files.  If it does then go through each project and get all
+		possible reference files.
+		 */
+		details.setRequiresReference(workflowDescription.requiresReference());
+		if (workflowDescription.requiresReference()) {
+			details.setFiles(getReferenceFilesForPipeline(projects));
 		}
 
+		return details;
+	}
+
+	private PipelineParameters getPipelineParameters(IridaWorkflowDescription description, Locale locale) {
+		List<IridaWorkflowParameter> workflowParameters = description.getParameters();
+		if (workflowParameters == null) {
+			return null;
+		}
+
+		// DEFAULT PARAMETERS ??
+		List<Parameter> defaultParameters = workflowParameters.stream()
+				.filter(IridaWorkflowParameter::isRequired)
+				.map(parameter -> new Parameter(messageSource.getMessage(
+						"pipeline.parameters." + description.getName() + "." + parameter.getName(), null, locale),
+						parameter.getDefaultValue(), parameter.getName()))
+				.collect(Collectors.toList());
+
+		// NAMED PARAMETERS ??
+		List<IridaWorkflowNamedParameters> workflowNamedParameters = namedParametersService.findNamedParametersForWorkflow(
+				description.getId());
+		List<NamedPipelineParameters> namedPipelineParameters = workflowNamedParameters.stream().map(namedParameter -> {
+			List<Parameter> parameters = namedParameter.getInputParameters().entrySet().stream().map(entry -> new Parameter(
+					messageSource.getMessage("pipeline.parameters." + description.getName() + "." + entry.getKey(), new Object[]{}, locale),
+					entry.getValue(), entry.getKey())).collect(Collectors.toList());
+			return new NamedPipelineParameters(namedParameter.getId(), namedParameter.getLabel(), parameters);
+		}).collect(Collectors.toList());
+	}
+
+	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
+		return projects.stream()
+				.map(project -> referenceFileService.getReferenceFilesForProject(project)
+						.stream()
+						.map(UIReferenceFile::new)
+						.collect(Collectors.toList()))
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
 	}
 }

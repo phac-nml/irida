@@ -6,8 +6,6 @@ const LaunchStateContext = React.createContext();
 const LaunchDispatchContext = React.createContext();
 
 function launchReducer(state, action) {
-  const formatName = (n) => `${n.replace(/ /g, "_")}_${Date.now()}`;
-
   switch (action.type) {
     case CONSTANTS.DISPATCH_DETAILS_UPDATE:
       return { ...state, [action.field]: action.value };
@@ -16,8 +14,6 @@ function launchReducer(state, action) {
         ...state,
         ...action.value,
         fetching: false,
-        name: formatName(action.value.name),
-        requiresReference: action.value.files !== null,
       };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
