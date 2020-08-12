@@ -173,7 +173,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 						.toFile()
 						.getName();
 
-				Optional<String> currentExtensionOpt = VALID_EXTENSIONS.stream()
+				Optional<String> currentExtensionOpt = VALID_CONCATENATION_EXTENSIONS.stream()
 						.filter(e -> fileName.endsWith(e))
 						.findFirst();
 
