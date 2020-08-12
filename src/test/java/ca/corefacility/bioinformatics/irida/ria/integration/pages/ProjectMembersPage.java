@@ -87,6 +87,10 @@ public class ProjectMembersPage extends AbstractPage {
 		addMemberButton.addMember(driver, name);
 	}
 
+	public boolean isAddMemberBtnVisible() {
+		return driver.findElements(By.className("t-add-member-btn")).size() > 0;
+	}
+
 	public void updateUserRole(int row, String role) {
 		WebElement roleSelect = roleSelects.get(row);
 		roleSelect.click();

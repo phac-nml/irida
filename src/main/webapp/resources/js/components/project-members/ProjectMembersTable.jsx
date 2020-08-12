@@ -69,7 +69,11 @@ export function ProjectMembersTable() {
 
   return (
     <PagedTable
-      buttons={[<AddMembersButton key="add-members-btn" />]}
+      buttons={[
+        window.PAGE.canManage ? (
+          <AddMembersButton key="add-members-btn" />
+        ) : null,
+      ]}
       columns={columns}
     />
   );
