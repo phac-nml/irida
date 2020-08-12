@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
-import ca.corefacility.bioinformatics.irida.web.spring.view.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.common.collect.ImmutableMap;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.View;
@@ -22,24 +22,24 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-import org.springframework.web.servlet.view.xml.MarshallingView;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
+import ca.corefacility.bioinformatics.irida.web.spring.view.*;
+
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Configuration for IRIDA REST API.
- *
- *
  */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
 public class IridaRestApiWebConfig implements WebMvcConfigurer {
 
-	/** named constant for allowing unlimited upload sizes. */
+	/**
+	 * named constant for allowing unlimited upload sizes.
+	 */
 	public static final Long UNLIMITED_UPLOAD_SIZE = -1L;
 
 	@Value("${file.upload.max_size}")
@@ -82,11 +82,7 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 				.registerModule(module);
 
 		views.add(jsonView);
-		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
-		jaxb2marshaller.setPackagesToScan(
-				new String[] { "ca.corefacility.bioinformatics.irida.web.assembler.resource" });
-		MarshallingView marshallingView = new MarshallingView(jaxb2marshaller);
-		views.add(marshallingView);
+
 		views.add(new FastaView());
 		views.add(new FastqView());
 		views.add(new GenbankView());
@@ -97,10 +93,12 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-		Map<String, MediaType> mediaTypes = ImmutableMap.of("json", MediaType.APPLICATION_JSON, "xml",
-				MediaType.APPLICATION_XML, "fasta", MediaType.valueOf("application/fasta"), "fastq",
-				MediaType.valueOf("application/fastq"), "gbk", MediaType.valueOf("application/genbank"));
-		configurer.ignoreAcceptHeader(false).defaultContentType(MediaType.APPLICATION_JSON).favorPathExtension(true)
+		Map<String, MediaType> mediaTypes = ImmutableMap.of("json", MediaType.APPLICATION_JSON, "fasta",
+				MediaType.valueOf("application/fasta"), "fastq", MediaType.valueOf("application/fastq"), "gbk",
+				MediaType.valueOf("application/genbank"));
+		configurer.ignoreAcceptHeader(false)
+				.defaultContentType(MediaType.APPLICATION_JSON)
+				.favorPathExtension(true)
 				.mediaTypes(mediaTypes);
 	}
 
