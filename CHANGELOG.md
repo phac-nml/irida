@@ -30,6 +30,7 @@ Changes
 * [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
 * [UI]: Updated UI for creating a sample within a project.
 * [REST]: Removed broken XML serialization config from REST API classes.  It was breaking content negotiation for some tools as it sometimes tried to return XML when it couldn't.
+* [UI]: Added `Create New Project` button to the Projects listing page.
 
 20.01 to 20.05
 --------------
