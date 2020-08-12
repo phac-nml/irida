@@ -16,8 +16,8 @@ import com.google.common.collect.Lists;
  */
 
 public interface IridaFileStorageUtility {
-	//Valid extensions to try to concatenate with this tool
-	public static final List<String> VALID_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
+	//Valid file extensions for sample file concatenation
+	public static final List<String> VALID_CONCATENATION_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
 	 * Get a temporarry file from storage
 	 *
