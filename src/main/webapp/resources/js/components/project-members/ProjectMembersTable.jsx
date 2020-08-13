@@ -8,6 +8,7 @@ import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
+  updateUserRoleOnProject,
 } from "../../apis/projects/members";
 
 /**
@@ -16,7 +17,7 @@ import {
  * @constructor
  */
 export function ProjectMembersTable() {
-  const {updateTable} = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   function userRemoved(user) {
     if (user.id === window.PAGE.user) {
@@ -71,15 +72,17 @@ export function ProjectMembersTable() {
   return (
     <PagedTable
       buttons={[
-        window.PAGE.canManage ? (<AddMemberButton
-          key="add-members-btn"
-          label={i18n("AddMemberButton.label")}
-          modalTitle={i18n("AddMemberButton.modal.title")}
-          addMemberFn={addMemberToProject}
-          addMemberSuccessFn={updateTable}
-          getAvailableMembersFn={getAvailableUsersForProject}
-          defaultRole="PROJECT_USER"
-        />) : null,
+        window.PAGE.canManage ? (
+          <AddMemberButton
+            key="add-members-btn"
+            label={i18n("AddMemberButton.label")}
+            modalTitle={i18n("AddMemberButton.modal.title")}
+            addMemberFn={addMemberToProject}
+            addMemberSuccessFn={updateTable}
+            getAvailableMembersFn={getAvailableUsersForProject}
+            defaultRole="PROJECT_USER"
+          />
+        ) : null,
       ]}
       columns={columns}
     />
