@@ -114,7 +114,10 @@ public class UIPipelineService {
 				.collect(Collectors.toList());
 		pipelineParameters.add(new NamedPipelineParameters(0L, messageSource.getMessage("workflow.parameters.named.default", null, locale), defaultParameters));
 
-		// NAMED PARAMETERS ??
+		/*
+		NAMED PARAMETERS:
+		These are copies of the default parameters with one or more changed parameter values.
+		 */
 		List<IridaWorkflowNamedParameters> workflowNamedParameters = namedParametersService.findNamedParametersForWorkflow(
 				description.getId());
 		pipelineParameters.addAll(workflowNamedParameters.stream()
