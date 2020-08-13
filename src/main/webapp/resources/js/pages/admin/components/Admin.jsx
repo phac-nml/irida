@@ -63,7 +63,7 @@ export default function Admin() {
                 />
                 <AdminClientsPage
                   path={
-                    `${DEFAULT_URL}/${ADMIN.CLIENTS}`
+                    `${DEFAULT_URL}/${ADMIN.CLIENTS}/*`
                   }
                 />
                 <AdminRemoteApiPage

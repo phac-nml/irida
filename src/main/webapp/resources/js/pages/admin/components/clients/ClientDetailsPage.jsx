@@ -1,16 +1,16 @@
 import React, { useEffect, useReducer, useRef } from "react";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { useNavigate } from "@reach/router";
+import { navigate, useNavigate } from "@reach/router";
 import {
   getClientDetails,
   updateClientDetails,
+  removeClient
 } from "../../../../apis/clients/clients";
-import { Button, Popconfirm, Tabs, Typography } from "antd";
+import { Button, notification, Popconfirm, Tabs, Typography } from "antd";
 import { BasicList } from "../../../../components/lists";
 import { WarningAlert } from "../../../../components/alerts";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { updateUserGroupDetails } from "../../../../apis/users/groups";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -39,7 +39,6 @@ export default function ClientDetailsPage({ id }) {
     loading: true,
     tab: "members",
   });
-  const deleteRef = useRef();
 
   const navigate = useNavigate();
 
@@ -50,85 +49,56 @@ export default function ClientDetailsPage({ id }) {
   }, [id]);
 
   /**
-   * When the value of either the name or description is changes, update the
-   * server.
+   * When the value of a field changes, update the server.
    * @param {string} field to be updated
-   * @param {string} value to update to.
+   * @param {*} value to update to.
    */
   const updateField = (field, value) => {
-    updateUserGroupDetails({ id, field, value }).then(() =>
-      dispatch({ type: "update", payload: { [field]: value } })
-    );
+    // updateClientDetails({ id, field, value }).then(() =>
+    //   dispatch({ type: "update", payload: { [field]: value } })
+    // );
   };
 
   /**
-   * Update contents of the table
-   * @returns {void | Promise<void>}
+   * Action to take when delete is confirmed
    */
-  const updateTable = () =>
-    getClientDetails(id).then((response) =>
-      dispatch({ type: "load", payload: response })
-    );
+  function deleteClient() {
+    removeClient(id).then((message) => {
+      navigate(`admin/clients`, { replace: true });
+      notification.success({ message });
+    }).catch((message) => {
+      notification.error({ message })
+    });
+  }
 
   const fields = state.loading
     ? []
     : [
+      // {
+      //   title: i18n("iridaThing.id"),
+      //   desc: state.getId()
+      // },
       {
         title: i18n("client.clientid"),
-        desc: state.canManage ? (
+        desc:
           <Paragraph
-            className={"t-group-name"}
             editable={{ onChange: (value) => updateField("clientId", value) }}
           >
             {state.clientId}
-          </Paragraph>
-        ) : (
-          state.clientId
-        ),
+          </Paragraph>,
       },
       {
-        title: i18n("UserGroupDetailsPage.description"),
-        desc: state.canManage ? (
-          <Paragraph
-            ellipsis={{ rows: 3, expandable: true }}
-            editable={{
-              onChange: (value) => updateField("description", value),
-            }}
-          >
-            {state.description || ""}
-          </Paragraph>
-        ) : (
-          <Paragraph ellipsis={{ rows: 3, expandable: true }}>
-            state.description
-          </Paragraph>
-        ),
-      },
-      {
-        title: i18n("UserGroupDetailsPage.members"),
-        desc: (
-          <UserGroupRolesProvider>
-            <UserGroupMembersTable
-              updateTable={updateTable}
-              members={state.members}
-              canManage={state.canManage}
-              groupId={id}
-            />
-          </UserGroupRolesProvider>
-        ),
+        title: i18n("client.details.clientSecret"),
+        desc: state.clientSecret
       },
     ];
 
-  const removeClient = () => (
+  const RemoveClient = () => (
     <div>
       <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
-      <form
-        style={{ marginTop: SPACE_SM }}
-        ref={deleteRef}
-        action={setBaseUrl(`/groups/${id}/delete`)}
-        method="POST"
-      >
+      <div style={{ marginTop: SPACE_SM }}>
         <Popconfirm
-          onConfirm={() => deleteRef.current.submit()}
+          onConfirm={deleteClient}
           title={i18n("UserGroupDetailsPage.delete-confirm")}
           okButtonProps={{ className: "t-delete-confirm-btn" }}
         >
@@ -136,7 +106,7 @@ export default function ClientDetailsPage({ id }) {
             {i18n("UserGroupDetailsPage.delete-button")}
           </Button>
         </Popconfirm>
-      </form>
+      </div>
     </div>
   );
 
@@ -150,23 +120,21 @@ export default function ClientDetailsPage({ id }) {
         tabPosition="left"
         tabBarStyle={{ width: 200 }}
       >
-        <TabPane tab={i18n("UserGroupDetailsPage.tab.details")} key="details">
-          <Title level={4}>{i18n("UserGroupsDetailsPage.title.details")}</Title>
+        <TabPane tab={i18n("Details")} key="details">
+          <Title level={4}>{i18n("Client Details")}</Title>
           <BasicList dataSource={fields} />
         </TabPane>
-        <TabPane tab={i18n("UserGroupDetailsPage.tab.projects")} key="project">
+        {/*<TabPane tab={i18n("UserGroupDetailsPage.tab.projects")} key="project">*/}
+        {/*  <Title level={4}>*/}
+        {/*    {i18n("UserGroupsDetailsPage.title.projects")}*/}
+        {/*  </Title>*/}
+        {/*</TabPane>*/}
+        <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
           <Title level={4}>
-            {i18n("UserGroupsDetailsPage.title.projects")}
+            {i18n("UserGroupsDetailsPage.title.delete")}
           </Title>
+          <RemoveClient />
         </TabPane>
-        {state.canManage ? (
-          <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
-            <Title level={4}>
-              {i18n("UserGroupsDetailsPage.title.delete")}
-            </Title>
-            <RemoveClient />
-          </TabPane>
-        ) : null}
       </Tabs>
     </PageWrapper>
   );

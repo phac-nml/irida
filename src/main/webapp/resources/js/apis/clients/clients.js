@@ -57,3 +57,13 @@ export async function getAddClientPage() {
 export function getClientDetails(id) {
   return axios.get(`${BASE_URL}/${id}`).then(({ data }) => data);
 }
+
+/**
+ * Remove Client with a given ID
+ *
+ * @param {number} id for a client
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function removeClient(id) {
+  return axios.post(`${BASE_URL}/remove`, { id }).then(({ data }) => data);
+}

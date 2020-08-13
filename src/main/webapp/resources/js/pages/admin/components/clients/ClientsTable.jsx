@@ -30,7 +30,7 @@ export function ClientsTable() {
       sorter: true,
       render(text, item) {
         return (
-          <a className="t-client-name" href={setBaseUrl(`/clients/${item.id}`)}>
+          <a className="t-client-name" href={setBaseUrl(`/admin/clients/${item.id}`)}>
             {text}
           </a>
         );
