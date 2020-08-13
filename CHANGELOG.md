@@ -31,6 +31,8 @@ Changes
 * [UI]: Updated UI for creating a sample within a project.
 * [REST]: Removed broken XML serialization config from REST API classes.  It was breaking content negotiation for some tools as it sometimes tried to return XML when it couldn't.
 * [UI]: Added `Create New Project` button to the Projects listing page.
+* [UI]: Fixed bug where import bulk metadata button was displayed on linelist page for project collaborators. (20.05.04)
+* [UI]: Fixed bug where add member to project button was displayed on project members page for project collaborators. (20.05.04)
 
 20.01 to 20.05
 --------------
