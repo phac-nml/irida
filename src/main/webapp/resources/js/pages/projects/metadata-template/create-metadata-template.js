@@ -2,7 +2,7 @@ import $ from "jquery";
 import Sortable from "sortablejs";
 import "../../../vendor/plugins/jquery/select2";
 import "jquery-validation";
-import "../../../../sass/pages/create-linelist-template.scss";
+import "../../../../css/pages/create-linelist-template.css";
 
 // ****************************************************************************
 // FORM VALIDATION - uses jquery-validation plugin

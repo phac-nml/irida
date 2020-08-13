@@ -48,7 +48,7 @@ public class AnnouncementControlPage extends AbstractPage {
      */
     public List<Date> getCreatedDates() {
         //May 20, 2016 11:42 AM
-        DateFormat df = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss a");
+        DateFormat df = new SimpleDateFormat("MMM d, yyyy, hh:mm a");
         List<WebElement> dateElements = driver.findElements(By.cssSelector("td.t-created-date"));
         List<Date> dates = new ArrayList<>();
         for (WebElement element : dateElements) {

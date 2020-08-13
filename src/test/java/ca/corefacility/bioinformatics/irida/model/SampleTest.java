@@ -33,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleNa
 public class SampleTest {
 	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
-	
+
 	private Sample sample1;
 	private Sample sample2;
 
@@ -57,7 +57,7 @@ public class SampleTest {
 				MESSAGES_BASENAME)));
 		ValidatorFactory factory = configuration.buildValidatorFactory();
 		validator = factory.getValidator();
-		
+
 		sample1 = new Sample("newsample");
 
 		field1 = new MetadataTemplateField("field1", "text");
@@ -87,7 +87,7 @@ public class SampleTest {
 
 		sample2.setMetadata(metadataMap2);
 	}
-	
+
 	@Test
 	public void testNullSampleName() {
 		Sample s = new Sample();
@@ -97,7 +97,7 @@ public class SampleTest {
 
 		assertEquals("Wrong number of violations.", 2, violations.size());
 	}
-	
+
 	@Test
 	public void testEmptySampleName() {
 		Sample s = new Sample();
@@ -117,9 +117,9 @@ public class SampleTest {
 	}
 
 	@Test
-	public void testBlacklistedCharactersInSampleName() {
-		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
-		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
+	public void testBlocklistedCharactersInSampleName() {
+		testBlocklists(ValidProjectName.ValidProjectNameBlocklist.BLOCKLIST);
+		testBlocklists(ValidSampleName.ValidSampleNameBlocklist.BLOCKLIST);
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class SampleTest {
 
 		PipelineProvidedMetadataEntry actualEntry = (PipelineProvidedMetadataEntry) sample2.getMetadata().get(field1);
 
-		assertEquals("Updated metadata entry does not point to correct submission", new Long(2),
+		assertEquals("Updated metadata entry does not point to correct submission", Long.valueOf(2),
 				actualEntry.getSubmission().getId());
 		assertEquals("Non-updated metadata entry does not match", this.pipelineEntry2,
 				sample2.getMetadata().get(field2));
@@ -181,8 +181,8 @@ public class SampleTest {
 				sample2.getMetadata().get(field2));
 	}
 
-	private void testBlacklists(char[] blacklist) {
-		for (char c : blacklist) {
+	private void testBlocklists(char[] blocklist) {
+		for (char c : blocklist) {
 			Sample s = new Sample();
 			s.setSampleName("ATLEAST3" + c);
 			Set<ConstraintViolation<Sample>> violations = validator.validate(s);

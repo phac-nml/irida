@@ -3,12 +3,33 @@ Changes
 
 20.05 to 20.09
 --------------
+* [UI] Updated project user groups to use Ant Design.
+* [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
+* [Developer]: Removed deprecated Long constructor.
+* [Developer]: Updated `webpack-dev-server` to fix security vulnerability caused by `websocket-extensions` 0.1.3.
+* [UI]: Update project metadata templates listing page to use Ant Design.
+* [UI/Developer]: Removed SASS compilation step from front end build. Everything is done using postcss now.
+* [Developer]: Bumped `node` version to 12.18.0.
 * [UI]: Fixed bug when creating/modifying a metadata template the user could not search for a field. (20.05.1)
 * [UI]: Fixed bug where managers could not load Users listing page. (20.05.1)
+* [UI]: Added functionality for users to synchronize assembly data from remote APIs.
+* [Developer]: Updated chromedriver to version `latest`.
+* [UI]: Removed gravatar and replaced with user icon.
+* [Developer]: Removed `webpack-dev-server`.
 * [UI]: Fixed issue where analysis results pages would hang after running with remote synchronized data. (20.05.2)
 * [Developer]: Updated chromedriver to version `latest`. (20.05.2)
+* [Developer]: Updated frontend dependencies (`babel`, `fontawesome`, and `ant-icons`)
+* [UI]: Updated NCBI Exports listing pages to use Ant Design Tables.
+* [UI/Developer]: Removed `irida.cart.js` (an older angularjs service for the cart).
+* [UI]: Fixed issue #637 where metadata toggles were not displaying in the "on" position properly on loading the advanced phylogenic viewer.
+* [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
+* [Developer/UI]: Removed `irida` angular app.  Individual components load themselves now.
+* [Developer/UI]: Updated to Ant Design v4.4.2.
 * [UI]: Updated importing numbers through excel file.  IRIDA will now check for excel formatted numeric cells and keep the formatting. (20.05.3);
 * [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
+* [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
+* [UI]: Updated UI for creating a sample within a project.
+* [REST]: Removed broken XML serialization config from REST API classes.  It was breaking content negotiation for some tools as it sometimes tried to return XML when it couldn't.
 * [UI]: Fixed bug where import bulk metadata button was displayed on linelist page for project collaborators. (20.05.04)
 * [UI]: Fixed bug where add member to project button was displayed on project members page for project collaborators. (20.05.04)
 

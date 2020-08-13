@@ -1,0 +1,85 @@
+.project-details {
+  li {
+    border-bottom: 1px solid #f3f3f3;
+    line-height: 2em;
+  }
+  i.glyphicon {
+    color: #929292;
+    margin-right: 0.5em;
+  }
+  em {
+    font-style: normal;
+  }
+  span {
+    float: right;
+  }
+}
+
+.panel.associated-projects {
+  div.panel-body {
+    padding: 0 !important;
+  }
+  .list-group-item {
+    border-radius: 0 !important;
+  }
+}
+
+.sidebar {
+  background-color: #ffffff;
+  border: 1px solid #dfdfdf;
+  border-bottom-color: #929292;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.sidebar__heading {
+  padding: 1rem;
+  h2 {
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.sidebar__body {
+  position: relative;
+
+  .form-group {
+    border-top: 1px solid #f3f3f3;
+    padding: 4px 8px;
+  }
+  label {
+    font-weight: 300;
+  }
+  input[type="text"].form-control {
+    border: 1px solid #929292;
+    border-right: none;
+  }
+  .input-group-btn button {
+    border: 1px solid #929292 !important;
+    border-left: none;
+    color: #929292;
+  }
+}
+
+.sidebar__item {
+  border-top: 1px solid #f3f3f3;
+  padding: 0.3em 0.5em;
+  display: flex;
+  align-items: center;
+
+  > div {
+    padding: 0 0.3em;
+  }
+}
+
+.sidebar__icon {
+  width: 2.6rem;
+  color: #929292;
+}
+
+.sidebar__value {
+  color: #232323;
+  text-align: right;
+  flex-grow: 2;
+}

@@ -1,10 +1,9 @@
 import { UserGroupRole } from "../../../components/roles/UserGroupRole";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import React, { useContext } from "react";
+import React from "react";
 import { SPACE_XS } from "../../../styles/spacing";
 import { stringSorter } from "../../../utilities/table-utilities";
 import { AddMemberButton } from "../../../components/Buttons/AddMemberButton";
-import { UserGroupRolesContext } from "../../../contexts/UserGroupRolesContext";
 import { RemoveTableItemButton } from "../../../components/Buttons";
 import {
   addMemberToUserGroup,
@@ -35,22 +34,6 @@ export default function UserGroupMembersTable({
   groupId,
   updateTable,
 }) {
-  const { roles } = useContext(UserGroupRolesContext);
-
-  /**
-   * Remove a member from the group, and then refresh the table.
-   * @param user
-   * @returns {void | Promise<AxiosResponse<*>>}
-   */
-  function removeMember(user) {
-    return removeMemberFromUserGroup({ groupId, userId: user.id }).then(
-      (message) => {
-        updateTable();
-        return message;
-      }
-    );
-  }
-
   const columns = [
     {
       dataIndex: "name",
@@ -77,7 +60,7 @@ export default function UserGroupMembersTable({
     {
       title: i18n("UserGroupMembersTable.joined"),
       dataIndex: "createdDate",
-      width: 200,
+      width: 230,
       render(text) {
         return formatInternationalizedDateTime(text);
       },
@@ -91,7 +74,10 @@ export default function UserGroupMembersTable({
       render(user) {
         return (
           <RemoveTableItemButton
-            onRemove={() => removeMember(user)}
+            onRemove={() =>
+              removeMemberFromUserGroup({ groupId, userId: user.id })
+            }
+            onRemoveSuccess={updateTable}
             tooltipText={i18n("UserGroupMembersTable.remove-tooltip")}
             confirmText={i18n("UserGroupMembersTable.remove-confirm")}
           />
@@ -114,7 +100,8 @@ export default function UserGroupMembersTable({
           {canManage ? (
             <AddMemberButton
               defaultRole="GROUP_MEMBER"
-              roles={roles}
+              label={i18n("UserGroupMembersTable.add")}
+              modalTitle={i18n("UserGroupMembersTable.add.title")}
               addMemberFn={addMember}
               addMemberSuccessFn={updateTable}
               getAvailableMembersFn={getAvailableMembers}

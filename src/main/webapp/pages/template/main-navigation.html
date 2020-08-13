@@ -77,17 +77,19 @@
                 <form id="global-search" class="navbar-form navbar-left" th:action="@{/search}" method="GET"
                       role="search">
                     <div class="form-group">
-                        <div class="search-wrapper">
-                            <span class="icon"><i class="fa fa-fw fa-search"></i></span>
+                        <div class="input-group">
+                            <span class="input-group-addon" style="background-color: white;"><i class="fa fa-fw fa-search"></i></span>
                             <input id="global-search-input" type="search" name="query"
+                                   style="border-right: none; border-left: none"
                                    class="form-control"
                                    th:placeholder="#{nav.main.search}"
                                    th:value="${searchQuery}"/>
                             <div class="input-group-btn search-dd" sec:authorize="hasAnyRole('ROLE_ADMIN')">
-                                <button type="button" id="admin-search-toggle" class="btn dropdown-toggle"
+                                <button type="button" id="admin-search-toggle" class="btn btn-default dropdown-toggle"
+                                        style="border-left: none; height: 34px"
                                         data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                    <span class="fa fa-angle-down" aria-hidden="true"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a href="#" id="search-admin-link" th:text="#{nav.main.search.admin}">_Search
@@ -210,15 +212,15 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle nav-gravatar-wrapper" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">
-                            <img class="nav-gravatar" th:src="${session.gravatar}" alt="User Icon"/>
+                              <i class="fas fa-user-circle nav-icon"></i>
                             <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown-menu">
                             <li>
                                 <a th:href="@{/users/current}">
-                                    <i class="fa fa-user spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="fas fa-user spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{nav.main.account}"/>
                                 </a>
                             </li>
