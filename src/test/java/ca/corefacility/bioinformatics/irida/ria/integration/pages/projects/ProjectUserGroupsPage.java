@@ -40,7 +40,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 
 	public boolean isAddUserGroupButtonVisible() {
 		return driver.findElements(By.className("t-add-user-group-btn"))
-				.size() > 0;
+				.size() == 1;
 	}
 
 	public int getNumberOfUserGroups() {
