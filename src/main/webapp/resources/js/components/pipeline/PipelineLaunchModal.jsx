@@ -3,11 +3,12 @@ import { useLaunchState } from "./launch-context";
 import { Modal, Tabs } from "antd";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
+import { PipelineParameters } from "./PipelineParameters";
 
 const { TabPane } = Tabs;
 
 export function PipelineLaunchModal({ visible = false, onCancel }) {
-  const { step, requiresReference, files } = useLaunchState();
+  const { step, requiresReference, files, parameters } = useLaunchState();
 
   return (
     <Modal
@@ -28,7 +29,7 @@ export function PipelineLaunchModal({ visible = false, onCancel }) {
           </TabPane>
         ) : null}
         <TabPane tab={"PARAMETERS"} key={3}>
-          FUN PARAMETERS HERE
+          <PipelineParameters parameters={parameters} />
         </TabPane>
       </Tabs>
     </Modal>

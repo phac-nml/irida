@@ -1,16 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -27,6 +16,16 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("session")
@@ -102,13 +101,17 @@ public class UIPipelineService {
 			return null;
 		}
 
+		String pipelineName = description.getName().toLowerCase();
 		List<NamedPipelineParameters> pipelineParameters = new ArrayList<>();
 
-		// DEFAULT PARAMETERS ??
+		/*
+		DEFAULT PARAMETERS:
+		These would be the ones defaulted by the pipeline itself.
+		 */
 		List<Parameter> defaultParameters = workflowParameters.stream()
-				.filter(IridaWorkflowParameter::isRequired)
+				.filter(p -> !p.isRequired())
 				.map(parameter -> new Parameter(messageSource.getMessage(
-						"pipeline.parameters." + description.getName() + "." + parameter.getName(), null, locale),
+						"pipeline.parameters." + pipelineName + "." + parameter.getName(), null, locale),
 						parameter.getDefaultValue(), parameter.getName()))
 				.collect(Collectors.toList());
 		pipelineParameters.add(new NamedPipelineParameters(0L, messageSource.getMessage("workflow.parameters.named.default", null, locale), defaultParameters));
@@ -122,7 +125,7 @@ public class UIPipelineService {
 							.entrySet()
 							.stream()
 							.map(entry -> new Parameter(messageSource.getMessage(
-									"pipeline.parameters." + description.getName() + "." + entry.getKey(), null,
+									"pipeline.parameters." + pipelineName + "." + entry.getKey(), null,
 									locale), entry.getValue(), entry.getKey()))
 							.collect(Collectors.toList());
 					return new NamedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
@@ -131,7 +134,7 @@ public class UIPipelineService {
 
 		//		List<NamedPipelineParameters> namedPipelineParameters = workflowNamedParameters.stream().map(namedParameter -> {
 		//			List<Parameter> parameters = namedParameter.getInputParameters().entrySet().stream().map(entry -> new Parameter(
-		//					messageSource.getMessage("pipeline.parameters." + description.getName() + "." + entry.getKey(), new Object[]{}, locale),
+		//					messageSource.getMessage("pipeline.parameters." + pipelineName + "." + entry.getKey(), new Object[]{}, locale),
 		//					entry.getValue(), entry.getKey())).collect(Collectors.toList());
 		//			return new NamedPipelineParameters(namedParameter.getId(), namedParameter.getLabel(), parameters);
 		//		}).collect(Collectors.toList());
