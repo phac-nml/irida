@@ -19,7 +19,11 @@ public class Parameter {
 			return value;
 		}
 
-		public String getName() {
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getName() {
 			return name;
 		}
 }

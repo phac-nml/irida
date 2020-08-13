@@ -1,5 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -16,16 +24,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @Scope("session")
@@ -121,23 +119,28 @@ public class UIPipelineService {
 				description.getId());
 		pipelineParameters.addAll(workflowNamedParameters.stream()
 				.map(wp -> {
-					List<Parameter> parameters = wp.getInputParameters()
-							.entrySet()
-							.stream()
-							.map(entry -> new Parameter(messageSource.getMessage(
-									"pipeline.parameters." + pipelineName + "." + entry.getKey(), null,
-									locale), entry.getValue(), entry.getKey()))
+					Map<String, String> inputParameters = wp.getInputParameters();
+
+					// Go through the default parameters and see which ones are getting overwritten.
+					List<Parameter> parameters = defaultParameters.stream()
+							.map(parameter -> {
+								if (inputParameters.containsKey(parameter.getName())) {
+									// This would be an overridden default parameter
+									return new Parameter(parameter.getLabel(), inputParameters.get(parameter.getName()),
+											parameter.getName());
+								} else {
+									// Not changed so just return a copy of the default.
+									return new Parameter(parameter.getLabel(), parameter.getValue(),
+											parameter.getName());
+								}
+
+							})
 							.collect(Collectors.toList());
+
 					return new NamedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
 				})
 				.collect(Collectors.toList()));
 
-		//		List<NamedPipelineParameters> namedPipelineParameters = workflowNamedParameters.stream().map(namedParameter -> {
-		//			List<Parameter> parameters = namedParameter.getInputParameters().entrySet().stream().map(entry -> new Parameter(
-		//					messageSource.getMessage("pipeline.parameters." + pipelineName + "." + entry.getKey(), new Object[]{}, locale),
-		//					entry.getValue(), entry.getKey())).collect(Collectors.toList());
-		//			return new NamedPipelineParameters(namedParameter.getId(), namedParameter.getLabel(), parameters);
-		//		}).collect(Collectors.toList());
 		return pipelineParameters;
 	}
 
