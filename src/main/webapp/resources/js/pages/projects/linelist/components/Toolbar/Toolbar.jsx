@@ -8,7 +8,7 @@ import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
 import {
   IconCloudUpload,
-  IconQuestion
+  IconQuestion,
 } from "../../../../../components/icons/Icons";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
@@ -72,20 +72,26 @@ export class ToolbarComponent extends Component {
         </div>
         <div className="toolbar-group">
           <Form layout="inline">
-            <Form.Item>
-              <Button href={urls.import} tour="tour-import">
-                <IconCloudUpload />
-                {i18n("linelist.importBtn.text")}
-              </Button>
-            </Form.Item>
+            {window.project.canManage ? (
+              <Form.Item>
+                <Button
+                  className="t-import-metadata-btn"
+                  href={urls.import}
+                  tour="tour-import"
+                >
+                  <IconCloudUpload />
+                  {i18n("linelist.importBtn.text")}
+                </Button>
+              </Form.Item>
+            ) : null}
             <Form.Item>
               <Search
                 tour="tour-search"
-                onKeyUp={e => this.props.updateFilter(e.target.value)}
+                onKeyUp={(e) => this.props.updateFilter(e.target.value)}
                 id="js-table-filter"
                 className="table-filter t-table-filter"
                 style={{
-                  width: 200
+                  width: 200,
                 }}
               />
             </Form.Item>
@@ -103,7 +109,7 @@ export class ToolbarComponent extends Component {
                   <strong
                     style={{
                       borderBottom: "2px solid orange",
-                      cursor: "pointer"
+                      cursor: "pointer",
                     }}
                     onClick={this.closePopover}
                   >
@@ -136,13 +142,13 @@ ToolbarComponent.propTypes = {
   exportCSV: PropTypes.func.isRequired,
   exportXLSX: PropTypes.func.isRequired,
   scrollTableToTop: PropTypes.func.isRequired,
-  updateFilter: PropTypes.func.isRequired
+  updateFilter: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({});
+const mapStateToProps = (state) => ({});
 
-const mapDispatchToProps = dispatch => ({
-  updateFilter: value => dispatch(entryActions.setGlobalFilter(value))
+const mapDispatchToProps = (dispatch) => ({
+  updateFilter: (value) => dispatch(entryActions.setGlobalFilter(value)),
 });
 
 export const Toolbar = connect(
