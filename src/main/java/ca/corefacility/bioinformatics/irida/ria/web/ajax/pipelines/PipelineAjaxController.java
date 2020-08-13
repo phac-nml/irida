@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.pipelines;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,9 @@ public class PipelineAjaxController {
 	}
 
 	@RequestMapping("/{workflowId}")
-	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(@PathVariable UUID workflowId, @RequestParam boolean automated) {
+	public ResponseEntity<UIPipelineDetailsResponse> getPipelineDetails(@PathVariable UUID workflowId, @RequestParam boolean automated, Locale locale) {
 		try {
-			return ResponseEntity.ok(service.getPipelineDetails(workflowId, automated));
+			return ResponseEntity.ok(service.getPipelineDetails(workflowId, automated, locale));
 		} catch (IridaWorkflowNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(null);

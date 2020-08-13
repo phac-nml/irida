@@ -9,6 +9,7 @@ public class UIPipelineDetailsResponse {
 	private boolean canPipelineWriteToSamples;
 	private boolean requiresReference;
 	private List<UIReferenceFile> files;
+	private List<NamedPipelineParameters> parameters;
 
 	public UUID getId() {
 		return id;
@@ -54,5 +55,13 @@ public class UIPipelineDetailsResponse {
 
 	public boolean isRequiresReference() {
 		return requiresReference;
+	}
+
+	public List<NamedPipelineParameters> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<NamedPipelineParameters> parameters) {
+		this.parameters = parameters;
 	}
 }

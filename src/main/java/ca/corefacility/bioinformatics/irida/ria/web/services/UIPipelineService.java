@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -18,7 +19,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.NamedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.Parameter;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -47,7 +51,7 @@ public class UIPipelineService {
 		this.messageSource = messageSource;
 	}
 
-	public UIPipelineDetailsResponse getPipelineDetails(UUID workflowId, boolean automated)
+	public UIPipelineDetailsResponse getPipelineDetails(UUID workflowId, boolean automated, Locale locale)
 			throws IridaWorkflowNotFoundException {
 
 		/*
@@ -83,15 +87,22 @@ public class UIPipelineService {
 		if (workflowDescription.requiresReference()) {
 			details.setFiles(getReferenceFilesForPipeline(projects));
 		}
+		
+		/*
+		PARAMETERS
+		 */
+		details.setParameters(getPipelineParameters(workflowDescription, locale));
 
 		return details;
 	}
 
-	private PipelineParameters getPipelineParameters(IridaWorkflowDescription description, Locale locale) {
+	private List<NamedPipelineParameters> getPipelineParameters(IridaWorkflowDescription description, Locale locale) {
 		List<IridaWorkflowParameter> workflowParameters = description.getParameters();
 		if (workflowParameters == null) {
 			return null;
 		}
+
+		List<NamedPipelineParameters> pipelineParameters = new ArrayList<>();
 
 		// DEFAULT PARAMETERS ??
 		List<Parameter> defaultParameters = workflowParameters.stream()
@@ -100,11 +111,12 @@ public class UIPipelineService {
 						"pipeline.parameters." + description.getName() + "." + parameter.getName(), null, locale),
 						parameter.getDefaultValue(), parameter.getName()))
 				.collect(Collectors.toList());
+		pipelineParameters.add(new NamedPipelineParameters(0L, messageSource.getMessage("workflow.parameters.named.default", null, locale), defaultParameters));
 
 		// NAMED PARAMETERS ??
 		List<IridaWorkflowNamedParameters> workflowNamedParameters = namedParametersService.findNamedParametersForWorkflow(
 				description.getId());
-		List<NamedPipelineParameters> pipelineParameters = workflowNamedParameters.stream()
+		pipelineParameters.addAll(workflowNamedParameters.stream()
 				.map(wp -> {
 					List<Parameter> parameters = wp.getInputParameters()
 							.entrySet()
@@ -115,7 +127,7 @@ public class UIPipelineService {
 							.collect(Collectors.toList());
 					return new NamedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
 				})
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
 
 		//		List<NamedPipelineParameters> namedPipelineParameters = workflowNamedParameters.stream().map(namedParameter -> {
 		//			List<Parameter> parameters = namedParameter.getInputParameters().entrySet().stream().map(entry -> new Parameter(
@@ -123,7 +135,7 @@ public class UIPipelineService {
 		//					entry.getValue(), entry.getKey())).collect(Collectors.toList());
 		//			return new NamedPipelineParameters(namedParameter.getId(), namedParameter.getLabel(), parameters);
 		//		}).collect(Collectors.toList());
-		return null;
+		return pipelineParameters;
 	}
 
 	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
