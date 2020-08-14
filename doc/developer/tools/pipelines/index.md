@@ -354,7 +354,11 @@ This contains the message to display asking the user if they wish to **Save Resu
 
 Your plugin can use one of IRIDA's built in analysis results viewers by implementing the `getAnalysisViewer()` method in `IridaPlugin`.  
 
-Currently the only viewer that can be used by a plugin is the `tree` viewer.  By setting this analysis viewer type, IRIDA will look for an output file with a `.newick` extension and display it in the analysis output pages.  Note that only one tree file is currently able to be visualized.
+The viewers available in IRIDA are the following:
+
+* `tree` - A phylogentic tree viewer.  By setting this analysis viewer type, IRIDA will look for an output file with a `.newick` extension and display it in the analysis output pages.  Note that only one tree file is currently able to be visualized.
+* `sistr` - A viewer for SISTR results.  Generally this should only be used for the SISTR pipeline.
+* `biohansel` - A viwer for BioHansel results.  Generally this should only be used for the BioHansel pipeline.
 
 
 ## 3.3. Update the [pom.xml][] file
