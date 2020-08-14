@@ -320,6 +320,11 @@ public class ExamplePlugin extends Plugin {
 				SampleService sampleService, IridaWorkflowsService iridaWorkflowsService) throws IridaPluginException {
 			return Optional.of(new ExamplePluginUpdater(metadataTemplateService, sampleService, iridaWorkflowsService));
 		}
+
+		@Override
+		public Optional<String> getAnalysisViewer() {
+			return Optional.of("tree");
+		}
 	}
 }
 ```
@@ -354,7 +359,7 @@ This contains the message to display asking the user if they wish to **Save Resu
 
 Your plugin can use one of IRIDA's built in analysis results viewers by implementing the `getAnalysisViewer()` method in `IridaPlugin`.  
 
-The viewers available in IRIDA are the following:
+The viewers available to plugins in IRIDA are the following:
 
 * `tree` - A phylogentic tree viewer.  By setting this analysis viewer type, IRIDA will look for an output file with a `.newick` extension and display it in the analysis output pages.  Note that only one tree file is currently able to be visualized.
 * `sistr` - A viewer for SISTR results.  Generally this should only be used for the SISTR pipeline.
