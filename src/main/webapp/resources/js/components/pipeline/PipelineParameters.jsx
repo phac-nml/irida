@@ -1,16 +1,30 @@
-import React, { useState } from "react";
-import { Button, Divider, Form, List, Select } from "antd";
-import { SPACE_MD } from "../../styles/spacing";
+import React, { useEffect, useState } from "react";
+import { Divider, Form, List, Select, Typography } from "antd";
+import { SPACE_SM } from "../../styles/spacing";
 
 const { Option } = Select;
+const { Paragraph } = Typography;
 
 export function PipelineParameters({ parameters }) {
   const [selected, setSelected] = useState(0);
+  const [currentParameters, setCurrentParameters] = useState();
+
+  useEffect(() => {
+    setCurrentParameters(parameters[selected].parameters);
+  }, [parameters, selected]);
+
+  const updateParameter = (name, value) => {
+    const p = [...parameters[selected].parameters];
+    const index = p.findIndex((i) => i.name === name);
+    p[index] = { ...p[index], value: value };
+    setCurrentParameters(p);
+  };
+
   return (
     <>
       <Form layout={"inline"} style={{ display: "flex" }}>
         <Select
-          style={{ flexGrow: 1, marginRight: SPACE_MD }}
+          style={{ flexGrow: 1, marginRight: SPACE_SM }}
           defaultValue={selected}
           onChange={setSelected}
         >
@@ -20,17 +34,30 @@ export function PipelineParameters({ parameters }) {
             </Option>
           ))}
         </Select>
-        <Button>Modify</Button>
       </Form>
       <Divider />
       <List
         itemLayout="horizontal"
-        dataSource={parameters[selected].parameters}
+        dataSource={currentParameters}
         renderItem={(parameter) => (
           <List.Item>
             <List.Item.Meta
               title={parameter.label}
-              description={parameter.value}
+              description={
+                <Paragraph
+                  style={{ marginLeft: 15, marginBottom: 0 }}
+                  editable={
+                    selected === 0
+                      ? null
+                      : {
+                          onChange: (value) =>
+                            updateParameter(parameter.name, value),
+                        }
+                  }
+                >
+                  {parameter.value}
+                </Paragraph>
+              }
             />
           </List.Item>
         )}
