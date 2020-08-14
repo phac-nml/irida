@@ -440,4 +440,19 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should display the correct linker for entire project", "ngsArchiveLinker.pl -p 1 -t fastq,assembly",
 				page.getLinkerText());
 	}
+
+	@Test
+	public void testAddNewSamples() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.openCreateNewSampleModal();
+		page.enterSampleName("BAD");
+		assertTrue("Should show a warning message", page.isSampleNameErrorDisplayed());
+		page.enterSampleName("BAD NAME");
+		assertTrue("Should show a warning message", page.isSampleNameErrorDisplayed());
+		page.enterSampleName("BAD ***");
+		assertTrue("Should show a warning message", page.isSampleNameErrorDisplayed());
+		page.enterSampleName("GOOD_NAME");
+		assertFalse("Sample name error should not be displayed", page.isSampleNameErrorDisplayed());
+	}
 }

@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -24,6 +25,8 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	@FindBy(id = "preview-btn") WebElement previewBtn;
 	@FindBy(id = "found-pill") WebElement foundPill;
 	@FindBy(id = "missing-pill") WebElement missingPill;
+	@FindBy(css = "thead th") List<WebElement> headers;
+	@FindBy(css = "tbody tr") List<WebElement> rows;
 
 	public ProjectSampleMetadataImportPage(WebDriver driver) {
 		super(driver);
@@ -49,10 +52,26 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public int getFoundCount() {
-		return Integer.parseInt(foundPill.findElement(By.className("badge")).getText());
+		return Integer.parseInt(foundPill.findElement(By.className("badge"))
+				.getText());
 	}
 
 	public int getMissingCount() {
-		return Integer.parseInt(missingPill.findElement(By.className("badge")).getText());
+		return Integer.parseInt(missingPill.findElement(By.className("badge"))
+				.getText());
+	}
+
+	public List<String> getValuesForColumnByName(String column) {
+		// Get the text from the headers
+		List<String> headerText = headers.stream()
+				.map(WebElement::getText)
+				.collect(Collectors.toList());
+		// Find which columns is the numbers
+		int index = headerText.indexOf(column);
+		return rows.stream()
+				.map(row -> row.findElements(By.tagName("td"))
+						.get(index)
+						.getText())
+				.collect(Collectors.toList());
 	}
 }
