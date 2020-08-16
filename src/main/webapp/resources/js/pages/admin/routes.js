@@ -4,7 +4,6 @@
 
 export const ADMIN = {
   ADMIN: "admin",
-  STATISTICS: "statistics",
   USERS: "users",
   USERGROUPS: "groups",
   CLIENTS: "clients",

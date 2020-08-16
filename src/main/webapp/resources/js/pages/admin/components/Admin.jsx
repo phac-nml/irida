@@ -21,7 +21,6 @@ import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu"
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
-const AdminStatistics = lazy(() => import("./AdminStatistics"));
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
 const AdminUserGroupsPage = lazy(() => import("./AdminUserGroupsPage"));
 const ClientListingPage = lazy(() => import("./clients/listing/ClientListingPage"));
@@ -34,7 +33,7 @@ export default function Admin() {
   const DEFAULT_URL = setBaseUrl("/admin");
 
   /*
-   * The following renders the tabs for statistics, users, and groups
+   * The following renders the tabs for the admin panel
    * the components are only loaded if the corresponding tab is clicked
    */
   return (
@@ -45,16 +44,11 @@ export default function Admin() {
           <Content>
             <Suspense fallback={<ContentLoading />}>
               <Router>
-                <AdminStatistics
-                  path={
-                    `${DEFAULT_URL}/${ADMIN.STATISTICS}`
-                  }
-                  default
-                />
                 <AdminUsersPage
                   path={
                     `${DEFAULT_URL}/${ADMIN.USERS}`
                   }
+                  default
                 />
                 <AdminUserGroupsPage
                   path={

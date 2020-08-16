@@ -22,12 +22,7 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		AdminPage page = AdminPage.initPage(driver());
 		assertTrue("Admin button should be displayed", page.adminPanelButtonVisible());
 		page.clickAdminButton();
-		assertTrue("Admin can navigate to admin panel, admin page title should be present", page.comparePageTitle("Statistics"));
-		// Navigate to users page
-		page.clickUsersSubMenu();
-		page.clickUsersLink();
-		assertTrue("Admin can navigate to users page, user page title should be present", page.comparePageTitle("Users"));
-		assertTrue("Add User button should be present", page.adminAddUserVisible());
+		assertTrue("Admin can navigate to admin panel, admin page title should be present", page.comparePageTitle("Users"));
 		// Navigate to user groups page
 		page.clickUsersSubMenu();
 		page.clickGroupsLink();
@@ -51,9 +46,11 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.clickAnnouncementsLink();
 		assertTrue("Admin can navigate to announcements page, announcements page title should be present", page.comparePageTitle("Announcements"));
 		assertTrue("Add Announcement button should be present", page.adminAddAnnouncementVisible());
-		// Navigate back to statistics page
-		page.clickStatsLink();
-		assertTrue("Admin can navigate to stats page, stats page title should be present", page.comparePageTitle("Statistics"));
+		// Navigate back to users page
+		page.clickUsersSubMenu();
+		page.clickUsersLink();
+		assertTrue("Admin can navigate to users page, user page title should be present", page.comparePageTitle("Users"));
+		assertTrue("Add User button should be present", page.adminAddUserVisible());
 	}
 
 	@Test
@@ -63,7 +60,7 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("Admin button should not be displayed", page.adminPanelButtonVisible());
 		// No admin button, so attempt to go to admin page by modifying the URL
 		page.goToAdminPage(driver());
-		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.comparePageTitle("Statistics"));
+		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.comparePageTitle("Users"));
 	}
 
 	@Test
@@ -74,7 +71,6 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		// Check that side menu is visible
 		assertTrue("Admin side menu should be visible", page.adminSideMenuVisible());
 		// Check that all top level links are visible
-		assertTrue("Admin stats link should be visible", page.adminStatsLinkVisible());
 		assertTrue("Admin clients link should be visible", page.adminClientsLinkVisible());
 		assertTrue("Admin remote api link should be visible", page.adminRemoteApiLinkVisible());
 		assertTrue("Admin sequencing runs link should be visible", page.adminSequencingRunsLinkVisible());
