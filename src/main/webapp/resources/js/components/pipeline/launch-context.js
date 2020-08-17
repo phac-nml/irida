@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import * as CONSTANTS from "./lauch-constants";
 
@@ -21,18 +21,18 @@ function launchReducer(state, action) {
 }
 
 function LaunchProvider({ children, pipelineId, automated = false }) {
-  const [state, dispatch] = React.useReducer(launchReducer, {
+  const [state, dispatch] = useReducer(launchReducer, {
     fetching: true,
     step: CONSTANTS.STEP_DETAILS,
     name: "",
     description: "",
+    parameters: [],
   });
 
   useEffect(() => {
     fetch(setBaseUrl(`/ajax/pipelines/${pipelineId}?automated=${automated}`))
       .then((response) => response.json())
       .then((json) => {
-        console.log(json.files);
         dispatch({ type: CONSTANTS.DISPATCH_PIPELINE_LOADED, value: json });
       });
   }, [pipelineId, automated]);

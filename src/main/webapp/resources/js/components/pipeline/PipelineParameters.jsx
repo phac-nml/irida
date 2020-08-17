@@ -10,7 +10,9 @@ export function PipelineParameters({ parameters }) {
   const [currentParameters, setCurrentParameters] = useState();
 
   useEffect(() => {
-    setCurrentParameters(parameters[selected].parameters);
+    if (parameters.length) {
+      setCurrentParameters(parameters[selected].parameters);
+    }
   }, [parameters, selected]);
 
   const updateParameter = (name, value) => {

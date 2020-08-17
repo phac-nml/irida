@@ -32,6 +32,7 @@ import {
   PlusCircleTwoTone,
   QuestionCircleOutlined,
   QuestionOutlined,
+  RocketOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
@@ -165,6 +166,8 @@ export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 
 export const IconForm = ({ ...props }) => <FormOutlined {...props} />;
+
+export const IconRocket = ({ ...props }) => <RocketOutlined {...props} />;
 
 /*
 File Type Icons

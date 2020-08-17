@@ -1,14 +1,28 @@
 import React, { Component, lazy, Suspense } from "react";
 
-import { Location, navigate, Router } from "@reach/router";
-import { Row } from "antd";
+import { Link, Location, navigate, Router } from "@reach/router";
+import { Menu, Row } from "antd";
 import styled from "styled-components";
-import { CartToolsMenu } from "./CartToolsMenu";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { LaunchPage } from "../../../components/pipeline/LaunchPage";
+
+const MenuWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 65px;
+  border-bottom: ${BORDERED_LIGHT};
+  background-color: ${grey1};
+  width: 100%;
+
+  .ant-menu {
+    line-height: 65px;
+  }
+`;
 
 /*
 Lazy loaded since we do not need it unless we came from galaxy.
@@ -47,7 +61,7 @@ export default class CartTools extends Component {
     super(props);
 
     this.state = {
-      fromGalaxy: typeof window.GALAXY !== "undefined"
+      fromGalaxy: typeof window.GALAXY !== "undefined",
     };
   }
 
@@ -75,8 +89,8 @@ export default class CartTools extends Component {
     // Remove the galaxy tab and redirect to the pipelines page.
     if (this.state.fromGalaxy) {
       this.setState(
-        prevState => ({
-          fromGalaxy: false
+        (prevState) => ({
+          fromGalaxy: false,
         }),
         () => {
           navigate(setBaseUrl(`cart/pipelines`));
@@ -97,7 +111,7 @@ export default class CartTools extends Component {
             text: i18n("CartTools.menu.galaxy"),
             component: (
               <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
-            )
+            ),
           }
         : null,
       {
@@ -113,25 +127,50 @@ export default class CartTools extends Component {
             automatedProject={window.PAGE.automatedProject}
             default={!this.state.fromGalaxy}
           />
-        )
-      }
+        ),
+      },
+      {
+        link: setBaseUrl(`cart/pipelines/:pipelineId`),
+        component: <p>Hello there</p>,
+      },
     ].filter(Boolean);
 
     return (
       <ToolsWrapper>
         <Location>
           {({ location }) => (
-            <>
-              <CartToolsMenu
-                pathname={location.pathname}
-                paths={paths}
-                toggleSidebar={this.props.toggleSidebar}
-                collapsed={this.props.collapsed}
-              />
+            <div style={{ width: `100%` }}>
+              <MenuWrapper>
+                <Menu>
+                  <Menu.Item>
+                    <Link to={setBaseUrl(`/cart/pipelines`)}>
+                      {i18n("CartTools.menu.pipelines")}
+                    </Link>
+                  </Menu.Item>
+                </Menu>
+              </MenuWrapper>
+              {/*<CartToolsMenu*/}
+              {/*  pathname={location.pathname}*/}
+              {/*  paths={paths.filter((p) => p.text !== undefined)}*/}
+              {/*  toggleSidebar={this.props.toggleSidebar}*/}
+              {/*  collapsed={this.props.collapsed}*/}
+              {/*/>*/}
               <ToolsInner>
-                <Router>{paths.map(path => path.component)}</Router>
+                <Router>
+                  <Pipelines
+                    path={setBaseUrl(`/cart/pipelines`)}
+                    displaySelect={
+                      this.props.count > 0 ||
+                      window.PAGE.automatedProject != null
+                    }
+                    automatedProject={window.PAGE.automatedProject}
+                  />
+                  <LaunchPage
+                    path={setBaseUrl(`/cart/pipelines/:pipelineId`)}
+                  />
+                </Router>
               </ToolsInner>
-            </>
+            </div>
           )}
         </Location>
       </ToolsWrapper>

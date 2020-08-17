@@ -10,7 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
  * Interface for interactions with {@link ReferenceFile}.
  * 
  */
-public interface ReferenceFileService extends CRUDService<Long, ReferenceFile> {
+public interface
+ReferenceFileService extends CRUDService<Long, ReferenceFile> {
 	/**
 	 * Get the collection of {@link ReferenceFile} attached to the specified
 	 * {@link Project}.
@@ -20,5 +21,5 @@ public interface ReferenceFileService extends CRUDService<Long, ReferenceFile> {
 	 * @return the collection of {@link ReferenceFile} attached to the
 	 *         {@link Project}.
 	 */
-	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project);
+	List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project);
 }

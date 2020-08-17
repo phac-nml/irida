@@ -1,5 +1,4 @@
 import React, { Suspense, useState } from "react";
-import { Button } from "antd";
 import { PipelineLaunchModal } from "./PipelineLaunchModal";
 import { LaunchProvider } from "./launch-context";
 
@@ -10,9 +9,6 @@ export function Launch({ pipelineId, automated }) {
 
   return (
     <>
-      <Button onClick={() => setVisible(true)} loading={visible}>
-        LAUNCH
-      </Button>
       {visible ? (
         <Suspense fallback={null}>
           <LaunchProvider pipelineId={pipelineId} automated={automated}>
