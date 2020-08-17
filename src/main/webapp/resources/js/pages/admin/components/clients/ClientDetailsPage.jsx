@@ -11,6 +11,8 @@ import { BasicList } from "../../../../components/lists";
 import { WarningAlert } from "../../../../components/alerts";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { ClientTokens } from "./ClientTokens";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -37,7 +39,6 @@ const reducer = (state, action) => {
 export default function ClientDetailsPage({ id }) {
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
-    tab: "members",
   });
 
   const navigate = useNavigate();
@@ -54,9 +55,9 @@ export default function ClientDetailsPage({ id }) {
    * @param {*} value to update to.
    */
   const updateField = (field, value) => {
-    // updateClientDetails({ id, field, value }).then(() =>
-    //   dispatch({ type: "update", payload: { [field]: value } })
-    // );
+    updateClientDetails({ id, field, value }).then(() =>
+      dispatch({ type: "update", payload: { [field]: value } })
+    );
   };
 
   /**
@@ -64,7 +65,7 @@ export default function ClientDetailsPage({ id }) {
    */
   function deleteClient() {
     removeClient(id).then((message) => {
-      navigate(`admin/clients`, { replace: true });
+      navigate(setBaseUrl(`admin/clients`), { replace: true });
       notification.success({ message });
     }).catch((message) => {
       notification.error({ message })
@@ -74,10 +75,10 @@ export default function ClientDetailsPage({ id }) {
   const fields = state.loading
     ? []
     : [
-      // {
-      //   title: i18n("iridaThing.id"),
-      //   desc: state.getId()
-      // },
+      {
+        title: i18n("iridaThing.id"),
+        desc: id
+      },
       {
         title: i18n("client.clientid"),
         desc:
@@ -91,19 +92,51 @@ export default function ClientDetailsPage({ id }) {
         title: i18n("client.details.clientSecret"),
         desc: state.clientSecret
       },
+      {
+        title: i18n("client.grant-types"),
+        desc: state.authorizedGrantTypes
+      },
+      {
+        title: i18n("client.registeredRedirectUri"),
+        desc:
+          <Paragraph
+            editable={{ onChange: (value) => updateField("registeredRedirectUri", value) }}
+          >
+            {state.registeredRedirectUri}
+          </Paragraph>,
+      },
+      {
+        title: i18n("client.scopes"),
+        desc: state.scope
+      },
+      {
+        title: i18n("client.autoScopes"),
+        desc: state.autoApprovableScopes
+      },
+      {
+        title: i18n("client.details.tokenValidity"),
+        desc: state.accessTokenValiditySeconds
+      },
+      {
+        title: i18n("client.details.refreshValidity"),
+        desc: state.refreshTokenValiditySeconds
+      },
+      {
+        title: i18n("iridaThing.timestamp"),
+        desc: formatInternationalizedDateTime(state.createdDate)
+      },
     ];
 
   const RemoveClient = () => (
     <div>
-      <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
+      <WarningAlert message={i18n("client.remove.warning")} />
       <div style={{ marginTop: SPACE_SM }}>
         <Popconfirm
           onConfirm={deleteClient}
-          title={i18n("UserGroupDetailsPage.delete-confirm")}
-          okButtonProps={{ className: "t-delete-confirm-btn" }}
+          title={i18n("client.remove.confirm")}
         >
-          <Button className="t-delete-group-btn" type="primary" danger>
-            {i18n("UserGroupDetailsPage.delete-button")}
+          <Button type="primary" danger>
+            {i18n("client.remove.button")}
           </Button>
         </Popconfirm>
       </div>
@@ -112,7 +145,7 @@ export default function ClientDetailsPage({ id }) {
 
   return (
     <PageWrapper
-      title={"Clients"}
+      title={i18n("AdminPanel.clients")}
       onBack={() => navigate(setBaseUrl("/admin/clients"), { replace: true })}
     >
       <Tabs
@@ -120,18 +153,19 @@ export default function ClientDetailsPage({ id }) {
         tabPosition="left"
         tabBarStyle={{ width: 200 }}
       >
-        <TabPane tab={i18n("Details")} key="details">
-          <Title level={4}>{i18n("Client Details")}</Title>
+        <TabPane tab={i18n("UserGroupDetailsPage.tab.details")} key="details">
+          <Title level={4}>{i18n("client.details.title")}</Title>
           <BasicList dataSource={fields} />
         </TabPane>
-        {/*<TabPane tab={i18n("UserGroupDetailsPage.tab.projects")} key="project">*/}
-        {/*  <Title level={4}>*/}
-        {/*    {i18n("UserGroupsDetailsPage.title.projects")}*/}
-        {/*  </Title>*/}
-        {/*</TabPane>*/}
-        <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
+        <TabPane tab={i18n("client.details.token.title")} key="tokens">
           <Title level={4}>
-            {i18n("UserGroupsDetailsPage.title.delete")}
+            {i18n("client.details.token.title")}
+          </Title>
+          <ClientTokens id={id} />
+        </TabPane>
+        <TabPane tab={i18n("client.remove.button")} key="remove">
+          <Title level={4}>
+            {i18n("client.remove.title")}
           </Title>
           <RemoveClient />
         </TabPane>

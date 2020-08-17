@@ -67,3 +67,17 @@ export function getClientDetails(id) {
 export function removeClient(id) {
   return axios.post(`${BASE_URL}/remove`, { id }).then(({ data }) => data);
 }
+
+/**
+ * Update the Client fields
+ * @param {number} id for the client
+ * @param {string} field to update
+ * @param {string} value to set
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function updateClientDetails({ id, field, value }) {
+  return axios.put(`${BASE_URL}/${id}/update `, {
+    field,
+    value,
+  });
+}

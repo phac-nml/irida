@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.base.Joiner;
@@ -106,24 +108,22 @@ public class ClientsController extends BaseController {
 	 * @return The view name of the client details page
 	 */
 	@RequestMapping("/{clientId}")
-	public String read(@PathVariable Long clientId, Model model) {
+	public ResponseEntity<IridaClientDetails> getClientDetails(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
+		// Need to find a way to send this info to front end on top of info in client
+		// Need to format scopes and autoApproveScopes in different fashion for client
 		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
 		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ", ");
 		String autoApproveScopes = StringUtils.collectionToDelimitedString(client.getAutoApprovableScopes(), ", ");
-		model.addAttribute("client", client);
 
-		model.addAttribute("grants", grants);
-		model.addAttribute("scopes", scopes);
-		model.addAttribute("autoApproveScopes", autoApproveScopes);
 		int allTokensForClient = clientDetailsService.countTokensForClient(client);
 		int activeTokensForClient = clientDetailsService.countActiveTokensForClient(client);
 
 		model.addAttribute("activeTokens",activeTokensForClient);
 		model.addAttribute("expiredTokens",allTokensForClient - activeTokensForClient);
 
-		return CLIENT_DETAILS_PAGE;
+		return ResponseEntity.ok(client);
 	}
 
 	/**
@@ -162,7 +162,6 @@ public class ClientsController extends BaseController {
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.GET)
 	public String getEditPage(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
-
 
 		model.addAttribute("client", client);
 
@@ -321,7 +320,7 @@ public class ClientsController extends BaseController {
 
 		model.addAttribute("refresh_validity", IridaClientDetails.DEFAULT_REFRESH_TOKEN_VALIDITY);
 
-		return "admin/index";
+		return ADD_CLIENT_PAGE;
 	}
 
 	/**
@@ -422,6 +421,26 @@ public class ClientsController extends BaseController {
 		clientDetailsService.delete(id);
 
 		return "redirect:/admin/clients";
+	}
+
+	/**
+	 * Update the details within client
+	 *
+	 * @param clientId identifier for the client
+	 * @param update  {@link FieldUpdate} containing name of field to update and the new value
+	 */
+	@RequestMapping(value = "/{clientId}/update", method = RequestMethod.PUT)
+	public void updateGroupDetails(@PathVariable Long clientId, @RequestBody FieldUpdate update) {
+		IridaClientDetails client = clientDetailsService.read(clientId);
+		switch (update.getField()) {
+		case "clientId":
+			client.setClientId(update.getValue());
+			break;
+		case "registeredRedirectUri":
+			client.setRegisteredRedirectUri(update.getValue());
+			break;
+		}
+		clientDetailsService.update(client);
 	}
 
 	/**

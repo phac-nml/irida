@@ -25,7 +25,7 @@ export function getUserGroupDetails(id) {
 
 /**
  * Update the User Group fields
- * @param {number} id for the user groupd
+ * @param {number} id for the user group
  * @param {string} field to update
  * @param {string} value to set
  * @returns {Promise<AxiosResponse<any>>}

@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form, Input, Modal, Select, Checkbox } from "antd";
-import { IconEdit } from "../../../../components/icons/Icons";
-import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { useNavigate } from "@reach/router";
@@ -43,7 +41,7 @@ export function AddClient() {
         .then((data) => {
           form.resetFields();
           setVisible(false);
-          navigate(`admin/groups/${data.id}`, { replace: true });
+          navigate(setBaseUrl(`admin/groups/${data.id}`), { replace: true });
         })
         .catch((error) => {
           setError(error.response.data.name);
@@ -52,7 +50,7 @@ export function AddClient() {
   };
 
   /**
-   * Action to take when cancelling creating a group
+   * Action to take when cancelling creating a client
    */
   const onCancel = () => {
     form.resetFields();
@@ -93,7 +91,7 @@ export function AddClient() {
             rules={[
               {
                 required: true,
-                message: i18n("CreateNewUserGroupButton.name-warning"),
+                message: i18n("clients.add.warning"),
               },
             ]}
           >
@@ -124,8 +122,7 @@ export function AddClient() {
           >
             <Select
               name="authorizedGrantTypes"
-              options={window.PAGE.available_token_validity}
-              selected={window.PAGE.validity}
+              options={window.PAGE.available_grants}
             />
             <Form.Item
               name="refresh"
@@ -157,7 +154,7 @@ export function AddClient() {
             rules={[
               {
                 required: true,
-                message: i18n("CreateNewUserGroupButton.name-warning"),
+                message: i18n("clients.add.warning"),
               },
             ]}
           >
