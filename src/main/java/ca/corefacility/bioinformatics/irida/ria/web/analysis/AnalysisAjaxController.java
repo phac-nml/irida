@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.checkerframework.checker.nullness.Opt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1205,16 +1206,31 @@ public class AnalysisAjaxController {
 	 * @return an optional of an {@link AnalysisOutputFile} if the file was found
 	 */
 	private Optional<AnalysisOutputFile> getTreeFileForSubmission(AnalysisSubmission submission) {
-		//get the analysis output files
-		Set<AnalysisOutputFile> analysisOutputFiles = submission.getAnalysis()
-				.getAnalysisOutputFiles();
+		//some submissions may not name their tree with a ".newick" extension.  We need to check for a `tree` file first
+		final String treeFileKey = "tree";
 
-		//loop through the files looking for with a newick file.  Get the first one
-		Optional<AnalysisOutputFile> treeOptional = analysisOutputFiles.stream()
-				.filter(f -> FileUtilities.getFileExt(f.getFile()
-						.toString())
-						.equals(TREE_EXT))
-				.findFirst();
+		//get the analysis output files
+		Analysis analysis = submission.getAnalysis();
+		Set<AnalysisOutputFile> analysisOutputFiles = analysis.getAnalysisOutputFiles();
+
+		Optional<AnalysisOutputFile> treeOptional = Optional.empty();
+
+		//first check for a file with a key of "tree"
+		if (analysis.getAnalysisOutputFileNames()
+				.contains(treeFileKey)) {
+			treeOptional = Optional.of(analysis.getAnalysisOutputFile(treeFileKey));
+		}
+
+		//if no "tree", check for files with ".newick" extension
+		if (treeOptional.isEmpty()) {
+			//loop through the files looking for with a newick file.  Get the first one
+			treeOptional = analysisOutputFiles.stream()
+					.filter(f -> FileUtilities.getFileExt(f.getFile()
+							.toString())
+							.equals(TREE_EXT))
+					.findFirst();
+
+		}
 
 		return treeOptional;
 	}
