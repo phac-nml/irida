@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Divider, Form, List, Select, Typography } from "antd";
-import { SPACE_SM } from "../../styles/spacing";
+import { Divider, List, Select, Typography } from "antd";
+import { useLaunchState } from "./launch-context";
 
 const { Option } = Select;
 const { Paragraph } = Typography;
 
-export function PipelineParameters({ parameters }) {
+export function PipelineParameters() {
   const [selected, setSelected] = useState(0);
   const [currentParameters, setCurrentParameters] = useState();
+  const { parameters } = useLaunchState();
 
   useEffect(() => {
     if (parameters.length) {
@@ -24,19 +25,17 @@ export function PipelineParameters({ parameters }) {
 
   return (
     <>
-      <Form layout={"inline"} style={{ display: "flex" }}>
-        <Select
-          style={{ flexGrow: 1, marginRight: SPACE_SM }}
-          defaultValue={selected}
-          onChange={setSelected}
-        >
-          {parameters.map((option) => (
-            <Option key={option.id} value={option.id}>
-              {option.label}
-            </Option>
-          ))}
-        </Select>
-      </Form>
+      <Select
+        style={{ flexGrow: 1 }}
+        defaultValue={selected}
+        onChange={setSelected}
+      >
+        {parameters.map((option) => (
+          <Option key={option.id} value={option.id}>
+            {option.label}
+          </Option>
+        ))}
+      </Select>
       <Divider />
       <List
         itemLayout="horizontal"

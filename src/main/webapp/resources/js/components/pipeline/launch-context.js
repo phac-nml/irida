@@ -13,6 +13,7 @@ function launchReducer(state, action) {
       return {
         ...state,
         ...action.value,
+        PIPELINE_NAME: action.value.name,
         fetching: false,
       };
     default:

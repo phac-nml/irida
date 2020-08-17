@@ -15,7 +15,7 @@ export function PipelineDetails({}) {
   const selectNameText = () => nameRef.current.select();
 
   return (
-    <Form layout="vertical">
+    <>
       <Form.Item label={"NAME"}>
         <Input
           type={"text"}
@@ -43,6 +43,6 @@ export function PipelineDetails({}) {
           }
         />
       </Form.Item>
-    </Form>
+    </>
   );
 }
