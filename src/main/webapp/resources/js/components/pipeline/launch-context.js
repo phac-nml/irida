@@ -6,15 +6,45 @@ const LaunchStateContext = React.createContext();
 const LaunchDispatchContext = React.createContext();
 
 function launchReducer(state, action) {
+  const modifyParameter = () => {
+    const modified = [...state.parameters];
+    modified[action.index].value = action.value;
+    return modified;
+  };
+
+  const getParameters = () => {
+    const parameters = state.original.parameters[action.index];
+    if (parameters) {
+      return [...parameters.parameters];
+    }
+    return [];
+  };
+
   switch (action.type) {
-    case CONSTANTS.DISPATCH_DETAILS_UPDATE:
-      return { ...state, [action.field]: action.value };
     case CONSTANTS.DISPATCH_PIPELINE_LOADED:
       return {
         ...state,
-        ...action.value,
-        PIPELINE_NAME: action.value.name,
+        original: { ...action.value },
+        name: action.value.name,
+        parameters: [...action.value.parameters[0].parameters],
+        requiresReference: action.value.requiresReference,
+        files: action.value.files,
+        modified: false,
         fetching: false,
+      };
+    case CONSTANTS.DISPATCH_DETAILS_UPDATE:
+      return { ...state, [action.field]: action.value };
+    case CONSTANTS.DISPATCH_PARAMETER_CHANGE:
+      return {
+        ...state,
+        modified: false,
+        parameters: getParameters(),
+      };
+    case CONSTANTS.DISPATCH_PARAMETERS_MODIFIED:
+      return {
+        ...state,
+        modified: true,
+        parameters: modifyParameter(),
       };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -23,8 +53,9 @@ function launchReducer(state, action) {
 
 function LaunchProvider({ children, pipelineId, automated = false }) {
   const [state, dispatch] = useReducer(launchReducer, {
+    original: {},
+    complete: false,
     fetching: true,
-    step: CONSTANTS.STEP_DETAILS,
     name: "",
     description: "",
     parameters: [],

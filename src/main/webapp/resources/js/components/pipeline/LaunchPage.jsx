@@ -4,11 +4,12 @@ import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
 import { Button, Form, PageHeader, Space, Steps } from "antd";
-import { IconRocket } from "../icons/Icons";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import styled from "styled-components";
 import { grey3 } from "../../styles/colors";
+import { LaunchComplete } from "./LaunchComplete";
+import { PipelineLaunchButton } from "./PipelineLaunchButton";
 
 const StepsContent = styled("div")`
   min-height: 500px;
@@ -18,12 +19,16 @@ const StepsContent = styled("div")`
 `;
 
 function LaunchTabs() {
-  const { PIPELINE_NAME, requiresReference } = useLaunchState();
+  const { original, complete, requiresReference } = useLaunchState();
   const [current, setCurrent] = useState(0);
 
   const steps = [
     {
-      title: "Pipeline Details",
+      title: (
+        <Button type="text" onClick={() => setCurrent(0)}>
+          Pipeline Details
+        </Button>
+      ),
       content: <PipelineDetails />,
     },
     requiresReference
@@ -42,10 +47,12 @@ function LaunchTabs() {
 
   const prev = () => setCurrent(current - 1);
 
-  return (
+  return complete ? (
+    <LaunchComplete />
+  ) : (
     <>
       <PageHeader
-        title={PIPELINE_NAME}
+        title={original.name}
         onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
       />
       <Space direction="vertical" style={{ width: `100%` }} size="large">
@@ -65,11 +72,7 @@ function LaunchTabs() {
           }}
         >
           {current < steps.length - 1 && <Button onClick={next}>Next</Button>}
-          {current === steps.length - 1 && (
-            <Button type="primary" danger icon={<IconRocket />}>
-              LAUNCH PIPELINE
-            </Button>
-          )}
+          {current === steps.length - 1 && <PipelineLaunchButton />}
           {current > 0 && <Button onClick={prev}>Previous</Button>}
         </div>
       </Space>

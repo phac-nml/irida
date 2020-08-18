@@ -9,6 +9,7 @@ import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { LaunchPage } from "../../../components/pipeline/LaunchPage";
+import { LaunchComplete } from "../../../components/pipeline/LaunchComplete";
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -167,6 +168,9 @@ export default class CartTools extends Component {
                   />
                   <LaunchPage
                     path={setBaseUrl(`/cart/pipelines/:pipelineId`)}
+                  />
+                  <LaunchComplete
+                    path={setBaseUrl(`/cart/pipelines/complete`)}
                   />
                 </Router>
               </ToolsInner>

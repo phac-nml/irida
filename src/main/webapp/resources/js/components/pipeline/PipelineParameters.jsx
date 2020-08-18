@@ -1,46 +1,77 @@
-import React, { useEffect, useState } from "react";
-import { Divider, List, Select, Typography } from "antd";
-import { useLaunchState } from "./launch-context";
+import React, { useState } from "react";
+import {
+  Button,
+  Divider,
+  Dropdown,
+  List,
+  Menu,
+  Select,
+  Typography,
+} from "antd";
+import { useLaunchDispatch, useLaunchState } from "./launch-context";
+import {
+  DISPATCH_PARAMETER_CHANGE,
+  DISPATCH_PARAMETERS_MODIFIED,
+} from "./lauch-constants";
+import { SPACE_SM } from "../../styles/spacing";
+import { IconDropDown } from "../icons/Icons";
 
 const { Option } = Select;
 const { Paragraph } = Typography;
 
 export function PipelineParameters() {
+  const { parameters, original, modified } = useLaunchState();
+  const dispatch = useLaunchDispatch();
   const [selected, setSelected] = useState(0);
-  const [currentParameters, setCurrentParameters] = useState();
-  const { parameters } = useLaunchState();
 
-  useEffect(() => {
-    if (parameters.length) {
-      setCurrentParameters(parameters[selected].parameters);
-    }
-  }, [parameters, selected]);
-
-  const updateParameter = (name, value) => {
-    const p = [...parameters[selected].parameters];
-    const index = p.findIndex((i) => i.name === name);
-    p[index] = { ...p[index], value: value };
-    setCurrentParameters(p);
+  const getParameters = (index) => {
+    dispatch({ type: DISPATCH_PARAMETER_CHANGE, index });
+    setSelected(index);
   };
+
+  const updateParameter = (value, index) =>
+    dispatch({
+      type: DISPATCH_PARAMETERS_MODIFIED,
+      value,
+      index,
+    });
 
   return (
     <>
-      <Select
-        style={{ flexGrow: 1 }}
-        defaultValue={selected}
-        onChange={setSelected}
-      >
-        {parameters.map((option) => (
-          <Option key={option.id} value={option.id}>
-            {option.label}
-          </Option>
-        ))}
-      </Select>
+      <div style={{ display: "flex" }}>
+        <Select
+          style={{ flexGrow: 1 }}
+          defaultValue={selected}
+          onChange={getParameters}
+        >
+          {original.parameters.map((option) => (
+            <Option key={option.id} value={option.id}>
+              {option.label}
+            </Option>
+          ))}
+        </Select>
+        {selected === 0 ? (
+          <Button style={{ marginLeft: SPACE_SM }}>Duplicate</Button>
+        ) : modified ? (
+          <Dropdown.Button
+            overlay={
+              <Menu>
+                <Menu.Item key="save-as">SAVE AS....</Menu.Item>
+                <Menu.Item key="revert">REVERT</Menu.Item>
+              </Menu>
+            }
+            icon={<IconDropDown />}
+            style={{ marginLeft: SPACE_SM }}
+          >
+            Save
+          </Dropdown.Button>
+        ) : null}
+      </div>
       <Divider />
       <List
         itemLayout="horizontal"
-        dataSource={currentParameters}
-        renderItem={(parameter) => (
+        dataSource={parameters}
+        renderItem={(parameter, index) => (
           <List.Item>
             <List.Item.Meta
               title={parameter.label}
@@ -51,8 +82,7 @@ export function PipelineParameters() {
                     selected === 0
                       ? null
                       : {
-                          onChange: (value) =>
-                            updateParameter(parameter.name, value),
+                          onChange: (value) => updateParameter(value, index),
                         }
                   }
                 >
