@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
@@ -55,6 +56,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
+			logger.trace("Getting file from azure [" + file.toString() + "]");
 			Path tempDirectory = Files.createTempDirectory(null);
 			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 			InputStream initialStream = blobClient.openInputStream();
@@ -62,9 +64,10 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			initialStream.close();
 			fileToProcess = tempFile.toFile();
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't find file on azure [" + e + "]");
+			logger.error("Couldn't find file on azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
 		} catch (IOException e) {
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage());
 		}
 
 		return fileToProcess;
@@ -98,7 +101,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
+			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
 		}
 		return fileSize;
 	}
@@ -115,7 +119,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			blobClient.uploadFromFile(source.toString(), false);
 			logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
 		} catch (BlobStorageException e) {
-			logger.trace("Unable to upload file to azure [" + e + "]");
+			logger.error("Unable to upload file to azure [" + e + "]");
+			throw new StorageException("Unable to upload file to azure", e);
 		}
 		cleanupLocalFiles(source);
 	}
@@ -141,7 +146,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 					.split("/");
 			fileName = blobNameTokens[blobNameTokens.length - 1];
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't find file on azure [" + e + "]");
+			logger.error("Couldn't find file on azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
 		}
 
 		return fileName;
@@ -166,12 +172,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public InputStream getFileInputStream(Path file) {
 		BlobClient blobClient;
 		try {
+			logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
 			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			return blobClient.openInputStream();
 		} catch (BlobStorageException e) {
-			logger.trace("Couldn't read file from azure [" + e + "]");
+			logger.error("Couldn't read file from azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
 		}
-		return null;
 	}
 
 	/**
