@@ -65,4 +65,10 @@ public final class IridaFiles {
 		return iridaFileStorageUtility.getFileExtension(files);
 	}
 
+	/**
+	 * Cleans up temporary downloaded files
+	 * @param file The path to the file
+	 */
+	public static void cleanupLocalFiles(Path file) { iridaFileStorageUtility.cleanupLocalFiles(file); }
+
 }

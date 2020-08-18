@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -54,11 +55,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
 		try {
+			Path tempDirectory = Files.createTempDirectory(null);
+			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 			InputStream initialStream = blobClient.openInputStream();
-			File targetFile = new File(file.toAbsolutePath().toString());
-			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, targetFile);
+			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
 			initialStream.close();
-			fileToProcess = targetFile;
+			fileToProcess = tempFile.toFile();
 		} catch (BlobStorageException e) {
 			logger.trace("Couldn't find file on azure [" + e + "]");
 		} catch (IOException e) {
@@ -66,6 +68,23 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		}
 
 		return fileToProcess;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void cleanupLocalFiles(Path path) {
+		logger.trace("Cleaning up temporary file downloaded from azure [" + path.toString() + "]");
+		try {
+			if(Files.isRegularFile(path)) {
+				Files.delete(path);
+			} else {
+				org.apache.commons.io.FileUtils.deleteDirectory(path.toFile());
+			}
+		} catch (IOException e) {
+			logger.error("Unable to delete local file [" + path.toString() + "]");
+		}
 	}
 
 	/**
@@ -98,6 +117,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (BlobStorageException e) {
 			logger.trace("Unable to upload file to azure [" + e + "]");
 		}
+		cleanupLocalFiles(source);
 	}
 
 	/**

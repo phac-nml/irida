@@ -27,6 +27,13 @@ public interface IridaFileStorageUtility {
 	public File getTemporaryFile(Path file);
 
 	/**
+	 * Delete temporary file.
+	 *
+	 * @param file The {@link Path} to the file
+	 */
+	public void cleanupLocalFiles(Path file);
+
+	/**
 	 * Get file size
 	 *
 	 * @param file The {@link Path} to the file

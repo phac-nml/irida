@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -96,8 +98,9 @@ public class FastqcFileProcessor implements FileProcessor {
 				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", new Object[] {FastQCApplication.VERSION},
 						LocaleContextHolder.getLocale()));
 		try {
+			File fastQCSequenceFileToProcess = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					iridaFileStorageUtility.getTemporaryFile(fileToProcess));
+					fastQCSequenceFileToProcess);
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
@@ -130,6 +133,9 @@ public class FastqcFileProcessor implements FileProcessor {
 			sequenceFile.setFastQCAnalysis(analysis.build());
 
 			sequenceFileRepository.saveMetadata(sequenceFile);
+
+			IridaFiles.cleanupLocalFiles(fastQCSequenceFileToProcess.toPath());
+			IridaFiles.cleanupLocalFiles(outputDirectory);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file: " + e.getMessage());
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);

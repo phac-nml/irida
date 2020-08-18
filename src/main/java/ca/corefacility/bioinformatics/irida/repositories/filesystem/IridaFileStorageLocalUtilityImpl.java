@@ -48,6 +48,14 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void cleanupLocalFiles(Path path) {
+		logger.trace("File resides on local filesystem. Not cleaning up file [" + path.toString() + "]");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
