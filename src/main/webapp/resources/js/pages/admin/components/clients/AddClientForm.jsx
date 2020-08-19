@@ -157,11 +157,6 @@ export default function AddClientForm({ visible }) {
                 />
               ) : null}
             </Radio>
-            {/*{grants.map((grant) => (*/}
-            {/*  <Radio value={grant.value} key={grant.value}>*/}
-            {/*    {grant.label}*/}
-            {/*  </Radio>*/}
-            {/*))}*/}
           </Radio.Group>
         </Form.Item>
         {/*Redirect URL*/}
