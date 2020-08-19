@@ -13,6 +13,25 @@ This guide shows how to use the administrative features of the IRIDA web interfa
 * This comment becomes the table of contents
 {:toc}
 
+Accessing the Administrative Panel
+==================================
+
+The administrative features of IRIDA are accessed within the administrative panel.
+
+To navigate to the administrative panel, click the button on the top right of the navbar.
+The button is only present if you have the **Administrator** system role.
+
+![Admin panel navbar button.](images/admin-panel-navbar-button.png)
+
+Administrative Panel Overview
+=============================
+
+The administrative panel contains a side menu with a menu option for each administrative feature.
+
+The panel has a top navbar with a "Return" button to return to the main application plus a "Profile" dropdown menu for viewing the current user's account and logging out.
+
+![Admin panel.](images/admin-panel.png)
+
 Managing User Accounts
 ======================
 
@@ -22,6 +41,14 @@ This section of the guide describes how to create, modify, and remove local user
 
 Creating a New User Account
 ---------------------------
+
+First navigate to the users page via the admin panel side menu:
+
+![Users side menu link.](images/users-side-menu.png)
+
+Then press the "Add User" button:
+
+![Add user button.](images/add-user-button.png)
 
 {% include tutorials/common/creating-a-user-account.md %}
 
@@ -53,7 +80,7 @@ When you click the button, you will be asked to confirm if you would like to res
 
 ![Reset password confirmation dialog.](images/reset-password-confirm.png)
 
-You should see a success notification in the top, right hand side of your browser window when you confirm:
+You should see a success notification at the top of your browser window when you confirm:
 
 ![Reset password success notification.](images/reset-password-success.png)
 
@@ -73,6 +100,32 @@ To disable a user account, uncheck the "Enabled" field, and click "Update User":
 ![Uncheck the "Enabled" field.](images/uncheck-enabled.png)
 
 **Note**: A user account that is not "Enabled" is **not** deleted from the system, but that user can no longer log in to IRIDA.
+
+Managing User Groups
+====================
+
+User accounts can be organized into a collection called a user group. User groups can be used to assign [project permissions](../project/#project-members) to collections of user accounts. This section of the user guide descibes how you can view projects, edit project metadata (including uploading reference files), search for projects by name, and create new projects.
+
+Viewing existing user groups
+----------------------------
+
+First click on "User Groups List" via the admin panel side menu:
+
+![Groups dashboard location.](images/user-groups-side-menu.png)
+
+The user groups list shows all user groups in IRIDA:
+
+![List of user groups.](../../images/tutorials/common/users/user-groups-list.png)
+
+The projects list provides a high-level overview of project details, including:
+
+* The name of the group,
+* The group description,
+* The date that the group was created,
+* The date that the group was last modified, and
+* (if you are permitted) group deletion buttons.
+
+{% include tutorials/common/managing-user-groups.md %}
 
 Managing System Clients
 =======================
@@ -197,9 +250,9 @@ Before a user can use a remote instance of IRIDA as a data source for associated
 * An OAuth2 client secret.
 * The root address of the IRIDA REST API of the remote installation.
 
-After being given the client credentials, go to the "Remote IRIDA Connections" page.
+After being given the client credentials, access "Remote IRIDA Connections" via the admin panel side menu.
 
-![Remote API page](images/remote-api-dash.png)
+![Remote API page](images/remote-api-side-menu.png)
 
 The Remote Connections page will display all currently available Remote Connections, and their connection status with an IRIDA instance.
 
@@ -237,9 +290,9 @@ Note that a priority change will only effect analyses in the `Queued` state.  Th
 
 Viewing Sequencing Runs
 =======================
-Start by clicking on the "Admin" menu (in the top, right-hand corner of the screen) and selecting "Sequencing Runs":
+First navigate to the sequencing runs page via the admin panel side menu:
 
-![Sequencing runs menu.](images/admin-sequencing-runs-menu.png)
+![Sequencing runs menu.](images/sequencing-runs-side-menu.png)
 
 The "Sequencing Runs" page lists all of the sequencing runs uploaded to IRIDA:
 
@@ -247,7 +300,7 @@ The "Sequencing Runs" page lists all of the sequencing runs uploaded to IRIDA:
 
 You can view the specific details about a sequencing run by clicking on the ID of the sequencing run:
 
-![Select a specific run.](images/sequencing-runs-list-select.png)
+![Select a specific run.](images/sequencing-runs-details-link.png)
 
 The sequencing run details page shows information that was captured from the sequencing run file, and provides you a method to view a complete collection of files that were uploaded as part of a run:
 
@@ -298,38 +351,37 @@ Displaying IRIDA Platform Updates/Announcements
 ===============================================
 Announcements and updates can be displayed to users after they log in:
 
-![Announcements panel display](images/announcements-display-to-user.png)
+![Announcements home page display](images/announcements-home-page.png)
 
-Administrators can create new announcements or view existing ones by going into the Admin menu and clicking `Announcements`:
+Administrators can create new announcements or view existing ones by clicking on the "Announcements" side menu link:
 
-![Announcements administrator menu option](images/announcements-display-to-user.png)
+![Announcements side menu link](images/announcements-side-menu.png)
 
-This will bring you into the Announcement Control Centre:
+New Announcements can be created by clicking on the "Create New Announcement" button at the top-left. 
 
-![Announcements control centre page](images/announcements-control-centre.png)
+![Announcements create button](images/add-announcement-button.png)
 
-New Announcements can be created by clicking on the `Create New Announcement` button at the top-left. These announcements are rendered as markdown. Saving the new announcement will allow users to see this on the front page of IRIDA.
+These announcements are rendered as markdown. Saving the new announcement will allow users to see this on the front page of IRIDA.
 
-![Announcements create a new announcement page](images/announcements-create-new.png)
+![Announcements create modal](images/add-announcement.png)
 
-To edit an announcement, or to see who has read the announcement, you can click on the `View Details or Edit Announcement` button: 
+To edit an announcement, or to see who has read the announcement, you can click on the announcement's title: 
 
-![Announcements view details or edit announcement button](images/announcements-view-details-button.png)
+![Announcements details link](images/announcement-details-link.png)
 
 The announcement can be edited and saved, or deleted from this page. You can also view a list of users who have marked this particular announcement as read, as well as see when they did so:
 
-![Announcements edit or view details page](images/announcements-edit-details.png)
-
+![Announcements edit or view details page](images/announcement-details.png)
 
 Viewing All Project Exports
 ===========================
-Administrators have the ability to view the status of all exports to NCBI in the system.  Start by clicking on the "Admin" menu (in the top, right-hand corner of the screen) and selecting "NCBI Export Uploads":
+Administrators have the ability to view the status of all exports to NCBI in the system.  First navigate to the NCBI export uploads page via the admin panel side menu:
 
-![Sequencing runs menu.](images/admin-exports-menu.png)
+![NCBI exports menu.](images/ncbi-exports-side-menu.png)
 
 You will be displayed all the NCBI exports that have been created sorted by the date they were created.
 
-![Sequencing runs menu.](images/admin-exports-list.png)
+![NCBI exports list.](images/ncbi-exports-list.png)
 
 The exports will have one of the following states:
 

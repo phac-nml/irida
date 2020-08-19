@@ -25,6 +25,12 @@ Creating a User Account
 
 If the person you would like to share data with within IRIDA does not have a user account, you'll need to make an account for them.
 
+You may create a new user account in IRIDA if you have the **Manager** or **Administrator** system role.
+
+After logging in to IRIDA, click on the **Users** menu, and select "Create User":
+
+![Create user menu.]({{ site.baseurl }}/images/tutorials/common/users/create-user-menu.png)
+
 {% include tutorials/common/creating-a-user-account.md %}
 
 Creating a User Group

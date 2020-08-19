@@ -1,6 +1,6 @@
-Start from the user list, by clicking on the "Users" menu and selecting "List Users":
+Start from the users list, by clicking on the "Users List" side menu link:
 
-![List users menu.](images/list-users-menu.png)
+![Users side menu link.](images/users-side-menu.png)
 
 The users list shows all users currently registered in the system:
 

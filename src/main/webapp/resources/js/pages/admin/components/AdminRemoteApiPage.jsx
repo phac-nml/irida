@@ -27,7 +27,7 @@ export default function AdminRemoteApiPage() {
         />
       }
     >
-      <PagedTableProvider url="ajax/remote_api/list">
+      <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
         <RemoteApiTable />
       </PagedTableProvider>
     </PageWrapper>
