@@ -21,9 +21,18 @@ export async function revokeClientTokens(id) {
  * Add new client.
  * @return {Promise<AxiosResponse<T>>}
  */
-export async function addNewClient({ clientId, accessTokenValiditySeconds, authorizedGrantTypes,
-                                     refresh, refreshTokenValidity, registeredRedirectUri,
-                                     scope_read, scope_auto_read, scope_write, scope_auto_write }) {
+export async function addNewClient({
+  clientId,
+  accessTokenValiditySeconds,
+  authorizedGrantTypes,
+  refresh,
+  refreshTokenValidity,
+  registeredRedirectUri,
+  scope_read,
+  scope_auto_read,
+  scope_write,
+  scope_auto_write,
+}) {
   return axios
     .post(`${BASE_URL}/create`, {
       clientId,
@@ -35,17 +44,9 @@ export async function addNewClient({ clientId, accessTokenValiditySeconds, autho
       scope_read,
       scope_auto_read,
       scope_write,
-      scope_auto_write
+      scope_auto_write,
     })
     .then(({ data }) => data);
-}
-
-/**
- * Add new client.
- * @return {Promise<AxiosResponse<T>>}
- */
-export async function getAddClientPage() {
-  return axios.get(`${BASE_URL}/create`);
 }
 
 /**

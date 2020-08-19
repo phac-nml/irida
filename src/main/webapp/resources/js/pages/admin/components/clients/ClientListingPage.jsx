@@ -1,11 +1,9 @@
 import React from "react";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
-import {
-  PagedTableProvider
-} from "../../../../components/ant.design/PagedTable";
+import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
 import { ClientsTable } from "./ClientsTable";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { AddClient } from "./AddClient";
+import { AddClientButton } from "./AddClientButton";
 
 /**
  * Page for displaying the list of all clients.
@@ -16,9 +14,7 @@ export default function ClientListingPage() {
   return (
     <PageWrapper
       title={i18n("clients.title")}
-      headerExtras={
-        <AddClient />
-      }
+      headerExtras={<AddClientButton />}
     >
       <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
         <ClientsTable />
