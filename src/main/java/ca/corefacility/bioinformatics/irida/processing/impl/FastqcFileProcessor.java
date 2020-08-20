@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -97,48 +98,62 @@ public class FastqcFileProcessor implements FileProcessor {
 				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
 				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", new Object[] {FastQCApplication.VERSION},
 						LocaleContextHolder.getLocale()));
+
+		File fastQCSequenceFileToProcess = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
+		Path perBaseQualityScoresOutputDirectory = null;
+		Path perSequenceQualityScoresOutputDirectory = null;
+		Path duplicationLevelOutputDirectory = null;
+
 		try {
-			File fastQCSequenceFileToProcess = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
-			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
-					fastQCSequenceFileToProcess);
-			BasicStats basicStats = new BasicStats();
-			PerBaseQualityScores pbqs = new PerBaseQualityScores();
-			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
-			OverRepresentedSeqs overRep = new OverRepresentedSeqs();
-			QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
+			perBaseQualityScoresOutputDirectory = Files.createTempDirectory("analysis-output");
+			perSequenceQualityScoresOutputDirectory = Files.createTempDirectory("analysis-output");
+			duplicationLevelOutputDirectory = Files.createTempDirectory("analysis-output");
 
-			logger.debug("Launching FastQC analysis modules on all sequences.");
-			while (fastQCSequenceFile.hasNext()) {
-				Sequence sequence = fastQCSequenceFile.next();
-				for (QCModule module : moduleList) {
-					module.processSequence(sequence);
+			try {
+				uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
+						fastQCSequenceFileToProcess);
+				BasicStats basicStats = new BasicStats();
+				PerBaseQualityScores pbqs = new PerBaseQualityScores();
+				PerSequenceQualityScores psqs = new PerSequenceQualityScores();
+				OverRepresentedSeqs overRep = new OverRepresentedSeqs();
+				QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
+
+				logger.debug("Launching FastQC analysis modules on all sequences.");
+				while (fastQCSequenceFile.hasNext()) {
+					Sequence sequence = fastQCSequenceFile.next();
+					for (QCModule module : moduleList) {
+						module.processSequence(sequence);
+					}
 				}
+
+				logger.debug("Finished FastQC analysis modules.");
+
+				handleBasicStats(basicStats, analysis);
+				handlePerBaseQualityScores(pbqs, analysis, perBaseQualityScoresOutputDirectory);
+				handlePerSequenceQualityScores(psqs, analysis, perSequenceQualityScoresOutputDirectory);
+				handleDuplicationLevel(overRep.duplicationLevelModule(), analysis, duplicationLevelOutputDirectory);
+				Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
+
+				logger.trace("Saving FastQC analysis.");
+				analysis.overrepresentedSequences(overrepresentedSequences);
+
+				AnalysisFastQC analysisFastQC = analysis.build();
+
+				sequenceFile.setFastQCAnalysis(analysis.build());
+
+				sequenceFileRepository.saveMetadata(sequenceFile);
+			} catch (Exception e) {
+				logger.error("FastQC failed to process the sequence file: " + e.getMessage());
+				throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 			}
-
-			logger.debug("Finished FastQC analysis modules.");
-
-			Path outputDirectory = Files.createTempDirectory("analysis-output");
-
-			handleBasicStats(basicStats, analysis);
-			handlePerBaseQualityScores(pbqs, analysis, outputDirectory);
-			handlePerSequenceQualityScores(psqs, analysis, outputDirectory);
-			handleDuplicationLevel(overRep.duplicationLevelModule(), analysis, outputDirectory);
-			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
-
-			logger.trace("Saving FastQC analysis.");
-			analysis.overrepresentedSequences(overrepresentedSequences);
-
-			AnalysisFastQC analysisFastQC = analysis.build();
-
-			sequenceFile.setFastQCAnalysis(analysis.build());
-
-			sequenceFileRepository.saveMetadata(sequenceFile);
-
-			IridaFiles.cleanupLocalFiles(fastQCSequenceFileToProcess.toPath());
-			IridaFiles.cleanupLocalFiles(outputDirectory);
-		} catch (Exception e) {
-			logger.error("FastQC failed to process the sequence file: " + e.getMessage());
-			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
+		} catch (IOException e) {
+			logger.error("Unable to create temporary directory ", e);
+			throw new StorageException("Unable to create temporary directory", e);
+		} finally {
+				IridaFiles.cleanupLocalFiles(fastQCSequenceFileToProcess.toPath());
+				IridaFiles.cleanupLocalFiles(perBaseQualityScoresOutputDirectory);
+				IridaFiles.cleanupLocalFiles(perSequenceQualityScoresOutputDirectory);
+				IridaFiles.cleanupLocalFiles(duplicationLevelOutputDirectory);
 		}
 	}
 

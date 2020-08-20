@@ -79,11 +79,22 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void cleanupLocalFiles(Path path) {
 		logger.trace("Cleaning up temporary file downloaded from azure [" + path.toString() + "]");
+
+		Path origPath = path;
+		if(Files.isRegularFile(path)) {
+			origPath = path;
+			path = path.getParent();
+		}
+
 		try {
-			if(Files.isRegularFile(path)) {
-				Files.delete(path);
-			} else {
-				org.apache.commons.io.FileUtils.deleteDirectory(path.toFile());
+			if(Files.isDirectory(path)) {
+				// Only delete the directory if it is not the root directory
+				if(path.getRoot() != path) {
+					org.apache.commons.io.FileUtils.deleteDirectory(path.toFile());
+				} else {
+					// We are already in the root directory so just delete the file
+					Files.delete(origPath);
+				}
 			}
 		} catch (IOException e) {
 			logger.error("Unable to delete local file [" + path.toString() + "]");
@@ -122,6 +133,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to upload file to azure [" + e + "]");
 			throw new StorageException("Unable to upload file to azure", e);
 		}
+		// Removes the parent directory and file
 		cleanupLocalFiles(source);
 	}
 
