@@ -18,7 +18,7 @@ export default function AddClientForm({ visible }) {
   const [refreshTokenValidity, setRefreshTokenValidity] = useState(0);
   const [scopeWrite, setScopeWrite] = useState("no");
   const [scopeRead, setScopeRead] = useState("yes");
-  const [authorizedGrantTypes, setAuthorizedGrantTypes] = useState("password");
+  const [grantType, setGrantType] = useState("password");
 
   const [error, setError] = useState();
   useEffect(() => {
@@ -92,11 +92,11 @@ export default function AddClientForm({ visible }) {
         layout="vertical"
         form={form}
         initialValues={{
-          scope_write: scopeWrite,
-          scope_read: scopeRead,
-          accessTokenValiditySeconds: tokenValidity,
-          authorizedGrantTypes,
-          refreshTokenValidity: refreshTokenValidity,
+          scopeWrite,
+          scopeRead,
+          tokenValidity,
+          grantType,
+          refreshTokenValidity,
         }}
       >
         {/*CLIENT ID*/}
@@ -115,7 +115,7 @@ export default function AddClientForm({ visible }) {
         {/*TOKEN VALIDITY*/}
         <Form.Item
           label={i18n("AddClientForm.tokenValidity")}
-          name="accessTokenValiditySeconds"
+          name="tokenValidity"
         >
           <Select value={tokenValidity} onChange={setTokenValidity}>
             {tokenValidities.map((token) => (
@@ -126,13 +126,10 @@ export default function AddClientForm({ visible }) {
           </Select>
         </Form.Item>
         {/*GRANT TYPES*/}
-        <Form.Item
-          label={i18n("AddClientForm.grant.types")}
-          name="authorizedGrantTypes"
-        >
+        <Form.Item label={i18n("AddClientForm.grant.types")} name="grantType">
           <Radio.Group
-            value={authorizedGrantTypes}
-            onChange={(e) => setAuthorizedGrantTypes(e.target.value)}
+            value={grantType}
+            onChange={(e) => setGrantType(e.target.value)}
           >
             <Radio style={radioStyle} value="password">
               {i18n("AddClientForm.grant.password")}
@@ -140,7 +137,7 @@ export default function AddClientForm({ visible }) {
             <Radio style={radioStyle} value="authorization_code">
               {i18n("AddClientForm.grant.authorization_code")}
 
-              {authorizedGrantTypes === "authorization_code" ? (
+              {grantType === "authorization_code" ? (
                 <Form.Item
                   name="redirectURIK"
                   style={{
@@ -183,7 +180,7 @@ export default function AddClientForm({ visible }) {
         <Divider orientation="left" plain>
           SCOPES
         </Divider>
-        <Form.Item name="scope_read" label={i18n("client.scope.read")}>
+        <Form.Item name="scopeRead" label={i18n("client.scope.read")}>
           <Radio.Group
             value={scopeRead}
             onChange={(e) => setScopeRead(e.target.value)}
@@ -193,7 +190,7 @@ export default function AddClientForm({ visible }) {
             <Radio value={"auto"}>Yes and Auto Approve</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item name="scope_write" label={i18n("client.scope.write")}>
+        <Form.Item name="scopeWrite" label={i18n("client.scope.write")}>
           <Radio.Group
             value={scopeWrite}
             onChange={(e) => setScopeWrite(e.target.value)}
