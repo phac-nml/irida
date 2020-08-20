@@ -18,7 +18,7 @@
 <body>
 <div layout:fragment="page">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
-        <form name="update_announcement" class="ng-cloak"
+        <form name="update_announcement"
               th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}"
               method="post" role="form"
               novalidate="novalidate">

@@ -168,7 +168,14 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
           <UserGroupProjectsTable groupId={id} />
         </TabPane>
         {state.canManage ? (
-          <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
+          <TabPane
+            tab={
+              <span className="t-tab-delete">
+                {i18n("UserGroupDetailsPage.tab.delete")}
+              </span>
+            }
+            key="delete"
+          >
             <Title level={4}>
               {i18n("UserGroupsDetailsPage.title.delete")}
             </Title>

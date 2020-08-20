@@ -1,4 +1,4 @@
-const angular = require("angular");
+import angular from "angular";
 import "angular-ui-bootstrap";
 import { convertFileSize } from "../../utilities/file-utilities";
 
@@ -93,7 +93,7 @@ function AssemblyFileController($uibModal) {
   };
 }
 
-const filesModule = angular
+angular
   .module("irida.sample.files", ["ui.bootstrap"])
   .filter("humanReadableBytes", humanReadableBytes)
   .controller("FileController", ["$uibModal", FileController])
@@ -103,6 +103,4 @@ const filesModule = angular
     "id",
     "label",
     FileDeletionController,
-  ]).name;
-
-angular.module("irida").requires.push(filesModule);
+  ]);
