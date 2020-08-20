@@ -169,7 +169,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(id = "linkerCloseBtn")
 	private WebElement linkerCloseBtn;
-	
+
 	@FindBy(className = "locked-sample")
 	private List<WebElement> lockedSamples;
 
@@ -178,6 +178,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(css = ".paginate_button.next a")
 	private WebElement nextTablePageBtn;
+
+	@FindBy(className = "t-create-sample")
+	private WebElement createSampleButton;
+
+	@FindBy(className = "t-sample-name")
+	private WebElement sampleNameInput;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -468,7 +474,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void clickLinkerFileType(String type){
 		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
+		boolean isChecked = fileTypeCheckbox.isSelected();
 		fileTypeCheckbox.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 	}
 	
 	public List<String> getLockedSampleNames(){
@@ -499,7 +508,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 					.perform();
 		}
 	}
-	
+
+	public void openCreateNewSampleModal() {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.elementToBeClickable(createSampleButton));
+		createSampleButton.click();
+	}
+
+	public void enterSampleName(String sampleName) {
+		sampleNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		sampleNameInput.sendKeys(sampleName);
+		waitForTime(300);
+	}
+
+	public boolean isSampleNameErrorDisplayed() {
+		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain")).size() > 0;
+	}
+
 	/**
 	 * Exception which is thrown when attempting to give owner to a sample
 	 * during copy/move and button is not displayed. Used for verifying no give
