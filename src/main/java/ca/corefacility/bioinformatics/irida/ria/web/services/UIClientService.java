@@ -1,16 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientCreateModel;
@@ -19,8 +8,17 @@ import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-
 import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Component
 public class UIClientService {
@@ -90,5 +88,9 @@ public class UIClientService {
 				.collect(Collectors.toList());
 
 		return new ClientCreateModel(refreshTokenValidity, tokenValidity);
+	}
+
+	public void createNewClient(Locale locale) {
+
 	}
 }
