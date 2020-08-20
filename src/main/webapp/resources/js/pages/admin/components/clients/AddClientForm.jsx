@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { Divider, Form, Input, Modal, Radio, Select } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
+import { addNewClient } from "../../../../apis/clients/clients";
 
 export default function AddClientForm({ visible }) {
   /*
@@ -17,7 +18,7 @@ export default function AddClientForm({ visible }) {
   const [refreshTokenValidities, setRefreshTokenValidities] = useState([]);
   const [refreshTokenValidity, setRefreshTokenValidity] = useState(0);
   const [scopeWrite, setScopeWrite] = useState("no");
-  const [scopeRead, setScopeRead] = useState("yes");
+  const [scopeRead, setScopeRead] = useState("read");
   const [grantType, setGrantType] = useState("password");
 
   const [error, setError] = useState();
@@ -54,21 +55,20 @@ export default function AddClientForm({ visible }) {
    * Action to take when the form is submitted
    */
   const onOk = () => {
-    form.validateFields().then((values) => console.log(values));
-    // form
-    //   .validateFields()
-    //   .then((values) => {
-    //     addNewClient(values)
-    //       .then((data) => {
-    //         form.resetFields();
-    //         setVisible(false);
-    //         navigate(setBaseUrl(`admin/groups/${data.id}`), { replace: true });
-    //       })
-    //       .catch((error) => {
-    //         setError(error.response.data.name);
-    //       });
-    //   })
-    //   .catch((errors) => setError(true));
+    form
+      .validateFields()
+      .then((values) => {
+        addNewClient(values)
+          .then((data) => {
+            form.resetFields();
+            // setVisible(false);
+            // navigate(setBaseUrl(`admin/groups/${data.id}`), { replace: true });
+          })
+          .catch((error) => {
+            setError(error.response.data.name);
+          });
+      })
+      .catch((errors) => console.log(errors));
   };
 
   const radioStyle = {
@@ -92,11 +92,13 @@ export default function AddClientForm({ visible }) {
         layout="vertical"
         form={form}
         initialValues={{
+          clientId: "",
           scopeWrite,
           scopeRead,
           tokenValidity,
           grantType,
           refreshTokenValidity,
+          redirectURI: "",
         }}
       >
         {/*CLIENT ID*/}
@@ -139,7 +141,7 @@ export default function AddClientForm({ visible }) {
 
               {grantType === "authorization_code" ? (
                 <Form.Item
-                  name="redirectURIK"
+                  name="redirectURI"
                   style={{
                     display: "inline-block",
                     marginLeft: SPACE_MD,
@@ -186,7 +188,7 @@ export default function AddClientForm({ visible }) {
             onChange={(e) => setScopeRead(e.target.value)}
           >
             <Radio value={"no"}>No</Radio>
-            <Radio value={"yes"}>Yes</Radio>
+            <Radio value={"read"}>Yes</Radio>
             <Radio value={"auto"}>Yes and Auto Approve</Radio>
           </Radio.Group>
         </Form.Item>
@@ -196,7 +198,7 @@ export default function AddClientForm({ visible }) {
             onChange={(e) => setScopeWrite(e.target.value)}
           >
             <Radio value={"no"}>No</Radio>
-            <Radio value={"yes"}>Yes</Radio>
+            <Radio value={"write"}>Yes</Radio>
             <Radio value={"auto"}>Yes and Auto Approve</Radio>
           </Radio.Group>
         </Form.Item>

@@ -6,7 +6,7 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const BASE_URL = setBaseUrl("/clients");
+const BASE_URL = setBaseUrl("/ajax/clients");
 
 /**
  * Revoke all tokens for a given client by identifier.
@@ -23,28 +23,22 @@ export async function revokeClientTokens(id) {
  */
 export async function addNewClient({
   clientId,
-  accessTokenValiditySeconds,
-  authorizedGrantTypes,
-  refresh,
+  scopeWrite,
+  scopeRead,
+  tokenValidity,
+  grantType,
   refreshTokenValidity,
-  registeredRedirectUri,
-  scope_read,
-  scope_auto_read,
-  scope_write,
-  scope_auto_write,
+  redirectURI = "",
 }) {
   return axios
     .post(`${BASE_URL}/create`, {
       clientId,
-      accessTokenValiditySeconds,
-      authorizedGrantTypes,
-      refresh,
+      scopeWrite,
+      scopeRead,
+      tokenValidity,
+      grantType,
       refreshTokenValidity,
-      registeredRedirectUri,
-      scope_read,
-      scope_auto_read,
-      scope_write,
-      scope_auto_write,
+      redirectURI,
     })
     .then(({ data }) => data);
 }

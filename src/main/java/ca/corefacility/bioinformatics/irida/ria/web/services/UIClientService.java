@@ -1,14 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientCreateModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.generic.LabelAndValue;
-import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
-import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-import com.google.common.collect.Lists;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -16,9 +14,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientCreateModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateClientRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.generic.LabelAndValue;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientModel;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+
+import com.google.common.collect.Lists;
 
 @Component
 public class UIClientService {
@@ -74,6 +81,15 @@ public class UIClientService {
 		return new TableResponse<>(models, page.getTotalElements());
 	}
 
+	public ClientDetailsResponse getClientDetails(Long clientId) {
+		IridaClientDetails details = clientDetailsService.read(clientId);
+
+		int totalTokens = clientDetailsService.countTokensForClient(details);
+		int activeTokens = clientDetailsService.countActiveTokensForClient(details);
+
+		return new ClientDetailsResponse(details, totalTokens, activeTokens);
+	}
+
 	public ClientCreateModel getClientCreateDetails(Locale locale) {
 		List<LabelAndValue> refreshTokenValidity = AVAILABLE_REFRESH_TOKEN_VALIDITY.stream()
 				.map(time -> new LabelAndValue(
@@ -90,7 +106,56 @@ public class UIClientService {
 		return new ClientCreateModel(refreshTokenValidity, tokenValidity);
 	}
 
-	public void createNewClient(Locale locale) {
+	public long createNewClient(CreateClientRequest request, Locale locale) {
+		IridaClientDetails clientDetails = new IridaClientDetails();
+		clientDetails.setClientId(request.getClientId());
+		clientDetails.setClientSecret(RandomStringUtils.randomAlphanumeric(42));
 
+		// TOKEN VALIDITY
+		clientDetails.setAccessTokenValiditySeconds(request.getTokenValidity());
+
+		// GRANT TYPE
+		clientDetails.getAuthorizedGrantTypes()
+				.add(request.getGrantType());
+		if (request.getGrantType()
+				.equals("authorization_code")) {
+			request.setRedirectURI(request.getRedirectURI());
+		}
+
+		Set<String> scopes = new HashSet<>();
+		Set<String> autoScopes = new HashSet<>();
+
+		// SCOPE READ
+		final String scopeRead = request.getScopeRead();
+		final String scopeWrite = request.getScopeWrite();
+		if (scopeRead
+				.equals("read")) {
+			scopes.add("read");
+		} else if (scopeRead
+				.equals("auto")) {
+			scopes.add("read");
+			autoScopes.add("read");
+		}
+
+		// SCOPE WRITE
+		if (scopeWrite.equals("write")) {
+			scopes.add("write");
+		} else if (scopeWrite.equals("auto")) {
+			scopes.add("write");
+			autoScopes.add("write");
+		}
+		clientDetails.setScope(scopes);
+		clientDetails.setAutoApprovableScopes(autoScopes);
+
+		// REFRESH TOKEN
+		if (request.getRefreshTokenValidity() > 0) {
+			clientDetails.getAuthorizedGrantTypes()
+					.add("refresh_token");
+			clientDetails.setRefreshTokenValiditySeconds(request.getRefreshTokenValidity());
+		}
+
+		clientDetails = clientDetailsService.create(clientDetails);
+
+		return clientDetails.getId();
 	}
 }

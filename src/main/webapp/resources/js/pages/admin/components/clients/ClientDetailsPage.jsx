@@ -1,10 +1,10 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer } from "react";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { navigate, useNavigate } from "@reach/router";
+import { useNavigate } from "@reach/router";
 import {
   getClientDetails,
+  removeClient,
   updateClientDetails,
-  removeClient
 } from "../../../../apis/clients/clients";
 import { Button, notification, Popconfirm, Tabs, Typography } from "antd";
 import { BasicList } from "../../../../components/lists";
@@ -64,68 +64,77 @@ export default function ClientDetailsPage({ id }) {
    * Action to take when delete is confirmed
    */
   function deleteClient() {
-    removeClient(id).then((message) => {
-      navigate(setBaseUrl(`admin/clients`), { replace: true });
-      notification.success({ message });
-    }).catch((message) => {
-      notification.error({ message })
-    });
+    removeClient(id)
+      .then((message) => {
+        navigate(setBaseUrl(`admin/clients`), { replace: true });
+        notification.success({ message });
+      })
+      .catch((message) => {
+        notification.error({ message });
+      });
   }
 
   const fields = state.loading
     ? []
     : [
-      {
-        title: i18n("iridaThing.id"),
-        desc: id
-      },
-      {
-        title: i18n("client.clientid"),
-        desc:
-          <Paragraph
-            editable={{ onChange: (value) => updateField("clientId", value) }}
-          >
-            {state.clientId}
-          </Paragraph>,
-      },
-      {
-        title: i18n("client.details.clientSecret"),
-        desc: state.clientSecret
-      },
-      {
-        title: i18n("client.grant-types"),
-        desc: state.authorizedGrantTypes
-      },
-      {
-        title: i18n("client.registeredRedirectUri"),
-        desc:
-          <Paragraph
-            editable={{ onChange: (value) => updateField("registeredRedirectUri", value) }}
-          >
-            {state.registeredRedirectUri}
-          </Paragraph>,
-      },
-      {
-        title: i18n("client.scopes"),
-        desc: state.scope
-      },
-      {
-        title: i18n("client.autoScopes"),
-        desc: state.autoApprovableScopes
-      },
-      {
-        title: i18n("client.details.tokenValidity"),
-        desc: state.accessTokenValiditySeconds
-      },
-      {
-        title: i18n("client.details.refreshValidity"),
-        desc: state.refreshTokenValiditySeconds
-      },
-      {
-        title: i18n("iridaThing.timestamp"),
-        desc: formatInternationalizedDateTime(state.createdDate)
-      },
-    ];
+        {
+          title: i18n("iridaThing.id"),
+          desc: id,
+        },
+        {
+          title: i18n("client.clientid"),
+          desc: (
+            <Paragraph
+              editable={{ onChange: (value) => updateField("clientId", value) }}
+            >
+              {state.clientDetails.clientId}
+            </Paragraph>
+          ),
+        },
+        {
+          title: i18n("client.details.clientSecret"),
+          desc: state.clientDetails.clientSecret,
+        },
+        {
+          title: i18n("client.grant-types"),
+          desc: state.clientDetails.authorizedGrantTypes.join(", "),
+        },
+        {
+          title: i18n("client.registeredRedirectUri"),
+          desc: (
+            <Paragraph
+              editable={{
+                onChange: (value) =>
+                  updateField("registeredRedirectUri", value),
+              }}
+            >
+              {state.clientDetails.registeredRedirectUri}
+            </Paragraph>
+          ),
+        },
+        {
+          title: i18n("client.scopes"),
+          desc: state.clientDetails.scope.join(", "),
+        },
+        {
+          title: i18n("client.autoScopes"),
+          desc: state.clientDetails.autoApprovableScopes,
+        },
+        {
+          title: i18n("client.details.tokenValidity"),
+          desc: state.clientDetails.accessTokenValiditySeconds,
+        },
+        {
+          title: i18n("client.details.refreshValidity"),
+          desc: state.clientDetails.refreshTokenValiditySeconds,
+        },
+        {
+          title: i18n("iridaThing.timestamp"),
+          desc: formatInternationalizedDateTime(
+            state.clientDetails.createdDate
+          ),
+        },
+      ];
 
   const RemoveClient = () => (
     <div>
@@ -158,15 +167,11 @@ export default function ClientDetailsPage({ id }) {
           <BasicList dataSource={fields} />
         </TabPane>
         <TabPane tab={i18n("client.details.token.title")} key="tokens">
-          <Title level={4}>
-            {i18n("client.details.token.title")}
-          </Title>
+          <Title level={4}>{i18n("client.details.token.title")}</Title>
           <ClientTokens id={id} />
         </TabPane>
         <TabPane tab={i18n("client.remove.button")} key="remove">
-          <Title level={4}>
-            {i18n("client.remove.title")}
-          </Title>
+          <Title level={4}>{i18n("client.remove.title")}</Title>
           <RemoveClient />
         </TabPane>
       </Tabs>
