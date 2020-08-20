@@ -73,8 +73,7 @@ export default function AddClientForm({ visible }) {
 
   const radioStyle = {
     display: "block",
-    height: 35,
-    lineHeight: 35,
+    lineHeight: `35px`,
   };
 
   return (
@@ -142,10 +141,22 @@ export default function AddClientForm({ visible }) {
               {i18n("AddClientForm.grant.authorization_code")}
 
               {authorizedGrantTypes === "authorization_code" ? (
-                <Input
-                  style={{ marginLeft: SPACE_MD }}
-                  placeholder={i18n("client.registeredRedirectUri")}
-                />
+                <Form.Item
+                  name="redirectURIK"
+                  style={{
+                    display: "inline-block",
+                    marginLeft: SPACE_MD,
+                    marginBottom: 0,
+                  }}
+                  rules={[
+                    {
+                      required: true,
+                      message: i18n("clients.add.warning"),
+                    },
+                  ]}
+                >
+                  <Input placeholder={i18n("client.registeredRedirectUri")} />
+                </Form.Item>
               ) : null}
             </Radio>
           </Radio.Group>
