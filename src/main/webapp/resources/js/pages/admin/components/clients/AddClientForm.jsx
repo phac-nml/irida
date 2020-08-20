@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { Divider, Form, Input, Modal, Radio, Select } from "antd";
-import { addNewClient } from "../../../../apis/clients/clients";
 import { SPACE_MD } from "../../../../styles/spacing";
 
 export default function AddClientForm({ visible }) {
@@ -15,7 +14,6 @@ export default function AddClientForm({ visible }) {
 
   const [tokenValidities, setTokenValidities] = useState([]);
   const [tokenValidity, setTokenValidity] = useState(43200);
-  const [grants, setGrants] = useState([]);
   const [refreshTokenValidities, setRefreshTokenValidities] = useState([]);
   const [refreshTokenValidity, setRefreshTokenValidity] = useState(0);
   const [scopeWrite, setScopeWrite] = useState("no");
@@ -30,7 +28,6 @@ export default function AddClientForm({ visible }) {
         console.log(data);
         setTokenValidities(data.tokenValidity);
         setRefreshTokenValidities(data.refreshTokenValidity);
-        setGrants(data.grants);
       });
   }, []);
 
@@ -57,26 +54,27 @@ export default function AddClientForm({ visible }) {
    * Action to take when the form is submitted
    */
   const onOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        addNewClient(values)
-          .then((data) => {
-            form.resetFields();
-            setVisible(false);
-            navigate(setBaseUrl(`admin/groups/${data.id}`), { replace: true });
-          })
-          .catch((error) => {
-            setError(error.response.data.name);
-          });
-      })
-      .catch((errors) => setError(true));
+    form.validateFields().then((values) => console.log(values));
+    // form
+    //   .validateFields()
+    //   .then((values) => {
+    //     addNewClient(values)
+    //       .then((data) => {
+    //         form.resetFields();
+    //         setVisible(false);
+    //         navigate(setBaseUrl(`admin/groups/${data.id}`), { replace: true });
+    //       })
+    //       .catch((error) => {
+    //         setError(error.response.data.name);
+    //       });
+    //   })
+    //   .catch((errors) => setError(true));
   };
 
   const radioStyle = {
     display: "block",
-    height: "30px",
-    lineHeight: "30px",
+    height: 35,
+    lineHeight: 35,
   };
 
   return (
@@ -86,7 +84,7 @@ export default function AddClientForm({ visible }) {
       title={i18n("client.create")}
       visible={visible}
       onCancel={onCancel}
-      // onOk={onOk}
+      onOk={onOk}
       okButtonProps={{ className: "t-confirm-new-client" }}
       okText={i18n("client.create")}
       cancelText={i18n("AdminPanel.cancel")}
@@ -106,8 +104,6 @@ export default function AddClientForm({ visible }) {
         <Form.Item
           label={i18n("AddClientForm.id")}
           name="clientId"
-          validateStatus={error ? "error" : null}
-          help={error}
           rules={[
             {
               required: true,
@@ -115,12 +111,7 @@ export default function AddClientForm({ visible }) {
             },
           ]}
         >
-          <Input
-            ref={inputRef}
-            onChange={() =>
-              typeof error !== "undefined" ? setError(undefined) : null
-            }
-          />
+          <Input ref={inputRef} />
         </Form.Item>
         {/*TOKEN VALIDITY*/}
         <Form.Item
