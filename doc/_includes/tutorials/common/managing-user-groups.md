@@ -52,7 +52,7 @@ You may want to completely remove all permissions for a user to access data in a
 
 Start by [viewing the user group details](#viewing-user-group-details).
 
-To remove a user group member, click on the button on the right-hand side of the table:
+To remove a user group member, click on the "X" button on the right-hand side of the table:
 
 ![Remove user group member button.]({{ site.baseurl }}/images/tutorials/common/users/user-group-details-remove-user.png)
 

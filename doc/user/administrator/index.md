@@ -46,7 +46,7 @@ First navigate to the users page via the admin panel side menu:
 
 ![Users side menu link.](images/users-side-menu.png)
 
-Then press the "Add User" button:
+Then click the "Add User" button:
 
 ![Add user button.](images/add-user-button.png)
 
@@ -64,7 +64,6 @@ To edit a user account, click on the "Edit" button at the top of the "User Detai
 All of the fields that were available to modify when creating a user account are available for editing:
 
 ![Edit user details.](images/edit-user-details.png)
-
 When you're finished updating the user account, you can click the "Update User" button at the bottom of the form to save the changes.
 
 Resetting a Password
@@ -89,7 +88,19 @@ You should see a success notification at the top of your browser window when you
 Disabling a User Account
 ------------------------
 
-{% include_relative includes/start-from-the-user-list.md %}
+Start from the users list, by clicking on the "Users List" side menu link:
+
+![Users side menu link.](images/users-side-menu.png)
+
+The users list shows all users currently registered in the system:
+
+![Users list.](images/users-list.png)
+
+A user's account can be quickly disabled by unchecking the checkbox beside the username of the user to disable.
+
+You can view the details of an existing user account by clicking on the username of the account your're interested in:
+
+![User details page.](images/user-details-page.png)
 
 To edit a user account, click on the "Edit" button at the top of the "User Details" table:
 
