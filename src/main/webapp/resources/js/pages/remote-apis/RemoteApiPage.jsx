@@ -24,7 +24,7 @@ export function RemoteApiPage({}) {
         ) : null
       }
     >
-      <PagedTableProvider url="ajax/remote_api/list">
+      <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
         <RemoteApiTable />
       </PagedTableProvider>
     </PageWrapper>

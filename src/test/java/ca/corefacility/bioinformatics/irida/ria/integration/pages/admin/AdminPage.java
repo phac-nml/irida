@@ -22,9 +22,6 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-side-menu")
 	private List<WebElement> adminSideMenu;
 
-	@FindBy(className="t-admin-stats-link")
-	private List<WebElement> adminStatsLink;
-
 	@FindBy(className="t-admin-users-submenu")
 	private List<WebElement> adminUsersSubMenu;
 
@@ -114,16 +111,6 @@ public class AdminPage extends AbstractPage {
 	 */
 	public boolean adminSideMenuVisible() {
 		return adminSideMenu.size() == 1;
-	}
-
-	/**
-	 * Determines if admin stats link on
-	 * side menu is visible.
-	 *
-	 * @return {@link Boolean}
-	 */
-	public boolean adminStatsLinkVisible() {
-		return adminStatsLink.size() == 1;
 	}
 
 	/**
@@ -260,16 +247,6 @@ public class AdminPage extends AbstractPage {
 		adminPanelBtn.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.urlContains("/admin"));
-	}
-
-	/**
-	 * Clicks on the admin stats menu button to navigate
-	 * to the admin stats page.
-	 */
-	public void clickStatsLink() {
-		adminStatsLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		wait.until(ExpectedConditions.urlContains("/admin/statistics"));
 	}
 
 	/**
