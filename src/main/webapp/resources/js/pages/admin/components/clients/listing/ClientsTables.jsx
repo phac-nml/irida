@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import {
   PagedTable,
-  PagedTableContext
+  PagedTableContext,
 } from "../../../../../components/ant.design/PagedTable";
 import { Button, Popconfirm, Tag } from "antd";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
@@ -19,13 +19,13 @@ export function ClientsTable() {
 
   const columns = [
     {
-      title: i18n("iridaThing.id"),
+      title: i18n("ClientsTable.column.id"),
       width: 80,
       dataIndex: "id",
-      sorter: true
+      sorter: true,
     },
     {
-      title: i18n("client.clientid"),
+      title: i18n("ClientsTable.column.clientId"),
       dataIndex: "name",
       ellipsis: true,
       sorter: true,
@@ -35,37 +35,37 @@ export function ClientsTable() {
             {text}
           </a>
         );
-      }
+      },
     },
     {
-      title: i18n("client.grant-types"),
+      title: i18n("ClientsTable.column.grants"),
       dataIndex: "grants",
       render(grants) {
         const colors = {
           password: "purple",
           authorization_code: "volcano",
-          refresh_token: "magenta"
+          refresh_token: "magenta",
         };
         return (
           <div>
-            {grants.map(g => (
+            {grants.map((g) => (
               <Tag color={colors[g] || ""} key={g}>
                 {g}
               </Tag>
             ))}
           </div>
         );
-      }
+      },
     },
     {
       ...dateColumnFormat(),
-      title: i18n("iridaThing.timestamp"),
-      dataIndex: "createdDate"
+      title: i18n("ClientsTable.column.created"),
+      dataIndex: "createdDate",
     },
     {
-      title: i18n("client.details.token.active"),
+      title: i18n("ClientsTable.column.activeTokens"),
       dataIndex: "tokens",
-      align: "right"
+      align: "right",
     },
     {
       key: "action",
@@ -87,8 +87,8 @@ export function ClientsTable() {
             </Button>
           </Popconfirm>
         );
-      }
-    }
+      },
+    },
   ];
 
   /**

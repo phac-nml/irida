@@ -13,7 +13,7 @@ import { AddNewButton } from "../../../../../components/Buttons/AddNewButton";
 export default function ClientListingPage() {
   return (
     <PageWrapper
-      title={i18n("clients.title")}
+      title={i18n("ClientListingPage.title")}
       headerExtras={
         <AddNewButton
           className={"t-add-client-btn"}
