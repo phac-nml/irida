@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Form, Input, Modal, Radio } from "antd";
 import { REFRESH_TOKEN_VALIDITY, TOKEN_VALIDITY } from "../constants";
 import { SPACE_MD } from "../../../../../styles/spacing";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const { Item } = Form;
 
@@ -54,7 +55,17 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
     form
       .validateFields()
       .then((values) => {
-        console.log(values);
+        console.table(values);
+        fetch(setBaseUrl(`/ajax/clients`), {
+          method: "post",
+          body: JSON.stringify(values),
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+          .then((json) => json.json())
+          .then((data) => console.table(data));
         // addNewClient(values)
         //   .then((data) => {
         //     form.resetFields();
@@ -88,7 +99,7 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
           tokenValidity: 21600,
           grantType: "password",
           refreshToken: 0,
-          read: "yes",
+          read: "read",
           write: "no",
         }}
       >
@@ -152,14 +163,14 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
         <Item label={"READ SCOPE"} name={"read"}>
           <Radio.Group>
             <Radio.Button value="no">Not Allowed</Radio.Button>
-            <Radio.Button value="yes">Allow</Radio.Button>
+            <Radio.Button value="read">Allow</Radio.Button>
             <Radio.Button value="auto">Allow, and auto approve</Radio.Button>
           </Radio.Group>
         </Item>
         <Item label={"Write Scope"} name="write">
           <Radio.Group>
             <Radio.Button value="no">Not Allowed</Radio.Button>
-            <Radio.Button value="yes">Allow</Radio.Button>
+            <Radio.Button value="write">Allow</Radio.Button>
             <Radio.Button value="auto">Allow, and auto approve</Radio.Button>
           </Radio.Group>
         </Item>
