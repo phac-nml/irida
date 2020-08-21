@@ -15,6 +15,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
+/**
+ * UI Service to handle IRIDA Clients
+ */
 @Component
 public class UIClientService {
 	private final IridaClientDetailsService clientDetailsService;
@@ -23,13 +26,21 @@ public class UIClientService {
 		this.clientDetailsService = clientDetailsService;
 	}
 
-	public TableResponse<ClientTableModel> getClientList( ClientTableRequest tableRequest) {
-		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
-				.searchClient(tableRequest.getSearch());
+	/**
+	 * Get a listing of clients based on the table request.
+	 *
+	 * @param tableRequest Information about the sort and page of the table.
+	 * @return Current status of the table
+	 */
+	public TableResponse<ClientTableModel> getClientList(ClientTableRequest tableRequest) {
+		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification.searchClient(
+				tableRequest.getSearch());
 
-		Page<IridaClientDetails> page = clientDetailsService
-				.search(specification, PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
-		List<ClientTableModel> models = page.getContent().stream().map(client -> new ClientTableModel(client, clientDetailsService.countActiveTokensForClient(client)))
+		Page<IridaClientDetails> page = clientDetailsService.search(specification,
+				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+		List<ClientTableModel> models = page.getContent()
+				.stream()
+				.map(client -> new ClientTableModel(client, clientDetailsService.countActiveTokensForClient(client)))
 				.collect(Collectors.toList());
 
 		return new TableResponse<>(models, page.getTotalElements());

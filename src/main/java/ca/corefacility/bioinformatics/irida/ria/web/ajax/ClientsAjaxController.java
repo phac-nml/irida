@@ -12,6 +12,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIClientService;
 
+/**
+ * Controller to handle ajax request for IRIDA Clients.
+ */
 @RestController
 @RequestMapping("/ajax/clients")
 public class ClientsAjaxController {
@@ -22,6 +25,12 @@ public class ClientsAjaxController {
 		this.service = service;
 	}
 
+	/**
+	 * Get a page in the clients listing table based on the table request.
+	 *
+	 * @param request Information about the current location in the Clients table
+	 * @return The current page of the clients table
+	 */
 	@RequestMapping("/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<TableResponse<ClientTableModel>> getClientsList(@RequestBody ClientTableRequest request) {
