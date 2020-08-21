@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
+package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,9 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIClientService;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.Lists;
@@ -18,21 +19,19 @@ import com.google.common.collect.Lists;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
-public class ClientsAjaxControllerTest {
+public class UIClientServiceTest {
 	private IridaClientDetailsService clientDetailsService;
-	private ClientsAjaxController controller;
+	private UIClientService service;
 
 	@Before
 	public void setUp() {
 		clientDetailsService = mock(IridaClientDetailsService.class);
-		controller = new ClientsAjaxController(clientDetailsService);
+		service = new UIClientService(clientDetailsService);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetAjaxClientList() {
+	public void testGetClientList() {
 		IridaClientDetails client1 = new IridaClientDetails();
 		client1.setId(1L);
 		IridaClientDetails client2 = new IridaClientDetails();
@@ -46,7 +45,7 @@ public class ClientsAjaxControllerTest {
 		params.setPageSize(10);
 		params.setSortColumn("createdDate");
 		params.setSortDirection("ascend");
-		TableResponse response = controller.getAjaxClientsList(params);
+		TableResponse<ClientTableModel> response = service.getClientList(params);
 
 		assertEquals(2, response.getDataSource().size());
 

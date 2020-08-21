@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.clients.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 

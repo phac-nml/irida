@@ -1,5 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
 import { PageWrapper } from "../../../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../../../components/ant.design/PagedTable";
 import { ClientsTable } from "./ClientsTables";
@@ -14,7 +13,7 @@ import { AddNewButton } from "../../../../../components/Buttons/AddNewButton";
 export default function ClientListingPage() {
   return (
     <PageWrapper
-      title={i18n("clients.title")}
+      title={i18n("ClientListingPage.title")}
       headerExtras={
         <AddNewButton
           className={"t-add-client-btn"}
