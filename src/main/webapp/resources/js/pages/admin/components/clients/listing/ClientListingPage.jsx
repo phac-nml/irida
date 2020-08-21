@@ -3,7 +3,7 @@ import { PageWrapper } from "../../../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../../../components/ant.design/PagedTable";
 import { ClientsTable } from "./ClientsTables";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
-import { AddNewButton } from "../../../../../components/Buttons/AddNewButton";
+import { AddClientButton } from "../add/AddClientButton";
 
 /**
  * Page for displaying the list of all clients.
@@ -13,14 +13,8 @@ import { AddNewButton } from "../../../../../components/Buttons/AddNewButton";
 export default function ClientListingPage() {
   return (
     <PageWrapper
-      title={i18n("clients.title")}
-      headerExtras={
-        <AddNewButton
-          className={"t-add-client-btn"}
-          href={setBaseUrl(`clients/create`)}
-          text={i18n("clients.add")}
-        />
-      }
+      title={i18n("ClientListingPage.title")}
+      headerExtras={<AddClientButton />}
     >
       <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
         <ClientsTable />
