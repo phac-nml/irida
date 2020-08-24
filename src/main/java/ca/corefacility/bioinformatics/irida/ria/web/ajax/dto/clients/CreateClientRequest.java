@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients;
 
+/**
+ * Used be the UI to send details for a new client.
+ */
 public class CreateClientRequest {
 	private String clientId;
 	private int tokenValidity;
