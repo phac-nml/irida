@@ -5,17 +5,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateClientRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
@@ -52,7 +56,11 @@ public class UIClientService {
 		return new TableResponse<>(models, page.getTotalElements());
 	}
 
-	public Long createClient(CreateClientRequest request) {
+	public void validateClientId(String clientId) throws ClientRegistrationException {
+		clientDetailsService.loadClientByClientId(clientId);
+	}
+
+	public Long createClient(CreateClientRequest request) throws EntityExistsException, ConstraintViolationException {
 		final String AUTO_APPROVE = "auto";
 		final String SCOPE_READ = "read";
 		final String SCOPE_WRITE = "write";
@@ -102,7 +110,6 @@ public class UIClientService {
 		}
 
 		client = clientDetailsService.create(client);
-
 		return client.getId();
 	}
 }

@@ -12,13 +12,13 @@ import { AddClientButton } from "../add/AddClientButton";
  */
 export default function ClientListingPage() {
   return (
-    <PageWrapper
-      title={i18n("ClientListingPage.title")}
-      headerExtras={<AddClientButton />}
-    >
-      <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
+    <PagedTableProvider url={setBaseUrl("/ajax/clients/list")}>
+      <PageWrapper
+        title={i18n("ClientListingPage.title")}
+        headerExtras={<AddClientButton />}
+      >
         <ClientsTable />
-      </PagedTableProvider>
-    </PageWrapper>
+      </PageWrapper>
+    </PagedTableProvider>
   );
 }

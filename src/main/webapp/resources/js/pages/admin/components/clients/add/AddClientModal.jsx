@@ -1,20 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, Modal, Radio } from "antd";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Form, Input, message, Modal, Radio } from "antd";
 import { REFRESH_TOKEN_VALIDITY, TOKEN_VALIDITY } from "../constants";
 import { SPACE_MD } from "../../../../../styles/spacing";
+import axios from "axios";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { PagedTableContext } from "../../../../../components/ant.design/PagedTable";
+import { validateClientId } from "../../../../../apis/clients/clients";
 
 const { Item } = Form;
 
 export function AddClientModal({ visible, onCancel, onComplete }) {
   const clientIdRef = useRef();
   const [grantType, setGrantType] = useState("password");
-  const [read, setRead] = useState(true);
-  const [readAutoApprove, setReadAutoApprove] = useState(false);
-  const [readApproveDisabled, setReadApproveDisabled] = useState(true);
-  const [write, wetWrite] = useState(false);
-  const [writeAutoApprove, wetWriteAutoApprove] = useState(false);
-  const [writeApproveDisabled, wetWriteApproveDisabled] = useState(true);
+
+  const { updateTable } = useContext(PagedTableContext);
 
   /*
   Watch for changes to the forms visibility, when it becomes visible
@@ -26,24 +25,6 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
     }
   }, [visible]);
 
-  useEffect(() => {
-    if (read) {
-      setReadApproveDisabled(false);
-    } else {
-      setReadApproveDisabled(true);
-      setReadAutoApprove(false);
-    }
-  }, [read]);
-
-  useEffect(() => {
-    if (write) {
-      wetWriteApproveDisabled(false);
-    } else {
-      wetWriteApproveDisabled(true);
-      wetWriteAutoApprove(false);
-    }
-  }, [write]);
-
   const [form] = Form.useForm();
 
   const radioStyle = { display: "block", lineHeight: `35px` };
@@ -51,32 +32,21 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
   /**
    * Action to take when the form is submitted
    */
-  const onOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        console.table(values);
-        fetch(setBaseUrl(`/ajax/clients`), {
-          method: "post",
-          body: JSON.stringify(values),
-          headers: {
-            "Content-Type": "application/json",
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        })
-          .then((json) => json.json())
-          .then((data) => console.table(data));
-        // addNewClient(values)
-        //   .then((data) => {
-        //     form.resetFields();
-        //     // setVisible(false);
-        //     // navigate(setBaseUrl(`admin/groups/${data.id}`), { replace: true });
-        //   })
-        //   .catch((error) => {
-        //     setError(error.response.data.name);
-        //   });
-      })
-      .catch((errors) => console.log(errors));
+  const onOk = async () => {
+    try {
+      const values = await form.validateFields();
+      axios.post(setBaseUrl(`/ajax/clients`), values).then(() => {
+        // Clear the form and reset the table
+        updateTable();
+        form.resetFields();
+        onComplete();
+      });
+    } catch (errors) {
+      // Re-enforce the error to the user
+      errors.errorFields.forEach((error) =>
+        message.error(error.errors.join(", "))
+      );
+    }
   };
 
   const closeModal = () => {
@@ -103,7 +73,24 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
           write: "no",
         }}
       >
-        <Item label={i18n("AddClientForm.clientId")} name="clientId">
+        <Item
+          label={i18n("AddClientForm.clientId")}
+          name="clientId"
+          rules={[
+            { required: true, message: "__FOOBAR_REQUIRED__" },
+            { min: 5, message: "__MINIMUM____" },
+            () => ({
+              validator(rule, value) {
+                if (value.length > 4) {
+                  return validateClientId(value)
+                    .then(() => Promise.resolve())
+                    .catch((error) => Promise.reject(error.response.data));
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
           <Input ref={clientIdRef} />
         </Item>
         <Item label={i18n("AddClientForm.tokenValidity")} name="tokenValidity">
