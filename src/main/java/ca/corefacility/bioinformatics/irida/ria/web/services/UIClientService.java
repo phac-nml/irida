@@ -56,10 +56,34 @@ public class UIClientService {
 		return new TableResponse<>(models, page.getTotalElements());
 	}
 
+	/**
+	 * Revoke all tokens for a specific client
+	 *
+	 * @param id Identifier for a client
+	 */
+	public void deleteClientTokens(Long id) {
+		IridaClientDetails details = clientDetailsService.read(id);
+		clientDetailsService.revokeTokensForClient(details);
+	}
+
+	/**
+	 * Validate a client identifier for a new client
+	 *
+	 * @param clientId Identifier to check to see if it exists
+	 * @throws ClientRegistrationException
+	 */
 	public void validateClientId(String clientId) throws ClientRegistrationException {
 		clientDetailsService.loadClientByClientId(clientId);
 	}
 
+	/**
+	 * Create a new client
+	 *
+	 * @param request Details about the new client
+	 * @return The identifier for the newly created client
+	 * @throws EntityExistsException        thrown if the client id already is used.
+	 * @throws ConstraintViolationException thrown if the client id violates any of its constraints
+	 */
 	public Long createClient(CreateClientRequest request) throws EntityExistsException, ConstraintViolationException {
 		final String AUTO_APPROVE = "auto";
 		final String SCOPE_READ = "read";

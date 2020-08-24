@@ -9,7 +9,7 @@ const BASE_URL = setBaseUrl(`/ajax/clients`);
  * @return {Promise<AxiosResponse<T>>}
  */
 export async function revokeClientTokens(id) {
-  return await axios.delete(`clients/ajax/revoke?id=${id}`);
+  return await axios.delete(`${BASE_URL}/revoke?id=${id}`);
 }
 
 export async function validateClientId(clientId) {

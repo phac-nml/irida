@@ -46,6 +46,24 @@ public class ClientsAjaxController {
 		return ResponseEntity.ok(service.getClientList(request));
 	}
 
+	/**
+	 * Revoke all tokens for a client given its identifier
+	 *
+	 * @param id Identifier for a specific client
+	 */
+	@DeleteMapping("/revoke")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void deleteClientTokens(@RequestParam Long id) {
+		service.deleteClientTokens(id);
+	}
+
+	/**
+	 * Check to see if the client identifier that a user wants to use for a new client is not already used
+	 *
+	 * @param clientId Name to check if exists
+	 * @param locale   Users current locale
+	 * @return Http response indicating if the client id is valid.
+	 */
 	@RequestMapping("/validate")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<String> validateClientName(@RequestParam String clientId, Locale locale) {
@@ -58,6 +76,13 @@ public class ClientsAjaxController {
 		}
 	}
 
+	/**
+	 * Create a new client.
+	 *
+	 * @param request Details about the client to create
+	 * @param locale  users current locale
+	 * @return Http response containing the result
+	 */
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<AjaxResponse> createClient(@RequestBody CreateClientRequest request, Locale locale) {
