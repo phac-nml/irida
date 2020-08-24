@@ -2,13 +2,12 @@
  * This file loads basic analysis info from the server.
  */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { showNotification } from "../modules/notifications";
 
 // Functions required by context
-import { getNewickTree, updateAnalysis } from "../apis/analysis/analysis";
+import { updateAnalysis } from "../apis/analysis/analysis";
 import { getUpdatedDetails } from "../apis/analysis/analysis";
-import { AnalysisDetailsContext} from "./AnalysisDetailsContext";
 /*
  * Since we are using Steps and only want to display
  * certain ones, we group some of the analysis states
