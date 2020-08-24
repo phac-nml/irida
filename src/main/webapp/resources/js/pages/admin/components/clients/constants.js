@@ -1,4 +1,7 @@
-// private final List<Integer> AVAILABLE_REFRESH_TOKEN_VALIDITY = Lists.newArrayList(
+/**
+ * Translations for refresh token based on time in seconds.
+ * @type {({text: string, value: number})[]}
+ */
 export const REFRESH_TOKEN_VALIDITY = [
   {
     value: 0,
@@ -22,6 +25,10 @@ export const REFRESH_TOKEN_VALIDITY = [
   },
 ];
 
+/**
+ * Translation for token validity based on seconds.
+ * @type {({text: string, value: number})[]}
+ */
 export const TOKEN_VALIDITY = [
   {
     value: 1800,
