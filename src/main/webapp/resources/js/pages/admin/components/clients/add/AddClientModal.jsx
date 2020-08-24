@@ -155,7 +155,7 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
             </Radio>
           </Radio.Group>
         </Item>
-        <Item label={i18n("AddClientForm.refreshToken")} name={"refreshToken"}>
+        <Item label={i18n("AddClientForm.refreshToken")} name="refreshToken">
           <Radio.Group>
             {REFRESH_TOKEN_VALIDITY.map((token) => (
               <Radio.Button key={token.value} value={token.value}>
@@ -164,7 +164,7 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
             ))}
           </Radio.Group>
         </Item>
-        <Item label={i18n("AddClientForm.readScope")} name={"read"}>
+        <Item label={i18n("AddClientForm.readScope")} name="read">
           <Radio.Group>
             <Radio.Button value="no">
               {i18n("AddClientForm.scopeNotAllowed")}
