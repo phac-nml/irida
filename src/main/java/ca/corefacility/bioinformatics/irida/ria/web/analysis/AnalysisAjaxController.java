@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
@@ -1146,6 +1147,36 @@ public class AnalysisAjaxController {
 					new AnalysisToolExecution(tool.getLabel(), executionParameters, getPreviousExecutionTools(tool)));
 		}
 		return analysisProvenance;
+	}
+
+	/**
+	 * Get the updated state and duration of an analysis
+	 *
+	 * @param submissionId The analysis submission id
+	 * @return dto which contains the updated analysis state and duration
+	 */
+	@RequestMapping(value = "/{submissionId}/updated-progress")
+	@ResponseBody
+	public UpdatedAnalysisProgress getProvenanceByFile(@PathVariable Long submissionId) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		AnalysisState prevStateBeforeError = null;
+		if (submission.getAnalysisState() == AnalysisState.ERROR) {
+			prevStateBeforeError = analysisAudit.getPreviousStateBeforeError(submissionId);
+		}
+
+		// Get the run time of the analysis runtime using the analysis
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
+
+		return new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration);
+
 	}
 
 	/*

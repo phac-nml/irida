@@ -2,12 +2,13 @@
  * This file loads basic analysis info from the server.
  */
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { showNotification } from "../modules/notifications";
 
 // Functions required by context
-import { updateAnalysis } from "../apis/analysis/analysis";
-
+import { getNewickTree, updateAnalysis } from "../apis/analysis/analysis";
+import { getUpdatedDetails } from "../apis/analysis/analysis";
+import { AnalysisDetailsContext} from "./AnalysisDetailsContext";
 /*
  * Since we are using Steps and only want to display
  * certain ones, we group some of the analysis states
@@ -43,6 +44,30 @@ const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
+
+  // Update the analysis details that
+  // are required to display the progression
+  // using polling
+  useEffect(() => {
+      const interval = setInterval(() => {
+        getUpdatedDetails(analysisContext.analysis.identifier).then(res => {
+          setAnalysisContext(analysisContext => {
+            return {
+              ...analysisContext,
+              analysisState: res.analysisState,
+              isCompleted: res.analysisState === "COMPLETED",
+              isError: res.analysisState.includes("ERROR"),
+              previousState: res.previousState,
+              duration: res.duration
+            };
+          });
+          if(res.analysisState === "COMPLETED" || res.analysisState.includes("ERROR")) {
+            clearInterval(interval);
+          }
+        })
+      }, 5000);
+      return () => clearInterval(interval);
+  }, []);
 
   /*
    * Updates the submission name, displays a notification
