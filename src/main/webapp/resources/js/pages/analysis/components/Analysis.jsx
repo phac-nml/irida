@@ -18,16 +18,16 @@ import { PageWrapper } from "../../../components/page/PageWrapper";
 
 import { Link, Location, Router } from "@reach/router";
 
-import { Error } from "../../../components/icons/Error";
-import { Running } from "../../../components/icons/Running";
-import { Success } from "../../../components/icons/Success";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import AnalysisError from "./AnalysisError";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { ANALYSIS } from "../routes";
 import { getNewickTree } from "../../../apis/analysis/analysis";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
+
+import { IconCheckCircle, IconCloseCircle, IconLoading } from "../../../components/icons/Icons";
+import { green7, red7, grey7 } from "../../../styles/colors";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
@@ -64,11 +64,11 @@ export default function Analysis() {
   const title = (
     <>
       {analysisContext.analysisState === "COMPLETED" ? (
-        <Success />
+        <IconCheckCircle style={{color: green7, marginRight: SPACE_XS}} />
       ) : analysisContext.analysisState === "ERROR" ? (
-        <Error />
+        <IconCloseCircle style={{color: red7 , marginRight: SPACE_XS}} />
       ) : (
-        <Running />
+        <IconLoading style={{color: grey7, marginRight: SPACE_XS}} />
       )}
       {analysisContext.analysisName}
     </>
