@@ -10,6 +10,15 @@ import {
 
 const { Item } = Form;
 
+/**
+ * React component to display an Ant Design Modal containing a form to
+ * create a new Irida Client
+ * @param {boolean} visible - whether the modal is open or not
+ * @param {function} onCancel - how the parent component should handle the form being cancelled
+ * @param {function} onComplete - how the parent component should handle the client created.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function AddClientModal({ visible, onCancel, onComplete }) {
   const clientIdRef = useRef();
   const [grantType, setGrantType] = useState("password");
@@ -78,8 +87,15 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
           label={i18n("AddClientForm.clientId")}
           name="clientId"
           rules={[
-            { required: true, message: "__FOOBAR_REQUIRED__" },
-            { min: 5, message: "__MINIMUM____" },
+            {
+              required: true,
+              message: i18n("AddClientForm.clientId.required"),
+            },
+            {
+              pattern: /^\S*$/,
+              message: i18n("AddClientForm.clientId.spaces"),
+            },
+            { min: 5, message: i18n("AddClientForm.clientId.minimum") },
             () => ({
               validator(rule, value) {
                 if (value.length > 4) {
@@ -103,7 +119,7 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
             ))}
           </Radio.Group>
         </Item>
-        <Item label={"GRANT TYPES"} name="grantType">
+        <Item label={i18n("AddClientForm.grantTypes")} name="grantType">
           <Radio.Group onChange={(e) => setGrantType(e.target.value)}>
             <Radio style={radioStyle} value="password">
               {i18n("AddClientForm.grant.password")}
@@ -139,7 +155,7 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
             </Radio>
           </Radio.Group>
         </Item>
-        <Item label={"ALLOW REFRESH TOKENS"} name={"refreshToken"}>
+        <Item label={i18n("AddClientForm.refreshToken")} name={"refreshToken"}>
           <Radio.Group>
             {REFRESH_TOKEN_VALIDITY.map((token) => (
               <Radio.Button key={token.value} value={token.value}>
@@ -148,18 +164,30 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
             ))}
           </Radio.Group>
         </Item>
-        <Item label={"READ SCOPE"} name={"read"}>
+        <Item label={i18n("AddClientForm.readScope")} name={"read"}>
           <Radio.Group>
-            <Radio.Button value="no">Not Allowed</Radio.Button>
-            <Radio.Button value="read">Allow</Radio.Button>
-            <Radio.Button value="auto">Allow, and auto approve</Radio.Button>
+            <Radio.Button value="no">
+              {i18n("AddClientForm.scopeNotAllowed")}
+            </Radio.Button>
+            <Radio.Button value="read">
+              {i18n("AddClientForm.scopeAllowed")}
+            </Radio.Button>
+            <Radio.Button value="auto">
+              {i18n("AddClientForm.scopeAllowedAutoApprove")}
+            </Radio.Button>
           </Radio.Group>
         </Item>
-        <Item label={"Write Scope"} name="write">
+        <Item label={i18n("AddClientForm.writeScope")} name="write">
           <Radio.Group>
-            <Radio.Button value="no">Not Allowed</Radio.Button>
-            <Radio.Button value="write">Allow</Radio.Button>
-            <Radio.Button value="auto">Allow, and auto approve</Radio.Button>
+            <Radio.Button value="no">
+              {i18n("AddClientForm.scopeNotAllowed")}
+            </Radio.Button>
+            <Radio.Button value="write">
+              {i18n("AddClientForm.scopeAllowed")}
+            </Radio.Button>
+            <Radio.Button value="auto">
+              {i18n("AddClientForm.scopeAllowedAutoApprove")}
+            </Radio.Button>
           </Radio.Group>
         </Item>
       </Form>
