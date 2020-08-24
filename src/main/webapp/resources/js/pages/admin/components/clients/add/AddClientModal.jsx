@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Form, Input, message, Modal, Radio } from "antd";
 import { REFRESH_TOKEN_VALIDITY, TOKEN_VALIDITY } from "../constants";
 import { SPACE_MD } from "../../../../../styles/spacing";
-import axios from "axios";
-import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { PagedTableContext } from "../../../../../components/ant.design/PagedTable";
-import { validateClientId } from "../../../../../apis/clients/clients";
+import {
+  createClient,
+  validateClientId,
+} from "../../../../../apis/clients/clients";
 
 const { Item } = Form;
 
@@ -35,7 +36,7 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
   const onOk = async () => {
     try {
       const values = await form.validateFields();
-      axios.post(setBaseUrl(`/ajax/clients`), values).then(() => {
+      createClient(values).then(() => {
         // Clear the form and reset the table
         updateTable();
         form.resetFields();

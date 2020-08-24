@@ -15,3 +15,7 @@ export async function revokeClientTokens(id) {
 export async function validateClientId(clientId) {
   return axios.get(`${BASE_URL}/validate?clientId=${clientId}`);
 }
+
+export async function createClient(details) {
+  return axios.post(`${BASE_URL}`, details);
+}
