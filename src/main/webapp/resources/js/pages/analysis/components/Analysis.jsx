@@ -74,7 +74,6 @@ export default function Analysis() {
     </>
   );
 
-  const analysisType = analysisContext.analysisType;
   const analysisViewer = analysisContext.analysisViewer;
 
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
