@@ -7,6 +7,7 @@ import {
   createClient,
   validateClientId,
 } from "../../../../../apis/clients/clients";
+import { HelpPopover } from "../../../../../components/popovers";
 
 const { Item } = Form;
 
@@ -84,7 +85,12 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
         }}
       >
         <Item
-          label={i18n("AddClientForm.clientId")}
+          label={
+            <span>
+              {i18n("AddClientForm.clientId")}
+              <HelpPopover content={i18n("AddClientForm.clientId.help")} />
+            </span>
+          }
           name="clientId"
           rules={[
             {
@@ -110,7 +116,15 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
         >
           <Input ref={clientIdRef} />
         </Item>
-        <Item label={i18n("AddClientForm.tokenValidity")} name="tokenValidity">
+        <Item
+          label={
+            <>
+              {i18n("AddClientForm.tokenValidity")}
+              <HelpPopover content={i18n("AddClientForm.tokenValidity.help")} />
+            </>
+          }
+          name="tokenValidity"
+        >
           <Radio.Group>
             {TOKEN_VALIDITY.map((token) => (
               <Radio.Button key={token.value} value={token.value}>

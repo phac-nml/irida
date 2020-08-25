@@ -1,13 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../../components/ant.design/PagedTable";
-import { Button, Popconfirm, Tag } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  List,
+  PageHeader,
+  Popconfirm,
+  Radio,
+  Tag,
+  Typography,
+} from "antd";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../../../components/ant.design/table-renderers";
 import { revokeClientTokens } from "../../../../../apis/clients/clients";
 import { IconStop } from "../../../../../components/icons/Icons";
+import { REFRESH_TOKEN_VALIDITY, TOKEN_VALIDITY } from "../constants";
+import { SPACE_MD } from "../../../../../styles/spacing";
+
+const { Paragraph } = Typography;
+const { Item } = Form;
 
 /**
  * Table for displaying a list of clients.
@@ -39,8 +54,8 @@ export function ClientsTable() {
     },
     {
       title: i18n("ClientsTable.column.grants"),
-      dataIndex: "grants",
-      render(grants) {
+      dataIndex: "details",
+      render(grants, item) {
         const colors = {
           password: "purple",
           authorization_code: "volcano",
@@ -48,7 +63,7 @@ export function ClientsTable() {
         };
         return (
           <div>
-            {grants.map((g) => (
+            {item.details.authorizedGrantTypes.map((g) => (
               <Tag color={colors[g] || ""} key={g}>
                 {g}
               </Tag>
@@ -99,5 +114,138 @@ export function ClientsTable() {
     revokeClientTokens(id).then(updateTable);
   }
 
-  return <PagedTable className={"t-admin-clients-table"} columns={columns} />;
+  const radioStyle = { display: "block", lineHeight: `35px` };
+  const [grantType, setGrantType] = useState("password");
+
+  return (
+    <PagedTable
+      className={"t-admin-clients-table"}
+      columns={columns}
+      expandable={{
+        expandedRowRender: (record) => (
+          <div>
+            <PageHeader
+              title={record.name}
+              extra={[
+                <Button key={`revoke-${record.id}`}>REVOKE</Button>,
+                <Button key={`remove-${record.id}`}>REMOVED</Button>,
+              ]}
+            />
+            <List>
+              <List.Item>
+                <List.Item.Meta
+                  title={"CLIENT SECRET"}
+                  description={
+                    <Paragraph copyable>
+                      {record.details.clientSecret}
+                    </Paragraph>
+                  }
+                />
+              </List.Item>
+            </List>
+            <Form
+              layout="vertical"
+              initialValues={{
+                tokenValidity: record.details.accessTokenValiditySeconds,
+                grantType: record.details.authorizedGrantTypes[0],
+                refreshToken:
+                  record.details.refreshTokenValiditySeconds === null
+                    ? 0
+                    : record.details.refreshTokenValiditySeconds,
+                read: "read",
+                write: "no",
+              }}
+            >
+              <Item
+                label={i18n("AddClientForm.tokenValidity")}
+                name="tokenValidity"
+              >
+                <Radio.Group>
+                  {TOKEN_VALIDITY.map((token) => (
+                    <Radio.Button key={token.value} value={token.value}>
+                      {token.text}
+                    </Radio.Button>
+                  ))}
+                </Radio.Group>
+              </Item>
+              <Item label={i18n("AddClientForm.grantTypes")} name="grantType">
+                <Radio.Group onChange={(e) => setGrantType(e.target.value)}>
+                  <Radio style={radioStyle} value="password">
+                    {i18n("AddClientForm.grant.password")}
+                  </Radio>
+                  <Radio style={radioStyle} value="authorization_code">
+                    {i18n("AddClientForm.grant.authorizationCode")}
+
+                    {grantType === "authorization_code" ? (
+                      <Item
+                        name="redirectURI"
+                        style={{
+                          display: "inline-block",
+                          marginLeft: SPACE_MD,
+                          marginBottom: 0,
+                          width: 400,
+                        }}
+                        rules={[
+                          {
+                            required: true,
+                            message: i18n(
+                              "AddClientForm.grant.authorizationCode.redirect.warning"
+                            ),
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder={i18n(
+                            "AddClientForm.grant.authorizationCode.redirect"
+                          )}
+                        />
+                      </Item>
+                    ) : null}
+                  </Radio>
+                </Radio.Group>
+              </Item>
+              <Item
+                label={i18n("AddClientForm.refreshToken")}
+                name="refreshToken"
+              >
+                <Radio.Group>
+                  {REFRESH_TOKEN_VALIDITY.map((token) => (
+                    <Radio.Button key={token.value} value={token.value}>
+                      {token.text}
+                    </Radio.Button>
+                  ))}
+                </Radio.Group>
+              </Item>
+              <Item label={i18n("AddClientForm.readScope")} name="read">
+                <Radio.Group>
+                  <Radio.Button value="no">
+                    {i18n("AddClientForm.scopeNotAllowed")}
+                  </Radio.Button>
+                  <Radio.Button value="read">
+                    {i18n("AddClientForm.scopeAllowed")}
+                  </Radio.Button>
+                  <Radio.Button value="auto">
+                    {i18n("AddClientForm.scopeAllowedAutoApprove")}
+                  </Radio.Button>
+                </Radio.Group>
+              </Item>
+              <Item label={i18n("AddClientForm.writeScope")} name="write">
+                <Radio.Group>
+                  <Radio.Button value="no">
+                    {i18n("AddClientForm.scopeNotAllowed")}
+                  </Radio.Button>
+                  <Radio.Button value="write">
+                    {i18n("AddClientForm.scopeAllowed")}
+                  </Radio.Button>
+                  <Radio.Button value="auto">
+                    {i18n("AddClientForm.scopeAllowedAutoApprove")}
+                  </Radio.Button>
+                </Radio.Group>
+              </Item>
+            </Form>
+          </div>
+        ),
+      }}
+    />
+  );
 }
