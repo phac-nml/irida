@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Form, Input, message, Modal, Radio } from "antd";
+import { Form, Input, message, Modal, Radio, Typography } from "antd";
 import { REFRESH_TOKEN_VALIDITY, TOKEN_VALIDITY } from "../constants";
 import { SPACE_MD } from "../../../../../styles/spacing";
 import { PagedTableContext } from "../../../../../components/ant.design/PagedTable";
@@ -10,6 +10,7 @@ import {
 import { HelpPopover } from "../../../../../components/popovers";
 
 const { Item } = Form;
+const { Paragraph } = Typography;
 
 /**
  * React component to display an Ant Design Modal containing a form to
@@ -86,10 +87,10 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
       >
         <Item
           label={
-            <span>
+            <>
               {i18n("AddClientForm.clientId")}
               <HelpPopover content={i18n("AddClientForm.clientId.help")} />
-            </span>
+            </>
           }
           name="clientId"
           rules={[
@@ -136,10 +137,30 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
         <Item label={i18n("AddClientForm.grantTypes")} name="grantType">
           <Radio.Group onChange={(e) => setGrantType(e.target.value)}>
             <Radio style={radioStyle} value="password">
-              {i18n("AddClientForm.grant.password")}
+              <>
+                {i18n("AddClientForm.grant.password")}
+                <HelpPopover
+                  content={i18n("AddClientForm.grant.password.help")}
+                />
+              </>
             </Radio>
             <Radio style={radioStyle} value="authorization_code">
-              {i18n("AddClientForm.grant.authorizationCode")}
+              <>
+                {i18n("AddClientForm.grant.authorizationCode")}
+                <HelpPopover
+                  width={400}
+                  content={
+                    <section>
+                      <Paragraph>
+                        {i18n("AddClientForm.grant.authorizationCode.help")}
+                      </Paragraph>
+                      <Paragraph>
+                        {i18n("AddClientForm.grant.authorizationCode.help2")}
+                      </Paragraph>
+                    </section>
+                  }
+                />
+              </>
 
               {grantType === "authorization_code" ? (
                 <Item
@@ -169,7 +190,27 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
             </Radio>
           </Radio.Group>
         </Item>
-        <Item label={i18n("AddClientForm.refreshToken")} name="refreshToken">
+        <Item
+          label={
+            <>
+              {i18n("AddClientForm.refreshToken")}
+              <HelpPopover
+                width={400}
+                content={
+                  <section>
+                    <Paragraph>
+                      {i18n("AddClientForm.refreshToken.help")}
+                    </Paragraph>
+                    <Paragraph>
+                      {i18n("AddClientForm.refreshToken.help2")}
+                    </Paragraph>
+                  </section>
+                }
+              />
+            </>
+          }
+          name="refreshToken"
+        >
           <Radio.Group>
             {REFRESH_TOKEN_VALIDITY.map((token) => (
               <Radio.Button key={token.value} value={token.value}>
