@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients;
 
-import java.util.Set;
-
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
