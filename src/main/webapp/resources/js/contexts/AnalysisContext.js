@@ -2,8 +2,10 @@
  * This file loads basic analysis info from the server.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { showNotification } from "../modules/notifications";
+
+import { useInterval } from "../hooks";
 
 // Functions required by context
 import { updateAnalysis } from "../apis/analysis/analysis";
@@ -44,29 +46,30 @@ const AnalysisContext = React.createContext(initialContext);
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
 
-  // Update the analysis details that
-  // are required to display the progression
-  // using polling
-  useEffect(() => {
-      const interval = setInterval(() => {
-        getUpdatedDetails(analysisContext.analysis.identifier).then(res => {
-          setAnalysisContext(analysisContext => {
-            return {
-              ...analysisContext,
-              analysisState: res.analysisState,
-              isCompleted: res.analysisState === "COMPLETED",
-              isError: res.analysisState.includes("ERROR"),
-              previousState: res.previousState,
-              duration: res.duration
-            };
-          });
-          if(res.analysisState === "COMPLETED" || res.analysisState.includes("ERROR")) {
-            clearInterval(interval);
-          }
-        })
-      }, 5000);
-      return () => clearInterval(interval);
-  }, []);
+  /* Update the analysis details that are required
+   * to display the progression using polling
+   */
+  const intervalId = useInterval(() => {
+    getUpdatedDetails(analysisContext.analysis.identifier).then(res => {
+      setAnalysisContext(analysisContext => {
+        return {
+          ...analysisContext,
+          analysisState: res.analysisState,
+          isCompleted: res.analysisState === "COMPLETED",
+          isError: res.analysisState.includes("ERROR"),
+          previousState: res.previousState,
+          duration: res.duration
+        };
+      });
+      /*
+       * If the analysis has completed or errored we want to clear the interval
+       * so we do not keep retrieving the analysis progress
+       */
+      if(res.analysisState === "COMPLETED" || res.analysisState.includes("ERROR")) {
+        clearInterval(intervalId);
+      }
+    })
+  }, 5000);
 
   /*
    * Updates the submission name, displays a notification
