@@ -18,9 +18,6 @@ import { PageWrapper } from "../../../components/page/PageWrapper";
 
 import { Link, Location, Router } from "@reach/router";
 
-import { Error } from "../../../components/icons/Error";
-import { Running } from "../../../components/icons/Running";
-import { Success } from "../../../components/icons/Success";
 import { SPACE_MD } from "../../../styles/spacing";
 import AnalysisError from "./AnalysisError";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
@@ -28,6 +25,8 @@ import { ANALYSIS } from "../routes";
 import { getNewickTree } from "../../../apis/analysis/analysis";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
+
+import { Error, Running, Success } from "../../../components/icons";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
