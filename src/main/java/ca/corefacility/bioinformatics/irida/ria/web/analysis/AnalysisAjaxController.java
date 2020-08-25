@@ -1156,8 +1156,7 @@ public class AnalysisAjaxController {
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-progress")
-	@ResponseBody
-	public UpdatedAnalysisProgress getProvenanceByFile(@PathVariable Long submissionId) {
+	public ResponseEntity<UpdatedAnalysisProgress> getUpdatedProgress(@PathVariable Long submissionId) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
@@ -1175,7 +1174,7 @@ public class AnalysisAjaxController {
 			duration = analysisAudit.getAnalysisRunningTime(submission);
 		}
 
-		return new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration);
+		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration));
 
 	}
 
