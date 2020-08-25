@@ -68,6 +68,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			throw new StorageException("Unable to locate file on azure", e);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			throw new StorageException(e.getMessage());
 		}
 
 		return fileToProcess;
@@ -98,6 +99,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			}
 		} catch (IOException e) {
 			logger.error("Unable to delete local file [" + path.toString() + "]");
+			throw new StorageException(e.getMessage());
 		}
 	}
 
@@ -235,11 +237,11 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new IOException("Could not open input file for reading", e);
+				throw new StorageException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {
-			throw new IOException("Could not open target file for writing", e);
+			throw new StorageException("Could not open target file for writing", e);
 		}
 	}
 
