@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {PagedTable, PagedTableContext} from "../../../../../components/ant.design/PagedTable";
+import {PagedTable, PagedTableContext,} from "../../../../../components/ant.design/PagedTable";
 import {Button, Popconfirm, Tag} from "antd";
 import {setBaseUrl} from "../../../../../utilities/url-utilities";
 import {dateColumnFormat} from "../../../../../components/ant.design/table-renderers";
@@ -19,7 +19,7 @@ export function ClientsTable() {
       title: i18n("iridaThing.id"),
       width: 80,
       dataIndex: "id",
-      sorter: true
+      sorter: true,
     },
     {
       title: i18n("client.clientid"),
@@ -32,7 +32,7 @@ export function ClientsTable() {
             {text}
           </a>
         );
-      }
+      },
     },
     {
       title: i18n("client.grant-types"),
@@ -41,28 +41,28 @@ export function ClientsTable() {
         const colors = {
           password: "purple",
           authorization_code: "volcano",
-          refresh_token: "magenta"
+          refresh_token: "magenta",
         };
         return (
           <div>
-            {grants.map(g => (
+            {grants.map((g) => (
               <Tag color={colors[g] || ""} key={g}>
                 {g}
               </Tag>
             ))}
           </div>
         );
-      }
+      },
     },
     {
       ...dateColumnFormat(),
       title: i18n("iridaThing.timestamp"),
-      dataIndex: "createdDate"
+      dataIndex: "createdDate",
     },
     {
       title: i18n("client.details.token.active"),
       dataIndex: "tokens",
-      align: "right"
+      align: "right",
     },
     {
       key: "action",
@@ -84,8 +84,8 @@ export function ClientsTable() {
             </Button>
           </Popconfirm>
         );
-      }
-    }
+      },
+    },
   ];
 
   /**
