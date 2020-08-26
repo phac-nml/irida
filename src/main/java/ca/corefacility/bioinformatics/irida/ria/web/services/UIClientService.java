@@ -11,7 +11,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.stereotype.Component;
 
@@ -71,7 +70,7 @@ public class UIClientService {
      * Validate a client identifier for a new client
      *
      * @param clientId Identifier to check to see if it exists
-     * @throws ClientRegistrationException thrown if a client does not exist with the given client id.
+     * @throws NoSuchClientException thrown if a client does not exist with the given client id.
      */
     public void validateClientId(String clientId) throws NoSuchClientException {
         clientDetailsService.loadClientByClientId(clientId);
@@ -96,7 +95,7 @@ public class UIClientService {
         client.setClientId(request.getClientId());
         client.setAccessTokenValiditySeconds(request.getTokenValidity());
 
-        // Let's set up the scopes for this client
+        // Let's set up the scopes for this cliente
         Set<String> scopes = new HashSet<>();
         Set<String> autoScopes = new HashSet<>();
         // 1. Read scope
