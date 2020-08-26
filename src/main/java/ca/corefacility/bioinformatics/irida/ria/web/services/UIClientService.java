@@ -1,5 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.NoSuchClientException;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
@@ -8,19 +23,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTable
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
-import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintViolationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.collect.Sets;
 
 /**
  * UI Service to handle IRIDA Clients
@@ -69,7 +73,7 @@ public class UIClientService {
      * @param clientId Identifier to check to see if it exists
      * @throws ClientRegistrationException thrown if a client does not exist with the given client id.
      */
-    public void validateClientId(String clientId) throws ClientRegistrationException {
+    public void validateClientId(String clientId) throws NoSuchClientException {
         clientDetailsService.loadClientByClientId(clientId);
     }
 
