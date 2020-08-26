@@ -1,10 +1,13 @@
-import React, {useContext} from "react";
-import {PagedTable, PagedTableContext,} from "../../../../../components/ant.design/PagedTable";
-import {Button, Popconfirm, Tag} from "antd";
-import {setBaseUrl} from "../../../../../utilities/url-utilities";
-import {dateColumnFormat} from "../../../../../components/ant.design/table-renderers";
-import {revokeClientTokens} from "../../../../../apis/clients/clients";
-import {IconStop} from "../../../../../components/icons/Icons";
+import React, { useContext } from "react";
+import {
+  PagedTable,
+  PagedTableContext,
+} from "../../../../../components/ant.design/PagedTable";
+import { Button, Popconfirm, Tag } from "antd";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../../../components/ant.design/table-renderers";
+import { revokeClientTokens } from "../../../../../apis/clients/clients";
+import { IconStop } from "../../../../../components/icons/Icons";
 
 /**
  * Table for displaying a list of clients.
