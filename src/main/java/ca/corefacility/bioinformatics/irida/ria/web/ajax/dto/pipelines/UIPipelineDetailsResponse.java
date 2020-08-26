@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines;
 import java.util.List;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
+
 public class UIPipelineDetailsResponse {
 	private UUID id;
 	private String name;

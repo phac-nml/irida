@@ -16,10 +16,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.NamedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.Parameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;

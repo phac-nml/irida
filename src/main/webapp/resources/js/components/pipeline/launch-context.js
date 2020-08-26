@@ -46,6 +46,11 @@ function launchReducer(state, action) {
         modified: true,
         parameters: modifyParameter(),
       };
+    case CONSTANTS.DISPATCH_REFERENCE_UPLOADED:
+      return {
+        ...state,
+        files: [...state.files, action.file],
+      };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
