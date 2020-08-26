@@ -19,13 +19,13 @@ export function ClientsTable() {
 
   const columns = [
     {
-      title: i18n("iridaThing.id"),
+      title: i18n("ClientsTable.column.id"),
       width: 80,
       dataIndex: "id",
       sorter: true,
     },
     {
-      title: i18n("client.clientid"),
+      title: i18n("ClientsTable.column.clientId"),
       dataIndex: "name",
       ellipsis: true,
       sorter: true,
@@ -38,7 +38,7 @@ export function ClientsTable() {
       },
     },
     {
-      title: i18n("client.grant-types"),
+      title: i18n("ClientsTable.column.grants"),
       dataIndex: "grants",
       render(grants) {
         const colors = {
@@ -59,11 +59,11 @@ export function ClientsTable() {
     },
     {
       ...dateColumnFormat(),
-      title: i18n("iridaThing.timestamp"),
+      title: i18n("ClientsTable.column.created"),
       dataIndex: "createdDate",
     },
     {
-      title: i18n("client.details.token.active"),
+      title: i18n("ClientsTable.column.activeTokens"),
       dataIndex: "tokens",
       align: "right",
     },
