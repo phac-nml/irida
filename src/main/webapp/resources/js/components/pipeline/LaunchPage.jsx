@@ -3,7 +3,7 @@ import { LaunchProvider, useLaunchState } from "./launch-context";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Button, Form, PageHeader, Space, Steps } from "antd";
+import { Button, Col, Form, PageHeader, Row, Space, Steps } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import styled from "styled-components";
@@ -31,17 +31,26 @@ function LaunchTabs() {
       ),
       content: <PipelineDetails />,
     },
-    requiresReference
-      ? {
-          title: "Reference Files",
-          content: <ReferenceFiles />,
-        }
-      : null,
     {
-      title: "Parameters",
+      title: (
+        <Button type="text" onClick={() => setCurrent(1)}>
+          Parameters
+        </Button>
+      ),
       content: <PipelineParameters />,
     },
-  ].filter(Boolean);
+  ];
+
+  if (requiresReference) {
+    steps.push({
+      title: (
+        <Button type="text" onClick={() => setCurrent(2)}>
+          Reference File
+        </Button>
+      ),
+      content: <ReferenceFiles />,
+    });
+  }
 
   const next = () => setCurrent(current + 1);
 
@@ -83,7 +92,11 @@ function LaunchTabs() {
 export function LaunchPage({ pipelineId }) {
   return (
     <LaunchProvider pipelineId={pipelineId}>
-      <LaunchTabs />
+      <Row>
+        <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }}>
+          <LaunchTabs />
+        </Col>
+      </Row>
     </LaunchProvider>
   );
 }
