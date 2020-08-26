@@ -7,7 +7,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemResponse;
@@ -71,7 +71,7 @@ public class ClientsAjaxController {
 			service.validateClientId(clientId);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(messageSource.getMessage("server.AddClientForm.error", new Object[] { clientId }, locale));
-		} catch (ClientRegistrationException e) {
+		} catch (NoSuchClientException e) {
 			return ResponseEntity.ok("");
 		}
 	}
