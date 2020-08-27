@@ -36,8 +36,12 @@ export function AnalysesQueue({}) {
   // Update the analysis duration using polling
   const intervalId = useInterval(() => {
     fetchAnalysesQueueCounts().then(data => {
-      setRunning(data.running);
-      setQueued(data.queued);
+      if(data.running !== running) {
+        setRunning(data.running);
+      }
+      if(data.queued !== queued) {
+        setQueued(data.queued);
+      }
     }).catch((message) => {
         notification.error({message});
         clearInterval(intervalId);

@@ -16,7 +16,8 @@ import { getTextSearchProps } from "../ant.design/table-search-props";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { IconDownloadFile, IconTableFilter } from "../icons/Icons";
+import { AnalysisDownloadButton} from "./AnalysisDownloadButton";
+import { IconTableFilter} from "../icons/Icons";
 
 // Used to poll for changes in state and duration
 // Set to 1 minute
@@ -111,16 +112,7 @@ export function AnalysesTable() {
       key: "download",
       fixed: "right",
       render(text, record) {
-        return (
-          <Button
-            shape="circle-outline"
-            disabled={record.state.value !== "COMPLETED"}
-            href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
-            download
-          >
-            <IconDownloadFile />
-          </Button>
-        );
+        return <AnalysisDownloadButton state={record.state.value} analysisId={record.id} updateDelay={UPDATE_PROGRESS_DELAY} />
       }
     }
   ];
