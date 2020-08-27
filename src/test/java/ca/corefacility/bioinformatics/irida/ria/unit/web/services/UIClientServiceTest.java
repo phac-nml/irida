@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIClientService;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;

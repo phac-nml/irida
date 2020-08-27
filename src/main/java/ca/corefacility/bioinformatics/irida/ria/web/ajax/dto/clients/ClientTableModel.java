@@ -1,9 +1,9 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
-
-import java.util.Set;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
+
+import java.util.Set;
 
 /**
  * Used to represent an {@link IridaClientDetails} in an ant.design table on the Clients page.
