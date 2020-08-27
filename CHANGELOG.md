@@ -83,6 +83,7 @@ Changes
 * [UI]: Outputs and Tree view now span the full width of the page.
 * [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
 * [UI]: Updated the analysis results page to auto update the progress of an analysis.
+* [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
 
 19.09 to 20.01
 --------------
