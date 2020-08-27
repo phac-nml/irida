@@ -4,6 +4,11 @@
       data-layout-decorate="~{samples/_base}">
 <head>
     <title th:text="#{samples.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
+    <style>
+        dd {
+            word-wrap: break-word;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main">

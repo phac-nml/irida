@@ -179,6 +179,20 @@ export async function getOutputInfo(submissionId) {
 }
 
 /**
+ * Get the updated progress of an analysis
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getUpdatedDetails(submissionId) {
+  try {
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/updated-progress`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
  * Get the data from the output file for with the supplied chunk size
  * @param {object} contains the output file data
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
