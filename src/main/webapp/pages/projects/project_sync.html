@@ -12,10 +12,10 @@
         };
     </script>
 </head>
-<body>
+<body ng-app="irida.sync">
 <div layout:fragment="page">
     <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2">
-        <form name="new_project" class="ng-cloak" th:action="@{/projects/synchronize}" method="post" role="form"
+        <form name="new_project" th:action="@{/projects/synchronize}" method="post" role="form"
               novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">

@@ -33,7 +33,7 @@ public class ProjectTest {
 		ValidatorFactory factory = configuration.buildValidatorFactory();
 		validator = factory.getValidator();
 	}
-	
+
 	@Test
 	public void testNullProjectName() {
 		Project p = new Project();
@@ -42,7 +42,7 @@ public class ProjectTest {
 		Set<ConstraintViolation<Project>> violations = validator.validate(p);
 		assertEquals("Wrong number of violations.", 2, violations.size());
 	}
-	
+
 	@Test
 	public void testEmptyProjectName() {
 		Project p = new Project();
@@ -62,12 +62,12 @@ public class ProjectTest {
 	}
 
 	@Test
-	public void testBlacklistedCharactersInSampleName() {
-		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
+	public void testBlocklistedCharactersInSampleName() {
+		testBlocklists(ValidProjectName.ValidProjectNameBlocklist.BLOCKLIST);
 	}
 
-	private void testBlacklists(char[] blacklist) {
-		for (char c : blacklist) {
+	private void testBlocklists(char[] blocklist) {
+		for (char c : blocklist) {
 			Project p = new Project();
 			p.setName("ATLEAST3" + c);
 			Set<ConstraintViolation<Project>> violations = validator.validate(p);

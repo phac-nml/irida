@@ -23,12 +23,13 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	private final String COLUMN_ID = "irida-4"; // This is is based on the id of the MetadataField.
 
 	@Test
-	public void testTableEditAsCollaborator() {
+	public void testPageAsCollaborator() {
 		LoginPage.loginAsUser(driver());
 		driver().manage()
 				.window()
 				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+		assertFalse("Should not display import metadata button to collaborators", page.isImportMetadataBtnVisible());
 
 		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
@@ -36,13 +37,14 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testTableSetup() {
+	public void testPageAsManager() {
 		LoginPage.loginAsManager(driver());
 		driver().manage()
 				.window()
 				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+		assertTrue("Should display import metadata button", page.isImportMetadataBtnVisible());
 
 		// Ensure translations are loaded onto the page.
 		assertTrue("Applications translations should be loaded", page.ensureTranslationsLoaded("app"));

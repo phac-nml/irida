@@ -127,10 +127,11 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
 
   return (
     <>
-      <Button onClick={() => setVisible(true)}>
+      <Button className="t-add-user-group-btn" onClick={() => setVisible(true)}>
         {i18n("AddGroupButton.label")}
       </Button>
       <Modal
+        className="t-add-user-group-modal"
         onCancel={() => setVisible(false)}
         visible={visible}
         onOk={addUserGroup}

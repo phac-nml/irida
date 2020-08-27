@@ -72,15 +72,17 @@ export function ProjectMembersTable() {
   return (
     <PagedTable
       buttons={[
-        <AddMemberButton
-          key="add-members-btn"
-          label={i18n("AddMemberButton.label")}
-          modalTitle={i18n("AddMemberButton.modal.title")}
-          addMemberFn={addMemberToProject}
-          addMemberSuccessFn={updateTable}
-          getAvailableMembersFn={getAvailableUsersForProject}
-          defaultRole="PROJECT_USER"
-        />,
+        window.PAGE.canManage ? (
+          <AddMemberButton
+            key="add-members-btn"
+            label={i18n("AddMemberButton.label")}
+            modalTitle={i18n("AddMemberButton.modal.title")}
+            addMemberFn={addMemberToProject}
+            addMemberSuccessFn={updateTable}
+            getAvailableMembersFn={getAvailableUsersForProject}
+            defaultRole="PROJECT_USER"
+          />
+        ) : null,
       ]}
       columns={columns}
     />

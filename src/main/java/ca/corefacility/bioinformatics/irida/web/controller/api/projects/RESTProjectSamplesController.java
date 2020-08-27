@@ -378,7 +378,7 @@ public class RESTProjectSamplesController {
 	 * {@link Sample}.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+			MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
 		ModelMap modelMap = new ModelMap();
 
