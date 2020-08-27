@@ -3,7 +3,7 @@ import { LaunchProvider, useLaunchState } from "./launch-context";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Form, PageHeader, Space, Tabs } from "antd";
+import { Button, Form, PageHeader, Result, Space, Tabs } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { LaunchComplete } from "./LaunchComplete";
@@ -12,7 +12,7 @@ import { PipelineLaunchButton } from "./PipelineLaunchButton";
 const { TabPane } = Tabs;
 
 function LaunchTabs() {
-  const { original, complete, requiresReference } = useLaunchState();
+  const { original, complete, requiresReference, notFound } = useLaunchState();
 
   const steps = [
     {
@@ -37,6 +37,20 @@ function LaunchTabs() {
 
   return complete ? (
     <LaunchComplete />
+  ) : notFound ? (
+    <Result
+      status="404"
+      title="The pipeline you are looking for cannot be found"
+      subTitle="Try returning to the cart and selecting again"
+      extra={
+        <Button
+          type="primary"
+          onClick={() => navigate(setBaseUrl(`/cart/pipelines`))}
+        >
+          Back to Cart
+        </Button>
+      }
+    />
   ) : (
     <>
       <PageHeader

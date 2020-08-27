@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   Dropdown,
+  Form,
   List,
   Menu,
   Select,
@@ -39,17 +40,24 @@ export function PipelineParameters() {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <Select
-          style={{ flexGrow: 1 }}
-          defaultValue={selected}
-          onChange={getParameters}
+        <Form.Item
+          help={
+            "Default parameters cannot be modified, make a duplicate copy and modify them"
+          }
         >
-          {original.parameters.map((option) => (
-            <Option key={option.id} value={option.id}>
-              {option.label}
-            </Option>
-          ))}
-        </Select>
+          {" "}
+          <Select
+            style={{ flexGrow: 1 }}
+            defaultValue={selected}
+            onChange={getParameters}
+          >
+            {original.parameters.map((option) => (
+              <Option key={option.id} value={option.id}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
         {selected === 0 ? (
           <Button style={{ marginLeft: SPACE_SM }}>Duplicate</Button>
         ) : modified ? (

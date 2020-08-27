@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import * as CONSTANTS from "./lauch-constants";
+import axios from "axios";
 
 const LaunchStateContext = React.createContext();
 const LaunchDispatchContext = React.createContext();
@@ -20,8 +21,15 @@ function launchReducer(state, action) {
     return [];
   };
 
+  const duplicateParameters = () => {
+    console.log("FOOBAR");
+  };
+
   switch (action.type) {
     case CONSTANTS.DISPATCH_PIPELINE_LOADED:
+      /*
+      Default loading and initialization.
+       */
       return {
         ...state,
         original: { ...action.value },
@@ -32,6 +40,11 @@ function launchReducer(state, action) {
         modified: false,
         fetching: false,
       };
+    case CONSTANTS.DISPATCH_PIPELINE_404:
+      /*
+      This should display a 404 pipeline not found message to the user.
+       */
+      return { ...state, notFound: true, fetching: false };
     case CONSTANTS.DISPATCH_DETAILS_UPDATE:
       return { ...state, [action.field]: action.value };
     case CONSTANTS.DISPATCH_PARAMETER_CHANGE:
@@ -45,6 +58,10 @@ function launchReducer(state, action) {
         ...state,
         modified: true,
         parameters: modifyParameter(),
+      };
+    case CONSTANTS.DISPATCH_PARAMETERS_DUPLICATE:
+      return {
+        ...state,
       };
     case CONSTANTS.DISPATCH_REFERENCE_UPLOADED:
       return {
@@ -67,11 +84,15 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
   });
 
   useEffect(() => {
-    fetch(setBaseUrl(`/ajax/pipelines/${pipelineId}?automated=${automated}`))
-      .then((response) => response.json())
-      .then((json) => {
-        dispatch({ type: CONSTANTS.DISPATCH_PIPELINE_LOADED, value: json });
-      });
+    axios
+      .get(setBaseUrl(`/ajax/pipelines/${pipelineId}?automated=${automated}`))
+      .then(({ data }) =>
+        dispatch({
+          type: CONSTANTS.DISPATCH_PIPELINE_LOADED,
+          value: data,
+        })
+      )
+      .catch(() => dispatch({ type: CONSTANTS.DISPATCH_PIPELINE_404 }));
   }, [pipelineId, automated]);
 
   return (

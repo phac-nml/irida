@@ -2,8 +2,6 @@ import React, { Suspense, useState } from "react";
 import { PipelineLaunchModal } from "./PipelineLaunchModal";
 import { LaunchProvider } from "./launch-context";
 
-const PipelineDetailsModal = React.lazy(() => import("./PipelineDetailsModal"));
-
 export function Launch({ pipelineId, automated }) {
   const [visible, setVisible] = useState(false);
 
