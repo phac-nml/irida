@@ -1,20 +1,58 @@
-import React from "react";
-import { Button } from "antd";
+import React, { useState } from "react";
+import { Button, Popover } from "antd";
 import { IconRocket } from "../icons/Icons";
-import { useLaunchDispatch } from "./launch-context";
-import { DISPATCH_LAUNCH_PIPELINE } from "./lauch-constants";
+import { useLaunchDispatch, useLaunchState } from "./launch-context";
 
 export function PipelineLaunchButton() {
+  const { modified } = useLaunchState();
+  const [visible, setVisible] = useState(false);
+
   const dispatch = useLaunchDispatch();
 
   const clickHandler = () => {
-    // TODO: implement launch details here
-    dispatch({ type: DISPATCH_LAUNCH_PIPELINE });
+    if (modified && !visible) {
+      setVisible(true);
+      return;
+    }
+
+    if (modified) {
+      alert("SAVE TEMPLATE NOW");
+    } else {
+      alert("LAUNCHING");
+    }
   };
 
+  const onOk = () => {
+    alert("FOOBAR");
+    setVisible(false);
+  };
+
+  const onCancel = () => setVisible(false);
+
   return (
-    <Button type="primary" danger onClick={clickHandler} icon={<IconRocket />}>
-      LAUNCH PIPELINE
-    </Button>
+    <Popover
+      visible={visible}
+      placement="bottomRight"
+      title={"Parameters have been modified"}
+      content={
+        <div>
+          <p>blah blah blah</p>
+          <Button onClick={clickHandler}>Save</Button>
+        </div>
+      }
+      onConfirm={clickHandler}
+      onCancel={onCancel}
+      onOk={onOk}
+    >
+      <Button
+        type="primary"
+        danger
+        ghost
+        icon={<IconRocket />}
+        onClick={clickHandler}
+      >
+        Launch Pipeline
+      </Button>
+    </Popover>
   );
 }

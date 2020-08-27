@@ -1,60 +1,39 @@
-import React, { useState } from "react";
+import React from "react";
 import { LaunchProvider, useLaunchState } from "./launch-context";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Button, Col, Form, PageHeader, Row, Space, Steps } from "antd";
+import { Form, PageHeader, Space, Tabs } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import styled from "styled-components";
-import { grey3 } from "../../styles/colors";
 import { LaunchComplete } from "./LaunchComplete";
 import { PipelineLaunchButton } from "./PipelineLaunchButton";
 
-const StepsContent = styled("div")`
-  min-height: 500px;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid ${grey3};
-`;
+const { TabPane } = Tabs;
 
 function LaunchTabs() {
   const { original, complete, requiresReference } = useLaunchState();
-  const [current, setCurrent] = useState(0);
 
   const steps = [
     {
-      title: (
-        <Button type="text" onClick={() => setCurrent(0)}>
-          Pipeline Details
-        </Button>
-      ),
+      key: "details",
+      title: "Pipeline Details",
       content: <PipelineDetails />,
     },
     {
-      title: (
-        <Button type="text" onClick={() => setCurrent(1)}>
-          Parameters
-        </Button>
-      ),
+      key: "parameters",
+      title: "Parameters",
       content: <PipelineParameters />,
     },
   ];
 
   if (requiresReference) {
     steps.push({
-      title: (
-        <Button type="text" onClick={() => setCurrent(2)}>
-          Reference File
-        </Button>
-      ),
+      key: "reference",
+      title: "Reference File",
       content: <ReferenceFiles />,
     });
   }
-
-  const next = () => setCurrent(current + 1);
-
-  const prev = () => setCurrent(current - 1);
 
   return complete ? (
     <LaunchComplete />
@@ -65,25 +44,15 @@ function LaunchTabs() {
         onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
       />
       <Space direction="vertical" style={{ width: `100%` }} size="large">
-        <Steps current={current}>
-          {steps.map((item) => (
-            <Steps.Step key={item.title} title={item.title} />
-          ))}
-        </Steps>
-        <StepsContent>
-          <Form layout={"vertical"}>{steps[current].content}</Form>
-        </StepsContent>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "row-reverse",
-          }}
-        >
-          {current < steps.length - 1 && <Button onClick={next}>Next</Button>}
-          {current === steps.length - 1 && <PipelineLaunchButton />}
-          {current > 0 && <Button onClick={prev}>Previous</Button>}
-        </div>
+        <Form layout="vertical">
+          <Tabs tabBarExtraContent={[<PipelineLaunchButton key="launch" />]}>
+            {steps.map((step) => (
+              <TabPane tab={step.title} key={step.key}>
+                {step.content}
+              </TabPane>
+            ))}
+          </Tabs>
+        </Form>
       </Space>
     </>
   );
@@ -92,11 +61,7 @@ function LaunchTabs() {
 export function LaunchPage({ pipelineId }) {
   return (
     <LaunchProvider pipelineId={pipelineId}>
-      <Row>
-        <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }}>
-          <LaunchTabs />
-        </Col>
-      </Row>
+      <LaunchTabs />
     </LaunchProvider>
   );
 }

@@ -25,7 +25,7 @@ function launchReducer(state, action) {
       return {
         ...state,
         original: { ...action.value },
-        name: action.value.name,
+        name: `${action.value.name}_${Date.now()}`,
         parameters: [...action.value.parameters[0].parameters],
         requiresReference: action.value.requiresReference,
         files: action.value.files,
