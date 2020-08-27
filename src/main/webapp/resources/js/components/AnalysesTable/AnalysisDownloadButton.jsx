@@ -7,11 +7,10 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile } from "../icons/Icons";
 
 /**
- * Display the duration of an analysis
- * @param {number} duration The time elapsed for the analysis
- * @param {string} analysisId the analysis identifier
- * @param {number} the polling delay
- * @param {object} the current analysis state
+ * Display the download results button for an analysis
+ * @param {string} state The state of the analysis
+ * @param {number} analysisId the analysis identifier
+ * @param {number} updateDelay the polling delay
  * @returns {*}
  * @constructor
  */
