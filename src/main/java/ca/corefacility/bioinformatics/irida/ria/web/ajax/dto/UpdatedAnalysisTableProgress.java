@@ -2,6 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateModel;
 
+/**
+ * Used by the UI to to update the state and duration of an analysis.
+ */
+
 public class UpdatedAnalysisTableProgress {
 	private AnalysisStateModel analysisStateModel;
 	private Long duration;

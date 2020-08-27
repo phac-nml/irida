@@ -10,6 +10,7 @@ import { getHumanizedDuration } from "../../utilities/date-utilities.js";
  * @param {number} duration The time elapsed for the analysis
  * @param {string} analysisId the analysis identifier
  * @param {number} the polling delay
+ * @param {object} the current analysis state
  * @returns {*}
  * @constructor
  */
