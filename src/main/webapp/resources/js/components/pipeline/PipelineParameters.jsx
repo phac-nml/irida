@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Divider,
-  Dropdown,
-  Form,
-  List,
-  Menu,
-  Select,
-  Typography,
-} from "antd";
+import { Divider, Dropdown, Form, List, Menu, Select, Typography } from "antd";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import {
   DISPATCH_PARAMETER_CHANGE,
@@ -16,6 +7,7 @@ import {
 } from "./lauch-constants";
 import { SPACE_SM } from "../../styles/spacing";
 import { IconDropDown } from "../icons/Icons";
+import { DuplicateParametersButton } from "./DuplicateParametersButton";
 
 const { Option } = Select;
 const { Paragraph } = Typography;
@@ -41,11 +33,13 @@ export function PipelineParameters() {
     <>
       <div style={{ display: "flex" }}>
         <Form.Item
+          style={{ width: 400, marginRight: SPACE_SM }}
           help={
-            "Default parameters cannot be modified, make a duplicate copy and modify them"
+            selected === 0
+              ? "Default parameters cannot be modified, make a duplicate copy and modify them"
+              : null
           }
         >
-          {" "}
           <Select
             style={{ flexGrow: 1 }}
             defaultValue={selected}
@@ -59,7 +53,7 @@ export function PipelineParameters() {
           </Select>
         </Form.Item>
         {selected === 0 ? (
-          <Button style={{ marginLeft: SPACE_SM }}>Duplicate</Button>
+          <DuplicateParametersButton />
         ) : modified ? (
           <Dropdown.Button
             overlay={

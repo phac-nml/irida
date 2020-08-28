@@ -21,8 +21,9 @@ function launchReducer(state, action) {
     return [];
   };
 
-  const duplicateParameters = () => {
-    console.log("FOOBAR");
+  const duplicateParameters = (name) => {
+    const parameters = [...state.parameters];
+    console.log(parameters);
   };
 
   switch (action.type) {
@@ -60,6 +61,7 @@ function launchReducer(state, action) {
         parameters: modifyParameter(),
       };
     case CONSTANTS.DISPATCH_PARAMETERS_DUPLICATE:
+      duplicateParameters(action.payload.name);
       return {
         ...state,
       };
