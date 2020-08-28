@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisTableProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
@@ -267,6 +266,7 @@ public class AnalysesTableAjaxController {
 	 * Get the updated state and duration of an analysis
 	 *
 	 * @param submissionId The analysis submission id
+	 * @param locale {@link Locale} Users locale
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-table-progress")
