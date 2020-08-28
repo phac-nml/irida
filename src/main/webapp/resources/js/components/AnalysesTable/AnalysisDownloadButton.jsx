@@ -17,12 +17,13 @@ import { IconDownloadFile } from "../icons/Icons";
 export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
   const [currState, setCurrState] = useState(state);
 
-  // Update the analysis duration using polling
+  // Get the updated analysis state using polling
   const intervalId = useInterval(() => {
-    if(state !== "COMPLETED" && state !== "ERROR") {
+    if(currState !== "COMPLETED" && currState !== "ERROR") {
       getUpdatedTableDetails(analysisId).then(res => {
-        setCurrState(res.analysisStateModel.value);
-
+        if(res.analysisStateModel.value !== state) {
+          setCurrState(res.analysisStateModel.value);
+        }
         if (res.analysisStateModel.value === "COMPLETED" || res.analysisStateModel.value === "ERROR") {
           clearInterval(intervalId);
         }
