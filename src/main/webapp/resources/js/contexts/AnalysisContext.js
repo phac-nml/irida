@@ -2,12 +2,13 @@
  * This file loads basic analysis info from the server.
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { showNotification } from "../modules/notifications";
 
 import { useInterval } from "../hooks";
 
 // Functions required by context
+import { getAnalysisInfo } from "../apis/analysis/analysis";
 import { updateAnalysis } from "../apis/analysis/analysis";
 import { getUpdatedDetails } from "../apis/analysis/analysis";
 
@@ -31,30 +32,59 @@ export const stateMap = {
   COMPLETED: 5
 };
 
-export const isAdmin = window.PAGE.isAdmin;
-
 const initialContext = {
-  analysis: window.PAGE.analysis,
-  analysisName: window.PAGE.analysisName,
-  analysisState: window.PAGE.analysisState,
-  analysisType: window.PAGE.analysisType.type,
-  analysisViewer: window.PAGE.analysisViewer,
-  isCompleted: window.PAGE.analysisState === "COMPLETED",
-  isError: window.PAGE.analysisState.includes("ERROR"),
-  previousState: window.PAGE.previousState,
-  duration: window.PAGE.duration
+  analysis: null,
+  analysisName: null,
+  analysisState: null,
+  analysisType: null,
+  analysisViewer: null,
+  isAdmin: false,
+  mailConfigured: false,
+  isCompleted: false,
+  isError: false,
+  previousState: null,
+  duration: null
 };
 
 const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
+  const analysisIdentifier = analysisContext.analysis !== null ? 
+                             analysisContext.analysis.identifier
+                             :
+                             window.location.pathname.match(/analysis\/(\d+)/)[1];
+
+  useEffect(() => {
+    getAnalysisInfo(analysisIdentifier).then(res => {
+      console.log(res);
+      setAnalysisContext(analysisContext => {
+        return {
+          ...analysisContext,
+          analysis: res.analysis,
+          analysisName: res.analysisName,
+          analysisState: res.analysisState,
+          analysisType: res.analysisType,
+          analysisViewer: res.analysisViewer,
+          isAdmin: res.admin,
+          mailConfigured: res.mailConfigured,
+          isCompleted: res.analysisState === "COMPLETED",
+          isError: res.analysisState.includes("ERROR"),
+          previousState: res.previousState,
+          duration: res.duration
+        }
+      });
+    }).catch((message) => {
+      notification.error({ message });
+    });
+  }, []);
+
 
   /* Update the analysis details that are required
    * to display the progression using polling
    */
   const intervalId = useInterval(() => {
-    getUpdatedDetails(analysisContext.analysis.identifier).then(res => {
+    getUpdatedDetails(analysisIdentifier).then(res => {
       updateAnalysisState(res.analysisState, res.previousState);
       updateAnalysisDuration(res.duration);
       /*
@@ -121,7 +151,7 @@ function AnalysisProvider(props) {
    */
   function analysisContextUpdateSubmissionName(updatedAnalysisName) {
     updateAnalysis({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       analysisName: updatedAnalysisName,
       priority: null
     }).then(message => {

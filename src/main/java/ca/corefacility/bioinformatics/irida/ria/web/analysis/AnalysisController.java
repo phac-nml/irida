@@ -137,50 +137,16 @@ public class AnalysisController {
 	 */
 
 	@RequestMapping(value = "/{submissionId}/**", produces = MediaType.TEXT_HTML_VALUE)
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal) {
+	public String getDetailsPage(@PathVariable Long submissionId, Model model) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		model.addAttribute("analysisSubmission", submission);
-
-		final User currentUser = userService.getUserByUsername(principal.getName());
-
-		// AnalysisControllerTest throws a null pointer error if not checked
-		if (currentUser != null) {
-			model.addAttribute("isAdmin", currentUser.getSystemRole()
-					.equals(Role.ROLE_ADMIN));
-		}
+		model.addAttribute("analysisName", submission.getName());
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
-		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-
-		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
-
-		if (viewerForAnalysisType.isPresent()) {
-			model.addAttribute("viewer", viewerForAnalysisType.get());
-		} else {
-			model.addAttribute("viewer", "none");
-		}
-
 		model.addAttribute("analysisType", analysisType);
-		model.addAttribute("mailConfigured", emailController.isMailConfigured());
-
-		if (submission.getAnalysisState() == AnalysisState.ERROR) {
-			model.addAttribute("previousState", analysisAudit.getPreviousStateBeforeError(submissionId));
-		}
-
-		// Get the run time of the analysis runtime using the analysis
-		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
-			Date currentDate = new Date();
-			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
-		} else {
-			duration = analysisAudit.getAnalysisRunningTime(submission);
-		}
-		model.addAttribute("duration", duration);
-
 		return "analysis";
 	}
 

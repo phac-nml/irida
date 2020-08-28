@@ -35,7 +35,7 @@ export default function AnalysisSettings() {
   const { analysisContext } = useContext(AnalysisContext);
 
   const DEFAULT_URL =
-    setBaseUrl(`/analysis/${analysisContext.analysis.identifier}/` + ANALYSIS.SETTINGS);
+    setBaseUrl(`/analysis/${window.location.pathname.match(/analysis\/(\d+)/)[1]}/` + ANALYSIS.SETTINGS);
 
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   const analysisRunning =

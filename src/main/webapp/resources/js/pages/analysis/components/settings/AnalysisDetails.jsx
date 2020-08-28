@@ -10,7 +10,7 @@ import React, { useContext } from "react";
 import { Checkbox, Select, Typography } from "antd";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 
-import { AnalysisContext, isAdmin } from "../../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { BasicList } from "../../../../components/lists/BasicList";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
@@ -71,7 +71,7 @@ export default function AnalysisDetails() {
     {
       title: i18n("AnalysisDetails.priority"),
       desc:
-        isAdmin && analysisContext.analysisState === "NEW"
+        analysisContext.isAdmin && analysisContext.analysisState === "NEW"
           ? renderUpdatePrioritySection()
           : analysisDetailsContext.priority
     },
@@ -141,7 +141,7 @@ export default function AnalysisDetails() {
     <TabPaneContent title={i18n("AnalysisDetails.details")}>
       <BasicList dataSource={analysisDetails} />
 
-      {window.PAGE.mailConfigured &&
+      {analysisContext.mailConfigured &&
       !analysisContext.isCompleted &&
       !analysisContext.isError ? (
         <section

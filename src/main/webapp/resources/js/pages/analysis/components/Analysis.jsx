@@ -42,7 +42,7 @@ const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
-  const DEFAULT_URL = setBaseUrl(`/analysis/${analysisContext.analysis.identifier}`);
+  const DEFAULT_URL = setBaseUrl(`/analysis/${window.location.pathname.match(/analysis\/(\d+)/)[1]}`);
   const [treeDefault, setTreeDefault] = useState(null);
 
   useEffect(() => {

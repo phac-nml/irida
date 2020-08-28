@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
@@ -53,9 +54,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -95,6 +94,8 @@ public class AnalysisAjaxController {
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private ExecutionManagerConfig configFile;
 	private AnalysisAudit analysisAudit;
+	private AnalysisTypesService analysisTypesService;
+	private EmailController emailController;
 
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
@@ -103,7 +104,7 @@ public class AnalysisAjaxController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
 			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource,
-			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit) {
+			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService, EmailController emailController) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -118,6 +119,8 @@ public class AnalysisAjaxController {
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.configFile = configFile;
 		this.analysisAudit = analysisAudit;
+		this.analysisTypesService = analysisTypesService;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -1197,6 +1200,45 @@ public class AnalysisAjaxController {
 
 		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration));
 
+	}
+
+	@RequestMapping(value = "/{submissionId}/analysis-details")
+	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		final User currentUser = userService.getUserByUsername(principal.getName());
+
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
+
+		// Get the name of the workflow
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
+
+		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
+		String viewer = "";
+		if (viewerForAnalysisType.isPresent()) {
+			viewer = viewerForAnalysisType.get();
+		} else {
+			viewer = "none";
+		}
+
+		AnalysisState prevState = submission.getAnalysisState();
+		if (submission.getAnalysisState() == AnalysisState.ERROR) {
+			prevState = analysisAudit.getPreviousStateBeforeError(submissionId);
+		}
+
+		// Get the run time of the analysis runtime using the analysis
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
+
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType, viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration));
 	}
 
 	/*

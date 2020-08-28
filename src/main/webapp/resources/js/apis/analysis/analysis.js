@@ -8,6 +8,16 @@ const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
 const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
 
+
+export async function getAnalysisInfo(submissionId) {
+  try {
+    const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/analysis-details`);
+    return data;
+  }  catch (error) {
+    return { error };
+  }
+}
+
 /*
  * Get all the data required for the analysis -> details page.
  * @param {number} submissionId Submission ID

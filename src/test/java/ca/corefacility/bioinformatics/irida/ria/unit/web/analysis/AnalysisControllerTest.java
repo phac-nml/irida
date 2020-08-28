@@ -94,7 +94,7 @@ public class AnalysisControllerTest {
 
 		Principal principal = () -> USER_NAME;
 
-		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
 		assertEquals("Phylogenetic Tree tab should be available", BuiltInAnalysisTypes.PHYLOGENOMICS,
@@ -125,7 +125,7 @@ public class AnalysisControllerTest {
 				Optional.of("tree"));
 		Principal principal = () -> USER_NAME;
 
-		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
 		assertFalse("Phylogenetic Tree tab should not be available",
@@ -150,7 +150,7 @@ public class AnalysisControllerTest {
 				createUnknownWorkflow(workflowId));
 		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.UNKNOWN)).thenReturn(Optional.empty());
 
-		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));

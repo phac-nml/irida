@@ -42,13 +42,19 @@ export default function AnalysisError() {
   const [jobErrors, setJobErrors] = useState(null);
   const [currActiveKey, setCurrActiveKey] = useState(1);
 
+  const analysisIdentifier = analysisContext.analysis !== null ?
+    analysisContext.analysis.identifier
+    :
+    window.location.pathname.match(/analysis\/(\d+)/)[1];
+
+
   const DEFAULT_URL =
-    setBaseUrl(`/analysis/${analysisContext.analysis.identifier}/` + ANALYSIS.ERROR);
+    setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.ERROR);
   const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
 
   // Sets the job errors into a local state variable on page load
   useEffect(() => {
-    getJobErrors(analysisContext.analysis.identifier).then(data => {
+    getJobErrors(analysisIdentifier).then(data => {
       setJobErrors(data);
     });
   }, []);
@@ -148,7 +154,7 @@ export default function AnalysisError() {
         <div style={{ display: "flex" }}>
           <WarningAlert message={i18n("AnalysisError.noJobInfoAvailable")} />
         </div>
-        { isAdmin && jobErrors.galaxyHistoryId !== null ?
+        { analysisContext.isAdmin && jobErrors.galaxyHistoryId !== null ?
           <div style={{ display: "flex", marginTop: SPACE_MD }} id="t-galaxy-history-id">
             <Descriptions title={i18n("AnalysisError.galaxyInformation")} column={1} bordered={true}>
               <Descriptions.Item label={i18n("AnalysisError.historyId")}>
