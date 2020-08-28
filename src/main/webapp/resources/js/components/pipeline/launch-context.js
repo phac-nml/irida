@@ -23,7 +23,7 @@ function launchReducer(state, action) {
 
   const duplicateParameters = (name) => {
     const parameters = [...state.parameters];
-    console.log(parameters);
+    console.log(state);
   };
 
   switch (action.type) {
