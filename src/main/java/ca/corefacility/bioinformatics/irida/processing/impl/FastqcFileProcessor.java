@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import org.slf4j.Logger;
@@ -99,15 +100,12 @@ public class FastqcFileProcessor implements FileProcessor {
 				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", new Object[] {FastQCApplication.VERSION},
 						LocaleContextHolder.getLocale()));
 
-		File fastQCSequenceFileToProcess = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
-		Path perBaseQualityScoresOutputDirectory = null;
-		Path perSequenceQualityScoresOutputDirectory = null;
-		Path duplicationLevelOutputDirectory = null;
+		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
+		File fastQCSequenceFileToProcess = iridaTemporaryFile.getFile().toFile();
+		Path outputDirectory = null;
 
 		try {
-			perBaseQualityScoresOutputDirectory = Files.createTempDirectory("analysis-output");
-			perSequenceQualityScoresOutputDirectory = Files.createTempDirectory("analysis-output");
-			duplicationLevelOutputDirectory = Files.createTempDirectory("analysis-output");
+			outputDirectory = Files.createTempDirectory("analysis-output");
 
 			try {
 				uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
@@ -129,9 +127,9 @@ public class FastqcFileProcessor implements FileProcessor {
 				logger.debug("Finished FastQC analysis modules.");
 
 				handleBasicStats(basicStats, analysis);
-				handlePerBaseQualityScores(pbqs, analysis, perBaseQualityScoresOutputDirectory);
-				handlePerSequenceQualityScores(psqs, analysis, perSequenceQualityScoresOutputDirectory);
-				handleDuplicationLevel(overRep.duplicationLevelModule(), analysis, duplicationLevelOutputDirectory);
+				handlePerBaseQualityScores(pbqs, analysis, outputDirectory);
+				handlePerSequenceQualityScores(psqs, analysis, outputDirectory);
+				handleDuplicationLevel(overRep.duplicationLevelModule(), analysis, outputDirectory);
 				Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 
 				logger.trace("Saving FastQC analysis.");
@@ -150,10 +148,8 @@ public class FastqcFileProcessor implements FileProcessor {
 			logger.error("Unable to create temporary directory ", e);
 			throw new StorageException("Unable to create temporary directory", e);
 		} finally {
-				IridaFiles.cleanupLocalFiles(fastQCSequenceFileToProcess.toPath());
-				IridaFiles.cleanupLocalFiles(perBaseQualityScoresOutputDirectory);
-				IridaFiles.cleanupLocalFiles(perSequenceQualityScoresOutputDirectory);
-				IridaFiles.cleanupLocalFiles(duplicationLevelOutputDirectory);
+				IridaFiles.cleanupLocalFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
+				IridaFiles.cleanupLocalFiles(null, outputDirectory);
 		}
 	}
 

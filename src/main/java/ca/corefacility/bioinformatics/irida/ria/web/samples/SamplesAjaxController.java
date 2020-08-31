@@ -22,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Controller for asynchronous requests for a {@link Sample}
@@ -143,6 +145,7 @@ public class SamplesAjaxController {
 				UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
 
 				genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
+				IridaFiles.cleanupLocalFiles(null, temp);
 			}
 			return ResponseEntity.ok()
 					.body(messageSource.getMessage("server.SampleFileUploader.success",
@@ -163,9 +166,13 @@ public class SamplesAjaxController {
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = createSequenceFile(pair.get(0));
-		SequenceFile secondFile = createSequenceFile(pair.get(1));
+		IridaTemporaryFile firstIridaTemporaryFile = createSequenceFile(pair.get(0));
+		IridaTemporaryFile secondIridaTemporaryFile = createSequenceFile(pair.get(1));
+		SequenceFile firstFile = new SequenceFile(firstIridaTemporaryFile.getFile());
+		SequenceFile secondFile = new SequenceFile(secondIridaTemporaryFile.getFile());
 		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
+		IridaFiles.cleanupLocalFiles(null, firstIridaTemporaryFile.getDirectoryPath());
+		IridaFiles.cleanupLocalFiles(null, secondIridaTemporaryFile.getDirectoryPath());
 	}
 
 	/**
@@ -176,8 +183,10 @@ public class SamplesAjaxController {
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
+		IridaTemporaryFile iridaTemporaryFile = createSequenceFile(file);
+		SequenceFile sequenceFile = new SequenceFile(iridaTemporaryFile.getFile());
 		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
+		IridaFiles.cleanupLocalFiles(null, iridaTemporaryFile.getDirectoryPath());
 	}
 
 	/**
@@ -188,22 +197,24 @@ public class SamplesAjaxController {
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private void createFast5FileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
+		IridaTemporaryFile iridaTemporaryFile = createSequenceFile(file);
+		SequenceFile sequenceFile = new SequenceFile(iridaTemporaryFile.getFile());
 		sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample);
+		IridaFiles.cleanupLocalFiles(null, iridaTemporaryFile.getDirectoryPath());
 	}
 
 	/**
 	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
+	 * create the {@link IridaTemporaryFile} object.
 	 *
 	 * @param file {@link MultipartFile} sequence file uploaded.
-	 * @return {@link SequenceFile}
+	 * @return {@link IridaTemporaryFile}
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
-	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
+	private IridaTemporaryFile createSequenceFile(MultipartFile file) throws IOException {
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
 		file.transferTo(target.toFile());
-		return new SequenceFile(target);
+		return new IridaTemporaryFile(target, temp);
 	}
 }

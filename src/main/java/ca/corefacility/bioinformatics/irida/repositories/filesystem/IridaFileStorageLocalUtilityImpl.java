@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
@@ -38,18 +39,19 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File getTemporaryFile(Path file) {
-		File fileToProcess = null;
-		fileToProcess = file.toFile();
-		return fileToProcess;
+	public IridaTemporaryFile getTemporaryFile(Path file) {
+		return new IridaTemporaryFile(file, null);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void cleanupLocalFiles(Path path) {
-		logger.trace("File resides on local filesystem. Not cleaning up file [" + path.toString() + "]");
+	public void cleanupLocalFiles(Path filePath, Path directoryPath) {
+		logger.trace("File resides on local filesystem. Not cleaning up file [" + filePath.toString() + "]");
+		if(directoryPath != null) {
+			logger.trace("Directory resides on local filesystem. Not cleaning up directory [" + directoryPath.toString() + "]");
+		}
 	}
 
 	/**

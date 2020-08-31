@@ -8,6 +8,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 
 import com.google.common.collect.Lists;
 
@@ -22,16 +23,17 @@ public interface IridaFileStorageUtility {
 	 * Get a temporarry file from storage
 	 *
 	 * @param file The {@link Path} to the file
-	 * @return {@link File} which was retrieved from path
+	 * @return {@link IridaTemporaryFile} which includes the file and optional temporary directory
 	 */
-	public File getTemporaryFile(Path file);
+	public IridaTemporaryFile getTemporaryFile(Path file);
 
 	/**
 	 * Delete temporary file.
 	 *
-	 * @param file The {@link Path} to the file
+	 * @param filePath The {@link Path} to the file
+	 * @param directoryPath The {@link Path} to the directory which has the file
 	 */
-	public void cleanupLocalFiles(Path file);
+	public void cleanupLocalFiles(Path filePath, Path directoryPath);
 
 	/**
 	 * Get file size

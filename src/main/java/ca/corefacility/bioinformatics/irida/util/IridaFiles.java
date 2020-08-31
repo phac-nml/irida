@@ -20,6 +20,7 @@ public final class IridaFiles {
 	public static void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
 		IridaFiles.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
+
 	private IridaFiles() {
 	}
 
@@ -66,9 +67,14 @@ public final class IridaFiles {
 	}
 
 	/**
-	 * Cleans up temporary downloaded files
-	 * @param file The path to the file
+	 * Cleans up temporary downloaded files. Can be used
+	 * to clean up file and/or directory
+	 *
+	 * @param filePath The path to the file
+	 * @param directoryPath The path to the directory which has the file
 	 */
-	public static void cleanupLocalFiles(Path file) { iridaFileStorageUtility.cleanupLocalFiles(file); }
+	public static void cleanupLocalFiles(Path filePath, Path directoryPath) {
+		iridaFileStorageUtility.cleanupLocalFiles(filePath, directoryPath);
+	}
 
 }
