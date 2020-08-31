@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
