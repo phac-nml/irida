@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -56,6 +57,7 @@ public class FastqcFileProcessorTest {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageUtility);
 	}
 

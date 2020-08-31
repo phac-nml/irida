@@ -48,7 +48,9 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void cleanupLocalFiles(Path filePath, Path directoryPath) {
-		logger.trace("File resides on local filesystem. Not cleaning up file [" + filePath.toString() + "]");
+		if(filePath != null) {
+			logger.trace("File resides on local filesystem. Not cleaning up file [" + filePath.toString() + "]");
+		}
 		if(directoryPath != null) {
 			logger.trace("Directory resides on local filesystem. Not cleaning up directory [" + directoryPath.toString() + "]");
 		}
