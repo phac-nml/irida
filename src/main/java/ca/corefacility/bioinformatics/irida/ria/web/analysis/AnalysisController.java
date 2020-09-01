@@ -132,7 +132,6 @@ public class AnalysisController {
 	 *
 	 * @param submissionId the ID of the submission
 	 * @param model        Model for the view
-	 * @param principal    Principal {@link User}
 	 * @return name of the details page view
 	 */
 

@@ -92,15 +92,13 @@ public class AnalysisControllerTest {
 		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS)).thenReturn(
 				Optional.of("tree"));
 
-		Principal principal = () -> USER_NAME;
-
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
 		assertEquals("Phylogenetic Tree tab should be available", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				model.get("analysisType"));
 
-		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
 
 		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				model.get("analysisType"));
@@ -123,15 +121,14 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS)).thenReturn(
 				Optional.of("tree"));
-		Principal principal = () -> USER_NAME;
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertFalse("Phylogenetic Tree tab should not be available",
+		assertFalse("Analysis should not be completed",
 				submission.getAnalysisState() == AnalysisState.COMPLETED);
 
-		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
 	}
 
 	@Test
@@ -139,8 +136,6 @@ public class AnalysisControllerTest {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		UUID workflowId = UUID.randomUUID();
-
-		Principal principal = () -> USER_NAME;
 
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
@@ -153,7 +148,7 @@ public class AnalysisControllerTest {
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
 
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}
