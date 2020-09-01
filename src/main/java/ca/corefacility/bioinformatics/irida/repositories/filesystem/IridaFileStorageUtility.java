@@ -131,7 +131,7 @@ public interface IridaFileStorageUtility {
 	public static void cleanupLocalTemporaryFiles(Path filePath, Path directoryPath) {
 		try {
 			if(filePath != null) {
-				Files.delete(filePath);
+				Files.deleteIfExists(filePath);
 			}
 			if(directoryPath != null) {
 				org.apache.commons.io.FileUtils.deleteDirectory(directoryPath.toFile());
