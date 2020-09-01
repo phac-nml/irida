@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaConcatenatorTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.Lists;
@@ -50,7 +51,8 @@ public class SequenceFilePairConcatenatorTest {
 		SequenceFilePair f1 = new SequenceFilePair(original1, original2);
 		SequenceFilePair f2 = new SequenceFilePair(original3, original4);
 
-		SequenceFilePair concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
+		IridaConcatenatorTemporaryFile iridaConcatenatorTemporaryFile = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
+		SequenceFilePair concatenateFiles = (SequenceFilePair) iridaConcatenatorTemporaryFile.getSequencingObject();
 
 		SequenceFile forward = concatenateFiles.getForwardSequenceFile();
 		SequenceFile reverse = concatenateFiles.getReverseSequenceFile();

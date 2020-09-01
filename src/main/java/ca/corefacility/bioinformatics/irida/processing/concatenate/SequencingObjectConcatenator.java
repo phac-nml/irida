@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.processing.concatenate;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaConcatenatorTemporaryFile;
 
 import java.util.List;
 
@@ -18,10 +19,10 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 	 *
 	 * @param toConcatenate the set of {@link SequencingObject}s to concatenate
 	 * @param filename      base name of the new file to create
-	 * @return the newly created {@link SequencingObject} class
+	 * @return the newly created {@link IridaConcatenatorTemporaryFile} class
 	 * @throws ConcatenateException if there is an error during concatenation
 	 */
-	public abstract Type concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
+	public abstract IridaConcatenatorTemporaryFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException;
 
 }

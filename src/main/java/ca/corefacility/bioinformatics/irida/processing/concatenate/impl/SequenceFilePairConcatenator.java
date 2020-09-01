@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaConcatenatorTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
@@ -28,8 +29,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
+
+	public IridaConcatenatorTemporaryFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 
 		String extension = null;
@@ -43,11 +44,12 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 		String forwardName = filename + "_R1." + extension;
 		String reverseName = filename + "_R2." + extension;
 
+		Path tempDirectory;
 		Path forwardFile;
 		Path reverseFile;
 		try {
 			// create a temp directory for the new files
-			Path tempDirectory = Files.createTempDirectory(null);
+			tempDirectory = Files.createTempDirectory(null);
 
 			forwardFile = tempDirectory.resolve(forwardName);
 			reverseFile = tempDirectory.resolve(reverseName);
@@ -82,6 +84,6 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 		// create the new pair
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(forward, reverse);
 
-		return sequenceFilePair;
+		return new IridaConcatenatorTemporaryFile(null, tempDirectory, sequenceFilePair);
 	}
 }
