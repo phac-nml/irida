@@ -152,7 +152,7 @@ public class GzipFileProcessor implements FileProcessor {
 					logger.error("Unable to create temporary directory", e);
 					throw new StorageException("Unable to create temporary directory");
 				} finally {
-					IridaFiles.cleanupLocalFiles(null, targetDirectory);
+					IridaFiles.cleanupLocalTemporaryFiles(null, targetDirectory);
 				}
 			}
 		} catch (Exception e) {

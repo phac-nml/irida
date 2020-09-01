@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Controller for all {@link ReferenceFile} related views
@@ -105,8 +106,7 @@ public class ReferenceFileController {
 				projectService.addReferenceFileToProject(project, referenceFile);
 
 				// Clean up temporary files
-				Files.deleteIfExists(target);
-				Files.deleteIfExists(temp);
+				IridaFiles.cleanupLocalTemporaryFiles(target, temp);
 			}
 		} catch (final UnsupportedReferenceFileContentError e) {
 			logger.error("User uploaded a reference file that biojava couldn't parse as DNA.", e);
@@ -156,8 +156,7 @@ public class ReferenceFileController {
 		}
 		
 		// Clean up temporary files
-		Files.deleteIfExists(target);
-		Files.deleteIfExists(temp);
+		IridaFiles.cleanupLocalTemporaryFiles(target, temp);
 		
 		return ImmutableMap.of("uploaded-file-id", referenceFile.getId(), "uploaded-file-name", referenceFile.getLabel());
 	}

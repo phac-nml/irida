@@ -145,7 +145,9 @@ public class SamplesAjaxController {
 				UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
 
 				genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
-				IridaFiles.cleanupLocalFiles(null, temp);
+
+				// Clean up temporary files
+				IridaFiles.cleanupLocalTemporaryFiles(target, temp);
 			}
 			return ResponseEntity.ok()
 					.body(messageSource.getMessage("server.SampleFileUploader.success",
@@ -171,8 +173,8 @@ public class SamplesAjaxController {
 		SequenceFile firstFile = new SequenceFile(firstIridaTemporaryFile.getFile());
 		SequenceFile secondFile = new SequenceFile(secondIridaTemporaryFile.getFile());
 		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
-		IridaFiles.cleanupLocalFiles(null, firstIridaTemporaryFile.getDirectoryPath());
-		IridaFiles.cleanupLocalFiles(null, secondIridaTemporaryFile.getDirectoryPath());
+		IridaFiles.cleanupLocalTemporaryFiles(firstIridaTemporaryFile.getFile(), firstIridaTemporaryFile.getDirectoryPath());
+		IridaFiles.cleanupLocalTemporaryFiles(secondIridaTemporaryFile.getFile(), secondIridaTemporaryFile.getDirectoryPath());
 	}
 
 	/**
@@ -186,7 +188,7 @@ public class SamplesAjaxController {
 		IridaTemporaryFile iridaTemporaryFile = createSequenceFile(file);
 		SequenceFile sequenceFile = new SequenceFile(iridaTemporaryFile.getFile());
 		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
-		IridaFiles.cleanupLocalFiles(null, iridaTemporaryFile.getDirectoryPath());
+		IridaFiles.cleanupLocalTemporaryFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
 	}
 
 	/**
@@ -200,7 +202,7 @@ public class SamplesAjaxController {
 		IridaTemporaryFile iridaTemporaryFile = createSequenceFile(file);
 		SequenceFile sequenceFile = new SequenceFile(iridaTemporaryFile.getFile());
 		sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample);
-		IridaFiles.cleanupLocalFiles(null, iridaTemporaryFile.getDirectoryPath());
+		IridaFiles.cleanupLocalTemporaryFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
 	}
 
 	/**

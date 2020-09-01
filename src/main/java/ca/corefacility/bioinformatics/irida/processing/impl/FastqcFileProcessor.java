@@ -148,8 +148,8 @@ public class FastqcFileProcessor implements FileProcessor {
 			logger.error("Unable to create temporary directory ", e);
 			throw new StorageException("Unable to create temporary directory", e);
 		} finally {
-				IridaFiles.cleanupLocalFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
-				IridaFiles.cleanupLocalFiles(null, outputDirectory);
+				IridaFiles.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
+				IridaFiles.cleanupLocalTemporaryFiles(null, outputDirectory);
 		}
 	}
 

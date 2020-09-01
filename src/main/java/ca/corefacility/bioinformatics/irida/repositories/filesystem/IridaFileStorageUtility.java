@@ -2,9 +2,14 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
@@ -16,6 +21,8 @@ import com.google.common.collect.Lists;
  */
 
 public interface IridaFileStorageUtility {
+	Logger logger = LoggerFactory.getLogger(IridaFileStorageUtility.class);
+
 	//Valid file extensions for sample file concatenation
 	public static final List<String> VALID_CONCATENATION_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
@@ -27,12 +34,12 @@ public interface IridaFileStorageUtility {
 	public IridaTemporaryFile getTemporaryFile(Path file);
 
 	/**
-	 * Delete temporary file.
+	 * Delete temporary downloaded file and/or directory.
 	 *
 	 * @param filePath The {@link Path} to the file
 	 * @param directoryPath The {@link Path} to the directory which has the file
 	 */
-	public void cleanupLocalFiles(Path filePath, Path directoryPath);
+	public void cleanupDownloadedLocalTemporaryFiles(Path filePath, Path directoryPath);
 
 	/**
 	 * Get file size
@@ -114,4 +121,24 @@ public interface IridaFileStorageUtility {
 	 * @throws IOException if the files have different or invalid extensions
 	 */
 	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
+
+	/**
+	 * Delete temporary file and/or directory.
+	 *
+	 * @param filePath The {@link Path} to the file
+	 * @param directoryPath The {@link Path} to the directory which has the file
+	 */
+	public static void cleanupLocalTemporaryFiles(Path filePath, Path directoryPath) {
+		try {
+			if(filePath != null) {
+				Files.delete(filePath);
+			}
+			if(directoryPath != null) {
+				org.apache.commons.io.FileUtils.deleteDirectory(directoryPath.toFile());
+			}
+		} catch (IOException e) {
+			logger.error("Unable to clean up local files/directories", e);
+			throw new StorageException(e.getMessage());
+		}
+	}
 }

@@ -74,7 +74,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void cleanupLocalFiles(Path filePath, Path directoryPath) {
+	public void cleanupDownloadedLocalTemporaryFiles(Path filePath, Path directoryPath) {
 		try {
 			if(filePath != null && Files.isRegularFile(filePath)) {
 				logger.trace("Cleaning up temporary file downloaded from azure [" + filePath.toString() + "]");
@@ -128,8 +128,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to upload file to azure [" + e + "]");
 			throw new StorageException("Unable to upload file to azure", e);
 		}
-		// Removes the file
-		cleanupLocalFiles(source, null);
 	}
 
 	/**
@@ -237,7 +235,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (IOException e) {
 			throw new StorageException("Could not open target file for writing", e);
 		} finally {
-			cleanupLocalFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
+			cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
 		}
 	}
 

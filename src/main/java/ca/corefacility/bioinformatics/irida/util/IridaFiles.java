@@ -67,14 +67,33 @@ public final class IridaFiles {
 	}
 
 	/**
-	 * Cleans up temporary downloaded files. Can be used
-	 * to clean up file and/or directory
+	 * Cleans up temporary downloaded files.
 	 *
 	 * @param filePath The path to the file
 	 * @param directoryPath The path to the directory which has the file
 	 */
-	public static void cleanupLocalFiles(Path filePath, Path directoryPath) {
-		iridaFileStorageUtility.cleanupLocalFiles(filePath, directoryPath);
+	public static void cleanupDownloadedLocalTemporaryFiles(Path filePath, Path directoryPath) {
+		iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(filePath, directoryPath);
+	}
+
+	/**
+	 * Cleans up temporary files.
+	 *
+	 * @param filePath The path to the file
+	 * @param directoryPath The path to the directory which has the file
+	 */
+	public static void cleanupLocalTemporaryFiles(Path filePath, Path directoryPath) {
+		IridaFileStorageUtility.cleanupLocalTemporaryFiles(filePath, directoryPath);
+	}
+
+	/**
+	 * Checks if the file exists
+	 *
+	 * @param file The path to the file
+	 * @return if file exists or not
+	 */
+	public static boolean fileExists(Path file) {
+		return iridaFileStorageUtility.fileExists(file);
 	}
 
 }
