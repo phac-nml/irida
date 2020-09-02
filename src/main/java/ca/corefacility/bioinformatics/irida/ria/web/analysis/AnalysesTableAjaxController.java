@@ -74,7 +74,6 @@ public class AnalysesTableAjaxController {
 	 * @return {@link List} of {@link AnalysisState}
 	 */
 	@RequestMapping("/states")
-	@ResponseBody
 	public List<AnalysisStateModel> getAnalysisStates(Locale locale) {
 		List<AnalysisState> states = Arrays.asList(AnalysisState.values());
 		return states.stream()
@@ -90,7 +89,6 @@ public class AnalysesTableAjaxController {
 	 * @return an internationalized list of analysis type names
 	 */
 	@RequestMapping("/types")
-	@ResponseBody
 	public List<AnalysisTypeModel> getWorkflowTypes(Locale locale) {
 		Set<AnalysisType> types = iridaWorkflowsService.getRegisteredWorkflowTypes();
 		return types.stream()
