@@ -21,7 +21,7 @@
       };
     </script>
   </head>
-  <body>
+  <body ng-app="irida.advanced.visualization">
     <div layout:fragment="page">
       <app-component></app-component>
     </div>
@@ -73,10 +73,11 @@
         <div class="spaced-bottom" id="phylocanvas"></div>
       </script>
       <script type="text/ng-template" id="metadata-component.tmpl.html">
-        <div class="spaced-bottom" ng-repeat="term in $ctrl.terms"> <input
-        type="checkbox" bs-switch="" ng-model="term.selected" switch-label="{{
-          term.term
-        }}" switch-label-width="200" ng-change="$ctrl.onSelectionChange(term)"/>
+        <h3 th:text="#{visualization.phylogenomics.fields.intro}">Metadata Fields</h3>
+        <div class="spaced-bottom" ng-repeat="term in $ctrl.terms">
+          <div class="checkbox">
+            <label><input ng-model="term.selected" type="checkbox" ng-change="$ctrl.onSelectionChange(term)"/> {{term.term}}</label>
+          </div>
         </div>
       </script>
 

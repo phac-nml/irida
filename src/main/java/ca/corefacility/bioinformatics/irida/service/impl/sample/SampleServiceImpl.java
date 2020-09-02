@@ -244,6 +244,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				} else {
 					// if they are different types, I need to replace the metadata entry instead of merging
 					currentMetadata.remove(originalMetadataEntry);
+					metadataEntryRepository.delete(originalMetadataEntry);
+
 					currentMetadata.add(newMetadataEntry);
 				}
 			} else {

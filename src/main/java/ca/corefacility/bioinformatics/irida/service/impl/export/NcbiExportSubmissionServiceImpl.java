@@ -8,12 +8,11 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -24,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Service impl for submitting data to NCBI
@@ -102,7 +103,16 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 			throws IllegalArgumentException {
 		return super.list(page, size, order, sortProperties);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<NcbiExportSubmission> list(int page, int size, Sort sort) throws IllegalArgumentException {
+		return super.list(page, size, sort);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -111,5 +121,4 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	public NcbiExportSubmission update(NcbiExportSubmission object) {
 		return super.update(object);
 	}
-
 }

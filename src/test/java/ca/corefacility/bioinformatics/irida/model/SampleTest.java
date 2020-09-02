@@ -75,13 +75,13 @@ public class SampleTest {
 	}
 
 	@Test
-	public void testBlacklistedCharactersInSampleName() {
-		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
-		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
+	public void testBlocklistedCharactersInSampleName() {
+		testBlocklists(ValidProjectName.ValidProjectNameBlocklist.BLOCKLIST);
+		testBlocklists(ValidSampleName.ValidSampleNameBlocklist.BLOCKLIST);
 	}
 
-	private void testBlacklists(char[] blacklist) {
-		for (char c : blacklist) {
+	private void testBlocklists(char[] blocklist) {
+		for (char c : blocklist) {
 			Sample s = new Sample();
 			s.setSampleName("ATLEAST3" + c);
 			Set<ConstraintViolation<Sample>> violations = validator.validate(s);

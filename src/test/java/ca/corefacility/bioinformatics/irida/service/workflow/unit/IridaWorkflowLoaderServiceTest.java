@@ -50,7 +50,10 @@ public class IridaWorkflowLoaderServiceTest {
 	public void setup() throws IridaWorkflowException, IOException {
 		MockitoAnnotations.initMocks(this);
 
-		iridaWorkflowLoaderService = new IridaWorkflowLoaderService(workflowDescriptionUnmarshellar, new AnalysisTypesServiceImpl());
+		AnalysisTypesServiceImpl analysisTypesService = new AnalysisTypesServiceImpl();
+		analysisTypesService.registerDefaultTypes();
+
+		iridaWorkflowLoaderService = new IridaWorkflowLoaderService(workflowDescriptionUnmarshellar, analysisTypesService);
 		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
 
 		workflowDescriptionPath = Files.createTempFile("workflowLoaderTest", "tmp");

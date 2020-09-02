@@ -33,6 +33,9 @@ public class MetadataTemplate implements MutableIridaThing {
 	@NotNull
 	private String name;
 
+	@Lob
+	private String description;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date", updatable = false)
 	@CreatedDate
@@ -98,5 +101,13 @@ public class MetadataTemplate implements MutableIridaThing {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

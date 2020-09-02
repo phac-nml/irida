@@ -26,7 +26,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 
 		ProjectsPage page = ProjectsPage.goToProjectsPage(driver(), true);
-		checkTranslations(page, ImmutableList.of("projects"), "Projects");
+		checkTranslations(page, ImmutableList.of("projects"), "Projects\nCreate New Project");
 
 		assertEquals("Should be 8 projects", 8, page.getNumberOfProjects());
 		List<String> projectNames = page.getProjectsSortListByColumnName();
@@ -45,6 +45,8 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.searchTableForProjectName("project EFGH");
 		assertEquals("Should only be 1 project visible", 1, page.getNumberOfProjects());
+
+		assertTrue("There should be a Create New Project button visible", page.createNewButtonVisible());
 	}
 
 	@Test
@@ -54,8 +56,9 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be on the error page", driver().getTitle(), "IRIDA Platform - Access Denied");
 
 		page = ProjectsPage.goToProjectsPage(driver(), false);
-		checkTranslations(page, ImmutableList.of("projects"), "Projects");
+		checkTranslations(page, ImmutableList.of("projects"), "Projects\nCreate New Project");
 		assertEquals("Should be 2 projects on the page", 2, page.getNumberOfProjects());
 
+		assertTrue("There should be a Create New Project button visible", page.createNewButtonVisible());
 	}
 }
