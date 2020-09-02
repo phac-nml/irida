@@ -123,7 +123,7 @@ public interface IridaFileStorageUtility {
 	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
 
 	/**
-	 * Delete temporary file and/or directory.
+	 * Delete local temporary file and/or directory.
 	 *
 	 * @param filePath The {@link Path} to the file
 	 * @param directoryPath The {@link Path} to the directory which has the file
