@@ -87,7 +87,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 		try {
 			if(directoryPath != null && Files.isDirectory(directoryPath)) {
-				logger.trace("Cleaning up temporary directory [" + directoryPath.toString() + "]");
+				logger.trace("Cleaning up temporary directory created for azure temporary file [" + directoryPath.toString() + "]");
 				org.apache.commons.io.FileUtils.deleteDirectory(directoryPath.toFile());
 			}
 		} catch (IOException e) {

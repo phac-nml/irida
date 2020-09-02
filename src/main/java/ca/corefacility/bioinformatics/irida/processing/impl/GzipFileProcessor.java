@@ -41,17 +41,20 @@ public class GzipFileProcessor implements FileProcessor {
 	private boolean disableFileProcessor = false;
 	private boolean removeCompressedFile;
 	private IridaFileStorageUtility iridaFileStorageUtility;
+	private boolean removeTemporaryFiles;
 
 	@Autowired
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		removeCompressedFile = false;
+		removeTemporaryFiles = true;
 	}
 
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageUtility iridaFileStorageUtility) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageUtility iridaFileStorageUtility, Boolean removeTemporaryFiles) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.removeCompressedFile = removeCompressedFiles;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
+		this.removeTemporaryFiles = removeTemporaryFiles;
 	}
 
 	/**
@@ -119,6 +122,7 @@ public class GzipFileProcessor implements FileProcessor {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 				sequenceFile.setFile(file);
 				Path targetDirectory = null;
+				Path target = null;
 
 				try {
 					targetDirectory = Files.createTempDirectory(null);
@@ -126,7 +130,7 @@ public class GzipFileProcessor implements FileProcessor {
 					try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
 						logger.trace("Handling gzip compressed file.");
 
-						Path target = targetDirectory.resolve(nameWithoutExtension);
+						target = targetDirectory.resolve(nameWithoutExtension);
 						logger.debug("Target directory is [" + targetDirectory + "]");
 						logger.debug("Writing uncompressed file to [" + target + "]");
 
@@ -152,7 +156,9 @@ public class GzipFileProcessor implements FileProcessor {
 					logger.error("Unable to create temporary directory", e);
 					throw new StorageException("Unable to create temporary directory");
 				} finally {
-					IridaFiles.cleanupLocalTemporaryFiles(null, targetDirectory);
+					if(removeTemporaryFiles) {
+						IridaFiles.cleanupLocalTemporaryFiles(target, targetDirectory);
+					}
 				}
 			}
 		} catch (Exception e) {
