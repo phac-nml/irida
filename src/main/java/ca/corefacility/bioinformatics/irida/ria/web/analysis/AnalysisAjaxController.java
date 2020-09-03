@@ -1206,6 +1206,7 @@ public class AnalysisAjaxController {
 	 * Get the analysis details
 	 *
 	 * @param submissionId The analysis submission id
+	 * @param principal Principal {@link User}
 	 * @return dto which contains the analysis details
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis-details")
