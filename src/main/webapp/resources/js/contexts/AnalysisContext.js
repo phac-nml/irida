@@ -8,10 +8,12 @@ import { showNotification } from "../modules/notifications";
 import { useInterval } from "../hooks";
 
 // Functions required by context
-import { getAnalysisInfo } from "../apis/analysis/analysis";
-import { updateAnalysis } from "../apis/analysis/analysis";
-import { getUpdatedDetails } from "../apis/analysis/analysis";
-import { getNewickTree } from "../apis/analysis/analysis";
+import {
+  getAnalysisInfo,
+  getNewickTree,
+  getUpdatedDetails,
+  updateAnalysis
+} from "../apis/analysis/analysis";
 
 import { notification } from "antd";
 
@@ -52,7 +54,7 @@ const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
-  const analysisIdentifier = analysisContext.analysis !== null ? 
+  const analysisIdentifier = analysisContext.analysis !== null ?
                              analysisContext.analysis.identifier
                              :
                              window.location.pathname.match(/analysis\/(\d+)/)[1];
