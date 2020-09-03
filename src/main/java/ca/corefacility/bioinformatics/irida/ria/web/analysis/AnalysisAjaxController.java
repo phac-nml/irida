@@ -1202,6 +1202,12 @@ public class AnalysisAjaxController {
 
 	}
 
+	/**
+	 * Get the analysis details
+	 *
+	 * @param submissionId The analysis submission id
+	 * @return dto which contains the analysis details
+	 */
 	@RequestMapping(value = "/{submissionId}/analysis-details")
 	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal) {
 		logger.trace("reading analysis submission " + submissionId);
