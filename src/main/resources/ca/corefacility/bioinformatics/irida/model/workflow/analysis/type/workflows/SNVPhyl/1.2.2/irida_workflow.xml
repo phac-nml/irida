@@ -76,10 +76,10 @@
 	</outputs>
 	<toolRepositories>
 		<repository>
-			<name>suite_snvphyl_1_2_1</name>
+			<name>suite_snvphyl_1_2_2</name>
 			<owner>nml</owner>
 			<url>https://toolshed.g2.bx.psu.edu</url>
-			<revision>a7094fa1d679</revision>
+			<revision>77a9422303ce</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>
