@@ -9,7 +9,7 @@
  *required by the components encompassed within
  */
 
-import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
+import React, { lazy, Suspense, useContext, useEffect } from "react";
 import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
@@ -22,7 +22,6 @@ import { SPACE_MD } from "../../../styles/spacing";
 import AnalysisError from "./AnalysisError";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { ANALYSIS } from "../routes";
-import { getNewickTree } from "../../../apis/analysis/analysis";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
@@ -43,22 +42,6 @@ const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
   const DEFAULT_URL = setBaseUrl(`/analysis/${window.location.pathname.match(/analysis\/(\d+)/)[1]}`);
-  const [treeDefault, setTreeDefault] = useState(null);
-
-  useEffect(() => {
-    if (
-      (analysisViewer === "tree") &&
-      analysisContext.isCompleted
-    ) {
-      getNewickTree(analysisContext.analysis.identifier).then(data => {
-        if (data.newick !== null) {
-          setTreeDefault(true);
-        } else {
-          setTreeDefault(false);
-        }
-      });
-    }
-  }, []);
 
   const title = (
     <>
@@ -73,7 +56,6 @@ export default function Analysis() {
     </>
   );
 
-  const analysisViewer = analysisContext.analysisViewer;
 
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
 
@@ -90,17 +72,18 @@ export default function Analysis() {
    * the default.
    */
   const defaultKey = analysisContext.isCompleted
-    ? analysisViewer === "sistr"
+    ? analysisContext.analysisViewer === "sistr"
       ? ANALYSIS.SISTR
-      : analysisViewer === "biohansel"
+      : analysisContext.analysisViewer === "biohansel"
       ? ANALYSIS.BIOHANSEL
-      : analysisViewer === "tree" &&
-        treeDefault
+      : analysisContext.analysisViewer === "tree" &&
+        analysisContext.treeDefault
       ? ANALYSIS.TREE
       : ANALYSIS.OUTPUT
     : analysisContext.isError
     ? ANALYSIS.ERROR
     : ANALYSIS.SETTINGS;
+
 
   /*
    * The functions returns a set of tabs which
@@ -138,7 +121,7 @@ export default function Analysis() {
           );
         } else if (
           analysisContext.analysisViewer === "tree"  &&
-          treeDefault
+          analysisContext.treeDefault
         ) {
           tabLinks.push(
             <Menu.Item key="tree">
@@ -214,19 +197,19 @@ export default function Analysis() {
               ? [
                   <AnalysisSistr
                     path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
-                    default={analysisViewer === "sistr"}
+                    default={analysisContext.analysisViewer === "sistr"}
                     key="sistr"
                   />,
                   <AnalysisBioHansel
                     path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
-                    default={analysisViewer === "biohansel"}
+                    default={analysisContext.analysisViewer === "biohansel"}
                     key="biohansel"
                   />,
                   <AnalysisPhylogeneticTree
                     path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
-                      (analysisViewer === "tree") &&
-                      treeDefault
+                      (analysisContext.analysisViewer === "tree") &&
+                      analysisContext.treeDefault
                     }
                     key="tree"
                   />,
@@ -237,9 +220,9 @@ export default function Analysis() {
                   <AnalysisOutputFiles
                     path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
-                      (analysisViewer === "none") ||
-                      ((analysisViewer === "tree") &&
-                        !treeDefault)
+                      (analysisContext.analysisViewer === "none") ||
+                      ((analysisContext.analysisViewer === "tree") &&
+                        !analysisContext.treeDefault)
                     }
                     key="output"
                   />

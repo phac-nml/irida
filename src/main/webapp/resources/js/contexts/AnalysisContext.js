@@ -11,6 +11,7 @@ import { useInterval } from "../hooks";
 import { getAnalysisInfo } from "../apis/analysis/analysis";
 import { updateAnalysis } from "../apis/analysis/analysis";
 import { getUpdatedDetails } from "../apis/analysis/analysis";
+import { getNewickTree } from "../apis/analysis/analysis";
 
 import { notification } from "antd";
 
@@ -43,7 +44,8 @@ const initialContext = {
   isCompleted: false,
   isError: false,
   previousState: null,
-  duration: null
+  duration: null,
+  treeDefault: false
 };
 
 const AnalysisContext = React.createContext(initialContext);
@@ -57,7 +59,6 @@ function AnalysisProvider(props) {
 
   useEffect(() => {
     getAnalysisInfo(analysisIdentifier).then(res => {
-      console.log(res);
       setAnalysisContext(analysisContext => {
         return {
           ...analysisContext,
@@ -71,7 +72,8 @@ function AnalysisProvider(props) {
           isCompleted: res.analysisState === "COMPLETED",
           isError: res.analysisState.includes("ERROR"),
           previousState: res.previousState,
-          duration: res.duration
+          duration: res.duration,
+          treeDefault: () => setTreeDefault(res.analysisViewer, res.analysisState === "COMPLETED", res.analysis.identifier)
         }
       });
     }).catch((message) => {
@@ -79,6 +81,17 @@ function AnalysisProvider(props) {
     });
   }, []);
 
+  function setTreeDefault(analysisViewer, isCompleted, analysisId) {
+    let isTreeDefault = false;
+    if(analysisViewer === "tree" && isCompleted) {
+      getNewickTree(analysisId).then(data => {
+        if (data.newick !== null) {
+          isTreeDefault = true;
+        }
+      });
+    }
+    return isTreeDefault;
+  }
 
   /* Update the analysis details that are required
    * to display the progression using polling

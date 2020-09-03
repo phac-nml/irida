@@ -366,7 +366,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Advanced Phylogenetic Tree button is not visible", page.advancedPhylogeneticTreeButtonNotFound());
 		assertTrue("Tree wrapper is not visible", page.phylocanvasWrapperNotFound());
 		assertTrue("Tree is not visible", page.treeNotFound());
-		assertEquals("No outputs available to display", page.getWarningAlertText());
+		assertEquals("Unable to find tree file. No tree available to display.", page.getWarningAlertText());
 	}
 
 	@Test
