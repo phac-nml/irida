@@ -42,8 +42,11 @@ public class AnalysesListingServiceTest {
 		IridaWorkflowsService iridaWorkflowsService = mock(IridaWorkflowsService.class);
 		UpdateAnalysisSubmissionPermission updateAnalysisPermission = mock(UpdateAnalysisSubmissionPermission.class);
 		MessageSource messageSource = mock(MessageSource.class);
+
+		AnalysisTypesServiceImpl analysisTypesService = new AnalysisTypesServiceImpl();
+		analysisTypesService.registerDefaultTypes();
 		analysesListingService = new AnalysesListingService(analysisSubmissionService, iridaWorkflowsService,
-				updateAnalysisPermission, messageSource, new AnalysisTypesServiceImpl());
+				updateAnalysisPermission, messageSource, analysisTypesService);
 	}
 
 	@Test

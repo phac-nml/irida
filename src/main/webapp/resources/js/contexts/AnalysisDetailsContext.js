@@ -25,7 +25,8 @@ const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
   EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
   PRIORITY: "UPDATED_PRIORITY",
-  UPDATE_SAMPLES: "UPDATE_SAMPLES"
+  UPDATE_SAMPLES: "UPDATE_SAMPLES",
+  UPDATE_DURATION: "UPDATE_DURATION"
 };
 
 // Updates the state and returns a new copy.
@@ -42,6 +43,8 @@ const reducer = (context, action) => {
       return { ...context, priority: action.priority };
     case TYPES.UPDATE_SAMPLES:
       return { ...context, updateSamples: action.updateSamples };
+    case TYPES.UPDATE_DURATION:
+      return { ...context, duration: action.duration };
     default:
       return;
   }
@@ -76,6 +79,10 @@ function AnalysisDetailsProvider(props) {
       dispatch({ type: TYPES.DETAILS, payload: data });
     });
   }, [getVariablesForDetails]);
+
+  useEffect(() => {
+    dispatch({ type: TYPES.UPDATE_DURATION, duration: analysisContext.duration });
+  }, [analysisContext.duration]);
 
   /*
    * Saves results to related samples and updates

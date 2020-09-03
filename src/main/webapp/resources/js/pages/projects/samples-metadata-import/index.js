@@ -13,12 +13,8 @@ import resultsMissingComponent from "./components/results.missing.component";
 import { sampleMetadataService } from "./factories/metadataImport.service";
 import "../../../../css/pages/project-samples-metadata-import.css";
 
-const app = angular.module("irida");
-
-// ui.router is not on the loaded by default so we need to inject it into angular here.
-app.requires.push(uiRouter);
-app.requires.push(ngFileUpload);
-app
+angular
+  .module("irida.metadata.importer", [uiRouter, ngFileUpload])
   .config(["$stateProvider", "$urlRouterProvider", states])
   .service("sampleMetadataService", [
     "$http",
