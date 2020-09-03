@@ -18,9 +18,6 @@ import { PageWrapper } from "../../../components/page/PageWrapper";
 
 import { Link, Location, Router } from "@reach/router";
 
-import { Error } from "../../../components/icons/Error";
-import { Running } from "../../../components/icons/Running";
-import { Success } from "../../../components/icons/Success";
 import { SPACE_MD } from "../../../styles/spacing";
 import AnalysisError from "./AnalysisError";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
@@ -28,6 +25,8 @@ import { ANALYSIS } from "../routes";
 import { getNewickTree } from "../../../apis/analysis/analysis";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
+
+import { Error, Running, Success } from "../../../components/icons";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
@@ -48,7 +47,7 @@ export default function Analysis() {
 
   useEffect(() => {
     if (
-      (analysisType === "PHYLOGENOMICS" || analysisType === "MLST_MENTALIST") &&
+      (analysisViewer === "tree") &&
       analysisContext.isCompleted
     ) {
       getNewickTree(analysisContext.analysis.identifier).then(data => {
@@ -74,7 +73,7 @@ export default function Analysis() {
     </>
   );
 
-  const analysisType = analysisContext.analysisType;
+  const analysisViewer = analysisContext.analysisViewer;
 
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
 
@@ -91,12 +90,11 @@ export default function Analysis() {
    * the default.
    */
   const defaultKey = analysisContext.isCompleted
-    ? analysisType === "SISTR_TYPING"
+    ? analysisViewer === "sistr"
       ? ANALYSIS.SISTR
-      : analysisType === "BIO_HANSEL"
+      : analysisViewer === "biohansel"
       ? ANALYSIS.BIOHANSEL
-      : (analysisType === "PHYLOGENOMICS" ||
-          analysisType === "MLST_MENTALIST") &&
+      : analysisViewer === "tree" &&
         treeDefault
       ? ANALYSIS.TREE
       : ANALYSIS.OUTPUT
@@ -122,7 +120,7 @@ export default function Analysis() {
       );
     } else {
       if (analysisContext.isCompleted) {
-        if (analysisContext.analysisType === "SISTR_TYPING") {
+        if (analysisContext.analysisViewer === "sistr") {
           tabLinks.push(
             <Menu.Item key="sistr">
               <Link to={`${DEFAULT_URL}/${ANALYSIS.SISTR}/`}>
@@ -130,7 +128,7 @@ export default function Analysis() {
               </Link>
             </Menu.Item>
           );
-        } else if (analysisContext.analysisType === "BIO_HANSEL") {
+        } else if (analysisContext.analysisViewer === "biohansel") {
           tabLinks.push(
             <Menu.Item key="biohansel">
               <Link to={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}`}>
@@ -139,8 +137,7 @@ export default function Analysis() {
             </Menu.Item>
           );
         } else if (
-          (analysisContext.analysisType === "PHYLOGENOMICS" ||
-            analysisContext.analysisType === "MLST_MENTALIST") &&
+          analysisContext.analysisViewer === "tree"  &&
           treeDefault
         ) {
           tabLinks.push(
@@ -217,19 +214,18 @@ export default function Analysis() {
               ? [
                   <AnalysisSistr
                     path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
-                    default={analysisType === "SISTR_TYPING"}
+                    default={analysisViewer === "sistr"}
                     key="sistr"
                   />,
                   <AnalysisBioHansel
                     path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
-                    default={analysisType === "BIO_HANSEL"}
+                    default={analysisViewer === "biohansel"}
                     key="biohansel"
                   />,
                   <AnalysisPhylogeneticTree
                     path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
-                      (analysisType === "PHYLOGENOMICS" ||
-                        analysisType === "MLST_MENTALIST") &&
+                      (analysisViewer === "tree") &&
                       treeDefault
                     }
                     key="tree"
@@ -241,12 +237,8 @@ export default function Analysis() {
                   <AnalysisOutputFiles
                     path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
-                      (analysisType !== "SISTR_TYPING" &&
-                        analysisType !== "BIO_HANSEL" &&
-                        analysisType !== "PHYLOGENOMICS" &&
-                        analysisType !== "MLST_MENTALIST") ||
-                      ((analysisType === "PHYLOGENOMICS" ||
-                        analysisType === "MLST_MENTALIST") &&
+                      (analysisViewer === "none") ||
+                      ((analysisViewer === "tree") &&
                         !treeDefault)
                     }
                     key="output"

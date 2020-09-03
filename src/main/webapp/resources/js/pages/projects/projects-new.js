@@ -10,30 +10,30 @@ $(".organism-select")
       // instead of writing the function to execute the request we use Select2's convenient helper
       url: window.PAGE.urls.taxonomy,
       dataType: "json",
-      data: function(term, page) {
+      data: function (term, page) {
         return {
-          searchTerm: term // search term
+          searchTerm: term, // search term
         };
       },
-      results: function(data, page) {
+      results: function (data, page) {
         // parse the results into the format expected by Select2.
         // since we are using custom formatting functions we do not need to alter remote JSON data
         return { results: data };
-      }
+      },
     },
-    initSelection: function(element, callback) {
+    initSelection: function (element, callback) {
       var organism = $(element).val();
       if (organism !== "") {
         $.ajax(window.PAGE.urls.taxonomy, {
           data: { searchTerm: organism },
-          dataType: "json"
-        }).done(function(data) {
+          dataType: "json",
+        }).done(function (data) {
           callback(data[0]);
         });
       }
-    }
+    },
   })
-  .on("change", function(data) {
+  .on("change", function (data) {
     if (data.added.searchTerm) {
       $("#new-organism-warning").show();
     } else {
@@ -42,7 +42,7 @@ $(".organism-select")
   })
   .select2("val", window.PAGE.project.organism);
 
-$("#useCartSamples").change(function() {
+$("#useCartSamples").change(function () {
   showHideCart(100);
 });
 
@@ -60,7 +60,7 @@ function showHideCart(time) {
     Disables/enables the lockSamples checkbox
     depending on if using the samples from cart
 */
-$("#useCartSamples").on("change", function(e) {
+$("#useCartSamples").on("change", function (e) {
   var selected = $(e.target).prop("checked");
   if (!selected) {
     $("#lockSamples").attr("disabled", true);
@@ -70,13 +70,12 @@ $("#useCartSamples").on("change", function(e) {
   }
 });
 
-const newProjectModule = angular
+angular
   .module("irida.project.new", ["ui.bootstrap"])
-  .controller("NewProjectController", function() {
+  .controller("NewProjectController", function () {
     var vm = this;
     vm.project = {
       name: window.PAGE.project.name,
-      remoteURL: window.PAGE.project.remoteURL
+      remoteURL: window.PAGE.project.remoteURL,
     };
-  }).name;
-angular.module("irida").requires.push(newProjectModule);
+  });

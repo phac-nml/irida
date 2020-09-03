@@ -9,7 +9,7 @@ JDBC_URL=jdbc:mysql://localhost:3306/$DATABASE_NAME
 TMP_DIRECTORY=`mktemp -d /tmp/irida-test-XXXXXXXX`
 chmod 777 $TMP_DIRECTORY # Needs to be world-accessible so that Docker/Galaxy can access
 
-GALAXY_DOCKER=phacnml/galaxy-irida-19.09:20.07-it
+GALAXY_DOCKER=phacnml/galaxy-irida-20.05:20.09-it
 GALAXY_DOCKER_NAME=irida-galaxy-test
 GALAXY_PORT=48889
 GALAXY_URL=http://localhost:$GALAXY_PORT

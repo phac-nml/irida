@@ -24,6 +24,7 @@ import { cartNotification } from "../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import "./linker/Linker";
+import "./add-sample/AddSampleButton";
 
 /*
 This is required to use select2 inside a modal.
@@ -361,7 +362,7 @@ const config = Object.assign({}, tableConfig, {
   },
 });
 
-const $dt = $table.DataTable(config);
+const $dt = (window.$dt = $table.DataTable(config));
 
 function checkToolButtonState(count = $dt.select.selected()[0].size) {
   /*

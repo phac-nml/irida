@@ -1,5 +1,3 @@
-import angular from "angular";
-import "./modules/cart/irida.cart";
 import "./pages/search/irida.search";
 // Import css
 import "../css/app.css";
@@ -16,10 +14,6 @@ import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";
-
-const deps = ["irida.cart"];
-
-const app = angular.module("irida", deps);
 
 /*
 This is here since this has been updated to use a standard Event,
@@ -81,5 +75,3 @@ function openBaseUrlModifier(method, url, async) {
 }
 
 window.XMLHttpRequest.prototype.open = openBaseUrlModifier;
-
-export default app;

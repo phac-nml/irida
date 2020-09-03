@@ -1,6 +1,6 @@
 # Galaxy - IRIDA Galaxy Image
 
-FROM phacnml/galaxy-irida-19.09:base
+FROM phacnml/galaxy-irida-20.05:base
 
 ADD ./data/tools-list.yml $GALAXY_ROOT/irida-tools.yml
 
