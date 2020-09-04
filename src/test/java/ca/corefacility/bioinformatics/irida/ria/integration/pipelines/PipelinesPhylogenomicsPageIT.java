@@ -17,6 +17,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  * <p>
@@ -76,6 +77,12 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	@Test
 	public void testCheckPipelineStatusAfterSubmit() {
 		addSamplesToCart();
+
+		assertFalse("Pipeline launch should not be enabled until density filtering is set",
+				page.isPipelineLaunchButtonEnabled());
+		page.selectAndSetDensityFiltering("Disable");
+		assertTrue("Pipeline launch should now be enabled",
+				page.isPipelineLaunchButtonEnabled());
 
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed once the pipeline finished submitting",
@@ -139,6 +146,13 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	@Test
 	public void testModifyAndSaveParameters() {
 		addSamplesToCart();
+
+		assertFalse("Pipeline launch should not be enabled until density filtering is set",
+				page.isPipelineLaunchButtonEnabled());
+		page.selectAndSetDensityFiltering("Enable");
+		assertTrue("Pipeline launch should now be enabled",
+				page.isPipelineLaunchButtonEnabled());
+
 		page.clickPipelineParametersBtn();
 		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
 				page.getParametersModalTitle());
