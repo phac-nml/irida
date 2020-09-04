@@ -108,7 +108,7 @@
             <name>bundle_collections</name>
             <owner>nml</owner>
             <url>https://toolshed.g2.bx.psu.edu</url>
-            <revision>cd6da887a5f4</revision>
+            <revision>705ebd286b57</revision>
         </repository>
         <repository>
             <name>prokka</name>
