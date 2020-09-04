@@ -71,11 +71,7 @@ function AnalysisDetailsProvider(props) {
     reducer,
     initialContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
-  const analysisIdentifier = analysisContext.analysis !== null ?
-                             analysisContext.analysis.identifier
-                             :
-                              window.location.pathname.match(/analysis\/(\d+)/)[1];
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
 
   // On page load get the analysis details
   useEffect(() => {

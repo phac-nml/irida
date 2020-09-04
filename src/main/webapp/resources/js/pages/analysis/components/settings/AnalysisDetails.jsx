@@ -35,7 +35,7 @@ export default function AnalysisDetails() {
     analysisDetailsContextUpdateEmailPipelineResult
   } = useContext(AnalysisDetailsContext);
 
-  const { analysisContext, analysisContextUpdateSubmissionName } = useContext(
+  const { analysisContext, analysisContextUpdateSubmissionName, analysisIdentifier } = useContext(
     AnalysisContext
   );
 
@@ -58,7 +58,7 @@ export default function AnalysisDetails() {
     },
     {
       title: i18n("AnalysisDetails.id"),
-      desc: analysisContext.analysis.identifier
+      desc: analysisIdentifier
     },
     {
       title: i18n("AnalysisDetails.pipeline"),

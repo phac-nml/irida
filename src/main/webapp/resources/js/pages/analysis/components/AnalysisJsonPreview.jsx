@@ -5,7 +5,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Divider, List } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
 import { OutputWrapper } from "../../../components/OutputFiles/OutputWrapper";

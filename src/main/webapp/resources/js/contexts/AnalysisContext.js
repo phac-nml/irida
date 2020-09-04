@@ -54,10 +54,7 @@ const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
-  const analysisIdentifier = analysisContext.analysis !== null ?
-                             analysisContext.analysis.identifier
-                             :
-                             window.location.pathname.match(/analysis\/(\d+)/)[1];
+  const analysisIdentifier = window.location.pathname.match(/analysis\/(\d+)/)[1];
 
   useEffect(() => {
     getAnalysisInfo(analysisIdentifier).then(res => {
@@ -181,7 +178,8 @@ function AnalysisProvider(props) {
     <AnalysisContext.Provider
       value={{
         analysisContext,
-        analysisContextUpdateSubmissionName
+        analysisContextUpdateSubmissionName,
+        analysisIdentifier
       }}
     >
       {props.children}

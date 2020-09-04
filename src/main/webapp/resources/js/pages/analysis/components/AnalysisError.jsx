@@ -38,15 +38,9 @@ const StandardOutputTab = React.lazy(() =>
 const { Content, Sider } = Layout;
 
 export default function AnalysisError() {
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
   const [currActiveKey, setCurrActiveKey] = useState(1);
-
-  const analysisIdentifier = analysisContext.analysis !== null ?
-    analysisContext.analysis.identifier
-    :
-    window.location.pathname.match(/analysis\/(\d+)/)[1];
-
 
   const DEFAULT_URL =
     setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.ERROR);

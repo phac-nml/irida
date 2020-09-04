@@ -27,7 +27,7 @@ function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
     initialContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
 
   function getPreviewForFileType(fileExt, type) {
     if (type === "text") {
@@ -56,7 +56,7 @@ function AnalysisOutputsProvider(props) {
     let hasExcelFile = false;
     let hasImageFile = false;
 
-    getOutputInfo(analysisContext.analysis.identifier).then((data) => {
+    getOutputInfo(analysisIdentifier).then((data) => {
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required

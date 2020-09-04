@@ -40,8 +40,8 @@ const AnalysisOutputFiles = lazy(() => import("./AnalysisOutputFiles"));
 const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
-  const { analysisContext } = useContext(AnalysisContext);
-  const DEFAULT_URL = setBaseUrl(`/analysis/${window.location.pathname.match(/analysis\/(\d+)/)[1]}`);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
+  const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 
   const title = (
     <>
