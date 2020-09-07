@@ -96,7 +96,7 @@
             <name>shovill</name>
             <owner>iuc</owner>
             <url>https://toolshed.g2.bx.psu.edu</url>
-            <revision>83ead2be47b2</revision>
+            <revision>8d1af5db538d</revision>
         </repository>
         <repository>
             <name>prokka</name>
