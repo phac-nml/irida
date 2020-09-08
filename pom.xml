@@ -711,9 +711,6 @@
 				<version>${maven.failsafe.plugin.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<systemPropertyVariables>
-						<java.awt.headless>true</java.awt.headless>
-					</systemPropertyVariables>
 					<properties>
 						<property>
 							<name>listener</name>
@@ -762,9 +759,6 @@
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
-					<systemPropertyVariables>
-						<java.awt.headless>true</java.awt.headless>
-					</systemPropertyVariables>
 					<properties>
 						<property>
 							<name>listener</name>
