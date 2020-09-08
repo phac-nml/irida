@@ -102,20 +102,6 @@ tools:
   install_tool_dependencies: true
 
   ### Extra tools for plugins ###
-- name: "staramr"
-  owner: "nml"
-  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revisions:
-  - "930893c83a1a"
-  tool_panel_section_id: "irida"
-  install_tool_dependencies: true
-#  - name: "rgi"
-#  owner: "card"
-#  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-#  revisions:
-#  - "715bc9aeef69"
-#  tool_panel_section_id: "irida"
-#  install_tool_dependencies: true
 - name: "shovill"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
