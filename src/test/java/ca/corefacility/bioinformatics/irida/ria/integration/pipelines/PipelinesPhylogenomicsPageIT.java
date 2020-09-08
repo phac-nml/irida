@@ -67,6 +67,11 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	@Test
 	public void testPipelineSubmission() {
 		addSamplesToCart();
+		assertFalse("Pipeline launch should not be enabled until density filtering is set",
+				page.isPipelineLaunchButtonEnabled());
+		page.selectAndSetDensityFiltering("Disable");
+		assertTrue("Pipeline launch should now be enabled",
+				page.isPipelineLaunchButtonEnabled());
 
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
