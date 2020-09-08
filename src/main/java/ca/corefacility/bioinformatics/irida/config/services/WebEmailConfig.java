@@ -13,6 +13,8 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+import java.util.Properties;
+
 /**
  * Configuration class for loading properties files. This configuration source
  * looks in three places for properties:
@@ -32,6 +34,7 @@ public class WebEmailConfig {
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
 	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final String CHARACER_ENCODING = "UTF-8";
+	private static final String UNCONFIGURED_PASSWORD_VALUE = "YOUR_MAIL_PASSWORD (the password associated with the provided name)";
 
 	@Value("${mail.server.host}")
 	String host;
@@ -42,6 +45,9 @@ public class WebEmailConfig {
 	@Value("${mail.server.username}")
 	String username;
 
+	@Value("${mail.server.password}")
+	String password;
+
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
@@ -50,9 +56,18 @@ public class WebEmailConfig {
 	@Bean
 	public ConfigurableJavaMailSender javaMailSender() {
 		ConfigurableJavaMailSenderImpl sender = new ConfigurableJavaMailSenderImpl();
+		Properties props = new Properties();
+
 		sender.setHost(host);
 		sender.setProtocol(protocol);
 		sender.setUsername(username);
+
+		if (!(UNCONFIGURED_PASSWORD_VALUE.equals(password) || password.isBlank())) {
+			props.put("mail.smtp.auth", true);  // https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html
+			sender.setPassword(password);
+		}
+
+		sender.setJavaMailProperties(props);
 		return sender;
 	}
 
