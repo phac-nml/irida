@@ -45,9 +45,9 @@ export default function Analysis() {
 
   const title = (
     <>
-      {analysisContext.analysisState === "COMPLETED" ? (
+      {analysisContext.isCompleted ? (
         <Success />
-      ) : analysisContext.analysisState === "ERROR" ? (
+      ) : analysisContext.isError ? (
         <Error />
       ) : (
         <Running />
@@ -169,7 +169,7 @@ export default function Analysis() {
    */
   return (
     <PageWrapper title={title}>
-      {analysisContext.analysisState !== "COMPLETED" ? <AnalysisSteps /> : null}
+      {!analysisContext.isCompleted ? <AnalysisSteps /> : null}
 
       <Location>
         {props => {

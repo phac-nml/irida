@@ -50,8 +50,6 @@ public class AnalysisControllerTest {
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 	private UserService userServiceMock;
-	private EmailController emailControllerMock;
-	private AnalysisAudit analysisAuditMock;
 	private AnalysisTypesService analysisTypesService;
 
 	/**
@@ -65,12 +63,10 @@ public class AnalysisControllerTest {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		userServiceMock = mock(UserService.class);
-		emailControllerMock = mock(EmailController.class);
-		analysisAuditMock = mock(AnalysisAudit.class);
 		analysisTypesService = mock(AnalysisTypesService.class);
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, emailControllerMock, analysisAuditMock, analysisTypesService);
+				userServiceMock);
 
 	}
 

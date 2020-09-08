@@ -1244,8 +1244,22 @@ public class AnalysisAjaxController {
 			duration = analysisAudit.getAnalysisRunningTime(submission);
 		}
 
-		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType, viewer, currentUser.getSystemRole()
-				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration));
+		boolean treeDefault = false;
+
+		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
+			try {
+				Map<String, Object> newickStr = getNewickForAnalysis(submission.getId());
+				if(newickStr != null) {
+					treeDefault = true;
+				}
+			} catch (IOException e) {
+				logger.error("Unable to get newick string for submission ", e);
+			}
+		}
+
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,
+				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault));
 	}
 
 	/*

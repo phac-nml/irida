@@ -19,10 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -46,21 +43,14 @@ public class AnalysisController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
-	private EmailController emailController;
-	private AnalysisAudit analysisAudit;
-	private AnalysisTypesService analysisTypesService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController,
-			AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
-		this.emailController = emailController;
-		this.analysisAudit = analysisAudit;
-		this.analysisTypesService = analysisTypesService;
 	}
 
 	// ************************************************************************************************

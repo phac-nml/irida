@@ -12,16 +12,19 @@ public class AnalysisInfo {
 	private AnalysisSubmission analysis;
 	private String analysisName;
 	private AnalysisState analysisState;
-	private AnalysisType analysisType;
+	private String analysisType;
 	private String analysisViewer;
 	private boolean isAdmin;
 	private boolean mailConfigured;
 	private AnalysisState previousState;
 	private Long duration;
+	private boolean isCompleted;
+	private boolean isError;
+	private boolean treeDefault;
 
 	public AnalysisInfo(AnalysisSubmission analysis, String analysisName, AnalysisState analysisState,
-			AnalysisType analysisType, String analysisViewer, boolean isAdmin, boolean mailConfigured,
-			AnalysisState previousState, Long duration) {
+			String analysisType, String analysisViewer, boolean isAdmin, boolean mailConfigured,
+			AnalysisState previousState, Long duration, boolean isCompleted, boolean isError, boolean treeDefault) {
 		this.analysis = analysis;
 		this.analysisName = analysisName;
 		this.analysisState = analysisState;
@@ -31,6 +34,9 @@ public class AnalysisInfo {
 		this.mailConfigured = mailConfigured;
 		this.previousState = previousState;
 		this.duration = duration;
+		this.isCompleted = isCompleted;
+		this.isError = isError;
+		this.treeDefault = treeDefault;
 	}
 
 	public AnalysisSubmission getAnalysis() {
@@ -57,11 +63,11 @@ public class AnalysisInfo {
 		this.analysisState = analysisState;
 	}
 
-	public AnalysisType getAnalysisType() {
+	public String getAnalysisType() {
 		return analysisType;
 	}
 
-	public void setAnalysisType(AnalysisType analysisType) {
+	public void setAnalysisType(String analysisType) {
 		this.analysisType = analysisType;
 	}
 
@@ -103,5 +109,29 @@ public class AnalysisInfo {
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
+	}
+
+	public boolean isCompleted() {
+		return isCompleted;
+	}
+
+	public void setCompleted(boolean completed) {
+		this.isCompleted = completed;
+	}
+
+	public boolean isError() {
+		return isError;
+	}
+
+	public void setError(boolean error) {
+		this.isError = error;
+	}
+
+	public boolean treeDefault() {
+		return treeDefault;
+	}
+
+	public void setTreeDefault(boolean treeDefault) {
+		this.treeDefault = treeDefault;
 	}
 }

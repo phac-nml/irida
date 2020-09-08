@@ -3,7 +3,7 @@
  * required for displaying analysis outputs.
  */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AnalysisContext } from "../contexts/AnalysisContext";
 
 // Functions required by context
@@ -27,7 +27,7 @@ function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
     initialContext
   );
-  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
 
   function getPreviewForFileType(fileExt, type) {
     if (type === "text") {

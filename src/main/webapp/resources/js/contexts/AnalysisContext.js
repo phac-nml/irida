@@ -10,7 +10,6 @@ import { useInterval } from "../hooks";
 // Functions required by context
 import {
   getAnalysisInfo,
-  getNewickTree,
   getUpdatedDetails,
   updateAnalysis
 } from "../apis/analysis/analysis";
@@ -43,10 +42,10 @@ const initialContext = {
   analysisViewer: null,
   isAdmin: false,
   mailConfigured: false,
-  isCompleted: false,
-  isError: false,
   previousState: null,
   duration: null,
+  isCompleted: false,
+  isError: false,
   treeDefault: false
 };
 
@@ -60,39 +59,20 @@ function AnalysisProvider(props) {
 
   useEffect(() => {
     getAnalysisInfo(analysisIdentifier).then(res => {
+      console.log(res);
       setAnalysisContext(analysisContext => {
         return {
           ...analysisContext,
-          analysis: res.analysis,
-          analysisName: res.analysisName,
-          analysisState: res.analysisState,
-          analysisType: res.analysisType,
-          analysisViewer: res.analysisViewer,
-          isAdmin: res.admin,
-          mailConfigured: res.mailConfigured,
-          isCompleted: res.analysisState === "COMPLETED",
-          isError: res.analysisState.includes("ERROR"),
-          previousState: res.previousState,
-          duration: res.duration,
-          treeDefault: () => setTreeDefault(res.analysisViewer, res.analysisState === "COMPLETED", res.analysis.identifier)
+          ...res,
+          isCompleted: res.completed,
+          isError: res.error,
+          isAdmin: res.admin
         }
       });
     }).catch((message) => {
       notification.error({ message });
     });
   }, []);
-
-  function setTreeDefault(analysisViewer, isCompleted, analysisId) {
-    let isTreeDefault = false;
-    if(analysisViewer === "tree" && isCompleted) {
-      getNewickTree(analysisId).then(data => {
-        if (data.newick !== null) {
-          isTreeDefault = true;
-        }
-      });
-    }
-    return isTreeDefault;
-  }
 
   /* Update the analysis details that are required
    * to display the progression using polling
