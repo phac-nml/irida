@@ -24,7 +24,7 @@ export const stateMap = {
   PREPARED: 1,
   SUBMITTING: 2,
   RUNNING: 3,
-  FINISHED_RUNNING: 3,
+  FINISHED_RUNNING: 4,
   POST_PROCESSING: 4,
   TRANSFERRING: 4,
   COMPLETING: 4,
@@ -44,6 +44,8 @@ const initialContext = {
   previousState: window.PAGE.previousState,
   duration: window.PAGE.duration
 };
+
+const UPDATE_ANALYSIS_DELAY=60000;
 
 const AnalysisContext = React.createContext(initialContext);
 
@@ -68,7 +70,7 @@ function AnalysisProvider(props) {
       notification.error({ message });
       clearInterval(intervalId);
     });
-  }, 5000);
+  }, UPDATE_ANALYSIS_DELAY);
 
   /* This function is used to update the AnalysisContext
    * analysis duration if it has changed from the original
