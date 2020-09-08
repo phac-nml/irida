@@ -44,12 +44,7 @@ export function PipelineLaunchButton() {
       onCancel={onCancel}
       onOk={onOk}
     >
-      <Button
-        type="primary"
-        danger
-        icon={<IconRocket />}
-        onClick={clickHandler}
-      >
+      <Button type="primary" icon={<IconRocket />} onClick={clickHandler}>
         Launch Pipeline
       </Button>
     </Popover>

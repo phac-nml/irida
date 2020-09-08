@@ -5,7 +5,7 @@ import {
   DISPATCH_PARAMETER_CHANGE,
   DISPATCH_PARAMETERS_MODIFIED,
 } from "./lauch-constants";
-import { SPACE_SM } from "../../styles/spacing";
+import { SPACE_XS } from "../../styles/spacing";
 import { IconDropDown } from "../icons/Icons";
 import { DuplicateParametersButton } from "./DuplicateParametersButton";
 
@@ -33,7 +33,7 @@ export function PipelineParameters() {
     <>
       <div style={{ display: "flex" }}>
         <Form.Item
-          style={{ width: 400, marginRight: SPACE_SM }}
+          style={{ width: 400, marginRight: SPACE_XS }}
           help={
             selected === 0
               ? "Default parameters cannot be modified, make a duplicate copy and modify them"
@@ -63,7 +63,7 @@ export function PipelineParameters() {
               </Menu>
             }
             icon={<IconDropDown />}
-            style={{ marginLeft: SPACE_SM }}
+            style={{ marginLeft: SPACE_XS }}
           >
             Save
           </Dropdown.Button>
