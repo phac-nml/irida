@@ -3,7 +3,7 @@ import { LaunchProvider, useLaunchState } from "./launch-context";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Button, Form, PageHeader, Result, Space, Tabs } from "antd";
+import { Button, Col, Form, PageHeader, Result, Row, Space, Tabs } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { LaunchComplete } from "./LaunchComplete";
@@ -52,26 +52,28 @@ function LaunchTabs() {
       }
     />
   ) : (
-    <>
-      <PageHeader
-        title={original.name}
-        onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
-      />
-      <Space direction="vertical" style={{ width: `100%` }} size="large">
-        <Form layout="vertical">
-          <Tabs tabPosition="left">
-            {steps.map((step) => (
-              <TabPane tab={step.title} key={step.key}>
-                {step.content}
-              </TabPane>
-            ))}
-          </Tabs>
-        </Form>
-        <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-          <PipelineLaunchButton key="launch" />
-        </div>
-      </Space>
-    </>
+    <Row>
+      <Col xxl={{ span: 15, offset: 3 }} xl={{ span: 24 }}>
+        <PageHeader
+          title={original.name}
+          onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
+        />
+        <Space direction="vertical" style={{ width: `100%` }} size="large">
+          <Form layout="vertical">
+            <Tabs tabPosition="left">
+              {steps.map((step) => (
+                <TabPane tab={step.title} key={step.key}>
+                  {step.content}
+                </TabPane>
+              ))}
+            </Tabs>
+          </Form>
+          <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+            <PipelineLaunchButton key="launch" />
+          </div>
+        </Space>
+      </Col>
+    </Row>
   );
 }
 
