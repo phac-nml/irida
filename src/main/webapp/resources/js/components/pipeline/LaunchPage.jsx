@@ -59,7 +59,7 @@ function LaunchTabs() {
       />
       <Space direction="vertical" style={{ width: `100%` }} size="large">
         <Form layout="vertical">
-          <Tabs tabBarExtraContent={[<PipelineLaunchButton key="launch" />]}>
+          <Tabs tabPosition="left">
             {steps.map((step) => (
               <TabPane tab={step.title} key={step.key}>
                 {step.content}
@@ -67,6 +67,9 @@ function LaunchTabs() {
             ))}
           </Tabs>
         </Form>
+        <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+          <PipelineLaunchButton key="launch" />
+        </div>
       </Space>
     </>
   );

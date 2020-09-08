@@ -47,7 +47,6 @@ export function PipelineLaunchButton() {
       <Button
         type="primary"
         danger
-        ghost
         icon={<IconRocket />}
         onClick={clickHandler}
       >
