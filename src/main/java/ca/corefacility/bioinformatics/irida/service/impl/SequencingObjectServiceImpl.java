@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -252,6 +251,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 				.getConcatenator(toJoin, iridaFileStorageUtility);
 
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
+
 		SampleSequencingObjectJoin created = createSequencingObjectInSample(concatenated, targetSample);
 		
 		concatenationRepository.save(new SequenceConcatenation(created.getObject(), toJoin));

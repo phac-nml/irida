@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
+
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip
  * compressed files have the extension ".gz" (not for determining whether or not

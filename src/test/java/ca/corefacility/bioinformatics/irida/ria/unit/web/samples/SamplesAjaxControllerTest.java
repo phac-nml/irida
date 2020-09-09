@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxControlle
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.ImmutableList;
 
@@ -59,7 +58,6 @@ public class SamplesAjaxControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-
 		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource);
 
 		// Set up mocks
