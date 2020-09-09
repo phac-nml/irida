@@ -53,7 +53,7 @@ export default function RemoteConnectionDetails({ remoteId }) {
     <PageWrapper
       title={details.name}
       onBack={returnToList}
-      headerExtras={<RemoteApiStatus key="status" api={{ id: 1 }} />}
+      headerExtras={<RemoteApiStatus key="status" api={{ id: remoteId }} />}
     >
       <Tabs tabPosition="left">
         <Tabs.TabPane tab={"DETAILS"} key="details">
