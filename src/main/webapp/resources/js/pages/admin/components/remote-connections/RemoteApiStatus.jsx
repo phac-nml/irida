@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {Alert, Button} from "antd";
-import {checkConnectionStatus} from "../../../../apis/remote-api/remote-api";
-import {setBaseUrl} from "../../../../utilities/url-utilities";
-import {IconLoading, IconLogin} from "../../../../components/icons/Icons";
-import {SPACE_XS} from "../../../../styles/spacing";
-import {formatInternationalizedDateTime} from "../../../../utilities/date-utilities";
+import React, { useEffect, useState } from "react";
+import { Alert, Button } from "antd";
+import { checkConnectionStatus } from "../../../../apis/remote-api/remote-api";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { IconLoading, IconLogin } from "../../../../components/icons/Icons";
+import { SPACE_XS } from "../../../../styles/spacing";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
 /**
  * React component to render the status of a Remote API.
