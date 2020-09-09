@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, PageHeader, Popconfirm, Space, Tabs, Typography } from "antd";
+import { Button, Popconfirm, Space, Tabs, Typography } from "antd";
 import { RemoteApiStatus } from "./RemoteApiStatus";
 import {
   deleteRemoteApi,
@@ -16,36 +16,39 @@ const { Title } = Typography;
 
 export default function RemoteConnectionDetails({ remoteId }) {
   const [details, setDetails] = useState({});
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     getConnectionDetails({ id: remoteId }).then(setDetails);
-  }, []);
+  }, [remoteId]);
 
   const dataSource = [
     {
-      title: "ID",
+      title: i18n("RemoteConnectionDetails.id"),
       desc: details.id,
     },
     {
-      title: "SERVICE URL",
+      title: i18n("RemoteConnectionDetails.url"),
       desc: details.url,
     },
     {
-      title: "CLIENT ID",
+      title: i18n("RemoteConnectionDetails.clientId"),
       desc: details.clientId,
     },
     {
-      title: "CLIENT SECRET",
+      title: i18n("RemoteConnectionDetails.clientSecret"),
       desc: details.clientSecret,
     },
     {
-      title: "CREATED",
+      title: i18n("RemoteConnectionDetails.created"),
       desc: formatInternationalizedDateTime(details.created),
     },
   ];
 
-  const removeConnection = () =>
+  const removeConnection = () => {
+    setDeleting(true);
     deleteRemoteApi({ id: remoteId }).then(returnToList);
+  };
 
   const returnToList = () => navigate(setBaseUrl(`admin/remote_api`));
 
@@ -56,21 +59,33 @@ export default function RemoteConnectionDetails({ remoteId }) {
       headerExtras={<RemoteApiStatus key="status" api={{ id: remoteId }} />}
     >
       <Tabs tabPosition="left">
-        <Tabs.TabPane tab={"DETAILS"} key="details">
-          <Title level={2}>Connection Details</Title>
+        <Tabs.TabPane
+          tab={i18n("RemoteConnectionDetails.tab.details")}
+          key="details"
+        >
+          <Title level={2}>
+            {i18n("RemoteConnectionDetails.tab.details.title")}
+          </Title>
           <BasicList dataSource={dataSource} />
         </Tabs.TabPane>
-        <Tabs.TabPane tab={"DELETE CONNECTION"} key="delete">
+        <Tabs.TabPane
+          tab={i18n("RemoteConnectionDetails.tab.delete")}
+          key="delete"
+        >
           <Space direction="vertical" style={{ width: "100%" }}>
-            <Title level={2}>Delete Connection</Title>
-            <WarningAlert message="Warning! Deletion of a connection is a permanent action!" />
+            <Title level={2}>
+              {i18n("RemoteConnectionDetails.tab.delete.title")}
+            </Title>
+            <WarningAlert
+              message={i18n("RemoteConnectionDetails.tab.delete.warning")}
+            />
             <Popconfirm
-              title={"Delete connection?"}
+              title={i18n("RemoteConnectionDetails.tab.delete.confirm")}
               placement="right"
               onConfirm={removeConnection}
             >
-              <Button type="primary" danger>
-                DELETE
+              <Button type="primary" danger loading={deleting}>
+                {i18n("RemoteConnectionDetails.tab.delete.button")}
               </Button>
             </Popconfirm>
           </Space>
