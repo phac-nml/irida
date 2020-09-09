@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -127,7 +126,7 @@ public class AnalysisInfo {
 		this.isError = error;
 	}
 
-	public boolean treeDefault() {
+	public boolean isTreeDefault() {
 		return treeDefault;
 	}
 

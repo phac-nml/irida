@@ -55,10 +55,12 @@ const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
-  const analysisIdentifier = window.location.pathname.match(/analysis\/(\d+)/)[1];
+  const [analysisIdentifier, setAnalysisIdentifier] = useState("");
 
   useEffect(() => {
-    getAnalysisInfo(analysisIdentifier).then(res => {
+    const analysisId = window.location.pathname.match(/analysis\/(\d+)/)[1]
+    setAnalysisIdentifier(analysisId);
+    getAnalysisInfo(analysisId).then(res => {
       console.log(res);
       setAnalysisContext(analysisContext => {
         return {
@@ -66,7 +68,7 @@ function AnalysisProvider(props) {
           ...res,
           isCompleted: res.completed,
           isError: res.error,
-          isAdmin: res.admin
+          isAdmin: res.admin,
         }
       });
     }).catch((message) => {

@@ -1206,11 +1206,12 @@ public class AnalysisAjaxController {
 	 * Get the analysis details
 	 *
 	 * @param submissionId The analysis submission id
-	 * @param principal Principal {@link User}
+	 * @param principal    Principal {@link User}
+	 * @param locale       The users current {@link Locale}
 	 * @return dto which contains the analysis details
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis-details")
-	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal) {
+	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
@@ -1248,8 +1249,9 @@ public class AnalysisAjaxController {
 
 		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
 			try {
-				Map<String, Object> newickStr = getNewickForAnalysis(submission.getId());
-				if(newickStr != null) {
+				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
+
+				if(analysisTreeResponse.getNewick().length() > 0) {
 					treeDefault = true;
 				}
 			} catch (IOException e) {
