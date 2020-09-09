@@ -18,9 +18,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceCo
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaConcatenatorTemporaryFile;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,9 +251,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
 				.getConcatenator(toJoin, iridaFileStorageUtility);
 
-		IridaConcatenatorTemporaryFile iridaConcatenatorTemporaryFile = concatenator.concatenateFiles(toJoin, filename);
-		SequencingObject concatenated = iridaConcatenatorTemporaryFile.getSequencingObject();
-
+		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
 		SampleSequencingObjectJoin created = createSequencingObjectInSample(concatenated, targetSample);
 		
 		concatenationRepository.save(new SequenceConcatenation(created.getObject(), toJoin));
@@ -266,8 +262,6 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 				ssoRepository.delete(sampleForSequencingObject);
 			}
 		}
-
-		IridaFiles.cleanupLocalTemporaryFiles(null, iridaConcatenatorTemporaryFile.getDirectoryPath());
 
 		return created;
 	}

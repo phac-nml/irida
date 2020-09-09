@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -473,7 +472,8 @@ public class RESTSampleSequenceFilesController {
 		} finally {
 			// clean up the temporary files.
 			logger.trace("Deleted temp files");
-			IridaFiles.cleanupLocalTemporaryFiles(target, temp);
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
 		}
 
 		// respond to the client
@@ -584,7 +584,8 @@ public class RESTSampleSequenceFilesController {
 		} finally {
 			// clean up the temporary files.
 			logger.trace("Deleted temp files");
-			IridaFiles.cleanupLocalTemporaryFiles(target, temp);
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
 		}
 
 		// respond to the client
@@ -686,8 +687,10 @@ public class RESTSampleSequenceFilesController {
 		} finally {
 			// clean up the temporary files.
 			logger.trace("Deleted temp files");
-			IridaFiles.cleanupLocalTemporaryFiles(target1, temp1);
-			IridaFiles.cleanupLocalTemporaryFiles(target2, temp2);
+			Files.deleteIfExists(target1);
+			Files.deleteIfExists(temp1);
+			Files.deleteIfExists(target2);
+			Files.deleteIfExists(temp2);
 		}
 
 		// respond to the client

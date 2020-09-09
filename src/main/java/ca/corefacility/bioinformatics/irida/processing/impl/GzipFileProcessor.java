@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip
@@ -41,20 +39,17 @@ public class GzipFileProcessor implements FileProcessor {
 	private boolean disableFileProcessor = false;
 	private boolean removeCompressedFile;
 	private IridaFileStorageUtility iridaFileStorageUtility;
-	private boolean removeTemporaryFiles;
 
 	@Autowired
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		removeCompressedFile = false;
-		removeTemporaryFiles = true;
 	}
 
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageUtility iridaFileStorageUtility, Boolean removeTemporaryFiles) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.removeCompressedFile = removeCompressedFiles;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
-		this.removeTemporaryFiles = removeTemporaryFiles;
 	}
 
 	/**
@@ -118,46 +113,35 @@ public class GzipFileProcessor implements FileProcessor {
 
 		try {
 			logger.trace("About to try handling a gzip file.");
+
 			if (sequenceFile.isGzipped()) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 				sequenceFile.setFile(file);
-				Path targetDirectory = null;
-				Path target = null;
 
-				try {
-					targetDirectory = Files.createTempDirectory(null);
+				try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
+					logger.trace("Handling gzip compressed file.");
 
-					try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
-						logger.trace("Handling gzip compressed file.");
+					Path targetDirectory = Files.createTempDirectory(null);
+					Path target = targetDirectory.resolve(nameWithoutExtension);
+					logger.debug("Target directory is [" + targetDirectory + "]");
+					logger.debug("Writing uncompressed file to [" + target + "]");
 
-						target = targetDirectory.resolve(nameWithoutExtension);
-						logger.debug("Target directory is [" + targetDirectory + "]");
-						logger.debug("Writing uncompressed file to [" + target + "]");
+					Files.copy(zippedInputStream, target);
 
-						Files.copy(zippedInputStream, target);
+					sequenceFile.setFile(target);
+					sequenceFile = sequenceFileRepository.save(sequenceFile);
 
-						sequenceFile.setFile(target);
-						sequenceFile = sequenceFileRepository.save(sequenceFile);
-
-						if (removeCompressedFile) {
-							logger.debug(
-									"Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
-							try {
-								Files.delete(file);
-							} catch (final Exception e) {
-								logger.error("Failed to remove the original compressed file.", e);
-								// throw the exception again to be caught by the
-								// outer try/catch block:
-								throw e;
-							}
+					if (removeCompressedFile) {
+						logger.debug(
+								"Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
+						try {
+							Files.delete(file);
+						} catch (final Exception e) {
+							logger.error("Failed to remove the original compressed file.", e);
+							// throw the exception again to be caught by the
+							// outer try/catch block:
+							throw e;
 						}
-					}
-				} catch(IOException e) {
-					logger.error("Unable to create temporary directory", e);
-					throw new StorageException("Unable to create temporary directory");
-				} finally {
-					if(removeTemporaryFiles) {
-						IridaFiles.cleanupLocalTemporaryFiles(target, targetDirectory);
 					}
 				}
 			}

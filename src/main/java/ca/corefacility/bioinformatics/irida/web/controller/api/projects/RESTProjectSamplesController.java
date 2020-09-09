@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.net.HttpHeaders;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 

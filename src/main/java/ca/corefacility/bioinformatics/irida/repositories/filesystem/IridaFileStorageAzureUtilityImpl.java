@@ -74,24 +74,24 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void cleanupDownloadedLocalTemporaryFiles(Path filePath, Path directoryPath) {
+	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		try {
-			if(filePath != null && Files.isRegularFile(filePath)) {
-				logger.trace("Cleaning up temporary file downloaded from azure [" + filePath.toString() + "]");
-				Files.delete(filePath);
+			if(iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {
+				logger.trace("Cleaning up temporary file downloaded from azure [" + iridaTemporaryFile.getFile().toString() + "]");
+				Files.delete(iridaTemporaryFile.getFile());
 			}
 		} catch (IOException e) {
-			logger.error("Unable to delete local file [" + filePath.toString() + "]");
+			logger.error("Unable to delete local file", e);
 			throw new StorageException(e.getMessage());
 		}
 
 		try {
-			if(directoryPath != null && Files.isDirectory(directoryPath)) {
-				logger.trace("Cleaning up temporary directory created for azure temporary file [" + directoryPath.toString() + "]");
-				org.apache.commons.io.FileUtils.deleteDirectory(directoryPath.toFile());
+			if(iridaTemporaryFile.getDirectoryPath() != null && Files.isDirectory(iridaTemporaryFile.getDirectoryPath())) {
+				logger.trace("Cleaning up temporary directory created for azure temporary file [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
+				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath().toFile());
 			}
 		} catch (IOException e) {
-			logger.error("Unable to delete local directory [" + directoryPath.toString() + "]");
+			logger.error("Unable to delete local directory", e);
 			throw new StorageException(e.getMessage());
 		}
 	}
@@ -127,6 +127,14 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (BlobStorageException e) {
 			logger.error("Unable to upload file to azure [" + e + "]");
 			throw new StorageException("Unable to upload file to azure", e);
+		}
+
+		try {
+			// The source file is the temp file which is no longer required
+			Files.deleteIfExists(source);
+		} catch (IOException e) {
+			logger.error("Unable to clean up source file", e);
+			throw new StorageException("Unable to clean up source file", e);
 		}
 	}
 
@@ -235,7 +243,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (IOException e) {
 			throw new StorageException("Could not open target file for writing", e);
 		} finally {
-			cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
+			cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 		}
 	}
 

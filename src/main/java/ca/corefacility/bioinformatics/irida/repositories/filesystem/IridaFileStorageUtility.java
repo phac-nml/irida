@@ -2,14 +2,9 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
@@ -21,8 +16,6 @@ import com.google.common.collect.Lists;
  */
 
 public interface IridaFileStorageUtility {
-	Logger logger = LoggerFactory.getLogger(IridaFileStorageUtility.class);
-
 	//Valid file extensions for sample file concatenation
 	public static final List<String> VALID_CONCATENATION_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
@@ -36,10 +29,9 @@ public interface IridaFileStorageUtility {
 	/**
 	 * Delete temporary downloaded file and/or directory.
 	 *
-	 * @param filePath The {@link Path} to the file
-	 * @param directoryPath The {@link Path} to the directory which has the file
+	 * @param iridaTemporaryFile The {@link IridaTemporaryFile} object which includes the file path and/or directory path
 	 */
-	public void cleanupDownloadedLocalTemporaryFiles(Path filePath, Path directoryPath);
+	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile);
 
 	/**
 	 * Get file size
@@ -122,25 +114,4 @@ public interface IridaFileStorageUtility {
 	 */
 	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
 
-	/**
-	 * Delete local temporary file and/or directory.
-	 *
-	 * @param filePath The {@link Path} to the file
-	 * @param directoryPath The {@link Path} to the directory which has the file
-	 */
-	public static void cleanupLocalTemporaryFiles(Path filePath, Path directoryPath) {
-		try {
-			if(filePath != null) {
-				logger.trace("Cleaning up temporary file: [" + filePath.toString() + "]");
-				Files.deleteIfExists(filePath);
-			}
-			if(directoryPath != null) {
-				logger.trace("Cleaning up temporary directory: [" + directoryPath.toString() + "]");
-				org.apache.commons.io.FileUtils.deleteDirectory(directoryPath.toFile());
-			}
-		} catch (IOException e) {
-			logger.error("Unable to clean up local files/directories", e);
-			throw new StorageException(e.getMessage());
-		}
-	}
 }

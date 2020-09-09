@@ -7,6 +7,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 
 /**
  * Static class which has file object operations that require
@@ -64,26 +65,6 @@ public final class IridaFiles {
 	 */
 	public static String getFileExtension(List<? extends SequencingObject> files) throws IOException {
 		return iridaFileStorageUtility.getFileExtension(files);
-	}
-
-	/**
-	 * Cleans up temporary downloaded files.
-	 *
-	 * @param filePath The path to the file
-	 * @param directoryPath The path to the directory which has the file
-	 */
-	public static void cleanupDownloadedLocalTemporaryFiles(Path filePath, Path directoryPath) {
-		iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(filePath, directoryPath);
-	}
-
-	/**
-	 * Cleans up temporary files.
-	 *
-	 * @param filePath The path to the file
-	 * @param directoryPath The path to the directory which has the file
-	 */
-	public static void cleanupLocalTemporaryFiles(Path filePath, Path directoryPath) {
-		IridaFileStorageUtility.cleanupLocalTemporaryFiles(filePath, directoryPath);
 	}
 
 	/**

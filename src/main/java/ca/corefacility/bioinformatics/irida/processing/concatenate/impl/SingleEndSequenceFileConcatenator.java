@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaConcatenatorTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
@@ -30,10 +29,9 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IridaConcatenatorTemporaryFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
+	public SingleEndSequenceFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 		Path tempFile;
-		Path tempDirectory;
 		String extension = null;
 
 		try {
@@ -45,7 +43,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 		filename = filename + "." + extension;
 		try {
 			// create a temp directory and temp file
-			tempDirectory = Files.createTempDirectory(null);
+			Path tempDirectory = Files.createTempDirectory(null);
 
 			tempFile = tempDirectory.resolve(filename);
 
@@ -73,7 +71,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 
 		SingleEndSequenceFile seqObject = new SingleEndSequenceFile(forward);
 
-		return new IridaConcatenatorTemporaryFile(null, tempDirectory, seqObject);
+		return seqObject;
 	}
 
 }

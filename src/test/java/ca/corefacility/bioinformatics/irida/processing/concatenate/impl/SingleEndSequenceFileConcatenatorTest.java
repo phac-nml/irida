@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaConcatenatorTemporaryFile;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.Lists;
@@ -48,8 +47,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		IridaConcatenatorTemporaryFile iridaConcatenatorTemporaryFile = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
-		SingleEndSequenceFile concatenateFiles = (SingleEndSequenceFile) iridaConcatenatorTemporaryFile.getSequencingObject();
+		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
 
 		SequenceFile newSeqFile = concatenateFiles.getSequenceFile();
 
@@ -76,8 +74,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		IridaConcatenatorTemporaryFile iridaConcatenatorTemporaryFile = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
-		SingleEndSequenceFile concatenateFiles = (SingleEndSequenceFile) iridaConcatenatorTemporaryFile.getSequencingObject();
+		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
 
 		SequenceFile newSeqFile = concatenateFiles.getSequenceFile();
 
@@ -100,8 +97,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		IridaConcatenatorTemporaryFile iridaConcatenatorTemporaryFile = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
-		SingleEndSequenceFile concatenateFiles = (SingleEndSequenceFile) iridaConcatenatorTemporaryFile.getSequencingObject();
+		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
 	}
 
 	@Test(expected = ConcatenateException.class)
@@ -114,8 +110,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		IridaConcatenatorTemporaryFile iridaConcatenatorTemporaryFile = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
-		SingleEndSequenceFile concatenateFiles = (SingleEndSequenceFile) iridaConcatenatorTemporaryFile.getSequencingObject();
+		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
 	}
 
 	private SequenceFile createSequenceFile(String name, String extension) throws IOException {

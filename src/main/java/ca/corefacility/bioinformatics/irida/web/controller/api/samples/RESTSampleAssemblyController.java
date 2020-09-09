@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
@@ -183,7 +182,8 @@ public class RESTSampleAssemblyController {
 		} finally {
 			// clean up the temporary files.
 			logger.trace("Deleted temp files");
-			IridaFiles.cleanupLocalTemporaryFiles(target, temp);
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
 		}
 
 		return modelMap;
