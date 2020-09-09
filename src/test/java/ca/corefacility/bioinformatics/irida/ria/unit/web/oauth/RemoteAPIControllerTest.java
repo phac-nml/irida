@@ -1,13 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import java.net.MalformedURLException;
-import java.security.Principal;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,18 +18,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.security.Principal;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +32,6 @@ public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
 	private ProjectRemoteService projectRemoteService;
-	private RemoteAPITokenService tokenService;
 	private UserService userService;
 	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
@@ -53,9 +46,8 @@ public class RemoteAPIControllerTest {
 		messageSource = mock(MessageSource.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		tokenService = mock(RemoteAPITokenService.class);
 		userService = mock(UserService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService, tokenService,
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService,
 				authController, messageSource);
 		locale = LocaleContextHolder.getLocale();
 
