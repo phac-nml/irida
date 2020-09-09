@@ -15,10 +15,20 @@ export function checkConnectionStatus({ id }) {
     .catch(() => false);
 }
 
+/**
+ * Get the specific details about a remote api connection
+ * @param id - identifier for a remote api
+ * @returns {Promise<*>}
+ */
 export function getConnectionDetails({ id }) {
   return axios.get(`${BASE_URL}/${id}`).then(({ data }) => data);
 }
 
+/**
+ * Delete a specific remote api
+ * @param id - identifier for a remote api
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export function deleteRemoteApi({ id }) {
   return axios.delete(`${BASE_URL}/${id}/delete`);
 }
