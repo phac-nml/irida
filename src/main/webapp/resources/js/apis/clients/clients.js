@@ -12,10 +12,20 @@ export async function revokeClientTokens(id) {
   return await axios.delete(`${BASE_URL}/revoke?id=${id}`);
 }
 
+/**
+ * Validate the identifier for client
+ * @param clientId - the identifier to validate
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export async function validateClientId(clientId) {
   return axios.get(`${BASE_URL}/validate?clientId=${clientId}`);
 }
 
+/**
+ * Create a new client with the provided details.
+ * @param details - {clientId, tokenValidity, grantType, refreshToken, read, write, redirectURI}
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export async function createClient(details) {
   return axios.post(`${BASE_URL}`, details);
 }
