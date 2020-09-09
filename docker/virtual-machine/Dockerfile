@@ -31,6 +31,10 @@ RUN /tool_deps/_conda/bin/conda remove --name __mentalist@0.1.9 --all -y \
       && /tool_deps/_conda/bin/conda clean --packages -t -i \
       && rm -rf /tmp/file_*.fastq
 
+# I am unable to get the actual MentaLiST tool to install via the Dockerfile
+# So, once Galaxy is started if you wish to use MentaLiST you will have to install
+# it via the web interface.
+
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
 EXPOSE :21
