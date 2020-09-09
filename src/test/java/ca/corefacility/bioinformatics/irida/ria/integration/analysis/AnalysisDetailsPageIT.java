@@ -132,7 +132,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Has output files
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
-		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
+		assertEquals("There should be two output files", 2, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be exactly one download individual files dropdown button", page.downloadIndividualFilesMenuButtonVisible());
 		assertTrue("There should be exactly one download individual files dropdown menu", page.downloadIndividualFilesMenuVisible());
