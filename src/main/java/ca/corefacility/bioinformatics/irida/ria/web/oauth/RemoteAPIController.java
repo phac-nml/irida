@@ -125,7 +125,7 @@ public class RemoteAPIController extends BaseController {
         String responsePage = null;
         try {
             RemoteAPI create = remoteAPIService.create(client);
-            responsePage = "redirect:/remote_api/" + create.getId();
+            responsePage = "redirect:/admin/remote_api/" + create.getId();
         } catch (ConstraintViolationException ex) {
             logger.error("Error creating api: " + ex.getMessage());
             errors.putAll(getErrorsFromViolationException(ex));
