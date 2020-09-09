@@ -4,6 +4,9 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 import java.util.Date;
 
+/**
+ * UI Model to represent the details of a {@link RemoteAPI}
+ */
 public class RemoteAPIModel {
     private final Long id;
     private final String name;
