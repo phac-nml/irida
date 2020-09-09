@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -43,6 +44,7 @@ public class RemoteAPIAjaxController {
      * @param tableRequest - the details for the current page of the Table
      * @return {@link TableResponse}
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public TableResponse<RemoteAPITableModel> getAjaxAPIList(@RequestBody TableRequest tableRequest) {
         Page<RemoteAPI> search = remoteAPIService.search(
@@ -63,6 +65,7 @@ public class RemoteAPIAjaxController {
      * @param apiId The ID of the api
      * @return "valid" or "invalid_token" message
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping("/status/{apiId}")
     public ResponseEntity<Date> checkAPIStatus(@PathVariable Long apiId) {
         try {
@@ -78,6 +81,7 @@ public class RemoteAPIAjaxController {
      * @param remoteId Identifier for a Remote API
      * @return {@link ResponseEntity} with the details of the Remote API
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{remoteId}")
     public ResponseEntity<RemoteAPIModel> getRemoteAPIDetails(@PathVariable long remoteId) {
         return ResponseEntity.ok(service.getRemoteApiDetails(remoteId));
@@ -88,6 +92,7 @@ public class RemoteAPIAjaxController {
      *
      * @param remoteId Identifier for a Remote API.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{remoteId}/delete")
     public void deleteRemoteAPI(@PathVariable long remoteId) {
         service.deleteRemoteAPI(remoteId);
