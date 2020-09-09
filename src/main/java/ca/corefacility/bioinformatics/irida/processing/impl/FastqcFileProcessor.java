@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutput
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

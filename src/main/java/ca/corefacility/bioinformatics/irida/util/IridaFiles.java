@@ -7,7 +7,6 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 
 /**
  * Static class which has file object operations that require
