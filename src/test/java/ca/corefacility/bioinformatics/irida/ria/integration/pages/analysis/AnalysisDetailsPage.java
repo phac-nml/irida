@@ -280,8 +280,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean downloadOutputFileButtonVisible() {
-		return downloadOutputFileButtons.size() == 2;
+	public boolean downloadOutputFileButtonVisible(int numBtnsExpected) {
+		return downloadOutputFileButtons.size() == numBtnsExpected;
 	}
 
 	/**
