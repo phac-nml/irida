@@ -5,8 +5,10 @@
 
 import {
   initConnectRemoteApi,
-  updateRemoteConnectionStatus
+  updateRemoteConnectionStatus,
 } from "./remote-apis";
+
+import "./../admin/components/remote-connections/RemoteConnectionDetails";
 
 const apiId = document.querySelector("#remoteapi-id").innerHTML;
 const $connectionPanel = $(".connection-status-panel");
@@ -19,6 +21,6 @@ updateRemoteConnectionStatus($connectionPanel, apiId);
 /**
  * Initialize the remote connection button.
  */
-initConnectRemoteApi(function() {
+initConnectRemoteApi(function () {
   updateRemoteConnectionStatus($connectionPanel, apiId);
 });

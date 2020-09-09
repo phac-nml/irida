@@ -74,17 +74,6 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testRemoveRemoteAPI() {
-		Long id = 1L;
-
-		String removeClient = remoteAPIController.removeClient(id);
-
-		assertEquals("redirect:/remote_api", removeClient);
-
-		verify(remoteAPIService).delete(id);
-	}
-
-	@Test
 	public void testGetAddRemoteAPIPage() {
 		ExtendedModelMap model = new ExtendedModelMap();
 
@@ -149,39 +138,6 @@ public class RemoteAPIControllerTest {
 		when(projectRemoteService.getServiceStatus(client)).thenReturn(true);
 		String connectToAPI = remoteAPIController.connectToAPI(apiId, model);
 		assertEquals(RemoteAPIController.PARENT_FRAME_RELOAD_PAGE, connectToAPI);
-	}
-
-	@Test
-	public void testRead() {
-		Long apiId = 1L;
-		ExtendedModelMap model = new ExtendedModelMap();
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		RemoteAPIToken remoteAPIToken = new RemoteAPIToken("xyz", client, new Date());
-		when(remoteAPIService.read(apiId)).thenReturn(client);
-		when(tokenService.getToken(client)).thenReturn(remoteAPIToken);
-
-		remoteAPIController.read(apiId, model, locale);
-
-		verify(remoteAPIService).read(apiId);
-		verify(tokenService).getToken(client);
-
-		assertTrue(model.containsAttribute("remoteApi"));
-	}
-
-	@Test
-	public void testReadNoToken() {
-		Long apiId = 1L;
-		ExtendedModelMap model = new ExtendedModelMap();
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		when(remoteAPIService.read(apiId)).thenReturn(client);
-		when(tokenService.getToken(client)).thenThrow(new EntityNotFoundException("no token"));
-
-		remoteAPIController.read(apiId, model, locale);
-
-		verify(remoteAPIService).read(apiId);
-		verify(tokenService).getToken(client);
-
-		assertTrue(model.containsAttribute("remoteApi"));
 	}
 
 	@Test

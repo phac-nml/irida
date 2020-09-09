@@ -1,17 +1,18 @@
-package ca.corefacility.bioinformatics.irida.ria.web.oauth;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -30,14 +31,16 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 public class RemoteAPIAjaxController {
 	private final RemoteAPIService remoteAPIService;
 	private final ProjectRemoteService projectRemoteService;
+	private final UIRemoteAPIService service;
 
 	public static final String VALID_OAUTH_CONNECTION = "valid_token";
 	public static final String INVALID_OAUTH_TOKEN = "invalid_token";
 
 	@Autowired
-	public RemoteAPIAjaxController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService) {
+	public RemoteAPIAjaxController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService, UIRemoteAPIService service) {
 		this.remoteAPIService = remoteAPIService;
 		this.projectRemoteService = projectRemoteService;
+		this.service = service;
 	}
 
 	/**
@@ -67,16 +70,21 @@ public class RemoteAPIAjaxController {
 	 * @return "valid" or "invalid_token" message
 	 */
 	@RequestMapping("/status/{apiId}")
-	public ResponseEntity<String> checkAPIStatus(@PathVariable Long apiId) {
-		RemoteAPI api = remoteAPIService.read(apiId);
-
+	public ResponseEntity<Date> checkAPIStatus(@PathVariable Long apiId) {
 		try {
-			projectRemoteService.getServiceStatus(api);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(VALID_OAUTH_CONNECTION);
-		} catch (IridaOAuthException ex) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(INVALID_OAUTH_TOKEN);
+			return ResponseEntity.ok(service.checkAPIStatus(apiId));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
+	}
+
+	@GetMapping("/{remoteId}")
+	public ResponseEntity<RemoteAPIModel> getRemoteAPIDetails(@PathVariable long remoteId) {
+		return ResponseEntity.ok(service.getRemoteApiDetails(remoteId));
+	}
+
+	@DeleteMapping("/{remoteId}/delete")
+	public void deleteRemoteAPI(@PathVariable long remoteId) {
+		service.deleteRemoteAPI(remoteId);
 	}
 }

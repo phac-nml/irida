@@ -98,7 +98,7 @@ public class RemoteAPIController extends BaseController {
 	 * Get the remote apis listing page
 	 *
 	 * @param model     {@link Model}
-	 * @param principal {@link Principal} currently logged in usef
+	 * @param principal {@link Principal} currently logged in user
 	 * @return The view name of the remote apis listing page
 	 */
 	@RequestMapping
@@ -121,36 +121,8 @@ public class RemoteAPIController extends BaseController {
 	 * @return The name of the remote api details page view
 	 */
 	@RequestMapping("/{apiId}")
-	public String read(@PathVariable Long apiId, Model model, Locale locale) {
-		RemoteAPI remoteApi = remoteAPIService.read(apiId);
-		model.addAttribute("remoteApi", remoteApi);
-
-		try {
-			RemoteAPIToken token = tokenService.getToken(remoteApi);
-			model.addAttribute("tokenExpiry", dateTimeFormatter.print(token.getExpiryDate(), locale));
-		} catch (EntityNotFoundException ex) {
-			// Not returning a token here is acceptable. The view will have to
-			// handle a state if the token does not exist
-			logger.trace("No token for service " + remoteApi);
-		}
-
+	public String details() {
 		return DETAILS_PAGE;
-	}
-
-	/**
-	 * Remove a {@link RemoteAPI} with the given id
-	 * 
-	 * @param id
-	 *            The ID to remove
-	 * @return redirect to the remote apis list
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(value = "/remove", method = RequestMethod.POST)
-	public String removeClient(@RequestParam Long id) {
-		logger.trace("Deleting remote client " + id);
-		remoteAPIService.delete(id);
-
-		return "redirect:/remote_api";
 	}
 
 	/**
@@ -211,29 +183,6 @@ public class RemoteAPIController extends BaseController {
 		}
 
 		return responsePage;
-	}
-
-	/**
-	 * Check the currently logged in user's OAuth2 connection status to a given
-	 * API and return the proper html to the user.
-	 *
-	 * @param apiId The ID of the api
-	 * @return html fragment for current connection state.
-	 */
-	@RequestMapping("/status/web/{apiId}")
-	public String checkWebApiStatus(@PathVariable Long apiId) {
-		// TODO: This is to be removed when remote api details page is refactored
-		//       Use similar functionality in RemoteAPIAjaxController.
-		RemoteAPI api = remoteAPIService.read(apiId);
-		String status;
-		try {
-			projectRemoteService.getServiceStatus(api);
-			status = VALID_OAUTH_CONNECTION;
-		} catch (IridaOAuthException ex) {
-			logger.debug("Can't connect to API: " + ex.getMessage());
-			status = INVALID_OAUTH_TOKEN;
-		}
-		return "remote_apis/fragments.html :: #" + status;
 	}
 
 	/**
