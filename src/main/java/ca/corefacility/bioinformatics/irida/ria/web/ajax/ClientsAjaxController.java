@@ -1,7 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
-import java.util.Locale;
-
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -10,14 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIClientService;
+import java.util.Locale;
 
 /**
  * Controller to handle ajax request for IRIDA Clients.
@@ -87,7 +86,7 @@ public class ClientsAjaxController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<AjaxResponse> createClient(@RequestBody CreateClientRequest request, Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxCreateItemResponse(service.createClient(request)));
+			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(service.createClient(request)));
 		} catch (Exception exception) {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(new AjaxErrorResponse(messageSource.getMessage("server.AddClientForm.error",
