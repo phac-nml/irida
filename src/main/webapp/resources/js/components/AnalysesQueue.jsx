@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, notification, Tooltip } from "antd";
 import {
-  fetchAnalysesQueueCounts,
-  getUpdatedTableDetails
+  fetchAnalysesQueueCounts
 } from "./../apis/analysis/analysis";
 import { SPACE_XS } from "../styles/spacing";
 import styled from "styled-components";
@@ -30,8 +29,15 @@ const UPDATE_QUEUE_COUNT_DELAY = 60000;
  * @constructor
  */
 export function AnalysesQueue({}) {
-  const [running, setRunning] = useState(0);
-  const [queued, setQueued] = useState(0);
+  const [running, setRunning] = useState(null);
+  const [queued, setQueued] = useState(null);
+
+  useEffect(() => {
+    fetchAnalysesQueueCounts().then(data => {
+      setRunning(data.running);
+      setQueued(data.queued);
+    })
+  }, []);
 
   // Update the analysis duration using polling
   const intervalId = useInterval(() => {

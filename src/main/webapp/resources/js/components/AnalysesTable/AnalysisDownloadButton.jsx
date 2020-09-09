@@ -34,7 +34,6 @@ export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
     } else {
       clearInterval(intervalId);
     }
-
   }, updateDelay);
 
   return (

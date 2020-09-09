@@ -19,17 +19,14 @@ public class AnalysesQueue {
 	private WebElement queueCounts;
 
 	public static AnalysesQueue getAnalysesQueue(WebDriver driver) {
-		waitForTime(100);
 		return PageFactory.initElements(driver, AnalysesQueue.class);
 	}
 
 	public int getRunningCounts() {
-		waitForTime(100);
 		return Integer.parseInt(runningCounts.getText());
 	}
 
 	public int getQueueCounts() {
-		waitForTime(100);
 		return Integer.parseInt(queueCounts.getText());
 	}
 }
