@@ -1251,7 +1251,7 @@ public class AnalysisAjaxController {
 			try {
 				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
 
-				if(analysisTreeResponse.getNewick().length() > 0) {
+				if(analysisTreeResponse.getNewick() != null) {
 					treeDefault = true;
 				}
 			} catch (IOException e) {
