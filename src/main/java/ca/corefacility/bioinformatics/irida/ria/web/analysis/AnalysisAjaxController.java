@@ -1,4 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -34,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
@@ -43,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
@@ -50,14 +54,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -93,14 +94,17 @@ public class AnalysisAjaxController {
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private ExecutionManagerConfig configFile;
 	private AnalysisAudit analysisAudit;
+	private AnalysisTypesService analysisTypesService;
+	private EmailController emailController;
 
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
-			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission, MetadataTemplateService metadataTemplateService,
-			SequencingObjectService sequencingObjectService,
+			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource, ExecutionManagerConfig configFile, AnalysisAudit analysisAudit) {
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource,
+			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService, EmailController emailController) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -115,10 +119,13 @@ public class AnalysisAjaxController {
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.configFile = configFile;
 		this.analysisAudit = analysisAudit;
+		this.analysisTypesService = analysisTypesService;
+		this.emailController = emailController;
 	}
 
 	/**
 	 * Get all {@link User} generated {@link AnalysisOutputFile} info for principal User
+	 *
 	 * @param principal Principal {@link User}
 	 * @return {@link User} generated {@link AnalysisOutputFile} info
 	 */
@@ -131,6 +138,7 @@ public class AnalysisAjaxController {
 
 	/**
 	 * Get all {@link User} generated {@link AnalysisOutputFile} info
+	 *
 	 * @param userId {@link User} id
 	 * @return {@link User} generated {@link AnalysisOutputFile} info
 	 */
@@ -141,7 +149,6 @@ public class AnalysisAjaxController {
 		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
 	}
 
-
 	/**
 	 * Get analysis output file information for all analyses shared with a {@link Project}.
 	 *
@@ -150,7 +157,8 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/shared-analysis-outputs")
 	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(@PathVariable Long projectId) {
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(
+			@PathVariable Long projectId) {
 		return analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(projectId);
 	}
 
@@ -162,7 +170,8 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/automated-analysis-outputs")
 	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(@PathVariable Long projectId) {
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(
+			@PathVariable Long projectId) {
 		return analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
 	}
 
@@ -230,7 +239,8 @@ public class AnalysisAjaxController {
 
 		// Get the run time of the analysis runtime using the analysis
 		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+		if (submission.getAnalysisState() != AnalysisState.COMPLETED
+				&& submission.getAnalysisState() != AnalysisState.ERROR) {
 			Date currentDate = new Date();
 			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
 		} else {
@@ -254,16 +264,16 @@ public class AnalysisAjaxController {
 		response.setStatus(HttpServletResponse.SC_OK);
 
 		// details is a DTO (Data Transfer Object)
-		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration, submission.getCreatedDate(), priorities,
-				emailPipelineResult, canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
-				submission.getUpdateSamples());
+		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration,
+				submission.getCreatedDate(), priorities, emailPipelineResult, canShareToSamples,
+				updateAnalysisPermission.isAllowed(authentication, submission), submission.getUpdateSamples());
 	}
 
 	/**
 	 * Get analysis input files and their sizes
 	 *
 	 * @param submissionId analysis submission id to get data for
-	 * @param locale User's locale
+	 * @param locale       User's locale
 	 * @return dto of analysis input files data
 	 */
 	@RequestMapping(value = "/inputs/{submissionId}", method = RequestMethod.GET)
@@ -279,7 +289,6 @@ public class AnalysisAjaxController {
 				.map(SampleSequencingObject::new)
 				.sorted()
 				.collect(Collectors.toList());
-
 
 		// - Single
 		Set<SingleEndSequenceFile> inputFilesSingle = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
@@ -305,29 +314,34 @@ public class AnalysisAjaxController {
 		List<AnalysisSamples> pairedEnd = new ArrayList<>();
 		List<AnalysisSingleEndSamples> singleEnd = new ArrayList<>();
 
-		for(SampleSequencingObject sso : sampleFiles) {
-			SequenceFilePair fp = (SequenceFilePair)sso.getSequencingObject();
-			if(fp.getFiles().size() == 2) {
-				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted",
-						new Object[] {}, locale);
+		for (SampleSequencingObject sso : sampleFiles) {
+			SequenceFilePair fp = (SequenceFilePair) sso.getSequencingObject();
+			if (fp.getFiles()
+					.size() == 2) {
+				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted", new Object[] {}, locale);
 				Long sampleId = 0L;
-				if(sso.getSample() != null) {
-					sampleName = sso.getSample().getSampleName();
-					sampleId = sso.getSample().getId();
+				if (sso.getSample() != null) {
+					sampleName = sso.getSample()
+							.getSampleName();
+					sampleId = sso.getSample()
+							.getId();
 				}
-				pairedEnd.add(new AnalysisSamples(sampleName, sampleId, fp.getId(), fp.getForwardSequenceFile(), fp.getReverseSequenceFile()));
+				pairedEnd.add(new AnalysisSamples(sampleName, sampleId, fp.getId(), fp.getForwardSequenceFile(),
+						fp.getReverseSequenceFile()));
 			}
 		}
 
-		for(SampleSequencingObject sso : singleFiles) {
-			SingleEndSequenceFile sesf = (SingleEndSequenceFile)sso.getSequencingObject();
-			if(sesf.getFiles().size() == 1) {
-				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted",
-						new Object[] {}, locale);
+		for (SampleSequencingObject sso : singleFiles) {
+			SingleEndSequenceFile sesf = (SingleEndSequenceFile) sso.getSequencingObject();
+			if (sesf.getFiles()
+					.size() == 1) {
+				String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted", new Object[] {}, locale);
 				Long sampleId = 0L;
-				if(sso.getSample() != null) {
-					sampleName = sso.getSample().getSampleName();
-					sampleId = sso.getSample().getId();
+				if (sso.getSample() != null) {
+					sampleName = sso.getSample()
+							.getSampleName();
+					sampleId = sso.getSample()
+							.getId();
 				}
 				singleEnd.add(new AnalysisSingleEndSamples(sampleName, sampleId, sesf.getId(), sesf.getSequenceFile()));
 			}
@@ -432,12 +446,11 @@ public class AnalysisAjaxController {
 		return null;
 	}
 
-
 	/**
 	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
 	 *
 	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
-	 * @param aof {@link AnalysisOutputFile} to read from
+	 * @param aof  {@link AnalysisOutputFile} to read from
 	 */
 	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
 		RandomAccessFile reader = null;
@@ -572,7 +585,7 @@ public class AnalysisAjaxController {
 			// Return a dto with galaxyJobErrors, galaxyUrl, and galaxyHistroyId
 			if (galaxyJobErrors != null && !galaxyJobErrors.isEmpty()) {
 				return new AnalysisJobError(galaxyJobErrors, galaxyUrl, galaxyHistoryId);
-			} else if(galaxyHistoryId != null) {
+			} else if (galaxyHistoryId != null) {
 				return new AnalysisJobError(null, galaxyUrl, galaxyHistoryId);
 			}
 		} catch (ExecutionManagerException e) {
@@ -585,8 +598,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the status of projects that can be shared with the given analysis
 	 *
-	 * @param submissionId
-	 *            the {@link AnalysisSubmission} id
+	 * @param submissionId the {@link AnalysisSubmission} id
 	 * @return a list of {@link SharedProjectResponse}
 	 */
 	@RequestMapping(value = "/{submissionId}/share", method = RequestMethod.GET)
@@ -628,7 +640,6 @@ public class AnalysisAjaxController {
 				.filter(p -> !projectsShared.contains(p))
 				.map(p -> new SharedProjectResponse(p, false))
 				.collect(Collectors.toList()));
-
 
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
@@ -813,7 +824,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
 	 *
-	 * @param outputs Info for {@link AnalysisOutputFile} to download
+	 * @param outputs  Info for {@link AnalysisOutputFile} to download
 	 * @param response {@link HttpServletResponse}
 	 * @return Map with the size of the selection for download.
 	 */
@@ -833,7 +844,9 @@ public class AnalysisAjaxController {
 	 * @param response {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void downloadSelection(@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String  filename, HttpServletResponse response) {
+	public void downloadSelection(
+			@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String filename,
+			HttpServletResponse response) {
 		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
 		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
 	}
@@ -848,7 +861,8 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping(value = "/download/{analysisSubmissionId}/file/{fileId}")
 	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
-			@PathVariable Long fileId, @RequestParam(defaultValue = "", required = false) String filename, HttpServletResponse response) {
+			@PathVariable Long fileId, @RequestParam(defaultValue = "", required = false) String filename,
+			HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 
 		Analysis analysis = analysisSubmission.getAnalysis();
@@ -879,13 +893,18 @@ public class AnalysisAjaxController {
 	@RequestMapping("/{submissionId}/newick")
 	@ResponseBody
 	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
-		final String treeFileKey = "tree";
-
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Analysis analysis = submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
-		List<String> lines = Files.readAllLines(file.getFile());
-		return ImmutableMap.of("newick", lines.get(0));
+
+		Optional<AnalysisOutputFile> treeFileForSubmission = getTreeFileForSubmission(submission);
+
+		if (treeFileForSubmission.isPresent()) {
+
+			AnalysisOutputFile file = treeFileForSubmission.get();
+			List<String> lines = Files.readAllLines(file.getFile());
+			return ImmutableMap.of("newick", lines.get(0));
+		} else {
+			throw new IOException("Newick file could not be found for this submission");
+		}
 	}
 
 	/**
@@ -938,10 +957,13 @@ public class AnalysisAjaxController {
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			if (!sample.getMetadata().isEmpty()) {
+			if (!sample.getMetadata()
+					.isEmpty()) {
 				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				terms.addAll(
-						metadata.keySet().stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
+				terms.addAll(metadata.keySet()
+						.stream()
+						.map(MetadataTemplateField::getLabel)
+						.collect(Collectors.toSet()));
 			}
 		}
 
@@ -950,9 +972,11 @@ public class AnalysisAjaxController {
 		for (Sample sample : samples) {
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
-			sampleMetadata.entrySet().forEach(e -> {
-				stringMetadata.put(e.getKey().getLabel(), e.getValue());
-			});
+			sampleMetadata.entrySet()
+					.forEach(e -> {
+						stringMetadata.put(e.getKey()
+								.getLabel(), e.getValue());
+					});
 
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
@@ -969,10 +993,7 @@ public class AnalysisAjaxController {
 			metadata.put(sample.getLabel(), valuesMap);
 		}
 
-		return ImmutableMap.of(
-				"terms", terms,
-				"metadata", metadata
-		);
+		return ImmutableMap.of("terms", terms, "metadata", metadata);
 	}
 
 	/**
@@ -995,8 +1016,8 @@ public class AnalysisAjaxController {
 				projectIds.add(project.getId());
 
 				// Get the templates for the project
-				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
-						.getMetadataTemplatesForProject(project);
+				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService.getMetadataTemplatesForProject(
+						project);
 				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
 					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
 					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
@@ -1028,7 +1049,7 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Construct the model parameters for PHYLOGENOMICS or MLST_MENTALIST
+	 * Construct the model parameters for results with a newick output
 	 * {@link Analysis}
 	 *
 	 * @param submissionId The analysis submission id
@@ -1038,18 +1059,20 @@ public class AnalysisAjaxController {
 	 */
 	@RequestMapping("/{submissionId}/tree")
 	public AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
-		final String treeFileKey = "tree";
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		AnalysisOutputFile file = submission.getAnalysis().getAnalysisOutputFile(treeFileKey);
+
+		//loop through the files looking for with a newick file.  Get the first one
+		Optional<AnalysisOutputFile> treeOptional = getTreeFileForSubmission(submission);
 		String tree = null;
 		String message = null;
 
-		if (file == null) {
+		if (!treeOptional.isPresent()) {
 			logger.debug("No tree file for analysis: " + submission);
-			tree=null;
-			message= messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound",
-					new Object[] {}, locale);
+			tree = null;
+			message = messageSource.getMessage("AnalysisPhylogeneticTree.noTreeFound", new Object[] {}, locale);
 		} else {
+			AnalysisOutputFile file = treeOptional.get();
+
 			try {
 				List<String> lines = Files.readAllLines(file.getFile());
 
@@ -1057,7 +1080,8 @@ public class AnalysisAjaxController {
 					tree = lines.get(0);
 
 					if (lines.size() > 1) {
-						logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+						logger.warn("Multiple lines in tree file, will only display first tree. For analysis: "
+								+ submission);
 						message = messageSource.getMessage("AnalysisPhylogeneticTree.multipleTrees", new Object[] {},
 								locale);
 					}
@@ -1065,7 +1089,8 @@ public class AnalysisAjaxController {
 					if (EMPTY_TREE.equals(tree)) {
 						logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
 						tree = null;
-						message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {}, locale);
+						message = messageSource.getMessage("AnalysisPhylogeneticTree.emptyTree", new Object[] {},
+								locale);
 					}
 				}
 			} catch (NoSuchFileException e) {
@@ -1148,6 +1173,97 @@ public class AnalysisAjaxController {
 		return analysisProvenance;
 	}
 
+	/**
+	 * Get the updated state and duration of an analysis
+	 *
+	 * @param submissionId The analysis submission id
+	 * @return dto which contains the updated analysis state and duration
+	 */
+	@RequestMapping(value = "/{submissionId}/updated-progress")
+	public ResponseEntity<UpdatedAnalysisProgress> getUpdatedProgress(@PathVariable Long submissionId) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		AnalysisState prevStateBeforeError = null;
+		if (submission.getAnalysisState() == AnalysisState.ERROR) {
+			prevStateBeforeError = analysisAudit.getPreviousStateBeforeError(submissionId);
+		}
+
+		// Get the run time of the analysis runtime using the analysis
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
+
+		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration));
+
+	}
+
+	/**
+	 * Get the analysis details
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param principal    Principal {@link User}
+	 * @param locale       The users current {@link Locale}
+	 * @return dto which contains the analysis details
+	 */
+	@RequestMapping(value = "/{submissionId}/analysis-details")
+	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal, Locale locale) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		final User currentUser = userService.getUserByUsername(principal.getName());
+
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
+
+		// Get the name of the workflow
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
+
+		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
+		String viewer = "";
+		if (viewerForAnalysisType.isPresent()) {
+			viewer = viewerForAnalysisType.get();
+		} else {
+			viewer = "none";
+		}
+
+		AnalysisState prevState = submission.getAnalysisState();
+		if (submission.getAnalysisState() == AnalysisState.ERROR) {
+			prevState = analysisAudit.getPreviousStateBeforeError(submissionId);
+		}
+
+		// Get the run time of the analysis runtime using the analysis
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
+
+		boolean treeDefault = false;
+
+		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
+			try {
+				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
+
+				if(analysisTreeResponse.getNewick() != null) {
+					treeDefault = true;
+				}
+			} catch (IOException e) {
+				logger.error("Unable to get newick string for submission ", e);
+			}
+		}
+
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,
+				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault));
+	}
+
 	/*
 	 * Recursive function to get the previous execution tools and their parameters
 	 *
@@ -1175,6 +1291,42 @@ public class AnalysisAjaxController {
 	 */
 	private Set<ToolExecution> getPrevTools(ToolExecution tool) {
 		return tool.getPreviousSteps();
+	}
+
+	/**
+	 * Find a file with a `.newick` extension in the analysis output files if it exists.
+	 *
+	 * @param submission the {@link AnalysisSubmission} to check
+	 * @return an optional of an {@link AnalysisOutputFile} if the file was found
+	 */
+	private Optional<AnalysisOutputFile> getTreeFileForSubmission(AnalysisSubmission submission) {
+		//some submissions may not name their tree with a ".newick" extension.  We need to check for a `tree` file first
+		final String treeFileKey = "tree";
+
+		//get the analysis output files
+		Analysis analysis = submission.getAnalysis();
+		Set<AnalysisOutputFile> analysisOutputFiles = analysis.getAnalysisOutputFiles();
+
+		Optional<AnalysisOutputFile> treeOptional = Optional.empty();
+
+		//first check for a file with a key of "tree"
+		if (analysis.getAnalysisOutputFileNames()
+				.contains(treeFileKey)) {
+			treeOptional = Optional.of(analysis.getAnalysisOutputFile(treeFileKey));
+		}
+
+		//if no "tree", check for files with ".newick" extension
+		if (treeOptional.isEmpty()) {
+			//loop through the files looking for with a newick file.  Get the first one
+			treeOptional = analysisOutputFiles.stream()
+					.filter(f -> FileUtilities.getFileExt(f.getFile()
+							.toString())
+							.equals(TREE_EXT))
+					.findFirst();
+
+		}
+
+		return treeOptional;
 	}
 
 	/*
@@ -1219,7 +1371,7 @@ public class AnalysisAjaxController {
 	/**
 	 * UI Model to return Sequence files with its accompanying sample.
 	 */
-	private class SampleSequencingObject implements Comparable<SampleSequencingObject>{
+	private class SampleSequencingObject implements Comparable<SampleSequencingObject> {
 		private Sample sample;
 		private SequencingObject sequencingObject;
 
@@ -1228,7 +1380,7 @@ public class AnalysisAjaxController {
 			try {
 				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
 						sequencingObject);
-				if(sampleSequencingObjectJoin != null) {
+				if (sampleSequencingObjectJoin != null) {
 					this.sample = sampleSequencingObjectJoin.getSubject();
 				}
 			} catch (Exception e) {

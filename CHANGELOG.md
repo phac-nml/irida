@@ -22,6 +22,20 @@ Changes
 * [UI]: Updated NCBI Exports listing pages to use Ant Design Tables.
 * [UI/Developer]: Removed `irida.cart.js` (an older angularjs service for the cart).
 * [UI]: Fixed issue #637 where metadata toggles were not displaying in the "on" position properly on loading the advanced phylogenic viewer.
+* [UI]: Removed unused front end dependencies (`angular-boostrap-lightbox` and `lodash.keys`).
+* [Developer/UI]: Removed `irida` angular app.  Individual components load themselves now.
+* [Developer/UI]: Updated to Ant Design v4.4.2.
+* [UI]: Updated importing numbers through excel file.  IRIDA will now check for excel formatted numeric cells and keep the formatting. (20.05.3);
+* [UI]: Updated sample details metadata so that long values will be broken up over multiple lines. (20.05.3);
+* [Developer]: Updated `babel-env` to fix a security vulnerability caused by dependency `elleptic`
+* [UI]: Updated UI for creating a sample within a project.
+* [REST]: Removed broken XML serialization config from REST API classes.  It was breaking content negotiation for some tools as it sometimes tried to return XML when it couldn't.
+* [UI]: Added `Create New Project` button to the Projects listing page.
+* [UI]: Fixed bug where import bulk metadata button was displayed on linelist page for project collaborators. (20.05.04)
+* [UI]: Fixed bug where add member to project button was displayed on project members page for project collaborators. (20.05.04)
+* [Developer]: Added optional method `getAnalysisViewer` for IridaPlugin to allow external applications to use IRIDA's built in analysis visualizations (such as the phylogenetic tree viewer).
+* [REST]: Fixed issue with double slashes sometimes getting added in OAuth2 redirect URI causing auth flow to fail.
+* [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
 
 20.01 to 20.05
 --------------
@@ -70,6 +84,7 @@ Changes
 * [UI/Developer]: Updated analysis urls to work with a context path.
 * [UI]: Outputs and Tree view now span the full width of the page.
 * [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
+* [UI]: Updated the analysis results page to auto update the progress of an analysis.
 
 19.09 to 20.01
 --------------

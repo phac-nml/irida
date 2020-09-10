@@ -7,10 +7,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AnalysisDetailsPage extends AbstractPage {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
+
 	public static final String RELATIVE_URL = "analysis/";
 
 	@FindBy(className = "t-file-header")
@@ -158,10 +163,11 @@ public class AnalysisDetailsPage extends AbstractPage {
 			index++;
 		}
 
-		for(int i=0; i < expectedDetails.length; i++) {
-			if(!expectedDetails[i].equals(actualDetails[i])) {
+		for (int i = 0; i < expectedDetails.length; i++) {
+			if (!expectedDetails[i].equals(actualDetails[i])) {
 				expectedEqualsActual = false;
-				break;
+				logger.debug(
+						"Analysis detail not equal. Expected: " + expectedDetails[i] + " actual: " + actualDetails[i]);
 			}
 		}
 		return expectedEqualsActual;
@@ -274,8 +280,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean downloadOutputFileButtonVisible() {
-		return downloadOutputFileButtons.size() == 1;
+	public boolean downloadOutputFileButtonVisible(int numBtnsExpected) {
+		return downloadOutputFileButtons.size() == numBtnsExpected;
 	}
 
 	/**

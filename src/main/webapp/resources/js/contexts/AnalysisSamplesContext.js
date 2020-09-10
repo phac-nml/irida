@@ -22,12 +22,12 @@ function AnalysisSamplesProvider(props) {
   const [analysisSamplesContext, setAnalysisSamplesContext] = useState(
     initialContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
   const [sampleDisplayHeight, setSampleDisplayHeight] = useState(null);
 
   function getAnalysisInputSamples() {
     updateHeight();
-    getAnalysisInputFiles(analysisContext.analysis.identifier).then(
+    getAnalysisInputFiles(analysisIdentifier).then(
       ({ pairedEndSamples, singleEndSamples, referenceFile }) => {
         setAnalysisSamplesContext(analysisSamplesContext => {
           return {

@@ -1,5 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.ui.ExtendedModelMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -12,27 +22,21 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
 
-import java.io.IOException;
-import java.util.*;
+import com.google.common.collect.Lists;
 
 import static liquibase.util.SystemUtils.USER_NAME;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.security.Principal;
-
-import javax.persistence.EntityManagerFactory;
-
 /**
+ *
  */
 public class AnalysisControllerTest {
 	/*
@@ -46,8 +50,7 @@ public class AnalysisControllerTest {
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 	private UserService userServiceMock;
-	private EmailController emailControllerMock;
-	private AnalysisAudit analysisAuditMock;
+	private AnalysisTypesService analysisTypesService;
 
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
@@ -60,11 +63,10 @@ public class AnalysisControllerTest {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		userServiceMock = mock(UserService.class);
-		emailControllerMock = mock(EmailController.class);
-		analysisAuditMock = mock(AnalysisAudit.class);
+		analysisTypesService = mock(AnalysisTypesService.class);
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, emailControllerMock, analysisAuditMock);
+				userServiceMock);
 
 	}
 
@@ -83,16 +85,17 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
+		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS)).thenReturn(
+				Optional.of("tree"));
 
-		Principal principal = () -> USER_NAME;
-
-		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertEquals("Phylogenetic Tree tab should be available", BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"));
+		assertEquals("Phylogenetic Tree tab should be available", BuiltInAnalysisTypes.PHYLOGENOMICS,
+				model.get("analysisType"));
 
-		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
-		
+		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
+
 		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				model.get("analysisType"));
 	}
@@ -112,14 +115,16 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
-		Principal principal = () -> USER_NAME;
+		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS)).thenReturn(
+				Optional.of("tree"));
 
-		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertFalse("Phylogenetic Tree tab should not be available", submission.getAnalysisState() == AnalysisState.COMPLETED);
+		assertFalse("Analysis should not be completed",
+				submission.getAnalysisState() == AnalysisState.COMPLETED);
 
-		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
 	}
 
 	@Test
@@ -128,19 +133,18 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		UUID workflowId = UUID.randomUUID();
 
-		Principal principal = () -> USER_NAME;
-
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
-				.thenReturn(createUnknownWorkflow(workflowId));
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(
+				createUnknownWorkflow(workflowId));
+		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.UNKNOWN)).thenReturn(Optional.empty());
 
-		String analysisPage = analysisController.getDetailsPage(submissionId, model, principal);
+		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
 
-		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
 
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}

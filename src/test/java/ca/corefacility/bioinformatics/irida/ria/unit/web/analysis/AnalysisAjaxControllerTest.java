@@ -35,10 +35,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAu
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -71,9 +68,11 @@ public class AnalysisAjaxControllerTest {
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 	private ExecutionManagerConfig configFileMock;
-	private EmailController emailControllerMock;
 	private AnalysisAudit analysisAuditMock;
 	private HttpServletResponse httpServletResponseMock;
+	private AnalysisTypesService analysisTypesServiceMock;
+	private EmailController emailControllerMock;
+
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
@@ -95,11 +94,13 @@ public class AnalysisAjaxControllerTest {
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisAuditMock = mock(AnalysisAudit.class);
 		httpServletResponseMock = mock(HttpServletResponse.class);
+		analysisTypesServiceMock = mock(AnalysisTypesService.class);
+		emailControllerMock = mock(EmailController.class);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock);
+				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
 
 	}
 

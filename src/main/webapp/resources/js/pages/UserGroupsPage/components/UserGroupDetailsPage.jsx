@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
 import {
@@ -8,11 +8,11 @@ import {
 import { Button, Popconfirm, Tabs, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
+import { UserGroupsContext } from "../../../contexts/UserGroupsContext";
 import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
-import { SPACE_SM } from "../../../styles/spacing";
 import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { SPACE_SM } from "../../../styles/spacing";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -32,16 +32,19 @@ const reducer = (state, action) => {
 
 /**
  * React component to display a page for viewing User Group Details.
- * @param {number}id - identifier for the user group
+ * @param {number} id - identifier for the user group
+ * @param baseUrl - either /admin/groups for admin panel or /groups for main app
+ * baseUrl should already be set in parent component
  * @returns {*}
  * @constructor
  */
-export default function UserGroupDetailsPage({ id }) {
+export default function UserGroupDetailsPage({ id, baseUrl }) {
+  const { userGroupsContextDeleteUserGroup } = useContext(UserGroupsContext);
+
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
     tab: "members",
   });
-  const deleteRef = useRef();
 
   const navigate = useNavigate();
 
@@ -71,6 +74,13 @@ export default function UserGroupDetailsPage({ id }) {
     getUserGroupDetails(id).then((response) =>
       dispatch({ type: "load", payload: response })
     );
+
+  /**
+   * Action to take when delete is confirmed
+   */
+  function deleteUserGroup() {
+    userGroupsContextDeleteUserGroup(id, baseUrl);
+  }
 
   const fields = state.loading
     ? []
@@ -123,14 +133,9 @@ export default function UserGroupDetailsPage({ id }) {
   const DeleteGroup = () => (
     <div>
       <WarningAlert message={i18n("UserGroupDetailsPage.delete-warning")} />
-      <form
-        style={{ marginTop: SPACE_SM }}
-        ref={deleteRef}
-        action={setBaseUrl(`/groups/${id}/delete`)}
-        method="POST"
-      >
+      <div style={{ marginTop: SPACE_SM }}>
         <Popconfirm
-          onConfirm={() => deleteRef.current.submit()}
+          onConfirm={deleteUserGroup}
           title={i18n("UserGroupDetailsPage.delete-confirm")}
           okButtonProps={{ className: "t-delete-confirm-btn" }}
         >
@@ -138,14 +143,14 @@ export default function UserGroupDetailsPage({ id }) {
             {i18n("UserGroupDetailsPage.delete-button")}
           </Button>
         </Popconfirm>
-      </form>
+      </div>
     </div>
   );
 
   return (
     <PageWrapper
       title={"User Groups"}
-      onBack={() => navigate(setBaseUrl("/groups"), { replace: true })}
+      onBack={() => navigate(baseUrl, { replace: true })}
     >
       <Tabs
         defaultActiveKey="details"
@@ -163,7 +168,14 @@ export default function UserGroupDetailsPage({ id }) {
           <UserGroupProjectsTable groupId={id} />
         </TabPane>
         {state.canManage ? (
-          <TabPane tab={i18n("UserGroupDetailsPage.tab.delete")} key="delete">
+          <TabPane
+            tab={
+              <span className="t-tab-delete">
+                {i18n("UserGroupDetailsPage.tab.delete")}
+              </span>
+            }
+            key="delete"
+          >
             <Title level={4}>
               {i18n("UserGroupsDetailsPage.title.delete")}
             </Title>

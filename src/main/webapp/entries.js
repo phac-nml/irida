@@ -8,7 +8,6 @@ module.exports = {
     "core-js/stable",
     "regenerator-runtime/runtime",
     "expose-loader?$!jquery",
-    "expose-loader?angular!angular",
     "./resources/js/vendors",
   ],
   login: "./resources/js/pages/LoginPage.jsx",
@@ -35,11 +34,9 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-remove.js",
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
-  "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "ncbi-exports": "./resources/js/admin/ncbi-exports",
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
@@ -67,13 +64,10 @@ module.exports = {
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
-  "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
-  "announcement-admin":
-    "./resources/js/pages/announcement/AnnouncementAdminPage.jsx",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sample-files-concatenate":
     "./resources/js/pages/samples/sample-files-concatenate.js",
@@ -86,4 +80,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   "project-metadata-templates":
     "./resources/js/pages/projects/metadata-templates",
+  admin: "./resources/js/pages/admin/index.js",
 };

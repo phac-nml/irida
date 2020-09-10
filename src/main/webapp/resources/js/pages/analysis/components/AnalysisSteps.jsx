@@ -13,7 +13,7 @@ import { Steps } from "antd";
 import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
 
 import { SPACE_MD } from "../../../styles/spacing";
-import { Running } from "../../../components/icons/Running";
+import { Running, Success } from "../../../components/icons";
 
 import { getHumanizedDuration } from "../../../utilities/date-utilities";
 
@@ -49,10 +49,10 @@ export function AnalysisSteps() {
       />
       <Step
         title={i18n("AnalysisSteps.preparing")}
-        icon={analysisState === "PREPARING" ? <Running /> : null}
+        icon={analysisState === "PREPARING" || analysisState === "PREPARED" ? <Running /> : null}
         description={
-          analysisState === "PREPARING" ||
-          (previousState === "PREPARING" && analysisError)
+          (analysisState === "PREPARED" || analysisState === "PREPARING") ||
+          ((previousState === "PREPARING" || previousState === "PREPARED") && analysisError)
             ? analysisDuration
             : null
         }
@@ -79,17 +79,24 @@ export function AnalysisSteps() {
       />
       <Step
         title={i18n("AnalysisSteps.completing")}
-        icon={analysisState === "COMPLETING" ? <Running /> : null}
+        icon={analysisState === "COMPLETING" || analysisState === "FINISHED_RUNNING" ||
+              analysisState === "POST_PROCESSING" || analysisState === "TRANSFERRING" ?
+                <Running />
+              :
+                null
+        }
         description={
-          analysisState === "COMPLETING" ||
-          (previousState === "COMPLETING" && analysisError)
+          (analysisState === "COMPLETING" || analysisState === "FINISHED_RUNNING" ||
+            analysisState === "POST_PROCESSING" || analysisState === "TRANSFERRING") ||
+          ((previousState === "COMPLETING" || previousState === "FINISHED_RUNNING" ||
+            previousState === "POST_PROCESSING" || previousState === "TRANSFERRING") && analysisError)
             ? analysisDuration
             : null
         }
       />
       <Step
         title={i18n("AnalysisSteps.completed")}
-        icon={analysisState === "COMPLETED" ? <Success /> : null}
+        icon={analysisContext.isCompleted ? <Success /> : null}
       />
     </Steps>
   );
