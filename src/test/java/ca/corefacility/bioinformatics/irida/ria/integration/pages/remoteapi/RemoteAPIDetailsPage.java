@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
+import java.util.Set;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -48,6 +50,10 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		return PageFactory.initElements(driver, RemoteAPIDetailsPage.class);
 	}
 
+	public static RemoteAPIDetailsPage gotoDetailsPage(WebDriver driver) {
+		return PageFactory.initElements(driver, RemoteAPIDetailsPage.class);
+	}
+
 	public RemoteAPIDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -86,20 +92,27 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public void clickConnect() {
-		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("oauth-connect-link")));
-		connectButton.click();
-
-		waitForAjax();
+		remoteStatusConnect.click();
 
 	}
 
 	public void clickAuthorize() {
-		driver.switchTo().frame("oauth-connect-frame");
+		String parentWindowHandler = driver.getWindowHandle(); // Store your parent window
+		String subWindowHandler = null;
+
+		Set<String> handles = driver.getWindowHandles(); // get all window handles
+		for (String handle : handles) {
+			subWindowHandler = handle;
+		}
+		driver.switchTo().window(subWindowHandler); // switch to popup window
+
+		// Now you are in the popup window, perform necessary actions here
+
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
 
-		driver.switchTo().defaultContent();
+
+		driver.switchTo().window(parentWindowHandler);  // switch back to parent window
 
 		waitForTime(8000);
 	}

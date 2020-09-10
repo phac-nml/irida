@@ -18,9 +18,8 @@ public class RemoteApiUtilities {
 		String url = baseUrl + "api";
 
 		page.createRemoteAPIWithDetails("new name", url, clientId, clientSecret);
-		assertTrue("client should have been created", page.checkSuccess());
 
-		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver);
+		RemoteAPIDetailsPage remoteAPIDetailsPage = RemoteAPIDetailsPage.gotoDetailsPage(driver);
 
 		remoteAPIDetailsPage.clickConnect();
 		remoteAPIDetailsPage.clickAuthorize();
