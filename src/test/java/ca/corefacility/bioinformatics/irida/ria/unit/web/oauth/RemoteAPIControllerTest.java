@@ -1,14 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import java.net.MalformedURLException;
+import java.security.Principal;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +16,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.MalformedURLException;
-import java.security.Principal;
-import java.util.Locale;
-import java.util.Map;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -85,7 +87,7 @@ public class RemoteAPIControllerTest {
 
 		String postCreateClient = remoteAPIController.postCreateRemoteAPI(client, model, locale);
 
-		assertEquals("redirect:/remote_api/1", postCreateClient);
+		assertEquals("redirect:/admin/remote_api/1", postCreateClient);
 		verify(remoteAPIService).create(client);
 	}
 

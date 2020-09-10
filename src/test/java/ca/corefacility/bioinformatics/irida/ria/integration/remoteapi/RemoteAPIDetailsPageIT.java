@@ -44,8 +44,7 @@ public class RemoteAPIDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		RemoteAPIDetailsPage page = RemoteAPIDetailsPage.gotoDetailsPage(driver(), id);
 		page.clickDeleteButton();
 		listingPage = RemoteAPIsPage.goTo(driver());
-		assertEquals(count, listingPage.getCartCount());
-		//		assertTrue(page.checkDeleteSuccess());
+		assertEquals(count, listingPage.remoteApisTableSize());
 	}
 
 }
