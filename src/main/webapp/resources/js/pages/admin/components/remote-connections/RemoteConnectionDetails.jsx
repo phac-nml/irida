@@ -25,7 +25,7 @@ export default function RemoteConnectionDetails({ remoteId }) {
   const dataSource = [
     {
       title: i18n("RemoteConnectionDetails.id"),
-      desc: details.id,
+      desc: <span className="t-remote-id">{details.id}</span>,
     },
     {
       title: i18n("RemoteConnectionDetails.url"),
@@ -33,7 +33,7 @@ export default function RemoteConnectionDetails({ remoteId }) {
     },
     {
       title: i18n("RemoteConnectionDetails.clientId"),
-      desc: details.clientId,
+      desc: <span className="t-remote-clientId">{details.clientId}</span>,
     },
     {
       title: i18n("RemoteConnectionDetails.clientSecret"),
@@ -54,7 +54,7 @@ export default function RemoteConnectionDetails({ remoteId }) {
 
   return (
     <PageWrapper
-      title={details.name}
+      title={<span className="t-remote-name">{details.name}</span>}
       onBack={returnToList}
       headerExtras={<RemoteApiStatus key="status" api={{ id: remoteId }} />}
     >
@@ -69,7 +69,11 @@ export default function RemoteConnectionDetails({ remoteId }) {
           <BasicList dataSource={dataSource} />
         </Tabs.TabPane>
         <Tabs.TabPane
-          tab={i18n("RemoteConnectionDetails.tab.delete")}
+          tab={
+            <span className="t-delete-tab">
+              {i18n("RemoteConnectionDetails.tab.delete")}
+            </span>
+          }
           key="delete"
         >
           <Space direction="vertical" style={{ width: "100%" }}>
@@ -83,8 +87,14 @@ export default function RemoteConnectionDetails({ remoteId }) {
               title={i18n("RemoteConnectionDetails.tab.delete.confirm")}
               placement="right"
               onConfirm={removeConnection}
+              okButtonProps={{ className: "t-delete-confirm" }}
             >
-              <Button type="primary" danger loading={deleting}>
+              <Button
+                className="t-delete-btn"
+                type="primary"
+                danger
+                loading={deleting}
+              >
                 {i18n("RemoteConnectionDetails.tab.delete.button")}
               </Button>
             </Popconfirm>

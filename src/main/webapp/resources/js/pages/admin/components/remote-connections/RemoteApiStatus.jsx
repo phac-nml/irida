@@ -60,6 +60,7 @@ export function RemoteApiStatus({ api }) {
     <div>
       {expiration ? (
         <Alert
+          className="t-remote-status-connected"
           message={i18n(
             "RemoteApi.connected",
             formatInternationalizedDateTime(expiration)
@@ -68,7 +69,11 @@ export function RemoteApiStatus({ api }) {
           showIcon
         />
       ) : (
-        <Button onClick={updateConnectionStatus} icon={<IconLogin />}>
+        <Button
+          className="t-remote-status-connect"
+          onClick={updateConnectionStatus}
+          icon={<IconLogin />}
+        >
           {i18n("RemoteApi.disconnected")}
         </Button>
       )}
