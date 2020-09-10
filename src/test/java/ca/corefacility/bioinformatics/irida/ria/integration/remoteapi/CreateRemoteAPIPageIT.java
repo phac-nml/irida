@@ -1,15 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -46,12 +48,14 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testCreateRemoteApi() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret");
 		assertTrue("remote api should be created", page.checkSuccess());
 	}
 
 	@Test
+	@Ignore
 	public void testCreateClientWithDuplicateURI() {
 		page.createRemoteAPIWithDetails("new name", "http://nowhere", "newClient", "newSecret");
 		assertFalse("client should not have been created", page.checkSuccess());
