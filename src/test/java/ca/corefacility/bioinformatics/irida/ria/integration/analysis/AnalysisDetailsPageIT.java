@@ -87,7 +87,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be a download button for the file that is displayed",
-				page.downloadOutputFileButtonVisible());
+				page.downloadOutputFileButtonVisible(1));
 	}
 
 	@Test
@@ -132,12 +132,12 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Has output files
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
-		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
+		assertEquals("There should be two output files", 2, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be exactly one download individual files dropdown button", page.downloadIndividualFilesMenuButtonVisible());
 		assertTrue("There should be exactly one download individual files dropdown menu", page.downloadIndividualFilesMenuVisible());
-		assertTrue("There should be a download button for the file that is displayed",
-				page.downloadOutputFileButtonVisible());
+		assertTrue("There should be a download button for the files that are displayed",
+				page.downloadOutputFileButtonVisible(2));
 
 		// Has no output files
 		page = AnalysisDetailsPage.initPage(driver(), 10L, "output");
@@ -186,7 +186,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be a download button for the file that is displayed",
-				page.downloadOutputFileButtonVisible());
+				page.downloadOutputFileButtonVisible(1));
 	}
 
 	@Test
@@ -281,7 +281,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be a download button for the file that is displayed",
-				page.downloadOutputFileButtonVisible());
+				page.downloadOutputFileButtonVisible(1));
 	}
 
 	@Test
@@ -397,7 +397,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("There should be one output file", 1, page.getNumberOfFilesDisplayed());
 		assertTrue("There should be exactly one download all files button", page.downloadAllFilesButtonVisible());
 		assertTrue("There should be a download button for the file that is displayed",
-				page.downloadOutputFileButtonVisible());
+				page.downloadOutputFileButtonVisible(1));
 
 		page = AnalysisDetailsPage.initPage(driver(), 14L, "provenance");
 		assertTrue("Page title should equal", page.compareTabTitle("Provenance"));
