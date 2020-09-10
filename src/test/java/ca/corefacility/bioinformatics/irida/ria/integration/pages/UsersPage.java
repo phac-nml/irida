@@ -30,6 +30,12 @@ public class UsersPage extends AbstractPage {
 		table = AntTable.getTable(driver);
 		return PageFactory.initElements(driver, UsersPage.class);
 	}
+
+	public static UsersPage goToAdminPanel(WebDriver driver) {
+		get(driver, "admin/users");
+		table = AntTable.getTable(driver);
+		return PageFactory.initElements(driver, UsersPage.class);
+	}
 	
 	public int usersTableSize() {
 		return table.getRows().size();

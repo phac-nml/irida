@@ -1,25 +1,36 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Form, Input, Modal } from "antd";
 import { createUserGroup } from "../../../apis/users/groups";
 import { useNavigate } from "@reach/router";
+import { useResetFormOnCloseModal } from "../../../hooks";
 
 /**
  * React component to render a button to create a new user group
+ * @param baseUrl - either /admin/groups for admin panel or /groups for main app
+ * baseUrl should already be set in parent component
  * @returns {*}
  * @constructor
  */
-export function CreateNewUserGroupButton() {
+export function CreateNewUserGroupButton({ baseUrl }) {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
    */
   const inputRef = useRef();
   const [visible, setVisible] = useState();
-  const [form] = Form.useForm();
+  const [error, setError] = useState();
+
   const navigate = useNavigate();
 
-  const [error, setError] = useState();
+  /*
+  Ant Design form
+   */
+  const [form] = Form.useForm();
+  useResetFormOnCloseModal({
+    form,
+    visible,
+  });
 
   /*
   Watch for changes to the forms visibility, when it becomes visible
@@ -40,7 +51,7 @@ export function CreateNewUserGroupButton() {
         .then((data) => {
           form.resetFields();
           setVisible(false);
-          navigate(`groups/${data.id}`, { replace: true });
+          navigate(`${baseUrl}/${data.id}`, { replace: true });
         })
         .catch((error) => {
           setError(error.response.data.name);

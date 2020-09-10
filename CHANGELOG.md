@@ -37,6 +37,7 @@ Changes
 * [REST]: Fixed issue with double slashes sometimes getting added in OAuth2 redirect URI causing auth flow to fail.
 * [Workflow]: Updated the SNVPhyl pipeline to version `1.2.2`.
 * [Developer]: Updated the Galaxy Docker instance to Galaxy `20.05`.
+* [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
 
 20.01 to 20.05
 --------------

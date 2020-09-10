@@ -22,24 +22,20 @@ const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
 const Mash = React.lazy(() => import("./sistr/Mash"));
 
-const OutputFilePreview = React.lazy(() =>
-  import("./outputs/OutputFilePreview")
-);
-
 const Citation = React.lazy(() => import("./sistr/Citation"));
 const { Content, Sider } = Layout;
 
 export default function AnalysisSistr() {
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
 
   const DEFAULT_URL =
-    setBaseUrl(`/analysis/${analysisContext.analysis.identifier}/` + ANALYSIS.SISTR);
+    setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.SISTR);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
   // On load gets the SISTR results
   useEffect(() => {
-    getSistrResults(analysisContext.analysis.identifier).then(data => {
+    getSistrResults(analysisIdentifier).then(data => {
       setSistrResults(data);
     });
   }, []);
