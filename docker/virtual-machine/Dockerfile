@@ -6,6 +6,8 @@ ADD ./data/tools-list.yml $GALAXY_ROOT/irida-tools.yml
 
 # Install tools
 RUN install-tools $GALAXY_ROOT/irida-tools.yml \
+      && /tool_deps/_conda/bin/conda install --name __sistr_cmd@1.0.2 pandas==1.0.5 -y \
+      && chown -R galaxy:galaxy /tool_deps/_conda/envs/__sistr_cmd@1.0.2 \
       && /tool_deps/_conda/bin/conda clean --packages -t -i \
       && rm -rf /tmp/* /root/.cache/ /var/cache/* $GALAXY_ROOT/client/node_modules/ $GALAXY_VIRTUAL_ENV/src/ /home/galaxy/.cache/ /home/galaxy/.npm
 
@@ -28,6 +30,8 @@ RUN /tool_deps/_conda/bin/conda remove --name __mentalist@0.1.9 --all -y \
       && echo -e "@\nATCG\n+\nIIII" > /tmp/file_2.fastq \
       && bash -c "source /tool_deps/_conda/bin/activate /tool_deps/_conda/envs/__mentalist\@0.1.9/ && mentalist call -o /tmp/mentalist-test -s x --db /galaxy-central/tool-data/mentalist_databases/salmonella_enterica_pubmlst_k31_2018-04-04/salmonella_enterica_pubmlst_k31_2018-04-04.jld /tmp/file_1.fastq /tmp/file_2.fastq" \
       && chown -R galaxy:galaxy /tool_deps/_conda/envs/__mentalist@0.1.9 \
+      && /tool_deps/_conda/bin/conda create --name __r-base@3.4.1 r-base==3.4.1 -y \
+      && chown -R galaxy:galaxy /tool_deps/_conda/envs/__r-base@3.4.1 \
       && /tool_deps/_conda/bin/conda clean --packages -t -i \
       && rm -rf /tmp/file_*.fastq
 
