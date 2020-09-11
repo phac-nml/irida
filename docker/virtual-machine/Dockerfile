@@ -30,14 +30,17 @@ RUN /tool_deps/_conda/bin/conda remove --name __mentalist@0.1.9 --all -y \
       && echo -e "@\nATCG\n+\nIIII" > /tmp/file_2.fastq \
       && bash -c "source /tool_deps/_conda/bin/activate /tool_deps/_conda/envs/__mentalist\@0.1.9/ && mentalist call -o /tmp/mentalist-test -s x --db /galaxy-central/tool-data/mentalist_databases/salmonella_enterica_pubmlst_k31_2018-04-04/salmonella_enterica_pubmlst_k31_2018-04-04.jld /tmp/file_1.fastq /tmp/file_2.fastq" \
       && chown -R galaxy:galaxy /tool_deps/_conda/envs/__mentalist@0.1.9 \
-      && /tool_deps/_conda/bin/conda create --name __r-base@3.4.1 r-base==3.4.1 -y \
+      && /tool_deps/_conda/bin/conda create -c defaults -c bioconda -c conda-forge --name __r-base@3.4.1 r-base==3.4.1 -y \
       && chown -R galaxy:galaxy /tool_deps/_conda/envs/__r-base@3.4.1 \
+      && /tool_deps/_conda/bin/conda create -c defaults -c bioconda -c conda-forge --name __biopython@1.70 biopython==1.70 -y \
+      && chown -R galaxy:galaxy /tool_deps/_conda/envs/__biopython@1.70 \
       && /tool_deps/_conda/bin/conda clean --packages -t -i \
       && rm -rf /tmp/file_*.fastq
 
-# I am unable to get the actual MentaLiST tool to install via the Dockerfile
-# So, once Galaxy is started if you wish to use MentaLiST you will have to install
-# it via the web interface.
+ADD ./data/tools-list-mentalist.yml $GALAXY_ROOT/irida-tools-mentalist.yml
+RUN install-tools $GALAXY_ROOT/irida-tools-mentalist.yml \
+      && /tool_deps/_conda/bin/conda clean --packages -t -i \
+      && rm -rf /tmp/* /root/.cache/ /var/cache/* $GALAXY_ROOT/client/node_modules/ $GALAXY_VIRTUAL_ENV/src/ /home/galaxy/.cache/ /home/galaxy/.npm
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80

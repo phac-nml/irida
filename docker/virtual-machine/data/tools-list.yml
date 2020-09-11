@@ -39,14 +39,8 @@ tools:
 
   ### Tools for MLSTMentalist v0.1.9 ###
 
-# Mentalist fails to install so I am commenting it out
-#- name: "mentalist"
-#  owner: "dfornika"
-#  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-#  revisions:
-#  - "a6cd59f35832"
-#  tool_panel_section_id: "irida"
-#  install_tool_dependencies: true
+# Mentalist tool fails to install so I am removing it from this file
+# And installing it elsewhere
 - name: "combine_tabular_collection"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
