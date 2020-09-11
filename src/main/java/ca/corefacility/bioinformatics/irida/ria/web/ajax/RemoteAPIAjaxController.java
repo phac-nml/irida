@@ -13,10 +13,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
@@ -106,7 +109,21 @@ public class RemoteAPIAjaxController {
     }
 
     @GetMapping("/{remoteId}/projects")
-    public ResponseEntity<List<SelectOption>> getProjectsForAPI(@PathVariable long remoteId) {
+    public ResponseEntity<List<RemoteProjectModel>> getProjectsForAPI(@PathVariable long remoteId) {
         return ResponseEntity.ok(service.getProjectsForAPI(remoteId));
+    }
+
+    @PostMapping("/project")
+    public ResponseEntity<AjaxResponse> createSynchronizedProject(
+            @RequestBody CreateRemoteProjectRequest request) {
+        try {
+            return ResponseEntity.ok(service.createSynchronizedProject(request));
+        } catch (IridaOAuthException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new AjaxErrorResponse("CRAP NOT AUTHORIZED"));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new AjaxErrorResponse("CRAP CANNOT FIND IT"));
+        }
     }
 }

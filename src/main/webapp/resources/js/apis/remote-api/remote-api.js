@@ -40,3 +40,7 @@ export function getListOfRemoteApis() {
 export function getProjectsForAPI({ id }) {
   return axios.get(`${BASE_URL}/${id}/projects`).then(({ data }) => data);
 }
+
+export function createSynchronizedProject({ url, frequency }) {
+  return axios.post(`${BASE_URL}/project`, { url, frequency });
+}

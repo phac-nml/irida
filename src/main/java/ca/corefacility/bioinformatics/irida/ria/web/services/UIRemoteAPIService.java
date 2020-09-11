@@ -11,8 +11,12 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.CreateRemoteProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -25,13 +29,15 @@ public class UIRemoteAPIService {
     private final RemoteAPIService remoteAPIService;
     private final RemoteAPITokenService tokenService;
     private final ProjectRemoteService projectRemoteService;
+    private final ProjectService projectService;
 
     @Autowired
     public UIRemoteAPIService(RemoteAPIService remoteAPIService, RemoteAPITokenService tokenService,
-            ProjectRemoteService projectRemoteService) {
+            ProjectRemoteService projectRemoteService, ProjectService projectService) {
         this.remoteAPIService = remoteAPIService;
         this.tokenService = tokenService;
         this.projectRemoteService = projectRemoteService;
+        this.projectService = projectService;
     }
 
     /**
@@ -67,20 +73,27 @@ public class UIRemoteAPIService {
     }
 
     public List<RemoteAPIModel> getListOfRemoteApis() {
-        Iterable<RemoteAPI> remotes =  remoteAPIService.findAll();
+        Iterable<RemoteAPI> remotes = remoteAPIService.findAll();
         List<RemoteAPIModel> remoteAPIModels = new ArrayList<>();
         remotes.forEach(r -> remoteAPIModels.add(new RemoteAPIModel(r)));
         return remoteAPIModels;
     }
 
-    public List<SelectOption> getProjectsForAPI(Long remoteId) {
+    public List<RemoteProjectModel> getProjectsForAPI(Long remoteId) {
         RemoteAPI api = remoteAPIService.read(remoteId);
         List<Project> projects = projectRemoteService.listProjectsForAPI(api);
-        return projects.stream().map(project -> {
-            SelectOption option = new SelectOption();
-            option.setValue(project.getId());
-            option.setText(project.getLabel());
-            return option;
-        }).collect(Collectors.toUnmodifiableList());
+        return projects.stream()
+                .map(RemoteProjectModel::new)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public AjaxCreateItemSuccessResponse createSynchronizedProject(CreateRemoteProjectRequest request) {
+        Project project = projectRemoteService.read(request.getUrl());
+        project.setId(null);
+        project.getRemoteStatus()
+                .setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+        project.setSyncFrequency(request.getFrequency());
+        project = projectService.create(project);
+        return new AjaxCreateItemSuccessResponse(project.getId());
     }
 }

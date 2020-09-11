@@ -74,7 +74,7 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
     window.open(
       setBaseUrl(`remote_api/connect/${api.id}`),
       "",
-      `height=${h}, width=${w}, chrome=yes, top=${top}, left=${left}`
+      `height=${h},width=${w},top=${top},left=${left}`
     );
   }
 
