@@ -38,6 +38,7 @@ Changes
 * [Workflow]: Updated the SNVPhyl pipeline to version `1.2.2`.
 * [Developer]: Updated the Galaxy Docker instance to Galaxy `20.05`.
 * [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
+* [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 
 20.01 to 20.05
 --------------
