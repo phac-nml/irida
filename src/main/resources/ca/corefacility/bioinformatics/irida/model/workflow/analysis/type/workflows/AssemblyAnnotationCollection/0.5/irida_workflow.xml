@@ -10,34 +10,34 @@
     </inputs>
     <parameters>
         <parameter name="shovill-1-adv.mincov" defaultValue="2">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.mincov"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.mincov"/>
         </parameter>
         <parameter name="shovill-1-adv.depth" defaultValue="100">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.depth"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.depth"/>
         </parameter>
         <parameter name="shovill-1-adv.nocorr" defaultValue="false">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.nocorr"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.nocorr"/>
         </parameter>
         <parameter name="shovill-1-trim" defaultValue="false">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="trim"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="trim"/>
         </parameter>
         <parameter name="shovill-1-adv.gsize" defaultValue="">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.gsize"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.gsize"/>
         </parameter>
         <parameter name="shovill-1-adv.kmers" defaultValue="">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.kmers"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.kmers"/>
         </parameter>
         <parameter name="shovill-1-adv.minlen" defaultValue="0">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.minlen"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.minlen"/>
         </parameter>
         <parameter name="shovill-1-adv.namefmt" defaultValue="contig%05d">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.namefmt"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.namefmt"/>
         </parameter>
         <parameter name="shovill-1-adv.opts" defaultValue="">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="adv.opts"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="adv.opts"/>
         </parameter>
         <parameter name="shovill-1-assembler" defaultValue="spades">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.1.0+galaxy0" parameterName="assembler"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1" parameterName="assembler"/>
         </parameter>
         <parameter name="quast-2-min_contig" defaultValue="500">
             <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2+galaxy1" parameterName="min_contig"/>
