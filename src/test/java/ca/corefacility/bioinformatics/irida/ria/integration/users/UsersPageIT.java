@@ -18,9 +18,9 @@ public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 	private UsersPage usersPage;
 
 	@Test
-	public void testUsersTableAsAsmin() {
+	public void testUsersTableAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
-		usersPage = UsersPage.goTo(driver());
+		usersPage = UsersPage.goToAdminPanel(driver());
 
 		assertEquals("Projects table should be populated by 3 projects", 3, usersPage.usersTableSize());
 

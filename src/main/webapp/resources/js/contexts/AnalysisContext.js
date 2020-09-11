@@ -2,14 +2,17 @@
  * This file loads basic analysis info from the server.
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { showNotification } from "../modules/notifications";
 
 import { useInterval } from "../hooks";
 
 // Functions required by context
-import { updateAnalysis } from "../apis/analysis/analysis";
-import { getUpdatedDetails } from "../apis/analysis/analysis";
+import {
+  getAnalysisInfo,
+  getUpdatedDetails,
+  updateAnalysis
+} from "../apis/analysis/analysis";
 
 import { notification } from "antd";
 
@@ -24,37 +27,59 @@ export const stateMap = {
   PREPARED: 1,
   SUBMITTING: 2,
   RUNNING: 3,
-  FINISHED_RUNNING: 3,
+  FINISHED_RUNNING: 4,
   POST_PROCESSING: 4,
   TRANSFERRING: 4,
   COMPLETING: 4,
   COMPLETED: 5
 };
 
-export const isAdmin = window.PAGE.isAdmin;
-
 const initialContext = {
-  analysis: window.PAGE.analysis,
-  analysisName: window.PAGE.analysisName,
-  analysisState: window.PAGE.analysisState,
-  analysisType: window.PAGE.analysisType.type,
-  analysisViewer: window.PAGE.analysisViewer,
-  isCompleted: window.PAGE.analysisState === "COMPLETED",
-  isError: window.PAGE.analysisState.includes("ERROR"),
-  previousState: window.PAGE.previousState,
-  duration: window.PAGE.duration
+  analysis: null,
+  analysisName: null,
+  analysisState: null,
+  analysisType: null,
+  analysisViewer: null,
+  isAdmin: false,
+  mailConfigured: false,
+  previousState: null,
+  duration: null,
+  isCompleted: false,
+  isError: false,
+  treeDefault: false
 };
+
+const UPDATE_ANALYSIS_DELAY=60000;
 
 const AnalysisContext = React.createContext(initialContext);
 
 function AnalysisProvider(props) {
   const [analysisContext, setAnalysisContext] = useState(initialContext);
+  const [analysisIdentifier, setAnalysisIdentifier] = useState("");
+
+  useEffect(() => {
+    const analysisId = window.location.pathname.match(/analysis\/(\d+)/)[1];
+    setAnalysisIdentifier(analysisId);
+    getAnalysisInfo(analysisId).then(res => {
+      setAnalysisContext(analysisContext => {
+        return {
+          ...analysisContext,
+          ...res,
+          isCompleted: res.completed,
+          isError: res.error,
+          isAdmin: res.admin,
+        }
+      });
+    }).catch((message) => {
+      notification.error({ message });
+    });
+  }, []);
 
   /* Update the analysis details that are required
    * to display the progression using polling
    */
   const intervalId = useInterval(() => {
-    getUpdatedDetails(analysisContext.analysis.identifier).then(res => {
+    getUpdatedDetails(analysisIdentifier).then(res => {
       updateAnalysisState(res.analysisState, res.previousState);
       updateAnalysisDuration(res.duration);
       /*
@@ -68,7 +93,7 @@ function AnalysisProvider(props) {
       notification.error({ message });
       clearInterval(intervalId);
     });
-  }, 5000);
+  }, UPDATE_ANALYSIS_DELAY);
 
   /* This function is used to update the AnalysisContext
    * analysis duration if it has changed from the original
@@ -121,7 +146,7 @@ function AnalysisProvider(props) {
    */
   function analysisContextUpdateSubmissionName(updatedAnalysisName) {
     updateAnalysis({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       analysisName: updatedAnalysisName,
       priority: null
     }).then(message => {
@@ -136,7 +161,8 @@ function AnalysisProvider(props) {
     <AnalysisContext.Provider
       value={{
         analysisContext,
-        analysisContextUpdateSubmissionName
+        analysisContextUpdateSubmissionName,
+        analysisIdentifier
       }}
     >
       {props.children}

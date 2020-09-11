@@ -36,11 +36,11 @@ export default function Tree() {
   const [newickString, setNewickString] = useState(null);
   const [serverMsg, setServerMsg] = useState(null);
   const [currTreeShape, setCurrTreeShape] = useState("rectangular");
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
 
   // On load gets the newick string for the analysis
   useEffect(() => {
-    getNewickTree(analysisContext.analysis.identifier).then(data => {
+    getNewickTree(analysisIdentifier).then(data => {
       if (data.newick === null) {
         //Empty tree
         setNewickString("");
@@ -111,7 +111,7 @@ export default function Tree() {
                 </Radio.Group>
                 <Button
                   type="primary"
-                  href={`${URL}/${analysisContext.analysis.identifier}/advanced-phylo`}
+                  href={`${URL}/${analysisIdentifier}/advanced-phylo`}
                   target="_blank"
                   key="advphylo"
                   id="t-advanced-phylo-btn"
