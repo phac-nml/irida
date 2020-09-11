@@ -26,12 +26,13 @@ function AnalysesTableProvider(props) {
    */
   function updateRowData(analysisId) {
       getUpdatedTableDetails(analysisId).then(res => {
+        console.log(res);
         let currRowData = {
           identifier: analysisId,
           analysisState: res.analysisStateModel,
           analysisDuration: res.duration,
-          isCompleted: res.analysisStateModel.value === "COMPLETED",
-          isError: res.analysisStateModel.value === "ERROR"
+          isCompleted: res.completed,
+          isError: res.error
         };
 
         setAnalysesTableContext(analysesTableContext => {

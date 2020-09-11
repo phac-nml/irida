@@ -5,7 +5,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
 
 /**
  * Used to test the state of the React AnalysisQueue component.

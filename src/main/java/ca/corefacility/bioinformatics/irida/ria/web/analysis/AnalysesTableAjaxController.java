@@ -287,7 +287,10 @@ public class AnalysesTableAjaxController {
 			duration = analysisAudit.getAnalysisRunningTime(submission);
 		}
 
-		return ResponseEntity.ok(new UpdatedAnalysisTableProgress(state, duration));
+		boolean isCompleted = analysisState == AnalysisState.COMPLETED;
+		boolean isError = analysisState == AnalysisState.ERROR;
+
+		return ResponseEntity.ok(new UpdatedAnalysisTableProgress(state, duration, isCompleted, isError));
 
 	}
 }

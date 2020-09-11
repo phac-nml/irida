@@ -9,10 +9,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisStateMo
 public class UpdatedAnalysisTableProgress {
 	private AnalysisStateModel analysisStateModel;
 	private Long duration;
+	private boolean isCompleted;
+	private boolean isError;
 
-	public UpdatedAnalysisTableProgress(AnalysisStateModel analysisStateModel, Long duration) {
+	public UpdatedAnalysisTableProgress(AnalysisStateModel analysisStateModel, Long duration, boolean isCompleted, boolean isError) {
 		this.analysisStateModel = analysisStateModel;
 		this.duration = duration;
+		this.isCompleted = isCompleted;
+		this.isError = isError;
 	}
 
 	public AnalysisStateModel getAnalysisStateModel() {
@@ -29,5 +33,21 @@ public class UpdatedAnalysisTableProgress {
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
+	}
+
+	public boolean isCompleted() {
+		return isCompleted;
+	}
+
+	public void setCompleted(boolean completed) {
+		isCompleted = completed;
+	}
+
+	public boolean isError() {
+		return isError;
+	}
+
+	public void setError(boolean error) {
+		isError = error;
 	}
 }
