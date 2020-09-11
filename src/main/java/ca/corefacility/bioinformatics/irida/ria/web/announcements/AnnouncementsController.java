@@ -3,14 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,13 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -159,7 +149,7 @@ public class AnnouncementsController extends BaseController {
             model.addAttribute("errors", "Announcement was not updated successfully");
             logger.error("Announcement could not be updated or saved to the database.", e.getMessage());
         }
-        return "redirect:/announcements/admin";
+        return "redirect:/admin/announcements";
     }
 
     /**
@@ -183,7 +173,7 @@ public class AnnouncementsController extends BaseController {
             logger.error(e.getMessage());
         }
 
-        return "redirect:/announcements/admin";
+        return "redirect:/admin/announcements";
     }
 
     /**
@@ -211,44 +201,5 @@ public class AnnouncementsController extends BaseController {
         model.addAttribute("numTotal", totalUsers);
 
         return ANNOUNCEMENT_DETAILS;
-    }
-
-    /**
-     * Get user read status for current announcement
-     * @param announcementID {@link Long} identifier for the {@link Announcement}
-     * @param params {@link DataTablesParams} parameters for current DataTable
-     * @return {@link DataTablesResponse} containing the list of users.
-     */
-    @RequestMapping(value = "/{announcementID}/details/ajax/list", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DataTablesResponse getUserAnnouncementInfoTable(
-            @PathVariable Long announcementID,
-            final @DataTablesRequest DataTablesParams params) {
-
-        final Announcement currentAnnouncement = announcementService.read(announcementID);
-
-        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()), PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-        final List<DataTablesResponseModel> announcementUsers = page.getContent().stream()
-                .map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
-                .collect(Collectors.toList());
-
-        return new DataTablesResponse(params, page, announcementUsers);
-    }
-
-    /**
-     * Utility method for checking whether the {@link Announcement} has been read by the {@link User}
-     *
-     * @param user
-     *          The user we want to check
-     * @param announcement
-     *          The announcement we want to check.
-     * @return {@link AnnouncementUserJoin} representing that the user has read the announcement, or null
-     *              if the user hasn't read the announcement.
-     */
-    private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
-        final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
-        final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
-                .filter(j -> j.getObject().equals(user)).findAny();
-        return currentAnnouncement.orElse(null);
     }
 }

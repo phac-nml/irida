@@ -130,7 +130,7 @@ public class AnnouncementsControllerTest {
 
         String page = announcementsController.submitUpdatedAnnouncement(id, message, model);
 
-        assertTrue("Unexpected redirect to page", page.equals("redirect:/announcements/admin"));
+        assertTrue("Unexpected redirect to page", page.equals("redirect:/admin/announcements"));
         verify(announcementService, times(1)).update(any(Announcement.class));
         verify(announcementService, times(1)).read(any(Long.class));
     }
@@ -144,7 +144,7 @@ public class AnnouncementsControllerTest {
 
         String page = announcementsController.deleteAnnouncement(model, id);
 
-        assertTrue("Unexpected redirect to page", page.equals("redirect:/announcements/admin"));
+        assertTrue("Unexpected redirect to page", page.equals("redirect:/admin/announcements"));
         verify(announcementService, times(1)).delete(any(Long.class));
     }
 
