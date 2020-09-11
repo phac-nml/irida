@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { notification } from "antd";
+import React, { useContext, useState } from "react";
 
 import { useInterval } from "../../hooks";
-import { getUpdatedTableDetails } from "../../apis/analysis/analysis";
 import { getHumanizedDuration } from "../../utilities/date-utilities.js";
+import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
 
 /**
  * Display the duration of an analysis
@@ -16,25 +15,25 @@ import { getHumanizedDuration } from "../../utilities/date-utilities.js";
  */
 export function AnalysisDuration({ duration, analysisId, updateDelay, state }) {
   const [currDuration, setCurrDuration] = useState(duration);
+  const { analysesTableContext } = useContext(AnalysesTableContext);
 
   // Update the analysis duration using polling
   const intervalId = useInterval(() => {
     if(state.value !== "COMPLETED" && state.value !== "ERROR") {
-      getUpdatedTableDetails(analysisId).then(res => {
-          if(res.duration !== duration) {
-            setCurrDuration(res.duration);
-          }
-          if (res.analysisStateModel.value === "COMPLETED" || res.analysisStateModel.value === "ERROR") {
-            clearInterval(intervalId);
-          }
-        }).catch((message) => {
-          notification.error({message});
+      let rowData = analysesTableContext.rows.filter(row => row.identifier === analysisId);
+      let currRowData = rowData[rowData.length - 1];
+      if(typeof currRowData !== "undefined") {
+        if(currDuration !== currRowData.analysisDuration) {
+          setCurrDuration(currRowData.analysisDuration);
+        }
+
+        if(currRowData.isCompleted || currRowData.isError) {
           clearInterval(intervalId);
-        });
+        }
+      }
     } else {
       clearInterval(intervalId);
     }
-
   }, updateDelay);
 
   return (

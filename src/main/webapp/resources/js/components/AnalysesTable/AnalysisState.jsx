@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Badge, notification } from "antd";
+import React, { useContext, useState } from "react";
+import { Badge } from "antd";
 import { SPACE_XS } from "../../styles/spacing";
 import { green6 } from "../../styles/colors";
 import { IconSyncSpin } from "../icons/Icons";
 import { useInterval } from "../../hooks";
-import { getUpdatedTableDetails } from "../../apis/analysis/analysis";
+
+import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
 
 
 /**
@@ -16,25 +17,30 @@ import { getUpdatedTableDetails } from "../../apis/analysis/analysis";
  * @constructor
  */
 export function AnalysisState({ state, analysisId, updateDelay }) {
+  const { analysesTableContext, updateRowData } = useContext(AnalysesTableContext);
   const [currStateText, setCurrStateText] = useState(state.text);
   const [currStateValue, setCurrStateValue] = useState(state.value);
 
   // Update the analysis state using polling
   const intervalId = useInterval(() => {
-    if(currStateValue !== "COMPLETED" && currStateValue !== "ERROR") {
-      getUpdatedTableDetails(analysisId).then(res => {
-        if (state.value !== res.analysisStateModel.value) {
-          setCurrStateText(res.analysisStateModel.text);
-          setCurrStateValue(res.analysisStateModel.value);
+    if(state.value !== "COMPLETED" && state.value !== "ERROR") {
+      updateRowData(analysisId);
+
+      let rowData = analysesTableContext.rows.filter(row => row.identifier === analysisId);
+      let currRowData = rowData[rowData.length - 1];
+      if(typeof currRowData !== "undefined") {
+        if(currStateText !== currRowData.analysisState.text) {
+          setCurrStateText(currRowData.analysisState.text);
         }
 
-        if (res.analysisStateModel.value === "COMPLETED" || res.analysisStateModel.value === "ERROR") {
+        if(currStateValue !== currRowData.analysisState.value) {
+          setCurrStateValue(currRowData.analysisState.value);
+        }
+
+        if(currRowData.isCompleted || currRowData.isError) {
           clearInterval(intervalId);
         }
-      }).catch((message) => {
-        notification.error({message});
-        clearInterval(intervalId);
-      });
+      }
     } else {
       clearInterval(intervalId);
     }

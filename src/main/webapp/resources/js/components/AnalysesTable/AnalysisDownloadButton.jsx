@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Button, notification } from "antd";
+import React, { useContext, useState } from "react";
+import { Button } from "antd";
 
 import { useInterval } from "../../hooks";
-import { getUpdatedTableDetails } from "../../apis/analysis/analysis";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile } from "../icons/Icons";
+import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
 
 /**
  * Display the download results button for an analysis
@@ -15,22 +15,23 @@ import { IconDownloadFile } from "../icons/Icons";
  * @constructor
  */
 export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
-  const [currState, setCurrState] = useState(state);
+  const [isAnalysisCompleted, setIsAnalysisCompleted] = useState(state.value !== "COMPLETED");
+  const { analysesTableContext } = useContext(AnalysesTableContext);
 
-  // Get the updated analysis state using polling
+  // Update if an analysis is completed (to enable or disable download results button)
   const intervalId = useInterval(() => {
-    if(currState !== "COMPLETED" && currState !== "ERROR") {
-      getUpdatedTableDetails(analysisId).then(res => {
-        if(res.analysisStateModel.value !== state) {
-          setCurrState(res.analysisStateModel.value);
+    if(state.value !== "COMPLETED" && state.value !== "ERROR") {
+      let rowData = analysesTableContext.rows.filter(row => row.identifier === analysisId);
+      let currRowData = rowData[rowData.length - 1];
+      if(typeof currRowData !== "undefined") {
+        if(isAnalysisCompleted !== currRowData.isCompleted) {
+          setIsAnalysisCompleted(currRowData.isCompleted);
         }
-        if (res.analysisStateModel.value === "COMPLETED" || res.analysisStateModel.value === "ERROR") {
+
+        if(currRowData.isCompleted || currRowData.isError) {
           clearInterval(intervalId);
         }
-      }).catch((message) => {
-        notification.error({message});
-        clearInterval(intervalId);
-      });
+      }
     } else {
       clearInterval(intervalId);
     }
@@ -39,7 +40,7 @@ export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
   return (
     <Button
       shape="circle-outline"
-      disabled={currState !== "COMPLETED"}
+      disabled={!isAnalysisCompleted}
       href={setBaseUrl(`ajax/analyses/download/${analysisId}`)}
       download
     >
