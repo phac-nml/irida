@@ -61,7 +61,11 @@ function NewRemoteProjectForm() {
               frequency: 7,
             }}
           >
-            <Form.Item name="api" label={i18n("NewProjectSync.api")}>
+            <Form.Item
+              name="api"
+              label={i18n("NewProjectSync.api")}
+              help={i18n("NewProjectSync.api.help")}
+            >
               <Select
                 showSearch
                 onChange={updateApiStatus}
