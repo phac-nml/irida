@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +175,7 @@ public class RESTProjectSamplesController {
 	 * location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody Sample sample,
+	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody @Valid Sample sample,
 			HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 
