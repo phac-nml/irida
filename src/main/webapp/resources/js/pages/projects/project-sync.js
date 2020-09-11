@@ -9,6 +9,7 @@ import {
 import { Button, Card, Checkbox, Col, Form, Input, Row, Select } from "antd";
 import { SPACE_LG } from "../../styles/spacing";
 import { HelpPopover } from "../../components/popovers";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 function NewRemoteProjectForm() {
   const [apis, setApis] = useState([]);
@@ -46,7 +47,7 @@ function NewRemoteProjectForm() {
     createSynchronizedProject({
       url,
       frequency,
-    }).then((response) => console.log(response));
+    }).then(({ id }) => (window.location.href = setBaseUrl(`/projects/${id}`)));
   };
 
   return (

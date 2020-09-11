@@ -42,5 +42,7 @@ export function getProjectsForAPI({ id }) {
 }
 
 export function createSynchronizedProject({ url, frequency }) {
-  return axios.post(`${BASE_URL}/project`, { url, frequency });
+  return axios
+    .post(`${BASE_URL}/project`, { url, frequency })
+    .then(({ data }) => data);
 }
