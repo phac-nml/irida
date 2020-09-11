@@ -11,10 +11,11 @@ import { formatInternationalizedDateTime } from "../../../../utilities/date-util
  * If the API is not connected it will present the user a button allowing
  * them to connect.
  * @param {object} api - details about the remote API
+ * @param {function} onConnect - what do when the connection is made.
  * @returns {*}
  * @constructor
  */
-export function RemoteApiStatus({ api }) {
+export function RemoteApiStatus({ api, onConnect = () => {} }) {
   const [loading, setLoading] = useState(true);
   const [expiration, setExpiration] = useState(undefined);
 
@@ -26,11 +27,14 @@ export function RemoteApiStatus({ api }) {
     return () => window.removeEventListener("message", updateRemoteApi);
   }, []);
 
+  useEffect(() => checkApiStatus(), [api.id]);
+
   function checkApiStatus() {
     setLoading(true);
     checkConnectionStatus({ id: api.id }).then((data) => {
       setLoading(false);
       setExpiration(data);
+      data && onConnect();
     });
   }
 
@@ -44,10 +48,33 @@ export function RemoteApiStatus({ api }) {
   }
 
   function updateConnectionStatus() {
+    // Fixes dual-screen position
+    const dualScreenLeft =
+      window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+    const dualScreenTop =
+      window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+    const width = window.innerWidth
+      ? window.innerWidth
+      : document.documentElement.clientWidth
+      ? document.documentElement.clientWidth
+      : screen.width;
+    const height = window.innerHeight
+      ? window.innerHeight
+      : document.documentElement.clientHeight
+      ? document.documentElement.clientHeight
+      : screen.height;
+    const w = 600;
+    const h = 400;
+
+    const systemZoom = width / window.screen.availWidth;
+    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+    const top = (height - h) / 2 / systemZoom + dualScreenTop;
+
     window.open(
       setBaseUrl(`remote_api/connect/${api.id}`),
       "",
-      "height=400, width=600, chrome=yes, centerscreen"
+      `height=${h}, width=${w}, chrome=yes, top=${top}, left=${left}`
     );
   }
 

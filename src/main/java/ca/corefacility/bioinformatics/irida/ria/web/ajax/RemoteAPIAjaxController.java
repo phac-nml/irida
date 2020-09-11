@@ -1,14 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,9 +12,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
 /**
  * Controller for asynchronous requests for remote api functionality.
@@ -96,5 +98,15 @@ public class RemoteAPIAjaxController {
     @DeleteMapping("/{remoteId}/delete")
     public void deleteRemoteAPI(@PathVariable long remoteId) {
         service.deleteRemoteAPI(remoteId);
+    }
+
+    @GetMapping("/apis")
+    public ResponseEntity<List<RemoteAPIModel>> getListOfRemoteApis() {
+        return ResponseEntity.ok(service.getListOfRemoteApis());
+    }
+
+    @GetMapping("/{remoteId}/projects")
+    public ResponseEntity<List<SelectOption>> getProjectsForAPI(@PathVariable long remoteId) {
+        return ResponseEntity.ok(service.getProjectsForAPI(remoteId));
     }
 }

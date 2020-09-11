@@ -32,3 +32,11 @@ export function getConnectionDetails({ id }) {
 export function deleteRemoteApi({ id }) {
   return axios.delete(`${BASE_URL}/${id}/delete`);
 }
+
+export function getListOfRemoteApis() {
+  return axios.get(`${BASE_URL}/apis`).then(({ data }) => data);
+}
+
+export function getProjectsForAPI({ id }) {
+  return axios.get(`${BASE_URL}/${id}/projects`).then(({ data }) => data);
+}
