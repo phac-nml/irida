@@ -37,10 +37,18 @@ RUN /tool_deps/_conda/bin/conda remove --name __mentalist@0.1.9 --all -y \
       && /tool_deps/_conda/bin/conda clean --packages -t -i \
       && rm -rf /tmp/file_*.fastq
 
-ADD ./data/tools-list-mentalist.yml $GALAXY_ROOT/irida-tools-mentalist.yml
-RUN install-tools $GALAXY_ROOT/irida-tools-mentalist.yml \
-      && /tool_deps/_conda/bin/conda clean --packages -t -i \
-      && rm -rf /tmp/* /root/.cache/ /var/cache/* $GALAXY_ROOT/client/node_modules/ $GALAXY_VIRTUAL_ENV/src/ /home/galaxy/.cache/ /home/galaxy/.npm
+# I cannot get MentaLiST to install via the command-line like the other tools
+# To install MentaLiST, please first build this image, then start up Galaxy Docker
+# Next, login to the web UI and install MentaLiST that way
+# Then you first have to cleanly shutdown Galaxy and postgres with:
+#  docker exec -it [container id] supervisorctl stop galaxy:
+#  docker exec -it [container id] service postgresql stop
+# Now, shutdown the running Docker container:
+#  docker stop [container id]
+# Now commit this container and tag it
+#  docker commit -m "Installed MentaLiST" [container id]
+#  docker tag [image id] [tag name]
+# Upload this tagged image to Dockerhub
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
