@@ -6,8 +6,9 @@ upgrading IRIDA that cannot be automated.
 
 20.05 to 20.09
 --------------
-* The [SNVPhyl](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/) pipeline has been ugpraded. Please make sure to install the necessary tools in Galaxy. While testing we were encountering some issues installing tools via the web UI for older versions of Galaxy (<20.01). If installation of the SNVPhyl tools is not working via the Galaxy UI for older Galaxy instances we recommend using the tool [Ephemeris](https://ephemeris.readthedocs.io) to install tools in Galaxy via the command-line. More information about using Ephemeris to install IRIDA tools can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/setup/#automated-installation-of-tools>.
+* The [SNVPhyl](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/) pipeline has been ugpraded. Please make sure to install the necessary tools in Galaxy.
 * The [AssemblyAnnotation](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/) and [AssemblyAnnotationCollection](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation-collection/) pipelines have been upgraded. Please make sure to install the necessary tools in Galaxy.
+* While testing out tool installation we were encountering some issues installing tools via the web UI for older versions of Galaxy (<20.01). If installation of the Galaxy tools is not working via the Galaxy UI for older Galaxy instances we recommend using the tool [Ephemeris](https://ephemeris.readthedocs.io) to install tools in Galaxy via the command-line. More information about using Ephemeris to install IRIDA tools can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/setup/#automated-installation-of-tools>.
 
 20.01 to 20.05
 --------------
