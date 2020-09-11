@@ -17,6 +17,9 @@ echo -e "export _OLD_SHOVILL_RAM=\$SHOVILL_RAM\nexport SHOVILL_RAM=8" >> etc/con
 echo -e "export SHOVILL_RAM=\$_OLD_SHOVILL_RAM" >> etc/conda/activate.d/shovill-ram.sh
 ```
 
+Alternatively, you can set environment variables within the [Galaxy Job Configuration][].
+
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
 [conda environment]: https://conda.io/docs/user-guide/tasks/manage-environments.html#saving-environment-variables
 [planemo]: https://planemo.readthedocs.io/en/latest/writing_advanced.html#cluster-usage
+[Galaxy Job Configuration]: https://docs.galaxyproject.org/en/release_20.05/admin/jobs.html#environment-modifications

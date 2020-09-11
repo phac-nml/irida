@@ -11,7 +11,7 @@ This workflow uses the [shovill] and [Prokka][] software for assembly and annota
 
 | Tool Name                  | Owner    | Tool Revision    | Toolshed Installable Revision | Toolshed             |
 |:--------------------------:|:--------:|:----------------:|:-----------------------------:|:--------------------:|
-| **shovill**                | iuc      | [8d1af5db538d][] | 3 (2020-06-28)                | [Galaxy Main Shed][] |
+| **shovill**                | iuc      | [8d1af5db538d][] | 5 (2020-06-28)                | [Galaxy Main Shed][] |
 | **prokka**                 | crs4     | [111884f0d912][] | 17 (2020-06-04)               | [Galaxy Main Shed][] |
 | **quast**                  | iuc      | [ebb0dcdb621a][] | 8 (2020-02-03)                | [Galaxy Main Shed][] |
 

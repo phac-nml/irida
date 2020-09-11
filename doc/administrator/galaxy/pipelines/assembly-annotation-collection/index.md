@@ -11,7 +11,7 @@ This workflow can assemble and annotate multiple genomes in one submission.  The
 
 | Tool Name                  | Owner    | Tool Revision    | Toolshed Installable Revision | Toolshed             |
 |:--------------------------:|:--------:|:----------------:|:-----------------------------:|:--------------------:|
-| **bundle_collections**     | nml      | [cd6da887a5f4][] | 1 (2017-08-04)                | [Galaxy Main Shed][] |
+| **bundle_collections**     | nml      | [705ebd286b57][] | 2 (2020-08-24)                | [Galaxy Main Shed][] |
 | **shovill**                | iuc      | [8d1af5db538d][] | 5 (2020-06-28)                | [Galaxy Main Shed][] |
 | **prokka**                 | crs4     | [111884f0d912][] | 17 (2020-06-04)               | [Galaxy Main Shed][] |
 | **quast**                  | iuc      | [ebb0dcdb621a][] | 8 (2020-02-03)                | [Galaxy Main Shed][] |
@@ -56,7 +56,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successful then all dependencies for this pipeline have been properly installed.
 
-[cd6da887a5f4]: https://toolshed.g2.bx.psu.edu/view/nml/bundle_collections/cd6da887a5f4
+[705ebd286b57]: https://toolshed.g2.bx.psu.edu/view/nml/bundle_collections/705ebd286b57
 [8d1af5db538d]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/8d1af5db538d
 [111884f0d912]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/111884f0d912
 [ebb0dcdb621a]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/ebb0dcdb621a
