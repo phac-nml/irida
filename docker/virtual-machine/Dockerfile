@@ -30,7 +30,7 @@ RUN /tool_deps/_conda/bin/conda remove --name __mentalist@0.1.9 --all -y \
       && echo -e "@\nATCG\n+\nIIII" > /tmp/file_2.fastq \
       && bash -c "source /tool_deps/_conda/bin/activate /tool_deps/_conda/envs/__mentalist\@0.1.9/ && mentalist call -o /tmp/mentalist-test -s x --db /galaxy-central/tool-data/mentalist_databases/salmonella_enterica_pubmlst_k31_2018-04-04/salmonella_enterica_pubmlst_k31_2018-04-04.jld /tmp/file_1.fastq /tmp/file_2.fastq" \
       && chown -R galaxy:galaxy /tool_deps/_conda/envs/__mentalist@0.1.9 \
-      && /tool_deps/_conda/bin/conda create -c defaults -c bioconda -c conda-forge --name __r-base@3.4.1 r-base==3.4.1 -y \
+      && /tool_deps/_conda/bin/conda create -c defaults -c bioconda -c conda-forge --name __r-base@3.4.1 r-base==3.4.1 libiconv -y \
       && chown -R galaxy:galaxy /tool_deps/_conda/envs/__r-base@3.4.1 \
       && /tool_deps/_conda/bin/conda create -c defaults -c bioconda -c conda-forge --name __biopython@1.70 biopython==1.70 -y \
       && chown -R galaxy:galaxy /tool_deps/_conda/envs/__biopython@1.70 \
