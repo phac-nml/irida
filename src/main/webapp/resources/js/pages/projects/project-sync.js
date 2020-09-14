@@ -58,7 +58,7 @@ function NewRemoteProjectForm() {
             form={form}
             layout="vertical"
             initialValues={{
-              frequency: 7,
+              frequency: 1,
             }}
           >
             <Form.Item
@@ -127,19 +127,22 @@ function NewRemoteProjectForm() {
                       name="frequency"
                     >
                       <Select>
+                        <Select.Option value={0}>
+                          {i18n("NewProjectSync.frequency.0")}
+                        </Select.Option>
                         <Select.Option value={1}>
                           {i18n("NewProjectSync.frequency.1")}
                         </Select.Option>
-                        <Select.Option value={7}>
+                        <Select.Option value={1}>
                           {i18n("NewProjectSync.frequency.7")}
                         </Select.Option>
-                        <Select.Option value={30}>
+                        <Select.Option value={2}>
                           {i18n("NewProjectSync.frequency.30")}
                         </Select.Option>
-                        <Select.Option value={60}>
+                        <Select.Option value={3}>
                           {i18n("NewProjectSync.frequency.60")}
                         </Select.Option>
-                        <Select.Option value={90}>
+                        <Select.Option value={4}>
                           {i18n("NewProjectSync.frequency.90")}
                         </Select.Option>
                       </Select>

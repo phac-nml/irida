@@ -2,11 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 
+/**
+ * Used to capture details about creating a new remote project through the UI>
+ */
 public class CreateRemoteProjectRequest {
 	private String url;
-	private int frequency;
+	private ProjectSyncFrequency frequency;
 
-	public CreateRemoteProjectRequest(String url, int frequency) {
+	public CreateRemoteProjectRequest(String url, ProjectSyncFrequency frequency) {
 		this.url = url;
 		this.frequency = frequency;
 	}
@@ -23,21 +26,10 @@ public class CreateRemoteProjectRequest {
 	}
 
 	public ProjectSyncFrequency getFrequency() {
-		switch (frequency) {
-		case 1:
-			return ProjectSyncFrequency.DAILY;
-		case 30:
-			return ProjectSyncFrequency.MONTHLY;
-		case 60:
-			return ProjectSyncFrequency.SEMIMONTHLY;
-		case 90:
-			return ProjectSyncFrequency.QUARTERLY;
-		default:
-			return ProjectSyncFrequency.WEEKLY;
-		}
+		return frequency;
 	}
 
-	public void setFrequency(int frequency) {
+	public void setFrequency(ProjectSyncFrequency frequency) {
 		this.frequency = frequency;
 	}
 }
