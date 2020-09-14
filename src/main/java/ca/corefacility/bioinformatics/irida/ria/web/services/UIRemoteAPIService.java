@@ -72,6 +72,11 @@ public class UIRemoteAPIService {
         remoteAPIService.delete(remoteId);
     }
 
+    /**
+     * Get a list of all {@link RemoteAPI}s
+     *
+     * @return A list of {@link RemoteAPI} formatted for the UI
+     */
     public List<RemoteAPIModel> getListOfRemoteApis() {
         Iterable<RemoteAPI> remotes = remoteAPIService.findAll();
         List<RemoteAPIModel> remoteAPIModels = new ArrayList<>();
@@ -79,6 +84,12 @@ public class UIRemoteAPIService {
         return remoteAPIModels;
     }
 
+    /**
+     * Get a list of projects available on a remote API
+     *
+     * @param remoteId identifier for a remote api
+     * @return List of projects on a remote API
+     */
     public List<RemoteProjectModel> getProjectsForAPI(Long remoteId) {
         RemoteAPI api = remoteAPIService.read(remoteId);
         List<Project> projects = projectRemoteService.listProjectsForAPI(api);
@@ -87,6 +98,12 @@ public class UIRemoteAPIService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    /**
+     * Add a new Synchronized Remote Project
+     *
+     * @param request Details about the remote project to synchronize
+     * @return the result of adding the new remote project
+     */
     public AjaxCreateItemSuccessResponse createSynchronizedProject(CreateRemoteProjectRequest request) {
         Project project = projectRemoteService.read(request.getUrl());
         project.setId(null);
