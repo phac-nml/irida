@@ -71,6 +71,7 @@ public class ProjectsController {
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
+	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
@@ -203,6 +204,17 @@ public class ProjectsController {
 		}
 		return CREATE_NEW_PROJECT_PAGE;
 	}
+
+	/**
+	 * Get the page to synchronize remote projects
+	 *
+	 * @return Name of the project sync page
+	 */
+	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
+	public String getSynchronizeProjectPage() {
+		return SYNC_NEW_PROJECT_PAGE;
+	}
+
 
 	/**
 	 * Creates a new project and displays a list of users for the user to add to
