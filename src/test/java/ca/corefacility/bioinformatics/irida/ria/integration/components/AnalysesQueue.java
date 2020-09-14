@@ -5,7 +5,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-
 /**
  * Used to test the state of the React AnalysisQueue component.
  * This component can be found on multiple pages (Analysis listing, Cart, Pipelines).
