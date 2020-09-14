@@ -106,19 +106,35 @@ public class RemoteAPIAjaxController {
         service.deleteRemoteAPI(remoteId);
     }
 
+    /**
+     * Get a list of all available remote API f
+     *
+     * @return List of {@link RemoteAPIModel}
+     */
     @GetMapping("/apis")
     public ResponseEntity<List<RemoteAPIModel>> getListOfRemoteApis() {
         return ResponseEntity.ok(service.getListOfRemoteApis());
     }
 
+    /**
+     * Get a list of project available at a remote API
+     *
+     * @param remoteId identifier for a remote API
+     * @return list of project
+     */
     @GetMapping("/{remoteId}/projects")
     public ResponseEntity<List<RemoteProjectModel>> getProjectsForAPI(@PathVariable long remoteId) {
         return ResponseEntity.ok(service.getProjectsForAPI(remoteId));
     }
 
+    /**
+     * Create a new synchronized remote project
+     *
+     * @param request details about the remote project
+     * @return status of created the new remote project
+     */
     @PostMapping("/project")
-    public ResponseEntity<AjaxResponse> createSynchronizedProject(
-            @RequestBody CreateRemoteProjectRequest request) {
+    public ResponseEntity<AjaxResponse> createSynchronizedProject(@RequestBody CreateRemoteProjectRequest request) {
         try {
             return ResponseEntity.ok(service.createSynchronizedProject(request));
         } catch (IridaOAuthException e) {
