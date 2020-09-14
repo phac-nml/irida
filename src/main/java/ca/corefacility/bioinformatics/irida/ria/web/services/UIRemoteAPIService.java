@@ -1,14 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * UI Service to handle request for Remote APIs
@@ -33,6 +35,9 @@ public class UIRemoteAPIService {
     public Date checkAPIStatus(long remoteId) {
         RemoteAPI api = remoteAPIService.read(remoteId);
         RemoteAPIToken token = tokenService.getToken(api);
+        if (token.isExpired()) {
+            throw new IridaOAuthException("expired token", api);
+        }
         return token.getExpiryDate();
     }
 
