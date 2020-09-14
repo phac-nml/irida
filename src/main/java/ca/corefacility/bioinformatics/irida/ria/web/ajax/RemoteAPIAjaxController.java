@@ -75,7 +75,10 @@ public class RemoteAPIAjaxController {
     public ResponseEntity<Date> checkAPIStatus(@PathVariable Long apiId) {
         try {
             return ResponseEntity.ok(service.checkAPIStatus(apiId));
-        } catch (EntityNotFoundException e) {
+        } catch (IridaOAuthException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(null);
+        }catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }

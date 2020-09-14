@@ -8,6 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -49,6 +55,9 @@ public class UIRemoteAPIService {
     public Date checkAPIStatus(long remoteId) {
         RemoteAPI api = remoteAPIService.read(remoteId);
         RemoteAPIToken token = tokenService.getToken(api);
+        if (token.isExpired()) {
+            throw new IridaOAuthException("expired token", api);
+        }
         return token.getExpiryDate();
     }
 
