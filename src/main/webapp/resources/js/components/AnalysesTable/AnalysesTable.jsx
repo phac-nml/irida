@@ -11,12 +11,17 @@ import {
   fetchAllPipelinesTypes
 } from "../../apis/analysis/analysis";
 import { AnalysisState } from "./AnalysisState";
-import { getHumanizedDuration } from "../../utilities/date-utilities.js";
+import { AnalysisDuration } from "./AnalysisDuration";
 import { getTextSearchProps } from "../ant.design/table-search-props";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { IconDownloadFile, IconTableFilter } from "../icons/Icons";
+import { AnalysisDownloadButton} from "./AnalysisDownloadButton";
+import { IconTableFilter} from "../icons/Icons";
+
+// Used to poll for changes in state and duration
+// Set to 1 minute
+const UPDATE_PROGRESS_DELAY = 60000;
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -68,8 +73,8 @@ export function AnalysesTable() {
       filterIcon(filtered) {
         return <IconTableFilter className="t-state" filtered={filtered} />;
       },
-      render(state) {
-        return <AnalysisState state={state} />;
+      render(state, data) {
+        return <AnalysisState state={state} analysisId={data.id} updateDelay={UPDATE_PROGRESS_DELAY} />;
       }
     },
     {
@@ -98,8 +103,8 @@ export function AnalysesTable() {
       title: i18n("analysis.duration"),
       key: "duration",
       dataIndex: "duration",
-      render(timestamp) {
-        return getHumanizedDuration({ date: timestamp });
+      render(duration, data) {
+        return <AnalysisDuration state={data.state} duration={duration} analysisId={data.id} updateDelay={UPDATE_PROGRESS_DELAY} />
       }
     },
     {
@@ -107,16 +112,7 @@ export function AnalysesTable() {
       key: "download",
       fixed: "right",
       render(text, record) {
-        return (
-          <Button
-            shape="circle-outline"
-            disabled={record.state.value !== "COMPLETED"}
-            href={setBaseUrl(`ajax/analyses/download/${record.id}`)}
-            download
-          >
-            <IconDownloadFile />
-          </Button>
-        );
+        return <AnalysisDownloadButton state={record.state.value} analysisId={record.id} updateDelay={UPDATE_PROGRESS_DELAY} />
       }
     }
   ];

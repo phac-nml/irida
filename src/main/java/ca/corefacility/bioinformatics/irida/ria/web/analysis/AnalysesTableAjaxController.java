@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisTableProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysesListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisModel;
@@ -258,5 +260,37 @@ public class AnalysesTableAjaxController {
 	@RequestMapping("/queue")
 	public AnalysisSubmissionService.AnalysisServiceStatus fetchAnalysesQueueCounts() {
 		return analysisSubmissionService.getAnalysisServiceStatus();
+	}
+
+	/**
+	 * Get the updated state and duration of an analysis
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param locale {@link Locale} Users locale
+	 * @return dto which contains the updated analysis state and duration
+	 */
+	@RequestMapping(value = "/{submissionId}/updated-table-progress")
+	public ResponseEntity<UpdatedAnalysisTableProgress> getUpdatedProgress(@PathVariable Long submissionId, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		AnalysisState analysisState = submission.getAnalysisState();
+
+		String stateString = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
+		AnalysisStateModel state = new AnalysisStateModel(stateString, analysisState.toString());
+
+		// Get the run time of the analysis runtime using the analysis
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
+
+		boolean isCompleted = analysisState == AnalysisState.COMPLETED;
+		boolean isError = analysisState == AnalysisState.ERROR;
+
+		return ResponseEntity.ok(new UpdatedAnalysisTableProgress(state, duration, isCompleted, isError));
+
 	}
 }
