@@ -26,7 +26,6 @@ function AnalysesTableProvider(props) {
    */
   function updateRowData(analysisId) {
       getUpdatedTableDetails(analysisId).then(res => {
-        console.log(res);
         let currRowData = {
           identifier: analysisId,
           analysisState: res.analysisStateModel,
