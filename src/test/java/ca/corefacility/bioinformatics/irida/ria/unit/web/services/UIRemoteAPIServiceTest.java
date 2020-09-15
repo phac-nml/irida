@@ -3,10 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
@@ -31,13 +32,10 @@ public class UIRemoteAPIServiceTest {
 
 	private final long REMOTE_ID_WITH_TOKEN = 1L;
 	private final String REMOTE_CLIENT_ID_WITH_TOKEN = "with_token";
-	private final long REMOTE_ID_WITHOUT_TOKEN = 2L;
-	private final String REMOTE_CLIENT_ID_WITHOUT_TOKEN = "without_token";
-	private final String REMOTE_CLIENT_ID = "CLIENT_ID";
-	private final Date REMOTE_EXPIRY_DATE = new Date(1600083738657L);
-	private final RemoteAPI remoteAPIwithToken = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITH_TOKEN);
-	private final RemoteAPI remoteAPIwithoutToken = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITHOUT_TOKEN);
-	private final RemoteAPIToken token = createFakeRemoteAPIToken();
+	private final long REMOTE_ID_WITH_EXPIRED_TOKEN = 2L;
+	private final String REMOTE_CLIENT_ID_WITh_EXPIRED_TOKEN = "expired_token";
+	private final Date REMOTE_EXPIRED_DATE = new Date(1600083738657L);
+	private final Date REMOTE_NON_EXPIRED_DATE = DateUtils.addDays(new Date(), 3);
 
 	@Before
 	public void setUp() {
@@ -47,23 +45,31 @@ public class UIRemoteAPIServiceTest {
 		this.projectService = mock(ProjectService.class);
 		this.service = new UIRemoteAPIService(remoteAPIService, tokenService, projectRemoteService, projectService);
 
-		when(remoteAPIService.read(REMOTE_ID_WITH_TOKEN)).thenReturn(remoteAPIwithToken);
-		when(remoteAPIService.read(REMOTE_ID_WITHOUT_TOKEN)).thenReturn(remoteAPIwithoutToken);
-		when(tokenService.getToken(remoteAPIwithToken)).thenReturn(token);
-		when(tokenService.getToken(remoteAPIwithoutToken)).thenThrow(new EntityNotFoundException("NOT FOUND!"));
-		when(remoteAPIService.findAll()).thenReturn(ImmutableList.of(remoteAPIwithToken, remoteAPIwithoutToken));
+		// Valid token
+		RemoteAPI validAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITH_TOKEN);
+		RemoteAPIToken validToken = createFakeRemoteAPIToken(REMOTE_NON_EXPIRED_DATE);
+		when(remoteAPIService.read(REMOTE_ID_WITH_TOKEN)).thenReturn(validAPI);
+		when(tokenService.getToken(validAPI)).thenReturn(validToken);
+
+		// Expired token
+		RemoteAPI expiredAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITh_EXPIRED_TOKEN);
+		RemoteAPIToken expiredToken = createFakeRemoteAPIToken(REMOTE_EXPIRED_DATE);
+		when(remoteAPIService.read(REMOTE_ID_WITH_EXPIRED_TOKEN)).thenReturn(expiredAPI);
+		when(tokenService.getToken(expiredAPI)).thenReturn(expiredToken);
+
+		when(tokenService.getToken(expiredAPI)).thenThrow(new IridaOAuthException("FOOBAR", expiredAPI));
+		when(remoteAPIService.findAll()).thenReturn(ImmutableList.of(validAPI, expiredAPI));
 	}
 
 	@Test
 	public void testCheckAPITStatusSuccess() {
 		Date expiryDate = service.checkAPIStatus(REMOTE_ID_WITH_TOKEN);
-		assertEquals("A valid token should return the appropriate expiration date.", REMOTE_EXPIRY_DATE, expiryDate);
+		assertEquals("A valid token should return the appropriate expiration date.", REMOTE_NON_EXPIRED_DATE, expiryDate);
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test(expected = IridaOAuthException.class)
 	public void testCheckAPITStatusError() {
-		Date expiryDate = service.checkAPIStatus(REMOTE_ID_WITHOUT_TOKEN);
-		assertEquals("A valid token should return the appropriate expiration date.", REMOTE_EXPIRY_DATE, expiryDate);
+		service.checkAPIStatus(REMOTE_ID_WITH_EXPIRED_TOKEN);
 	}
 
 	@Test
@@ -77,7 +83,7 @@ public class UIRemoteAPIServiceTest {
 		List<RemoteAPIModel> models =service.getListOfRemoteApis();
 		assertEquals(2, models.size());
 		assertEquals(models.get(0).getClientId(), REMOTE_CLIENT_ID_WITH_TOKEN);
-		assertEquals(models.get(1).getClientId(), REMOTE_CLIENT_ID_WITHOUT_TOKEN);
+		assertEquals(models.get(1).getClientId(), REMOTE_CLIENT_ID_WITh_EXPIRED_TOKEN);
 	}
 
 	private RemoteAPI createFakeRemoteAPI(String clientId) {
@@ -86,9 +92,9 @@ public class UIRemoteAPIServiceTest {
 		return api;
 	}
 
-	private RemoteAPIToken createFakeRemoteAPIToken() {
+	private RemoteAPIToken createFakeRemoteAPIToken(Date expiry) {
 		RemoteAPIToken token = new RemoteAPIToken();
-		token.setExpiryDate(REMOTE_EXPIRY_DATE);
+		token.setExpiryDate(expiry);
 		return token;
 	}
 }
