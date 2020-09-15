@@ -71,7 +71,6 @@ public class ProjectSettingsRemoteController {
 
 		Project read = projectService.read(projectId);
 		RemoteStatus remoteStatus = read.getRemoteStatus();
-
 		Map<String, Object> updates = new HashMap<>();
 
 		String message = null;

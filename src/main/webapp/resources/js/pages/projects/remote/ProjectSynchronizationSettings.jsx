@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, notification, Select } from "antd";
+import { Button, Form, notification } from "antd";
 import { BasicList } from "../../../components/lists";
 import { RemoteApiStatus } from "../../admin/components/remote-connections/RemoteApiStatus";
 import {
@@ -7,6 +7,7 @@ import {
   getRemoteProjectSyncSettings }
 from "../../../apis/projects/projects";
 import { formatDate } from "../../../utilities/date-utilities";
+import { SyncFrequencySelect } from "../../../components/remote-api/SyncFrequencySelect";
 
 /**
  * React component for render the remote project sync settings.
@@ -25,6 +26,7 @@ export function ProjectSynchronizationSettings() {
    */
   useEffect(() => {
     getRemoteProjectSyncSettings(projectId).then(res => {
+      console.log(res);
       setRemoteProjectData(res.remoteProjectInfo);
     }).catch((message) => {
       notification.error({ message: message });
@@ -54,14 +56,15 @@ export function ProjectSynchronizationSettings() {
         /></span>)
       },
       {
-        title: i18n("ProjectRemoteSettings.syncFrequency"),
+        title: "",
         desc: (
-          <Select
-            defaultValue={remoteProjectData.projectSyncFrequency}
-            style={{ width: "100%" }}
-            onChange={(e) => updateSyncSettings({ frequency: e })}>
-              {renderFrequencies()}
-          </Select>
+          <Form initialValues={{
+            frequency: remoteProjectData.projectSyncFrequencies.indexOf(remoteProjectData.projectSyncFrequency),
+          }}>
+            <SyncFrequencySelect
+              onChange={(e) => updateSyncSettings({frequency: remoteProjectData.projectSyncFrequencies[e]})}
+            />
+          </Form>
         )
       },
       {
@@ -79,21 +82,6 @@ export function ProjectSynchronizationSettings() {
         </div>)
       }
     ];
-
-  // Returns a list (sync frequencies) of select options
-  function renderFrequencies() {
-    const frequencyList = [];
-    if(remoteProjectData !== null) {
-      for (let frequency of remoteProjectData.projectSyncFrequencies) {
-        frequencyList.push(
-          <Select.Option key={frequency} value={frequency}>
-            {i18n(`ProjectRemoteSettings.frequency.${frequency}`)}
-          </Select.Option>
-        );
-      }
-    }
-    return frequencyList;
-  }
 
   // Used to update sync user, sync frequency, and force to sync now
   function updateSyncSettings(data) {
