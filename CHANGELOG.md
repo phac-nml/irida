@@ -36,7 +36,8 @@ Changes
 * [Developer]: Added optional method `getAnalysisViewer` for IridaPlugin to allow external applications to use IRIDA's built in analysis visualizations (such as the phylogenetic tree viewer).
 * [REST]: Fixed issue with double slashes sometimes getting added in OAuth2 redirect URI causing auth flow to fail.
 * [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
-* [UI]: Upprojdated Remote API Connection details page to use full Ant Design and updated oauth.
+* [UI]: Updated Remote API Connection details page to use full Ant Design and updated oauth.
+* [UI]: Updated Remote Project Synchronization Settings page to use Ant Design and updated oauth.
 
 20.01 to 20.05
 --------------

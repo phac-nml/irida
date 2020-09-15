@@ -1,15 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.RemoteProjectInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -64,6 +68,7 @@ public class ProjectSettingsRemoteController {
 			@RequestParam(required = false, defaultValue = "false") boolean forceSync,
 			@RequestParam(required = false, defaultValue = "false") boolean changeUser, Principal principal,
 			Locale locale) {
+
 		Project read = projectService.read(projectId);
 		RemoteStatus remoteStatus = read.getRemoteStatus();
 
@@ -74,13 +79,13 @@ public class ProjectSettingsRemoteController {
 
 		if (frequency != null) {
 			updates.put("syncFrequency", frequency);
-			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
+			message = messageSource.getMessage("project.settings.notifications.sync.frequencychange", new Object[] {frequency}, locale);
 		}
 
 		if (forceSync) {
 			remoteStatus.setSyncStatus(RemoteStatus.SyncStatus.MARKED);
 			updates.put("remoteStatus", remoteStatus);
-			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
+			message = messageSource.getMessage("project.settings.notifications.sync.marked.for.sync", new Object[] {}, locale);
 		}
 
 		if (changeUser) {
@@ -131,5 +136,21 @@ public class ProjectSettingsRemoteController {
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/remote";
+	}
+
+
+	@RequestMapping("/remote-settings")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
+	public RemoteProjectInfo getProjectRemoteSettings(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+
+		RemoteStatus remoteStatus = project.getRemoteStatus();
+		Date lastUpdate = remoteStatus.getLastUpdate();
+		RemoteAPI remoteAPI = remoteStatus.getApi();
+		ProjectSyncFrequency [] projectSyncFrequencies = ProjectSyncFrequency.values();
+		ProjectSyncFrequency projectSyncFrequency = project.getSyncFrequency();
+		User syncUser = remoteStatus.getReadBy();
+
+		return new RemoteProjectInfo(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies, projectSyncFrequency, syncUser);
 	}
 }
