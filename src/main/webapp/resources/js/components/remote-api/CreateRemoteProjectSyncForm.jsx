@@ -106,9 +106,9 @@ export function CreateRemoteProjectSyncForm() {
                 required
                 label={
                   <span>
-                    REMOTE PROJECT URL
+                    {i18n("NewProjectSync.remoteUrl")}
                     <Checkbox onChange={(e) => setManual(e.target.checked)}>
-                      Set url manually
+                      {i18n("NewProjectSync.remoteUrl.manual")}
                       <HelpPopover
                         content={<div>{i18n("NewProjectSync.url.help")}</div>}
                       />
