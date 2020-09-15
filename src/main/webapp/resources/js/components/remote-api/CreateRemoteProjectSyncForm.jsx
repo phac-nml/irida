@@ -8,6 +8,7 @@ import {
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { RemoteApiStatus } from "../../pages/admin/components/remote-connections/RemoteApiStatus";
 import { HelpPopover } from "../popovers";
+import { SyncFrequencySelect } from "./SyncFrequencySelect";
 
 /**
  * React form for creating a Synchronized Remote Project
@@ -51,12 +52,14 @@ export function CreateRemoteProjectSyncForm() {
   };
 
   const createRemote = () => {
-    const url = form.getFieldValue("project");
-    const frequency = form.getFieldValue("frequency");
-    createSynchronizedProject({
-      url,
-      frequency,
-    }).then(({ id }) => (window.location.href = setBaseUrl(`/projects/${id}`)));
+    form.validateFields().then(({ frequency, url }) => {
+      createSynchronizedProject({
+        url,
+        frequency,
+      }).then(
+        ({ id }) => (window.location.href = setBaseUrl(`/projects/${id}`))
+      );
+    });
   };
 
   return (
@@ -94,16 +97,19 @@ export function CreateRemoteProjectSyncForm() {
             <>
               <Form.Item label={i18n("NewProjectSync.project")} name="project">
                 <Select
-                  onChange={(value) =>
-                    form.setFieldsValue({ projectUrl: value })
-                  }
+                  onChange={(value) => form.setFieldsValue({ url: value })}
                   showSearch
                   options={projects}
                   placeholder={i18n("NewProjectSync.project.placeholder")}
                 />
               </Form.Item>
               <Form.Item
-                required
+                rules={[
+                  {
+                    required: true,
+                    message: i18n("NewProjectSync.remoteUrl.required"),
+                  },
+                ]}
                 label={
                   <span>
                     {i18n("NewProjectSync.remoteUrl")}
@@ -115,35 +121,11 @@ export function CreateRemoteProjectSyncForm() {
                     </Checkbox>
                   </span>
                 }
-                name="projectUrl"
+                name="url"
               >
                 <Input disabled={!manual} />
               </Form.Item>
-              <Form.Item
-                label={i18n("NewProjectSync.frequency")}
-                name="frequency"
-              >
-                <Select>
-                  <Select.Option value={0}>
-                    {i18n("NewProjectSync.frequency.0")}
-                  </Select.Option>
-                  <Select.Option value={1}>
-                    {i18n("NewProjectSync.frequency.1")}
-                  </Select.Option>
-                  <Select.Option value={2}>
-                    {i18n("NewProjectSync.frequency.7")}
-                  </Select.Option>
-                  <Select.Option value={3}>
-                    {i18n("NewProjectSync.frequency.30")}
-                  </Select.Option>
-                  <Select.Option value={4}>
-                    {i18n("NewProjectSync.frequency.60")}
-                  </Select.Option>
-                  <Select.Option value={5}>
-                    {i18n("NewProjectSync.frequency.90")}
-                  </Select.Option>
-                </Select>
-              </Form.Item>
+              <SyncFrequencySelect />
             </>
           ) : null}
           <div style={{ display: "flex", flexDirection: "row-reverse" }}>
