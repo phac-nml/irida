@@ -31,7 +31,7 @@ export default function OutputFilePreview() {
     getPreviewForFileType
   } = useContext(AnalysisOutputsContext);
 
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
 
   useEffect(() => {
     if (analysisOutputsContext.outputs === null) {
@@ -53,7 +53,7 @@ export default function OutputFilePreview() {
       <Menu
         onClick={e =>
           downloadOutputFile({
-            submissionId: analysisContext.analysis.identifier,
+            submissionId: analysisIdentifier,
             fileId: e.key
           })
         }
@@ -185,7 +185,7 @@ export default function OutputFilePreview() {
         <Dropdown.Button
           id="t-download-all-files-btn"
           onClick={() =>
-            downloadFilesAsZip(analysisContext.analysis.identifier)
+            downloadFilesAsZip(analysisIdentifier)
           }
           overlay={downloadFilesMenu()}
         >
