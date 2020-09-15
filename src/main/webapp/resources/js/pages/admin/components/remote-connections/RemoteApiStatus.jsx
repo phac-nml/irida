@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button } from "antd";
-import { checkConnectionStatus } from "../../apis/remote-api/remote-api";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { IconLoading, IconLogin } from "../../components/icons/Icons";
-import { SPACE_XS } from "../../styles/spacing";
+import { checkConnectionStatus } from "../../../../apis/remote-api/remote-api";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { IconLoading, IconLogin } from "../../../../components/icons/Icons";
+import { SPACE_XS } from "../../../../styles/spacing";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
 /**
  * React component to render the status of a Remote API.
  * If the API is not connected it will present the user a button allowing
  * them to connect.
  * @param {object} api - details about the remote API
- * @param {function} updateTable - function to update the table once the api has been updated
  * @returns {*}
  * @constructor
  */
-export function RemoteApiStatus({ api, updateTable }) {
+export function RemoteApiStatus({ api }) {
   const [loading, setLoading] = useState(true);
-  const [validToken, setValidToken] = useState(false);
+  const [expiration, setExpiration] = useState(undefined);
 
   useEffect(checkApiStatus, []);
 
@@ -28,9 +28,9 @@ export function RemoteApiStatus({ api, updateTable }) {
 
   function checkApiStatus() {
     setLoading(true);
-    checkConnectionStatus({ id: api.id }).then(validity => {
+    checkConnectionStatus({ id: api.id }).then((data) => {
       setLoading(false);
-      setValidToken(validity);
+      setExpiration(data);
     });
   }
 
@@ -58,10 +58,22 @@ export function RemoteApiStatus({ api, updateTable }) {
     </span>
   ) : (
     <div>
-      {validToken ? (
-        <Alert message={i18n("RemoteApi.connected")} type="success" showIcon />
+      {expiration ? (
+        <Alert
+          className="t-remote-status-connected"
+          message={i18n(
+            "RemoteApi.connected",
+            formatInternationalizedDateTime(expiration)
+          )}
+          type="success"
+          showIcon
+        />
       ) : (
-        <Button onClick={updateConnectionStatus} icon={<IconLogin />}>
+        <Button
+          className="t-remote-status-connect"
+          onClick={updateConnectionStatus}
+          icon={<IconLogin />}
+        >
           {i18n("RemoteApi.disconnected")}
         </Button>
       )}
