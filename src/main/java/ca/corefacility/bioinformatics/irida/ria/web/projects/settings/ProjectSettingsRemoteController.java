@@ -138,7 +138,13 @@ public class ProjectSettingsRemoteController {
 		return "projects/settings/pages/remote";
 	}
 
-
+	/**
+	 * Gets the remote synchronization {@link Project} settings
+	 *
+	 * @param projectId the ID of the {@link Project} to read
+	 * @return {@link RemoteProjectInfo} object which has the
+	 * remote project synchronization settings
+	 */
 	@RequestMapping("/remote-settings")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public RemoteProjectInfo getProjectRemoteSettings(@PathVariable Long projectId) {
@@ -147,10 +153,11 @@ public class ProjectSettingsRemoteController {
 		RemoteStatus remoteStatus = project.getRemoteStatus();
 		Date lastUpdate = remoteStatus.getLastUpdate();
 		RemoteAPI remoteAPI = remoteStatus.getApi();
-		ProjectSyncFrequency [] projectSyncFrequencies = ProjectSyncFrequency.values();
+		ProjectSyncFrequency[] projectSyncFrequencies = ProjectSyncFrequency.values();
 		ProjectSyncFrequency projectSyncFrequency = project.getSyncFrequency();
 		User syncUser = remoteStatus.getReadBy();
 
-		return new RemoteProjectInfo(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies, projectSyncFrequency, syncUser);
+		return new RemoteProjectInfo(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies, projectSyncFrequency,
+				syncUser);
 	}
 }
