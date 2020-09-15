@@ -26,7 +26,6 @@ export function ProjectSynchronizationSettings() {
    */
   useEffect(() => {
     getRemoteProjectSyncSettings(projectId).then(res => {
-      console.log(res);
       setRemoteProjectData(res.remoteProjectInfo);
     }).catch((message) => {
       notification.error({ message: message });
