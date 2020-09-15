@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Checkbox, Form, Input, Select } from "antd";
 import {
   createSynchronizedProject,
@@ -21,6 +21,7 @@ export function CreateRemoteProjectSyncForm() {
   const [connected, setConnected] = useState();
   const [manual, setManual] = useState(false);
   const [form] = Form.useForm();
+  const apiRef = useRef();
 
   useEffect(() => {
     // Load all remote api's at mount time
@@ -30,20 +31,16 @@ export function CreateRemoteProjectSyncForm() {
         form.setFieldsValue({ api: 0 });
         setSelectedApi(list[0]);
       }
+      // Set user focus on the api select after at mount time
+      apiRef.current.focus();
     });
   }, [form]);
 
   /**
    * Update the status of a specific api.
-   * @param {number|string} value - index of the api in the apis list.
+   * @param {number} value - index of the api in the apis list.
    */
-  const updateApiStatus = (value) => {
-    if (value !== "default") {
-      setSelectedApi(apis[value]);
-    } else {
-      setSelectedApi(undefined);
-    }
-  };
+  const updateApiStatus = (value) => setSelectedApi(apis[value]);
 
   const getApiProjects = () => {
     if (selectedApi.id) {
@@ -67,7 +64,7 @@ export function CreateRemoteProjectSyncForm() {
       form={form}
       layout="vertical"
       initialValues={{
-        frequency: 1,
+        frequency: 2,
       }}
     >
       <Form.Item
@@ -76,6 +73,7 @@ export function CreateRemoteProjectSyncForm() {
         help={i18n("NewProjectSync.api.help")}
       >
         <Select
+          ref={apiRef}
           showSearch
           onChange={updateApiStatus}
           placeholder={i18n("NewProjectSync.api.placeholder")}
@@ -132,16 +130,16 @@ export function CreateRemoteProjectSyncForm() {
                   <Select.Option value={1}>
                     {i18n("NewProjectSync.frequency.1")}
                   </Select.Option>
-                  <Select.Option value={1}>
+                  <Select.Option value={2}>
                     {i18n("NewProjectSync.frequency.7")}
                   </Select.Option>
-                  <Select.Option value={2}>
+                  <Select.Option value={3}>
                     {i18n("NewProjectSync.frequency.30")}
                   </Select.Option>
-                  <Select.Option value={3}>
+                  <Select.Option value={4}>
                     {i18n("NewProjectSync.frequency.60")}
                   </Select.Option>
-                  <Select.Option value={4}>
+                  <Select.Option value={5}>
                     {i18n("NewProjectSync.frequency.90")}
                   </Select.Option>
                 </Select>
