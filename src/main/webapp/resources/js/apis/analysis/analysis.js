@@ -9,7 +9,22 @@ const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
 
 /*
- * Get all the data required for the analysis -> details page.
+ * Get all the data required for the analysis on load
+ * @param {number} submissionId Submission ID
+ * @return {Promise<*>} `data` contains the OK response and the details map;
+ *                      `error` contains error information if an error occurred.
+ */
+export async function getAnalysisInfo(submissionId) {
+  try {
+    const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/analysis-details`);
+    return data;
+  }  catch (error) {
+    return { error };
+  }
+}
+
+/*
+ * Get all the data required for the analysis -> settings -> details page.
  * @param {number} submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response and the details map;
  *                      `error` contains error information if an error occurred.

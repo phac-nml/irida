@@ -34,7 +34,7 @@ export default function AnalysisShare() {
   const { analysisDetailsContext, saveResultsToRelatedSamples } = useContext(
     AnalysisDetailsContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const {
     analysisShareContext,
     storeSharedProjects,
@@ -114,7 +114,7 @@ export default function AnalysisShare() {
   // Updates if analysis is shared with a project or not
   function onChange(e) {
     updateSharedProject({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       projectId: e.target.value,
       shareStatus: e.target.checked
     }).then(res => {
@@ -129,7 +129,7 @@ export default function AnalysisShare() {
   // On load gets the projects which the analysis can be shared with
   useEffect(() => {
     if (analysisShareContext.sharedProjects != sharedProjects) {
-      getSharedProjects(analysisContext.analysis.identifier).then(data => {
+      getSharedProjects(analysisIdentifier).then(data => {
         //List of projects which results can be shared with (local state)
         setSharedProjects(data);
         storeSharedProjects({ sharedProjects: data });

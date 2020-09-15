@@ -47,6 +47,9 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
     }
   }
 
+  /**
+   * This will open a popup window with the Oauth for the Remote API
+   */
   function updateConnectionStatus() {
     const w = 600;
     const h = 400;
