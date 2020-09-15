@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -563,26 +562,5 @@ public class ProjectsController {
 	 */
 	private DTProject createDataTablesProject(Project project) {
 		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
-	}
-
-	/**
-	 * Response class for a {@link Project} and its {@link RemoteStatus}
-	 */
-	public class ProjectByApiResponse {
-		private final RemoteStatus remoteStatus;
-		private final Project project;
-
-		public ProjectByApiResponse(Project project) {
-			this.project = project;
-			this.remoteStatus = project.getRemoteStatus();
-		}
-
-		public Project getProject() {
-			return project;
-		}
-
-		public RemoteStatus getRemoteStatus() {
-			return remoteStatus;
-		}
 	}
 }
