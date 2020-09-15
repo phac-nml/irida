@@ -125,7 +125,7 @@ export function CreateRemoteProjectSyncForm() {
               >
                 <Input disabled={!manual} />
               </Form.Item>
-              <SyncFrequencySelect onChange={() => alert("FUCK")} />
+              <SyncFrequencySelect />
             </>
           ) : null}
           <div style={{ display: "flex", flexDirection: "row-reverse" }}>
