@@ -10,10 +10,6 @@
     <link rel="stylesheet" href="/dist/css/project-remote.bundle.css">
     <title th:text="#{ProjectRemoteSettings.title}">Title</title>
         <script th:inline="javascript">
-            window.PAGE = {
-                _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {}
-            };
-
             window.translations = [{
                 "ProjectRemoteSettings.frequency.NEVER": /*[[#{ProjectRemoteSettings.frequency.NEVER}]]*/ "",
                 "ProjectRemoteSettings.frequency.DAILY": /*[[#{ProjectRemoteSettings.frequency.DAILY}]]*/ "",

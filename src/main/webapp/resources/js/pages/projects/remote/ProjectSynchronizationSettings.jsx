@@ -69,7 +69,7 @@ export function ProjectSynchronizationSettings() {
         desc: (<div>
           <span>{remoteProjectData.syncUser.label}</span>
           <br />
-          { window.PAGE._USER.identifier !== remoteProjectData.syncUser.identifier ?
+          { window.TL._USER.identifier !== remoteProjectData.syncUser.identifier ?
               <Button
                 onClick={() => updateSyncSettings({changeUser: true})}>
                 {i18n("ProjectRemoteSettings.becomeSyncUser")}

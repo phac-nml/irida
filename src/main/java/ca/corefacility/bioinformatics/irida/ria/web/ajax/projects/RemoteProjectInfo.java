@@ -7,8 +7,11 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
-public class RemoteProjectInfo {
+/**
+ * Used as a response for encapsulating a remote synchronized project settings
+ */
 
+public class RemoteProjectInfo {
 	private RemoteStatus remoteStatus;
 	private Date lastUpdate;
 	private RemoteAPI remoteAPI;
