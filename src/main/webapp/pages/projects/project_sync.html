@@ -7,15 +7,8 @@
   <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
     <link rel="stylesheet" th:href="@{/dist/css/project-sync.bundle.css}" />
-    <script th:inline="javascript">
-      var PAGE = {
-        urls: {
-          apiProjectList: /*[[@{/projects/ajax/api/}]]*/ "/projects/ajax/api/",
-        },
-      };
-    </script>
   </head>
-  <body ng-app="irida.sync">
+  <body>
     <div
       style="background-color: hsl(116, 0%, 96%); height: 100%"
       layout:fragment="page"

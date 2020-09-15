@@ -48,33 +48,15 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
   }
 
   function updateConnectionStatus() {
-    // Fixes dual-screen position
-    const dualScreenLeft =
-      window.screenLeft !== undefined ? window.screenLeft : window.screenX;
-    const dualScreenTop =
-      window.screenTop !== undefined ? window.screenTop : window.screenY;
-
-    const width = window.innerWidth
-      ? window.innerWidth
-      : document.documentElement.clientWidth
-      ? document.documentElement.clientWidth
-      : screen.width;
-    const height = window.innerHeight
-      ? window.innerHeight
-      : document.documentElement.clientHeight
-      ? document.documentElement.clientHeight
-      : screen.height;
     const w = 600;
     const h = 400;
 
-    const systemZoom = width / window.screen.availWidth;
-    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
-    const top = (height - h) / 2 / systemZoom + dualScreenTop;
-
+    const left = screen.width / 2 - w / 2;
+    const top = screen.height / 2 - h / 2;
     window.open(
       setBaseUrl(`remote_api/connect/${api.id}`),
       "",
-      `height=${h},width=${w},top=${top},left=${left}`
+      `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${top}, left=${left}`
     );
   }
 
