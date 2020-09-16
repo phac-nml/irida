@@ -76,6 +76,7 @@ export function CreateRemoteProjectSyncForm() {
         help={i18n("NewProjectSync.api.help")}
       >
         <Select
+          className="t-api-select"
           ref={apiRef}
           showSearch
           onChange={updateApiStatus}
@@ -97,6 +98,7 @@ export function CreateRemoteProjectSyncForm() {
             <>
               <Form.Item label={i18n("NewProjectSync.project")} name="project">
                 <Select
+                  className="t-project-select"
                   onChange={(value) => form.setFieldsValue({ url: value })}
                   showSearch
                   options={projects}
@@ -123,13 +125,17 @@ export function CreateRemoteProjectSyncForm() {
                 }
                 name="url"
               >
-                <Input disabled={!manual} />
+                <Input className="t-project-url" disabled={!manual} />
               </Form.Item>
               <SyncFrequencySelect />
             </>
           ) : null}
           <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-            <Button type="primary" onClick={createRemote}>
+            <Button
+              type="primary"
+              onClick={createRemote}
+              className="t-sync-submit"
+            >
               {i18n("NewProjectSync.submit")}
             </Button>
           </div>
