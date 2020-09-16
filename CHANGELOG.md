@@ -37,6 +37,9 @@ Changes
 * [REST]: Fixed issue with double slashes sometimes getting added in OAuth2 redirect URI causing auth flow to fail.
 * [Workflow]: Updated the SNVPhyl pipeline to version `1.2.2`.
 * [Developer]: Updated the Galaxy Docker instance to Galaxy `20.05`.
+* [Workflow]: Updated the tools `Shovill`, `Prokka`, and `Quast` in the **Assembly and Annotation** pipeline. These updates mean the issue with out-of-date `tbl2asn` is now fixed and the value of `SHOVILL_RAM` will now be set automatically by Galaxy based on assigned resources to the tool.
+* [Workflow]: Updated the tools `Shovill`, `Prokka`, and `Quast` in the  **Assembly and Annotation Collection** pipeline. Also moved tool **Bundle collections** from the IRIDA Toolshed to the Galaxy Main Toolshed.
+* [Workflow]: Removed dependency of IRIDA on the IRIDA Toolshed (<https://irida.corefacility.ca/galaxy-shed>). This means that all tools for IRIDA pipelines are now available on the main Galaxy toolshed and that IRIDA is compatible with newer versions of Galaxy (`20.XX+`).
 * [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
 * [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 
