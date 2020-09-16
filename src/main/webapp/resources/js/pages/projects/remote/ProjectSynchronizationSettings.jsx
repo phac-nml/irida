@@ -56,9 +56,12 @@ export function ProjectSynchronizationSettings() {
         /></span>)
       },
       {
-        title: <span><span>Synchronization Frequency</span><HelpPopover
+        title: <span>
+                <span>{i18n("ProjectRemoteSettings.syncFrequency")}</span>
+                <HelpPopover
                   content={<div>{i18n("SyncFrequencySelect.frequency.help")}</div>}
-                /></span>,
+                />
+               </span>,
         desc: (
           <Form initialValues={{
             frequency: remoteProjectData.projectSyncFrequencies.indexOf(remoteProjectData.projectSyncFrequency),
