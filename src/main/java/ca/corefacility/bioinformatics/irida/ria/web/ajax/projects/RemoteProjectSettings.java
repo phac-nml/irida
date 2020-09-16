@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * Used as a response for encapsulating a remote synchronized project settings
  */
 
-public class RemoteProjectInfo {
+public class RemoteProjectSettings {
 	private RemoteStatus remoteStatus;
 	private Date lastUpdate;
 	private RemoteAPI remoteAPI;
@@ -19,7 +19,7 @@ public class RemoteProjectInfo {
 	private ProjectSyncFrequency projectSyncFrequency;
 	private User syncUser;
 
-	public RemoteProjectInfo(RemoteStatus remoteStatus, Date lastUpdate, RemoteAPI remoteAPI,
+	public RemoteProjectSettings(RemoteStatus remoteStatus, Date lastUpdate, RemoteAPI remoteAPI,
 			ProjectSyncFrequency[] projectSyncFrequencies, ProjectSyncFrequency projectSyncFrequency, User syncUser) {
 		this.remoteStatus = remoteStatus;
 		this.lastUpdate = lastUpdate;

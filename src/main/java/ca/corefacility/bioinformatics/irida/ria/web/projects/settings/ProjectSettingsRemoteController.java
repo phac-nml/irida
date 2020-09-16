@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.RemoteProjectInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.RemoteProjectSettings;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -141,12 +141,12 @@ public class ProjectSettingsRemoteController {
 	 * Gets the remote synchronization {@link Project} settings
 	 *
 	 * @param projectId the ID of the {@link Project} to read
-	 * @return {@link RemoteProjectInfo} object which has the
+	 * @return {@link RemoteProjectSettings} object which has the
 	 * remote project synchronization settings
 	 */
 	@RequestMapping("/remote-settings")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public RemoteProjectInfo getProjectRemoteSettings(@PathVariable Long projectId) {
+	public RemoteProjectSettings getProjectRemoteSettings(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 
 		RemoteStatus remoteStatus = project.getRemoteStatus();
@@ -156,7 +156,7 @@ public class ProjectSettingsRemoteController {
 		ProjectSyncFrequency projectSyncFrequency = project.getSyncFrequency();
 		User syncUser = remoteStatus.getReadBy();
 
-		return new RemoteProjectInfo(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies, projectSyncFrequency,
+		return new RemoteProjectSettings(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies, projectSyncFrequency,
 				syncUser);
 	}
 }

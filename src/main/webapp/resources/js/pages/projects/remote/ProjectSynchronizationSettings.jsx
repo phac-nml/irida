@@ -8,6 +8,7 @@ import {
 from "../../../apis/projects/projects";
 import { formatDate } from "../../../utilities/date-utilities";
 import { SyncFrequencySelect } from "../../../components/remote-api/SyncFrequencySelect";
+import { HelpPopover } from "../../../components/popovers";
 
 /**
  * React component for render the remote project sync settings.
@@ -26,7 +27,7 @@ export function ProjectSynchronizationSettings() {
    */
   useEffect(() => {
     getRemoteProjectSyncSettings(projectId).then(res => {
-      setRemoteProjectData(res.remoteProjectInfo);
+      setRemoteProjectData(res.remoteProjectSettings);
     }).catch((message) => {
       notification.error({ message: message });
     });
@@ -55,13 +56,16 @@ export function ProjectSynchronizationSettings() {
         /></span>)
       },
       {
-        title: "",
+        title: <span><span>Synchronization Frequency</span><HelpPopover
+                  content={<div>{i18n("SyncFrequencySelect.frequency.help")}</div>}
+                /></span>,
         desc: (
           <Form initialValues={{
             frequency: remoteProjectData.projectSyncFrequencies.indexOf(remoteProjectData.projectSyncFrequency),
           }}>
             <SyncFrequencySelect
               onChange={(e) => updateSyncSettings({frequency: remoteProjectData.projectSyncFrequencies[e]})}
+              labelRequired={false}
             />
           </Form>
         )
