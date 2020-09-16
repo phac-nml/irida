@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Button, Popover } from "antd";
 import { IconRocket } from "../icons/Icons";
-import { useLaunchDispatch, useLaunchState } from "./launch-context";
+import {
+  useLaunchDispatch,
+  useLaunchState,
+} from "../pipeline-launch/launch-context";
 
 export function PipelineLaunchButton() {
   const { modified } = useLaunchState();

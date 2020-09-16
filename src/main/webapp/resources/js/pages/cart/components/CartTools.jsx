@@ -8,8 +8,8 @@ import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { LaunchPage } from "../../../components/pipeline/LaunchPage";
-import { LaunchComplete } from "../../../components/pipeline/LaunchComplete";
+import { LaunchPage } from "../../../components/pipeline-launch/LaunchPage";
+import { LaunchComplete } from "../../../components/pipeline-launch/LaunchComplete";
 
 const MenuWrapper = styled.div`
   display: flex;

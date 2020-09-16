@@ -1,6 +1,6 @@
 import React, { Suspense, useState } from "react";
 import { PipelineLaunchModal } from "./PipelineLaunchModal";
-import { LaunchProvider } from "./launch-context";
+import { LaunchProvider } from "../pipeline-launch/launch-context";
 
 export function Launch({ pipelineId, automated }) {
   const [visible, setVisible] = useState(false);

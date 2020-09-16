@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Form, Input, Popover } from "antd";
 import { SPACE_SM } from "../../styles/spacing";
 import { useLaunchDispatch } from "./launch-context";
-import { DISPATCH_PARAMETERS_DUPLICATE } from "./lauch-constants";
+import { DISPATCH_PARAMETERS_DUPLICATE } from "../pipeline/lauch-constants";
 
 export function DuplicateParametersButton() {
   const [visible, setVisible] = useState(false);

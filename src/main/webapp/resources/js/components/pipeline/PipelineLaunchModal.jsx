@@ -1,9 +1,9 @@
 import React from "react";
-import { useLaunchState } from "./launch-context";
+import { useLaunchState } from "../pipeline-launch/launch-context";
 import { Modal, Tabs } from "antd";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
-import { PipelineParameters } from "./PipelineParameters";
+import { PipelineParameters } from "../pipeline-launch/PipelineParameters";
 
 const { TabPane } = Tabs;
 

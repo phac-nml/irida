@@ -4,7 +4,7 @@ import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import {
   DISPATCH_PARAMETER_CHANGE,
   DISPATCH_PARAMETERS_MODIFIED,
-} from "./lauch-constants";
+} from "../pipeline/lauch-constants";
 import { SPACE_XS } from "../../styles/spacing";
 import { IconDropDown } from "../icons/Icons";
 import { DuplicateParametersButton } from "./DuplicateParametersButton";

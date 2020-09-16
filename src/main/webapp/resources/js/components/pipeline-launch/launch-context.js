@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import * as CONSTANTS from "./lauch-constants";
+import * as CONSTANTS from "../pipeline/lauch-constants";
 import axios from "axios";
 
 const LaunchStateContext = React.createContext();
