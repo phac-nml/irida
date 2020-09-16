@@ -81,13 +81,13 @@ tools:
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
-  ### Tools for SNVPhyl v1.0.1 ###
+  ### Tools for SNVPhyl v1.2.2 ###
 
-- name: "suite_snvphyl_1_0_1"
+- name: "suite_snvphyl_1_2_2"
   owner: "nml"
-  tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "4841b7148c44"
+  - "77a9422303ce"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 

@@ -76,14 +76,21 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testShareSampleToProjectWithSameId() {
-		final List<String> samples = Lists.newArrayList("3");
+		final List<String> samples = Lists.newArrayList("1");
 
-		final String projectUri = "/api/projects/4";
+		final String projectUri = "/api/projects/1";
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
-		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
-				.expect().response().statusCode(HttpStatus.CONFLICT.value()).when().post(samplesUri);
+		//this used to return CONFLICT, but ended up in errors where samples were partially added.  Now it accepts the POST but doesn't change anything since the sample is already there
+		asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
 	}
 
 	@Test
