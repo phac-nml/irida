@@ -12,7 +12,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiU
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
@@ -38,18 +39,15 @@ public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
 		RemoteApiUtilities.addRemoteApi(driver(), clientId, clientSecret);
 		page = ProjectSyncPage.goTo(driver());
 		page.selectApi(0);
-		assertTrue("Projects should be shown in dropdown", page.areProjectsAvailable());
-		page.selectProjectInListing(1);
-		String selectedProjectName = page.getSelectedProjectName();
+		final String name = "project";
+		page.selectProjectInListing(name);
 
-		page.openAdvanced();
 		String url = page.getProjectUrl();
 		assertFalse("URL should not be empty", url.isEmpty());
 		page.submitProject();
 
 		ProjectDetailsPage projectDetailsPage = ProjectDetailsPage.initElements(driver());
 		String dataProjectName = projectDetailsPage.getProjectName();
-
-		assertEquals("Project names should be equal", selectedProjectName, dataProjectName);
+		assertEquals("Should be on the remote project page", dataProjectName, name);
 	}
 }
