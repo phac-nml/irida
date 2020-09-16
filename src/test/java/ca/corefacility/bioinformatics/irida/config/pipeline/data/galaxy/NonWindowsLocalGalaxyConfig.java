@@ -69,8 +69,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		localGalaxy.setTestGalaxyURL(galaxyInvalidURL2);
 
 		localGalaxy.setAdminName(new GalaxyAccountEmail("admin@galaxy.org"));
-		localGalaxy.setAdminPassword("admin");
-		localGalaxy.setAdminAPIKey("admin");
+		localGalaxy.setAdminPassword("password");
+		localGalaxy.setAdminAPIKey("fakekey");
 
 		logger.debug("Creating Admin Blend4j Galaxy Instance using api key: " + localGalaxy.getAdminAPIKey());
 		GalaxyInstance adminInstance = GalaxyInstanceFactory.get(localGalaxy.getGalaxyURL().toString(),

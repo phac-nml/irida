@@ -27,5 +27,5 @@ export async function validateClientId(clientId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function createClient(details) {
-  return axios.post(`${BASE_URL}`, details);
+  return axios.post(`${BASE_URL}`, details).then(({ data }) => data);
 }
