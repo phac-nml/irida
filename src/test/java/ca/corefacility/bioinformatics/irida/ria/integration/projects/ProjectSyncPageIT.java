@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
@@ -7,11 +9,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.Create
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Ignore;
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
@@ -23,7 +25,6 @@ public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
 	String clientSecret;
 
 	@Test
-	@Ignore
 	public void testSyncProject() {
 		LoginPage.loginAsAdmin(driver());
 
@@ -38,18 +39,15 @@ public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
 		RemoteApiUtilities.addRemoteApi(driver(), clientId, clientSecret);
 		page = ProjectSyncPage.goTo(driver());
 		page.selectApi(0);
-		assertTrue("Projects should be shown in dropdown", page.areProjectsAvailable());
-		page.selectProjectInListing(1);
-		String selectedProjectName = page.getSelectedProjectName();
+		final String name = "project";
+		page.selectProjectInListing(name);
 
-		page.openAdvanced();
 		String url = page.getProjectUrl();
 		assertFalse("URL should not be empty", url.isEmpty());
 		page.submitProject();
 
 		ProjectDetailsPage projectDetailsPage = ProjectDetailsPage.initElements(driver());
 		String dataProjectName = projectDetailsPage.getProjectName();
-
-		assertEquals("Project names should be equal", selectedProjectName, dataProjectName);
+		assertEquals("Should be on the remote project page", dataProjectName, name);
 	}
 }

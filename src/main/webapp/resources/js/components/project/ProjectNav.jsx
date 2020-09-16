@@ -22,7 +22,7 @@ export function ProjectNav() {
 
   return (
     <PageHeader
-      title={window.project.label}
+      title={<span className="t-project-name">{window.project.label}</span>}
       avatar={{ icon: <IconFolder /> }}
       tags={[<RemoteProjectStatus key="remote" />].filter((f) => f !== null)}
     >

@@ -40,7 +40,8 @@ Changes
 * [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
 * [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 * [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
-* [UI]: Updated Remote API Connection details page to use full Ant Design and updated oauth.
+* [UI]: Updated Remote API Connection details page to use full Ant Design and updated Oauth.
+* [UI]: Updated Create Remote Synchronized Project page to use Ant Design and updated Oauth.
 
 20.01 to 20.05
 --------------

@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,9 +11,16 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.CreateRemoteProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 /**
  * UI Service to handle request for Remote APIs
@@ -19,11 +29,16 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 public class UIRemoteAPIService {
     private final RemoteAPIService remoteAPIService;
     private final RemoteAPITokenService tokenService;
+    private final ProjectRemoteService projectRemoteService;
+    private final ProjectService projectService;
 
     @Autowired
-    public UIRemoteAPIService(RemoteAPIService remoteAPIService, RemoteAPITokenService tokenService) {
+    public UIRemoteAPIService(RemoteAPIService remoteAPIService, RemoteAPITokenService tokenService,
+            ProjectRemoteService projectRemoteService, ProjectService projectService) {
         this.remoteAPIService = remoteAPIService;
         this.tokenService = tokenService;
+        this.projectRemoteService = projectRemoteService;
+        this.projectService = projectService;
     }
 
     /**
@@ -59,5 +74,47 @@ public class UIRemoteAPIService {
      */
     public void deleteRemoteAPI(long remoteId) {
         remoteAPIService.delete(remoteId);
+    }
+
+    /**
+     * Get a list of all {@link RemoteAPI}s
+     *
+     * @return A list of {@link RemoteAPI} formatted for the UI
+     */
+    public List<RemoteAPIModel> getListOfRemoteApis() {
+        Iterable<RemoteAPI> remotes = remoteAPIService.findAll();
+        List<RemoteAPIModel> remoteAPIModels = new ArrayList<>();
+        remotes.forEach(r -> remoteAPIModels.add(new RemoteAPIModel(r)));
+        return remoteAPIModels;
+    }
+
+    /**
+     * Get a list of projects available on a remote API
+     *
+     * @param remoteId identifier for a remote api
+     * @return List of projects on a remote API
+     */
+    public List<RemoteProjectModel> getProjectsForAPI(Long remoteId) {
+        RemoteAPI api = remoteAPIService.read(remoteId);
+        List<Project> projects = projectRemoteService.listProjectsForAPI(api);
+        return projects.stream()
+                .map(RemoteProjectModel::new)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Add a new Synchronized Remote Project
+     *
+     * @param request Details about the remote project to synchronize
+     * @return the result of adding the new remote project
+     */
+    public AjaxCreateItemSuccessResponse createSynchronizedProject(CreateRemoteProjectRequest request) {
+        Project project = projectRemoteService.read(request.getUrl());
+        project.setId(null);
+        project.getRemoteStatus()
+                .setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+        project.setSyncFrequency(request.getFrequency());
+        project = projectService.create(project);
+        return new AjaxCreateItemSuccessResponse(project.getId());
     }
 }

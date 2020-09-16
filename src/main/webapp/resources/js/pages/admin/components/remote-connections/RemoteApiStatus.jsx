@@ -11,10 +11,11 @@ import { formatInternationalizedDateTime } from "../../../../utilities/date-util
  * If the API is not connected it will present the user a button allowing
  * them to connect.
  * @param {object} api - details about the remote API
+ * @param {function} onConnect - what do when the connection is made.
  * @returns {*}
  * @constructor
  */
-export function RemoteApiStatus({ api }) {
+export function RemoteApiStatus({ api, onConnect = () => {} }) {
   const [loading, setLoading] = useState(true);
   const [expiration, setExpiration] = useState(undefined);
 
@@ -26,11 +27,14 @@ export function RemoteApiStatus({ api }) {
     return () => window.removeEventListener("message", updateRemoteApi);
   }, []);
 
+  useEffect(() => checkApiStatus(), [api.id]);
+
   function checkApiStatus() {
     setLoading(true);
     checkConnectionStatus({ id: api.id }).then((data) => {
       setLoading(false);
       setExpiration(data);
+      data && onConnect();
     });
   }
 
@@ -43,11 +47,19 @@ export function RemoteApiStatus({ api }) {
     }
   }
 
+  /**
+   * This will open a popup window with the Oauth for the Remote API
+   */
   function updateConnectionStatus() {
+    const w = 600;
+    const h = 400;
+
+    const left = screen.width / 2 - w / 2;
+    const top = screen.height / 2 - h / 2;
     window.open(
       setBaseUrl(`remote_api/connect/${api.id}`),
       "",
-      "height=400, width=600, chrome=yes, centerscreen"
+      `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${top}, left=${left}`
     );
   }
 

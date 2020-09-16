@@ -32,3 +32,32 @@ export function getConnectionDetails({ id }) {
 export function deleteRemoteApi({ id }) {
   return axios.delete(`${BASE_URL}/${id}/delete`);
 }
+
+/**
+ * Get a list of all remote APIs
+ * @returns {Promise<*>}
+ */
+export function getListOfRemoteApis() {
+  return axios.get(`${BASE_URL}/apis`).then(({ data }) => data);
+}
+
+/**
+ * Get a list of projects for a Remote API
+ * @param id - Remote API identifier
+ * @returns {Promise<*>}
+ */
+export function getProjectsForAPI({ id }) {
+  return axios.get(`${BASE_URL}/${id}/projects`).then(({ data }) => data);
+}
+
+/**
+ * Create a new Synchronized Project
+ * @param url
+ * @param frequency
+ * @returns {Promise<*>}
+ */
+export function createSynchronizedProject({ url, frequency }) {
+  return axios
+    .post(`${BASE_URL}/project`, { url, frequency })
+    .then(({ data }) => data);
+}

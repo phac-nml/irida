@@ -17,6 +17,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
@@ -101,5 +104,45 @@ public class RemoteAPIAjaxController {
     @DeleteMapping("/{remoteId}/delete")
     public void deleteRemoteAPI(@PathVariable long remoteId) {
         service.deleteRemoteAPI(remoteId);
+    }
+
+    /**
+     * Get a list of all available remote API f
+     *
+     * @return List of {@link RemoteAPIModel}
+     */
+    @GetMapping("/apis")
+    public ResponseEntity<List<RemoteAPIModel>> getListOfRemoteApis() {
+        return ResponseEntity.ok(service.getListOfRemoteApis());
+    }
+
+    /**
+     * Get a list of project available at a remote API
+     *
+     * @param remoteId identifier for a remote API
+     * @return list of project
+     */
+    @GetMapping("/{remoteId}/projects")
+    public ResponseEntity<List<RemoteProjectModel>> getProjectsForAPI(@PathVariable long remoteId) {
+        return ResponseEntity.ok(service.getProjectsForAPI(remoteId));
+    }
+
+    /**
+     * Create a new synchronized remote project
+     *
+     * @param request details about the remote project
+     * @return status of created the new remote project
+     */
+    @PostMapping("/project")
+    public ResponseEntity<AjaxResponse> createSynchronizedProject(@RequestBody CreateRemoteProjectRequest request) {
+        try {
+            return ResponseEntity.ok(service.createSynchronizedProject(request));
+        } catch (IridaOAuthException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new AjaxErrorResponse("CRAP NOT AUTHORIZED"));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new AjaxErrorResponse("CRAP CANNOT FIND IT"));
+        }
     }
 }
