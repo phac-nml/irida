@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import java.util.Date;
 

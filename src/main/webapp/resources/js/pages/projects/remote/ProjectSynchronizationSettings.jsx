@@ -5,7 +5,7 @@ import { RemoteApiStatus } from "../../admin/components/remote-connections/Remot
 import {
   updateRemoteProjectSyncSettings,
   getRemoteProjectSyncSettings }
-from "../../../apis/projects/projects";
+from "../../../apis/projects/remote-projects";
 import { formatDate } from "../../../utilities/date-utilities";
 import { SyncFrequencySelect } from "../../../components/remote-api/SyncFrequencySelect";
 import { HelpPopover } from "../../../components/popovers";
@@ -16,7 +16,7 @@ import { HelpPopover } from "../../../components/popovers";
  * @constructor
  */
 export function ProjectSynchronizationSettings() {
-  const projectId = window.project.id;
+  const projectId = window.location.pathname.match(/projects\/(\d+)/)[1];
   const syncNowEnabledStates = ["SYNCHRONIZED", "ERROR"];
   const [remoteProjectData, setRemoteProjectData] = useState(null);
   const [disableSyncNow, setDisableSyncNow] = useState(false);
@@ -26,10 +26,10 @@ export function ProjectSynchronizationSettings() {
   for this remote project.
    */
   useEffect(() => {
-    getRemoteProjectSyncSettings(projectId).then(res => {
-      setRemoteProjectData(res.remoteProjectSettings);
+    getRemoteProjectSyncSettings(projectId).then(remoteProjectSettings => {
+      setRemoteProjectData(remoteProjectSettings);
     }).catch((message) => {
-      notification.error({ message: message });
+      notification.error({ message });
     });
   }, []);
 
@@ -40,7 +40,7 @@ export function ProjectSynchronizationSettings() {
           <span>{formatDate({ date: remoteProjectData.lastUpdate })}</span>
           <br />
           <Button type="primary"
-                  onClick={() => updateSyncSettings({forceSync: true})}
+                  onClick={() => updateSyncSettings({ forceSync: true })}
                   disabled={(disableSyncNow ? true : false) ||
                             (syncNowEnabledStates.includes(remoteProjectData.remoteStatus.syncStatus) ? false : true)}
                   className="t-sync-now-btn"
@@ -68,7 +68,7 @@ export function ProjectSynchronizationSettings() {
             frequency: remoteProjectData.projectSyncFrequencies.indexOf(remoteProjectData.projectSyncFrequency),
           }}>
             <SyncFrequencySelect
-              onChange={(e) => updateSyncSettings({frequency: remoteProjectData.projectSyncFrequencies[e]})}
+              onChange={(e) => updateSyncSettings({ projectSyncFrequency: remoteProjectData.projectSyncFrequencies[e] })}
               labelRequired={false}
             />
           </Form>
@@ -81,7 +81,7 @@ export function ProjectSynchronizationSettings() {
           <br />
           { window.TL._USER.identifier !== remoteProjectData.syncUser.identifier ?
               <Button
-                onClick={() => updateSyncSettings({changeUser: true})}
+                onClick={() => updateSyncSettings({ changeUser: true })}
                 className="t-become-sync-user-btn"
               >
                 {i18n("ProjectRemoteSettings.becomeSyncUser")}
@@ -93,14 +93,14 @@ export function ProjectSynchronizationSettings() {
     ];
 
   // Used to update sync user, sync frequency, and force to sync now
-  function updateSyncSettings(data) {
-    updateRemoteProjectSyncSettings(projectId, data).then(res => {
+  function updateSyncSettings({forceSync, changeUser, projectSyncFrequency}) {
+    updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}).then(res => {
       notification.success({ message: res.result });
-      if(data.forceSync === true) {
+      if(forceSync === true) {
         setDisableSyncNow(true);
       }
     }).catch((message) => {
-      notification.error({ message: message });
+      notification.error({ message });
     });
   }
 
