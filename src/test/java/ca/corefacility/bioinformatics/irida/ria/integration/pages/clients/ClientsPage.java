@@ -18,7 +18,7 @@ public class ClientsPage extends AbstractPage {
 	}
 
 	public static ClientsPage goTo(WebDriver driver) {
-		get(driver, "clients");
+		get(driver, "admin/clients");
 		return PageFactory.initElements(driver, ClientsPage.class);
 	}
 

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -15,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  */
 public class UserGroupsListingPage extends AbstractPage {
 	private static final String GROUP_LISTING_PAGE = "groups";
+	private static final String GROUP_LISTING_ADMIN_PAGE = "admin/groups";
 	private static WebDriver webDriver;
 	private static AntTable table;
 
@@ -41,6 +43,10 @@ public class UserGroupsListingPage extends AbstractPage {
 		get(driver, GROUP_LISTING_PAGE);
 	}
 
+	public void gotoAdminPage() {
+		get(driver, GROUP_LISTING_ADMIN_PAGE);
+	}
+
 	public int getNumberOfExistingUserGroups() {
 		return table.getRows().size();
 	}
@@ -52,5 +58,13 @@ public class UserGroupsListingPage extends AbstractPage {
 		WebElement input = driver.switchTo().activeElement();
 		input.sendKeys(name);
 		newGroupConfirmButton.click();
+	}
+
+	/*
+	 * Method that takes in the current url and waits until the url has changed.
+	 */
+	public void validateRouteChange(String url) {
+		WebDriverWait wait = new WebDriverWait(webDriver, 2);
+		wait.until(ExpectedConditions.not(ExpectedConditions.urlToBe(url)));
 	}
 }

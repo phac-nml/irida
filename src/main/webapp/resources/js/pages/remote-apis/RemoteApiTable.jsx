@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import {
   PagedTable,
   PagedTableContext
@@ -24,7 +25,7 @@ export function RemoteApiTable() {
         return (
           <Button
             type="link"
-            href={`remote_api/${record.id}`}
+            href={setBaseUrl(`remote_api/${record.id}`)}
             className="t-api-name"
           >
             {text}

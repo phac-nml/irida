@@ -35,6 +35,10 @@ Changes
 * [UI]: Fixed bug where add member to project button was displayed on project members page for project collaborators. (20.05.04)
 * [Developer]: Added optional method `getAnalysisViewer` for IridaPlugin to allow external applications to use IRIDA's built in analysis visualizations (such as the phylogenetic tree viewer).
 * [REST]: Fixed issue with double slashes sometimes getting added in OAuth2 redirect URI causing auth flow to fail.
+* [Workflow]: Updated the SNVPhyl pipeline to version `1.2.2`.
+* [Developer]: Updated the Galaxy Docker instance to Galaxy `20.05`.
+* [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
+* [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
 
 20.01 to 20.05
 --------------
@@ -84,6 +88,7 @@ Changes
 * [UI]: Outputs and Tree view now span the full width of the page.
 * [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
 * [UI]: Updated the analysis results page to auto update the progress of an analysis.
+* [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
 
 19.09 to 20.01
 --------------

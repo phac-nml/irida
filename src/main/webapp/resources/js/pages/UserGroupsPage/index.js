@@ -5,6 +5,7 @@ import { ContentLoading } from "../../components/loader";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { RolesProvider } from "../../contexts";
 import { getUserGroupRoles } from "../../apis/users/groups";
+import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -26,6 +27,8 @@ const UserGroupsDetailsPage = lazy(() =>
  * @constructor
  */
 export function UserGroups() {
+  const DEFAULT_URL = setBaseUrl("/groups");
+
   return (
     <Suspense
       fallback={
@@ -41,12 +44,14 @@ export function UserGroups() {
         </div>
       }
     >
-      <RolesProvider rolesFn={getUserGroupRoles}>
-        <Router style={{ height: "100%" }}>
-          <UserGroupsPage path={setBaseUrl("/groups")} />
-          <UserGroupsDetailsPage path={setBaseUrl("/groups/:id")} />
-        </Router>
-      </RolesProvider>
+      <UserGroupsProvider>
+        <RolesProvider rolesFn={getUserGroupRoles}>
+          <Router style={{ height: "100%" }}>
+            <UserGroupsPage baseUrl={DEFAULT_URL} path={DEFAULT_URL} />
+            <UserGroupsDetailsPage baseUrl={DEFAULT_URL} path={`${DEFAULT_URL}/:id`} />
+          </Router>
+        </RolesProvider>
+      </UserGroupsProvider>
     </Suspense>
   );
 }

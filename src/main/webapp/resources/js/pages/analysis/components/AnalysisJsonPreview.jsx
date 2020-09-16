@@ -2,10 +2,10 @@
  * @File component renders a JSON preview of output files.
  */
 
-import React, { useEffect, useState } from "react";
-import { Divider, List, Row } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { Divider, List } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { isAdmin } from "../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
 import { OutputWrapper } from "../../../components/OutputFiles/OutputWrapper";
@@ -16,6 +16,8 @@ import { FixedSizeList as VList } from "react-window";
 const SCROLLABLE_DIV_HEIGHT = 300;
 
 export default function AnalysisJsonPreview({ output }) {
+  const { analysisContext } = useContext(AnalysisContext);
+
   let savedText = "";
   const [jsonData, setJsonData] = useState(null);
   /*
@@ -65,7 +67,7 @@ export default function AnalysisJsonPreview({ output }) {
   return jsonData !== null ? (
     <div>
         <OutputFileHeader output={output} />
-      {isAdmin ? (
+      {analysisContext.isAdmin ? (
         <div>
           <OutputWrapper overflowRequired={!Array.isArray(jsonData)}>
             {Array.isArray(jsonData) ? (

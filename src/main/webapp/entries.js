@@ -40,7 +40,6 @@ module.exports = {
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "ncbi-exports": "./resources/js/admin/ncbi-exports",
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
@@ -68,13 +67,10 @@ module.exports = {
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
-  "clients-list": "./resources/js/pages/clients/listing/ClientListingPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
-  "announcement-admin":
-    "./resources/js/pages/announcement/AnnouncementAdminPage.jsx",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
@@ -85,4 +81,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   "project-metadata-templates":
     "./resources/js/pages/projects/metadata-templates",
+  admin: "./resources/js/pages/admin/index.js",
 };

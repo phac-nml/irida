@@ -7,11 +7,19 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`ajax/sequencingRuns`);
 
-render(
-  <PageWrapper title={i18n("sequencingruns.title")}>
-    <PagedTableProvider url={`${URL}/list`}>
-      <SequencingRunsList />
-    </PagedTableProvider>
-  </PageWrapper>,
-  document.querySelector("#root")
-);
+/**
+ * React component to render Sequencing Runs page.
+ * @returns {*}
+ * @constructor
+ */
+export function SequencingRuns({}) {
+  return (
+    <PageWrapper title={i18n("sequencingruns.title")}>
+      <PagedTableProvider url={`${URL}/list`}>
+        <SequencingRunsList/>
+      </PagedTableProvider>
+    </PageWrapper>
+  );
+}
+
+render(<SequencingRuns />, document.querySelector("#root"));
