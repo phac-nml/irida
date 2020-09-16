@@ -13,7 +13,7 @@ const BASE_URL = setBaseUrl(`ajax/remote-projects`);
 export async function updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}) {
   try {
     const { data } = await axios.post(
-      setBaseUrl(`${BASE_URL}/${projectId}/settings/sync`),
+      `${BASE_URL}/${projectId}/settings/sync`,
       {forceSync, changeUser, projectSyncFrequency}
     );
     return data;
@@ -28,5 +28,5 @@ export async function updateRemoteProjectSyncSettings(projectId, {forceSync, cha
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function getRemoteProjectSyncSettings(projectId) {
-  return axios.get(setBaseUrl(`${BASE_URL}/${projectId}/settings/remote-settings`)).then(({ data }) => data);
+  return axios.get(`${BASE_URL}/${projectId}/settings/remote-settings`).then(({ data }) => data);
 }

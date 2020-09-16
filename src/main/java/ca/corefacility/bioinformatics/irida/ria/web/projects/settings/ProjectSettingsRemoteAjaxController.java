@@ -63,7 +63,7 @@ public class ProjectSettingsRemoteAjaxController {
 			@RequestBody RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest,
 			Principal principal,
 			Locale locale) {
-		
+
 		Project read = projectService.read(projectId);
 		RemoteStatus remoteStatus = read.getRemoteStatus();
 		Map<String, Object> updates = new HashMap<>();
