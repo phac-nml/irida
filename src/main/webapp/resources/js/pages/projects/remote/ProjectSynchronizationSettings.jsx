@@ -43,6 +43,7 @@ export function ProjectSynchronizationSettings() {
                   onClick={() => updateSyncSettings({forceSync: true})}
                   disabled={(disableSyncNow ? true : false) ||
                             (syncNowEnabledStates.includes(remoteProjectData.remoteStatus.syncStatus) ? false : true)}
+                  className="t-sync-now-btn"
           >
             {i18n("ProjectRemoteSettings.syncNow")}
           </Button>
@@ -80,7 +81,9 @@ export function ProjectSynchronizationSettings() {
           <br />
           { window.TL._USER.identifier !== remoteProjectData.syncUser.identifier ?
               <Button
-                onClick={() => updateSyncSettings({changeUser: true})}>
+                onClick={() => updateSyncSettings({changeUser: true})}
+                className="t-become-sync-user-btn"
+              >
                 {i18n("ProjectRemoteSettings.becomeSyncUser")}
               </Button>
             : null
@@ -103,7 +106,7 @@ export function ProjectSynchronizationSettings() {
 
   return (
     <>
-      <h1>{i18n("ProjectRemoteSettings.heading")}</h1>
+      <h1 className="t-main-heading">{i18n("ProjectRemoteSettings.heading")}</h1>
       <BasicList dataSource={syncSettings} />
     </>
   );

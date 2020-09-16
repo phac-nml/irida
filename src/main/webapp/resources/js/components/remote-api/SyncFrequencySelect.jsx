@@ -27,7 +27,7 @@ export function SyncFrequencySelect({
       }
       name={name}
     >
-      <Select onChange={onChange}>
+      <Select onChange={onChange} className={"t-sync-frequency"}>
         <Select.Option value={0}>
           {i18n("SyncFrequencySelect.frequency.0")}
         </Select.Option>
