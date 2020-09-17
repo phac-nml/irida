@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-
 /**
  * A utility class for doing operations on remote project sync settings.
  */
@@ -55,7 +54,8 @@ public class UIRemoteProjectService {
 	 * @throws Exception if user cannot read the remote project or project is not found
 	 */
 	public String updateProjectSyncSettings(Long projectId,
-		RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal, Locale locale) throws Exception {
+			RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal, Locale locale)
+			throws Exception {
 
 		try {
 			Project project = projectService.read(projectId);
@@ -86,7 +86,8 @@ public class UIRemoteProjectService {
 
 					message = messageSource.getMessage("server.ProjectRemote.userchange", new Object[] {}, locale);
 				} catch (Exception ex) {
-					throw new Exception(messageSource.getMessage("server.ProjectRemote.userchange.error", new Object[] {}, locale));
+					throw new Exception(
+							messageSource.getMessage("server.ProjectRemote.userchange.error", new Object[] {}, locale));
 				}
 			}
 
@@ -94,8 +95,10 @@ public class UIRemoteProjectService {
 
 			return message;
 
-		} catch(Exception ex) {
-			throw new Exception(messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] {projectId}, locale));
+		} catch (Exception ex) {
+			throw new Exception(
+					messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] { projectId },
+							locale));
 		}
 	}
 
@@ -103,6 +106,7 @@ public class UIRemoteProjectService {
 	 * Gets the remote synchronization {@link Project} settings
 	 *
 	 * @param projectId the ID of the {@link Project} to read
+	 * @param locale    user's locale
 	 * @return {@link RemoteProjectSettings}
 	 * @throws Exception throws Exception if project is not found
 	 */
@@ -120,7 +124,9 @@ public class UIRemoteProjectService {
 			return new RemoteProjectSettings(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies,
 					projectSyncFrequency, syncUser);
 		} catch (Exception e) {
-			throw new Exception(messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] {projectId}, locale));
+			throw new Exception(
+					messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] { projectId },
+							locale));
 		}
 	}
 }

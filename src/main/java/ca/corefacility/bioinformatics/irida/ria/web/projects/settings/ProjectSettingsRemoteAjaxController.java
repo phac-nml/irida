@@ -51,7 +51,8 @@ public class ProjectSettingsRemoteAjaxController {
 					uiRemoteProjectService.updateProjectSyncSettings(projectId, remoteProjectSettingsUpdateRequest,
 							principal, locale)));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -59,6 +60,7 @@ public class ProjectSettingsRemoteAjaxController {
 	 * Gets the remote synchronization {@link Project} settings
 	 *
 	 * @param projectId the ID of the {@link Project} to read
+	 * @param locale    user's locale
 	 * @return {@link RemoteProjectSettings} object which has the
 	 * remote project synchronization settings
 	 */
@@ -67,8 +69,9 @@ public class ProjectSettingsRemoteAjaxController {
 	public ResponseEntity<RemoteProjectSettings> getProjectRemoteSettings(@PathVariable Long projectId, Locale locale) {
 		try {
 			return ResponseEntity.ok(uiRemoteProjectService.getProjectRemoteSettings(projectId, locale));
-		} catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(null);
 		}
 	}
 }
