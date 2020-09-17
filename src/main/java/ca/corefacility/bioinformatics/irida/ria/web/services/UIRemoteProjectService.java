@@ -17,12 +17,10 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettings;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettingsUpdateRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 
 /**
  * A utility class for doing operations on remote project sync settings.
@@ -53,18 +51,17 @@ public class UIRemoteProjectService {
 	 *                                           force sync for a project
 	 * @param principal                          The current logged in user
 	 * @param locale                             user's locale
-	 * @return {@link AjaxResponse}
+	 * @return {@link String}
+	 * @throws {@link Exception}
 	 */
-	public AjaxResponse updateProjectSyncSettings(Long projectId,
-			RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal, Locale locale) {
-		Project project = projectService.read(projectId);
+	public String updateProjectSyncSettings(Long projectId,
+		RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal, Locale locale) throws Exception {
 
-		if (project != null) {
+		try {
+			Project project = projectService.read(projectId);
 			RemoteStatus remoteStatus = project.getRemoteStatus();
 			Map<String, Object> updates = new HashMap<>();
-
 			String message = null;
-			String error = null;
 
 			if (remoteProjectSettingsUpdateRequest.getProjectSyncFrequency() != null) {
 				updates.put("syncFrequency", remoteProjectSettingsUpdateRequest.getProjectSyncFrequency());
@@ -89,20 +86,17 @@ public class UIRemoteProjectService {
 
 					message = messageSource.getMessage("server.ProjectRemote.userchange", new Object[] {}, locale);
 				} catch (Exception ex) {
-					error = messageSource.getMessage("server.ProjectRemote.userchange.error", new Object[] {}, locale);
+					throw new Exception(messageSource.getMessage("server.ProjectRemote.userchange.error", new Object[] {}, locale));
 				}
 			}
 
 			projectService.updateProjectSettings(project, updates);
 
-			if (error != null) {
-				return new AjaxErrorResponse(error);
-			}
+			return message;
 
-			return new AjaxUpdateItemSuccessResponse(message);
+		} catch(Exception ex) {
+			throw new Exception(messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] {projectId}, locale));
 		}
-		return new AjaxErrorResponse(
-				messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] { projectId }, locale));
 	}
 
 	/**

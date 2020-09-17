@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettings;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettingsUpdateRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteProjectService;
 
 /**
@@ -43,9 +46,13 @@ public class ProjectSettingsRemoteAjaxController {
 	public ResponseEntity<AjaxResponse> updateProjectSyncSettings(@PathVariable Long projectId,
 			@RequestBody RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal,
 			Locale locale) {
-		return ResponseEntity.ok(
-				uiRemoteProjectService.updateProjectSyncSettings(projectId, remoteProjectSettingsUpdateRequest,
-						principal, locale));
+		try {
+			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
+					uiRemoteProjectService.updateProjectSyncSettings(projectId, remoteProjectSettingsUpdateRequest,
+							principal, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**
