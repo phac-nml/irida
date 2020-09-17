@@ -1,10 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Form, Input } from "antd";
-import {
-  useLaunchDispatch,
-  useLaunchState,
-} from "../pipeline-launch/launch-context";
-import * as CONSTANTS from "./lauch-constants";
+import { useLaunchDispatch, useLaunchState } from "./launch-context";
+import * as CONSTANTS from "../pipeline/lauch-constants";
 
 /**
  * React component for the editing of launching a pipeline base details, including

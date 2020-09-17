@@ -1,18 +1,22 @@
 import React from "react";
 import { LaunchProvider, useLaunchState } from "./launch-context";
-import { PipelineDetails } from "../pipeline/PipelineDetails";
+import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Button, Col, Form, PageHeader, Result, Row, Space, Tabs } from "antd";
+import { Button, Card, Col, Form, PageHeader, Result, Row, Space, } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { LaunchComplete } from "./LaunchComplete";
 import { PipelineLaunchButton } from "../pipeline/PipelineLaunchButton";
 
-const { TabPane } = Tabs;
-
 function LaunchTabs() {
-  const { original, complete, requiresReference, notFound } = useLaunchState();
+  const {
+    fetching,
+    original,
+    complete,
+    requiresReference,
+    notFound,
+  } = useLaunchState();
 
   const steps = [
     {
@@ -57,21 +61,28 @@ function LaunchTabs() {
         <PageHeader
           title={original.name}
           onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
+          extra={[<PipelineLaunchButton key="launch" />]}
         />
-        <Space direction="vertical" style={{ width: `100%` }} size="large">
+        {fetching ? null : (
           <Form layout="vertical">
-            <Tabs tabPosition="left">
-              {steps.map((step) => (
-                <TabPane tab={step.title} key={step.key}>
-                  {step.content}
-                </TabPane>
-              ))}
-            </Tabs>
+            <Space direction="vertical" style={{ width: `100%` }} size="large">
+              <Card title={"PIPELINE DETAILS"}>
+                <PipelineDetails />
+              </Card>
+              <Card title={"PIPELINE PARAMETERS"}>
+                <PipelineParameters />
+              </Card>
+              {requiresReference ? (
+                <Card title={"Reference File"}>
+                  <ReferenceFiles />
+                </Card>
+              ) : null}
+            </Space>
+            <div
+              style={{ display: "flex", flexDirection: "row-reverse" }}
+            ></div>
           </Form>
-          <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-            <PipelineLaunchButton key="launch" />
-          </div>
-        </Space>
+        )}
       </Col>
     </Row>
   );

@@ -3,7 +3,7 @@ import React, { Component, lazy, Suspense } from "react";
 import { Link, Location, navigate, Router } from "@reach/router";
 import { Menu, Row } from "antd";
 import styled from "styled-components";
-import { grey1 } from "../../../styles/colors";
+import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
@@ -52,6 +52,7 @@ const ToolsInner = styled.div`
   bottom: 0;
   left: 0;
   overflow-x: auto;
+  background-color: ${grey4};
 `;
 
 /**

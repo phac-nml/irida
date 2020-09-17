@@ -71,6 +71,7 @@ export function PipelineParameters() {
       </div>
       <Divider />
       <List
+        bordered={true}
         itemLayout="horizontal"
         dataSource={parameters}
         renderItem={(parameter, index) => (

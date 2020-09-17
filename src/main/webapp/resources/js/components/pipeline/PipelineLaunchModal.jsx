@@ -1,7 +1,7 @@
 import React from "react";
 import { useLaunchState } from "../pipeline-launch/launch-context";
 import { Modal, Tabs } from "antd";
-import { PipelineDetails } from "./PipelineDetails";
+import { PipelineDetails } from "../pipeline-launch/PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "../pipeline-launch/PipelineParameters";
 
