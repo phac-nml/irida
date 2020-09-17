@@ -52,7 +52,7 @@ public class UIRemoteProjectService {
 	 * @param principal                          The current logged in user
 	 * @param locale                             user's locale
 	 * @return {@link String}
-	 * @throws {@link Exception}
+	 * @throws Exception
 	 */
 	public String updateProjectSyncSettings(Long projectId,
 		RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal, Locale locale) throws Exception {
