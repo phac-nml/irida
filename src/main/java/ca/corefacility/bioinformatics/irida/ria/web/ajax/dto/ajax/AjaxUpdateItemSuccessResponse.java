@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax;
 
+/**
+ * UI Response for successfully updating an item. Will return the internationalized
+ * success text.
+ */
 public class AjaxUpdateItemSuccessResponse extends AjaxResponse {
 	public String responseMessage;
 
