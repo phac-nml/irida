@@ -94,8 +94,8 @@ export function ProjectSynchronizationSettings() {
 
   // Used to update sync user, sync frequency, and force to sync now
   function updateSyncSettings({forceSync, changeUser, projectSyncFrequency}) {
-    updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}).then(res => {
-      notification.success({ message: res.result });
+    updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}).then(({ responseMessage }) => {
+      notification.success({ message: responseMessage });
       if(forceSync) {
         setDisableSyncNow(true);
       }
