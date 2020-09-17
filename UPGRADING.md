@@ -6,6 +6,7 @@ upgrading IRIDA that cannot be automated.
 
 20.05 to 20.09
 --------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 * The [SNVPhyl](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/) pipeline has been upgraded. Please make sure to install the necessary tools in Galaxy.
 * The [AssemblyAnnotation](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/) and [AssemblyAnnotationCollection](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation-collection/) pipelines have been upgraded. Please make sure to install the necessary tools in Galaxy.
 * We have upgraded our Galaxy Docker image to Galaxy 20.05: `docker pull phacnml/galaxy-irida-20.05`. The default account credentials for this Galaxy instance have changed. The username remains as `admin@galaxy.org` but the password is `password`. The admin key has also changed to `fakekey`. Please keep these changes in mind (and make adjustments to the Galaxy credentials in `/etc/irida/irida.conf`) if you use the Docker image.
