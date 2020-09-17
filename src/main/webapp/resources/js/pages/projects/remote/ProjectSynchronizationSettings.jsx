@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, notification } from "antd";
+import { Button, Form, notification , Typography} from "antd";
 import { BasicList } from "../../../components/lists";
 import { RemoteApiStatus } from "../../admin/components/remote-connections/RemoteApiStatus";
 import {
@@ -9,6 +9,8 @@ from "../../../apis/projects/remote-projects";
 import { formatDate } from "../../../utilities/date-utilities";
 import { SyncFrequencySelect } from "../../../components/remote-api/SyncFrequencySelect";
 import { HelpPopover } from "../../../components/popovers";
+
+const { Title } = Typography;
 
 /**
  * React component for render the remote project sync settings.
@@ -37,8 +39,7 @@ export function ProjectSynchronizationSettings() {
       {
         title: i18n("ProjectRemoteSettings.lastSync"),
         desc: (<div>
-          <span>{formatDate({ date: remoteProjectData.lastUpdate })}</span>
-          <br />
+          <div>{formatDate({ date: remoteProjectData.lastUpdate })}</div>
           <Button type="primary"
                   onClick={() => updateSyncSettings({ forceSync: true })}
                   disabled={(disableSyncNow ? true : false) ||
@@ -77,8 +78,7 @@ export function ProjectSynchronizationSettings() {
       {
         title: i18n("ProjectRemoteSettings.syncUser"),
         desc: (<div>
-          <span>{remoteProjectData.syncUser.label}</span>
-          <br />
+          <div>{remoteProjectData.syncUser.label}</div>
           { window.TL._USER.identifier !== remoteProjectData.syncUser.identifier ?
               <Button
                 onClick={() => updateSyncSettings({ changeUser: true })}
@@ -96,7 +96,7 @@ export function ProjectSynchronizationSettings() {
   function updateSyncSettings({forceSync, changeUser, projectSyncFrequency}) {
     updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}).then(res => {
       notification.success({ message: res.result });
-      if(forceSync === true) {
+      if(forceSync) {
         setDisableSyncNow(true);
       }
     }).catch((message) => {
@@ -106,7 +106,9 @@ export function ProjectSynchronizationSettings() {
 
   return (
     <>
-      <h1 className="t-main-heading">{i18n("ProjectRemoteSettings.heading")}</h1>
+      <Title level={2} className="t-main-heading">
+        {i18n("ProjectRemoteSettings.heading")}
+      </Title>
       <BasicList dataSource={syncSettings} />
     </>
   );
