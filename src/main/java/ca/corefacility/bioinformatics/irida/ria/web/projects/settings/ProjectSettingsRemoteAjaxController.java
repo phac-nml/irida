@@ -64,7 +64,11 @@ public class ProjectSettingsRemoteAjaxController {
 	 */
 	@RequestMapping("/remote-settings")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public ResponseEntity<RemoteProjectSettings> getProjectRemoteSettings(@PathVariable Long projectId) {
-		return ResponseEntity.ok(uiRemoteProjectService.getProjectRemoteSettings(projectId));
+	public ResponseEntity<RemoteProjectSettings> getProjectRemoteSettings(@PathVariable Long projectId, Locale locale) {
+		try {
+			return ResponseEntity.ok(uiRemoteProjectService.getProjectRemoteSettings(projectId, locale));
+		} catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
 	}
 }

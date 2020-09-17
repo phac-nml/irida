@@ -52,7 +52,7 @@ public class UIRemoteProjectService {
 	 * @param principal                          The current logged in user
 	 * @param locale                             user's locale
 	 * @return {@link String}
-	 * @throws Exception
+	 * @throws Exception if user cannot read the remote project or project is not found
 	 */
 	public String updateProjectSyncSettings(Long projectId,
 		RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest, Principal principal, Locale locale) throws Exception {
@@ -104,18 +104,23 @@ public class UIRemoteProjectService {
 	 *
 	 * @param projectId the ID of the {@link Project} to read
 	 * @return {@link RemoteProjectSettings}
+	 * @throws Exception throws Exception if project is not found
 	 */
-	public RemoteProjectSettings getProjectRemoteSettings(Long projectId) {
-		Project project = projectService.read(projectId);
+	public RemoteProjectSettings getProjectRemoteSettings(Long projectId, Locale locale) throws Exception {
+		try {
+			Project project = projectService.read(projectId);
 
-		RemoteStatus remoteStatus = project.getRemoteStatus();
-		Date lastUpdate = remoteStatus.getLastUpdate();
-		RemoteAPI remoteAPI = remoteStatus.getApi();
-		ProjectSyncFrequency[] projectSyncFrequencies = ProjectSyncFrequency.values();
-		ProjectSyncFrequency projectSyncFrequency = project.getSyncFrequency();
-		User syncUser = remoteStatus.getReadBy();
+			RemoteStatus remoteStatus = project.getRemoteStatus();
+			Date lastUpdate = remoteStatus.getLastUpdate();
+			RemoteAPI remoteAPI = remoteStatus.getApi();
+			ProjectSyncFrequency[] projectSyncFrequencies = ProjectSyncFrequency.values();
+			ProjectSyncFrequency projectSyncFrequency = project.getSyncFrequency();
+			User syncUser = remoteStatus.getReadBy();
 
-		return new RemoteProjectSettings(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies,
-				projectSyncFrequency, syncUser);
+			return new RemoteProjectSettings(remoteStatus, lastUpdate, remoteAPI, projectSyncFrequencies,
+					projectSyncFrequency, syncUser);
+		} catch (Exception e) {
+			throw new Exception(messageSource.getMessage("server.ProjectRemote.unable.to.find", new Object[] {projectId}, locale));
+		}
 	}
 }

@@ -30,7 +30,7 @@ export function ProjectSynchronizationSettings() {
   useEffect(() => {
     getRemoteProjectSyncSettings(projectId).then(remoteProjectSettings => {
       setRemoteProjectData(remoteProjectSettings);
-    }).catch((message) => {
+    }).catch(({message}) => {
       notification.error({ message });
     });
   }, []);
@@ -99,8 +99,8 @@ export function ProjectSynchronizationSettings() {
       if(forceSync) {
         setDisableSyncNow(true);
       }
-    }).catch((message) => {
-      notification.error({ message });
+    }).catch(({message}) => {
+      notification.error({message});
     });
   }
 

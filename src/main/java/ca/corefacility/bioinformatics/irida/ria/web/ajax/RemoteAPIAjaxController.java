@@ -139,10 +139,10 @@ public class RemoteAPIAjaxController {
             return ResponseEntity.ok(service.createSynchronizedProject(request));
         } catch (IridaOAuthException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new AjaxErrorResponse("CRAP NOT AUTHORIZED"));
+                    .body(new AjaxErrorResponse(e.getMessage()));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new AjaxErrorResponse("CRAP CANNOT FIND IT"));
+                    .body(new AjaxErrorResponse(e.getMessage()));
         }
     }
 }

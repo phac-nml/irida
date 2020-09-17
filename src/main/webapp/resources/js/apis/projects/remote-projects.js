@@ -8,18 +8,16 @@ const BASE_URL = setBaseUrl(`ajax/remote-projects`);
  * @param {number} projectId - identifier for a project
  * @param {object} {} - object which contains frequency,
  * forceSync, and/or changeUser values to update
- * @returns {Promise<AxiosResponse<any>>}
+ * @returns {Promise<{error: *}>}
  */
 export async function updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}) {
-  try {
-    const { data } = await axios.post(
+    return await axios.post(
       `${BASE_URL}/${projectId}/settings/sync`,
       {forceSync, changeUser, projectSyncFrequency}
-    );
-    return data;
-  } catch (e) {
-    return {};
-  }
+    ).then(({ data }) => data
+    ).catch(error => {
+      throw new Error(error.response.data.error);
+    });
 }
 
 /**
@@ -28,5 +26,10 @@ export async function updateRemoteProjectSyncSettings(projectId, {forceSync, cha
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function getRemoteProjectSyncSettings(projectId) {
-  return axios.get(`${BASE_URL}/${projectId}/settings/remote-settings`).then(({ data }) => data);
+    return axios.get(
+      `${BASE_URL}/${projectId}/settings/remote-settings`
+    ).then(({ data }) => data
+    ).catch(error => {
+      throw new Error(error.response.data.error);
+    });
 }
