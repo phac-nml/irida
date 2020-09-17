@@ -3,7 +3,7 @@ import { LaunchProvider, useLaunchState } from "./launch-context";
 import { PipelineDetails } from "./PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Button, Card, Col, Form, PageHeader, Result, Row, Space, } from "antd";
+import { Button, Card, Col, Form, PageHeader, Result, Row, Space } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { LaunchComplete } from "./LaunchComplete";
