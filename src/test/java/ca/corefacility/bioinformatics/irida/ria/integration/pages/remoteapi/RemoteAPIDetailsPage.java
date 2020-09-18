@@ -117,35 +117,6 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		waitForTime(8000);
 	}
 
-//	public boolean checkDeleteSuccess() {
-//		boolean deleted = false;
-//
-//		logger.debug("Checking for client existence");
-//		do {
-//			try {
-//				WebElement el = driver.findElement(By.className("ant-page-header-heading-title"));
-//				if (el.getText().equals("Remote IRIDA Connections")) {
-//					logger.debug("Successfully loaded client list page");
-//					waitForAjax();
-//					logger.debug("Table loaded");
-//					List<WebElement> findElements = driver.findElements(By.className("remoteApiCol"));
-//					deleted = true;
-//					// check if the element is in the table
-//					for (WebElement ele : findElements) {
-//						if (ele.getText().equals(clientId)) {
-//							deleted = false;
-//						}
-//					}
-//				}
-//			} catch (StaleElementReferenceException e) {
-//				logger.debug("Got stale element reference exception when trying to get text on h1, trying again.");
-//			}
-//		} while (!deleted);
-//
-//
-//		return deleted;
-//	}
-
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
 		wait.until(Ajax.waitForAjax(60000));
