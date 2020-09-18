@@ -54,8 +54,6 @@ public class ProjectSyncPage extends AbstractPage {
 		projectSelection.findElement(By.className("ant-select-selection-search")).click();
 		driver.switchTo().activeElement().sendKeys(name);
 		driver.switchTo().activeElement().sendKeys(Keys.ENTER);
-//		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("ant-select-item")));
-//		driver.findElements(By.className("ant-select-item")).get(index).click();
 	}
 
 	public String getSelectedProjectName() {
