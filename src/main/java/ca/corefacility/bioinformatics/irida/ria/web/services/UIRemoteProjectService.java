@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettings;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettingsUpdateRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectSettings;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectSettingsUpdateRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -27,10 +27,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @Component
 public class UIRemoteProjectService {
-	private MessageSource messageSource;
-	private ProjectService projectService;
-	private ProjectRemoteService projectRemoteService;
-	private UserService userService;
+	private final MessageSource messageSource;
+	private final ProjectService projectService;
+	private final ProjectRemoteService projectRemoteService;
+	private final UserService userService;
 
 	@Autowired
 	public UIRemoteProjectService(MessageSource messageSource, ProjectService projectService,

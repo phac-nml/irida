@@ -10,11 +10,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettings;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectSettingsUpdateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectSettings;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectSettingsUpdateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteProjectService;
 
 /**
@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteProjectServ
 @RestController
 @RequestMapping("/ajax/remote-projects/{projectId}/settings")
 public class ProjectSettingsRemoteAjaxController {
-	private UIRemoteProjectService uiRemoteProjectService;
+	private final UIRemoteProjectService uiRemoteProjectService;
 
 	@Autowired
 	public ProjectSettingsRemoteAjaxController(UIRemoteProjectService uiRemoteProjectService) {

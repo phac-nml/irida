@@ -1,8 +1,8 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
-
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote;
 
 import java.util.Date;
+
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 /**
  * UI Model to represent the details of a {@link RemoteAPI}
