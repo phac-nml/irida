@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -9,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/CreateRemoteApisIT.xml")
-@Ignore
 public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateRemoteAPIPage page;
 	private CreateClientPage createClientPage;
@@ -48,14 +47,12 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testCreateRemoteApi() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret");
 		assertTrue("remote api should be created", page.checkSuccess());
 	}
 
 	@Test
-	@Ignore
 	public void testCreateClientWithDuplicateURI() {
 		page.createRemoteAPIWithDetails("new name", "http://nowhere", "newClient", "newSecret");
 		assertFalse("client should not have been created", page.checkSuccess());
@@ -81,20 +78,15 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAndConnectToClient() {
-//		String baseUrl = page.getBaseUrl();
-//		String url = baseUrl + "api";
-//
-//		page.createRemoteAPIWithDetails("new name", url, clientId, clientSecret);
-//		assertTrue("client should have been created", page.checkSuccess());
-//
-//		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver());
-//
-//		ApiStatus remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
-//		assertEquals("api status should be invalid", ApiStatus.INVALID, remoteApiStatus);
-//		remoteAPIDetailsPage.clickConnect();
-//		remoteAPIDetailsPage.clickAuthorize();
-//
-//		remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
-//		assertEquals("api status should be connected", ApiStatus.CONNECTED, remoteApiStatus);
+		page.createRemoteAPIWithDetails("new name", "http://localhost:8080/api", clientId, clientSecret);
+		assertTrue("client should have been created", page.checkSuccess());
+
+		RemoteAPIDetailsPage remoteAPIDetailsPage = RemoteAPIDetailsPage.gotoDetailsPage(driver());
+
+		assertFalse("API status should not be connect",  remoteAPIDetailsPage.isRemoteAPIConnected());
+		remoteAPIDetailsPage.clickConnect();
+		remoteAPIDetailsPage.clickAuthorize();
+
+		assertTrue("API status is now connected", page.checkSuccess());
 	}
 }
