@@ -88,12 +88,13 @@ public class UIPipelineService {
 		/*
 		PARAMETERS
 		 */
-		details.setParameters(getPipelineParameters(workflowDescription, locale));
+		details.setParameters(getPipelineParameters(workflow, locale));
 
 		return details;
 	}
 
-	private List<NamedPipelineParameters> getPipelineParameters(IridaWorkflowDescription description, Locale locale) {
+	private List<NamedPipelineParameters> getPipelineParameters(IridaWorkflow workflow, Locale locale) {
+		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 		List<IridaWorkflowParameter> workflowParameters = description.getParameters();
 		if (workflowParameters == null) {
 			return null;
@@ -119,7 +120,7 @@ public class UIPipelineService {
 		These are copies of the default parameters with one or more changed parameter values.
 		 */
 		List<IridaWorkflowNamedParameters> workflowNamedParameters = namedParametersService.findNamedParametersForWorkflow(
-				description.getId());
+				workflow.getWorkflowIdentifier());
 		pipelineParameters.addAll(workflowNamedParameters.stream()
 				.map(wp -> {
 					Map<String, String> inputParameters = wp.getInputParameters();
