@@ -42,8 +42,8 @@ module.exports = {
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
-  "project-settings-remote":
-    "./resources/js/pages/projects/settings/project-settings-remote.js",
+  "project-remote":
+    "./resources/js/pages/projects/remote/",
   "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",

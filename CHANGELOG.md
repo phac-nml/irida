@@ -42,6 +42,7 @@ Changes
 * [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
 * [UI]: Updated Remote API Connection details page to use full Ant Design and updated Oauth.
 * [UI]: Updated Create Remote Synchronized Project page to use Ant Design and updated Oauth.
+* [UI]: Updated Remote Project Synchronization Settings page to use Ant Design and updated oauth.
 
 20.01 to 20.05
 --------------
