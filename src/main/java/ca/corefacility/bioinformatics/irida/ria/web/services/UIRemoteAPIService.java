@@ -50,8 +50,13 @@ public class UIRemoteAPIService {
     public Date checkAPIStatus(long remoteId) {
         RemoteAPI api = remoteAPIService.read(remoteId);
         RemoteAPIToken token = tokenService.getToken(api);
+
+        boolean isValidToken = projectRemoteService.getServiceStatus(api);
+
         if (token.isExpired()) {
             throw new IridaOAuthException("expired token", api);
+        } else if(!isValidToken) {
+            throw new IridaOAuthException("invalid token", api);
         }
         return token.getExpiryDate();
     }
