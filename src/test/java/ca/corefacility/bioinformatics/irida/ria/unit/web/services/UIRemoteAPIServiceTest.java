@@ -36,6 +36,8 @@ public class UIRemoteAPIServiceTest {
 	private final String REMOTE_CLIENT_ID_WITh_EXPIRED_TOKEN = "expired_token";
 	private final Date REMOTE_EXPIRED_DATE = new Date(1600083738657L);
 	private final Date REMOTE_NON_EXPIRED_DATE = DateUtils.addDays(new Date(), 3);
+	private final long REMOTE_ID_WITH_REVOKED_TOKEN = 3L;
+
 
 	@Before
 	public void setUp() {
@@ -50,6 +52,7 @@ public class UIRemoteAPIServiceTest {
 		RemoteAPIToken validToken = createFakeRemoteAPIToken(REMOTE_NON_EXPIRED_DATE);
 		when(remoteAPIService.read(REMOTE_ID_WITH_TOKEN)).thenReturn(validAPI);
 		when(tokenService.getToken(validAPI)).thenReturn(validToken);
+		when(projectRemoteService.getServiceStatus(validAPI)).thenReturn(true);
 
 		// Expired token
 		RemoteAPI expiredAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITh_EXPIRED_TOKEN);
@@ -70,6 +73,16 @@ public class UIRemoteAPIServiceTest {
 	@Test(expected = IridaOAuthException.class)
 	public void testCheckAPITStatusError() {
 		service.checkAPIStatus(REMOTE_ID_WITH_EXPIRED_TOKEN);
+	}
+
+	@Test(expected = IridaOAuthException.class)
+	public void testRevokedTokensApiSuccess() {
+		RemoteAPI validAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITH_TOKEN);
+		RemoteAPIToken validToken = createFakeRemoteAPIToken(REMOTE_NON_EXPIRED_DATE);
+		when(remoteAPIService.read(REMOTE_ID_WITH_REVOKED_TOKEN)).thenReturn(validAPI);
+		when(tokenService.getToken(validAPI)).thenReturn(validToken);
+		when(projectRemoteService.getServiceStatus(validAPI)).thenReturn(false);
+		service.checkAPIStatus(REMOTE_ID_WITH_REVOKED_TOKEN);
 	}
 
 	@Test
