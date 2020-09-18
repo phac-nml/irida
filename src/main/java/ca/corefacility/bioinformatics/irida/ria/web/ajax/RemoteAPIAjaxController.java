@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateRemoteProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;

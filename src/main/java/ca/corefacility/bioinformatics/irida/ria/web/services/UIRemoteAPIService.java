@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.CreateRemoteProjectRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateRemoteProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.RemoteProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 
