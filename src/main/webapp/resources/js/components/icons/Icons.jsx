@@ -9,6 +9,7 @@ import {
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
+  CopyOutlined,
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
@@ -169,6 +170,8 @@ export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 export const IconForm = ({ ...props }) => <FormOutlined {...props} />;
 
 export const IconRocket = ({ ...props }) => <RocketOutlined {...props} />;
+
+export const IconCopy = ({ ...props }) => <CopyOutlined {...props} />;
 
 /*
 File Type Icons

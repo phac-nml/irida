@@ -5,6 +5,7 @@ import {
   DISPATCH_PARAMETER_CHANGE,
   DISPATCH_PARAMETERS_MODIFIED,
 } from "../pipeline/lauch-constants";
+import { IconCopy } from "../icons/Icons";
 
 const { Panel } = Collapse;
 const { Paragraph } = Typography;
@@ -36,6 +37,7 @@ export function PipelineParameters() {
         {parameters.map((p) => (
           <Panel
             key={`parameter-${p.id}`}
+            extra={<IconCopy />}
             header={
               <Space>
                 <input
