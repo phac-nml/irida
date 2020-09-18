@@ -76,7 +76,7 @@ public class UIRemoteAPIServiceTest {
 	}
 
 	@Test(expected = IridaOAuthException.class)
-	public void testRevokedTokensApiSuccess() {
+	public void testRevokedTokensApiStatusError() {
 		RemoteAPI validAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITH_TOKEN);
 		RemoteAPIToken validToken = createFakeRemoteAPIToken(REMOTE_NON_EXPIRED_DATE);
 		when(remoteAPIService.read(REMOTE_ID_WITH_REVOKED_TOKEN)).thenReturn(validAPI);
