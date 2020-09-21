@@ -61,7 +61,6 @@ function LaunchTabs() {
         <PageHeader
           title={original.name}
           onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
-          extra={[<PipelineLaunchButton key="launch" />]}
         />
         {fetching ? null : (
           <Form layout="vertical">
@@ -77,10 +76,10 @@ function LaunchTabs() {
                   <ReferenceFiles />
                 </Card>
               ) : null}
+              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+                <PipelineLaunchButton key="launch" />
+              </div>
             </Space>
-            <div
-              style={{ display: "flex", flexDirection: "row-reverse" }}
-            ></div>
           </Form>
         )}
       </Col>

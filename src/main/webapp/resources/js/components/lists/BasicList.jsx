@@ -21,13 +21,13 @@ const { Text } = Typography;
 
 export function BasicList({
   itemLayout = "horizontal",
-  dataSource = { dataSource }
+  dataSource = { dataSource },
 }) {
   return (
     <List
       itemLayout={itemLayout}
       dataSource={dataSource}
-      renderItem={item => (
+      renderItem={(item) => (
         <List.Item>
           <List.Item.Meta
             title={<Text strong>{item.title}</Text>}
@@ -47,13 +47,13 @@ BasicList.propTypes = {
     PropTypes.shape({
       title: PropTypes.oneOfType([
         PropTypes.string.isRequired,
-        PropTypes.object
+        PropTypes.object,
       ]),
       desc: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
-        PropTypes.object
-      ])
+        PropTypes.object,
+      ]),
     })
-  ).isRequired
+  ).isRequired,
 };

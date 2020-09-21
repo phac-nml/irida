@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-import { Collapse, List, Radio, Typography, } from "antd";
+import { Collapse, List, Radio, Typography } from "antd";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import {
   DISPATCH_PARAMETER_CHANGE,
   DISPATCH_PARAMETERS_MODIFIED,
 } from "../pipeline/lauch-constants";
+import { IconCopy } from "../icons/Icons";
+import styled from "styled-components";
 
 const { Panel } = Collapse;
 const { Paragraph } = Typography;
+
+const CollapseRadio = styled(Collapse)`
+  label.ant-radio-wrapper {
+    display: inline-block !important;
+  }
+`;
 
 export function PipelineParameters() {
   const { parameters, original, modified } = useLaunchState();
@@ -36,14 +44,13 @@ export function PipelineParameters() {
 
   return (
     <>
-      <Collapse expandIconPosition="right">
+      <CollapseRadio>
         {parameters.map((p) => (
           <Panel
             key={`parameter-${p.id}`}
             header={
-              <span onClick={(e) => e.stopPropagation()}>
+              <span role="button" onClick={(e) => e.stopPropagation()}>
                 <Radio
-                  style={{ height: 32 }}
                   type="radio"
                   name="para"
                   value={p.id}
@@ -54,6 +61,7 @@ export function PipelineParameters() {
                 </Radio>
               </span>
             }
+            extra={[<IconCopy key="copy" onClick={duplicateParameters} />]}
           >
             <List
               bordered={true}
@@ -84,7 +92,7 @@ export function PipelineParameters() {
             />
           </Panel>
         ))}
-      </Collapse>
+      </CollapseRadio>
     </>
   );
 }

@@ -12,18 +12,19 @@ import { HelpPopover } from "../popovers";
 export function SyncFrequencySelect({
   name = "frequency",
   onChange = () => {},
-  labelRequired = true
+  labelRequired = true,
 }) {
   return (
     <Form.Item
-      label={ labelRequired ?
+      label={
+        labelRequired ? (
           <span>
             {i18n("SyncFrequencySelect.frequency")}
             <HelpPopover
               content={<div>{i18n("SyncFrequencySelect.frequency.help")}</div>}
             />
           </span>
-        : null
+        ) : null
       }
       name={name}
     >
