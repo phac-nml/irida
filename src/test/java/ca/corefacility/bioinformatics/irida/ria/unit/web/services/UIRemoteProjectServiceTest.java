@@ -7,11 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectSettingsUpdateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteProjectService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -29,7 +27,6 @@ public class UIRemoteProjectServiceTest {
 	private UIRemoteProjectService uiRemoteProjectService;
 	private Principal principal;
 	private RemoteStatus remoteStatus;
-	private RemoteAPI remoteAPI;
 	Project remoteProject = TestDataFactory.constructProject();
 
 	private final Locale LOCALE = Locale.CANADA;
