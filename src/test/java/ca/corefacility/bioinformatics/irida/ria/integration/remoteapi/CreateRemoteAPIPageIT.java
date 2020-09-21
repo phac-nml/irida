@@ -78,7 +78,7 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAndConnectToClient() {
-		page.createRemoteAPIWithDetails("new name", "http://localhost:8080/api", clientId, clientSecret);
+		page.createRemoteAPIWithDetails("new name", page.getBaseUrl()  + "/api", clientId, clientSecret);
 		assertTrue("client should have been created", page.checkSuccess());
 
 		RemoteAPIDetailsPage remoteAPIDetailsPage = RemoteAPIDetailsPage.gotoDetailsPage(driver());

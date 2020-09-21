@@ -37,6 +37,7 @@ public class CreateRemoteAPIPage extends AbstractPage {
 
 	public boolean checkSuccess() {
 		// Should be redirected to the specific details page.
-		return driver.getCurrentUrl().matches("http://localhost:8080/admin/remote_api/(\\d+)");
+		return driver.getCurrentUrl()
+				.matches(this.getBaseUrl() + "admin/remote_api/(\\d+)");
 	}
 }
