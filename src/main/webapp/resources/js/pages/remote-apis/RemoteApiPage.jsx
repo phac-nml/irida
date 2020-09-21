@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
-import { RemoteApiTable } from "./RemoteApiTable";
+import { RemoteApiTable } from "../admin/components/remote-connections/RemoteApiTable";
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";

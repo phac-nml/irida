@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   PagedTable,
-  PagedTableContext
-} from "../../components/ant.design/PagedTable";
+  PagedTableContext,
+} from "../../../../components/ant.design/PagedTable";
 import { RemoteApiStatus } from "./RemoteApiStatus";
-import { Button } from "antd";
+import { Link } from "@reach/router";
 
 /**
  * Render a table to display remote API's
@@ -23,15 +23,14 @@ export function RemoteApiTable() {
       dataIndex: "name",
       render(text, record) {
         return (
-          <Button
-            type="link"
-            href={setBaseUrl(`remote_api/${record.id}`)}
+          <Link
+            to={setBaseUrl(`/admin/remote_api/${record.id}`)}
             className="t-api-name"
           >
             {text}
-          </Button>
+          </Link>
         );
-      }
+      },
     },
     {
       title: i18n("iridaThing.timestamp"),
@@ -39,16 +38,16 @@ export function RemoteApiTable() {
       dataIndex: "createdDate",
       render(text) {
         return formatInternationalizedDateTime(text);
-      }
+      },
     },
     {
       title: i18n("remoteapi.status"),
       align: "right",
-      width: 160,
+      width: 330,
       render(text, item) {
         return <RemoteApiStatus api={item} updateTable={updateTable} />;
-      }
-    }
+      },
+    },
   ];
 
   return <PagedTable className="t-remoteapi-table" columns={columnDefs} />;

@@ -42,6 +42,11 @@ Changes
 * [Workflow]: Removed dependency of IRIDA on the IRIDA Toolshed (<https://irida.corefacility.ca/galaxy-shed>). This means that all tools for IRIDA pipelines are now available on the main Galaxy toolshed and that IRIDA is compatible with newer versions of Galaxy (`20.XX+`).
 * [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
 * [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
+* [UI]: Updated the analysis results page to auto update the progress of an analysis.
+* [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
+* [UI]: Updated Remote API Connection details page to use full Ant Design and updated Oauth.
+* [UI]: Updated Create Remote Synchronized Project page to use Ant Design and updated Oauth.
+* [UI]: Updated Remote Project Synchronization Settings page to use Ant Design and updated oauth.
 
 20.01 to 20.05
 --------------
@@ -90,8 +95,6 @@ Changes
 * [UI/Developer]: Updated analysis urls to work with a context path.
 * [UI]: Outputs and Tree view now span the full width of the page.
 * [Processing]: Fixed bug where analyses wouldn't run if project didn't have analysis priority.
-* [UI]: Updated the analysis results page to auto update the progress of an analysis.
-* [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
 
 19.09 to 20.01
 --------------
