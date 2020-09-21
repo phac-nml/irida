@@ -36,7 +36,6 @@ public class RemoteAPIAjaxController {
     private final RemoteAPIService remoteAPIService;
     private final UIRemoteAPIService service;
 
-    public static final String INVALID_OAUTH_TOKEN = "invalid_token";
 
     @Autowired
     public RemoteAPIAjaxController(RemoteAPIService remoteAPIService, UIRemoteAPIService service) {
