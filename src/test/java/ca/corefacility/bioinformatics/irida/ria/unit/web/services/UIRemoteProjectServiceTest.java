@@ -34,7 +34,6 @@ public class UIRemoteProjectServiceTest {
 
 	private final Locale LOCALE = Locale.CANADA;
 	private final Long NONEXISTENTPROJECTID = 12L;
-	private final User USER_1 = new User(1L, "user1", "user1@nowhere.com", "SDF123", "USER", "ONE", "7777");
 	private RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest;
 
 	@Before
