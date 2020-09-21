@@ -45,7 +45,10 @@ BasicList.propTypes = {
   /*data for the List component to display*/
   dataSource: PropTypes.arrayOf(
     PropTypes.shape({
-      title: PropTypes.string.isRequired,
+      title: PropTypes.oneOfType([
+        PropTypes.string.isRequired,
+        PropTypes.object
+      ]),
       desc: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

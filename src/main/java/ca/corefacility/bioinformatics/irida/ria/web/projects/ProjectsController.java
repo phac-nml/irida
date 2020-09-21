@@ -23,7 +23,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.format.Formatter;
@@ -37,16 +36,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -54,12 +46,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.ImmutableList;
@@ -73,7 +62,6 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
 
@@ -82,10 +70,9 @@ public class ProjectsController {
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
-	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
+	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
-	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -95,14 +82,8 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
-	private final ProjectRemoteService projectRemoteService;
-	private final RemoteAPIService remoteApiService;
-	private final IridaWorkflowsService workflowsService;
 	private final CartController cartController;
 	private final UpdateSamplePermission updateSamplePermission;
-
-	@Value("${file.upload.max_size}")
-	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
 	/*
 	 * Converters
@@ -116,19 +97,16 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectRemoteService projectRemoteService, ProjectControllerUtils projectControllerUtils,
-			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService,
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService,
+
 			CartController cartController, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
-		this.projectRemoteService = projectRemoteService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
-		this.remoteApiService = remoteApiService;
-		this.workflowsService = workflowsService;
 		this.cartController = cartController;
 		this.fileSizeConverter = new FileSizeConverter();
 		this.updateSamplePermission = updateSamplePermission;
@@ -229,77 +207,13 @@ public class ProjectsController {
 	/**
 	 * Get the page to synchronize remote projects
 	 *
-	 * @param model Model to render for view
 	 * @return Name of the project sync page
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
-	public String getSynchronizeProjectPage(final Model model) {
-
-		Iterable<RemoteAPI> apis = remoteApiService.findAll();
-		model.addAttribute("apis", apis);
-		model.addAttribute("frequencies", ProjectSyncFrequency.values());
-		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
-
-		if (!model.containsAttribute("errors")) {
-			model.addAttribute("errors", new HashMap<>());
-		}
-
+	public String getSynchronizeProjectPage() {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
-	/**
-	 * Get a {@link Project} from a remote api and mark it to be synchronized in
-	 * this IRIDA installation
-	 *
-	 * @param url           the URL of the remote project
-	 * @param syncFrequency How often to sync the project
-	 * @param model         Model for the view
-	 * @return Redirect to the new project. If an oauth exception occurs it will
-	 * be forwarded back to the creation page.
-	 */
-	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
-	public String syncProject(@RequestParam String url, @RequestParam ProjectSyncFrequency syncFrequency, Model model) {
-
-		try {
-			Project read = projectRemoteService.read(url);
-			read.setId(null);
-			read.getRemoteStatus()
-					.setSyncStatus(SyncStatus.MARKED);
-			read.setSyncFrequency(syncFrequency);
-
-			read = projectService.create(read);
-
-			return "redirect:/projects/" + read.getId() + "/settings";
-		} catch (IridaOAuthException ex) {
-			Map<String, String> errors = new HashMap<>();
-			errors.put("oauthError", ex.getMessage());
-			model.addAttribute("errors", errors);
-			return getSynchronizeProjectPage(model);
-		} catch (EntityNotFoundException ex) {
-			Map<String, String> errors = new HashMap<>();
-			errors.put("urlError", ex.getMessage());
-			model.addAttribute("errors", errors);
-			return getSynchronizeProjectPage(model);
-		}
-	}
-
-	/**
-	 * List all the {@link Project}s that can be read for a user from a given
-	 * {@link RemoteAPI}
-	 *
-	 * @param apiId the local ID of the {@link RemoteAPI}
-	 * @return a List of {@link Project}s
-	 */
-	@RequestMapping(value = "/projects/ajax/api/{apiId}")
-	@ResponseBody
-	public List<ProjectByApiResponse> ajaxGetProjectsForApi(@PathVariable Long apiId) {
-		RemoteAPI api = remoteApiService.read(apiId);
-		List<Project> listProjectsForAPI = projectRemoteService.listProjectsForAPI(api);
-
-		return listProjectsForAPI.stream()
-				.map(ProjectByApiResponse::new)
-				.collect(Collectors.toList());
-	}
 
 	/**
 	 * Creates a new project and displays a list of users for the user to add to
@@ -648,26 +562,5 @@ public class ProjectsController {
 	 */
 	private DTProject createDataTablesProject(Project project) {
 		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
-	}
-
-	/**
-	 * Response class for a {@link Project} and its {@link RemoteStatus}
-	 */
-	public class ProjectByApiResponse {
-		private RemoteStatus remoteStatus;
-		private Project project;
-
-		public ProjectByApiResponse(Project project) {
-			this.project = project;
-			this.remoteStatus = project.getRemoteStatus();
-		}
-
-		public Project getProject() {
-			return project;
-		}
-
-		public RemoteStatus getRemoteStatus() {
-			return remoteStatus;
-		}
 	}
 }

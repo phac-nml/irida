@@ -8,11 +8,11 @@
  */
 
 import React from "react";
-import { PageWrapper } from "../../../components/page/PageWrapper";
-import { RemoteApiTable } from "../../remote-apis/RemoteApiTable";
-import { AddNewButton } from "../../../components/Buttons/AddNewButton";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
+import { RemoteApiTable } from "./RemoteApiTable";
+import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
 
 export default function AdminRemoteApiPage() {
   // The following renders the Remote Api component view

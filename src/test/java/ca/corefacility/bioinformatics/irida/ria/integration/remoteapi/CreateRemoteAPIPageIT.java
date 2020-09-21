@@ -1,18 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * IT for the client details page
@@ -24,7 +26,7 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateClientPage createClientPage;
 	private ClientDetailsPage clientDetailsPage;
 
-	private String clientId = "testClient";
+	private final String clientId = "testClient";
 	private String clientSecret;
 
 	@Before
@@ -76,20 +78,15 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAndConnectToClient() {
-		String baseUrl = page.getBaseUrl();
-		String url = baseUrl + "api";
-
-		page.createRemoteAPIWithDetails("new name", url, clientId, clientSecret);
+		page.createRemoteAPIWithDetails("new name", page.getBaseUrl()  + "/api", clientId, clientSecret);
 		assertTrue("client should have been created", page.checkSuccess());
 
-		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver());
+		RemoteAPIDetailsPage remoteAPIDetailsPage = RemoteAPIDetailsPage.gotoDetailsPage(driver());
 
-		ApiStatus remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
-		assertEquals("api status should be invalid", ApiStatus.INVALID, remoteApiStatus);
+		assertFalse("API status should not be connect",  remoteAPIDetailsPage.isRemoteAPIConnected());
 		remoteAPIDetailsPage.clickConnect();
 		remoteAPIDetailsPage.clickAuthorize();
 
-		remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
-		assertEquals("api status should be connected", ApiStatus.CONNECTED, remoteApiStatus);
+		assertTrue("API status is now connected", page.checkSuccess());
 	}
 }

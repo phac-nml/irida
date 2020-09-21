@@ -1,8 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
-import java.util.List;
+import java.util.Set;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,16 +20,38 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 public class RemoteAPIDetailsPage extends AbstractPage {
 	public static String REMOTEAPI_LIST = "remote_api";
 
-	public static String RELATIVE_URL = "remote_api/";
+	public static String RELATIVE_URL = "admin/remote_api/";
 
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPIDetailsPage.class);
 
-	private Long clientId;
+	@FindBy(className = "t-remote-name")
+	private WebElement remoteName;
 
-	public RemoteAPIDetailsPage(WebDriver driver, Long clientId) {
-		super(driver);
-		this.clientId = clientId;
-		get(driver, RELATIVE_URL + clientId);
+	@FindBy(className = "t-remote-status-connect")
+	private WebElement remoteStatusConnect;
+
+	@FindBy(className = "t-remote-status-connected")
+	private WebElement remoteStatusConnected;
+
+	@FindBy(className = "t-remote-clientId")
+	private WebElement remoteClientId;
+
+	@FindBy(className = "t-delete-tab")
+	private WebElement deleteTab;
+
+	@FindBy(className = "t-delete-btn")
+	private WebElement deleteButton;
+
+	@FindBy(className = "t-delete-confirm")
+	private WebElement deleteConfirmButton;
+
+	public static RemoteAPIDetailsPage gotoDetailsPage(WebDriver driver, Long remoteId) {
+		get(driver, RELATIVE_URL + remoteId);
+		return PageFactory.initElements(driver, RemoteAPIDetailsPage.class);
+	}
+
+	public static RemoteAPIDetailsPage gotoDetailsPage(WebDriver driver) {
+		return PageFactory.initElements(driver, RemoteAPIDetailsPage.class);
 	}
 
 	public RemoteAPIDetailsPage(WebDriver driver) {
@@ -32,21 +59,21 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public String getClientName() {
-		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-name"));
-		return clientIdSpan.getText();
+		return remoteName.getText();
 	}
 
 	public String getClientId() {
-		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-clientid"));
-		return clientIdSpan.getText();
+		return remoteClientId.getText();
 	}
 
 	public void clickDeleteButton() {
-		logger.debug("clicking remove button");
-
-		WebElement findElement = new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.presenceOfElementLocated(By.className("t-remove-btn")));
-		findElement.click();
+		deleteTab.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOf(deleteButton));
+		deleteButton.click();
+		wait.until(ExpectedConditions.visibilityOf(deleteConfirmButton));
+		deleteConfirmButton.click();
+		String foobar;
 	}
 
 	public void confirmDelete() {
@@ -56,68 +83,38 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		confirmButton.click();
 	}
 
-	public ApiStatus getRemoteApiStatus() {
-		WebElement connectionStatus = (new WebDriverWait(driver, 10)).until(ExpectedConditions
-				.presenceOfElementLocated(By.className("status-label")));
-
-		String labelClass = connectionStatus.getAttribute("class");
-		if (labelClass.contains("api-connected")) {
-			return ApiStatus.CONNECTED;
-		} else if (labelClass.contains("api-invalid")) {
-			return ApiStatus.INVALID;
-		} else if (labelClass.contains("api-error")) {
-			return ApiStatus.ERROR;
+	public boolean isRemoteAPIConnected() {
+		try {
+			return remoteStatusConnected.isDisplayed();
+		} catch (NoSuchElementException e) {
+			return false;
 		}
-
-		throw new ElementNotVisibleException("Coudldn't get api status");
 	}
 
 	public void clickConnect() {
-		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("oauth-connect-link")));
-		connectButton.click();
-
-		waitForAjax();
+		remoteStatusConnect.click();
 
 	}
 
 	public void clickAuthorize() {
-		driver.switchTo().frame("oauth-connect-frame");
+		String parentWindowHandler = driver.getWindowHandle(); // Store your parent window
+		String subWindowHandler = null;
+
+		Set<String> handles = driver.getWindowHandles(); // get all window handles
+		for (String handle : handles) {
+			subWindowHandler = handle;
+		}
+		driver.switchTo().window(subWindowHandler); // switch to popup window
+
+		// Now you are in the popup window, perform necessary actions here
+
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
 
-		driver.switchTo().defaultContent();
+
+		driver.switchTo().window(parentWindowHandler);  // switch back to parent window
 
 		waitForTime(8000);
-	}
-
-	public boolean checkDeleteSuccess() {
-		boolean deleted = false;
-
-		logger.debug("Checking for client existence");
-		do {
-			try {
-				WebElement el = driver.findElement(By.className("ant-page-header-heading-title"));
-				if (el.getText().equals("Remote IRIDA Connections")) {
-					logger.debug("Successfully loaded client list page");
-					waitForAjax();
-					logger.debug("Table loaded");
-					List<WebElement> findElements = driver.findElements(By.className("remoteApiCol"));
-					deleted = true;
-					// check if the element is in the table
-					for (WebElement ele : findElements) {
-						if (ele.getText().equals(clientId)) {
-							deleted = false;
-						}
-					}
-				}
-			} catch (StaleElementReferenceException e) {
-				logger.debug("Got stale element reference exception when trying to get text on h1, trying again.");
-			}
-		} while (!deleted);
-
-
-		return deleted;
 	}
 
 	private void waitForAjax() {
@@ -126,6 +123,6 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public enum ApiStatus {
-		CONNECTED, INVALID, ERROR;
+		CONNECTED, INVALID, ERROR
 	}
 }
