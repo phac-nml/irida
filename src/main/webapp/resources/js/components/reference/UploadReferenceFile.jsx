@@ -2,7 +2,7 @@ import React from "react";
 import { message, Upload } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconCloudUpload } from "../icons/Icons";
-import { useLaunchDispatch } from "../pipeline-launch/launch-context";
+import { useLaunchDispatch } from "../pipeline-launch-old/launch-context";
 import { DISPATCH_REFERENCE_UPLOADED } from "../pipeline/lauch-constants";
 
 const { Dragger } = Upload;

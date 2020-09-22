@@ -1,21 +1,23 @@
 import React from "react";
 import { LaunchProvider, useLaunchState } from "./launch-context";
-import { PipelineDetails } from "./PipelineDetails";
+import { PipelineDetails } from "../../pages/pipeline-launch/PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
 import { PipelineParameters } from "./PipelineParameters";
-import { Button, Card, Col, Form, PageHeader, Result, Row, Space } from "antd";
+import { Button, Card, Col, Form, PageHeader, Result, Row, Space, } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { LaunchComplete } from "./LaunchComplete";
-import { PipelineLaunchButton } from "../pipeline/PipelineLaunchButton";
+import { IconRocket } from "../icons/Icons";
 
 function LaunchTabs() {
   const {
     fetching,
+    name,
     original,
     complete,
     requiresReference,
     notFound,
+    parametersWithOptions,
   } = useLaunchState();
 
   const steps = [
@@ -38,6 +40,10 @@ function LaunchTabs() {
       content: <ReferenceFiles />,
     });
   }
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
 
   return complete ? (
     <LaunchComplete />
@@ -63,7 +69,16 @@ function LaunchTabs() {
           onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
         />
         {fetching ? null : (
-          <Form layout="vertical">
+          <Form
+            layout="vertical"
+            initialValues={{
+              name,
+              description: "",
+              parameters: 0,
+              ...parametersWithOptions,
+            }}
+            onFinish={(values) => console.log(values)}
+          >
             <Space direction="vertical" style={{ width: `100%` }} size="large">
               <Card title={"PIPELINE DETAILS"}>
                 <PipelineDetails />
@@ -77,7 +92,9 @@ function LaunchTabs() {
                 </Card>
               ) : null}
               <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-                <PipelineLaunchButton key="launch" />
+                <Button type="primary" icon={<IconRocket />} htmlType="submit">
+                  Launch Pipeline
+                </Button>
               </div>
             </Space>
           </Form>

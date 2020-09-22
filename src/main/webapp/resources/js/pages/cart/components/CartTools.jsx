@@ -8,8 +8,8 @@ import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { LaunchPage } from "../../../components/pipeline-launch/LaunchPage";
-import { LaunchComplete } from "../../../components/pipeline-launch/LaunchComplete";
+import { PipelineLaunchPage } from "../../pipeline-launch/PipelineLaunchPage";
+import { LaunchComplete } from "../../../components/pipeline-launch-old/LaunchComplete";
 
 const MenuWrapper = styled.div`
   display: flex;
@@ -106,41 +106,10 @@ export default class CartTools extends Component {
     document.body.removeEventListener("galaxy:removal", this.removeGalaxy);
 
   render() {
-    const paths = [
-      this.state.fromGalaxy
-        ? {
-            link: setBaseUrl(`cart/galaxy`),
-            text: i18n("CartTools.menu.galaxy"),
-            component: (
-              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
-            ),
-          }
-        : null,
-      {
-        link: setBaseUrl(`cart/pipelines`),
-        text: i18n("CartTools.menu.pipelines"),
-        component: (
-          <Pipelines
-            key="pipelines"
-            path={setBaseUrl(`cart/pipelines`)}
-            displaySelect={
-              this.props.count > 0 || window.PAGE.automatedProject != null
-            }
-            automatedProject={window.PAGE.automatedProject}
-            default={!this.state.fromGalaxy}
-          />
-        ),
-      },
-      {
-        link: setBaseUrl(`cart/pipelines/:pipelineId`),
-        component: <p>Hello there</p>,
-      },
-    ].filter(Boolean);
-
     return (
       <ToolsWrapper>
         <Location>
-          {({ location }) => (
+          {() => (
             <div style={{ width: `100%` }}>
               <MenuWrapper>
                 <Menu>
@@ -151,12 +120,6 @@ export default class CartTools extends Component {
                   </Menu.Item>
                 </Menu>
               </MenuWrapper>
-              {/*<CartToolsMenu*/}
-              {/*  pathname={location.pathname}*/}
-              {/*  paths={paths.filter((p) => p.text !== undefined)}*/}
-              {/*  toggleSidebar={this.props.toggleSidebar}*/}
-              {/*  collapsed={this.props.collapsed}*/}
-              {/*/>*/}
               <ToolsInner>
                 <Router>
                   <Pipelines
@@ -167,7 +130,7 @@ export default class CartTools extends Component {
                     }
                     automatedProject={window.PAGE.automatedProject}
                   />
-                  <LaunchPage
+                  <PipelineLaunchPage
                     path={setBaseUrl(`/cart/pipelines/:pipelineId`)}
                   />
                   <LaunchComplete

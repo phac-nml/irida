@@ -34,12 +34,17 @@ function launchReducer(state, action) {
       return {
         ...state,
         original: { ...action.value },
-        name: `${action.value.name}_${Date.now()}`,
         parameters: [...action.value.parameters],
+        parametersWithOptions: action.value.parametersWithOptions,
         requiresReference: action.value.requiresReference,
         files: action.value.files,
         modified: false,
         fetching: false,
+        initialValues: {
+          name: `${action.value.name}_${Date.now()}`,
+          description: "",
+          parameters: [...[action.value.parameters[0].map()]],
+        },
       };
     case CONSTANTS.DISPATCH_PIPELINE_404:
       /*

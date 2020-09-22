@@ -12,6 +12,7 @@ public class UIPipelineDetailsResponse {
 	private boolean requiresReference;
 	private List<UIReferenceFile> files;
 	private List<NamedPipelineParameters> parameters;
+	private List<PipelineParameterWithOptions> parametersWithOptions;
 
 	public UUID getId() {
 		return id;
@@ -65,5 +66,13 @@ public class UIPipelineDetailsResponse {
 
 	public void setParameters(List<NamedPipelineParameters> parameters) {
 		this.parameters = parameters;
+	}
+
+	public List<PipelineParameterWithOptions> getParametersWithOptions() {
+		return parametersWithOptions;
+	}
+
+	public void setParametersWithOptions(List<PipelineParameterWithOptions> parametersWithOptions) {
+		this.parametersWithOptions = parametersWithOptions;
 	}
 }

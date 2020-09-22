@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,9 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionS
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.NamedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.Parameter;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -90,6 +93,11 @@ public class UIPipelineService {
 		 */
 		details.setParameters(getPipelineParameters(workflow, locale));
 
+		/*
+
+		 */
+		details.setParametersWithOptions(getPipelineSpecificParametersWithOptions(workflowDescription, locale));
+
 		return details;
 	}
 
@@ -148,6 +156,24 @@ public class UIPipelineService {
 		return pipelineParameters;
 	}
 
+	private List<PipelineParameterWithOptions> getPipelineSpecificParametersWithOptions(IridaWorkflowDescription description, Locale locale) {
+		return description.getParameters()
+				.stream()
+				.filter(IridaWorkflowParameter::hasChoices)
+				.map(parameter -> {
+					final String name = description.getName().toLowerCase();
+					String label = localizedParamLabel(locale, name, parameter.getName());
+					String defaultValue = parameter.getDefaultValue();
+					List<SelectOption> options = parameter.getChoices()
+							.stream()
+							.map(option -> new SelectOption(option.getValue(),
+									localizedParamOptionLabel(locale, name, parameter.getName(),
+											option.getName())))
+							.collect(Collectors.toUnmodifiableList());
+					return new PipelineParameterWithOptions(label, defaultValue, options);
+				}).collect(Collectors.toUnmodifiableList());
+	}
+
 	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
 		return projects.stream()
 				.map(project -> referenceFileService.getReferenceFilesForProject(project)
@@ -156,5 +182,34 @@ public class UIPipelineService {
 						.collect(Collectors.toList()))
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get localized workflow parameter label.
+	 * <p>
+	 * If the localized workflow parameter label text is not found by the {@link MessageSource}, then log the
+	 * NoSuchMessageException and return the `paramName` as the localized parameter label.
+	 *
+	 * @param locale       Message locale
+	 * @param workflowName Workflow name
+	 * @param paramName    Parameter name
+	 * @return Localized parameter label if found in {@link MessageSource}; otherwise, return `paramName`.
+	 */
+	private String localizedParamLabel(Locale locale, String workflowName, String paramName) {
+		final String messageName = "pipeline.parameters." + workflowName + "." + paramName;
+		try {
+			return messageSource.getMessage(messageName, null, locale);
+		} catch (NoSuchMessageException e) {
+			return paramName;
+		}
+	}
+
+	private String localizedParamOptionLabel(Locale locale, String workflowName, String paramName, String optionName) {
+		final String messageName = "pipeline.parameters." + workflowName + "." + paramName + "." + optionName;
+		try {
+			return messageSource.getMessage(messageName, null, locale);
+		} catch (NoSuchMessageException e) {
+			return paramName + "." + optionName;
+		}
 	}
 }

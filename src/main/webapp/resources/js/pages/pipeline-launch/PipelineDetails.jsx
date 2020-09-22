@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Form, Input } from "antd";
-import { useLaunchDispatch, useLaunchState } from "./launch-context";
-import * as CONSTANTS from "../pipeline/lauch-constants";
+import { useLaunchState } from "./launch-context";
 
 /**
  * React component for the editing of launching a pipeline base details, including
@@ -10,8 +9,7 @@ import * as CONSTANTS from "../pipeline/lauch-constants";
  * @constructor
  */
 export function PipelineDetails({}) {
-  const { name, description } = useLaunchState();
-  const dispatch = useLaunchDispatch();
+  const { name, description, updateDetailsField } = useLaunchState();
   const nameRef = useRef();
 
   useEffect(() => {
@@ -25,18 +23,17 @@ export function PipelineDetails({}) {
 
   return (
     <>
-      <Form.Item label={"NAME"}>
+      <Form.Item
+        label={"NAME"}
+        rules={[{ required: true, message: "Pipeline name is required" }]}
+      >
         <Input
           type={"text"}
           value={name}
           ref={nameRef}
           onFocus={selectNameText}
           onChange={(e) =>
-            dispatch({
-              type: CONSTANTS.DISPATCH_DETAILS_UPDATE,
-              value: e.target.value,
-              field: "name",
-            })
+            updateDetailsField({ field: "name", value: e.target.value })
           }
         />
       </Form.Item>
@@ -44,10 +41,9 @@ export function PipelineDetails({}) {
         <Input.TextArea
           value={description}
           onChange={(e) =>
-            dispatch({
-              type: CONSTANTS.DISPATCH_DETAILS_UPDATE,
-              value: e.target.value,
+            updateDetailsField({
               field: "description",
+              value: e.currentTarget.value,
             })
           }
         />
