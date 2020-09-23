@@ -767,8 +767,7 @@ public class AnalysisAjaxController {
 				if (sistrResults.size() > 0) {
 					// should only ever be one sample for these results
 					if (samples != null && samples.size() == 1) {
-						Sample sample = samples.iterator()
-								.next();
+						Sample sample = samples.iterator().next();
 						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
 					} else {
 						logger.error("Invalid number of associated samples for submission " + submission);

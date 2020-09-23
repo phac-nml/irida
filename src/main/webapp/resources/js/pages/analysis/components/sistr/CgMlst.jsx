@@ -25,19 +25,33 @@ export default function CgMlst({ sistrResults }) {
       {
         title: i18n("AnalysisSistr.percentMatching"),
         desc:
-          sistrResults.cgmlst_distance !== null
-            ? `${getPercentage(sistrResults.cgmlst_distance) + ""}%`
-            : ""
+            sistrResults.cgmlst_distance !== null
+                ? `${getPercentageFromDistance(sistrResults.cgmlst_distance) + ""}%`
+                : "-"
+      },
+      {
+        title: i18n("AnalysisSistr.allelesFoundGenome"),
+        desc: sistrResults.cgmlst_found_loci !== null
+          ? `${sistrResults.cgmlst_found_loci}/330` + "" : "-"
+      },
+      {
+        title: i18n("AnalysisSistr.allelesFoundGenomePercent"),
+        desc: sistrResults.cgmlst_found_loci !== null
+            ? `${getPercentage(sistrResults.cgmlst_found_loci)+""}%` + "" : "-"
       },
       {
         title: i18n("AnalysisSistr.cgmlstSequenceType"),
-        desc: sistrResults.cgmlst_ST !== null ? sistrResults.cgmlst_ST + "" : ""
+        desc: sistrResults.cgmlst_ST !== null ? sistrResults.cgmlst_ST + "" : "-"
       }
     ];
   }
 
+  function getPercentageFromDistance(str) {
+    return parseFloat((1 - str) * 100).toFixed(2);
+  }
+
   function getPercentage(str) {
-    return parseFloat((1 - str) * 100).toFixed(1);
+    return parseFloat((str / 330) * 100).toFixed(2);
   }
 
   /*

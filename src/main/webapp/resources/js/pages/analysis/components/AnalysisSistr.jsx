@@ -33,7 +33,7 @@ export default function AnalysisSistr() {
     setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.SISTR);
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
 
-  // On load gets the SISTR results
+  // On load gets the SISTR results by causing the SistResult Object generation and conversion to Ajax Ojbect
   useEffect(() => {
     getSistrResults(analysisIdentifier).then(data => {
       setSistrResults(data);
