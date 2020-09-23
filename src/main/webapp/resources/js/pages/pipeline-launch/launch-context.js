@@ -1,12 +1,13 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import axios from "axios";
 import { PageLoader } from "../../components/page-loader/PageLoader";
+import {
+  fetchPipelineDetails,
+  launchPipeline,
+} from "../../apis/pipelines/launch";
 
 const LaunchStateContext = React.createContext();
 
 function launchReducer(state, action) {
-  const { field, value } = action;
   switch (action.type) {
     case "loaded":
       return {
@@ -34,9 +35,8 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
   });
 
   useEffect(() => {
-    axios
-      .get(setBaseUrl(`/ajax/pipelines/${pipelineId}?automated=${automated}`))
-      .then(({ data }) =>
+    fetchPipelineDetails(pipelineId)
+      .then((data) =>
         dispatch({
           type: "loaded",
           value: data,
@@ -55,12 +55,22 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
   const updateDetailsField = ({ field, value }) =>
     dispatch({ type: "detail_update", field, value });
 
-  const launchPipeline = () => {
+  const startPipeline = () => {
     console.log("Launching", state);
+    const details = {
+      name: state.name,
+      description: state.description,
+      shareWithProjects: state.shareWithProjects,
+    };
+    launchPipeline({ id: pipelineId, details }).then((response) =>
+      console.log(response)
+    );
   };
 
   return (
-    <LaunchStateContext.Provider value={{ ...state, updateDetailsField }}>
+    <LaunchStateContext.Provider
+      value={{ ...state, updateDetailsField, startPipeline }}
+    >
       {loading ? <PageLoader /> : children}
     </LaunchStateContext.Provider>
   );

@@ -15,7 +15,7 @@ export async function getIridaWorkflowDescription(workflowUUID) {
   try {
     const { data } = await axios({
       method: "get",
-      url: `${URL}/${workflowUUID}`
+      url: `${URL}/${workflowUUID}`,
     });
     return { data };
   } catch (error) {
@@ -27,10 +27,10 @@ export async function getIridaWorkflowDescription(workflowUUID) {
  * Get a listing of all Pipelines in IRIDA.
  * @returns {Promise<AxiosResponse<any> | never>}
  */
-export const fetchIridaAnalysisWorkflows = async function() {
+export const fetchIridaAnalysisWorkflows = async function () {
   var ajaxUrl = URL;
   if (window.PAGE.automatedProject !== null) {
     ajaxUrl = `${ajaxUrl}?automatedProject=${window.PAGE.automatedProject}`;
   }
-  return axios.get(ajaxUrl).then(response => response.data);
+  return axios.get(ajaxUrl).then((response) => response.data);
 };

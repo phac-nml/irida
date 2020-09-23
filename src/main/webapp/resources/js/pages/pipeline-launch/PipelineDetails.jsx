@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Checkbox, Form, Input } from "antd";
+import { Form, Input } from "antd";
 import { useLaunchState } from "./launch-context";
 
 /**
@@ -52,11 +52,6 @@ export function PipelineDetails({}) {
             })
           }
         />
-      </Form.Item>
-      <Form.Item>
-        <Checkbox onChange={(e) => console.log(e.target.checked)}>
-          {i18n("PipelineDetails.shareWithProjects")}
-        </Checkbox>
       </Form.Item>
     </>
   );

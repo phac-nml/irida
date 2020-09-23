@@ -51,7 +51,7 @@ public class UIPipelineService {
 		this.messageSource = messageSource;
 	}
 
-	public UIPipelineDetailsResponse getPipelineDetails(UUID workflowId, boolean automated, Locale locale)
+	public UIPipelineDetailsResponse getPipelineDetails(UUID workflowId, Locale locale)
 			throws IridaWorkflowNotFoundException {
 
 		/*
