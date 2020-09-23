@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Form, Input } from "antd";
+import { Checkbox, Form, Input } from "antd";
 import { useLaunchState } from "./launch-context";
 
 /**
@@ -24,8 +24,13 @@ export function PipelineDetails({}) {
   return (
     <>
       <Form.Item
-        label={"NAME"}
-        rules={[{ required: true, message: "Pipeline name is required" }]}
+        label={i18n("PipelineDetails.name")}
+        rules={[
+          {
+            required: true,
+            message: i18n("PipelineDetails.name.required"),
+          },
+        ]}
       >
         <Input
           type={"text"}
@@ -37,7 +42,7 @@ export function PipelineDetails({}) {
           }
         />
       </Form.Item>
-      <Form.Item label={"DESCRIPTION"}>
+      <Form.Item label={i18n("PipelineDetails.description")}>
         <Input.TextArea
           value={description}
           onChange={(e) =>
@@ -47,6 +52,11 @@ export function PipelineDetails({}) {
             })
           }
         />
+      </Form.Item>
+      <Form.Item>
+        <Checkbox onChange={(e) => console.log(e.target.checked)}>
+          {i18n("PipelineDetails.shareWithProjects")}
+        </Checkbox>
       </Form.Item>
     </>
   );

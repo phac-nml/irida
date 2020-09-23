@@ -1,7 +1,7 @@
 import React from "react";
 import { Collapse, Divider, Form, List, Radio, Select, Typography } from "antd";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
-import { DISPATCH_PARAMETERS_MODIFIED, } from "../pipeline/lauch-constants";
+import { DISPATCH_PARAMETERS_MODIFIED } from "../pipeline/lauch-constants";
 import styled from "styled-components";
 
 const { Panel } = Collapse;
