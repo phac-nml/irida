@@ -3,7 +3,7 @@ import { useLaunchState } from "../pipeline-launch-old/launch-context";
 import { Modal, Tabs } from "antd";
 import { PipelineDetails } from "../../pages/pipeline-launch/PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
-import { PipelineParameters } from "../pipeline-launch-old/PipelineParameters";
+import { PipelineParameters } from "../../pages/pipeline-launch/PipelineParameters";
 
 const { TabPane } = Tabs;
 

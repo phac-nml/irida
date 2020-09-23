@@ -2,7 +2,7 @@ import React from "react";
 import { LaunchProvider, useLaunchState } from "./launch-context";
 import { PipelineDetails } from "../../pages/pipeline-launch/PipelineDetails";
 import { ReferenceFiles } from "../reference/ReferenceFiles";
-import { PipelineParameters } from "./PipelineParameters";
+import { PipelineParameters } from "../../pages/pipeline-launch/PipelineParameters";
 import { Button, Card, Col, Form, PageHeader, Result, Row, Space } from "antd";
 import { navigate } from "@reach/router";
 import { setBaseUrl } from "../../utilities/url-utilities";

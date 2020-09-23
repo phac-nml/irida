@@ -6,6 +6,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { PipelineDetails } from "./PipelineDetails";
 import { IconRocket } from "../../components/icons/Icons";
 import { PipelineResultsSharing } from "./PipelineResultsSharing";
+import { PipelineParameters } from "./PipelineParameters";
 
 export function LaunchContent() {
   const { pipelineName, startPipeline } = useLaunchState();
@@ -20,10 +21,12 @@ export function LaunchContent() {
           <Card title={i18n("LaunchContent.details")}>
             <PipelineDetails />
           </Card>
+          <Card title={"PARAMETERS"}>
+            <PipelineParameters />
+          </Card>
           <Card title={i18n("LaunchContent.resultSharing")}>
             <PipelineResultsSharing />
           </Card>
-
           <Form.Item>
             <Button type="primary" htmlType="submit" icon={<IconRocket />}>
               {i18n("LaunchContent.launch-btn")}

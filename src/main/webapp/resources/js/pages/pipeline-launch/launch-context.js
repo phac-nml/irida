@@ -13,14 +13,21 @@ function launchReducer(state, action) {
       return {
         ...state,
         fetching: false,
+        ...action.value,
         pipelineName: action.value.name,
         name: `${action.value.name}_${Date.now()}`,
         description: "",
+        selectedPipeline: action.value.parameters[0].id,
       };
     case "detail_update":
       return {
         ...state,
         [action.field]: action.value,
+      };
+    case "parameter_modified":
+      return {
+        ...state,
+        parameters: action.parameters,
       };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -55,6 +62,15 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
   const updateDetailsField = ({ field, value }) =>
     dispatch({ type: "detail_update", field, value });
 
+  const modifyParameter = ({ id, index, value }) => {
+    console.log(index, value);
+    const parameters = JSON.parse(JSON.stringify(state.parameters));
+    const set = parameters.find((p) => p.id === id);
+    set.modified = set.modified || [...set.parameters];
+    set.modified[index].value = value;
+    dispatch({ type: "parameter_modified", parameters });
+  };
+
   const startPipeline = () => {
     console.log("Launching", state);
     const details = {
@@ -69,7 +85,7 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
 
   return (
     <LaunchStateContext.Provider
-      value={{ ...state, updateDetailsField, startPipeline }}
+      value={{ ...state, updateDetailsField, modifyParameter, startPipeline }}
     >
       {loading ? <PageLoader /> : children}
     </LaunchStateContext.Provider>

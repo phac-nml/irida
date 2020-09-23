@@ -35,6 +35,7 @@ import {
   QuestionCircleOutlined,
   QuestionOutlined,
   RocketOutlined,
+  SaveOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
@@ -172,6 +173,8 @@ export const IconForm = ({ ...props }) => <FormOutlined {...props} />;
 export const IconRocket = ({ ...props }) => <RocketOutlined {...props} />;
 
 export const IconCopy = ({ ...props }) => <CopyOutlined {...props} />;
+
+export const IconSave = ({ ...props }) => <SaveOutlined {...props} />;
 
 /*
 File Type Icons
