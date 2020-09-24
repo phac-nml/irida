@@ -74,24 +74,11 @@ This user must also have Galaxy admin privileges in order to allow IRIDA to link
 Setup IRIDA tools in Galaxy
 ---------------------------
 
-### Step 1: Configure External Toolsheds
-
-The workflows used by IRIDA make use of external tools that can be installed using a [Galaxy Toolshed][].  The two toolsheds used by IRIDA are the [Main Galaxy Toolshed][] and the [IRIDA Toolshed][].  These are configured in the file `config/tool_sheds_conf.xml`.  Please make sure the following two `tool_shed` entries are setup within this file:
-
-```xml
-<tool_sheds>
-	<tool_shed name="Galaxy main tool shed" url="http://toolshed.g2.bx.psu.edu/"/>
-	<tool_shed name="IRIDA Galaxy Toolshed" url="https://irida.corefacility.ca/galaxy-shed"/>
-</tool_sheds>
-```
-
-### Step 2: Install Pipeline Tools
-
-#### Automated installation of tools
+### Automated installation of tools
 
 {%include administrator/galaxy/setup/automated-tool-install.md %}
 
-#### Manual installation of tools
+### Manual installation of tools
 
 Alternatively, the necessary tools can be installed manually through the following instructions specific to each pipeline in IRIDA:
 
@@ -114,7 +101,6 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [Conda]: https://conda.io/miniconda.html
 [galaxy-api]: https://wiki.galaxyproject.org/Learn/API
 [PostgreSQL]: http://www.postgresql.org/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Main Galaxy Toolshed]: https://toolshed.g2.bx.psu.edu/
 [Galaxy Toolshed]: https://wiki.galaxyproject.org/ToolShed
 [SNVPhyl Whole Genome Phylogeny]: ../pipelines/phylogenomics/
