@@ -9,7 +9,7 @@ export function PipelineParameterSet({ id, label, parameters, modified }) {
 
   return (
     <List
-      bordered={true}
+      bordered={false}
       itemLayout="horizontal"
       dataSource={modified || parameters}
       renderItem={(parameter, index) => (

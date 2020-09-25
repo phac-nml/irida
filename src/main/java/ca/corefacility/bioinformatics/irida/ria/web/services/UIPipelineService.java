@@ -179,7 +179,7 @@ public class UIPipelineService {
 									localizedParamOptionLabel(locale, name, parameter.getName(),
 											option.getName())))
 							.collect(Collectors.toUnmodifiableList());
-					return new PipelineParameterWithOptions(label, defaultValue, options);
+					return new PipelineParameterWithOptions(parameter.getName(), label, defaultValue, options);
 				}).collect(Collectors.toUnmodifiableList());
 	}
 

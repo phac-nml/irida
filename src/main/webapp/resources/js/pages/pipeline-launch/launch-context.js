@@ -100,12 +100,31 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
     dispatch({ type: "parameter_modified", parameters });
   };
 
+  const setParameterWithOption = ({ parameter, value }) => {
+    const parametersWithOptions = JSON.parse(
+      JSON.stringify(state.parametersWithOptions)
+    );
+    parametersWithOptions.find((p) => p.name === parameter.name).value = value;
+    dispatch({
+      type: "detail_update",
+      field: "parametersWithOptions",
+      value: parametersWithOptions,
+    });
+  };
+
   const startPipeline = () => {
     console.log("Launching", state);
     const details = {
       name: state.name,
       description: state.description,
       shareWithProjects: state.shareWithProjects,
+      parameters:
+        state.parameters[state.selectedPipeline].modified ||
+        state.parameters[state.selectedPipeline].parameters,
+      parametersWithOptions: state.parametersWithOptions.map((p) => ({
+        name: p.name,
+        value: p.value,
+      })),
     };
     launchPipeline({ id: pipelineId, details }).then((response) =>
       console.log(response)
@@ -123,6 +142,7 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
           saveParameters,
           resetParameters,
           validateSetName,
+          setParameterWithOption,
         },
       }}
     >
