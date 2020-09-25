@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Button, Form, Input, Popover } from "antd";
+import { Button, Form, Input, Popover, Tooltip } from "antd";
 import { IconSave } from "../../components/icons/Icons";
 import { useLaunchState } from "./launch-context";
 
@@ -27,6 +27,7 @@ export function ParameterSetSaveButton({ set }) {
 
   return (
     <Popover
+      placement="bottom"
       visible={visible}
       trigger="click"
       onVisibleChange={setVisible}
@@ -70,12 +71,14 @@ export function ParameterSetSaveButton({ set }) {
         </section>
       }
     >
-      <Button
-        onClick={(e) => e.stopPropagation()}
-        shape="circle"
-        size="small"
-        icon={<IconSave />}
-      />
+      <Tooltip title={i18n("ParameterSetSaveButton.tooltip")}>
+        <Button
+          onClick={(e) => e.stopPropagation()}
+          shape="circle"
+          size="small"
+          icon={<IconSave />}
+        />
+      </Tooltip>
     </Popover>
   );
 }
