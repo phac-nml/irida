@@ -43,7 +43,20 @@ export default function AdminHeader() {
                 <img style={{ height: 64, width: 200 }} src={setBaseUrl("/resources/img/irida_logo_dark.svg")}/>
               </Link>
               <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
-                    selectedKeys={[keyname ? parseKey(keyname) : ADMIN.USERS]}>
+                    selectedKeys={[keyname ?
+                      ( parseKey(keyname) !== "admin" ?
+                          parseKey(keyname)
+                          :
+                          ADMIN.STATISTICS
+                      )
+                      : ADMIN.STATISTICS
+                    ]}
+              >
+                <Menu.Item key="statistics">
+                  <Link to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} className={"t-admin-statistics-link"}>
+                    {i18n("AdminPanel.statistics")}
+                  </Link>
+                </Menu.Item>
                 <SubMenu title={i18n("AdminPanel.users")} className={"t-admin-users-submenu"}>
                   <Menu.Item key="users">
                     <Link to={`${DEFAULT_URL}/${ADMIN.USERS}`} className={"t-admin-users-link"}>

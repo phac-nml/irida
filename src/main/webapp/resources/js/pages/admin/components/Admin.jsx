@@ -20,6 +20,8 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Content } = Layout;
 
+const AdminStatistics = lazy(() => import("./AdminStatistics"));
+
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
 const AdminUserGroupsPage = lazy(() => import("./AdminUserGroupsPage"));
 const ClientListingPage = lazy(() =>
@@ -54,7 +56,8 @@ export default function Admin() {
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Router>
-              <AdminUsersPage path={`${DEFAULT_URL}/${ADMIN.USERS}`} default />
+              <AdminStatistics path={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} default />
+              <AdminUsersPage path={`${DEFAULT_URL}/${ADMIN.USERS}`} />
               <AdminUserGroupsPage
                 path={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/*`}
               />

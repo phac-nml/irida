@@ -17,6 +17,7 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
+    "@ant-design/charts": "^0.9.13",
     "@ant-design/icons": "^4.2.1",
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
