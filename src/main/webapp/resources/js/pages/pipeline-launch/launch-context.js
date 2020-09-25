@@ -71,6 +71,9 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
     dispatch({ type: "parameter_modified", parameters });
   };
 
+  const validateSetName = (name) =>
+    state.parameters.findIndex((p) => p.label === name) === -1;
+
   const saveParameters = ({ parameters, name }) => {
     savePipelineParameters({
       id: pipelineId,
@@ -119,6 +122,7 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
           startPipeline,
           saveParameters,
           resetParameters,
+          validateSetName,
         },
       }}
     >

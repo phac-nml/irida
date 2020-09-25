@@ -37,7 +37,6 @@ export function ParameterSetSaveButton({ set }) {
             style={{ width: 400 }}
             form={form}
             layout="vertical"
-            initialValues={{ name: `${set.label} (copy)` }}
             onFinish={onFinish}
           >
             <Form.Item
@@ -46,21 +45,21 @@ export function ParameterSetSaveButton({ set }) {
               rules={[
                 {
                   required: true,
-                  message: "A name for this set is required",
+                  message: i18n("ParameterSetSaveButton.name.required"),
                 },
                 () => ({
                   validator(rule, value) {
-                    if (value !== set.label) {
+                    if (api.validateSetName(value)) {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      "This name already exists for a template on this pipeline"
+                      i18n("ParameterSetSaveButton.name.error")
                     );
                   },
                 }),
               ]}
             >
-              <Input ref={inputRef} onFocus={() => inputRef.current.select()} />
+              <Input ref={inputRef} />
             </Form.Item>
             <Form.Item>
               <Button loading={saving} htmlType="submit">

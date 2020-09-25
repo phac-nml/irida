@@ -1,5 +1,5 @@
 import React from "react";
-import { Collapse, Form, Radio, Typography } from "antd";
+import { Button, Collapse, Form, Radio, Typography } from "antd";
 import { useLaunchState } from "./launch-context";
 import styled from "styled-components";
 import { PipelineParameterSet } from "./PipelineParameterSet";
@@ -47,14 +47,14 @@ export function PipelineParameters() {
               key={`parameter-${set.id}`}
               extra={generateSave(set)}
               header={
-                <span role="button" onClick={(e) => e.stopPropagation()}>
+                <Button ghost onClick={(e) => e.stopPropagation()}>
                   <Radio type="radio" name="parameters" value={set.id}>
                     {set.label}
                   </Radio>
                   {set.modified ? (
                     <Text type="warning">{"* Modified"}</Text>
                   ) : null}
-                </span>
+                </Button>
               }
             >
               <PipelineParameterSet {...set} />
