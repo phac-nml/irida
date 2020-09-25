@@ -46,6 +46,7 @@ import {
   SyncOutlined,
   TableOutlined,
   TeamOutlined,
+  UndoOutlined,
   UnorderedListOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -175,6 +176,8 @@ export const IconRocket = ({ ...props }) => <RocketOutlined {...props} />;
 export const IconCopy = ({ ...props }) => <CopyOutlined {...props} />;
 
 export const IconSave = ({ ...props }) => <SaveOutlined {...props} />;
+
+export const IconUndo = ({ ...props }) => <UndoOutlined {...props} />;
 
 /*
 File Type Icons

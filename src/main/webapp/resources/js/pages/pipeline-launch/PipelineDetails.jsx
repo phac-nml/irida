@@ -9,7 +9,7 @@ import { useLaunchState } from "./launch-context";
  * @constructor
  */
 export function PipelineDetails({}) {
-  const { name, description, updateDetailsField } = useLaunchState();
+  const { name, description, api } = useLaunchState();
   const nameRef = useRef();
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export function PipelineDetails({}) {
           ref={nameRef}
           onFocus={selectNameText}
           onChange={(e) =>
-            updateDetailsField({ field: "name", value: e.target.value })
+            api.updateDetailsField({ field: "name", value: e.target.value })
           }
         />
       </Form.Item>
@@ -46,7 +46,7 @@ export function PipelineDetails({}) {
         <Input.TextArea
           value={description}
           onChange={(e) =>
-            updateDetailsField({
+            api.updateDetailsField({
               field: "description",
               value: e.currentTarget.value,
             })

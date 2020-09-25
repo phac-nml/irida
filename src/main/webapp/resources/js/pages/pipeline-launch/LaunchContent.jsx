@@ -9,14 +9,14 @@ import { PipelineResultsSharing } from "./PipelineResultsSharing";
 import { PipelineParameters } from "./PipelineParameters";
 
 export function LaunchContent() {
-  const { pipelineName, startPipeline } = useLaunchState();
+  const { pipelineName, api } = useLaunchState();
   return (
     <section>
       <PageHeader
         title={i18n("LaunchContent.title", pipelineName)}
         onBack={() => navigate(setBaseUrl(`/cart/pipelines`))}
       />
-      <Form layout="vertical" onFinish={startPipeline}>
+      <Form layout="vertical" onFinish={api.startPipeline}>
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
           <Card title={i18n("LaunchContent.details")}>
             <PipelineDetails />

@@ -5,10 +5,7 @@ import { useLaunchState } from "./launch-context";
 const { Paragraph } = Typography;
 
 export function PipelineParameterSet({ id, label, parameters, modified }) {
-  const { modifyParameter } = useLaunchState();
-
-  const updateParameter = (index, value) =>
-    modifyParameter({ id, index, value });
+  const { api } = useLaunchState();
 
   return (
     <List
@@ -23,7 +20,8 @@ export function PipelineParameterSet({ id, label, parameters, modified }) {
               <Paragraph
                 style={{ marginLeft: 15, marginBottom: 0 }}
                 editable={{
-                  onChange: (value) => updateParameter(index, value),
+                  onChange: (value) =>
+                    api.modifyParameter({ id, index, value }),
                 }}
               >
                 {parameter.value}

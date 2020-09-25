@@ -3,6 +3,7 @@ import { PageLoader } from "../../components/page-loader/PageLoader";
 import {
   fetchPipelineDetails,
   launchPipeline,
+  savePipelineParameters,
 } from "../../apis/pipelines/launch";
 
 const LaunchStateContext = React.createContext();
@@ -63,11 +64,36 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
     dispatch({ type: "detail_update", field, value });
 
   const modifyParameter = ({ id, index, value }) => {
-    console.log(index, value);
     const parameters = JSON.parse(JSON.stringify(state.parameters));
     const set = parameters.find((p) => p.id === id);
-    set.modified = set.modified || [...set.parameters];
+    set.modified = set.modified || JSON.parse(JSON.stringify(set.parameters));
     set.modified[index].value = value;
+    dispatch({ type: "parameter_modified", parameters });
+  };
+
+  const saveParameters = ({ parameters, name }) => {
+    savePipelineParameters({
+      id: pipelineId,
+      parameters,
+      name,
+    }).then((id) => {
+      const parameters = JSON.parse(JSON.stringify(state.parameters));
+      const set = [...parameters[state.selectedPipeline].modified];
+      parameters[state.selectedPipeline].modified = undefined;
+      parameters.push({
+        id,
+        label: name,
+        parameters: set,
+      });
+      dispatch({ type: "parameter_modified", parameters });
+      dispatch({ type: "detail_update", field: "selectedPipeline", value: id });
+    });
+  };
+
+  const resetParameters = (set) => {
+    const parameters = JSON.parse(JSON.stringify(state.parameters));
+    const index = parameters.findIndex((p) => p.id === set.id);
+    parameters[index].modified = undefined;
     dispatch({ type: "parameter_modified", parameters });
   };
 
@@ -85,7 +111,16 @@ function LaunchProvider({ children, pipelineId, automated = false }) {
 
   return (
     <LaunchStateContext.Provider
-      value={{ ...state, updateDetailsField, modifyParameter, startPipeline }}
+      value={{
+        ...state,
+        api: {
+          updateDetailsField,
+          modifyParameter,
+          startPipeline,
+          saveParameters,
+          resetParameters,
+        },
+      }}
     >
       {loading ? <PageLoader /> : children}
     </LaunchStateContext.Provider>

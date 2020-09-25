@@ -12,3 +12,16 @@ export const launchPipeline = async function ({ details, id }) {
     .post(`${URL}/${id}`, details)
     .then((response) => console.log(response));
 };
+
+export const savePipelineParameters = async function ({
+  id,
+  name,
+  parameters,
+}) {
+  return axios
+    .post(`${URL}/${id}/parameters`, {
+      name,
+      parameters,
+    })
+    .then(({ data }) => data);
+};

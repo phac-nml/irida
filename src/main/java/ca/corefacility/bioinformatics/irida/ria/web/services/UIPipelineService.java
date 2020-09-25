@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -18,10 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.NamedPipelineParameters;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.Parameter;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.PipelineParameterWithOptions;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -101,6 +99,16 @@ public class UIPipelineService {
 		return details;
 	}
 
+	public Long savePipelineParameters(@PathVariable UUID workflowId, PipelineParametersSaveRequest request) {
+		Map<String, String> parameters = new HashMap<>();
+		request.getParameters()
+				.forEach(p -> parameters.put(p.getName(), p.getValue()));
+		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(request.getName(),
+				workflowId, parameters);
+		namedParameters = namedParametersService.create(namedParameters);
+		return namedParameters.getId();
+	}
+
 	private List<NamedPipelineParameters> getPipelineParameters(IridaWorkflow workflow, Locale locale) {
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 		List<IridaWorkflowParameter> workflowParameters = description.getParameters();
@@ -108,7 +116,8 @@ public class UIPipelineService {
 			return null;
 		}
 
-		String pipelineName = description.getName().toLowerCase();
+		String pipelineName = description.getName()
+				.toLowerCase();
 		List<NamedPipelineParameters> pipelineParameters = new ArrayList<>();
 
 		/*

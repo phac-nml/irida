@@ -3,10 +3,10 @@ import { Collapse, Form, Radio, Typography } from "antd";
 import { useLaunchState } from "./launch-context";
 import styled from "styled-components";
 import { PipelineParameterSet } from "./PipelineParameterSet";
-import { ParameterSaveButton } from "./ParameterSaveButton";
+import { ParameterSetActionButtons } from "./ParameterSetActionButtons";
 
 const { Panel } = Collapse;
-const { Paragraph } = Typography;
+const { Text } = Typography;
 
 const CollapseRadioGroup = styled(Radio.Group)`
   label.ant-radio-wrapper {
@@ -20,13 +20,12 @@ export function PipelineParameters() {
     parameters,
     parametersWithOptions,
     selectedPipeline,
-    updateDetailsField,
+    api,
   } = useLaunchState();
 
-  const generateSave = (index) => {
-    const set = parameters[index];
+  const generateSave = (set) => {
     if (set.modified) {
-      return <ParameterSaveButton parameter={set} />;
+      return <ParameterSetActionButtons set={set} />;
     }
     return null;
   };
@@ -35,7 +34,7 @@ export function PipelineParameters() {
     <Form.Item>
       <CollapseRadioGroup
         onChange={(e) =>
-          updateDetailsField({
+          api.updateDetailsField({
             field: "selectedPipeline",
             value: e.target.value,
           })
@@ -43,19 +42,22 @@ export function PipelineParameters() {
         value={selectedPipeline}
       >
         <Collapse expandIconPosition="right">
-          {parameters.map((p, index) => (
+          {parameters.map((set) => (
             <Panel
-              key={`parameter-${p.id}`}
-              extra={generateSave(index)}
+              key={`parameter-${set.id}`}
+              extra={generateSave(set)}
               header={
                 <span role="button" onClick={(e) => e.stopPropagation()}>
-                  <Radio type="radio" name="parameters" value={p.id}>
-                    {p.label}
+                  <Radio type="radio" name="parameters" value={set.id}>
+                    {set.label}
                   </Radio>
+                  {set.modified ? (
+                    <Text type="warning">{"* Modified"}</Text>
+                  ) : null}
                 </span>
               }
             >
-              <PipelineParameterSet {...p} />
+              <PipelineParameterSet {...set} />
             </Panel>
           ))}
         </Collapse>

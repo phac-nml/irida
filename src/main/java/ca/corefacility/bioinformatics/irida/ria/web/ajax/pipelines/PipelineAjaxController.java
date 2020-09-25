@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.PipelineLaunchDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.PipelineParametersSaveRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
@@ -39,5 +40,10 @@ public class PipelineAjaxController {
 	public ResponseEntity<String> launchPipeline(@PathVariable UUID workflowId,
 			@RequestBody PipelineLaunchDetails details) {
 		return ResponseEntity.ok("");
+	}
+
+	@PostMapping("/{workflowId}/parameters")
+	public ResponseEntity<Long> savePipelineParameters(@PathVariable UUID workflowId, @RequestBody PipelineParametersSaveRequest request) {
+		return ResponseEntity.ok(service.savePipelineParameters(workflowId, request));
 	}
 }
