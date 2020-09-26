@@ -750,10 +750,18 @@ public class AnalysisAjaxController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
+		if (analysisTypesService.getViewerForAnalysisType(analysisType).get().equals("sistr")) {
 			Analysis analysis = submission.getAnalysis();
-			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
-					.getFile();
+
+			Path path = null;
+			if(analysis.getAnalysisOutputFile(sistrFileKey) != null) {
+				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
+			}else{
+				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
+						"No output file was found for the default sistrFileKey \""+sistrFileKey + "\"."+
+						"Check irida_workflow.xml for \"sistr-predictions\" attribute (<output name=\"sistr-predictions\">)");
+			}
+
 
 			try {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
