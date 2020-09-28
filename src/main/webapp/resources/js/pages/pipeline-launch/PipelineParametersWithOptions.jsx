@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Divider, Form, Radio, Select } from "antd";
+import { Checkbox, Form, Radio, Select } from "antd";
 import { useLaunchState } from "./launch-context";
 
 function BooleanParameter({ parameter, onChange }) {
@@ -60,7 +60,6 @@ export function PipelineParametersWithOptions() {
 
   return parametersWithOptions ? (
     <section>
-      <Divider />
       {parametersWithOptions.map((set) => {
         if (isBoolean(set.options)) {
           return (

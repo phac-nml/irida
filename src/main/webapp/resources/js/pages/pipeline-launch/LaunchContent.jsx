@@ -6,7 +6,8 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { PipelineDetails } from "./PipelineDetails";
 import { IconRocket } from "../../components/icons/Icons";
 import { PipelineResultsSharing } from "./PipelineResultsSharing";
-import { PipelineParameters } from "./PipelineParameters";
+import { PipelineRequiredParameters } from "./PipelineRequiredParameters";
+import { PipelineParametersWithOptions } from "./PipelineParametersWithOptions";
 
 export function LaunchContent() {
   const { pipelineName, api } = useLaunchState();
@@ -21,8 +22,9 @@ export function LaunchContent() {
           <Card title={i18n("LaunchContent.details")}>
             <PipelineDetails />
           </Card>
-          <Card title={"PARAMETERS"}>
-            <PipelineParameters />
+          <Card title={i18n("LaunchContent.parameters")}>
+            <PipelineRequiredParameters />
+            <PipelineParametersWithOptions />
           </Card>
           <Card title={i18n("LaunchContent.resultSharing")}>
             <PipelineResultsSharing />

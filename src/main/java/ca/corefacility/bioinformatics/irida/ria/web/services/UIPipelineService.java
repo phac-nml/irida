@@ -92,9 +92,16 @@ public class UIPipelineService {
 		details.setParameters(getPipelineParameters(workflow, locale));
 
 		/*
-
+		Some parameters have specific options only.  These are not saved, and must be set manually.
 		 */
 		details.setParametersWithOptions(getPipelineSpecificParametersWithOptions(workflowDescription, locale));
+
+		/*
+		Set up dynamic source parameters
+		 */
+		if (workflowDescription.requiresDynamicSource()) {
+
+		}
 
 		return details;
 	}
