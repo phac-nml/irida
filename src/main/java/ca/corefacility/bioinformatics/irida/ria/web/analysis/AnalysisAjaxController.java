@@ -755,40 +755,40 @@ public class AnalysisAjaxController {
 			Path path = null;
 			if(analysis.getAnalysisOutputFile(sistrFileKey) != null) {
 				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
-			}else{
-				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
-						"No output file was found for the default sistrFileKey \""+sistrFileKey + "\"."+
-						"Check irida_workflow.xml for \"sistr-predictions\" attribute (<output name=\"sistr-predictions\">)");
-			}
 
+				try {
+					String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
+							.next();
 
-			try {
-				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
-						.next();
+					// verify file is proper json file and map to a SistrResult list
+					ObjectMapper mapper = new ObjectMapper();
+					List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
+					});
 
-				// verify file is proper json file and map to a SistrResult list
-				ObjectMapper mapper = new ObjectMapper();
-				List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
-				});
-
-				if (sistrResults.size() > 0) {
-					// should only ever be one sample for these results
-					if (samples != null && samples.size() == 1) {
-						Sample sample = samples.iterator().next();
-						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
+					if (sistrResults.size() > 0) {
+						// should only ever be one sample for these results
+						if (samples != null && samples.size() == 1) {
+							Sample sample = samples.iterator().next();
+							return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
+						} else {
+							logger.error("Invalid number of associated samples for submission " + submission);
+						}
 					} else {
-						logger.error("Invalid number of associated samples for submission " + submission);
+						logger.error("SISTR results for file [" + path + "] are not correctly formatted");
 					}
-				} else {
-					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
+				} catch (FileNotFoundException e) {
+					logger.error("File [" + path + "] not found", e);
+				} catch (JsonParseException | JsonMappingException e) {
+					logger.error("Error attempting to parse file [" + path + "] as JSON", e);
+				} catch (IOException e) {
+					logger.error("Error reading file [" + path + "]", e);
 				}
-			} catch (FileNotFoundException e) {
-				logger.error("File [" + path + "] not found", e);
-			} catch (JsonParseException | JsonMappingException e) {
-				logger.error("Error attempting to parse file [" + path + "] as JSON", e);
-			} catch (IOException e) {
-				logger.error("Error reading file [" + path + "]", e);
+			} else {
+				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
+						"No output file was found for the default sistrFileKey \""+sistrFileKey + "\". "+
+						"Check irida_workflow.xml for \"sistr-predictions\" attribute (<output name=\"sistr-predictions\">).");
 			}
+
 		}
 		return new AnalysisSistrResults(null, true, null);
 	}
