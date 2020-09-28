@@ -1,25 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
-
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -31,7 +27,7 @@ import static org.mockito.Mockito.*;
  */
 public class RemoteAPIAjaxControllerTest {
 	private RemoteAPIService remoteAPIService;
-	private ProjectRemoteService projectRemoteService;
+	private UIRemoteAPIService uiRemoteAPIService;
 	private RemoteAPIAjaxController controller;
 
 	private final RemoteAPI REMOTE_API_01 = new RemoteAPI("Toronto", "http://toronto.nowhere", "", "toronto", "123456");
@@ -41,8 +37,8 @@ public class RemoteAPIAjaxControllerTest {
 	@Before
 	public void init() {
 		remoteAPIService = mock(RemoteAPIService.class);
-		projectRemoteService = mock(ProjectRemoteService.class);
-		controller = new RemoteAPIAjaxController(remoteAPIService, projectRemoteService);
+		uiRemoteAPIService = mock(UIRemoteAPIService.class);
+		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService);
 
 		Page<RemoteAPI> remoteAPIPage = new Page<>() {
 			@Override
@@ -130,9 +126,6 @@ public class RemoteAPIAjaxControllerTest {
 				any(String[].class))).thenReturn(remoteAPIPage);
 		when(remoteAPIService.read(1L)).thenReturn(REMOTE_API_01);
 		when(remoteAPIService.read(2L)).thenReturn(REMOTE_API_02);
-		when(projectRemoteService.getServiceStatus(REMOTE_API_01)).thenReturn(true);
-		when(projectRemoteService.getServiceStatus(REMOTE_API_02)).thenThrow(
-				new IridaOAuthException("", REMOTE_API_02));
 	}
 
 	@Test
@@ -148,19 +141,5 @@ public class RemoteAPIAjaxControllerTest {
 				any(String[].class));
 		assertEquals("Should have 1 Remote API", 1, response.getDataSource()
 				.size());
-	}
-
-	@Test
-	public void checkAPIStatusTest() {
-		ResponseEntity<String> responseEntity1 = controller.checkAPIStatus(1L);
-		assertEquals("Should have a valid token", responseEntity1.getBody(),
-				RemoteAPIAjaxController.VALID_OAUTH_CONNECTION);
-		assertEquals("Should have a 'OK' HttpStatus", HttpStatus.OK, responseEntity1.getStatusCode());
-
-		ResponseEntity<String> responseEntity2 = controller.checkAPIStatus(2L);
-		assertEquals("Should have a invalid token", responseEntity2.getBody(),
-				RemoteAPIAjaxController.INVALID_OAUTH_TOKEN);
-		assertEquals("Should have a 'OK' HttpStatus", HttpStatus.OK, responseEntity2.getStatusCode());
-
 	}
 }

@@ -42,12 +42,10 @@ module.exports = {
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
-  "project-settings-remote":
-    "./resources/js/pages/projects/settings/project-settings-remote.js",
+  "project-remote":
+    "./resources/js/pages/projects/remote/",
   "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
-  "remote-api-details":
-    "./resources/js/pages/remote-apis/remote-api-details.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",

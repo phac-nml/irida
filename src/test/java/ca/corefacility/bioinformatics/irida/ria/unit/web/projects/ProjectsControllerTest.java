@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
 import java.util.function.Function;
@@ -8,7 +7,6 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,18 +19,14 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.Lists;
@@ -59,11 +53,8 @@ public class ProjectsControllerTest {
 	private ProjectsController controller;
 	private SampleService sampleService;
 	private UserService userService;
-	private ProjectRemoteService projectRemoteService;
 	private ProjectControllerUtils projectUtils;
-	private RemoteAPIService remoteApiService;
 	private TaxonomyService taxonomyService;
-	private IridaWorkflowsService workflowsService;
 	private CartController cartController;
 	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
@@ -73,15 +64,13 @@ public class ProjectsControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
-		projectRemoteService = mock(ProjectRemoteService.class);
 		cartController = mock(CartController.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
-		controller = new ProjectsController(projectService, sampleService, userService, projectRemoteService,
-				projectUtils, taxonomyService, remoteApiService, workflowsService, cartController,
-				updateSamplePermission, messageSource);
+		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService,
+				cartController, updateSamplePermission, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -214,90 +203,6 @@ public class ProjectsControllerTest {
 		List<Join<Project, User>> list = new ArrayList<>();
 		list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
 		return list;
-	}
-
-	private Page<Project> getProjectUserJoinPage(User user) {
-		return new Page<Project>() {
-			@Override
-			public int getTotalPages() {
-				return 10;
-			}
-
-			@Override
-			public long getTotalElements() {
-				return 100;
-			}
-
-			@Override
-			public <U> Page<U> map(Function<? super Project, ? extends U> function) {
-				return null;
-			}
-
-			@Override
-			public int getNumber() {
-				return 10;
-			}
-
-			@Override
-			public int getSize() {
-				return 10;
-			}
-
-			@Override
-			public int getNumberOfElements() {
-				return 10;
-			}
-
-			@Override
-			public List<Project> getContent() {
-				return TestDataFactory.constructListJoinProjectUser(user);
-			}
-
-			@Override
-			public boolean hasContent() {
-				return true;
-			}
-
-			@Override
-			public Sort getSort() {
-				return null;
-			}
-
-			@Override
-			public boolean isFirst() {
-				return true;
-			}
-
-			@Override
-			public boolean isLast() {
-				return false;
-			}
-
-			@Override
-			public boolean hasNext() {
-				return true;
-			}
-
-			@Override
-			public boolean hasPrevious() {
-				return false;
-			}
-
-			@Override
-			public Pageable nextPageable() {
-				return null;
-			}
-
-			@Override
-			public Pageable previousPageable() {
-				return null;
-			}
-
-			@Override
-			public Iterator<Project> iterator() {
-				return null;
-			}
-		};
 	}
 
 	public Page<Project> getProjectPage() {
