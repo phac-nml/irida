@@ -11,13 +11,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSourceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
@@ -25,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
 @Component
 @Scope("session")
@@ -34,18 +39,21 @@ public class UIPipelineService {
 	private final WorkflowNamedParametersService namedParametersService;
 	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private final ReferenceFileService referenceFileService;
+	private final GalaxyToolDataService galaxyToolDataService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
 			WorkflowNamedParametersService namedParametersService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			ReferenceFileService referenceFileService, MessageSource messageSource) {
+			ReferenceFileService referenceFileService, GalaxyToolDataService galaxyToolDataService,
+			MessageSource messageSource) {
 		this.cart = cart;
 		this.workflowsService = workflowsService;
 		this.namedParametersService = namedParametersService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.referenceFileService = referenceFileService;
+		this.galaxyToolDataService = galaxyToolDataService;
 		this.messageSource = messageSource;
 	}
 
@@ -227,5 +235,50 @@ public class UIPipelineService {
 		} catch (NoSuchMessageException e) {
 			return paramName + "." + optionName;
 		}
+	}
+
+	private List<DynamicSourceTool> generateDynamicSourceParameters(IridaWorkflowDescription description,
+			Locale locale) {
+		List<DynamicSourceTool> dynamicSources = new ArrayList<>();
+
+		IridaWorkflowDynamicSourceGalaxy galaxyDynamicSource = new IridaWorkflowDynamicSourceGalaxy();
+
+		for (IridaWorkflowParameter parameter : description.getParameters()) {
+			if (parameter.isRequired() && parameter.hasDynamicSource()) {
+				try {
+					galaxyDynamicSource = parameter.getDynamicSource();
+				} catch (IridaWorkflowParameterException e) {
+					logger.debug("Dynamic Source error: ", e);
+				}
+
+				List<SelectOption> parametersList = new ArrayList<>();
+				String dynamicSourceName;
+				Map<String, Object> toolDataTable = new HashMap<>();
+				try {
+					dynamicSourceName = galaxyDynamicSource.getName();
+					toolDataTable.put("id", dynamicSourceName);
+					toolDataTable.put("label",
+							messageSource.getMessage("dynamicsource.label." + dynamicSourceName, null, locale));
+					toolDataTable.put("parameters", parametersList);
+
+					TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(
+							dynamicSourceName);
+					List<String> labels = galaxyToolDataTable.getFieldsForColumn(
+							galaxyDynamicSource.getDisplayColumn());
+					Iterator<String> labelsIterator = labels.iterator();
+					List<String> values = galaxyToolDataTable.getFieldsForColumn(
+							galaxyDynamicSource.getParameterColumn());
+					Iterator<String> valuesIterator = values.iterator();
+
+					while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
+						parametersList.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
+					}
+					dynamicSources.add(toolDataTable);
+				} catch (Exception e) {
+					logger.debug("Tool Data Table not found: ", e);
+				}
+			}
+		}
+		return dynamicSources;
 	}
 }
