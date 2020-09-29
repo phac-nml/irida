@@ -25,7 +25,8 @@ export function PipelineRequiredParameters() {
     return null;
   };
 
-  return (
+  return parameters.length === 0 ||
+    parameters[0].parameters.length === 0 ? null : (
     <Form.Item label={i18n("PipelineParameters.requiredParameters")}>
       <CollapseRadioGroup
         onChange={(e) =>
