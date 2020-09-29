@@ -42,8 +42,7 @@ module.exports = {
   "project-new": "./resources/js/pages/projects/projects-new.js",
   "project-settings-basic":
     "./resources/js/pages/projects/settings/project-settings-basic.js",
-  "project-remote":
-    "./resources/js/pages/projects/remote/",
+  "project-remote": "./resources/js/pages/projects/remote/",
   "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
@@ -71,6 +70,7 @@ module.exports = {
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
+  "sequencing-run-details": "./resources/js/pages/sequencing-runs/details",
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
   search: "./resources/js/pages/search/search.js",
