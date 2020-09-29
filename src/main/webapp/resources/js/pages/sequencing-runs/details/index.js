@@ -20,7 +20,9 @@ function SequencingRunDetails() {
             title={i18n("SequenceRunDetails.delete.confirmation")}
             onConfirm={() => deleteSequencingRun({ id: runId })}
           >
-            <Button>{i18n("SequenceRunDetails.delete")}</Button>
+            <Button className="t-remove-btn">
+              {i18n("SequenceRunDetails.delete")}
+            </Button>
           </Popconfirm>
         ) : null,
       ]}
