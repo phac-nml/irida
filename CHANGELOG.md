@@ -1,6 +1,10 @@
 Changes
 =======
 
+20.09 to 21.01
+--------------
+* [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)
+
 20.05 to 20.09
 --------------
 * [UI] Updated project user groups to use Ant Design.
