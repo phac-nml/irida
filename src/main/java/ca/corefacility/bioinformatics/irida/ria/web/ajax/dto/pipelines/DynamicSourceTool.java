@@ -1,18 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines;
 
-import java.util.List;
-
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+
+import java.util.List;
 
 public class DynamicSourceTool {
 	private final String id;
 	private final String label;
-	private final List<SelectOption> parameters;
+	private  List<SelectOption> options;
 
-	public DynamicSourceTool(String id, String label, List<SelectOption> parameters) {
+	public DynamicSourceTool(String id, String label) {
 		this.id = id;
 		this.label = label;
-		this.parameters = parameters;
 	}
 
 	public String getId() {
@@ -23,7 +22,11 @@ public class DynamicSourceTool {
 		return label;
 	}
 
-	public List<SelectOption> getParameters() {
-		return parameters;
+	public void setOptions(List<SelectOption> options) {
+		this.options = options;
+	}
+
+	public List<SelectOption> getOptions() {
+		return options;
 	}
 }

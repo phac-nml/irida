@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
+
 import java.util.List;
 import java.util.UUID;
-
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
 
 public class UIPipelineDetailsResponse {
 	private UUID id;
@@ -13,6 +13,7 @@ public class UIPipelineDetailsResponse {
 	private List<UIReferenceFile> files;
 	private List<NamedPipelineParameters> parameters;
 	private List<PipelineParameterWithOptions> parametersWithOptions;
+	private List<DynamicSourceTool> dynamicSourceTools;
 
 	public UUID getId() {
 		return id;
@@ -74,5 +75,13 @@ public class UIPipelineDetailsResponse {
 
 	public void setParametersWithOptions(List<PipelineParameterWithOptions> parametersWithOptions) {
 		this.parametersWithOptions = parametersWithOptions;
+	}
+
+	public List<DynamicSourceTool> getDynamicSourceTools() {
+		return dynamicSourceTools;
+	}
+
+	public void setDynamicSourceTools(List<DynamicSourceTool> dynamicSourceTools) {
+		this.dynamicSourceTools = dynamicSourceTools;
 	}
 }

@@ -1,15 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -28,8 +18,18 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("session")
@@ -41,6 +41,8 @@ public class UIPipelineService {
 	private final ReferenceFileService referenceFileService;
 	private final GalaxyToolDataService galaxyToolDataService;
 	private final MessageSource messageSource;
+
+	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
 
 	@Autowired
 	public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
@@ -108,7 +110,8 @@ public class UIPipelineService {
 		Set up dynamic source parameters
 		 */
 		if (workflowDescription.requiresDynamicSource()) {
-
+			List<DynamicSourceTool> dynamicSourceTools = generateDynamicSourceParameters(workflowDescription, locale);
+			details.setDynamicSourceTools(dynamicSourceTools);
 		}
 
 		return details;
@@ -251,18 +254,13 @@ public class UIPipelineService {
 					logger.debug("Dynamic Source error: ", e);
 				}
 
-				List<SelectOption> parametersList = new ArrayList<>();
-				String dynamicSourceName;
-				Map<String, Object> toolDataTable = new HashMap<>();
+				List<SelectOption> selectOptions = new ArrayList<>();
 				try {
-					dynamicSourceName = galaxyDynamicSource.getName();
-					toolDataTable.put("id", dynamicSourceName);
-					toolDataTable.put("label",
-							messageSource.getMessage("dynamicsource.label." + dynamicSourceName, null, locale));
-					toolDataTable.put("parameters", parametersList);
+					String name = galaxyDynamicSource.getName();
+					DynamicSourceTool tool = new DynamicSourceTool(name, messageSource.getMessage("dynamicsource.label." + name, new Object[]{}, locale));
 
 					TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(
-							dynamicSourceName);
+							name);
 					List<String> labels = galaxyToolDataTable.getFieldsForColumn(
 							galaxyDynamicSource.getDisplayColumn());
 					Iterator<String> labelsIterator = labels.iterator();
@@ -271,9 +269,9 @@ public class UIPipelineService {
 					Iterator<String> valuesIterator = values.iterator();
 
 					while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
-						parametersList.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
+						selectOptions.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 					}
-					dynamicSources.add(toolDataTable);
+					tool.setOptions(selectOptions);
 				} catch (Exception e) {
 					logger.debug("Tool Data Table not found: ", e);
 				}
