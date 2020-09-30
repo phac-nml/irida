@@ -4,10 +4,13 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+const max_cgMLST_count = 330; /* the maximum number of possible cgMLST alleles in SISTR */
 
 export default function CgMlst({ sistrResults }) {
+
+
+
   function cgMLST330() {
     return [
       {
@@ -20,7 +23,7 @@ export default function CgMlst({ sistrResults }) {
       },
       {
         title: i18n("AnalysisSistr.allelesMatchingGenome"),
-        desc: `${sistrResults.cgmlst_matching_alleles}/330`
+        desc: `${sistrResults.cgmlst_matching_alleles}/${max_cgMLST_count}`
       },
       {
         title: i18n("AnalysisSistr.percentMatching"),
@@ -32,7 +35,7 @@ export default function CgMlst({ sistrResults }) {
       {
         title: i18n("AnalysisSistr.allelesFoundGenome"),
         desc: sistrResults.cgmlst_found_loci !== null
-          ? `${sistrResults.cgmlst_found_loci}/330` + "" : "-"
+          ? `${sistrResults.cgmlst_found_loci}/${max_cgMLST_count}` + "" : "-"
       },
       {
         title: i18n("AnalysisSistr.allelesFoundGenomePercent"),
@@ -46,12 +49,14 @@ export default function CgMlst({ sistrResults }) {
     ];
   }
 
+  /*Converts decimal distance to percent similarity with 2 decimal points precision*/
   function getPercentageFromDistance(str) {
     return parseFloat((1 - str) * 100).toFixed(2);
   }
 
+  /*Get percent value out of cgMLST allele counts out of 330 (maximum number of cgMLST alleles)*/
   function getPercentage(str) {
-    return parseFloat((str / 330) * 100).toFixed(2);
+    return parseFloat((str / max_cgMLST_count) * 100).toFixed(2);
   }
 
   /*
