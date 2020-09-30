@@ -18,9 +18,12 @@ public class Cart extends HashMap<Project, HashSet<Sample>> {
 	 */
 	public int add(Project project, List<Sample> samples) {
 		HashSet<Sample> existing = this.containsKey(project) ? this.get(project) : new HashSet<>();
-		int size = existing.size();
 		existing.addAll(samples);
 		this.put(project, existing);
-		return existing.size() - size;
+		return existing.size();
+	}
+
+	public int getNumberOfSamplesInCart() {
+		return this.values().stream().reduce(0, (total, samples) -> total + samples.size(), Integer::sum);
 	}
 }

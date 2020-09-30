@@ -2,6 +2,7 @@ import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const url = setBaseUrl(`cart`);
+const AJAX_URL = setBaseUrl(`/ajax/cart`);
 
 /**
  * Add samples for a project to the cart.
@@ -10,19 +11,19 @@ const url = setBaseUrl(`cart`);
  * @returns {AxiosPromise<any>}
  */
 export const putSampleInCart = async (projectId, samples) =>
-  axios.post(setBaseUrl(`/ajax/cart`), {
-    projectId,
-    samples,
-  });
+  axios
+    .post(AJAX_URL, {
+      projectId,
+      samples,
+    })
+    .then(({ data }) => data);
 
 /**
  * Get the current number of samples in the cart
  * @returns {Promise<void>}
  */
 export const getCartCount = async () => {
-  return axios
-    .get(`${url}/count`)
-    .then((response) => ({ count: response.data }));
+  return axios.get(`${AJAX_URL}/count`).then(({ data }) => ({ count: data }));
 };
 
 /**

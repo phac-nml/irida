@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
@@ -25,9 +27,14 @@ public class UICartService {
 		this.sampleService = sampleService;
 	}
 
-	public void addSamplesToCart(AddToCartRequest request) {
+	public int addSamplesToCart(AddToCartRequest request) {
 		Project project = projectService.read(request.getProjectId());
-		sampleService.readMultiple(request.getSamples().stream().map(CartSampleRequest::getId).collect(Collectors.toUnmodifiableList()));
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSamples().stream().map(CartSampleRequest::getId).collect(
+				Collectors.toUnmodifiableList()));
+		return cart.add(project, samples);
+	}
 
+	public int getNumberOfSamplesInCart() {
+		return cart.getNumberOfSamplesInCart();
 	}
 }

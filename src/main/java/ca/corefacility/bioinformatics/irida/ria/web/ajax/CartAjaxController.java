@@ -4,10 +4,7 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
@@ -23,7 +20,12 @@ public class CartAjaxController {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<String> addSamplesToCart(@RequestBody AddToCartRequest request, Locale locale) {
-		return ResponseEntity.ok("SDFKLJ");
+	public ResponseEntity<Integer> addSamplesToCart(@RequestBody AddToCartRequest request, Locale locale) {
+		return ResponseEntity.ok(service.addSamplesToCart(request));
+	}
+
+	@GetMapping("/count")
+	public ResponseEntity<Integer> getNumberOfSamplesInCart() {
+		return ResponseEntity.ok(service.getNumberOfSamplesInCart());
 	}
 }
