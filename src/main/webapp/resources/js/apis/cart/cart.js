@@ -10,9 +10,9 @@ const url = setBaseUrl(`cart`);
  * @returns {AxiosPromise<any>}
  */
 export const putSampleInCart = async (projectId, samples) =>
-  axios.put(url, {
+  axios.post(setBaseUrl(`/ajax/cart`), {
     projectId,
-    samples
+    samples,
   });
 
 /**
@@ -20,7 +20,9 @@ export const putSampleInCart = async (projectId, samples) =>
  * @returns {Promise<void>}
  */
 export const getCartCount = async () => {
-  return axios.get(`${url}/count`).then(response => ({ count: response.data }));
+  return axios
+    .get(`${url}/count`)
+    .then((response) => ({ count: response.data }));
 };
 
 /**
@@ -28,14 +30,14 @@ export const getCartCount = async () => {
  * @returns {Promise<void | never>}
  */
 export const getCart = async () =>
-  axios.get(`${url}`).then(response => response.data);
+  axios.get(`${url}`).then((response) => response.data);
 
 export const getCartIds = async () =>
-  axios.get(`${url}/ids`).then(response => ({ ids: response.data }));
+  axios.get(`${url}/ids`).then((response) => ({ ids: response.data }));
 
-export const getSamplesForProjects = async ids =>
+export const getSamplesForProjects = async (ids) =>
   axios
-    .get(`${url}?${ids.map(id => `projectId=${id}`).join("&")}`)
+    .get(`${url}?${ids.map((id) => `projectId=${id}`).join("&")}`)
     .then(({ data }) => data);
 
 /**
@@ -54,15 +56,15 @@ export const removeSample = async (projectId, sampleId) =>
     .delete(`${url}/sample`, {
       data: {
         projectId,
-        sampleId
-      }
+        sampleId,
+      },
     })
-    .then(response => response.data);
+    .then((response) => response.data);
 
 /**
  * Remove an entire project from the cart.
  * @param {number} id - Identifier for a sample
  * @returns {Promise<AxiosPromise>}
  */
-export const removeProject = async id =>
-  axios.delete(`${url}/project?id=${id}`).then(response => response.data);
+export const removeProject = async (id) =>
+  axios.delete(`${url}/project?id=${id}`).then((response) => response.data);
