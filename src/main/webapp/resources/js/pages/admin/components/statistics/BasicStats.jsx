@@ -10,6 +10,7 @@ import { SPACE_LG } from "../../../../styles/spacing";
 import AdvancedStatistics from "./AdvancedStatistics";
 import {
   defaultTimePeriod,
+  statisticTypes,
   timePeriodMap
 } from "../../../../contexts/AdminStatisticsContext";
 
@@ -22,26 +23,58 @@ export default function BasicStats({ statistics }) {
         <Row gutter={16}>
           <Col span={6}>
             <Card>
-              <Statistic title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`} value={statistics.analysesRun}></Statistic>
-              <Button style={{ marginTop: 16 }} onClick={() => setStatsChartView(<AdvancedStatistics statType="analyses" />)}>Advanced Analyses Statistics</Button>
+              <Statistic
+                title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={statistics.analysesRun}
+              />
+              <Button
+                style={{ marginTop: 16 }}
+                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)}
+              >
+                Advanced Analyses Statistics
+              </Button>
             </Card>
           </Col>
           <Col span={6}>
             <Card>
-              <Statistic title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`} value={statistics.projectsCreated} />
-              <Button style={{ marginTop: 16 }} onClick={() => setStatsChartView(<AdvancedStatistics statType="projects" />)}>Advanced Project Statistics</Button>
+              <Statistic
+                title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={statistics.projectsCreated}
+              />
+              <Button
+                style={{ marginTop: 16 }}
+                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS} />)}
+              >
+                Advanced Project Statistics
+              </Button>
             </Card>
           </Col>
           <Col span={6}>
             <Card>
-              <Statistic title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`} value={statistics.samplesCreated} />
-              <Button style={{ marginTop: 16 }} onClick={() => setStatsChartView(<AdvancedStatistics statType="samples" />)}>Advanced Sample Statistics</Button>
+              <Statistic
+                title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={statistics.samplesCreated}
+              />
+              <Button
+                style={{ marginTop: 16 }}
+                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)}
+              >
+                Advanced Sample Statistics
+              </Button>
             </Card>
           </Col>
           <Col span={6}>
             <Card>
-              <Statistic title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`} value={statistics.usersLoggedIn} />
-              <Button style={{ marginTop: 16 }} onClick={() => setStatsChartView(<AdvancedStatistics statType="users" />)}>Advanced User Statistics</Button>
+              <Statistic
+                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={statistics.usersLoggedIn}
+              />
+              <Button
+                style={{ marginTop: 16 }}
+                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)}
+              >
+                Advanced User Statistics
+              </Button>
             </Card>
           </Col>
         </Row>

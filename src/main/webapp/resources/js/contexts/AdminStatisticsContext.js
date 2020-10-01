@@ -13,11 +13,6 @@ import {
   getUpdatedAdminUserStatistics
 } from "../apis/admin/admin";
 
-// Default is to display statistics for the last week
-export const defaultTimePeriod = 7;
-
-export const defaultChartType = "bar";
-
 export const timePeriodMap = {
   1: "day",
   7: "week",
@@ -30,12 +25,41 @@ export const timePeriodMap = {
   3650: "10 years"
 };
 
+export const chartTypes = {
+  BAR: "bar",
+  COLUMN: "column",
+  DONUT: "donut",
+  LINE: "line",
+  PIE: "pie"
+}
+
+export const statisticTypes = {
+  ANALYSES: "analyses",
+  PROJECTS: "projects",
+  SAMPLES: "samples",
+  USERS: "users"
+}
+
+// Default is to display statistics for the last week
+export const defaultTimePeriod = 7;
+
+export const defaultChartType = chartTypes.BAR;
+
 const initialContext = {
   statistics: {
-    analysesStats: {},
-    projectStats: {},
-    sampleStats: {},
-    userStats: {}
+    analysesStats: [
+      { key: '2019', value: 1607 },
+      { key: '2018', value: 801 },
+      { key: '2017', value: 421 },
+      { key: '2016', value: 221 },
+      { key: '2015', value: 145 },
+      { key: '2014', value: 61 },
+      { key: '2013', value: 52 },
+      { key: '2012', value: 38 }
+    ],
+    projectStats: [{}],
+    sampleStats: [{}],
+    userStats: [{}]
   },
   basicStats : {
     analysesRun: 25,
@@ -52,7 +76,7 @@ function AdminStatisticsProvider(props) {
 
   // On load get the usage statistics for the default time period
   // useEffect(() => {
-  //   getAdminStatistics().then(res => {
+  //   getAdminStatistics(defaultTimePeriod).then(res => {
   //     console.log(res);
   //     setAdminStatisticsContext(res);
   //   }).catch((message) => {
@@ -97,44 +121,65 @@ function AdminStatisticsProvider(props) {
   }
 
   /*
+   * Gets the config required for the chart
    * @param chartType - The type of chart (bar, column, line, or pie)
    * @param data - The data for the chart
    * @param statsType - The type of statistics (projects, analyses, samples, users)
    * @param timePeriod - The time period for the statistics
    */
-  function getChartConfig(chartType, data, statsType, timePeriod)
+  function getChartConfig(chartType, statsType, timePeriod)
   {
-    const revData =  [...data].reverse();
+    let data = null;
     const timePeriodText = timePeriodMap[timePeriod];
+    const isBarChartType = chartType === chartTypes.BAR;
+    const isPieDonutChartType = chartType === chartTypes.DONUT || chartType === chartTypes.PIE;
 
-    const chartTitle = statsType === "analyses" ? `Number of analyses run in past ${timePeriodText}` : statsType === "projects" ? `Number of projects created in past ${timePeriodText}` :
-    statsType === "users" ? `Number of users logged on in past ${timePeriodText}` : `Number of samples created in past ${timePeriodText}` ;
+    let chartTitle = "";
+    let chartAxisAlias = "";
 
-    const chartAxisAlias = statsType === "analyses" ? '# of Analyses' : statsType === "projects" ? '# of Projects' :
-      statsType === "users" ? '# of Users' : '# of Samples' ;
+    if(statsType === statisticTypes.ANALYSES) {
+      chartTitle = `Number of analyses run in past ${timePeriodText}`;
+      chartAxisAlias = '# of Analyses';
+      data = adminStatisticsContext.statistics.analysesStats;
+    } else if (statsType === statisticTypes.PROJECTS) {
+      chartTitle = `Number of projects created in past ${timePeriodText}`;
+      chartAxisAlias ='# of Projects';
+    } else if (statsType === statisticTypes.SAMPLES)
+    {
+      chartTitle = `Number of samples created in past ${timePeriodText}`;
+      chartAxisAlias = '# of Samples';
+    } else if (statsType === statisticTypes.USERS) {
+      chartTitle =`Number of users logged on in past ${timePeriodText}`;
+      chartAxisAlias = '# of Users';
+    }
 
+    // Some charts for examples Column need the data reversed so that it is
+    // displayed in the correct order
+    const revData = data !== null ? [...data].reverse() : null;
+
+    // The configuration required to display a chart
     const chartConfig = {
       title: { visible: true, text: chartTitle },
       forceFit: true,
-      data: chartType === "bar" ? data : revData,
+      data: data !== null || revData !== null ? (isBarChartType ? data : revData) : [{key:"", value:""}],
       padding: 'auto',
-      xField: chartType === "bar" ? 'number' : 'time',
-      yField: chartType === "bar" ? 'time' : 'number',
-      meta: { time: { alias: 'Year' }, number: { alias: chartAxisAlias } },
-      angleField:"number",
+      xField: isBarChartType ? 'value' : 'key',
+      yField: isBarChartType ? 'key' : 'value',
+      meta: { key: { alias: 'Time Period' }, value: { alias: chartAxisAlias } },
+      angleField:"value",
       label: {
-        visible: chartType === "pie" || chartType === "donut" ? false : true,
-        position: chartType === "bar" ? 'right' : 'middle',
+        visible: data !== null || revData !== null ? (isPieDonutChartType ? false : true) : false,
+        position: isBarChartType ? 'right' : 'middle',
         adjustColor: true,
         style: { fill: '#0D0E68', fontSize: 12, fontWeight: 600, opacity: 0.3 },
       },
-      colorField: "time",
+      colorField: "key",
       legend: {
-        visible: true,
+        visible: data !== null || revData !== null ? true : false,
         position: 'bottom-center',
       },
       statistic: {
-        visible: true,
+        visible: data !== null || revData !== null ? true : false,
         content: {
           value: "",
           name: '',

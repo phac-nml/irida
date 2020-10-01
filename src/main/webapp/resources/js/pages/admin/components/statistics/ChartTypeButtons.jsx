@@ -1,5 +1,6 @@
 import React from "react";
 import { Radio } from "antd";
+import { chartTypes } from "../../../../contexts/AdminStatisticsContext";
 
 /**
  * React component for displaying chart type buttons
@@ -11,11 +12,11 @@ import { Radio } from "antd";
 export function ChartTypeButtons({ onChange = () => {}, value }) {
 
   const buttonOptions = [
-    { label: 'Bar Chart', value: 'bar' },
-    { label: 'Column Chart', value: 'column' },
-    { label: 'Line Chart', value: 'line' },
-    { label: 'Pie Chart', value: 'pie' },
-    { label: 'Donut Chart', value: 'donut' },
+    { label: 'Bar Chart', value: chartTypes.BAR },
+    { label: 'Column Chart', value: chartTypes.COLUMN },
+    { label: 'Donut Chart', value: chartTypes.DONUT },
+    { label: 'Line Chart', value: chartTypes.LINE },
+    { label: 'Pie Chart', value: chartTypes.PIE }
   ];
 
   return (
