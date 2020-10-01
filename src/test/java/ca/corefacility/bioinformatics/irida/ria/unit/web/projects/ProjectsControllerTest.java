@@ -19,9 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -55,7 +55,7 @@ public class ProjectsControllerTest {
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
-	private CartController cartController;
+	private UICartService cartService;
 	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
 
@@ -64,13 +64,13 @@ public class ProjectsControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
-		cartController = mock(CartController.class);
+		cartService = mock(UICartService.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService,
-				cartController, updateSamplePermission, messageSource);
+				cartService, updateSamplePermission, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();

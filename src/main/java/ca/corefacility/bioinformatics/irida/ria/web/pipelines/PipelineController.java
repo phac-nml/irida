@@ -141,7 +141,7 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 		boolean canUpdateAllSamples;
 
-		Map<Project, List<Sample>> cartMap = cartController.getSelected();
+		Map<Project, List<Sample>> cartMap = .getSelected();
 
 		Set<Project> projectSet = cartMap.keySet();
 

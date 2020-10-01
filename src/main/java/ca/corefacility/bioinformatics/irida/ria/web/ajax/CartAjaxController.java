@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
-import java.util.Locale;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 
 @RestController
@@ -20,12 +22,37 @@ public class CartAjaxController {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<Integer> addSamplesToCart(@RequestBody AddToCartRequest request, Locale locale) {
+	public ResponseEntity<Integer> addSamplesToCart(@RequestBody AddToCartRequest request) {
 		return ResponseEntity.ok(service.addSamplesToCart(request));
 	}
 
 	@GetMapping("/count")
 	public ResponseEntity<Integer> getNumberOfSamplesInCart() {
 		return ResponseEntity.ok(service.getNumberOfSamplesInCart());
+	}
+
+	@DeleteMapping("/sample")
+	public ResponseEntity<Integer> removeSample(@RequestBody RemoveSampleRequest request) {
+		return ResponseEntity.ok(service.removeSample(request));
+	}
+
+	@DeleteMapping("/project")
+	public ResponseEntity<Integer> removeProject(@RequestParam Long id) {
+		return ResponseEntity.ok(service.removeProject(id));
+	}
+
+	@DeleteMapping("")
+	public void emptyCart() {
+		service.emptyCart();
+	}
+
+	@GetMapping("/ids")
+	public ResponseEntity<List<Long>> getProjectIdsInCart() {
+		return ResponseEntity.ok(service.getProjectIdsInCart());
+	}
+
+	@GetMapping("/samples")
+	public ResponseEntity<List<Sample>> getCartSamplesForProject(@RequestParam List<Long> ids) {
+		return ResponseEntity.ok(service.getCartSamplesForProject(ids));
 	}
 }

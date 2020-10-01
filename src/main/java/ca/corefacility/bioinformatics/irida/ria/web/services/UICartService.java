@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -36,5 +37,33 @@ public class UICartService {
 
 	public int getNumberOfSamplesInCart() {
 		return cart.getNumberOfSamplesInCart();
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void emptyCart() {
+		cart.clear();
+	}
+
+	public int removeSample(RemoveSampleRequest request) {
+		Project project = projectService.read(request.getProjectId());
+		Sample sample = sampleService.read(request.getSampleId());
+		return cart.removeSample(project, sample);
+	}
+
+	public int removeProject(Long id) {
+		Project project = projectService.read(id);
+		return cart.removeProject(project);
+	}
+
+	public List<Long> getProjectIdsInCart() {
+		return cart.getProjectIdsInCart();
+	}
+
+	public List<Sample> getCartSamplesForProject(List<Long> ids) {
+		List<Project> projects = (List<Project>) projectService.readMultiple(ids);
+		return cart.getCartSamplesForProject(projects);
 	}
 }
