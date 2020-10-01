@@ -13,7 +13,7 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
     style={{
       border: `1px solid ${grey4}`,
       borderRadius: 2,
-      boxShadow: `0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`
+      boxShadow: `0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`,
     }}
   >
     <Menu.Item>
@@ -41,7 +41,7 @@ export class SampleRenderer extends React.Component {
       /** Function to remove a sample from the cart */
       removeSample: PropTypes.func.isRequired,
       /** Function to remove an entire project from the cart */
-      removeProject: PropTypes.func.isRequired
+      removeProject: PropTypes.func.isRequired,
     }),
     /** Index in the ag-grid table of the current row */
     rowIndex: PropTypes.number.isRequired,
@@ -50,16 +50,16 @@ export class SampleRenderer extends React.Component {
       label: PropTypes.string.isRequired,
       project: PropTypes.shape({
         label: PropTypes.string.isRequired,
-        id: PropTypes.number.isRequired
-      }).isRequired
-    })
+        id: PropTypes.number.isRequired,
+      }).isRequired,
+    }),
   };
 
   displaySample = () => this.props.displaySample(this.props.data);
 
   removeSample = () => this.props.removeSample(this.props.data);
 
-  removeProject = () => this.props.removeProject(this.props.data.project.id);
+  removeProject = () => {}; //this.props.removeProject(this.props.data.project.id);
 
   render() {
     const sample = this.props.data;
@@ -69,7 +69,7 @@ export class SampleRenderer extends React.Component {
           ...this.props.style,
           padding: SPACE_SM,
           backgroundColor: grey1,
-          borderBottom: `1px solid ${grey4}`
+          borderBottom: `1px solid ${grey4}`,
         }}
       >
         <div
@@ -78,7 +78,7 @@ export class SampleRenderer extends React.Component {
           style={{
             display: "flex",
             alignItems: "center",
-            marginBottom: SPACE_XS
+            marginBottom: SPACE_XS,
           }}
         >
           <div style={{ flexGrow: 1 }}>
@@ -105,9 +105,9 @@ export class SampleRenderer extends React.Component {
         <div>
           <span>
             <IconFolder style={{ marginRight: SPACE_XS }} />
-            <a href={setBaseUrl(`projects/${sample.project.id}`)}>
-              {sample.project.label}
-            </a>
+            {/*<a href={setBaseUrl(`projects/${sample.project.id}`)}>*/}
+            {/*  {sample.project.label}*/}
+            {/*</a>*/}
           </span>
         </div>
       </div>

@@ -28,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.PipelineStartParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -60,7 +62,6 @@ import java.util.stream.Collectors;
  * Controller for pipeline related views
  */
 @Controller
-@Scope("session")
 @RequestMapping(PipelineController.BASE_URL)
 public class PipelineController extends BaseController {
 	// URI's
@@ -95,33 +96,29 @@ public class PipelineController extends BaseController {
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
 	private EmailController emailController;
-
-	/*
-	 * CONTROLLERS
-	 */
-	private CartController cartController;
+	private final UICartService cartService;
 
 	@Autowired
 	public PipelineController(SequencingObjectService sequencingObjectService,
 			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
-			CartController cartController, MessageSource messageSource,
+			MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService, UpdateSamplePermission updateSamplePermission,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			GalaxyToolDataService galaxyToolDataService, EmailController emailController) {
+			GalaxyToolDataService galaxyToolDataService, EmailController emailController, UICartService cartService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.projectService = projectService;
 		this.userService = userService;
-		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
 		this.emailController = emailController;
+		this.cartService = cartService;
 	}
 
 	/**
@@ -141,9 +138,9 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 		boolean canUpdateAllSamples;
 
-		Map<Project, List<Sample>> cartMap = .getSelected();
+		Cart cart = cartService.getCart();
 
-		Set<Project> projectSet = cartMap.keySet();
+		Set<Project> projectSet = cart.keySet();
 
 		//if we have a project id, overwrite the project set from the cart
 		if (projectId != null) {
@@ -209,12 +206,12 @@ public class PipelineController extends BaseController {
 
 				//if we're not doing automated, get the files from the cart
 				if (projectId == null) {
-					List<Sample> samples = cartMap.get(project);
+					Set<Sample> samples = cart.get(project);
 					canUpdateAllSamples &= updateSamplePermission.isAllowed(authentication, samples);
 
 					//for each sample in the project in the cart
 					for (Sample sample : samples) {
-						//add the sample detalis
+						//add the sample details
 						Map<String, Object> sampleMap = new HashMap<>();
 						sampleMap.put("name", sample.getLabel());
 						sampleMap.put("id", sample.getId()

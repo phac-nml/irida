@@ -1,14 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.pipelines;
 
-import java.security.Principal;
-import java.util.Locale;
-import java.util.UUID;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.ui.ExtendedModelMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -19,8 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -45,11 +36,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /**
  * Created by josh on 15-01-09.
  */
@@ -62,7 +48,6 @@ public class PipelineControllerTest {
 	private ProjectService projectService;
 	private UserService userService;
 	private MessageSource messageSource;
-	private CartController cartController;
 	// Controller to test
 	private PipelineController controller;
 	private WorkflowNamedParametersService namedParameterService;
@@ -70,6 +55,7 @@ public class PipelineControllerTest {
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
 	private TestEmailController emailController;
+	private UICartService cartService;
 
 	@Before
 	public void setUp() {
@@ -79,7 +65,7 @@ public class PipelineControllerTest {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		messageSource = mock(MessageSource.class);
-		cartController = mock(CartController.class);
+		cartService = mock(UICartService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
@@ -88,8 +74,8 @@ public class PipelineControllerTest {
 		emailController = mock(TestEmailController.class);
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
-				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController);
+				workflowsService, projectService, userService, messageSource, namedParameterService,
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, emailController, cartService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
@@ -114,7 +100,7 @@ public class PipelineControllerTest {
 		when(userService.getUserByUsername(username)).thenReturn(user);
 		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(
 				true);
-		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
+		when(cartService.getCart()).thenReturn(TestDataFactory.constructCart());
 
 		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class),
 				eq(SingleEndSequenceFile.class))).thenReturn(

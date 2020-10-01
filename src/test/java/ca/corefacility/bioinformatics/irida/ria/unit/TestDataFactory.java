@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
@@ -186,15 +187,15 @@ public class TestDataFactory {
 		return new IridaWorkflow(description, structure);
 	}
 
-	public static Map<Project, List<Sample>> constructCart() {
+	public static Cart constructCart() {
 		Project project = constructProject();
 		List<Sample> samples = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			samples.add(constructSample());
 		}
-		return ImmutableMap.of(
-				project, samples
-		);
+		Cart cart = new Cart();
+		cart.add(project, samples);
+		return cart;
 	}
 
 	public static List<Project> constructListJoinProjectUser(User user) {
