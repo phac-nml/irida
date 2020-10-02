@@ -59,7 +59,7 @@ export class SampleRenderer extends React.Component {
 
   removeSample = () => this.props.removeSample(this.props.data);
 
-  removeProject = () => {}; //this.props.removeProject(this.props.data.project.id);
+  removeProject = () => this.props.removeProject(this.props.data.project.id);
 
   render() {
     const sample = this.props.data;
@@ -105,9 +105,9 @@ export class SampleRenderer extends React.Component {
         <div>
           <span>
             <IconFolder style={{ marginRight: SPACE_XS }} />
-            {/*<a href={setBaseUrl(`projects/${sample.project.id}`)}>*/}
-            {/*  {sample.project.label}*/}
-            {/*</a>*/}
+            <a href={setBaseUrl(`projects/${sample.project.id}`)}>
+              {sample.project.label}
+            </a>
           </span>
         </div>
       </div>

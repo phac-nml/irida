@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
-import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -177,7 +176,7 @@ public class ProjectsController {
 			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
 		model.addAttribute("useCartSamples", useCartSamples);
 
-		Cart cart = cartService.getCart();
+		Map<Project, List<Sample>> cart = cartService.getFullCart();
 
 		// Check which samples they can modify
 		Set<Sample> allowed = new HashSet<>();
@@ -229,7 +228,7 @@ public class ProjectsController {
 
 		try {
 			if (useCartSamples) {
-				Cart cart = cartService.getCart();
+				Map<Project, List<Sample>> cart = cartService.getFullCart();
 
 				List<Long> sampleIds = cart.entrySet()
 						.stream()

@@ -1,5 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
+import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -24,39 +41,21 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.PipelineStartParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
-import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Controller for pipeline related views
@@ -84,18 +83,18 @@ public class PipelineController extends BaseController {
 	/*
 	 * SERVICES
 	 */
-	private ReferenceFileService referenceFileService;
-	private SequencingObjectService sequencingObjectService;
-	private AnalysisSubmissionService analysisSubmissionService;
-	private ProjectService projectService;
-	private UserService userService;
-	private IridaWorkflowsService workflowsService;
-	private MessageSource messageSource;
+	private final ReferenceFileService referenceFileService;
+	private final SequencingObjectService sequencingObjectService;
+	private final AnalysisSubmissionService analysisSubmissionService;
+	private final ProjectService projectService;
+	private final UserService userService;
+	private final IridaWorkflowsService workflowsService;
+	private final MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
-	private UpdateSamplePermission updateSamplePermission;
-	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
-	private GalaxyToolDataService galaxyToolDataService;
-	private EmailController emailController;
+	private final UpdateSamplePermission updateSamplePermission;
+	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private final GalaxyToolDataService galaxyToolDataService;
+	private final EmailController emailController;
 	private final UICartService cartService;
 
 	@Autowired
@@ -138,14 +137,14 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 		boolean canUpdateAllSamples;
 
-		Cart cart = cartService.getCart();
+		Map<Project, List<Sample>> cart = cartService.getFullCart();
 
-		Set<Project> projectSet = cart.keySet();
+		Set<Project> projects = cart.keySet();
 
 		//if we have a project id, overwrite the project set from the cart
 		if (projectId != null) {
 			Project project = projectService.read(projectId);
-			projectSet = Sets.newHashSet(project);
+			projects = Sets.newHashSet(project);
 
 			model.addAttribute("automatedProject", project);
 			//this is separate because the view can't handle dereferencing a null project if one isn't set
@@ -153,7 +152,7 @@ public class PipelineController extends BaseController {
 		}
 
 		// Ensure we have something in the cart or an automated pipeline project
-		if (!projectSet.isEmpty()) {
+		if (!projects.isEmpty()) {
 			Authentication authentication = SecurityContextHolder.getContext()
 					.getAuthentication();
 
@@ -180,7 +179,7 @@ public class PipelineController extends BaseController {
 					.toLowerCase();
 
 			//loop through the projects in the set to get their files
-			for (Project project : projectSet) {
+			for (Project project : projects) {
 				// Check to see if the pipeline requires a reference file.
 				if (description.requiresReference()) {
 					List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(
@@ -206,7 +205,7 @@ public class PipelineController extends BaseController {
 
 				//if we're not doing automated, get the files from the cart
 				if (projectId == null) {
-					Set<Sample> samples = cart.get(project);
+					List<Sample> samples = cart.get(project);
 					canUpdateAllSamples &= updateSamplePermission.isAllowed(authentication, samples);
 
 					//for each sample in the project in the cart

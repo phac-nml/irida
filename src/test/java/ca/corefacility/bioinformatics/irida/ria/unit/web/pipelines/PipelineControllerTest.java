@@ -1,5 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.pipelines;
 
+import java.security.Principal;
+import java.util.Locale;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.ui.ExtendedModelMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -21,14 +30,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.ui.ExtendedModelMap;
-
-import java.security.Principal;
-import java.util.Locale;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -100,7 +101,7 @@ public class PipelineControllerTest {
 		when(userService.getUserByUsername(username)).thenReturn(user);
 		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(
 				true);
-		when(cartService.getCart()).thenReturn(TestDataFactory.constructCart());
+		when(cartService.getFullCart()).thenReturn(TestDataFactory.constructCart());
 
 		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class),
 				eq(SingleEndSequenceFile.class))).thenReturn(

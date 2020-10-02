@@ -13,7 +13,7 @@ export const putSampleInCart = async (projectId, samples) =>
   axios
     .post(AJAX_URL, {
       projectId,
-      samples,
+      sampleIds: samples.map((s) => s.id),
     })
     .then(({ data }) => data);
 

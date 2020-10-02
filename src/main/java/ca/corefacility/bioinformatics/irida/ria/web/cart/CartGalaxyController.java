@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportSample;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -26,8 +26,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Scope("session")
 @RequestMapping("/ajax/galaxy-export")
 public class CartGalaxyController {
-	private SampleService sampleService;
-	private Cart cart;
+	private final SampleService sampleService;
+	private final Cart cart;
 
 	@Autowired
 	public CartGalaxyController(SampleService sampleService, Cart cart) {

@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProject;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -29,10 +29,7 @@ public class UICartService {
 	}
 
 	public int addSamplesToCart(AddToCartRequest request) {
-		Project project = projectService.read(request.getProjectId());
-		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSamples().stream().map(CartSampleRequest::getId).collect(
-				Collectors.toUnmodifiableList()));
-		return cart.add(project, samples);
+		return cart.add(request.getProjectId(), (List<Long>) request.getSampleIds());
 	}
 
 	public int getNumberOfSamplesInCart() {
@@ -48,22 +45,40 @@ public class UICartService {
 	}
 
 	public int removeSample(RemoveSampleRequest request) {
-		Project project = projectService.read(request.getProjectId());
-		Sample sample = sampleService.read(request.getSampleId());
-		return cart.removeSample(project, sample);
+		return cart.removeSample(request.getProjectId(), request.getSampleId());
 	}
 
 	public int removeProject(Long id) {
-		Project project = projectService.read(id);
-		return cart.removeProject(project);
+		return cart.removeProject(id);
 	}
 
-	public List<Long> getProjectIdsInCart() {
+	public Set<Long> getProjectIdsInCart() {
 		return cart.getProjectIdsInCart();
 	}
 
-	public List<Sample> getCartSamplesForProject(List<Long> ids) {
+
+	public List<CartProject> getSamplesForProjects(List<Long> ids) {
 		List<Project> projects = (List<Project>) projectService.readMultiple(ids);
-		return cart.getCartSamplesForProject(projects);
+		List<CartProject> cartProjects = new ArrayList<>();
+		for (Project project : projects) {
+			CartProject cartProject = new CartProject(project.getId(), project.getLabel());
+			List<CartSample> samples = new ArrayList<>();
+			sampleService.readMultiple(cart.getCartSampleIdsForProject(project.getId())).forEach(sample -> {
+				samples.add(new CartSample(sample));
+			});
+			cartProject.setSamples(samples);
+			cartProjects.add(cartProject);
+		}
+		return cartProjects;
+	}
+
+	public Map<Project, List<Sample>> getFullCart() {
+		Iterable<Project> projects = projectService.readMultiple(cart.getProjectIdsInCart());
+		Map<Project, List<Sample>> results = new HashMap<>();
+		projects.forEach(project -> {
+			List<Sample> samples = (List<Sample>) sampleService.readMultiple(cart.getCartSampleIdsForProject(project.getId()));
+			results.put(project, samples);
+		});
+		return results;
 	}
 }

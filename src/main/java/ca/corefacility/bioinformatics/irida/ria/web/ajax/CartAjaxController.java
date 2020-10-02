@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProject;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
@@ -47,12 +48,12 @@ public class CartAjaxController {
 	}
 
 	@GetMapping("/ids")
-	public ResponseEntity<List<Long>> getProjectIdsInCart() {
+	public ResponseEntity<Set<Long>> getProjectIdsInCart() {
 		return ResponseEntity.ok(service.getProjectIdsInCart());
 	}
 
 	@GetMapping("/samples")
-	public ResponseEntity<List<Sample>> getCartSamplesForProject(@RequestParam List<Long> ids) {
-		return ResponseEntity.ok(service.getCartSamplesForProject(ids));
+	public ResponseEntity<List<CartProject>> getCartSamplesForProjects(@RequestParam List<Long> ids) {
+		return ResponseEntity.ok(service.getSamplesForProjects(ids));
 	}
 }
