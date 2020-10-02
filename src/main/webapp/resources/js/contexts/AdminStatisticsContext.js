@@ -3,7 +3,7 @@
  * for the admin statistics page
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notification } from "antd";
 import {
   getAdminStatistics,
@@ -47,25 +47,16 @@ export const defaultChartType = chartTypes.BAR;
 
 const initialContext = {
   statistics: {
-    analysesStats: [
-      { key: '2019', value: 1607 },
-      { key: '2018', value: 801 },
-      { key: '2017', value: 421 },
-      { key: '2016', value: 221 },
-      { key: '2015', value: 145 },
-      { key: '2014', value: 61 },
-      { key: '2013', value: 52 },
-      { key: '2012', value: 38 }
-    ],
+    analysesStats: [{}],
     projectStats: [{}],
     sampleStats: [{}],
     userStats: [{}]
   },
   basicStats : {
-    analysesRun: 25,
-    projectsCreated: 64,
-    samplesCreated: 128,
-    usersLoggedIn: 12
+    analysesRan: 0,
+    projectsCreated: 0,
+    samplesCreated: 0,
+    usersLoggedIn: 0
   }
 };
 
@@ -74,15 +65,16 @@ const AdminStatisticsContext = React.createContext(initialContext);
 function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
 
-  // On load get the usage statistics for the default time period
-  // useEffect(() => {
-  //   getAdminStatistics(defaultTimePeriod).then(res => {
-  //     console.log(res);
-  //     setAdminStatisticsContext(res);
-  //   }).catch((message) => {
-  //     notification.error({ message });
-  //   });
-  // }, []);
+  useEffect(() => {
+    // On load get the basic and advanced stats for the default time period
+    getAdminStatistics(defaultTimePeriod).then(res => {
+      setAdminStatisticsContext(adminStatisticsContext => {
+        return {...adminStatisticsContext, basicStats: res.basicStats, statistics: res.advancedStats};
+      });
+    }).catch((message) => {
+      notification.error({ message });
+    });
+  }, []);
 
   // Get updated project usage stats for the selected time period
   function updateProjectStatsTimePeriod(timePeriod) {
@@ -153,33 +145,30 @@ function AdminStatisticsProvider(props) {
       chartAxisAlias = '# of Users';
     }
 
-    // Some charts for examples Column need the data reversed so that it is
-    // displayed in the correct order
-    const revData = data !== null ? [...data].reverse() : null;
-
     // The configuration required to display a chart
     const chartConfig = {
       title: { visible: true, text: chartTitle },
       forceFit: true,
-      data: data !== null || revData !== null ? (isBarChartType ? data : revData) : [{key:"", value:""}],
+      height: 800,
+      data: data !== null ? data : [{key:"", value:""}],
       padding: 'auto',
       xField: isBarChartType ? 'value' : 'key',
       yField: isBarChartType ? 'key' : 'value',
       meta: { key: { alias: 'Time Period' }, value: { alias: chartAxisAlias } },
       angleField:"value",
       label: {
-        visible: data !== null || revData !== null ? (isPieDonutChartType ? false : true) : false,
+        visible: data !== null ? (isPieDonutChartType ? false : true) : false,
         position: isBarChartType ? 'right' : 'middle',
         adjustColor: true,
         style: { fill: '#0D0E68', fontSize: 12, fontWeight: 600, opacity: 0.3 },
       },
       colorField: "key",
       legend: {
-        visible: data !== null || revData !== null ? true : false,
+        visible: data !== null  ? true : false,
         position: 'bottom-center',
       },
       statistic: {
-        visible: data !== null || revData !== null ? true : false,
+        visible: data !== null ? true : false,
         content: {
           value: "",
           name: '',
@@ -199,7 +188,6 @@ function AdminStatisticsProvider(props) {
         updateAnalysesStatsTimePeriod,
         updateSampleStatsTimePeriod,
         getChartConfig
-
       }}
     >
       {props.children}

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -85,4 +86,13 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 */
 	@Query("FROM Project p WHERE p.remoteStatus != NULL")
 	public List<Project> getRemoteProjects();
+
+	/**
+	 * Get a count of all {@link Project}s created within time period
+	 *
+	 * @return a count of {@link Project}s
+	 */
+	@Query("select count(p.id) from Project p where p.createdDate >= ?1")
+	public Long countProjectsCreatedInTimePeriod(Date createdDate);
+
 }

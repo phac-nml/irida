@@ -8,9 +8,13 @@ const ADMIN_URL = setBaseUrl(`/ajax/admin`);
  * @return {Promise<*>} `data` contains the OK response and the details map;
  *                      `error` contains error information if an error occurred.
  */
-export async function getAdminStatistics() {
+export async function getAdminStatistics(timePeriod) {
   try {
-    const { data } = await axios.get(`${ADMIN_URL}/statistics`);
+    const { data } = await axios.get(`${ADMIN_URL}/statistics`, {
+      params: {
+        timePeriod
+      }
+    });
     return data;
   }  catch (error) {
     return { error };

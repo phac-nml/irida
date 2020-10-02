@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -62,4 +63,12 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long>, Samp
 	 */
 	@Query("SELECT j.sample FROM SampleSequencingObjectJoin j WHERE ?1 in elements(j.sequencingObject.analysisSubmissions)")
 	public Set<Sample> findSamplesForAnalysisSubmission(AnalysisSubmission analysisSubmission);
+
+	/**
+	 * Get a count of all {@link Sample}s created within time period
+	 *
+	 * @return a count of {@link Sample}s
+	 */
+	@Query("select count(s.id) from Sample s where s.createdDate >= ?1")
+	public Long countSamplesCreatedInTimePeriod(Date createdDate);
 }

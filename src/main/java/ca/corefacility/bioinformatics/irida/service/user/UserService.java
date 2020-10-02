@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.user;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -145,4 +146,10 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return the user entity with the updated password.
 	 */
 	public User changePassword(Long userId, String password);
+
+	/**
+	 * Get count of users logged on during the time period
+	 * @return An {@link Long} count of users logged in
+	 */
+	public Long getUsersLoggedIn(Date createdDate);
 }

@@ -423,4 +423,13 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		return new EntityExistsException("Could not create user as a duplicate field exists: " + fieldName, fieldName);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getUsersLoggedIn(Date createdDate) {
+		Long usersCount = userRepository.countUsersLoggedInTimePeriod(createdDate);
+		return usersCount;
+	}
 }

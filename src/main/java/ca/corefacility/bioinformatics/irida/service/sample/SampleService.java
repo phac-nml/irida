@@ -295,4 +295,10 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
 			final Sort sort);
+
+	/**
+	 * Get count of samples created in the time period
+	 * @return An {@link Long} count of samples created
+	 */
+	public Long getSamplesCreated(Date createdDate);
 }

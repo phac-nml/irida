@@ -336,6 +336,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public AnalysisServiceStatus getAnalysisServiceStatus();
 
 	/**
+	 * Get count of analyses run in the time period
+	 * @return An {@link Long} count of analyses ran
+	 */
+	public Long getAnalysesRan(Date createdDate);
+
+	/**
 	 * Class to store the number of running and queued analyses
 	 */
 	class AnalysisServiceStatus {

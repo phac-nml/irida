@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.user;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -38,4 +39,12 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 */
 	@Query("SELECT u FROM User u WHERE u NOT IN (SELECT f from ProjectUserJoin p JOIN p.user f WHERE p.project=?1) and (CONCAT(u.firstName, ' ', u.lastName) like %?2% or u.username like %?2% or u.email like %?2%)")
 	public List<User> getUsersAvailableForProject(Project project, String term);
+
+	/**
+	 * Get a count of all {@link User}s logged in within time period
+	 *
+	 * @return a count of {@link User}s
+	 */
+	@Query("select count(u.id) from User u where u.lastLogin >= ?1")
+	public Long countUsersLoggedInTimePeriod(Date createdDate);
 }

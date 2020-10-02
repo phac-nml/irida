@@ -25,7 +25,7 @@ export default function BasicStats({ statistics }) {
             <Card>
               <Statistic
                 title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.analysesRun}
+                value={statistics.analysesRan}
               />
               <Button
                 style={{ marginTop: 16 }}

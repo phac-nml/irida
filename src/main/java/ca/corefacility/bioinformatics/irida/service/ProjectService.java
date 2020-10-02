@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -427,4 +424,11 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the created {@link Project}
 	 */
 	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner);
+
+	/**
+	 * Get count of projects created in the time period
+	 * @return An {@link Long} count of projects created
+	 */
+	public Long getProjectsCreated(Date createdDate);
+
 }

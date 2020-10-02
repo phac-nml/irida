@@ -6,48 +6,27 @@ package ca.corefacility.bioinformatics.irida.ria.web.admin.dto;
  */
 
 public class AdminStatisticsRequest {
-	private AnalysesStatistics analysesStatistics;
-	private ProjectStatistics projectStatistics;
-	private SampleStatistics sampleStatistics;
-	private UserStatistics userStatistics;
+	private AdvancedStats advancedStats;
+	private BasicStats basicStats;
 
-	public AdminStatisticsRequest(AnalysesStatistics analysesStatistics, ProjectStatistics projectStatistics,
-			SampleStatistics sampleStatistics, UserStatistics userStatistics) {
-		this.analysesStatistics = analysesStatistics;
-		this.projectStatistics = projectStatistics;
-		this.sampleStatistics = sampleStatistics;
-		this.userStatistics = userStatistics;
+	public AdminStatisticsRequest(AdvancedStats advancedStats, BasicStats basicStats) {
+		this.advancedStats = advancedStats;
+		this.basicStats = basicStats;
 	}
 
-	public AnalysesStatistics getAnalysesStatistics() {
-		return analysesStatistics;
+	public AdvancedStats getAdvancedStats() {
+		return advancedStats;
 	}
 
-	public void setAnalysesStatistics(AnalysesStatistics analysesStatistics) {
-		this.analysesStatistics = analysesStatistics;
+	public void setAdvancedStats(AdvancedStats advancedStats) {
+		this.advancedStats = advancedStats;
 	}
 
-	public ProjectStatistics getProjectStatistics() {
-		return projectStatistics;
+	public BasicStats getBasicStats() {
+		return basicStats;
 	}
 
-	public void setProjectStatistics(ProjectStatistics projectStatistics) {
-		this.projectStatistics = projectStatistics;
-	}
-
-	public SampleStatistics getSampleStatistics() {
-		return sampleStatistics;
-	}
-
-	public void setSampleStatistics(SampleStatistics sampleStatistics) {
-		this.sampleStatistics = sampleStatistics;
-	}
-
-	public UserStatistics getUserStatistics() {
-		return userStatistics;
-	}
-
-	public void setUserStatistics(UserStatistics userStatistics) {
-		this.userStatistics = userStatistics;
+	public void setBasicStats(BasicStats basicStats) {
+		this.basicStats = basicStats;
 	}
 }

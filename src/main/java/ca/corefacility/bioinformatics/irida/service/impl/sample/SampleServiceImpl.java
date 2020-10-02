@@ -630,4 +630,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		};
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getSamplesCreated(Date createdDate) {
+		Long samplesCount = sampleRepository.countSamplesCreatedInTimePeriod(createdDate);
+		return samplesCount;
+	}
 }
