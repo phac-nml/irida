@@ -9,28 +9,19 @@ IRIDA Whole Genome Phylogenomics
 
 IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  The following table lists the dependency tools required by the software.
 
-| Tool Name               | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:-----------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **suite_snvphyl_1_0_1** | 4841b7148c44  | 0 (2017-01-18)                | [IRIDA Main Shed][]  |
+| Tool Name               | Tool Revision   | Toolshed Installable Revision | Toolshed              |
+|:-----------------------:|:---------------:|:-----------------------------:|:---------------------:|
+| **suite_snvphyl_1_2_2** | [77a9422303ce]  | 0                             | [Galaxy Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
-## Step 1: Install Dependencies
-
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution using the `env.sh` file).
-
-```
-source activate galaxy
-conda install ncurses perl-readonly
-```
-
-## Step 2: Install Galaxy Tools
+## Step 1: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
 The install progress can be monitored in the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
-## Step 3: Testing Pipeline
+## Step 2: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
@@ -55,13 +46,8 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SNVPhyl]: http://snvphyl.readthedocs.io
-[GCC]: https://gcc.gnu.org/
+[77a9422303ce]: https://toolshed.g2.bx.psu.edu/view/nml/suite_snvphyl_1_2_2/77a9422303ce
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
-[IRIDA Main Shed]: https://irida.corefacility.ca/galaxy-shed
-[MUMMer]: http://mummer.sourceforge.net/
-[SAMTools]: http://www.htslib.org/
-[SAMTools 0.1.18]: http://downloads.sourceforge.net/project/samtools/samtools/0.1.18/samtools-0.1.18.tar.bz2
-[BioPerl]: http://www.bioperl.org/wiki/Main_Page
 [SNVPhyl Galaxy Workflow]: ../test/snvphyl/snvphyl_workflow.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [pipelines/test/snvphyl/reference.fasta]: ../test/snvphyl/reference.fasta

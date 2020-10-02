@@ -78,6 +78,6 @@ If everything was successful then all dependencies for this pipeline have been p
 [FAQ]: ../../../faq/#tbl2asn-out-of-date
 [conda]: https://conda.io/docs/intro.html
 [bioconda]: https://bioconda.github.io/
-[FAQ/Conda dependencies]: ../../../faq#installing-conda-dependencies-in-galaxy-versions--v1601
+[FAQ/Conda dependencies]: ../../../faq#4-installing-conda-dependencies-in-galaxy-versions--v1601
 [conda environment]: https://conda.io/docs/user-guide/tasks/manage-environments.html#saving-environment-variables
 [GALAXY_MEMORY_MB]: https://planemo.readthedocs.io/en/latest/writing_advanced.html#developing-for-clusters-galaxy-slots-galaxy-memory-mb-and-galaxy-memory-mb-per-slot

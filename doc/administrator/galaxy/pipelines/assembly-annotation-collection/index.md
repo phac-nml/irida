@@ -68,7 +68,6 @@ If everything was successful then all dependencies for this pipeline have been p
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
 [QUAST]: http://quast.sourceforge.net/quast.html
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Assembly Annotation Collection Galaxy Workflow]: ../test/assembly-annotation-collection/assembly-annotation-collection.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/assembly-annotation/reads
@@ -80,5 +79,5 @@ If everything was successful then all dependencies for this pipeline have been p
 [FAQ]: ../../../faq/#tbl2asn-out-of-date
 [conda]: https://conda.io/docs/intro.html
 [bioconda]: https://bioconda.github.io/
-[FAQ/Conda dependencies]: ../../../faq#installing-conda-dependencies-in-galaxy-versions--v1601
+[FAQ/Conda dependencies]: ../../../faq#4-installing-conda-dependencies-in-galaxy-versions--v1601
 [conda environment]: https://conda.io/docs/user-guide/tasks/manage-environments.html#saving-environment-variables
