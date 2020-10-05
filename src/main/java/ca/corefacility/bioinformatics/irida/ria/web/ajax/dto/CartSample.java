@@ -3,7 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
- * Used to represent a {@link ca.corefacility.bioinformatics.irida.model.sample.Sample} on the UI Cart Page.
+ * Used to represent a {@link Sample} on the UI Cart Page.
+ * Keeping this as simple as possible as there could be a lot of these asked for.
  */
 public class CartSample {
 	private final Long id;
