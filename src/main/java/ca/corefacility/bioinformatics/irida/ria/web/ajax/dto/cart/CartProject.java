@@ -4,6 +4,9 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSample;
 
+/**
+ * Model for UI to represent a project and its sample within the cart.
+ */
 public class CartProject {
 	private final Long id;
 	private final String label;
