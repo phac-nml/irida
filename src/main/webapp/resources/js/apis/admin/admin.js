@@ -28,7 +28,11 @@ export async function getAdminStatistics(timePeriod) {
  */
 export async function getUpdatedAdminProjectStatistics(timePeriod) {
   try {
-    const { data } = await axios.get(`${ADMIN_URL}/project-statistics/`);
+    const { data } = await axios.get(`${ADMIN_URL}/project-statistics/`,{
+      params: {
+        timePeriod
+      }
+    });
     return data;
   }  catch (error) {
     return { error };
@@ -42,7 +46,11 @@ export async function getUpdatedAdminProjectStatistics(timePeriod) {
  */
 export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
   try {
-    const { data } = await axios.get(`${ADMIN_URL}/analyses-statistics/`);
+    const { data } = await axios.get(`${ADMIN_URL}/analyses-statistics/`,{
+      params: {
+        timePeriod
+      }
+    });
     return data;
   }  catch (error) {
     return { error };

@@ -47,10 +47,10 @@ export const defaultChartType = chartTypes.BAR;
 
 const initialContext = {
   statistics: {
-    analysesStats: [{}],
-    projectStats: [{}],
-    sampleStats: [{}],
-    userStats: [{}]
+    analysesStats: null,
+    projectStats: null,
+    sampleStats: null,
+    userStats: null
   },
   basicStats : {
     analysesRan: 0,
@@ -66,10 +66,10 @@ function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
 
   useEffect(() => {
-    // On load get the basic and advanced stats for the default time period
-    getAdminStatistics(defaultTimePeriod).then(res => {
+    // On load get the basic for the default time period
+    getAdminStatistics(defaultTimePeriod).then(basicStats => {
       setAdminStatisticsContext(adminStatisticsContext => {
-        return {...adminStatisticsContext, basicStats: res.basicStats, statistics: res.advancedStats};
+        return {...adminStatisticsContext, basicStats: basicStats};
       });
     }).catch((message) => {
       notification.error({ message });
@@ -78,8 +78,17 @@ function AdminStatisticsProvider(props) {
 
   // Get updated project usage stats for the selected time period
   function updateProjectStatsTimePeriod(timePeriod) {
-    getUpdatedAdminProjectStatistics(timePeriod).then(res => {
-      console.log(res);
+    getUpdatedAdminProjectStatistics(timePeriod).then(({projectStats}) => {
+      if(projectStats !== null) {
+        setAdminStatisticsContext(adminStatisticsContext => {
+          return {...adminStatisticsContext,
+            statistics: {
+              ...adminStatisticsContext.statistics,
+              projectStats: projectStats
+            }
+          };
+        });
+      }
     }).catch((message) => {
       notification.error({ message });
     });
@@ -87,8 +96,17 @@ function AdminStatisticsProvider(props) {
 
   // Get updated user usage stats for the selected time period
   function updateUserStatsTimePeriod(timePeriod) {
-    getUpdatedAdminUserStatistics(timePeriod).then(res => {
-      console.log(res);
+    getUpdatedAdminUserStatistics(timePeriod).then(({userStats}) => {
+      if(userStats !== null) {
+        setAdminStatisticsContext(adminStatisticsContext => {
+          return {...adminStatisticsContext,
+            statistics: {
+              ...adminStatisticsContext.statistics,
+              userStats: userStats
+            }
+          };
+        });
+      }
     }).catch((message) => {
       notification.error({ message });
     });
@@ -96,8 +114,17 @@ function AdminStatisticsProvider(props) {
 
   // Get updated analyses usage stats for the selected time period
   function updateAnalysesStatsTimePeriod(timePeriod) {
-    getUpdatedAdminAnalysesStatistics(timePeriod).then(res => {
-      console.log(res);
+    getUpdatedAdminAnalysesStatistics(timePeriod).then(({analysesStats}) => {
+      if(analysesStats !== null) {
+        setAdminStatisticsContext(adminStatisticsContext => {
+          return {...adminStatisticsContext,
+            statistics: {
+              ...adminStatisticsContext.statistics,
+              analysesStats: analysesStats
+            }
+          };
+        });
+      }
     }).catch((message) => {
       notification.error({ message });
     });
@@ -105,8 +132,17 @@ function AdminStatisticsProvider(props) {
 
   // Get updated sample usage stats for the selected time period
   function updateSampleStatsTimePeriod(timePeriod) {
-    getUpdatedAdminSampleStatistics(timePeriod).then(res => {
-      console.log(res);
+    getUpdatedAdminSampleStatistics(timePeriod).then(({sampleStats}) => {
+      if(sampleStats !== null) {
+        setAdminStatisticsContext(adminStatisticsContext => {
+          return {...adminStatisticsContext,
+            statistics: {
+              ...adminStatisticsContext.statistics,
+              sampleStats: sampleStats
+            }
+          };
+        });
+      }
     }).catch((message) => {
       notification.error({ message });
     });

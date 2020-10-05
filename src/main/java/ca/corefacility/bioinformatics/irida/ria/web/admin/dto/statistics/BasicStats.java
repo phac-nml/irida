@@ -1,4 +1,8 @@
-package ca.corefacility.bioinformatics.irida.ria.web.admin.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics;
+
+/**
+ * UI Response to to encapsulate basic usage statistics.
+ */
 
 public class BasicStats {
 	private Long analysesRan;

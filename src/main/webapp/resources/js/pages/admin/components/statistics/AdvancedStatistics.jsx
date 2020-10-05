@@ -42,13 +42,13 @@ export default function AdvancedStatistics({statType}) {
 
   function updateTimePeriod(currTimePeriod) {
     if(statType === statisticTypes.ANALYSES) {
-      updateAnalysesStatsTimePeriod(timePeriod);
+      updateAnalysesStatsTimePeriod(currTimePeriod);
     } else if (statType === statisticTypes.PROJECTS) {
-      updateProjectStatsTimePeriod(timePeriod);
+      updateProjectStatsTimePeriod(currTimePeriod);
     } else if (statType === statisticTypes.SAMPLES) {
-      updateSampleStatsTimePeriod(timePeriod)
+      updateSampleStatsTimePeriod(currTimePeriod)
     } else if (statType === statisticTypes.USERS) {
-      updateUserStatsTimePeriod(timePeriod);
+      updateUserStatsTimePeriod(currTimePeriod);
     }
     setTimePeriod(currTimePeriod);
   }

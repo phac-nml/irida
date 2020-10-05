@@ -1,4 +1,8 @@
-package ca.corefacility.bioinformatics.irida.ria.web.admin.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics;
+
+/**
+ * Used to represent the time period and counts for statistics.
+ */
 
 public class GenericStatModel {
 	private String key;

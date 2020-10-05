@@ -4,18 +4,27 @@
  * charts
  */
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Card, Statistic, Row, Col } from "antd";
 import { SPACE_LG } from "../../../../styles/spacing";
 import AdvancedStatistics from "./AdvancedStatistics";
 import {
+  AdminStatisticsContext,
   defaultTimePeriod,
   statisticTypes,
   timePeriodMap
 } from "../../../../contexts/AdminStatisticsContext";
 
+
 export default function BasicStats({ statistics }) {
   const [statsChartView, setStatsChartView] = useState(null);
+
+  const {
+    updateAnalysesStatsTimePeriod,
+    updateProjectStatsTimePeriod,
+    updateSampleStatsTimePeriod,
+    updateUserStatsTimePeriod,
+  } = useContext(AdminStatisticsContext);
 
   return (
     <div className="t-statistics">
@@ -29,7 +38,11 @@ export default function BasicStats({ statistics }) {
               />
               <Button
                 style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)}
+                onClick={() =>
+                {
+                  updateAnalysesStatsTimePeriod(defaultTimePeriod)
+                  setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)
+                }}
               >
                 Advanced Analyses Statistics
               </Button>
@@ -43,7 +56,11 @@ export default function BasicStats({ statistics }) {
               />
               <Button
                 style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS} />)}
+                onClick={() => {
+                  updateProjectStatsTimePeriod(defaultTimePeriod)
+                  setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS}/>)
+                }
+                }
               >
                 Advanced Project Statistics
               </Button>
@@ -57,7 +74,10 @@ export default function BasicStats({ statistics }) {
               />
               <Button
                 style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)}
+                onClick={() => {
+                  updateSampleStatsTimePeriod(defaultTimePeriod)
+                  setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)
+                }}
               >
                 Advanced Sample Statistics
               </Button>
@@ -71,7 +91,10 @@ export default function BasicStats({ statistics }) {
               />
               <Button
                 style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)}
+                onClick={() => {
+                  updateUserStatsTimePeriod(defaultTimePeriod)
+                  setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)
+                }}
               >
                 Advanced User Statistics
               </Button>
