@@ -80,7 +80,6 @@ function CartSamplesComponent({
       return project.samples.map((sample) => ({ ...sample, project: p }));
     })
     .flat();
-  console.log(s);
 
   const filterSamples = (e) => applyFilter(e.target.value);
 
