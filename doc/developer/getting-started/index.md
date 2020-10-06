@@ -224,7 +224,7 @@ As the integration tests simulate a running IRIDA installation, in order to run 
 ./run-tests.sh <TEST PROFILE>
 ```
 
-This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destroy this Docker image afterwards (you can skip destroying the Docker image by passing `--no-kill-docker` to this script).  In order to not overwrite the database **irida_integration_test** you may pass the name of a new database as:
+This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destroy this Docker image afterwards (you can skip destroying the Docker image by passing `--no-kill-docker` to this script).  If you wish to use a different database than the default **irida_integration_test**, you may pass the name of the database with the `-d` flag:
 
 ```bash
 ./run-tests.sh -d <DATABASE> <TEST PROFILE>
