@@ -7,6 +7,7 @@ import {
 } from "../../../../components/ant.design/PagedTable";
 import { RemoteApiStatus } from "./RemoteApiStatus";
 import { Link } from "@reach/router";
+import { isAdmin } from "../../../../utilities/role-utilities";
 
 /**
  * Render a table to display remote API's
@@ -22,13 +23,15 @@ export function RemoteApiTable() {
       key: "name",
       dataIndex: "name",
       render(text, record) {
-        return (
+        return isAdmin() ? (
           <Link
             to={setBaseUrl(`/admin/remote_api/${record.id}`)}
             className="t-api-name"
           >
             {text}
           </Link>
+        ) : (
+          text
         );
       },
     },

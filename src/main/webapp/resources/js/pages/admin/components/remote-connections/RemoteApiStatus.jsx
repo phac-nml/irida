@@ -5,6 +5,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconLoading, IconLogin } from "../../../../components/icons/Icons";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { authenticateRemoteClient } from "../../../../apis/oauth/oauth";
 
 /**
  * React component to render the status of a Remote API.
@@ -51,16 +52,7 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
    * This will open a popup window with the Oauth for the Remote API
    */
   function updateConnectionStatus() {
-    const w = 600;
-    const h = 400;
-
-    const left = screen.width / 2 - w / 2;
-    const top = screen.height / 2 - h / 2;
-    window.open(
-      setBaseUrl(`remote_api/connect/${api.id}`),
-      "",
-      `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${top}, left=${left}`
-    );
+    authenticateRemoteClient(api).then(checkApiStatus);
   }
 
   return loading ? (

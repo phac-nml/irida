@@ -49,7 +49,6 @@ public class RemoteAPIAjaxController {
      * @param tableRequest - the details for the current page of the Table
      * @return {@link TableResponse}
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public TableResponse<RemoteAPITableModel> getAjaxAPIList(@RequestBody TableRequest tableRequest) {
         Page<RemoteAPI> search = remoteAPIService.search(
@@ -70,7 +69,6 @@ public class RemoteAPIAjaxController {
      * @param apiId The ID of the api
      * @return "valid" or "invalid_token" message
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping("/status/{apiId}")
     public ResponseEntity<Date> checkAPIStatus(@PathVariable Long apiId) {
         try {
