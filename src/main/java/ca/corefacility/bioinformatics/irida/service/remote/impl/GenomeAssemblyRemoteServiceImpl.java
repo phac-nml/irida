@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -43,6 +44,9 @@ public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedA
 	 */
 	@Override
 	public List<UploadedAssembly> getGenomeAssembliesForSample(Sample sample) {
+		if (!sample.hasLink(SAMPLE_ASSEMBLY_REL)) {
+			throw new LinkNotFoundException("No link for rel: " + SAMPLE_ASSEMBLY_REL);
+		}
 		Link link = sample.getLink(SAMPLE_ASSEMBLY_REL);
 		String href = link.getHref();
 
