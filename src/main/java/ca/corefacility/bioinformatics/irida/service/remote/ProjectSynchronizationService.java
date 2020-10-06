@@ -374,12 +374,14 @@ public class ProjectSynchronizationService {
 			}
 		}
 
-		//list the remote assemblies for the sample
-		List<UploadedAssembly> genomeAssembliesForSample = Lists.newArrayList();
+		//list the remote assemblies for the sample.
+		List<UploadedAssembly> genomeAssembliesForSample;
 		try {
 			genomeAssembliesForSample = assemblyRemoteService.getGenomeAssembliesForSample(sample);
 		} catch (LinkNotFoundException e) {
+			//if the target IRIDA doesn't support assemblies yet, warn and ignore assemblies.
 			logger.warn("The referenced IRIDA instance doesn't support assemblies.");
+			genomeAssembliesForSample = Lists.newArrayList();
 		}
 
 
