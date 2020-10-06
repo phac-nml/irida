@@ -1,19 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSample;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 /**
  * Service for handling all aspects interaction with the Cart.
@@ -90,22 +89,22 @@ public class UICartService {
 	 * Get a list of sample in the cart belonging to a list of projects
 	 *
 	 * @param ids List of identifiers for project to get the samples for.
-	 * @return {@link List} of {@link CartProject}s containing project and sample information for items in the cart.
+	 * @return {@link List} of {@link CartProjectModel}s containing project and sample information for items in the cart.
 	 */
-	public List<CartProject> getSamplesForProjects(List<Long> ids) {
+	public List<CartProjectModel> getSamplesForProjects(List<Long> ids) {
 		List<Project> projects = (List<Project>) projectService.readMultiple(ids);
-		List<CartProject> cartProjects = new ArrayList<>();
+		List<CartProjectModel> cartProjectModels = new ArrayList<>();
 		for (Project project : projects) {
-			CartProject cartProject = new CartProject(project.getId(), project.getLabel());
+			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
 			List<CartSample> samples = new ArrayList<>();
 			sampleService.readMultiple(cart.getCartSampleIdsForProject(project.getId()))
 					.forEach(sample -> {
 						samples.add(new CartSample(sample));
 					});
-			cartProject.setSamples(samples);
-			cartProjects.add(cartProject);
+			cartProjectModel.setSamples(samples);
+			cartProjectModels.add(cartProjectModel);
 		}
-		return cartProjects;
+		return cartProjectModels;
 	}
 
 	/**

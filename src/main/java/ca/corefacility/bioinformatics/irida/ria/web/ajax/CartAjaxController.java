@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
@@ -92,7 +92,7 @@ public class CartAjaxController {
 	 * @return Samples that are currently in the cart for specific projects
 	 */
 	@GetMapping("/samples")
-	public ResponseEntity<List<CartProject>> getCartSamplesForProjects(@RequestParam List<Long> ids) {
+	public ResponseEntity<List<CartProjectModel>> getCartSamplesForProjects(@RequestParam List<Long> ids) {
 		return ResponseEntity.ok(service.getSamplesForProjects(ids));
 	}
 }
