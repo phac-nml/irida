@@ -31,7 +31,7 @@ export function RemoteApiTable() {
             {text}
           </Link>
         ) : (
-          text
+          <span className="t-api-name">{text}</span>
         );
       },
     },
