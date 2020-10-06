@@ -43,7 +43,7 @@ public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedA
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<UploadedAssembly> getGenomeAssembliesForSample(Sample sample) {
+	public List<UploadedAssembly> getGenomeAssembliesForSample(Sample sample) throws LinkNotFoundException {
 		if (!sample.hasLink(SAMPLE_ASSEMBLY_REL)) {
 			throw new LinkNotFoundException("No link for rel: " + SAMPLE_ASSEMBLY_REL);
 		}
