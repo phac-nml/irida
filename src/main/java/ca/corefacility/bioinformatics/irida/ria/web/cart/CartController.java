@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.GalaxyRedirectionEndpointController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.GalaxyRedirectionEndpointController;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -22,7 +21,7 @@ public class CartController {
 	/*
 	 * Additional variables
 	 */
-	private final String iridaPipelinePluginStyle;
+	private String iridaPipelinePluginStyle;
 
 	@Autowired
 	public CartController(@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle) {
