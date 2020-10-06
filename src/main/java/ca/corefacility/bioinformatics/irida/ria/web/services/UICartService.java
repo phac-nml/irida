@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
@@ -96,10 +96,10 @@ public class UICartService {
 		List<CartProjectModel> cartProjectModels = new ArrayList<>();
 		for (Project project : projects) {
 			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
-			List<CartSample> samples = new ArrayList<>();
+			List<CartSampleModel> samples = new ArrayList<>();
 			sampleService.readMultiple(cart.getCartSampleIdsForProject(project.getId()))
 					.forEach(sample -> {
-						samples.add(new CartSample(sample));
+						samples.add(new CartSampleModel(sample));
 					});
 			cartProjectModel.setSamples(samples);
 			cartProjectModels.add(cartProjectModel);

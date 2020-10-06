@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 
 import java.util.List;
 
@@ -10,14 +10,14 @@ import java.util.List;
 public class CartProjectModel {
 	private final Long id;
 	private final String label;
-	private  List<CartSample> samples;
+	private  List<CartSampleModel> samples;
 
 	public CartProjectModel(Long id, String label) {
 		this.id = id;
 		this.label = label;
 	}
 
-	public void setSamples(List<CartSample> samples) {
+	public void setSamples(List<CartSampleModel> samples) {
 		this.samples = samples;
 	}
 
@@ -29,7 +29,7 @@ public class CartProjectModel {
 		return label;
 	}
 
-	public List<CartSample> getSamples() {
+	public List<CartSampleModel> getSamples() {
 		return samples;
 	}
 }
