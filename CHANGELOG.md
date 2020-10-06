@@ -5,7 +5,8 @@ Changes
 --------------
 * [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)
 * [Developer] Fixed `SISTR viewer` so plugin and built-in pipelines can use it (20.09.1)
-* [UI] Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
+* [UI]: Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
+* [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality addded in 20.09. (20.09.2)
 
 20.05 to 20.09
 --------------
