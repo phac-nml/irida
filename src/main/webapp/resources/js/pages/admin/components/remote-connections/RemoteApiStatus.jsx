@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button } from "antd";
 import { checkConnectionStatus } from "../../../../apis/remote-api/remote-api";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconLoading, IconLogin } from "../../../../components/icons/Icons";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
@@ -18,6 +17,7 @@ import { authenticateRemoteClient } from "../../../../apis/oauth/oauth";
  */
 export function RemoteApiStatus({ api, onConnect = () => {} }) {
   const [loading, setLoading] = useState(true);
+  const [connecting, setConnecting] = useState(false);
   const [expiration, setExpiration] = useState(undefined);
 
   useEffect(checkApiStatus, []);
@@ -52,7 +52,10 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
    * This will open a popup window with the Oauth for the Remote API
    */
   function updateConnectionStatus() {
-    authenticateRemoteClient(api).then(checkApiStatus);
+    setConnecting(true);
+    authenticateRemoteClient(api)
+      .then(checkApiStatus)
+      .finally(() => setConnecting(false));
   }
 
   return loading ? (
@@ -77,6 +80,7 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
           className="t-remote-status-connect"
           onClick={updateConnectionStatus}
           icon={<IconLogin />}
+          loading={connecting}
         >
           {i18n("RemoteApi.disconnected")}
         </Button>
