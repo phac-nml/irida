@@ -10,6 +10,12 @@ import java.util.Set;
  */
 public class Cart extends HashMap<Long, HashSet<Long>> {
 
+	/**
+	 * Add a project and list of samples to the cart.
+	 * @param projectId identifier for a project
+	 * @param sampleIds list of identifiers for samples from the project to add to the cart
+	 * @return Total samples from all projects in the cart.
+	 */
 	public int add(Long projectId, List<Long> sampleIds) {
 		HashSet<Long> existing = this.containsKey(projectId) ? this.get(projectId) : new HashSet<>();
 		existing.addAll(sampleIds);
@@ -20,7 +26,7 @@ public class Cart extends HashMap<Long, HashSet<Long>> {
 	/**
 	 * Get the total number of samples in the cart
 	 *
-	 * @return Total samples from all project in the cart
+	 * @return Total samples from all projects in the cart
 	 */
 	public int getNumberOfSamplesInCart() {
 		return this.values()
@@ -45,7 +51,7 @@ public class Cart extends HashMap<Long, HashSet<Long>> {
 	 * Remove all samples from a specific project
 	 *
 	 * @param projectId Identifier of the project
-	 * @return Total samples from all project in the cart
+	 * @return Total samples from all projects in the cart
 	 */
 	public int removeProject(Long projectId) {
 		this.remove(projectId);
