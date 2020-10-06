@@ -1,24 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportSample;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controller to handle all ajax requests made to the cart that have to do with Galaxy.
@@ -26,8 +23,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @RestController
 @RequestMapping("/ajax/galaxy-export")
 public class CartGalaxyController {
-	private final SampleService sampleService;
-	private final UICartService cartService;
+	private SampleService sampleService;
+	private UICartService cartService;
 
 	@Autowired
 	public CartGalaxyController(SampleService sampleService, UICartService cartService) {
