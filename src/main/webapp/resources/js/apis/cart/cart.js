@@ -32,9 +32,18 @@ export const getCartCount = async () => {
 export const getCart = async () =>
   axios.get(`${AJAX_URL}`).then((response) => response.data);
 
+/**
+ * Get a list of projects identifiers that are in the cart
+ * @returns {Promise<{ids: *}>}
+ */
 export const getCartIds = async () =>
   axios.get(`${AJAX_URL}/ids`).then((response) => ({ ids: response.data }));
 
+/**
+ * Get the samples for projects by their project identifiers.
+ * @param ids - List of identifiers for projects in the cart
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export const getSamplesForProjects = async (ids) =>
   axios
     .get(`${AJAX_URL}/samples?${ids.map((id) => `ids=${id}`).join("&")}`)
