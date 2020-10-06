@@ -1,16 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProject;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * AJAX controller for cart functionality
@@ -87,7 +86,7 @@ public class CartAjaxController {
 	}
 
 	/**
-	 * Cart the samples that are in the cart for a specific project
+	 * Get the samples that are in the cart for a specific project
 	 *
 	 * @param ids List of project identifiers to get the samples for.
 	 * @return Samples that are currently in the cart for specific projects
