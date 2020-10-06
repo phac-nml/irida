@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * Controller to handle all ajax requests made to the cart that have to do with Galaxy.
  */
 @RestController
-@Scope("session")
 @RequestMapping("/ajax/galaxy-export")
 public class CartGalaxyController {
 	private final SampleService sampleService;
