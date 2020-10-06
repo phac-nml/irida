@@ -3,10 +3,13 @@ Changes
 
 20.09 to 21.01
 --------------
+* [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)
+* [Developer] Fixed `SISTR viewer` so plugin and built-in pipelines can use it (20.09.1)
+* [UI] Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
 
 20.05 to 20.09
 --------------
-* [UI] Updated project user groups to use Ant Design.
+* [UI]: Updated project user groups to use Ant Design.
 * [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
 * [Developer]: Removed deprecated Long constructor.
 * [Developer]: Updated `webpack-dev-server` to fix security vulnerability caused by `websocket-extensions` 0.1.3.

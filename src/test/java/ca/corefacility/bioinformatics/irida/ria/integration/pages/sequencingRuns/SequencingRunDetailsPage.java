@@ -1,15 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class SequencingRunDetailsPage extends AbstractPage {
 	public static String PAGEURL = "sequencingRuns/";
@@ -44,9 +47,10 @@ public class SequencingRunDetailsPage extends AbstractPage {
 	}
 
 	public void deleteRun() {
-		driver.findElement(By.id("remove-btn")).click();
-		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.id("confirm-delete")));
+		driver.findElement(By.className("t-remove-btn")).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("ant-popover-content")));
+		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.cssSelector(".ant-popover-content .ant-btn-primary")));
 		confirmButton.click();
-		waitForElementInvisible(By.className("modal-dialog"));
 	}
 }
