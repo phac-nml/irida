@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
- * Request sent from the UI to add {@link Sample} from a {@link Project} to the cart.
+ * Request sent from the UI to add {@link Sample}s from a {@link Project} to the cart.
  */
 public class AddToCartRequest {
 	/**
@@ -15,7 +15,7 @@ public class AddToCartRequest {
 	private Long projectId;
 
 	/**
-	 * Set of {@link CartSampleRequest} that mapping to a {@link Sample} to add to the cart.
+	 * List of {@link Sample} identifiers for samples to add to the cart.
 	 */
 	private List<Long> sampleIds;
 
