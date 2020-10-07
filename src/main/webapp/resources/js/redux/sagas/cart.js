@@ -8,7 +8,7 @@ import {
   removeSample,
   removeProject,
   getCartIds,
-  getSamplesForProjects
+  getSamplesForProjects,
 } from "../../apis/cart/cart";
 import { FIELDS } from "../../pages/projects/linelist/constants";
 
@@ -31,9 +31,9 @@ export function* addToCartSaga() {
     const { samples } = yield take(types.ADD);
     if (samples.length > 0) {
       const projectId = samples[0][FIELDS.projectId];
-      const sampleIds = samples.map(s => ({
+      const sampleIds = samples.map((s) => ({
         id: s[FIELDS.sampleId],
-        label: s[FIELDS.sampleName]
+        label: s[FIELDS.sampleName],
       }));
 
       const { data } = yield call(putSampleInCart, projectId, sampleIds);
@@ -62,11 +62,7 @@ export function* empty() {
 export function* removeSampleFromCart() {
   while (true) {
     const { payload } = yield take(types.REMOVE_SAMPLE);
-    const { count } = yield call(
-      removeSample,
-      payload.projectId,
-      payload.sampleId
-    );
+    const count = yield call(removeSample, payload.projectId, payload.sampleId);
     yield put(actions.updated({ count }));
   }
 }

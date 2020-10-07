@@ -308,7 +308,7 @@ function PipelineController(
    * @param sampleId the sample if to remove
    */
   vm.removeSample = function (projectId, sampleId) {
-    removeSample(projectId, sampleId).then(({ count }) => {
+    removeSample(projectId, sampleId).then((count) => {
       // Update the cart
       const event = new CustomEvent(CART.UPDATED, { detail: { count } });
       document.dispatchEvent(event);
