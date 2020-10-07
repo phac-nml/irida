@@ -6,4 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="oauth-redirect-uri.xml"
              relativeToChangelogFile="true"/>
+    <include file="announcements_upgrade.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
