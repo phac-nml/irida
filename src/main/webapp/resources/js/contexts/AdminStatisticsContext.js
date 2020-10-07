@@ -177,6 +177,7 @@ function AdminStatisticsProvider(props) {
     {
       chartTitle = `Number of samples created in past ${timePeriodText}`;
       chartAxisAlias = '# of Samples';
+      data = adminStatisticsContext.statistics.sampleStats;
     } else if (statsType === statisticTypes.USERS) {
       chartTitle =`Number of users logged on in past ${timePeriodText}`;
       chartAxisAlias = '# of Users';

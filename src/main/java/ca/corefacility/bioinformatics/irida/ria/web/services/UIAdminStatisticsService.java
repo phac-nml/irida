@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.joda.time.DateTime;
@@ -93,11 +92,27 @@ public class UIAdminStatisticsService {
 		}
 
 		return new ProjectStatsResponse(projectsList);
-
 	}
 
 	public SampleStatsResponse getAdminSampleStatistics(Integer timePeriod) {
-		return new SampleStatsResponse(null);
+		List<GenericStatModel> samplesList = new ArrayList<>();
+		Date currDate = new Date();
+		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
+				.toDate();
+
+		if(IntStream.of(DAILY).anyMatch((x -> x == timePeriod))) {
+			samplesList = sampleService.getSamplesCreatedDaily(minimumCreatedDate);
+		} else if(IntStream.of(MONTHLY).anyMatch((x -> x == timePeriod))) {
+			samplesList = sampleService.getSamplesCreatedMonthly(minimumCreatedDate);
+		} else if(IntStream.of(YEARLY).anyMatch((x -> x == timePeriod))) {
+			samplesList = sampleService.getSamplesCreatedYearly(minimumCreatedDate);
+		} else {
+			minimumCreatedDate = new DateTime(currDate).minusHours(24)
+					.toDate();
+			samplesList = sampleService.getSamplesCreatedHourly(minimumCreatedDate);
+		}
+
+		return new SampleStatsResponse(samplesList);
 	}
 
 	public UserStatsResponse getAdminUserStatistics(Integer timePeriod) {

@@ -64,7 +64,11 @@ export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
  */
 export async function getUpdatedAdminSampleStatistics(timePeriod) {
   try {
-    const { data } = await axios.get(`${ADMIN_URL}/sample-statistics/`);
+    const { data } = await axios.get(`${ADMIN_URL}/sample-statistics/`, {
+      params: {
+        timePeriod
+      }
+    });
     return data;
   }  catch (error) {
     return { error };
