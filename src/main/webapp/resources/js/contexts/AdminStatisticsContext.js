@@ -172,6 +172,7 @@ function AdminStatisticsProvider(props) {
     } else if (statsType === statisticTypes.PROJECTS) {
       chartTitle = `Number of projects created in past ${timePeriodText}`;
       chartAxisAlias ='# of Projects';
+      data = adminStatisticsContext.statistics.projectStats;
     } else if (statsType === statisticTypes.SAMPLES)
     {
       chartTitle = `Number of samples created in past ${timePeriodText}`;

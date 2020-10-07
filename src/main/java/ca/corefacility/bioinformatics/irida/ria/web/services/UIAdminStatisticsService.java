@@ -74,7 +74,26 @@ public class UIAdminStatisticsService {
 	}
 
 	public ProjectStatsResponse getAdminProjectStatistics(Integer timePeriod) {
-		return new ProjectStatsResponse(null);
+
+		List<GenericStatModel> projectsList = new ArrayList<>();
+		Date currDate = new Date();
+		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
+				.toDate();
+
+		if(IntStream.of(DAILY).anyMatch((x -> x == timePeriod))) {
+			projectsList = projectService.getProjectsCreatedDaily(minimumCreatedDate);
+		} else if(IntStream.of(MONTHLY).anyMatch((x -> x == timePeriod))) {
+			projectsList = projectService.getProjectsCreatedMonthly(minimumCreatedDate);
+		} else if(IntStream.of(YEARLY).anyMatch((x -> x == timePeriod))) {
+			projectsList = projectService.getProjectsCreatedYearly(minimumCreatedDate);
+		} else {
+			minimumCreatedDate = new DateTime(currDate).minusHours(24)
+					.toDate();
+			projectsList = projectService.getProjectsCreatedHourly(minimumCreatedDate);
+		}
+
+		return new ProjectStatsResponse(projectsList);
+
 	}
 
 	public SampleStatsResponse getAdminSampleStatistics(Integer timePeriod) {

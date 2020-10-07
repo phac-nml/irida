@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * A specialized service layer for projects.
@@ -430,5 +431,30 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return An {@link Long} count of projects created
 	 */
 	public Long getProjectsCreated(Date createdDate);
+
+
+	/**
+	 * Get list of {@link GenericStatModel} of projects created in the past 24 hours
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getProjectsCreatedHourly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of projects created in the past n days
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getProjectsCreatedDaily(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of projects created in the past n months
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getProjectsCreatedMonthly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of projects created in the past n years
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getProjectsCreatedYearly(Date createdDate);
 
 }
