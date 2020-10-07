@@ -74,24 +74,16 @@ function CartSamplesComponent({
   removeSample,
   removeProject,
 }) {
-  const s = samples
-    .map((project) => {
-      const { samples, ...p } = project;
-      return project.samples.map((sample) => ({ ...sample, project: p }));
-    })
-    .flat();
-
   const filterSamples = (e) => applyFilter(e.target.value);
 
-  const removeOneSample = (sample) =>
-    removeSample(sample.project.id, sample.id);
+  const removeOneSample = (sample) => removeSample(sample);
 
   const removeOneProject = (id) => removeProject(id);
 
   const renderSample = ({ index, data, style }) => (
     <SampleRenderer
       rowIndex={index}
-      data={s[index]}
+      data={samples[index]}
       style={style}
       displaySample={displaySample}
       removeSample={removeOneSample}
@@ -108,7 +100,7 @@ function CartSamplesComponent({
         <AutoSizer>
           {({ height = 600, width = 400 }) => (
             <VList
-              itemCount={s.length}
+              itemCount={samples.length}
               itemSize={75}
               height={height}
               width={width}
@@ -147,8 +139,7 @@ const mapDispatchToProps = (dispatch) => ({
   emptyCart: () => dispatch(actions.emptyCart()),
   displaySample: (sample) =>
     dispatch(sampleDetailsActions.displaySample(sample)),
-  removeSample: (projectId, sampleId) =>
-    dispatch(actions.removeSample(projectId, sampleId)),
+  removeSample: (sample) => dispatch(actions.removeSample(sample)),
   removeProject: (id) => dispatch(actions.removeProject(id)),
 });
 
