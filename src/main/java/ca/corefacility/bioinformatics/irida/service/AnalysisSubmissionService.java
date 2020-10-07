@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * A service for AnalysisSubmissions.
@@ -339,7 +340,31 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * Get count of analyses run in the time period
 	 * @return An {@link Long} count of analyses ran
 	 */
-	public Long getAnalysesRan(Date createdDate);
+	public Long getAnalysesRanInTimePeriod(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of analyses run in the past 24 hours
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getAnalysesRanHourly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of analyses run in the past n days
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getAnalysesRanDaily(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of analyses run in the past n months
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getAnalysesRanMonthly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of analyses run in the n years
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getAnalysesRanYearly(Date createdDate);
 
 	/**
 	 * Class to store the number of running and queued analyses

@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
@@ -17,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @Component
 public class UIAdminStatisticsService {
+	private int [] DAILY = {7,14,30};
+	private int [] MONTHLY = {90, 365};
+	private int [] YEARLY = {730, 1825, 3650};
 
 	private ProjectService projectService;
 	private UserService userService;
@@ -37,7 +44,7 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
 				.toDate();
 
-		Long analysesRan = analysisSubmissionService.getAnalysesRan(minimumCreatedDate);
+		Long analysesRan = analysisSubmissionService.getAnalysesRanInTimePeriod(minimumCreatedDate);
 		Long projectsCreated = projectService.getProjectsCreated(minimumCreatedDate);
 		Long samplesCreated = sampleService.getSamplesCreated(minimumCreatedDate);
 		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
@@ -45,7 +52,26 @@ public class UIAdminStatisticsService {
 		return new BasicStats(analysesRan, projectsCreated, samplesCreated, usersLoggedIn);
 	}
 
-	public AnalysesStatsResponse getAdminAnalysesStatistics(Integer timePeriod) { return new AnalysesStatsResponse(null); }
+	public AnalysesStatsResponse getAdminAnalysesStatistics(Integer timePeriod) {
+		List<GenericStatModel> analysesList = new ArrayList<>();
+		Date currDate = new Date();
+		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
+				.toDate();
+
+		if(IntStream.of(DAILY).anyMatch((x -> x == timePeriod))) {
+			analysesList = analysisSubmissionService.getAnalysesRanDaily(minimumCreatedDate);
+		} else if(IntStream.of(MONTHLY).anyMatch((x -> x == timePeriod))) {
+			analysesList = analysisSubmissionService.getAnalysesRanMonthly(minimumCreatedDate);
+		} else if(IntStream.of(YEARLY).anyMatch((x -> x == timePeriod))) {
+			analysesList = analysisSubmissionService.getAnalysesRanYearly(minimumCreatedDate);
+		} else {
+			minimumCreatedDate = new DateTime(currDate).minusHours(24)
+					.toDate();
+			analysesList = analysisSubmissionService.getAnalysesRanHourly(minimumCreatedDate);
+		}
+
+		return new AnalysesStatsResponse(analysesList);
+	}
 
 	public ProjectStatsResponse getAdminProjectStatistics(Integer timePeriod) {
 		return new ProjectStatsResponse(null);
@@ -58,4 +84,5 @@ public class UIAdminStatisticsService {
 	public UserStatsResponse getAdminUserStatistics(Integer timePeriod) {
 		return new UserStatsResponse(null);
 	}
+
 }
