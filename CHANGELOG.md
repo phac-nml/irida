@@ -7,7 +7,7 @@ Changes
 * [Developer]: Fixed `SISTR viewer` so plugin and built-in pipelines can use it (20.09.1)
 * [UI]: Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
 * [UI]: Fixed bug where users could not see or connect to Remote APIs (20.09.2)
-* [UI]: Fixed bug on project page where incorrect link to Remote API was displayed. (20.09.3)
+* [UI]: Fixed bug on project page where incorrect link to Remote API was displayed. (20.09.2)
 
 20.05 to 20.09
 --------------
