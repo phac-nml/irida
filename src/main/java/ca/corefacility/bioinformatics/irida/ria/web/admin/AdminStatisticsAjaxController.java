@@ -3,21 +3,15 @@ package ca.corefacility.bioinformatics.irida.ria.web.admin;
 import java.util.Date;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.AdminStatisticsRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.AdvancedStats;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.BasicStats;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -30,35 +24,30 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @Scope("session")
 @RequestMapping("/ajax/admin")
 public class AdminStatisticsAjaxController {
-	private static final Logger logger = LoggerFactory.getLogger(AdminStatisticsAjaxController.class);
 
 	private ProjectService projectService;
 	private UserService userService;
-	private AnalysisTypesService analysisTypesService;
 	private SampleService sampleService;
-	private MessageSource messageSource;
 	private AnalysisSubmissionService analysisSubmissionService;
 
 	@Autowired
 	public AdminStatisticsAjaxController(ProjectService projectService, UserService userService,
-			AnalysisTypesService analysisTypesService, SampleService sampleService, MessageSource messageSource, AnalysisSubmissionService analysisSubmissionService) {
+			SampleService sampleService, AnalysisSubmissionService analysisSubmissionService) {
 		this.projectService = projectService;
 		this.userService = userService;
-		this.analysisTypesService = analysisTypesService;
 		this.sampleService = sampleService;
-		this.messageSource = messageSource;
 		this.analysisSubmissionService = analysisSubmissionService;
 	}
 
 	/**
-	 * Get usage statistics for projects, samples, analyses, and users
+	 * Get basic usage statistics for projects, samples, analyses, and users
 	 * for the provided time period
 	 *
 	 * @param timePeriod The time period for which to retrieve usage stats for
-	 * @return dto with usage stats
+	 * @return dto with basic usage stats
 	 */
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
-	public ResponseEntity<AdminStatisticsRequest> getAdminStatistics(Integer timePeriod) {
+	public ResponseEntity<BasicStats> getAdminStatistics(Integer timePeriod) {
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
 				.toDate();
@@ -68,8 +57,7 @@ public class AdminStatisticsAjaxController {
 		Long samplesCreated = sampleService.getSamplesCreated(minimumCreatedDate);
 		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
 
-		return ResponseEntity.ok(new AdminStatisticsRequest(new AdvancedStats(null, null, null, null),
-				new BasicStats(analysesRan, projectsCreated, samplesCreated, usersLoggedIn)));
+		return ResponseEntity.ok(new BasicStats(analysesRan, projectsCreated, samplesCreated, usersLoggedIn));
 	}
 
 	/**

@@ -66,7 +66,7 @@ export default function BasicStats({ statistics }) {
           <Col span={6}>
             <Card>
               <Statistic
-                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={statistics.usersLoggedIn}
               />
               <Button

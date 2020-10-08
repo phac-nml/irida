@@ -67,9 +67,9 @@ function AdminStatisticsProvider(props) {
 
   useEffect(() => {
     // On load get the basic and advanced stats for the default time period
-    getAdminStatistics(defaultTimePeriod).then(res => {
+    getAdminStatistics(defaultTimePeriod).then(basicStats => {
       setAdminStatisticsContext(adminStatisticsContext => {
-        return {...adminStatisticsContext, basicStats: res.basicStats, statistics: res.advancedStats};
+        return {...adminStatisticsContext, basicStats: basicStats};
       });
     }).catch((message) => {
       notification.error({ message });
@@ -132,7 +132,6 @@ function AdminStatisticsProvider(props) {
     if(statsType === statisticTypes.ANALYSES) {
       chartTitle = `Number of analyses run in past ${timePeriodText}`;
       chartAxisAlias = '# of Analyses';
-      data = adminStatisticsContext.statistics.analysesStats;
     } else if (statsType === statisticTypes.PROJECTS) {
       chartTitle = `Number of projects created in past ${timePeriodText}`;
       chartAxisAlias ='# of Projects';
