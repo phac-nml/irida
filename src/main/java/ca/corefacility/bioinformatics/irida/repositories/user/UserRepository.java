@@ -50,12 +50,13 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	public Long countUsersLoggedInTimePeriod(Date createdDate);
 
 	/**
-	 * Get a count of all {@link User}s created in within time period
+	 * Get a count of all {@link User}s created within time period
 	 *
 	 * @return a count of {@link User}s
 	 */
 	@Query("select count(u.id) from User u where u.createdDate >= ?1")
 	public Long countUsersCreatedInTimePeriod(Date createdDate);
+
 
 	/**
 	 * Get a list of {@link GenericStatModel}s for users created in the last day and grouped by hour
@@ -96,4 +97,5 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, '%Y'), count(u.id))"
 			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, '%Y')")
 	public List<GenericStatModel> countUsersCreatedYearly(Date createdDate);
+
 }

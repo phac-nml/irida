@@ -39,6 +39,10 @@ export default function AdvancedStatistics({statType}) {
     });
   }, [statType]);
 
+  /*
+   * Updates the stats for the time period selected
+   * for the stat type (analyses, projects, samples, or users
+   */
   function updateTimePeriod(currTimePeriod) {
     if(statType === statisticTypes.ANALYSES) {
       updateAnalysesStatsTimePeriod(currTimePeriod);
@@ -52,6 +56,7 @@ export default function AdvancedStatistics({statType}) {
     setTimePeriod(currTimePeriod);
   }
 
+  // Displays the data in a chart of type selected
   function displayChart() {
     if(chartType === chartTypes.BAR) {
       return <Bar {...getChartConfig(chartType, statType, timePeriod)} ></Bar>;

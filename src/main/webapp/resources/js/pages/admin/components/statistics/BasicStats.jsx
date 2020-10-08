@@ -5,8 +5,8 @@
  */
 
 import React, { useContext, useState } from "react";
-import { Button, Card, Statistic, Row, Col } from "antd";
-import { SPACE_LG } from "../../../../styles/spacing";
+import { Button, Card, Statistic } from "antd";
+import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import AdvancedStatistics from "./AdvancedStatistics";
 import {
   AdminStatisticsContext,
@@ -29,86 +29,87 @@ export default function BasicStats() {
   return (
     <div className="t-statistics">
       <div style={{marginBottom: SPACE_LG}} className="t-stats-basic">
-        <Row gutter={16}>
-          <Col span={4}>
-            <Card>
+
+        <div style={{display: "flex",
+          justifyContent: "flex-start", flexWrap: "wrap"}}>
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.analysesRan}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() =>
                 {
                   updateAnalysesStatsTimePeriod(defaultTimePeriod)
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)
                 }}
               >
-                Advanced Analyses Statistics
+                Analyses Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={4}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.projectsCreated}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => {
                   updateProjectStatsTimePeriod(defaultTimePeriod)
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS}/>)
-                }
-                }
+                }}
               >
-                Advanced Project Statistics
+                Project Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={4}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.samplesCreated}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => {
                   updateSampleStatsTimePeriod(defaultTimePeriod)
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)
                 }}
               >
-                Advanced Sample Statistics
+                Sample Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={4}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.usersCreated}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => {
                   updateUserStatsTimePeriod(defaultTimePeriod)
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)
                 }}
               >
-                Advanced User Statistics
+                User Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={4}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
-                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.usersLoggedIn}
               />
+              <Button
+                style={{ marginTop: 16, width: 170 }}
+                disabled={true}
+              >
+                User Usage Statistics
+              </Button>
             </Card>
-          </Col>
-        </Row>
+        </div>
       </div>
 
       <div className="t-stats-chart">

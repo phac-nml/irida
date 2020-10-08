@@ -5,7 +5,7 @@ const ADMIN_URL = setBaseUrl(`/ajax/admin`);
 
 /*
  * Get all the statistics for the admin panel
- * @return {Promise<*>} `data` contains the OK response and the basicStats map;
+ * @return {Promise<*>} `data` contains the OK response and the basicStats dto;
  *                      `error` contains error information if an error occurred.
  */
 export async function getAdminStatistics(timePeriod) {
@@ -23,7 +23,7 @@ export async function getAdminStatistics(timePeriod) {
 
 /*
  * Get updated project statistics for the provided time period
- * @return {Promise<*>} `data` contains the OK response and the projectStats map;
+ * @return {Promise<*>} `data` contains the OK response and the projectStats dto;
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminProjectStatistics(timePeriod) {
@@ -41,7 +41,7 @@ export async function getUpdatedAdminProjectStatistics(timePeriod) {
 
 /*
  * Get updated analyses statistics for the provided time period
- * @return {Promise<*>} `data` contains the OK response and the analysesStats map;
+ * @return {Promise<*>} `data` contains the OK response and the analysesStats dto;
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
@@ -59,7 +59,7 @@ export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
 
 /*
  * Get updated sample statistics for the provided time period
- * @return {Promise<*>} `data` contains the OK response and the sampleStats map;
+ * @return {Promise<*>} `data` contains the OK response and the sampleStats dto;
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminSampleStatistics(timePeriod) {
@@ -77,7 +77,7 @@ export async function getUpdatedAdminSampleStatistics(timePeriod) {
 
 /*
  * Get updated user statistics for the provided time period
- * @return {Promise<*>} `data` contains the OK response and the userStats map;
+ * @return {Promise<*>} `data` contains the OK response and the userStats dto;
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminUserStatistics(timePeriod) {

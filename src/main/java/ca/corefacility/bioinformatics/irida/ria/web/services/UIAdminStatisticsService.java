@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -37,6 +36,12 @@ public class UIAdminStatisticsService {
 		this.analysisSubmissionService = analysisSubmissionService;
 	}
 
+	/**
+	 * Returns a dto with basic stats (counts) for analyses, projects, users, and samples.
+	 *
+	 * @param timePeriod - The time period for which to get the stats for
+	 * @return a {@link BasicStats} containing the counts for the time period.
+	 */
 	public BasicStats getAdminStatistics(Integer timePeriod) {
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
@@ -51,8 +56,15 @@ public class UIAdminStatisticsService {
 		return new BasicStats(analysesRan, projectsCreated, samplesCreated, usersCreated, usersLoggedIn);
 	}
 
+	/**
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains
+	 * the analyses ran counts and labels
+	 *
+	 * @param timePeriod - The time period for which to get the stats for
+	 * @return a {@link AnalysesStatsResponse} containing the counts and labels for the time period.
+	 */
 	public AnalysesStatsResponse getAdminAnalysesStatistics(Integer timePeriod) {
-		List<GenericStatModel> analysesList = new ArrayList<>();
+		List<GenericStatModel> analysesList;
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
 				.toDate();
@@ -72,9 +84,16 @@ public class UIAdminStatisticsService {
 		return new AnalysesStatsResponse(analysesList);
 	}
 
+	/**
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains
+	 * the projects created counts and labels
+	 *
+	 * @param timePeriod - The time period for which to get the stats for
+	 * @return a {@link ProjectStatsResponse} containing the counts and labels for the time period.
+	 */
 	public ProjectStatsResponse getAdminProjectStatistics(Integer timePeriod) {
 
-		List<GenericStatModel> projectsList = new ArrayList<>();
+		List<GenericStatModel> projectsList;
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
 				.toDate();
@@ -94,8 +113,15 @@ public class UIAdminStatisticsService {
 		return new ProjectStatsResponse(projectsList);
 	}
 
+	/**
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains
+	 * the samples created counts and labels
+	 *
+	 * @param timePeriod - The time period for which to get the stats for
+	 * @return a {@link SampleStatsResponse} containing the counts and labels for the time period.
+	 */
 	public SampleStatsResponse getAdminSampleStatistics(Integer timePeriod) {
-		List<GenericStatModel> samplesList = new ArrayList<>();
+		List<GenericStatModel> samplesList;
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
 				.toDate();
@@ -115,8 +141,15 @@ public class UIAdminStatisticsService {
 		return new SampleStatsResponse(samplesList);
 	}
 
+	/**
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains
+	 * the users created counts and labels
+	 *
+	 * @param timePeriod - The time period for which to get the stats for
+	 * @return a {@link UserStatsResponse} containing the counts and labels for the time period.
+	 */
 	public UserStatsResponse getAdminUserStatistics(Integer timePeriod) {
-		List<GenericStatModel> usersList = new ArrayList<>();
+		List<GenericStatModel> usersList;
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
 				.toDate();
