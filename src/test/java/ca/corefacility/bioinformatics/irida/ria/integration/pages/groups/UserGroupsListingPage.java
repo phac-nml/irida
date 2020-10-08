@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -55,6 +54,7 @@ public class UserGroupsListingPage extends AbstractPage {
 		createGroupBtn.click();
 		WebDriverWait wait = new WebDriverWait(webDriver, 5);
 		wait.until(ExpectedConditions.visibilityOf(newGroupModal));
+		waitForTime(100);
 		WebElement input = driver.switchTo().activeElement();
 		input.sendKeys(name);
 		newGroupConfirmButton.click();
