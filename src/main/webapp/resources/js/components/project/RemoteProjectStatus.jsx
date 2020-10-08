@@ -1,24 +1,20 @@
 import React from "react";
-import { Tag, Typography } from "antd";
+import { Button, Tag } from "antd";
 import { IconSwap } from "../icons/Icons";
-
-const { Text } = Typography;
+import { SPACE_XS } from "../../styles/spacing";
 
 export function RemoteProjectStatus() {
   const { remote } = window.project;
   if (!remote) return null;
 
-  return (
+  return window.project.canManageRemote ? (
+    <Button size="small" icon={<IconSwap />} href={remote.url}>
+      <strong style={{ marginLeft: SPACE_XS }}>{remote.label}</strong>:
+      <span style={{ marginLeft: SPACE_XS }}>{remote.status}</span>
+    </Button>
+  ) : (
     <Tag icon={<IconSwap />}>
-      {window.project.canManageRemote ? (
-        <a href={remote.url}>
-          <Text strong>{remote.label}</Text>: {remote.status}
-        </a>
-      ) : (
-        <>
-          <Text strong>{remote.label}</Text>: {remote.status}
-        </>
-      )}
+      <strong>{remote.label}</strong>: {remote.status}
     </Tag>
   );
 }

@@ -22,7 +22,7 @@
     >
       window.project.remote = {
         url:
-          /*[[@{/admin/remote_api/{id}(id=${status.getApi().getId()})}]]*/ "",
+          /*[[@{/projects/{id}/settings/remote(id=${project.getId()})}]]*/ "",
         label: /*[[${status.getApi().getLabel()}]]*/ "",
         status: /*[[#{'project.sync.status.'+${status.getSyncStatus()}}]]*/ "",
       };
