@@ -67,7 +67,7 @@ function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
 
   useEffect(() => {
-    // On load get the basic and advanced stats for the default time period
+    // On load get the basic stats for the default time period
     getAdminStatistics(defaultTimePeriod).then(basicStats => {
       setAdminStatisticsContext(adminStatisticsContext => {
         return {...adminStatisticsContext, basicStats: basicStats};
