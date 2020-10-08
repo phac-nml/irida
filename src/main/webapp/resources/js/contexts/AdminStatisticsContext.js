@@ -61,6 +61,8 @@ const initialContext = {
   }
 };
 
+const chartHeight = 800;
+
 const AdminStatisticsContext = React.createContext(initialContext);
 
 function AdminStatisticsProvider(props) {
@@ -190,7 +192,7 @@ function AdminStatisticsProvider(props) {
     const chartConfig = {
       title: { visible: true, text: chartTitle },
       forceFit: true,
-      height: 800,
+      height: chartHeight,
       data: data !== null ? data : [{key:"", value:""}],
       padding: 'auto',
       xField: isBarChartType ? 'value' : 'key',
