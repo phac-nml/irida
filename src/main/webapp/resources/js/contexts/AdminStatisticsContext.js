@@ -56,6 +56,7 @@ const initialContext = {
     analysesRun: 0,
     projectsCreated: 0,
     samplesCreated: 0,
+    usersCreated: 0,
     usersLoggedIn: 0
   }
 };
@@ -129,7 +130,7 @@ function AdminStatisticsProvider(props) {
       chartTitle = `Number of samples created in past ${timePeriodText}`;
       chartAxisAlias = '# of Samples';
     } else if (statsType === statisticTypes.USERS) {
-      chartTitle =`Number of users logged on in past ${timePeriodText}`;
+      chartTitle =`Number of users created in past ${timePeriodText}`;
       chartAxisAlias = '# of Users';
     }
 

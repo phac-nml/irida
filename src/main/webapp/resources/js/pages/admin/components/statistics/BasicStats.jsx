@@ -5,8 +5,8 @@
  */
 
 import React, { useContext, useState } from "react";
-import { Button, Card, Statistic, Row, Col } from "antd";
-import { SPACE_LG } from "../../../../styles/spacing";
+import { Button, Card, Statistic } from "antd";
+import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import AdvancedStatistics from "./AdvancedStatistics";
 import {
   AdminStatisticsContext,
@@ -25,9 +25,9 @@ export default function BasicStats() {
   return (
     <div className="t-statistics">
       <div style={{marginBottom: SPACE_LG}} className="t-stats-basic">
-        <Row gutter={16}>
-          <Col span={6}>
-            <Card>
+        <div style={{display: "flex",
+          justifyContent: "flex-start", flexWrap: "wrap"}}>
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.analysesRun}
@@ -36,12 +36,11 @@ export default function BasicStats() {
                 style={{ marginTop: 16 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)}
               >
-                Advanced Analyses Statistics
+                Analyses Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.projectsCreated}
@@ -50,12 +49,11 @@ export default function BasicStats() {
                 style={{ marginTop: 16 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS} />)}
               >
-                Advanced Project Statistics
+                Project Creation Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
                 title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.samplesCreated}
@@ -64,25 +62,37 @@ export default function BasicStats() {
                 style={{ marginTop: 16 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)}
               >
-                Advanced Sample Statistics
+                Sample Creation Statistics
               </Button>
             </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
               <Statistic
-                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.usersLoggedIn}
+                title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={adminStatisticsContext.basicStats.usersCreated}
               />
               <Button
                 style={{ marginTop: 16 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)}
               >
-                Advanced User Statistics
+                User Creation Statistics
               </Button>
             </Card>
-          </Col>
-        </Row>
+
+            <Card style={{width: 240, marginRight: SPACE_XS}}>
+              <Statistic
+                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={adminStatisticsContext.basicStats.usersLoggedIn}
+              />
+              <Button
+                style={{ marginTop: 16 }}
+                disabled={true}
+              >
+                User Usage Statistics
+              </Button>
+            </Card>
+
+        </div>
       </div>
 
       <div className="t-stats-chart">
