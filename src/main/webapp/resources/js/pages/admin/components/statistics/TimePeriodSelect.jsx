@@ -32,7 +32,7 @@ export function TimePeriodSelect({ onChange = () => {} }) {
           Month
         </Select.Option>
         <Select.Option value={90}>
-          Quarterly
+          Quarter
         </Select.Option>
         <Select.Option value={365}>
           1 Year

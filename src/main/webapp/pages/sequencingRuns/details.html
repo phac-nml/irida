@@ -1,89 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{sequencingRuns/_details_base}">
-<body>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{sequencingRuns/_details_base}"
+>
+  <body>
     <main layout:fragment="main">
-    <div class="row">
+      <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-info">
-                <div class="panel-heading clearfix" ng-controller="DeleteModalCtrl as ctrl">
-                    <b class="panel-title pull-left" th:text="#{sequencingruns.details.details}">Run Details</b>
-                    <button sec:authorize="hasRole('ROLE_ADMIN')" id="remove-btn" class="btn btn-danger btn-xs pull-right"
-                            ng-click="ctrl.open()" th:text="#{form.btn.remove}">_Remove_
-                    </button>
-                </div>
-                <div class="panel-body">
-                    <dl class="run-detail">
-                        <dt class="run-detail-key" th:text="#{sequencingruns.details.description}">_Description_</dt>
-                        <dd class="run-detail-value" th:if="${run.description}" th:text="${run.description}">_Description_</dd>
-                    </dl>
-                    <div>
-                      <dl class="run-detail" th:each="kv : ${run.optionalProperties}">
-                        <dt class="run-detail-key" th:text="${kv.key}">_Description_</dt>
-                        <dd class="run-detail-value" th:text="${kv.value}">_Description_</dd>
-                    </dl>
-                    </div>
-                </div>
+          <div class="panel panel-info">
+            <div
+              class="panel-heading clearfix"
+              ng-controller="DeleteModalCtrl as ctrl"
+            >
+              <b
+                class="panel-title pull-left"
+                th:text="#{sequencingruns.details.details}"
+                >Run Details</b
+              >
             </div>
+            <div class="panel-body">
+              <dl class="run-detail">
+                <dt
+                  class="run-detail-key"
+                  th:text="#{sequencingruns.details.description}"
+                >
+                  _Description_
+                </dt>
+                <dd
+                  class="run-detail-value"
+                  th:if="${run.description}"
+                  th:text="${run.description}"
+                >
+                  _Description_
+                </dd>
+              </dl>
+              <div>
+                <dl class="run-detail" th:each="kv : ${run.optionalProperties}">
+                  <dt class="run-detail-key" th:text="${kv.key}">
+                    _Description_
+                  </dt>
+                  <dd class="run-detail-value" th:text="${kv.value}">
+                    _Description_
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-
+      </div>
     </main>
-    <th:block layout:fragment="scripts">
-      <script type="text/ng-template" id="myModalContent.html">
-          <div class="modal-header">
-              <h3 class="modal-title" th:text="#{sequencingruns.delete.confirmation}">I'm a modal!</h3>
-          </div>
-          <div class="modal-footer">
-              <button id="confirm-delete" class="btn btn-primary" type="button" ng-click="modal.ok()">OK</button>
-              <button class="btn btn-warning" type="button" ng-click="modal.cancel()">Cancel</button>
-          </div>
-      </script>
-
-      <script th:inline="javascript">
-        var PAGE = {
-          urls: {
-            remove: /*[[@{/sequencingRuns/{id}(id=${run.id})}]]*/ '/sequencingRuns',
-            list: /*[[@{/sequencingRuns}]]*/ '/sequencingRuns',
-          }
-        };
-
-    	(function() {
-	        "use strict";
-
-	        var app = angular.module('irida.sequencingruns', ['ui.bootstrap']);
-	        app.controller('DeleteModalCtrl', function ($uibModal) {
-		        var vm = this;
-	            vm.open = function (size) {
-
-                  $uibModal.open({
-                    templateUrl: 'myModalContent.html',
-                    controller: 'ModalInstanceCtrl as modal',
-                    size: 'sm'
-                  });
-                };
-	        }).controller('ModalInstanceCtrl',function($uibModalInstance, $http){
-              var vm = this;
-
-              vm.ok = function(){
-                $http({
-                  method: 'DELETE',
-                  url: PAGE.urls.remove,
-                }).then(function() {
-                  window.location = PAGE.urls.list
-                });
-              };
-
-              vm.cancel = function(){
-                $uibModalInstance.dismiss('cancel');
-              }
-
-            });
-
-          angular.module("irida").requires.push(app.name);
-
-        })(window.angular, [angular]);
-      </script>
-    </th:block>
-</body>
+  </body>
 </html>

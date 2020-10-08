@@ -155,26 +155,32 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	public Long getUsersLoggedIn(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of users logged on in the past 24 hours
-	 * @return An {@link GenericStatModel} list
+	 * Get count of users created in the time period
+	 * @return An {@link Long} count of users logged in
 	 */
-	public List<GenericStatModel> getUsersLoggedInHourly(Date createdDate);
+	public Long getUsersCreatedInTimePeriod(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of users logged on in the past n days
+	 * Get list of {@link GenericStatModel} of users created in the past 24 hours
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getUsersLoggedInDaily(Date createdDate);
+	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of users logged on in the past n months
+	 * Get list of {@link GenericStatModel} of users created in the past n days
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getUsersLoggedInMonthly(Date createdDate);
+	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of users logged on in the past n years
+	 * Get list of {@link GenericStatModel} of users created in the past n months
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getUsersLoggedInYearly(Date createdDate);
+	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users created in the past n years
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate);
 }

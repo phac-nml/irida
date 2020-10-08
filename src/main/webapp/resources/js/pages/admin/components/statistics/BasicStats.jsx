@@ -15,11 +15,11 @@ import {
   timePeriodMap
 } from "../../../../contexts/AdminStatisticsContext";
 
-
-export default function BasicStats({ statistics }) {
+export default function BasicStats() {
   const [statsChartView, setStatsChartView] = useState(null);
 
   const {
+    adminStatisticsContext,
     updateAnalysesStatsTimePeriod,
     updateProjectStatsTimePeriod,
     updateSampleStatsTimePeriod,
@@ -30,11 +30,11 @@ export default function BasicStats({ statistics }) {
     <div className="t-statistics">
       <div style={{marginBottom: SPACE_LG}} className="t-stats-basic">
         <Row gutter={16}>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.analysesRan}
+                value={adminStatisticsContext.basicStats.analysesRan}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -48,11 +48,11 @@ export default function BasicStats({ statistics }) {
               </Button>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.projectsCreated}
+                value={adminStatisticsContext.basicStats.projectsCreated}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -66,11 +66,11 @@ export default function BasicStats({ statistics }) {
               </Button>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.samplesCreated}
+                value={adminStatisticsContext.basicStats.samplesCreated}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -83,11 +83,11 @@ export default function BasicStats({ statistics }) {
               </Button>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
-                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.usersLoggedIn}
+                title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={adminStatisticsContext.basicStats.usersCreated}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -98,6 +98,14 @@ export default function BasicStats({ statistics }) {
               >
                 Advanced User Statistics
               </Button>
+            </Card>
+          </Col>
+          <Col span={4}>
+            <Card>
+              <Statistic
+                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={adminStatisticsContext.basicStats.usersLoggedIn}
+              />
             </Card>
           </Col>
         </Row>

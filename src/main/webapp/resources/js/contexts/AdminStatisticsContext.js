@@ -56,6 +56,7 @@ const initialContext = {
     analysesRan: 0,
     projectsCreated: 0,
     samplesCreated: 0,
+    usersCreated: 0,
     usersLoggedIn: 0
   }
 };
@@ -179,10 +180,11 @@ function AdminStatisticsProvider(props) {
       chartAxisAlias = '# of Samples';
       data = adminStatisticsContext.statistics.sampleStats;
     } else if (statsType === statisticTypes.USERS) {
-      chartTitle =`Number of users logged on in past ${timePeriodText}`;
+      chartTitle =`Number of users created in past ${timePeriodText}`;
       chartAxisAlias = '# of Users';
       data = adminStatisticsContext.statistics.userStats;
     }
+
 
     // The configuration required to display a chart
     const chartConfig = {
@@ -203,7 +205,7 @@ function AdminStatisticsProvider(props) {
       },
       colorField: "key",
       legend: {
-        visible: data !== null  ? true : false,
+        visible: data !== null ? true : false,
         position: 'bottom-center',
       },
       statistic: {

@@ -33,7 +33,6 @@ public class UIAdminStatisticsService {
 			SampleService sampleService, AnalysisSubmissionService analysisSubmissionService) {
 		this.projectService = projectService;
 		this.userService = userService;
-
 		this.sampleService = sampleService;
 		this.analysisSubmissionService = analysisSubmissionService;
 	}
@@ -46,9 +45,10 @@ public class UIAdminStatisticsService {
 		Long analysesRan = analysisSubmissionService.getAnalysesRanInTimePeriod(minimumCreatedDate);
 		Long projectsCreated = projectService.getProjectsCreated(minimumCreatedDate);
 		Long samplesCreated = sampleService.getSamplesCreated(minimumCreatedDate);
+		Long usersCreated = userService.getUsersCreatedInTimePeriod(minimumCreatedDate);
 		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
 
-		return new BasicStats(analysesRan, projectsCreated, samplesCreated, usersLoggedIn);
+		return new BasicStats(analysesRan, projectsCreated, samplesCreated, usersCreated, usersLoggedIn);
 	}
 
 	public AnalysesStatsResponse getAdminAnalysesStatistics(Integer timePeriod) {
@@ -122,15 +122,15 @@ public class UIAdminStatisticsService {
 				.toDate();
 
 		if(IntStream.of(DAILY).anyMatch((x -> x == timePeriod))) {
-			usersList = userService.getUsersLoggedInDaily(minimumCreatedDate);
+			usersList = userService.getUsersCreatedDaily(minimumCreatedDate);
 		} else if(IntStream.of(MONTHLY).anyMatch((x -> x == timePeriod))) {
-			usersList = userService.getUsersLoggedInMonthly(minimumCreatedDate);
+			usersList = userService.getUsersCreatedMonthly(minimumCreatedDate);
 		} else if(IntStream.of(YEARLY).anyMatch((x -> x == timePeriod))) {
-			usersList = userService.getUsersLoggedInYearly(minimumCreatedDate);
+			usersList = userService.getUsersCreatedYearly(minimumCreatedDate);
 		} else {
 			minimumCreatedDate = new DateTime(currDate).minusHours(24)
 					.toDate();
-			usersList = userService.getUsersLoggedInHourly(minimumCreatedDate);
+			usersList = userService.getUsersCreatedHourly(minimumCreatedDate);
 		}
 
 		return new UserStatsResponse(usersList);

@@ -8,12 +8,15 @@ public class BasicStats {
 	private Long analysesRan;
 	private Long projectsCreated;
 	private Long samplesCreated;
+	private Long usersCreated;
 	private Long usersLoggedIn;
 
-	public BasicStats(Long analysesRan, Long projectsCreated, Long samplesCreated, Long usersLoggedIn) {
+	public BasicStats(Long analysesRan, Long projectsCreated, Long samplesCreated, Long usersCreated,
+			Long usersLoggedIn) {
 		this.analysesRan = analysesRan;
 		this.projectsCreated = projectsCreated;
 		this.samplesCreated = samplesCreated;
+		this.usersCreated = usersCreated;
 		this.usersLoggedIn = usersLoggedIn;
 	}
 
@@ -39,6 +42,14 @@ public class BasicStats {
 
 	public void setSamplesCreated(Long samplesCreated) {
 		this.samplesCreated = samplesCreated;
+	}
+
+	public Long getUsersCreated() {
+		return usersCreated;
+	}
+
+	public void setUsersCreated(Long usersCreated) {
+		this.usersCreated = usersCreated;
 	}
 
 	public Long getUsersLoggedIn() {

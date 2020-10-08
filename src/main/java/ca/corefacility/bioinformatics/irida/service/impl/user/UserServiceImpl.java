@@ -438,31 +438,40 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersLoggedInHourly(Date createdDate) {
-		return userRepository.countUsersLoggedOnHourly(createdDate);
+	public Long getUsersCreatedInTimePeriod(Date createdDate) {
+		Long usersCount = userRepository.countUsersCreatedInTimePeriod(createdDate);
+		return usersCount;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersLoggedInDaily(Date createdDate) {
-		return userRepository.countUsersLoggedOnDaily(createdDate);
+	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate) {
+		return userRepository.countUsersCreatedHourly(createdDate);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersLoggedInMonthly(Date createdDate) {
-		return userRepository.countUsersLoggedOnMonthly(createdDate);
+	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate) {
+		return userRepository.countUsersCreatedDaily(createdDate);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersLoggedInYearly(Date createdDate) {
-		return userRepository.countUsersLoggedOnYearly(createdDate);
+	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate) {
+		return userRepository.countUsersCreatedMonthly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate) {
+		return userRepository.countUsersCreatedYearly(createdDate);
 	}
 }

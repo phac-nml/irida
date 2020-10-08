@@ -266,7 +266,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/cgmlst");
 		assertTrue("Page title should equal", page.comparePageTitle("cgMLST330"));
-		assertTrue("Has 5 list items for cgMLST330", page.expectedNumberOfListItemsEqualsActual(5));
+		assertTrue("Has 7 list items for cgMLST330", page.expectedNumberOfListItemsEqualsActual(7));
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/mash");
 		assertTrue("Page title should equal", page.comparePageTitle("Mash"));

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.admin;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.*;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAdminStatisticsService;
+
 
 /**
  * Controller to handle ajax requests for the Admin Panel statistics page.
@@ -32,7 +34,7 @@ public class AdminStatisticsAjaxController {
 	 * for the provided time period
 	 *
 	 * @param timePeriod The time period for which to retrieve usage stats for
-	 * @return dto with usage stats
+	 * @return dto with basic usage stats
 	 */
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ResponseEntity<BasicStats> getAdminStatistics(@RequestParam int timePeriod) {
