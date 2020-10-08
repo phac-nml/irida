@@ -1,41 +1,49 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  data-layout-decorate="~{template/page}">
-<head>
-	<title th:text="${project.label}">Project</title>
-	<script th:inline="javascript">
-		window.project = {
-          canManage: /*[[${isOwner or isAdmin}]]*/ false,
-          page: /*[[${activeNav}]]*/ "settings",
-          label: /*[[${project.getLabel()}]]*/ 1,
-          id: /*[[${project.getId()}]]*/ 1
-        };
-	</script>
-    <script th:inline="javascript" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
-      window.project.remote = {
-        url: /*[[@{/remote_api/{id}(id=${status.getApi().getId()})}]]*/ '',
-        label: /*[[${status.getApi().getLabel()}]]*/ "",
-        status: /*[[#{'project.sync.status.'+${status.getSyncStatus()}}]]*/ ''
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="${project.label}">Project</title>
+    <script th:inline="javascript">
+      window.project = {
+        canManageRemote: /*[[${isAdmin or isOwnerAllowRemote}]]*/ false,
+        canManage: /*[[${isOwner or isAdmin}]]*/ false,
+        page: /*[[${activeNav}]]*/ "settings",
+        label: /*[[${project.getLabel()}]]*/ 1,
+        id: /*[[${project.getId()}]]*/ 1,
       };
     </script>
-    <link rel="stylesheet" th:href="@{/dist/css/project.bundle.css}">
-</head>
-<body>
-
-<div layout:fragment="page">
-    <div class="col-md-12">
+    <script
+      th:inline="javascript"
+      th:if="${project.isRemote()}"
+      th:with="status=${project.getRemoteStatus()}"
+    >
+      window.project.remote = {
+        url:
+          /*[[@{/admin/remote_api/{id}(id=${status.getApi().getId()})}]]*/ "",
+        label: /*[[${status.getApi().getLabel()}]]*/ "",
+        status: /*[[#{'project.sync.status.'+${status.getSyncStatus()}}]]*/ "",
+      };
+    </script>
+    <link rel="stylesheet" th:href="@{/dist/css/project.bundle.css}" />
+  </head>
+  <body>
+    <div layout:fragment="page">
+      <div class="col-md-12">
         <div id="project-root"></div>
 
-        <main layout:fragment="main" style="padding: 16px 24px;">
-            <!--/*/
+        <main layout:fragment="main" style="padding: 16px 24px">
+          <!--/*/
             This is where the main content of every project page will go.
             /*/-->
         </main>
+      </div>
     </div>
-</div>
 
-<th:block layout:fragment="base-scripts">
-    <script th:src="@{/dist/js/project.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="base-scripts">
+      <script th:src="@{/dist/js/project.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

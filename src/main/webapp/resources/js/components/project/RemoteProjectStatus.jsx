@@ -10,9 +10,15 @@ export function RemoteProjectStatus() {
 
   return (
     <Tag icon={<IconSwap />}>
-      <a href={remote.url}>
-        <Text strong>{remote.label}</Text>: {remote.status}
-      </a>
+      {window.project.canManageRemote ? (
+        <a href={remote.url}>
+          <Text strong>{remote.label}</Text>: {remote.status}
+        </a>
+      ) : (
+        <>
+          <Text strong>{remote.label}</Text>: {remote.status}
+        </>
+      )}
     </Tag>
   );
 }
