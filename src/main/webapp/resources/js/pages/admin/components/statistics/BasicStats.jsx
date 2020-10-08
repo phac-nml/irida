@@ -33,7 +33,7 @@ export default function BasicStats() {
                 value={adminStatisticsContext.basicStats.analysesRan}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)}
               >
                 Analyses Statistics
@@ -46,10 +46,10 @@ export default function BasicStats() {
                 value={adminStatisticsContext.basicStats.projectsCreated}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS} />)}
               >
-                Project Creation Statistics
+                Project Statistics
               </Button>
             </Card>
 
@@ -59,10 +59,10 @@ export default function BasicStats() {
                 value={adminStatisticsContext.basicStats.samplesCreated}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)}
               >
-                Sample Creation Statistics
+                Sample Statistics
               </Button>
             </Card>
 
@@ -72,10 +72,10 @@ export default function BasicStats() {
                 value={adminStatisticsContext.basicStats.usersCreated}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)}
               >
-                User Creation Statistics
+                User Statistics
               </Button>
             </Card>
 
@@ -85,7 +85,7 @@ export default function BasicStats() {
                 value={adminStatisticsContext.basicStats.usersLoggedIn}
               />
               <Button
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, width: 170 }}
                 disabled={true}
               >
                 User Usage Statistics

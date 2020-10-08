@@ -47,4 +47,12 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 */
 	@Query("select count(u.id) from User u where u.lastLogin >= ?1")
 	public Long countUsersLoggedInTimePeriod(Date createdDate);
+
+	/**
+	 * Get a count of all {@link User}s created within time period
+	 *
+	 * @return a count of {@link User}s
+	 */
+	@Query("select count(u.id) from User u where u.createdDate >= ?1")
+	public Long countUsersCreatedInTimePeriod(Date createdDate);
 }

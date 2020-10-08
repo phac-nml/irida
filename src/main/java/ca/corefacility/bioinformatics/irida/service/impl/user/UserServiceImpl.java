@@ -432,4 +432,13 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		Long usersCount = userRepository.countUsersLoggedInTimePeriod(createdDate);
 		return usersCount;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getUsersCreatedInTimePeriod(Date createdDate) {
+		Long usersCount = userRepository.countUsersCreatedInTimePeriod(createdDate);
+		return usersCount;
+	}
 }

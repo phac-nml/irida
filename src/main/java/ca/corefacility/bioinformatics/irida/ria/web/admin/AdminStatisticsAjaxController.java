@@ -56,9 +56,10 @@ public class AdminStatisticsAjaxController {
 		Long analysesRan = analysisSubmissionService.getAnalysesRan(minimumCreatedDate);
 		Long projectsCreated = projectService.getProjectsCreated(minimumCreatedDate);
 		Long samplesCreated = sampleService.getSamplesCreated(minimumCreatedDate);
+		Long usersCreated = userService.getUsersCreatedInTimePeriod(minimumCreatedDate);
 		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
 
-		return ResponseEntity.ok(new BasicStats(analysesRan, projectsCreated, samplesCreated, usersLoggedIn));
+		return ResponseEntity.ok(new BasicStats(analysesRan, projectsCreated, samplesCreated, usersCreated, usersLoggedIn));
 	}
 
 	/**

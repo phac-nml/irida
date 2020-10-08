@@ -152,4 +152,10 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return An {@link Long} count of users logged in
 	 */
 	public Long getUsersLoggedIn(Date createdDate);
+
+	/**
+	 * Get count of users created during the time period
+	 * @return An {@link Long} count of users created
+	 */
+	public Long getUsersCreatedInTimePeriod(Date createdDate);
 }
