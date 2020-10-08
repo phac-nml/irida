@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button } from "antd";
 import { checkConnectionStatus } from "../../../../apis/remote-api/remote-api";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconLoading, IconLogin } from "../../../../components/icons/Icons";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { authenticateRemoteClient } from "../../../../apis/oauth/oauth";
 
 /**
  * React component to render the status of a Remote API.
@@ -17,6 +17,7 @@ import { formatInternationalizedDateTime } from "../../../../utilities/date-util
  */
 export function RemoteApiStatus({ api, onConnect = () => {} }) {
   const [loading, setLoading] = useState(true);
+  const [connecting, setConnecting] = useState(false);
   const [expiration, setExpiration] = useState(undefined);
 
   useEffect(checkApiStatus, []);
@@ -51,16 +52,10 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
    * This will open a popup window with the Oauth for the Remote API
    */
   function updateConnectionStatus() {
-    const w = 600;
-    const h = 400;
-
-    const left = screen.width / 2 - w / 2;
-    const top = screen.height / 2 - h / 2;
-    window.open(
-      setBaseUrl(`remote_api/connect/${api.id}`),
-      "",
-      `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${top}, left=${left}`
-    );
+    setConnecting(true);
+    authenticateRemoteClient(api)
+      .then(checkApiStatus)
+      .finally(() => setConnecting(false));
   }
 
   return loading ? (
@@ -85,6 +80,7 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
           className="t-remote-status-connect"
           onClick={updateConnectionStatus}
           icon={<IconLogin />}
+          loading={connecting}
         >
           {i18n("RemoteApi.disconnected")}
         </Button>
