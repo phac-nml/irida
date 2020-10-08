@@ -9,7 +9,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
  */
 public class AnnouncementTableModel extends TableModel {
 	private final User user;
+	private final String title;
 	private final String message;
+	private final Boolean priority;
 
 	public AnnouncementTableModel(Announcement announcement) {
 		super(announcement.getId(), announcement.getLabel(), announcement.getCreatedDate(), null);
@@ -21,12 +23,22 @@ public class AnnouncementTableModel extends TableModel {
 			name = name.substring(0, 79) + " ...";
 		}
 		setName(name);
+		title = announcement.getTitle();
 		message = announcement.getMessage();
+		priority = announcement.getPriority();
 		user = announcement.getUser();
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public String getMessage() {
 		return message;
+	}
+
+	public Boolean getPriority() {
+		return priority;
 	}
 
 	public User getUser() {

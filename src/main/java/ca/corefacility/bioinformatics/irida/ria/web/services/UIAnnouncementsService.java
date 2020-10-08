@@ -68,7 +68,7 @@ public class UIAnnouncementsService {
 	 */
 	public void createNewAnnouncement(@RequestBody AnnouncementRequest announcementRequest, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
-		Announcement announcement = new Announcement(announcementRequest.getMessage(), user);
+		Announcement announcement = new Announcement(announcementRequest.getTitle(), announcementRequest.getMessage(), announcementRequest.getPriority(), user);
 		announcementService.create(announcement);
 	}
 
@@ -79,7 +79,9 @@ public class UIAnnouncementsService {
 	 */
 	public void updateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
 		Announcement announcement = announcementService.read(announcementRequest.getId());
+		announcement.setTitle(announcementRequest.getTitle());
 		announcement.setMessage(announcementRequest.getMessage());
+		announcement.setPriority(announcementRequest.getPriority());
 		announcementService.update(announcement);
 	}
 
