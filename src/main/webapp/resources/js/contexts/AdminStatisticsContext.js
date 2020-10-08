@@ -144,6 +144,7 @@ function AdminStatisticsProvider(props) {
       chartAxisAlias = '# of Users';
     }
 
+
     // The configuration required to display a chart
     const chartConfig = {
       title: { visible: true, text: chartTitle },
@@ -163,7 +164,7 @@ function AdminStatisticsProvider(props) {
       },
       colorField: "key",
       legend: {
-        visible: data !== null  ? true : false,
+        visible: data !== null ? true : false,
         position: 'bottom-center',
       },
       statistic: {

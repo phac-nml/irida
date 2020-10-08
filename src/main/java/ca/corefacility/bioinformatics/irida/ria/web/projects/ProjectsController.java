@@ -42,8 +42,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -82,7 +82,7 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
-	private final CartController cartController;
+	private final UICartService cartService;
 	private final UpdateSamplePermission updateSamplePermission;
 
 	/*
@@ -98,8 +98,7 @@ public class ProjectsController {
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService,
-
-			CartController cartController, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
+			UICartService cartService, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -107,7 +106,7 @@ public class ProjectsController {
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
-		this.cartController = cartController;
+		this.cartService = cartService;
 		this.fileSizeConverter = new FileSizeConverter();
 		this.updateSamplePermission = updateSamplePermission;
 	}
@@ -177,23 +176,20 @@ public class ProjectsController {
 			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
 		model.addAttribute("useCartSamples", useCartSamples);
 
-		Map<Project, List<Sample>> selected = cartController.getSelected();
+		Map<Project, List<Sample>> cart = cartService.getFullCart();
 
 		// Check which samples they can modify
 		Set<Sample> allowed = new HashSet<>();
 		Set<Sample> disallowed = new HashSet<>();
 
-		selected.values()
-				.forEach(set -> {
-					set.stream()
-							.forEach(s -> {
-								if (canModifySample(s)) {
-									allowed.add(s);
-								} else {
-									disallowed.add(s);
-								}
-							});
-				});
+		cart.values()
+				.forEach(set -> set.forEach(s -> {
+					if (canModifySample(s)) {
+						allowed.add(s);
+					} else {
+						disallowed.add(s);
+					}
+				}));
 
 		model.addAttribute("allowedSamples", allowed);
 		model.addAttribute("disallowedSamples", disallowed);
@@ -232,16 +228,14 @@ public class ProjectsController {
 
 		try {
 			if (useCartSamples) {
-				Map<Project, List<Sample>> selected = cartController.getSelected();
+				Map<Project, List<Sample>> cart = cartService.getFullCart();
 
-				List<Long> sampleIds = selected.entrySet()
+				List<Long> sampleIds = cart.entrySet()
 						.stream()
 						.flatMap(e -> e.getValue()
 								.stream()
-								.filter(s -> {
-									return canModifySample(s);
-								})
-								.map(i -> i.getId()))
+								.filter(this::canModifySample)
+								.map(Sample::getId))
 						.collect(Collectors.toList());
 
 				project = projectService.createProjectWithSamples(project, sampleIds, owner);

@@ -4,18 +4,23 @@
  * charts
  */
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Card, Statistic, Row, Col } from "antd";
 import { SPACE_LG } from "../../../../styles/spacing";
 import AdvancedStatistics from "./AdvancedStatistics";
 import {
+  AdminStatisticsContext,
   defaultTimePeriod,
   statisticTypes,
   timePeriodMap
 } from "../../../../contexts/AdminStatisticsContext";
 
-export default function BasicStats({ statistics }) {
+export default function BasicStats() {
   const [statsChartView, setStatsChartView] = useState(null);
+
+  const { adminStatisticsContext } = useContext(
+    AdminStatisticsContext
+  );
 
   return (
     <div className="t-statistics">
@@ -25,7 +30,7 @@ export default function BasicStats({ statistics }) {
             <Card>
               <Statistic
                 title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.analysesRan}
+                value={adminStatisticsContext.basicStats.analysesRan}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -39,7 +44,7 @@ export default function BasicStats({ statistics }) {
             <Card>
               <Statistic
                 title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.projectsCreated}
+                value={adminStatisticsContext.basicStats.projectsCreated}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -53,7 +58,7 @@ export default function BasicStats({ statistics }) {
             <Card>
               <Statistic
                 title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.samplesCreated}
+                value={adminStatisticsContext.basicStats.samplesCreated}
               />
               <Button
                 style={{ marginTop: 16 }}
@@ -66,8 +71,8 @@ export default function BasicStats({ statistics }) {
           <Col span={6}>
             <Card>
               <Statistic
-                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={statistics.usersLoggedIn}
+                title={`Users logged in past ${timePeriodMap[defaultTimePeriod]}`}
+                value={adminStatisticsContext.basicStats.usersLoggedIn}
               />
               <Button
                 style={{ marginTop: 16 }}

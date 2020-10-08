@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+
 /**
  * Controller to handle ajax requests for the Admin Panel statistics page.
  */
